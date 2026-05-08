@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Heartbeat"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /distributed-systems/heartbeat/
 id: DST-041

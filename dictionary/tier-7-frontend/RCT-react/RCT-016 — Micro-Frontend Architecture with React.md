@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-016
 title: Micro-Frontend Architecture with React
 category: React
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /rct/micro-frontend-architecture-with-react/
 ---

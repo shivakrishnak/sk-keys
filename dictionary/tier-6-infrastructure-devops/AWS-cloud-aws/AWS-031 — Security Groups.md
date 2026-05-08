@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Security Groups"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /cloud-aws/security-groups/
 id: AWS-031

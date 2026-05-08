@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "YAGNI (You Aren't Gonna Need It)"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /software-architecture/yagni/
 id: SAP-046

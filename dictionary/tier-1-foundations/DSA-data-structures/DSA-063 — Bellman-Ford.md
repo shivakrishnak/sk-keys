@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bellman-Ford"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /dsa/bellman-ford/
 id: DSA-063

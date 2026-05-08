@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Memento"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /design-patterns/memento/
 id: DPT-024

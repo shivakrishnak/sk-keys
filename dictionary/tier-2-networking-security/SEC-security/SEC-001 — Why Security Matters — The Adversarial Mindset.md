@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-001
 title: Why Security Matters — The Adversarial Mindset
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /sec/why-security-matters-the-adversarial-mindset/
 ---

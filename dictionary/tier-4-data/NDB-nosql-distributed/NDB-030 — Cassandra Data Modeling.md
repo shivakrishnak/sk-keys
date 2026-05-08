@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cassandra Data Modeling"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /nosql/cassandra-data-modeling/
 id: NDB-030

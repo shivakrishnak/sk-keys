@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Mean Time to Recovery (MTTR)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /ci-cd/mean-time-to-recovery/
 id: CCD-041

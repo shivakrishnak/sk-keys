@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Raft"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /distributed-systems/raft/
 id: DST-023

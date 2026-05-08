@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-010
 title: RAG Pipeline Basics (Index, Retrieve, Generate)
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /rag/rag-pipeline-basics-index-retrieve-generate/
 ---

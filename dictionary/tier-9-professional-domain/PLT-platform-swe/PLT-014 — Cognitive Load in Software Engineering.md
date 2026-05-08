@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-014
 title: Cognitive Load in Software Engineering
 category: Platform & Modern SWE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /plt/cognitive-load-in-software-engineering/
 ---

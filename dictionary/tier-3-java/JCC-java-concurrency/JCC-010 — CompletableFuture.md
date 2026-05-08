@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CompletableFuture"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /java-concurrency/completable-future/
 id: JCC-010

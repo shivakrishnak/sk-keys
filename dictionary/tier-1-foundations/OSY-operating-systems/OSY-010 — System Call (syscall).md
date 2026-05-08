@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "System Call (syscall)"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /operating-systems/system-call-syscall/
 id: OSY-010

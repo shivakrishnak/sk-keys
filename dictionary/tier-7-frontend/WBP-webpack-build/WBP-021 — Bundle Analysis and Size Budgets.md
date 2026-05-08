@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-021
 title: Bundle Analysis and Size Budgets
 category: Webpack & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /wbp/bundle-analysis-and-size-budgets/
 ---

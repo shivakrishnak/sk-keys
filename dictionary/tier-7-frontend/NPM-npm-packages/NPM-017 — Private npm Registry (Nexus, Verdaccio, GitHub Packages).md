@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-017
 title: Private npm Registry (Nexus, Verdaccio, GitHub Packages)
 category: npm & Package Management
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /npm/private-npm-registry-nexus-verdaccio-github-packages/
 ---

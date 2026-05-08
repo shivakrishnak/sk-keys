@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Grounding"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /ai-foundations/grounding/
 id: AIF-020

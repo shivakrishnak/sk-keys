@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-005
 title: The Security Ecosystem Map (AppSec NetSec CloudSec)
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /sec/the-security-ecosystem-map-appsec-netsec-cloudsec/
 ---

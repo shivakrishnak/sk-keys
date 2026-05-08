@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-005
 title: Angular in Production -- What to Expect
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /ang/angular-in-production----what-to-expect/
 ---

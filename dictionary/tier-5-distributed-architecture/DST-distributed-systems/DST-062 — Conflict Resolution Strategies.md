@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Conflict Resolution Strategies"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /distributed-systems/conflict-resolution-strategies/
 id: DST-062

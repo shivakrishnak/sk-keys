@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Three-Phase Commit (3PC)"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /distributed-systems/three-phase-commit/
 id: DST-035

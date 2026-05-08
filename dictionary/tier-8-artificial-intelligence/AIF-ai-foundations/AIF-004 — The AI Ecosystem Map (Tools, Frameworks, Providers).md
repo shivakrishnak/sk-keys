@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-004
 title: The AI Ecosystem Map (Tools, Frameworks, Providers)
 category: AI Foundations
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /aif/the-ai-ecosystem-map-tools-frameworks-providers/
 ---

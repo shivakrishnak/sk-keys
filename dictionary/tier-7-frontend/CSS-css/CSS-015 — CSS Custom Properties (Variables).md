@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-015
 title: CSS Custom Properties (Variables)
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /css/css-custom-properties-variables/
 ---

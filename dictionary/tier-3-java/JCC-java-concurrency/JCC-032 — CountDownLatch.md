@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CountDownLatch"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /java-concurrency/count-down-latch/
 id: JCC-032

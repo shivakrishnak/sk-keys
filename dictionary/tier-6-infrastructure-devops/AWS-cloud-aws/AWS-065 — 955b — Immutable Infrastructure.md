@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "955b — Immutable Infrastructure"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /cloud-aws/immutable-infrastructure/
 ---

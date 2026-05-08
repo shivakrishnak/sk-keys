@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS CloudWatch Dashboards"
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /observability/aws-cloudwatch-dashboards/
 number: "OBS-003"

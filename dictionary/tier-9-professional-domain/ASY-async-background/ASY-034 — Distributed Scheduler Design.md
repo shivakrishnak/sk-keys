@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-034
 title: Distributed Scheduler Design
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /asy/distributed-scheduler-design/
 ---

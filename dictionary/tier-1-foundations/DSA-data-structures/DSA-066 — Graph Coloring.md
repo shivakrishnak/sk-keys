@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Graph Coloring"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 66
 permalink: /dsa/graph-coloring/
 id: DSA-066

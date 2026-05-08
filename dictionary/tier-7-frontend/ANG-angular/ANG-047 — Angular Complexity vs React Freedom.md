@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-047
 title: Angular Complexity vs React Freedom
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /ang/angular-complexity-vs-react-freedom/
 ---

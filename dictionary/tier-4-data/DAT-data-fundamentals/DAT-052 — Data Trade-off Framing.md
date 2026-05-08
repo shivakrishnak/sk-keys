@@ -1,4 +1,4 @@
----
+﻿---
 id: DAT-052
 title: Data Trade-off Framing
 category: Data Fundamentals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /dat/data-trade-off-framing/
 ---

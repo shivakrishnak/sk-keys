@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-061
 title: GC Algorithm Design Principles
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /jvm/gc-algorithm-design-principles/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Process Management (ps, top, kill)"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /linux/process-management-ps-top-kill/
 id: LNX-012

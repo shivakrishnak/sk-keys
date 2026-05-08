@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Vector Database"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /nosql/vector-database/
 id: NDB-025

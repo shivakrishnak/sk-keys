@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-016
 title: Security Misconfiguration
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /sec/security-misconfiguration/
 ---

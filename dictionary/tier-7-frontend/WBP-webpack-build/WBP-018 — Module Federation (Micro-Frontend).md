@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-018
 title: Module Federation (Micro-Frontend)
 category: Webpack & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /wbp/module-federation-micro-frontend/
 ---

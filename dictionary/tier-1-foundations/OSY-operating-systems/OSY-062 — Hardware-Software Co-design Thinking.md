@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-062
 title: Hardware-Software Co-design Thinking
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /osy/hardware-software-co-design-thinking/
 ---

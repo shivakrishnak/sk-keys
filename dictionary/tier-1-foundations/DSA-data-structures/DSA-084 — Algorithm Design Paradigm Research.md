@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-084
 title: Algorithm Design Paradigm Research
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 84
 permalink: /dsa/algorithm-design-paradigm-research/
 ---

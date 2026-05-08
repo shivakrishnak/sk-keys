@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CDK"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /cloud-aws/cdk/
 id: AWS-057

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pair Programming"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /code-quality/pair-programming/
 id: CDQ-017

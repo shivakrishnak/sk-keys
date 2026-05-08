@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "URL Shortener Design"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /system-design/url-shortener-design/
 id: SYD-043

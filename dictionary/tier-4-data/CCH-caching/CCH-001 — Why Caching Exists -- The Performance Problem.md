@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-001
 title: Why Caching Exists -- The Performance Problem
 category: Caching
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /cch/why-caching-exists----the-performance-problem/
 ---

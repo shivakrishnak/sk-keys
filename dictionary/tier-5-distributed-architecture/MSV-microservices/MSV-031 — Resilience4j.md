@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Resilience4j"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /microservices/resilience4j/
 id: MSV-031

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Page Cache"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /operating-systems/page-cache/
 id: OSY-036

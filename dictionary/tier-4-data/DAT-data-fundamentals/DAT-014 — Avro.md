@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Avro"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /data-fundamentals/avro/
 id: DAT-014

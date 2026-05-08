@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "pom.xml"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /maven-build/pom-xml/
 id: MVN-007

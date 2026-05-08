@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "LSM Tree"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /databases/lsm-tree/
 id: DBF-032

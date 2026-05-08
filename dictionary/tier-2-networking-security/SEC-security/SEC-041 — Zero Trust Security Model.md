@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-041
 title: Zero Trust Security Model
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /sec/zero-trust-security-model/
 ---

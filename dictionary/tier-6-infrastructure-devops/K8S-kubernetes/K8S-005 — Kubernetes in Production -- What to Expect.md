@@ -1,4 +1,4 @@
----
+﻿---
 id: K8S-005
 title: Kubernetes in Production -- What to Expect
 category: Kubernetes
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /k8s/kubernetes-in-production----what-to-expect/
 ---

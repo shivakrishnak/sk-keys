@@ -1,4 +1,4 @@
----
+﻿---
 id: BIG-048
 title: Real-Time Analytics Platform Design
 category: Big Data & Streaming
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /big/real-time-analytics-platform-design/
 ---

@@ -2,6 +2,7 @@
 layout: default
 title: "First-Class Functions"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /cs-fundamentals/first-class-functions/
 id: CSF-029

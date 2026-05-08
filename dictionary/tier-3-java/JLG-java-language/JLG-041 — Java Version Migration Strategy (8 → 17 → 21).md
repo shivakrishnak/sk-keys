@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-041
 title: Java Version Migration Strategy (8 → 17 → 21)
 category: Java Language
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /jlg/java-version-migration-strategy-8-17-21/
 ---

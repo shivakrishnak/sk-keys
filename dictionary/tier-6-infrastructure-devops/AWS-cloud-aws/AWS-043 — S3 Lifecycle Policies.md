@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "S3 Lifecycle Policies"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /cloud-aws/s3-lifecycle-policies/
 id: AWS-043

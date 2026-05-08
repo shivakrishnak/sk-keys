@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-053
 title: Formal SLO Theory
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /obs/formal-slo-theory/
 ---

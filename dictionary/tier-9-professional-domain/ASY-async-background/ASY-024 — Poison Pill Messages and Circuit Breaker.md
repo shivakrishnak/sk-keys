@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-024
 title: Poison Pill Messages and Circuit Breaker
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /asy/poison-pill-messages-and-circuit-breaker/
 ---

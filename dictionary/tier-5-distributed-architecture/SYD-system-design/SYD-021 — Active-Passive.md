@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Active-Passive"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /system-design/active-passive/
 id: SYD-021

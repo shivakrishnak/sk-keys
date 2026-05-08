@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AI Safety"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /ai-foundations/ai-safety/
 id: AIF-044

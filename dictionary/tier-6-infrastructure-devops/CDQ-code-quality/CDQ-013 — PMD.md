@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "PMD"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /code-quality/pmd/
 id: CDQ-013

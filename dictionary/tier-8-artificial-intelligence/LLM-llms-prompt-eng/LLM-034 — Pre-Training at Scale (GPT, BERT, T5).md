@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-034
 title: Pre-Training at Scale (GPT, BERT, T5)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /llm/pre-training-at-scale-gpt-bert-t5/
 ---

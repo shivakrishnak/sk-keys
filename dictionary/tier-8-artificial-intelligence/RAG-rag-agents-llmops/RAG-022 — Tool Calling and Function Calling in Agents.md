@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-022
 title: Tool Calling and Function Calling in Agents
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /rag/tool-calling-and-function-calling-in-agents/
 ---

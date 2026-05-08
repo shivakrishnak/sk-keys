@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "MongoDB Schema Evolution"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /nosql/mongodb-schema-evolution/
 id: NDB-010

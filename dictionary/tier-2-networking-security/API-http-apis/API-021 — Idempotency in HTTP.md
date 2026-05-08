@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Idempotency in HTTP"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /http-apis/idempotency-in-http/
 id: API-021

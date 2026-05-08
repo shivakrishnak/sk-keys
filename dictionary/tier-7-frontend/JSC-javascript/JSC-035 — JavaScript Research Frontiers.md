@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-035
 title: JavaScript Research Frontiers
 category: JavaScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /jsc/javascript-research-frontiers/
 ---

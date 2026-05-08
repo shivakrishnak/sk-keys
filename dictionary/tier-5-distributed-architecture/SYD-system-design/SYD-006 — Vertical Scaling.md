@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Vertical Scaling"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /system-design/vertical-scaling/
 id: SYD-006

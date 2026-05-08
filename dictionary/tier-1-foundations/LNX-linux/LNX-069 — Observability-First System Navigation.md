@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-069
 title: Observability-First System Navigation
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 69
 permalink: /lnx/observability-first-system-navigation/
 ---

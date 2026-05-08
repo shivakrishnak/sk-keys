@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Active Object Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /design-patterns/active-object-pattern/
 id: DPT-036

@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-065
 title: Scheduler Algorithm Design (CFS, FIFO)
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /lnx/scheduler-algorithm-design-cfs-fifo/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "lsof"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /linux/lsof/
 id: LNX-037

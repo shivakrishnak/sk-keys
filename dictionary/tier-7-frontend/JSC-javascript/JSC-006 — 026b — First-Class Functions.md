@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "026b — First-Class Functions"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /javascript/first-class-functions/
 id: JSC-006

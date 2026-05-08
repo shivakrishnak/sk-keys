@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bit Manipulation"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /dsa/bit-manipulation/
 id: DSA-032

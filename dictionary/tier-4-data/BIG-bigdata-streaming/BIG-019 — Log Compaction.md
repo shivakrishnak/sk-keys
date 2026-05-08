@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Log Compaction"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /big-data-streaming/log-compaction/
 id: BIG-019

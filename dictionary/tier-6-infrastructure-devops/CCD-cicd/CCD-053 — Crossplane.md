@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Crossplane"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /ci-cd/crossplane/
 id: CCD-053

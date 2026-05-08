@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Search Engine (Elasticsearch)"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /nosql/search-engine-elasticsearch/
 id: NDB-022

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Vision Language Models"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /ai-foundations/vision-language-models/
 id: AIF-039

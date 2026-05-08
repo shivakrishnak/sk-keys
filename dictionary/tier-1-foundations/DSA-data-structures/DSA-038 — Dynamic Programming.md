@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Dynamic Programming"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /dsa/dynamic-programming/
 id: DSA-038

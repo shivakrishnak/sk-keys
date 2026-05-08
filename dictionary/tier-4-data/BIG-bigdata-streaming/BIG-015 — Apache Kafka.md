@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Apache Kafka"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /big-data-streaming/apache-kafka/
 id: BIG-015

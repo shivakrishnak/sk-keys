@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Progressive Delivery"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /ci-cd/progressive-delivery/
 id: CCD-043

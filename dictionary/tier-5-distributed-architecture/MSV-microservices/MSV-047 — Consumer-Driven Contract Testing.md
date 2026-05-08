@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Consumer-Driven Contract Testing"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /microservices/consumer-driven-contract-testing/
 id: MSV-047

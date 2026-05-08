@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-051
 title: Theoretical ML -- VC Dimension, PAC Learning
 category: AI Foundations
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /aif/theoretical-ml----vc-dimension-pac-learning/
 ---

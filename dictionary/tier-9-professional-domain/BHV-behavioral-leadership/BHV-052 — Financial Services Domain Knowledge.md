@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Financial Services Domain Knowledge"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /leadership/financial-services-domain-knowledge/
 id: BHV-052

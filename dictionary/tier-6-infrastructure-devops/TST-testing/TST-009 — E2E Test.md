@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "E2E Test"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /testing/e2e-test/
 id: TST-009

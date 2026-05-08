@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ELB  ALB  NLB"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /cloud-aws/elb-alb-nlb/
 id: AWS-040

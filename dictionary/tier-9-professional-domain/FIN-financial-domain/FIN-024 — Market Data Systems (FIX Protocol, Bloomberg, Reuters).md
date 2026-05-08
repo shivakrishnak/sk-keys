@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-024
 title: Market Data Systems (FIX Protocol, Bloomberg, Reuters)
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /fin/market-data-systems-fix-protocol-bloomberg-reuters/
 ---

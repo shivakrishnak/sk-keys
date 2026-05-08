@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-034
 title: Command Injection
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /sec/command-injection/
 ---

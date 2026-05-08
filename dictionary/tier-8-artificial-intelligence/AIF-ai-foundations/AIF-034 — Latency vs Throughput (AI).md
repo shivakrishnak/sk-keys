@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Latency vs Throughput (AI)"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /ai-foundations/latency-vs-throughput-ai/
 id: AIF-034

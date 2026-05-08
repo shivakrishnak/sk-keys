@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-058
 title: Formal Architecture Specification (C4, ADL, UML)
 category: Software Architecture Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 58
 permalink: /sap/formal-architecture-specification-c4-adl-uml/
 ---

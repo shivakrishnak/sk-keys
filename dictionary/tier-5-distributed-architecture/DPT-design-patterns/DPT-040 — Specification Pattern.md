@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Specification Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /design-patterns/specification-pattern/
 id: DPT-040

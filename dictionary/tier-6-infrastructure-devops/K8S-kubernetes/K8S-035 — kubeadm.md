@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "kubeadm"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /kubernetes/kubeadm/
 id: K8S-035

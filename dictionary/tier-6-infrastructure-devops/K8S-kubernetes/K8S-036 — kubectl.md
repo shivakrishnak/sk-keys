@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "kubectl"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /kubernetes/kubectl/
 id: K8S-036

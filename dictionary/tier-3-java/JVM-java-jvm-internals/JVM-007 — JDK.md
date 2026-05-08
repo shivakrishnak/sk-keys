@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "JDK"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /java/jdk/
 id: JVM-007

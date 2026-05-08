@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-044
 title: Financial System Failure Mode Thinking
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /fin/financial-system-failure-mode-thinking/
 ---

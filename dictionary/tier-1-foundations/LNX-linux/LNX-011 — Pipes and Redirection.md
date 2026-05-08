@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pipes and Redirection"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /linux/pipes-and-redirection/
 id: LNX-011

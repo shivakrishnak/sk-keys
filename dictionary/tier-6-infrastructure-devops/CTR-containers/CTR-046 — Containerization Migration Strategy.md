@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-046
 title: Containerization Migration Strategy
 category: Containers
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /ctr/containerization-migration-strategy/
 ---

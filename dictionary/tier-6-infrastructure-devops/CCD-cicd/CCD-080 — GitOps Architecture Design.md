@@ -1,4 +1,4 @@
----
+﻿---
 id: CCD-080
 title: GitOps Architecture Design
 category: CI/CD
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 80
 permalink: /ccd/gitops-architecture-design/
 ---

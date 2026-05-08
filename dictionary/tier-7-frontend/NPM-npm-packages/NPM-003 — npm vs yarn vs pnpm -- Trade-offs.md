@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-003
 title: npm vs yarn vs pnpm -- Trade-offs
 category: npm & Package Management
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /npm/npm-vs-yarn-vs-pnpm----trade-offs/
 ---

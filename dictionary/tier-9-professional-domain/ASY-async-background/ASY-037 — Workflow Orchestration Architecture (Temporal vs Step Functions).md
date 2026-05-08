@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-037
 title: Workflow Orchestration Architecture (Temporal vs Step Functions)
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /asy/workflow-orchestration-architecture-temporal-vs-step-functions/
 ---

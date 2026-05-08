@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-021
 title: npm Supply Chain Security (SBOMs, Signed Packages)
 category: npm & Package Management
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /npm/npm-supply-chain-security-sboms-signed-packages/
 ---

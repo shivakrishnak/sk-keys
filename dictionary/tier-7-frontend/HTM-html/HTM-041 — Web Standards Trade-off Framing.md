@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-041
 title: Web Standards Trade-off Framing
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /htm/web-standards-trade-off-framing/
 ---

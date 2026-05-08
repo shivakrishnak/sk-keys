@@ -1,4 +1,4 @@
----
+﻿---
 id: DAT-054
 title: Data Platform Selection Framework
 category: Data Fundamentals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /dat/data-platform-selection-framework/
 ---

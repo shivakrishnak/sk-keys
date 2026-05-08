@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Timeout Strategy"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /microservices/timeout-strategy/
 id: MSV-035

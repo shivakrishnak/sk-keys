@@ -2,6 +2,7 @@
 layout: default
 title: "Synchronous vs Asynchronous"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /cs-fundamentals/synchronous-vs-asynchronous/
 id: CSF-017

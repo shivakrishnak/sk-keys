@@ -2,6 +2,7 @@
 layout: default
 title: "Side Effects"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /cs-fundamentals/side-effects/
 id: CSF-031

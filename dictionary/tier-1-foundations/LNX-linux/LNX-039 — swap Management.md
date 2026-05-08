@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "swap Management"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /linux/swap-management/
 id: LNX-039

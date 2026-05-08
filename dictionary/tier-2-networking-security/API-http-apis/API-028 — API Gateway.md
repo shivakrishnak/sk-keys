@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Gateway"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /http-apis/api-gateway/
 id: API-028

@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-022
 title: React Trade-off Framing (Complexity vs Flexibility)
 category: React
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /rct/react-trade-off-framing-complexity-vs-flexibility/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-027
 title: PDF Internals (Cross-Reference Table, Object Streams)
 category: Document Generation
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /dgn/pdf-internals-cross-reference-table-object-streams/
 ---

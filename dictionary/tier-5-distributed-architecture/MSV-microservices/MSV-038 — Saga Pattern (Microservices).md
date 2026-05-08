@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Saga Pattern (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /microservices/saga-pattern-microservices/
 id: MSV-038

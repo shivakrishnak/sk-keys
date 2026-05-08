@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-033
 title: Document Rendering Algorithm Research
 category: Document Generation
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /dgn/document-rendering-algorithm-research/
 ---

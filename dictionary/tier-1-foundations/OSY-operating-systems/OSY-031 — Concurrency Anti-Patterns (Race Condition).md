@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-031
 title: Concurrency Anti-Patterns (Race Condition)
 category: Operating Systems
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /osy/concurrency-anti-patterns-race-condition/
 ---

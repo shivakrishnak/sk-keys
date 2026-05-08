@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Catalog"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /data-fundamentals/data-catalog/
 id: DAT-037

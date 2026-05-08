@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-022
 title: Monorepo Package Management Strategy
 category: npm & Package Management
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /npm/monorepo-package-management-strategy/
 ---

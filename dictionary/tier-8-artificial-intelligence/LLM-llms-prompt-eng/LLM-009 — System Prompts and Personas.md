@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-009
 title: System Prompts and Personas
 category: LLMs & Prompt Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /llm/system-prompts-and-personas/
 ---

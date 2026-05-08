@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Message Broker vs Event Bus"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /big-data-streaming/message-broker-vs-event-bus/
 id: BIG-039

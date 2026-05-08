@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Technical Leadership"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /leadership/technical-leadership/
 id: BHV-008

@@ -1,4 +1,4 @@
----
+﻿---
 id: BIG-002
 title: The Streaming vs Batch Divide
 category: Big Data & Streaming
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /big/the-streaming-vs-batch-divide/
 ---

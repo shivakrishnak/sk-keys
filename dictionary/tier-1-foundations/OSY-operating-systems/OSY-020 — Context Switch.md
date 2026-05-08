@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Context Switch"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /operating-systems/context-switch/
 id: OSY-020

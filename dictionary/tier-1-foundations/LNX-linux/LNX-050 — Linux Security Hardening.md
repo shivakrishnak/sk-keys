@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Linux Security Hardening"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /linux/linux-security-hardening/
 id: LNX-050

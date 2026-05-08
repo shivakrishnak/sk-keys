@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Region  AZ  Edge Location"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /cloud-aws/region-az-edge-location/
 id: AWS-026

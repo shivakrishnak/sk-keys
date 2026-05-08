@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "JRE"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /java/jre/
 id: JVM-006

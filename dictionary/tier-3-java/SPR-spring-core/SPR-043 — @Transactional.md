@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "@Transactional"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /spring/transactional/
 id: SPR-043

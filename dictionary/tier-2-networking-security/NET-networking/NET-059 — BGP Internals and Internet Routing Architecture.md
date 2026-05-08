@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-059
 title: BGP Internals and Internet Routing Architecture
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /net/bgp-internals-and-internet-routing-architecture/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-013
 title: SPACE Framework for Developer Productivity
 category: Platform & Modern SWE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /plt/space-framework-for-developer-productivity/
 ---

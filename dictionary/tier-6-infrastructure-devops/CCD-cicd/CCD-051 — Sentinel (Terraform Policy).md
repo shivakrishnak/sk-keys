@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sentinel (Terraform Policy)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /ci-cd/sentinel-terraform-policy/
 id: CCD-051

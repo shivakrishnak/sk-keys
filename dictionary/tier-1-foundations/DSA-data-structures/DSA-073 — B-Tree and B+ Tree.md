@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-073
 title: B-Tree and B+ Tree
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 73
 permalink: /dsa/b-tree-and-b-tree/
 ---

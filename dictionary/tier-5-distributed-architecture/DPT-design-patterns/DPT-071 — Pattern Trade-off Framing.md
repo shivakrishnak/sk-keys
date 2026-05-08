@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-071
 title: Pattern Trade-off Framing
 category: Design Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 71
 permalink: /dpt/pattern-trade-off-framing/
 ---

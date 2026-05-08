@@ -1,4 +1,4 @@
----
+﻿---
 id: CCD-081
 title: Deployment Trade-off Framing
 category: CI/CD
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 81
 permalink: /ccd/deployment-trade-off-framing/
 ---

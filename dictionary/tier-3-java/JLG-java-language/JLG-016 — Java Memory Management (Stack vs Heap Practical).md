@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Java Memory Management (Stack vs Heap Practical)"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /java/java-memory-management-stack-heap/
 id: JLG-016

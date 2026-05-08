@@ -1,4 +1,4 @@
----
+﻿---
 id: BIG-055
 title: Batch vs Stream Trade-off Framing
 category: Big Data & Streaming
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /big/batch-vs-stream-trade-off-framing/
 ---

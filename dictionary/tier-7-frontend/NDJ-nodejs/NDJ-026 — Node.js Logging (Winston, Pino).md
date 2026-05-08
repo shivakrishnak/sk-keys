@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-026
 title: Node.js Logging (Winston, Pino)
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /ndj/nodejs-logging-winston-pino/
 ---

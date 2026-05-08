@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Graceful Degradation"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /distributed-systems/graceful-degradation/
 id: DST-048

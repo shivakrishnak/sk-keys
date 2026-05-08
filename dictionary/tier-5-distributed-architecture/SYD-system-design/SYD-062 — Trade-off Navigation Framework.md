@@ -1,4 +1,4 @@
----
+﻿---
 id: SYD-062
 title: Trade-off Navigation Framework
 category: System Design
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /syd/trade-off-navigation-framework/
 ---

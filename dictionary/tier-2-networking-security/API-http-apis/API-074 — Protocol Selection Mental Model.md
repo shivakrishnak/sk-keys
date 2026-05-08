@@ -1,4 +1,4 @@
----
+﻿---
 id: API-074
 title: Protocol Selection Mental Model
 category: HTTP & APIs
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 74
 permalink: /api/protocol-selection-mental-model/
 ---

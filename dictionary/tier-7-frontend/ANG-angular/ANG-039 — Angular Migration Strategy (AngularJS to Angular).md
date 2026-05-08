@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-039
 title: Angular Migration Strategy (AngularJS to Angular)
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /ang/angular-migration-strategy-angularjs-to-angular/
 ---

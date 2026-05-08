@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-001
 title: What Is npm and Package Management
 category: npm & Package Management
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /npm/what-is-npm-and-package-management/
 ---

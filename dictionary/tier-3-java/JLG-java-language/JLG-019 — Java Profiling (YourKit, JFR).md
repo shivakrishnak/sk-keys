@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Java Profiling (YourKit, JFR)"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /java/java-profiling-yourkit-jfr/
 id: JLG-019

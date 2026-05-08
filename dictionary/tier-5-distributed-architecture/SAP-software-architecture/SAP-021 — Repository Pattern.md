@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Repository Pattern"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /software-architecture/repository-pattern/
 id: SAP-021

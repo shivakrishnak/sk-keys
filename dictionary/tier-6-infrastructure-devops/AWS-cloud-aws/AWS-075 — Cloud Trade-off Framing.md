@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-075
 title: Cloud Trade-off Framing
 category: Cloud -- AWS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 75
 permalink: /aws/cloud-trade-off-framing/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Jest (JavaScript Testing)"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /testing/jest-javascript/
 id: TST-055

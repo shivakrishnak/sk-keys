@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Integrity Constraints"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /databases/data-integrity-constraints/
 id: DBF-013

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GraphQL"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /http-apis/graphql/
 id: API-032

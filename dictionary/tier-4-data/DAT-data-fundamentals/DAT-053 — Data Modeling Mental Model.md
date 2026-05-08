@@ -1,4 +1,4 @@
----
+﻿---
 id: DAT-053
 title: Data Modeling Mental Model
 category: Data Fundamentals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /dat/data-modeling-mental-model/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Strangler Fig Pattern"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /microservices/strangler-fig-pattern/
 id: MSV-019

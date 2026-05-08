@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-001
 title: What Is Git and Why Version Control Matters
 category: Git & Branching Strategy
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /git/what-is-git-and-why-version-control-matters/
 ---

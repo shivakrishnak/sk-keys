@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-019
 title: Card Networks (Visa, Mastercard, AMEX) -- How They Work
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /fin/card-networks-visa-mastercard-amex----how-they-work/
 ---

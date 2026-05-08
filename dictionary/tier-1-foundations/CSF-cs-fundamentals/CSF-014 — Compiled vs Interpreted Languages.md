@@ -2,6 +2,7 @@
 layout: default
 title: "Compiled vs Interpreted Languages"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /cs-fundamentals/compiled-vs-interpreted-languages/
 id: CSF-014

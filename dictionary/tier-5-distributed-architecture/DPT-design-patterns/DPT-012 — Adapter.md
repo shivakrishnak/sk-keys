@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Adapter"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /design-patterns/adapter/
 id: DPT-012

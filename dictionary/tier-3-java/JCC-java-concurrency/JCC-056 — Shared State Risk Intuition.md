@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-056
 title: Shared State Risk Intuition
 category: Java Concurrency
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /jcc/shared-state-risk-intuition/
 ---

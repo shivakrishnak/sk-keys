@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Istio"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /microservices/istio/
 id: MSV-029

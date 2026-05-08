@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-005
 title: Bundlers in Production -- What to Expect
 category: Webpack & Build Tools
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /wbp/bundlers-in-production----what-to-expect/
 ---

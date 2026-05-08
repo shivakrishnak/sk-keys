@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-004
 title: Why Engineers Learn Linux
 category: Linux
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /lnx/why-engineers-learn-linux/
 ---

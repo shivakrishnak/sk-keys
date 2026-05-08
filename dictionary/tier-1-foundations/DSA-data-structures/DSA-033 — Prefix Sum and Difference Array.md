@@ -1,4 +1,8 @@
----
+﻿---
+layout: default
+parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
+nav_order: 33
 id: DSA-033
 title: Prefix Sum & Difference Array
 category: Data Structures & Algorithms

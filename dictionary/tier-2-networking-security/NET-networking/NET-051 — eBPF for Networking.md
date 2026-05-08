@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-051
 title: eBPF for Networking
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /net/ebpf-for-networking/
 ---

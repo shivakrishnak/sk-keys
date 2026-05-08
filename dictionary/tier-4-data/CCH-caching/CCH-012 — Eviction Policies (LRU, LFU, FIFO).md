@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Eviction Policies (LRU, LFU, FIFO)"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /caching/eviction-policies/
 id: CCH-012

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "/etc/hosts / DNS Resolution"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /linux/etc-hosts-dns-resolution/
 id: LNX-043

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Gateway Patterns"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 58
 permalink: /http-apis/api-gateway-patterns/
 id: API-058

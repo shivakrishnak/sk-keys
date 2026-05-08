@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Ubiquitous Language"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /microservices/ubiquitous-language/
 id: MSV-017

@@ -2,6 +2,7 @@
 layout: default
 title: "Procedural Programming"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /cs-fundamentals/procedural-programming/
 id: CSF-008

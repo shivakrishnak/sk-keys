@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-020
 title: HTML Custom Data Attributes (data-*)
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /htm/html-custom-data-attributes-data/
 ---

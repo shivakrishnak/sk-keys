@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Hoisting"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /javascript/hoisting/
 id: JSC-014

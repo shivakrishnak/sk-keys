@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Safepoint"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /java/safepoint/
 id: JVM-051

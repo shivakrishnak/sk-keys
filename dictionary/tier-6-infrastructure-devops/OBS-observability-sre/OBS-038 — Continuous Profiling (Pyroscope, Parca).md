@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-038
 title: Continuous Profiling (Pyroscope, Parca)
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /obs/continuous-profiling-pyroscope-parca/
 ---

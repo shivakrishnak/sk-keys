@@ -2,6 +2,7 @@
 layout: default
 title: "Inheritance"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /cs-fundamentals/inheritance/
 id: CSF-026

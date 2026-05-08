@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "WireMock"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /testing/wiremock/
 id: TST-030

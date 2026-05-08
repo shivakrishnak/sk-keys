@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-071
 title: AWS Service Internals Deep Dives
 category: Cloud -- AWS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 71
 permalink: /aws/aws-service-internals-deep-dives/
 ---

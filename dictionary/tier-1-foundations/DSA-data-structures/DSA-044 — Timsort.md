@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Timsort"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /dsa/timsort/
 id: DSA-044

@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-010
 title: AI Product Metrics (Beyond Accuracy)
 category: AI Product Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /aip/ai-product-metrics-beyond-accuracy/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Event-Driven Microservices"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /microservices/event-driven-microservices/
 id: MSV-040

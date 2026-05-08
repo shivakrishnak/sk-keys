@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Karate Framework (API Testing)"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /testing/karate-framework/
 id: TST-052

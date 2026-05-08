@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Happened-Before"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /distributed-systems/happened-before/
 id: DST-021

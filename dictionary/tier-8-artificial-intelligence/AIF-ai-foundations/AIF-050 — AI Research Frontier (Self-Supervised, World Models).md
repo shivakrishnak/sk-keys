@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-050
 title: AI Research Frontier (Self-Supervised, World Models)
 category: AI Foundations
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /aif/ai-research-frontier-self-supervised-world-models/
 ---

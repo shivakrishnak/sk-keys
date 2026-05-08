@@ -1,4 +1,4 @@
----
+﻿---
 id: API-073
 title: API Specification Language Design
 category: HTTP & APIs
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 73
 permalink: /api/api-specification-language-design/
 ---

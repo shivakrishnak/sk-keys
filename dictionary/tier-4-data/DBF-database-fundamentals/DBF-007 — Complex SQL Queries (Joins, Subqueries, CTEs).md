@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Complex SQL Queries (Joins, Subqueries, CTEs)"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /databases/complex-sql-queries/
 id: DBF-007

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Reflection"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /java-language/reflection/
 id: JLG-029

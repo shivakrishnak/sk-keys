@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GC Logs"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /java/gc-logs/
 id: JVM-037

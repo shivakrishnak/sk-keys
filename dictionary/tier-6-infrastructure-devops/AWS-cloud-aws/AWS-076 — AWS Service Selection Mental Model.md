@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-076
 title: AWS Service Selection Mental Model
 category: Cloud -- AWS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 76
 permalink: /aws/aws-service-selection-mental-model/
 ---

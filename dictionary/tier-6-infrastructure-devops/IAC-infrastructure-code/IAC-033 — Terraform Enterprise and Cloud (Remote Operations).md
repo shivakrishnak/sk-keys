@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-033
 title: Terraform Enterprise and Cloud (Remote Operations)
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /iac/terraform-enterprise-and-cloud-remote-operations/
 ---

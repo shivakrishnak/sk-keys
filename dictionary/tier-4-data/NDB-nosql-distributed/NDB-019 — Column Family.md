@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Column Family"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /nosql/column-family/
 id: NDB-019

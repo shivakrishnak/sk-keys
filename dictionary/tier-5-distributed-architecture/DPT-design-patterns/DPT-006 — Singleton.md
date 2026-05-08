@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Singleton"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /design-patterns/singleton/
 id: DPT-006

@@ -1,4 +1,4 @@
----
+﻿---
 id: BIG-053
 title: State Management in Streaming Pipelines
 category: Big Data & Streaming
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /big/state-management-in-streaming-pipelines/
 ---

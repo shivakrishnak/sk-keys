@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "HikariCP"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /spring/hikaricp/
 id: SPR-048

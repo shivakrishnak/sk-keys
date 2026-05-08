@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-008
 title: Word Document Generation (docx4j, python-docx, OpenXML)
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /dgn/word-document-generation-docx4j-python-docx-openxml/
 ---

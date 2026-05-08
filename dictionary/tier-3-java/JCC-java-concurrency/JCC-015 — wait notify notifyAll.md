@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "wait notify notifyAll"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /java-concurrency/wait-notify-notifyall/
 id: JCC-015

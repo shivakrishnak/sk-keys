@@ -1,4 +1,4 @@
----
+﻿---
 id: CCD-076
 title: Platform Engineering CI/CD Strategy
 category: CI/CD
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 76
 permalink: /ccd/platform-engineering-cicd-strategy/
 ---

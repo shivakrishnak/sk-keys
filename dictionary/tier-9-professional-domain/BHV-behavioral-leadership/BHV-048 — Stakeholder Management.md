@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Stakeholder Management"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /leadership/stakeholder-management/
 id: BHV-048

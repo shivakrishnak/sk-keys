@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-056
 title: Reliability Mental Model
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /obs/reliability-mental-model/
 ---

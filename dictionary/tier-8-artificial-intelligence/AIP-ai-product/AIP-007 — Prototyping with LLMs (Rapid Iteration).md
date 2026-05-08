@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-007
 title: Prototyping with LLMs (Rapid Iteration)
 category: AI Product Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /aip/prototyping-with-llms-rapid-iteration/
 ---

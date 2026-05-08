@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Build vs Buy vs Outsource"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /leadership/build-vs-buy-vs-outsource/
 id: BHV-032

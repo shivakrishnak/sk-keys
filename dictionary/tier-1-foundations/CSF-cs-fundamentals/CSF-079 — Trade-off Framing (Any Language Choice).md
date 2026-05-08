@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-079
 title: Trade-off Framing (Any Language Choice)
 category: CS Fundamentals — Paradigms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 79
 permalink: /csf/trade-off-framing-any-language-choice/
 ---

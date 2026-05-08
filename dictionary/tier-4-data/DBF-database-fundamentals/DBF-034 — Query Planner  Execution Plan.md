@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Query Planner  Execution Plan"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /databases/query-planner/
 id: DBF-034

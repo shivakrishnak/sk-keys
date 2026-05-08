@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ulimit"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /linux/ulimit/
 id: LNX-038

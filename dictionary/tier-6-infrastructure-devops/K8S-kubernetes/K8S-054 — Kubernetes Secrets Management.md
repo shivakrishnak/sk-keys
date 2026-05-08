@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kubernetes Secrets Management"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /kubernetes/kubernetes-secrets-management/
 id: K8S-054

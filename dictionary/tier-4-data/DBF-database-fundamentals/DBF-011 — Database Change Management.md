@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Database Change Management"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /databases/database-change-management/
 id: DBF-011

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ThreadLocal"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /java-concurrency/thread-local/
 id: JCC-019

@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-012
 title: HTML Images and Media
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /htm/html-images-and-media/
 ---

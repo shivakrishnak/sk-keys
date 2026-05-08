@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "MongoDB Patterns"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /nosql/mongodb-patterns/
 id: NDB-027

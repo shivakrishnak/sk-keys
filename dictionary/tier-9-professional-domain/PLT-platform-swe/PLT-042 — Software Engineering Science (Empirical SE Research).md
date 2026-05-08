@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-042
 title: Software Engineering Science (Empirical SE Research)
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /plt/software-engineering-science-empirical-se-research/
 ---

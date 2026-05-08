@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-050
 title: IPv6 and Migration Strategy
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /net/ipv6-and-migration-strategy/
 ---

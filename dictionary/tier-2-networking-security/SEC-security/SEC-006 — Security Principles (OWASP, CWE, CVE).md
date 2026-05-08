@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-006
 title: Security Principles (OWASP, CWE, CVE)
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /sec/security-principles-owasp-cwe-cve/
 ---

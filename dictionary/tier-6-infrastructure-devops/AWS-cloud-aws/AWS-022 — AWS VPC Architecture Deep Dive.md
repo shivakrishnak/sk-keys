@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS VPC Architecture Deep Dive"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /cloud-aws/aws-vpc-architecture/
 id: AWS-022

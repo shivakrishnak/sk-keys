@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-016
 title: Celery (Python Task Queue)
 category: Async & Background Processing
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /asy/celery-python-task-queue/
 ---

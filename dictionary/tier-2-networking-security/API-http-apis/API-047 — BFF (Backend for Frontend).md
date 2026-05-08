@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "BFF (Backend for Frontend)"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /http-apis/bff/
 id: API-047

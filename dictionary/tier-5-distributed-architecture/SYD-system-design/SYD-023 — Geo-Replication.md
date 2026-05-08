@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Geo-Replication"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /system-design/geo-replication/
 id: SYD-023

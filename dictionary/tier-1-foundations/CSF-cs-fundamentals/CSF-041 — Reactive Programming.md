@@ -2,6 +2,7 @@
 layout: default
 title: "Reactive Programming"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /cs-fundamentals/reactive-programming/
 id: CSF-041

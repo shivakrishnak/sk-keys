@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cache Coherence"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /caching/cache-coherence/
 id: CCH-017

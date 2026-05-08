@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Scrum"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /leadership/scrum/
 id: BHV-026

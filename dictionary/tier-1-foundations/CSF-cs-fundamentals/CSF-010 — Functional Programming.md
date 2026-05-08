@@ -2,6 +2,7 @@
 layout: default
 title: "Functional Programming"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /cs-fundamentals/functional-programming/
 id: CSF-010

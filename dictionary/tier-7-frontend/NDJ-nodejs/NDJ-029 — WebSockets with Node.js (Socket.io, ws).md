@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-029
 title: WebSockets with Node.js (Socket.io, ws)
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /ndj/websockets-with-nodejs-socketio-ws/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Test Pyramid"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /testing/test-pyramid/
 id: TST-023

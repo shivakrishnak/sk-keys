@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Vector Clock"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /distributed-systems/vector-clock/
 id: DST-016

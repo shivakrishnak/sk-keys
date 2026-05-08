@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Event Sourcing in Microservices"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /microservices/event-sourcing-in-microservices/
 id: MSV-044

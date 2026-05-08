@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-040
 title: Chaos Engineering for Observability
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /obs/chaos-engineering-for-observability/
 ---

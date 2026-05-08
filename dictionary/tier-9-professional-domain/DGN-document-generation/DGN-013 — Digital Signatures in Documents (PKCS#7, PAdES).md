@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-013
 title: Digital Signatures in Documents (PKCS#7, PAdES)
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /dgn/digital-signatures-in-documents-pkcs7-pades/
 ---

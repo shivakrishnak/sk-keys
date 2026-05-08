@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS Step Functions"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /cloud-aws/aws-step-functions/
 id: AWS-008

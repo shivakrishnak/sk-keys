@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Subnet and CIDR"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /networking/subnet-cidr/
 id: NET-009

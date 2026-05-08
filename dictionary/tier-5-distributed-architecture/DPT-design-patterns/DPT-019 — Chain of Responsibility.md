@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Chain of Responsibility"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /design-patterns/chain-of-responsibility/
 id: DPT-019

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "OCI Standard"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /containers/oci-standard/
 id: CTR-024

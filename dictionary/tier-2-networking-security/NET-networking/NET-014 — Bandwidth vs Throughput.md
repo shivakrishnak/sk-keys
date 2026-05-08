@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bandwidth vs Throughput"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /networking/bandwidth-vs-throughput/
 id: NET-014

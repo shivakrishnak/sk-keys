@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Deep Learning"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /ai-foundations/deep-learning/
 id: AIF-009

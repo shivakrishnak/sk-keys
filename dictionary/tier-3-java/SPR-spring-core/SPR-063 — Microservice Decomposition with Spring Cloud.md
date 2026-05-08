@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-063
 title: Microservice Decomposition with Spring Cloud
 category: Spring Core
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /spr/microservice-decomposition-with-spring-cloud/
 ---

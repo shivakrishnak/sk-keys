@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-017
 title: Sorting — Why It Matters
 category: Data Structures & Algorithms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /dsa/sorting-why-it-matters/
 ---

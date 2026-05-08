@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-001
 title: What Is Artificial Intelligence and Why It Matters Now
 category: AI Foundations
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /aif/what-is-artificial-intelligence-and-why-it-matters-now/
 ---

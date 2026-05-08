@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Network Topologies"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /networking/network-topologies/
 id: NET-035

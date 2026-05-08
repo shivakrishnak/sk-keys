@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Dirty Read"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /databases/dirty-read/
 id: DBF-024

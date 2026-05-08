@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Replication Strategies"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /distributed-systems/replication-strategies/
 id: DST-025

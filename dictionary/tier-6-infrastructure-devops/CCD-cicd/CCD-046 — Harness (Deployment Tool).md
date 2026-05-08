@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Harness (Deployment Tool)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /ci-cd/harness-deployment-tool/
 id: CCD-046

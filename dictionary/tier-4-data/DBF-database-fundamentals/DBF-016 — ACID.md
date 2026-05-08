@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ACID"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /databases/acid/
 id: DBF-016

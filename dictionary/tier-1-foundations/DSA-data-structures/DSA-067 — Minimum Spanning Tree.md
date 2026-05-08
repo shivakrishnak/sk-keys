@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Minimum Spanning Tree"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 67
 permalink: /dsa/minimum-spanning-tree/
 id: DSA-067

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Remembered Set"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /java/remembered-set/
 id: JVM-054

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Transaction"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /databases/transaction/
 id: DBF-021

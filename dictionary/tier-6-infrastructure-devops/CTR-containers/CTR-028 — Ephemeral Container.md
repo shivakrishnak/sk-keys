@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Ephemeral Container"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /containers/ephemeral-container/
 id: CTR-028

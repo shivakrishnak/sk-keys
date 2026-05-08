@@ -1,4 +1,4 @@
----
+﻿---
 id: DBF-063
 title: Query Optimizer Design
 category: Database Fundamentals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /dbf/query-optimizer-design/
 ---

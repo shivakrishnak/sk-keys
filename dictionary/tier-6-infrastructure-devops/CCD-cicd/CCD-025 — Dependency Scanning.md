@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Dependency Scanning"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /ci-cd/dependency-scanning/
 id: CCD-025

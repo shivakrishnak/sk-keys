@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-061
 title: Undefined Behaviour in Language Specs
 category: CS Fundamentals — Paradigms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /csf/undefined-behaviour-in-language-specs/
 ---

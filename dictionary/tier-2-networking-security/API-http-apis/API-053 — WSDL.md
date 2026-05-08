@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "WSDL"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /http-apis/wsdl/
 id: API-053

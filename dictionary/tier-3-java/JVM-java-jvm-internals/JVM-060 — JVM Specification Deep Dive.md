@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-060
 title: JVM Specification Deep Dive
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /jvm/jvm-specification-deep-dive/
 ---

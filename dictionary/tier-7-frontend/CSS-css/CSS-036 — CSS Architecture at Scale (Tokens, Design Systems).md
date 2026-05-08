@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-036
 title: CSS Architecture at Scale (Tokens, Design Systems)
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /css/css-architecture-at-scale-tokens-design-systems/
 ---

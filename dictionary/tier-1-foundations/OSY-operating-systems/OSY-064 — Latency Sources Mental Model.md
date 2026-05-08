@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-064
 title: Latency Sources Mental Model
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /osy/latency-sources-mental-model/
 ---

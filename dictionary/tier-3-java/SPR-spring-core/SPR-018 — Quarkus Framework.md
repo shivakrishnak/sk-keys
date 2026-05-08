@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Quarkus Framework"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /spring/quarkus-framework/
 id: SPR-018

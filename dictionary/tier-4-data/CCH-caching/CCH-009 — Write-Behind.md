@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Write-Behind"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /caching/write-behind/
 id: CCH-009

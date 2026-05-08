@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service Mesh (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /microservices/service-mesh/
 id: MSV-028

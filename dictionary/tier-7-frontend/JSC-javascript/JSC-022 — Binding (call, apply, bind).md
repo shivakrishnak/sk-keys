@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Binding (call, apply, bind)"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /javascript/binding-call-apply-bind/
 id: JSC-022

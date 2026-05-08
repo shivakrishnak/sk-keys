@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-044
 title: Backend JavaScript Thinking
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /ndj/backend-javascript-thinking/
 ---

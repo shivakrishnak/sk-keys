@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "grep / awk / sed"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /linux/grep-awk-sed/
 id: LNX-023

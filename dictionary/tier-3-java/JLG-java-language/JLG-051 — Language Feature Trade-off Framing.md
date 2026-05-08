@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-051
 title: Language Feature Trade-off Framing
 category: Java Language
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /jlg/language-feature-trade-off-framing/
 ---

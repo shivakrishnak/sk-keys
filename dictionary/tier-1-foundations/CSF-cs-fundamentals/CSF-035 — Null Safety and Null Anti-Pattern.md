@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-035
 title: Null Safety and Null Anti-Pattern
 category: CS Fundamentals — Paradigms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /csf/null-safety-and-null-anti-pattern/
 ---

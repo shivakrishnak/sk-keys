@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-004
 title: The Microservices Ecosystem Map
 category: Microservices
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /msv/the-microservices-ecosystem-map/
 ---

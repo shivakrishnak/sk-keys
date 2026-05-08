@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-023
 title: Advanced RAG Patterns (Corrective RAG, Self-RAG)
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /rag/advanced-rag-patterns-corrective-rag-self-rag/
 ---

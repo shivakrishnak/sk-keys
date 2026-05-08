@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Test Reporting"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /testing/test-reporting/
 id: TST-050

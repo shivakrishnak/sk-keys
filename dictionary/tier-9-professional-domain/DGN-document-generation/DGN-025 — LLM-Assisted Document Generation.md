@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-025
 title: LLM-Assisted Document Generation
 category: Document Generation
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /dgn/llm-assisted-document-generation/
 ---

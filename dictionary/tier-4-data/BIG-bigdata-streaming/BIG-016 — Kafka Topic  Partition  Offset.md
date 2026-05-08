@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kafka Topic  Partition  Offset"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /big-data-streaming/kafka-topic-partition-offset/
 id: BIG-016

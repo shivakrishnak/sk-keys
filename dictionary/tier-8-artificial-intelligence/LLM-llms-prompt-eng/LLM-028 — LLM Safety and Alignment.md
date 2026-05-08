@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-028
 title: LLM Safety and Alignment
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /llm/llm-safety-and-alignment/
 ---

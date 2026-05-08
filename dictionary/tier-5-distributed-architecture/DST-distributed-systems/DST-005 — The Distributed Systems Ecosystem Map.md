@@ -1,4 +1,4 @@
----
+﻿---
 id: DST-005
 title: The Distributed Systems Ecosystem Map
 category: Distributed Systems
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /dst/the-distributed-systems-ecosystem-map/
 ---

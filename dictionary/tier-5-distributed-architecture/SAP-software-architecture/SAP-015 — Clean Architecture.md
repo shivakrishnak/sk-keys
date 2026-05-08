@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Clean Architecture"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /software-architecture/clean-architecture/
 id: SAP-015

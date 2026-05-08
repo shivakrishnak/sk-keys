@@ -2,6 +2,7 @@
 layout: default
 title: "Turing Completeness"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /cs-fundamentals/turing-completeness/
 id: CSF-056

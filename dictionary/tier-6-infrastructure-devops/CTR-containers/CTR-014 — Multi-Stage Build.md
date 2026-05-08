@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Multi-Stage Build"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /containers/multi-stage-build/
 id: CTR-014

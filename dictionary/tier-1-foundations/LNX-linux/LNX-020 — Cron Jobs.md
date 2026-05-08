@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cron Jobs"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /linux/cron-jobs/
 id: LNX-020

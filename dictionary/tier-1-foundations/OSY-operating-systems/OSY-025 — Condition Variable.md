@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Condition Variable"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /operating-systems/condition-variable/
 id: OSY-025

@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-002
 title: Why the JVM Was Invented
 category: Java & JVM Internals
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /jvm/why-the-jvm-was-invented/
 ---

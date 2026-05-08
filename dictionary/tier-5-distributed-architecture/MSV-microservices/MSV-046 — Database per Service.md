@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Database per Service"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /microservices/database-per-service/
 id: MSV-046

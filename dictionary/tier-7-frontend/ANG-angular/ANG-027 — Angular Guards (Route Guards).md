@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-027
 title: Angular Guards (Route Guards)
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /ang/angular-guards-route-guards/
 ---

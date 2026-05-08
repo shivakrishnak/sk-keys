@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-023
 title: Angular Change Detection Strategy (OnPush)
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /ang/angular-change-detection-strategy-onpush/
 ---

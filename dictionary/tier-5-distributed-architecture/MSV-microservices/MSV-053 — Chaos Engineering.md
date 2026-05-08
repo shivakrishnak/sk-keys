@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Chaos Engineering"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /microservices/chaos-engineering/
 id: MSV-053

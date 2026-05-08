@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DNS"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /networking/dns/
 id: NET-010

@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-029
 title: Log Management (journalctl, syslog)
 category: Linux
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /lnx/log-management-journalctl-syslog/
 ---

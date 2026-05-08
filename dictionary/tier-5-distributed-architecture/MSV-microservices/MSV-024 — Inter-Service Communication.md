@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Inter-Service Communication"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /microservices/inter-service-communication/
 id: MSV-024

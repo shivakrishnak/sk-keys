@@ -1,4 +1,4 @@
----
+﻿---
 id: BIG-001
 title: What Is Big Data -- The 3Vs Problem
 category: Big Data & Streaming
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /big/what-is-big-data----the-3vs-problem/
 ---

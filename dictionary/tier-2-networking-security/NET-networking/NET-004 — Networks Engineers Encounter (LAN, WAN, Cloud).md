@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-004
 title: Networks Engineers Encounter (LAN, WAN, Cloud)
 category: Networking
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /net/networks-engineers-encounter-lan-wan-cloud/
 ---

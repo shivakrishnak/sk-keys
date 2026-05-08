@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-004
 title: Architecture vs Design vs Implementation
 category: Software Architecture Patterns
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /sap/architecture-vs-design-vs-implementation/
 ---

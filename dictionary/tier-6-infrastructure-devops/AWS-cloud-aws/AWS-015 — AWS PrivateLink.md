@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS PrivateLink"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /cloud-aws/aws-privatelink/
 id: AWS-015

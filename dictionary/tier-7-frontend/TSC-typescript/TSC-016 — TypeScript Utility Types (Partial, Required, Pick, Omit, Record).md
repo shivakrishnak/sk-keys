@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-016
 title: TypeScript Utility Types (Partial, Required, Pick, Omit, Record)
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /tsc/typescript-utility-types-partial-required-pick-omit-record/
 ---

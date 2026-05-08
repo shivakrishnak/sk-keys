@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-040
 title: Distributed Consensus in Message Systems
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /asy/distributed-consensus-in-message-systems/
 ---

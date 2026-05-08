@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Init Container"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /containers/init-container/
 id: CTR-029

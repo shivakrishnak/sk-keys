@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bounded Context"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /microservices/bounded-context/
 id: MSV-015

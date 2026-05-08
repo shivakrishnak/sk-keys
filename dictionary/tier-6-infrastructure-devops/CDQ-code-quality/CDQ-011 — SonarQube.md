@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SonarQube"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /code-quality/sonarqube/
 id: CDQ-011

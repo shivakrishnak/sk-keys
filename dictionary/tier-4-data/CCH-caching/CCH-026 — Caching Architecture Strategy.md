@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-026
 title: Caching Architecture Strategy
 category: Caching
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /cch/caching-architecture-strategy/
 ---

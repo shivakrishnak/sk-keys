@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "BeanFactory"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /spring/beanfactory/
 id: SPR-022

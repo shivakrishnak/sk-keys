@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Locking (Row, Table, Gap, Next-Key)"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /databases/locking/
 id: DBF-039

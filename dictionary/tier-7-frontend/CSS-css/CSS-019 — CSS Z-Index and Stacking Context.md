@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-019
 title: CSS Z-Index and Stacking Context
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /css/css-z-index-and-stacking-context/
 ---

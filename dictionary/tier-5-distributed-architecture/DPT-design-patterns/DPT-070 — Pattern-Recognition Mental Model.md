@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-070
 title: Pattern-Recognition Mental Model
 category: Design Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 70
 permalink: /dpt/pattern-recognition-mental-model/
 ---

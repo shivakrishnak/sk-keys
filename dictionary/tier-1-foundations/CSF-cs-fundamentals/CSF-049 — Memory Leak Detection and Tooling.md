@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-049
 title: Memory Leak Detection and Tooling
 category: CS Fundamentals — Paradigms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /csf/memory-leak-detection-and-tooling/
 ---

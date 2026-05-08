@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-024
 title: LLM Quantization (GGUF, AWQ, GPTQ)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /llm/llm-quantization-gguf-awq-gptq/
 ---

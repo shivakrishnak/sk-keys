@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Wide Column vs Document"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /nosql/wide-column-vs-document/
 id: NDB-033

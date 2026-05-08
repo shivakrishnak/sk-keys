@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Connascence"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /software-architecture/connascence/
 id: SAP-052

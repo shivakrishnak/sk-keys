@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-004
 title: The Modern SWE Ecosystem Map (Platform Tools)
 category: Platform & Modern SWE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /plt/the-modern-swe-ecosystem-map-platform-tools/
 ---

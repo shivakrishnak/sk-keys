@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Deadlock Detection (Java)"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /java-concurrency/jcc-047-deadlock-detection/
 id: JCC-043

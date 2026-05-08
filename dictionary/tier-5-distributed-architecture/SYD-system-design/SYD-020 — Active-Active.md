@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Active-Active"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /system-design/active-active/
 id: SYD-020

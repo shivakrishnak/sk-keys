@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Caching"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /http-apis/api-caching/
 id: API-044

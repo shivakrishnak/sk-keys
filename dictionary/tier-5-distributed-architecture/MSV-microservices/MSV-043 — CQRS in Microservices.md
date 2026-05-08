@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CQRS in Microservices"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /microservices/cqrs-in-microservices/
 id: MSV-043

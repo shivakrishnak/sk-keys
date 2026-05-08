@@ -1,4 +1,4 @@
----
+﻿---
 id: CDQ-002
 title: The Code Quality Landscape -- A Map
 category: Code Quality
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /cdq/the-code-quality-landscape----a-map/
 ---

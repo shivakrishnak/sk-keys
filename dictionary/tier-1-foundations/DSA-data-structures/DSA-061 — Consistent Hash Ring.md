@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Consistent Hash Ring"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /dsa/consistent-hash-ring/
 id: DSA-061

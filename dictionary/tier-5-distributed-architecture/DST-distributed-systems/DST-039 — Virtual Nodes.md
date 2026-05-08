@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Virtual Nodes"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /distributed-systems/virtual-nodes/
 id: DST-039

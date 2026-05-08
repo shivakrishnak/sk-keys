@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Model Evaluation Metrics"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /ai-foundations/model-evaluation-metrics/
 id: AIF-042

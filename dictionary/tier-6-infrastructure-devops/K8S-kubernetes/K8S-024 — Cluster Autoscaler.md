@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cluster Autoscaler"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /kubernetes/cluster-autoscaler/
 id: K8S-024

@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-033
 title: Git Packfiles and Delta Compression
 category: Git & Branching Strategy
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /git/git-packfiles-and-delta-compression/
 ---

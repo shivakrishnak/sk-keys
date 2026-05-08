@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-060
 title: Security Architecture Design Patterns
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /sec/security-architecture-design-patterns/
 ---

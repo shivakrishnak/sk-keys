@@ -1,4 +1,4 @@
----
+﻿---
 id: DBF-005
 title: The SQL Ecosystem Map
 category: Database Fundamentals
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /dbf/the-sql-ecosystem-map/
 ---

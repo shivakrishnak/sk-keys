@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CircleCI"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /ci-cd/circleci/
 id: CCD-017

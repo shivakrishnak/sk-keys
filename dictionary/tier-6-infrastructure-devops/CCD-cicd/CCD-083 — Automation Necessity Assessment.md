@@ -1,4 +1,4 @@
----
+﻿---
 id: CCD-083
 title: Automation Necessity Assessment
 category: CI/CD
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 83
 permalink: /ccd/automation-necessity-assessment/
 ---

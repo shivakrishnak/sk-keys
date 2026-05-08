@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-003
 title: How Attackers Think — Attack Surfaces and Vectors
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /sec/how-attackers-think-attack-surfaces-and-vectors/
 ---

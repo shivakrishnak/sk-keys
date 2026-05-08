@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-041
 title: I/O Scheduling Algorithms
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /osy/io-scheduling-algorithms/
 ---

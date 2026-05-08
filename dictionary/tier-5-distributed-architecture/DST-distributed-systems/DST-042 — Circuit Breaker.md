@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Circuit Breaker"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /distributed-systems/circuit-breaker/
 id: DST-042

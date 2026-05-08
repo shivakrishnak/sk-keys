@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Scheduler / Preemption"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /operating-systems/scheduler-preemption/
 id: OSY-021

@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-038
 title: Node.js API Design Strategy (REST vs GraphQL vs tRPC)
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /ndj/nodejs-api-design-strategy-rest-vs-graphql-vs-trpc/
 ---

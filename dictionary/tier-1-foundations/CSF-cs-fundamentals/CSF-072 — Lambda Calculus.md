@@ -2,6 +2,7 @@
 layout: default
 title: "Lambda Calculus"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 72
 permalink: /cs-fundamentals/lambda-calculus/
 id: CSF-072

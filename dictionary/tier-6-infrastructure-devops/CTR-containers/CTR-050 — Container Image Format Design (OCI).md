@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-050
 title: Container Image Format Design (OCI)
 category: Containers
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /ctr/container-image-format-design-oci/
 ---

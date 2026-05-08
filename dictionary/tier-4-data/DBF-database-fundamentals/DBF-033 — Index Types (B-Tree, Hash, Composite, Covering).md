@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Index Types (B-Tree, Hash, Composite, Covering)"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /databases/index-types/
 id: DBF-033

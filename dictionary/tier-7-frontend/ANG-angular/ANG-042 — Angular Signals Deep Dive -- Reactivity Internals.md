@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-042
 title: Angular Signals Deep Dive -- Reactivity Internals
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /ang/angular-signals-deep-dive----reactivity-internals/
 ---

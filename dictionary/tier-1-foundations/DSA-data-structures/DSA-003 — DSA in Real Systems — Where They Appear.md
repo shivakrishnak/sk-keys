@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-003
 title: DSA in Real Systems — Where They Appear
 category: Data Structures & Algorithms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /dsa/dsa-in-real-systems-where-they-appear/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Node"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /kubernetes/node/
 id: K8S-008

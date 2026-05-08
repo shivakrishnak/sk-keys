@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SELinux / AppArmor"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /linux/selinux-apparmor/
 id: LNX-049

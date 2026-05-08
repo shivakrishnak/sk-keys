@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Competing Consumers"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /big-data-streaming/competing-consumers/
 id: BIG-041

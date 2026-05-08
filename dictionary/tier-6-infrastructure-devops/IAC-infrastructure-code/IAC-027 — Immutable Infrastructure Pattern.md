@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-027
 title: Immutable Infrastructure Pattern
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /iac/immutable-infrastructure-pattern/
 ---

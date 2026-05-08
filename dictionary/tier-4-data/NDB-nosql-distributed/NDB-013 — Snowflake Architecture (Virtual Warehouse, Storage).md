@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Snowflake Architecture (Virtual Warehouse, Storage)"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /nosql/snowflake-architecture/
 id: NDB-013

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Blue-Green Deployment"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /microservices/blue-green-deployment/
 id: MSV-055

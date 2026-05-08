@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "tar / gzip / zip"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /linux/tar-gzip-zip/
 id: LNX-025

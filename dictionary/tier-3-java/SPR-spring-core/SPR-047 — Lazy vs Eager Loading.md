@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Lazy vs Eager Loading"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /spring/lazy-vs-eager-loading/
 id: SPR-047

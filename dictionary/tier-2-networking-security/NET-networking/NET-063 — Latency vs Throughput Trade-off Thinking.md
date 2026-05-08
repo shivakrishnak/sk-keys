@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-063
 title: Latency vs Throughput Trade-off Thinking
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /net/latency-vs-throughput-trade-off-thinking/
 ---

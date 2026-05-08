@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "KISS (Keep It Simple, Stupid)"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /software-architecture/kiss/
 id: SAP-045

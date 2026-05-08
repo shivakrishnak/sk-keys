@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Transit Gateway"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /cloud-aws/transit-gateway/
 id: AWS-035

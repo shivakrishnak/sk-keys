@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-013
 title: React Architecture Strategy (State Management Selection)
 category: React
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /rct/react-architecture-strategy-state-management-selection/
 ---

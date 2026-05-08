@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-070
 title: Event-Driven Microservices Design
 category: Microservices
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 70
 permalink: /msv/event-driven-microservices-design/
 ---

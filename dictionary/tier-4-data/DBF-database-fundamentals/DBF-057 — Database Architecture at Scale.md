@@ -1,4 +1,4 @@
----
+﻿---
 id: DBF-057
 title: Database Architecture at Scale
 category: Database Fundamentals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /dbf/database-architecture-at-scale/
 ---

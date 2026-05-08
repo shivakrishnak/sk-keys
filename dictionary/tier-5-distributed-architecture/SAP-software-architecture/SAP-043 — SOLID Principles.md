@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SOLID Principles"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /software-architecture/solid-principles/
 id: SAP-043

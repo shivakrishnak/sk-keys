@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-018
 title: Embedding Models and Semantic Search
 category: LLMs & Prompt Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /llm/embedding-models-and-semantic-search/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Ambassador Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /design-patterns/ambassador-pattern/
 id: DPT-059

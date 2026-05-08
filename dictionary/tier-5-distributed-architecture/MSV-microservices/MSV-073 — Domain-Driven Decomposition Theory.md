@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-073
 title: Domain-Driven Decomposition Theory
 category: Microservices
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 73
 permalink: /msv/domain-driven-decomposition-theory/
 ---

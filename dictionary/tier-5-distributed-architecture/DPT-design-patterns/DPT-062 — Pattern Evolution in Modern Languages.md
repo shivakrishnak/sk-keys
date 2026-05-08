@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-062
 title: Pattern Evolution in Modern Languages
 category: Design Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /dpt/pattern-evolution-in-modern-languages/
 ---

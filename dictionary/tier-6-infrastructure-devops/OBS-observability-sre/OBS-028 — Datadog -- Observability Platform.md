@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-028
 title: Datadog -- Observability Platform
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /obs/datadog----observability-platform/
 ---

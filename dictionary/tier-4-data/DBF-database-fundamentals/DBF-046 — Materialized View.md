@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Materialized View"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /databases/materialized-view/
 id: DBF-046

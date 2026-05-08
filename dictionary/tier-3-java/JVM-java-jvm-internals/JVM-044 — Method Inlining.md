@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Method Inlining"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /java/method-inlining/
 id: JVM-044

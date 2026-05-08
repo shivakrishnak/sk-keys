@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-056
 title: Zero Trust Network Architecture Design
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /net/zero-trust-network-architecture-design/
 ---

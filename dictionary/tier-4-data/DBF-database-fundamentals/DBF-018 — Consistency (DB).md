@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Consistency (DB)"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /databases/consistency-db/
 id: DBF-018

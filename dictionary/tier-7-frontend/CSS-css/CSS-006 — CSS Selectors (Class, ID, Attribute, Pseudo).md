@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-006
 title: CSS Selectors (Class, ID, Attribute, Pseudo)
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /css/css-selectors-class-id-attribute-pseudo/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-011
 title: Angular Modules (NgModule)
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /ang/angular-modules-ngmodule/
 ---

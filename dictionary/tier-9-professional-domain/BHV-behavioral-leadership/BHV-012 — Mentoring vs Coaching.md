@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Mentoring vs Coaching"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /leadership/mentoring-vs-coaching/
 id: BHV-012

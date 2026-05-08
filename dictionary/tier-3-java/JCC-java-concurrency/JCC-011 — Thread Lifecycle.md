@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Thread Lifecycle"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /java-concurrency/thread-lifecycle/
 id: JCC-011

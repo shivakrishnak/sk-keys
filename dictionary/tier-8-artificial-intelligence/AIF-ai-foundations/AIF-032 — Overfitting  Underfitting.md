@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Overfitting  Underfitting"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /ai-foundations/overfitting-underfitting/
 id: AIF-032

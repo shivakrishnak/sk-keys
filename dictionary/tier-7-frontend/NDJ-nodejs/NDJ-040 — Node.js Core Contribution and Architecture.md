@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-040
 title: Node.js Core Contribution and Architecture
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /ndj/nodejs-core-contribution-and-architecture/
 ---

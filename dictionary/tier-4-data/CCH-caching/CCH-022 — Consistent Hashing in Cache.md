@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Consistent Hashing in Cache"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /caching/consistent-hashing/
 id: CCH-022

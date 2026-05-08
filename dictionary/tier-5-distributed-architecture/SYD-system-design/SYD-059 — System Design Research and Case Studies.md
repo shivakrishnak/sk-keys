@@ -1,4 +1,4 @@
----
+﻿---
 id: SYD-059
 title: System Design Research and Case Studies
 category: System Design
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /syd/system-design-research-and-case-studies/
 ---

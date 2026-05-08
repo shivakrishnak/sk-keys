@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-002
 title: The Security Threat Landscape — A Map
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /sec/the-security-threat-landscape-a-map/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Multimodal Models"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /ai-foundations/multimodal-models/
 id: AIF-038

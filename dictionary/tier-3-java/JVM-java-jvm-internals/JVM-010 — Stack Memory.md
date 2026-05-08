@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Stack Memory"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /java/stack-memory/
 id: JVM-010

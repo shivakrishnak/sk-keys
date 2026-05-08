@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Gradle Build Cache"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /maven-build/gradle-build-cache/
 id: MVN-028

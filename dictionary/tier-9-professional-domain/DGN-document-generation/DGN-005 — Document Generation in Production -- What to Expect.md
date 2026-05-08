@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-005
 title: Document Generation in Production -- What to Expect
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /dgn/document-generation-in-production----what-to-expect/
 ---

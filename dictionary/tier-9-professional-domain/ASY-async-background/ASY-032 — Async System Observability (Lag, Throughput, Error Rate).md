@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-032
 title: Async System Observability (Lag, Throughput, Error Rate)
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /asy/async-system-observability-lag-throughput-error-rate/
 ---

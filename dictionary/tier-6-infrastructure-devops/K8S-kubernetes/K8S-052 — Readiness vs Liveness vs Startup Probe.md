@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Readiness vs Liveness vs Startup Probe"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /kubernetes/readiness-vs-liveness-vs-startup-probe/
 id: K8S-052

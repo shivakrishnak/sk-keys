@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Total Order Partial Order"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /distributed-systems/dst-015-total-order-partial-order/
 id: DST-020

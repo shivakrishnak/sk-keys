@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-024
 title: Web Components (Custom Elements, Shadow DOM, Templates)
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /htm/web-components-custom-elements-shadow-dom-templates/
 ---

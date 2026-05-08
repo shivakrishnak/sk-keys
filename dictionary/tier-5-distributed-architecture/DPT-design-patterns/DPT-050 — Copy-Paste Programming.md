@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Copy-Paste Programming"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /design-patterns/copy-paste-programming/
 id: DPT-050

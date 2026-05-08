@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "OpenAPI / Swagger"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /http-apis/openapi-swagger/
 id: API-026

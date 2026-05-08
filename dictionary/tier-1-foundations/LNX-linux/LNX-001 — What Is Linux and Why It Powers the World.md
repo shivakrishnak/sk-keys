@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-001
 title: What Is Linux and Why It Powers the World
 category: Linux
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /lnx/what-is-linux-and-why-it-powers-the-world/
 ---

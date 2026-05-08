@@ -1,4 +1,4 @@
----
+﻿---
 id: API-066
 title: API Strategy at Scale
 category: HTTP & APIs
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 66
 permalink: /api/api-strategy-at-scale/
 ---

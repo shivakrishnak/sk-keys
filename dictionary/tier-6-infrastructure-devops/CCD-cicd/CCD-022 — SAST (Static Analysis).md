@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SAST (Static Analysis)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /ci-cd/sast/
 id: CCD-022

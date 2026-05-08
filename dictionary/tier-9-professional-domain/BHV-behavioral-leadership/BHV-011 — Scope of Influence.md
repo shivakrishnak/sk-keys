@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Scope of Influence"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /leadership/scope-of-influence/
 id: BHV-011

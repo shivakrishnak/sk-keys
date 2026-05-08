@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-045
 title: IaC Trade-off Framing
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /iac/iac-trade-off-framing/
 ---

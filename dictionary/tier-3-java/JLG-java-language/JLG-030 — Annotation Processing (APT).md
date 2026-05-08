@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Annotation Processing (APT)"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /java-language/annotation-processing-apt/
 id: JLG-030

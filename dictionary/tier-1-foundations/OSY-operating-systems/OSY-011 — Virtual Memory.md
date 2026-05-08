@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Virtual Memory"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /operating-systems/virtual-memory/
 id: OSY-011

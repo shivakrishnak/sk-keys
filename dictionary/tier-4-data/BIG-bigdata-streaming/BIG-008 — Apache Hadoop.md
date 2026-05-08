@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Apache Hadoop"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /big-data-streaming/apache-hadoop/
 id: BIG-008

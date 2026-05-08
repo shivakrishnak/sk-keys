@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Primitive Obsession"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /code-quality/primitive-obsession/
 id: CDQ-027

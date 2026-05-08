@@ -2,6 +2,7 @@
 layout: default
 title: "Memory Management Models"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /cs-fundamentals/memory-management-models/
 id: CSF-015

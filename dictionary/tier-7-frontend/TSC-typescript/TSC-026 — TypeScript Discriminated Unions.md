@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-026
 title: TypeScript Discriminated Unions
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /tsc/typescript-discriminated-unions/
 ---

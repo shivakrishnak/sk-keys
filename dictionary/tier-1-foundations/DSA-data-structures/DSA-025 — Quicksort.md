@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Quicksort"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /dsa/quicksort/
 id: DSA-025

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Tiered Compilation"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /java/tiered-compilation/
 id: JVM-043

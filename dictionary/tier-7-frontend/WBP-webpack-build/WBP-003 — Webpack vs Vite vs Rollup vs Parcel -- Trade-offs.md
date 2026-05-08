@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-003
 title: Webpack vs Vite vs Rollup vs Parcel -- Trade-offs
 category: Webpack & Build Tools
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /wbp/webpack-vs-vite-vs-rollup-vs-parcel----trade-offs/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "B+ Tree"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /databases/b-plus-tree/
 id: DBF-031

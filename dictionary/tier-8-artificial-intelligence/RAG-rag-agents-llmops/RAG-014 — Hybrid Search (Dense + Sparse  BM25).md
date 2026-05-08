@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-014
 title: Hybrid Search (Dense + Sparse / BM25)
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /rag/hybrid-search-dense-sparse-bm25/
 ---

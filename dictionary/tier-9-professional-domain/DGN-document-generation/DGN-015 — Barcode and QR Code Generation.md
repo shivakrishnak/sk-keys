@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-015
 title: Barcode and QR Code Generation
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /dgn/barcode-and-qr-code-generation/
 ---

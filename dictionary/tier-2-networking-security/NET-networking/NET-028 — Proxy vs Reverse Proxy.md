@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Proxy vs Reverse Proxy"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /networking/proxy-vs-reverse-proxy/
 id: NET-028

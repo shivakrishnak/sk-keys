@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service Contract"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /microservices/service-contract/
 id: MSV-059

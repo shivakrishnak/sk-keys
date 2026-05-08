@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-011
 title: SLI (Service Level Indicator)
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /obs/sli-service-level-indicator/
 ---

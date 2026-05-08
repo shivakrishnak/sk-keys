@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-023
 title: Tailwind CSS (Utility-First)
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /css/tailwind-css-utility-first/
 ---

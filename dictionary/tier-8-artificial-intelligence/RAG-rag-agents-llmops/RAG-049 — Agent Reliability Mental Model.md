@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-049
 title: Agent Reliability Mental Model
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /rag/agent-reliability-mental-model/
 ---

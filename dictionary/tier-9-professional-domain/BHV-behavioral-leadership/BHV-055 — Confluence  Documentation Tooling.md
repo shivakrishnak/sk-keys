@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Confluence  Documentation Tooling"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /leadership/confluence-documentation-tooling/
 id: BHV-055

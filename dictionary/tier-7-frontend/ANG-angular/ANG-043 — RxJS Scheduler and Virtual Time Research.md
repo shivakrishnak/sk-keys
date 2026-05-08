@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-043
 title: RxJS Scheduler and Virtual Time Research
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /ang/rxjs-scheduler-and-virtual-time-research/
 ---

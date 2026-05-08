@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Isolation"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /databases/isolation/
 id: DBF-019

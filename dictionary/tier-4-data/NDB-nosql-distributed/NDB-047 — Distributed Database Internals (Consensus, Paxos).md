@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-047
 title: Distributed Database Internals (Consensus, Paxos)
 category: NoSQL & Distributed Databases
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /ndb/distributed-database-internals-consensus-paxos/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-021
 title: HTML Microdata and Schema.org
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /htm/html-microdata-and-schemaorg/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SNS"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /cloud-aws/sns/
 id: AWS-050

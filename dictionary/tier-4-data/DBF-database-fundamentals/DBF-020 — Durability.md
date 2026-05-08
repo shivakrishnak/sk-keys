@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Durability"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /databases/durability/
 id: DBF-020

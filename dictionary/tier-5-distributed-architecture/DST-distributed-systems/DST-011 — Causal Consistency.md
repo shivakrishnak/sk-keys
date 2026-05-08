@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Causal Consistency"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /distributed-systems/causal-consistency/
 id: DST-011

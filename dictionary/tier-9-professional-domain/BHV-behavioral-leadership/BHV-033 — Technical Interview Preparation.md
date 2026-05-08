@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Technical Interview Preparation"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /leadership/technical-interview-preparation/
 id: BHV-033

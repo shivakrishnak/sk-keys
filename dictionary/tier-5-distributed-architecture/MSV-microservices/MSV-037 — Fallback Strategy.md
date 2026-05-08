@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Fallback Strategy"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /microservices/fallback-strategy/
 id: MSV-037

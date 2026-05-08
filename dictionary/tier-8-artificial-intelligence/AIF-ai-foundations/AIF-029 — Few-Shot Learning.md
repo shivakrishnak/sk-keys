@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Few-Shot Learning"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /ai-foundations/few-shot-learning/
 id: AIF-029

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Transaction Script"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /software-architecture/transaction-script/
 id: SAP-027

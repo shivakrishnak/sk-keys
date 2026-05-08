@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Schema Evolution (Data)"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /data-fundamentals/schema-evolution/
 id: DAT-023

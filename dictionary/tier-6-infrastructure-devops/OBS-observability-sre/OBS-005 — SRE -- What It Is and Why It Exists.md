@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-005
 title: SRE -- What It Is and Why It Exists
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /obs/sre----what-it-is-and-why-it-exists/
 ---

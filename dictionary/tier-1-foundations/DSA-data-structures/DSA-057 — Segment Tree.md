@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Segment Tree"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /dsa/segment-tree/
 id: DSA-057

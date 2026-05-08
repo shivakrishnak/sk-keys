@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GraphQL Resolvers"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /http-apis/graphql-resolvers/
 id: API-041

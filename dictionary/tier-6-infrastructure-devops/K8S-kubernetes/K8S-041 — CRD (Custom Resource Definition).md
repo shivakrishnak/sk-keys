@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CRD (Custom Resource Definition)"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /kubernetes/crd-custom-resource-definition/
 id: K8S-041

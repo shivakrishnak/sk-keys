@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-032
 title: AI Monetization Models
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /aip/ai-monetization-models/
 ---

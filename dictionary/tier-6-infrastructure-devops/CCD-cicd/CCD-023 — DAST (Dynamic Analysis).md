@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DAST (Dynamic Analysis)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /ci-cd/dast/
 id: CCD-023

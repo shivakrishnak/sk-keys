@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-032
 title: JavaScript Module System Internals
 category: npm & Package Management
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /npm/javascript-module-system-internals/
 ---

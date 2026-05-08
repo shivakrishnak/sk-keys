@@ -1,4 +1,4 @@
----
+﻿---
 id: DBF-065
 title: ACID Trade-off Framing
 category: Database Fundamentals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /dbf/acid-trade-off-framing/
 ---

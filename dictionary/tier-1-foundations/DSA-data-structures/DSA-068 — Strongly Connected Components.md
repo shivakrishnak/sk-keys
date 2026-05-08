@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Strongly Connected Components"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /dsa/strongly-connected-components/
 id: DSA-068

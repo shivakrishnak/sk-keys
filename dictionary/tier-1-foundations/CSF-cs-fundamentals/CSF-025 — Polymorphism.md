@@ -2,6 +2,7 @@
 layout: default
 title: "Polymorphism"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /cs-fundamentals/polymorphism/
 id: CSF-025

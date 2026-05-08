@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-050
 title: RAG vs Fine-Tuning Decision Framework
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /rag/rag-vs-fine-tuning-decision-framework/
 ---

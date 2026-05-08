@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pact (Contract Testing)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /microservices/pact-contract-testing/
 id: MSV-048

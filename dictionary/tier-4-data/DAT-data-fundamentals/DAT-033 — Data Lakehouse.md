@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Lakehouse"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /data-fundamentals/data-lakehouse/
 id: DAT-033

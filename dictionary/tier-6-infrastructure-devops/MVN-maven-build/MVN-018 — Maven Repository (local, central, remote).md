@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Maven Repository (local, central, remote)"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /maven-build/maven-repository-local-central-remote/
 id: MVN-018

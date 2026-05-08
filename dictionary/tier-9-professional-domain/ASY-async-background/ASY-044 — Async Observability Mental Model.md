@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-044
 title: Async Observability Mental Model
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /asy/async-observability-mental-model/
 ---

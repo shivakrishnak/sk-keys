@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Two-Phase Commit (2PC)"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /nosql/two-phase-commit-2pc/
 id: NDB-037

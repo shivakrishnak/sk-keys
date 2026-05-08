@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Anti-Entropy"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /distributed-systems/anti-entropy/
 id: DST-063

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Thread Pool Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /design-patterns/thread-pool-pattern/
 id: DPT-033

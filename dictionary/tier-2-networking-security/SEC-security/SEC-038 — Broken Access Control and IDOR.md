@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-038
 title: Broken Access Control and IDOR
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /sec/broken-access-control-and-idor/
 ---

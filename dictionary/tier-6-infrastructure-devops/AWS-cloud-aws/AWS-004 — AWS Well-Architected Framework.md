@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-004
 title: AWS Well-Architected Framework
 category: Cloud -- AWS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /aws/aws-well-architected-framework/
 ---

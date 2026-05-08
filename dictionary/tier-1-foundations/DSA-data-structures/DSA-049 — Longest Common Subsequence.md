@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Longest Common Subsequence"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /dsa/longest-common-subsequence/
 id: DSA-049

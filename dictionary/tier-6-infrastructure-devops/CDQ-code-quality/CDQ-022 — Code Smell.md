@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Code Smell"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /code-quality/code-smell/
 id: CDQ-022

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Write-Ahead Logging (System)"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /system-design/write-ahead-logging-system/
 id: SYD-041

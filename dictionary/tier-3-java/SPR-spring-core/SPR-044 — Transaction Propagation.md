@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Transaction Propagation"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /spring/transaction-propagation/
 id: SPR-044

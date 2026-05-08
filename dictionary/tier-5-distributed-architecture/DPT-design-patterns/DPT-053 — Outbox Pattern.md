@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Outbox Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /design-patterns/outbox-pattern/
 id: DPT-053

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Neural Network"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /ai-foundations/neural-network/
 id: AIF-008

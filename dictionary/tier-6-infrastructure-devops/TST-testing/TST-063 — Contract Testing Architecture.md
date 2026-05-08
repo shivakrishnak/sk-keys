@@ -1,4 +1,4 @@
----
+﻿---
 id: TST-063
 title: Contract Testing Architecture
 category: Testing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /tst/contract-testing-architecture/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-077
 title: Service Boundary Mental Model
 category: Microservices
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 77
 permalink: /msv/service-boundary-mental-model/
 ---

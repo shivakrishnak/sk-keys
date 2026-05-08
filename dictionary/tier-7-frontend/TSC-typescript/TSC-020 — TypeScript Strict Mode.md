@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-020
 title: TypeScript Strict Mode
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /tsc/typescript-strict-mode/
 ---

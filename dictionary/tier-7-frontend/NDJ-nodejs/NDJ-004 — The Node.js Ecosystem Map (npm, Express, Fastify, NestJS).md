@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-004
 title: The Node.js Ecosystem Map (npm, Express, Fastify, NestJS)
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /ndj/the-nodejs-ecosystem-map-npm-express-fastify-nestjs/
 ---

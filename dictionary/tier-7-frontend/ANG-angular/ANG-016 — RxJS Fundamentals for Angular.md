@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-016
 title: RxJS Fundamentals for Angular
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /ang/rxjs-fundamentals-for-angular/
 ---

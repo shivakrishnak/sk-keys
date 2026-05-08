@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Route 53"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /cloud-aws/route-53/
 id: AWS-036

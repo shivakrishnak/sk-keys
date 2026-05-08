@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Modular Monolith Patterns"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /software-architecture/modular-monolith-patterns/
 id: SAP-039

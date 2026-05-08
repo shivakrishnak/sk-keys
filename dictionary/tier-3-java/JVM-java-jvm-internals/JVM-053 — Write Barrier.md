@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Write Barrier"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /java/write-barrier/
 id: JVM-053

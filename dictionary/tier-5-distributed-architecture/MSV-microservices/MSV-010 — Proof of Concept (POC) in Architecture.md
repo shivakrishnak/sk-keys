@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Proof of Concept (POC) in Architecture"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /microservices/proof-of-concept-poc-in-architecture/
 id: MSV-010

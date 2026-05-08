@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Re-platforming vs Re-architecting"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /microservices/re-platforming-vs-re-architecting/
 id: MSV-009

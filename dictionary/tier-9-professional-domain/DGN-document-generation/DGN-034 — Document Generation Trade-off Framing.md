@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-034
 title: Document Generation Trade-off Framing
 category: Document Generation
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /dgn/document-generation-trade-off-framing/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Enterprise Application Architecture"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /software-architecture/enterprise-application-architecture/
 id: SAP-010

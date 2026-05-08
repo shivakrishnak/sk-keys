@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CAP Theorem (DB)"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /nosql/cap-theorem-db/
 id: NDB-035

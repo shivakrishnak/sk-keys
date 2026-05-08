@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Retry Strategy"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /microservices/retry-strategy/
 id: MSV-036

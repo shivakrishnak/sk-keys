@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-004
 title: The TypeScript Ecosystem Map (tsc, ts-node, vite)
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /tsc/the-typescript-ecosystem-map-tsc-ts-node-vite/
 ---

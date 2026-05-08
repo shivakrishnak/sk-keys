@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Stakeholder Communication"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /leadership/stakeholder-communication/
 id: BHV-014

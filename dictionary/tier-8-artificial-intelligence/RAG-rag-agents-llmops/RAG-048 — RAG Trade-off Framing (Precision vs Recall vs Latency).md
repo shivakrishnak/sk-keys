@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-048
 title: RAG Trade-off Framing (Precision vs Recall vs Latency)
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /rag/rag-trade-off-framing-precision-vs-recall-vs-latency/
 ---

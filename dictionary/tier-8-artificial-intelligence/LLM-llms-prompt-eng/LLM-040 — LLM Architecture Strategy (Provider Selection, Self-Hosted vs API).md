@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-040
 title: LLM Architecture Strategy (Provider Selection, Self-Hosted vs API)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /llm/llm-architecture-strategy-provider-selection-self-hosted-vs-api/
 ---

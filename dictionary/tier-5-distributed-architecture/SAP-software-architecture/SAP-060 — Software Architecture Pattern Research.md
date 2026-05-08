@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-060
 title: Software Architecture Pattern Research
 category: Software Architecture Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /sap/software-architecture-pattern-research/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-004
 title: The CAP Theorem in Plain English
 category: NoSQL & Distributed Databases
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /ndb/the-cap-theorem-in-plain-english/
 ---

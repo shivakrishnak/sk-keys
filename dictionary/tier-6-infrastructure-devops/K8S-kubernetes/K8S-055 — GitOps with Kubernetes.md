@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GitOps with Kubernetes"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /kubernetes/gitops-with-kubernetes/
 id: K8S-055

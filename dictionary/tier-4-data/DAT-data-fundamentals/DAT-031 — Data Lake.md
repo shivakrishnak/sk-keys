@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Lake"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /data-fundamentals/data-lake/
 id: DAT-031

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Aggregate Root"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /software-architecture/aggregate-root/
 id: SAP-030

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Cloud Config"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /spring/spring-cloud-config/
 id: SPR-011

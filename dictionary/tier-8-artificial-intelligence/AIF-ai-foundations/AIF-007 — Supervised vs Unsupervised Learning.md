@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Supervised vs Unsupervised Learning"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /ai-foundations/supervised-vs-unsupervised-learning/
 id: AIF-007

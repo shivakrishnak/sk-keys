@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Embedding"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /ai-foundations/embedding/
 id: AIF-013

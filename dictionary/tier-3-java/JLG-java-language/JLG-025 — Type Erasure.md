@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Type Erasure"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /java-language/type-erasure/
 id: JLG-025

@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-031
 title: Browser Rendering Pipeline (Parse, CSSOM, Layout, Paint)
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /htm/browser-rendering-pipeline-parse-cssom-layout-paint/
 ---

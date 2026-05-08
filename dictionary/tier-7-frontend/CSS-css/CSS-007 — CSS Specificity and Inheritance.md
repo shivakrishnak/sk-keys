@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-007
 title: CSS Specificity and Inheritance
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /css/css-specificity-and-inheritance/
 ---

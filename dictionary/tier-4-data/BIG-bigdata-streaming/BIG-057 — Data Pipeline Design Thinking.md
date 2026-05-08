@@ -1,4 +1,4 @@
----
+﻿---
 id: BIG-057
 title: Data Pipeline Design Thinking
 category: Big Data & Streaming
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /big/data-pipeline-design-thinking/
 ---

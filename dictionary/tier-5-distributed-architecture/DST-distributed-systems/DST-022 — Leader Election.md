@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Leader Election"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /distributed-systems/leader-election/
 id: DST-022

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Linux Networking (ip, ss, netstat)"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /linux/linux-networking/
 id: LNX-026

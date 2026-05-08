@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ReentrantLock"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /java-concurrency/reentrant-lock/
 id: JCC-016

@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-041
 title: CSS Specification Design Philosophy
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /css/css-specification-design-philosophy/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-003
 title: AI vs ML vs Deep Learning -- The Map
 category: AI Foundations
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /aif/ai-vs-ml-vs-deep-learning----the-map/
 ---

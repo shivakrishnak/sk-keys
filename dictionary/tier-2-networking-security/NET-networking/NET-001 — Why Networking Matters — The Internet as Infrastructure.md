@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-001
 title: Why Networking Matters — The Internet as Infrastructure
 category: Networking
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /net/why-networking-matters-the-internet-as-infrastructure/
 ---

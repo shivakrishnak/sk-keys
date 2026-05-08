@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Technology Evangelism"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /leadership/technology-evangelism/
 id: BHV-049

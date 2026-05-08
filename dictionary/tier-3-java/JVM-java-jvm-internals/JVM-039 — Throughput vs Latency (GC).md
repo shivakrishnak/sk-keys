@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Throughput vs Latency (GC)"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /java/throughput-vs-latency-gc/
 id: JVM-039

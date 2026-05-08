@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "EC2 Instance Types"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /cloud-aws/ec2-instance-types/
 id: AWS-038

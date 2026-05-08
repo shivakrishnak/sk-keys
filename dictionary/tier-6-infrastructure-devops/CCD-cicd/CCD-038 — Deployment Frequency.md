@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Deployment Frequency"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /ci-cd/deployment-frequency/
 id: CCD-038

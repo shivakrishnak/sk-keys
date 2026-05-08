@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SLA SLO SLI"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /system-design/sla-slo-sli/
 id: SYD-015

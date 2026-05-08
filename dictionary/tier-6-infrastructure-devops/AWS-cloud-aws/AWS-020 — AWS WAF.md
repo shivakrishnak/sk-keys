@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS WAF"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /cloud-aws/aws-waf/
 id: AWS-020

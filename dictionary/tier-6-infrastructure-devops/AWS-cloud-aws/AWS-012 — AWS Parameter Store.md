@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS Parameter Store"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /cloud-aws/aws-parameter-store/
 id: AWS-012

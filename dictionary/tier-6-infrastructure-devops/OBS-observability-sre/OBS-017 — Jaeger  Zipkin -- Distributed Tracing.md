@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-017
 title: Jaeger / Zipkin -- Distributed Tracing
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /obs/jaeger-zipkin----distributed-tracing/
 ---

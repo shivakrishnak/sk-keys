@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Ingress"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /kubernetes/ingress/
 id: K8S-018

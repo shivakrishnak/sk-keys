@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-008
 title: TypeScript Functions (Parameter Types, Return Types, Overloads)
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /tsc/typescript-functions-parameter-types-return-types-overloads/
 ---

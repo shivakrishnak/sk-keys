@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-043
 title: Vector DB Selection Framework
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /rag/vector-db-selection-framework/
 ---

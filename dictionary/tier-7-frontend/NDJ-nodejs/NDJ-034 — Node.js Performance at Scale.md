@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-034
 title: Node.js Performance at Scale
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /ndj/nodejs-performance-at-scale/
 ---

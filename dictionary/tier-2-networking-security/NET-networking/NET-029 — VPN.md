@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "VPN"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /networking/vpn/
 id: NET-029

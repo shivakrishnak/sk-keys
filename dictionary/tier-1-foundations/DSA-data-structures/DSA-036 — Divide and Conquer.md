@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Divide and Conquer"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /dsa/divide-and-conquer/
 id: DSA-036

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Visitor"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /design-patterns/visitor/
 id: DPT-029

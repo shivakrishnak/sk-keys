@@ -1,4 +1,4 @@
----
+﻿---
 id: CDQ-042
 title: Code Review Mindset
 category: Code Quality
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /cdq/code-review-mindset/
 ---

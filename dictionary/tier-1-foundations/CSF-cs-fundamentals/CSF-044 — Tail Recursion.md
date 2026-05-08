@@ -2,6 +2,7 @@
 layout: default
 title: "Tail Recursion"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /cs-fundamentals/tail-recursion/
 id: CSF-044

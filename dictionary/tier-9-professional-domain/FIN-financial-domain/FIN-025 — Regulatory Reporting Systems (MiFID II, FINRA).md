@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-025
 title: Regulatory Reporting Systems (MiFID II, FINRA)
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /fin/regulatory-reporting-systems-mifid-ii-finra/
 ---

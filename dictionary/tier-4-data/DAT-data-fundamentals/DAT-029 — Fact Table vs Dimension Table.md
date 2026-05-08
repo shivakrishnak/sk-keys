@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Fact Table vs Dimension Table"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /data-fundamentals/fact-table-vs-dimension-table/
 id: DAT-029

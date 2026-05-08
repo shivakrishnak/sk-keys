@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Docker Compose"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /containers/docker-compose/
 id: CTR-015

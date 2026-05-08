@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-001
 title: What Is Document Generation and Why It Matters
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /dgn/what-is-document-generation-and-why-it-matters/
 ---

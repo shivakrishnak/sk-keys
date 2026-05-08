@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Foundation Models"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /ai-foundations/foundation-models/
 id: AIF-040

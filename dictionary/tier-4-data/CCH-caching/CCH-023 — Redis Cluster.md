@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Redis Cluster"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /caching/redis-cluster/
 id: CCH-023

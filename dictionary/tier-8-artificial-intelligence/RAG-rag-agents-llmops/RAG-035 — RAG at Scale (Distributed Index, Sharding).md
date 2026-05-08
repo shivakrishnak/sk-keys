@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-035
 title: RAG at Scale (Distributed Index, Sharding)
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /rag/rag-at-scale-distributed-index-sharding/
 ---

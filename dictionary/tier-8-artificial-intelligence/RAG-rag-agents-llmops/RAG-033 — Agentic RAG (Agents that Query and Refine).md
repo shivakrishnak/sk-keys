@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-033
 title: Agentic RAG (Agents that Query and Refine)
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /rag/agentic-rag-agents-that-query-and-refine/
 ---

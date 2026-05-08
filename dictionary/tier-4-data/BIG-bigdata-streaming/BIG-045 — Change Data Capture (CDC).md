@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Change Data Capture (CDC)"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /big-data-streaming/change-data-capture/
 id: BIG-045

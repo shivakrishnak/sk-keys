@@ -1,4 +1,4 @@
----
+﻿---
 id: TST-070
 title: Test Coverage Mental Model
 category: Testing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 70
 permalink: /tst/test-coverage-mental-model/
 ---

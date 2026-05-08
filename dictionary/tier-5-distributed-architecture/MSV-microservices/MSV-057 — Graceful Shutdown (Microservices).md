@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Graceful Shutdown (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /microservices/graceful-shutdown-microservices/
 id: MSV-057

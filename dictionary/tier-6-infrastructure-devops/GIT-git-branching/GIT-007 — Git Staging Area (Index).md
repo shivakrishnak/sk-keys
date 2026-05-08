@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-007
 title: Git Staging Area (Index)
 category: Git & Branching Strategy
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /git/git-staging-area-index/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-060
 title: Golden Image vs Immutable Infrastructure
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /lnx/golden-image-vs-immutable-infrastructure/
 ---

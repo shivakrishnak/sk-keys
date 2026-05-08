@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Aggregate"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /microservices/aggregate/
 id: MSV-016

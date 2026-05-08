@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-018
 title: AWS CDK (Cloud Development Kit)
 category: Infrastructure as Code
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /iac/aws-cdk-cloud-development-kit/
 ---

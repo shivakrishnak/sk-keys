@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-028
 title: CSS Clipping and Masking
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /css/css-clipping-and-masking/
 ---

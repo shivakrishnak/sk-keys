@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Token"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /ai-foundations/token/
 id: AIF-015

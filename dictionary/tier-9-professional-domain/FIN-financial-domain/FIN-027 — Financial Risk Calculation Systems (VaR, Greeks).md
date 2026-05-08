@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-027
 title: Financial Risk Calculation Systems (VaR, Greeks)
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /fin/financial-risk-calculation-systems-var-greeks/
 ---

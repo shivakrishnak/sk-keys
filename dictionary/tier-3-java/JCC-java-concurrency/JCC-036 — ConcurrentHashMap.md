@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ConcurrentHashMap"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /java-concurrency/jcc-040-concurrenthashmap/
 id: JCC-036

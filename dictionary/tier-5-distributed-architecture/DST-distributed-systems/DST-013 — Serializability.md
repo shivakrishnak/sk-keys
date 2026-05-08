@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Serializability"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /distributed-systems/serializability/
 id: DST-013

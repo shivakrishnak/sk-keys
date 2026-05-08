@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Complexity Classes"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 71
 permalink: /dsa/complexity-classes/
 id: DSA-071

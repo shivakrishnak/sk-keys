@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Lambda"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /cloud-aws/lambda/
 id: AWS-052

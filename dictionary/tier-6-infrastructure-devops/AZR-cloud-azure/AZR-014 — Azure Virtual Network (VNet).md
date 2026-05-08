@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-014
 title: Azure Virtual Network (VNet)
 category: Cloud -- Azure
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /azr/azure-virtual-network-vnet/
 ---

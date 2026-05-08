@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Model Pruning"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /ai-foundations/model-pruning/
 id: AIF-036

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Distributed Cache"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /caching/distributed-cache/
 id: CCH-016

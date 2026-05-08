@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-052
 title: Container Trade-off Framing
 category: Containers
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /ctr/container-trade-off-framing/
 ---

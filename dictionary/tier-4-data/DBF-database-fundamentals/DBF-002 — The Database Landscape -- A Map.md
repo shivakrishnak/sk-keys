@@ -1,4 +1,4 @@
----
+﻿---
 id: DBF-002
 title: The Database Landscape -- A Map
 category: Database Fundamentals
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /dbf/the-database-landscape----a-map/
 ---

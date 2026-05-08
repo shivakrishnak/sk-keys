@@ -1,4 +1,4 @@
----
+﻿---
 id: CDQ-035
 title: Engineering Excellence Program Design
 category: Code Quality
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /cdq/engineering-excellence-program-design/
 ---

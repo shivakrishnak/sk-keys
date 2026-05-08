@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Style Guide"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /code-quality/style-guide/
 id: CDQ-008

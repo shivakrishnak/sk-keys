@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-043
 title: Capacity Planning with Metrics
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /obs/capacity-planning-with-metrics/
 ---

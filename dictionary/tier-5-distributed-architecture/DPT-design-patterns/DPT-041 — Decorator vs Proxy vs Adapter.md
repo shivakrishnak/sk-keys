@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Decorator vs Proxy vs Adapter"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /design-patterns/decorator-vs-proxy-vs-adapter/
 id: DPT-041

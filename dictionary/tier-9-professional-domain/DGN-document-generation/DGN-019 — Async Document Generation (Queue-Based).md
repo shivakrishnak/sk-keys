@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-019
 title: Async Document Generation (Queue-Based)
 category: Document Generation
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /dgn/async-document-generation-queue-based/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-052
 title: Lock-Free Data Structure Design
 category: Java Concurrency
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /jcc/lock-free-data-structure-design/
 ---

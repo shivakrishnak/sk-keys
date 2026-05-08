@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Admission Controllers"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /kubernetes/admission-controllers/
 id: K8S-042

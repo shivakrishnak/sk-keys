@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-060
 title: Concurrency Models Compared (Actor, CSP, STM)
 category: CS Fundamentals — Paradigms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /csf/concurrency-models-compared-actor-csp-stm/
 ---

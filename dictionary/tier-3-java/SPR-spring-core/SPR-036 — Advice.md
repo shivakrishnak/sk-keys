@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Advice"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /spring/advice/
 id: SPR-036

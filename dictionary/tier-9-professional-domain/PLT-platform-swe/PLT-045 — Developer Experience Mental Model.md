@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-045
 title: Developer Experience Mental Model
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /plt/developer-experience-mental-model/
 ---

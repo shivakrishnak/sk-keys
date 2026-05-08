@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-044
 title: Observability at Scale (Sampling, Aggregation)
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /obs/observability-at-scale-sampling-aggregation/
 ---

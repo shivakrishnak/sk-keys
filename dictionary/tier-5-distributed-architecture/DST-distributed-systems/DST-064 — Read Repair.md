@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Read Repair"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /distributed-systems/read-repair/
 id: DST-064

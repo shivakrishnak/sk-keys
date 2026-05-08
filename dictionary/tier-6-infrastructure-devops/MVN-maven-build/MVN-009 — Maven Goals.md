@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Maven Goals"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /maven-build/maven-goals/
 id: MVN-009

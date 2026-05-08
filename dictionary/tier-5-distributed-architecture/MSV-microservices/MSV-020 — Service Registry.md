@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service Registry"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /microservices/service-registry/
 id: MSV-020

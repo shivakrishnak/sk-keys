@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-037
 title: FinTech vs Core Banking Strategy
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /fin/fintech-vs-core-banking-strategy/
 ---

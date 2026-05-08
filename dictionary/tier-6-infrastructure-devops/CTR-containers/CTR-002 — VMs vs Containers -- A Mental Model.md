@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-002
 title: VMs vs Containers -- A Mental Model
 category: Containers
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /ctr/vms-vs-containers----a-mental-model/
 ---

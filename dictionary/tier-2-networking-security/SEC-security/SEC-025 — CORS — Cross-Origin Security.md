@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-025
 title: CORS — Cross-Origin Security
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /sec/cors-cross-origin-security/
 ---

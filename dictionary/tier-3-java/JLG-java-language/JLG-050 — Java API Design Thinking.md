@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-050
 title: Java API Design Thinking
 category: Java Language
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /jlg/java-api-design-thinking/
 ---

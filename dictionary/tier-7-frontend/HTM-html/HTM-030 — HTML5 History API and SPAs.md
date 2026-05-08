@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-030
 title: HTML5 History API and SPAs
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /htm/html5-history-api-and-spas/
 ---

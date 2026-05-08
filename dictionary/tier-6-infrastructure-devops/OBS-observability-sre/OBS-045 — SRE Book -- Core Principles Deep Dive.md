@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-045
 title: SRE Book -- Core Principles Deep Dive
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /obs/sre-book----core-principles-deep-dive/
 ---

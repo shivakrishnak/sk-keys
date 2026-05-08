@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Lamport Clock"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /distributed-systems/lamport-clock/
 id: DST-015

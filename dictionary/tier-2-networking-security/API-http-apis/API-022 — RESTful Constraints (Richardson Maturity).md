@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "RESTful Constraints (Richardson Maturity)"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /http-apis/restful-constraints/
 id: API-022

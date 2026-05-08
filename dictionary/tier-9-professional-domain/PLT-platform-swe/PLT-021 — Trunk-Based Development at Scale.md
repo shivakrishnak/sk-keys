@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-021
 title: Trunk-Based Development at Scale
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /plt/trunk-based-development-at-scale/
 ---

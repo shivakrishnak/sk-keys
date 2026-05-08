@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS Cost Tagging Strategy"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /cloud-aws/aws-cost-tagging-strategy/
 id: AWS-023

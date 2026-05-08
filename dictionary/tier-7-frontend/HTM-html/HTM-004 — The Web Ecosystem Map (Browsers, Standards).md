@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-004
 title: The Web Ecosystem Map (Browsers, Standards)
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /htm/the-web-ecosystem-map-browsers-standards/
 ---

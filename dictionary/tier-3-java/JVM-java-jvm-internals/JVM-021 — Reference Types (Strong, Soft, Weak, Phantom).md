@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Reference Types (Strong, Soft, Weak, Phantom)"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /java/reference-types/
 id: JVM-021

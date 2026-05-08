@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-069
 title: Meta-Pattern Design
 category: Design Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 69
 permalink: /dpt/meta-pattern-design/
 ---

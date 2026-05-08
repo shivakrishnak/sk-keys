@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kubernetes Networking (CNI)"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 58
 permalink: /kubernetes/kubernetes-networking-cni/
 id: K8S-058

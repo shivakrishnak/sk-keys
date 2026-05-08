@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AppDynamics"
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /observability/appdynamics/
 number: "OBS-001"

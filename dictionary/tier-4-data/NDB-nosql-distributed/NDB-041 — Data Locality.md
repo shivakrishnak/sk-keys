@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Locality"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /nosql/data-locality/
 id: NDB-041

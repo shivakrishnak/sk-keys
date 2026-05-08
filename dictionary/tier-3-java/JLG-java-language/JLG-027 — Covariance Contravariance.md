@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Covariance Contravariance"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /java-language/covariance-contravariance/
 id: JLG-027

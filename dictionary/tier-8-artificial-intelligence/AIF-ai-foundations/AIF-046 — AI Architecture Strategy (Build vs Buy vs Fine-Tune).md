@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-046
 title: AI Architecture Strategy (Build vs Buy vs Fine-Tune)
 category: AI Foundations
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /aif/ai-architecture-strategy-build-vs-buy-vs-fine-tune/
 ---

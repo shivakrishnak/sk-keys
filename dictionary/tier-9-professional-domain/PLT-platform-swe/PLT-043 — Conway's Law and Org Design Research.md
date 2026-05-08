@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-043
 title: Conway's Law and Org Design Research
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /plt/conways-law-and-org-design-research/
 ---

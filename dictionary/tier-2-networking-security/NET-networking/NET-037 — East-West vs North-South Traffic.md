@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "East-West vs North-South Traffic"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /networking/east-west-vs-north-south-traffic/
 id: NET-037

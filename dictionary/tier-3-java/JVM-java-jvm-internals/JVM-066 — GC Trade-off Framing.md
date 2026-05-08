@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-066
 title: GC Trade-off Framing
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 66
 permalink: /jvm/gc-trade-off-framing/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Partitioning Strategies"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /system-design/data-partitioning-strategies/
 id: SYD-042

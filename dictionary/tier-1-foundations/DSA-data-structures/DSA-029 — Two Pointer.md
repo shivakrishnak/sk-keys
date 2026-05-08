@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Two Pointer"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /dsa/two-pointer/
 id: DSA-029

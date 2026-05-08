@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CORS"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /http-apis/cors/
 id: API-025

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Memcached vs Redis"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /caching/memcached-vs-redis/
 id: CCH-024

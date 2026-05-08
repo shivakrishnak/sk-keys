@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-046
 title: Reactive Programming Thinking (RxJS)
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /ang/reactive-programming-thinking-rxjs/
 ---

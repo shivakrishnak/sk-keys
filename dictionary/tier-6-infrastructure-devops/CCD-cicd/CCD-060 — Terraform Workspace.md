@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Workspace"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /ci-cd/terraform-workspace/
 id: CCD-060

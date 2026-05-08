@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Firewall"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /networking/firewall/
 id: NET-016

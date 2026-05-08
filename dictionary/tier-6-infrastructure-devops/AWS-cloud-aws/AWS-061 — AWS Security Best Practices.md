@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS Security Best Practices"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /cloud-aws/aws-security-best-practices/
 id: AWS-061

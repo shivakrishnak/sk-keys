@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-052
 title: JWT Algorithm Confusion Attacks
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /sec/jwt-algorithm-confusion-attacks/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Semi-Structured Data"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /data-fundamentals/semi-structured-data/
 id: DAT-010

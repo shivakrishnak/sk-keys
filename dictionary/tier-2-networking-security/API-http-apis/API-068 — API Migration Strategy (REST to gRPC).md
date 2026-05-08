@@ -1,4 +1,4 @@
----
+﻿---
 id: API-068
 title: API Migration Strategy (REST to gRPC)
 category: HTTP & APIs
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /api/api-migration-strategy-rest-to-grpc/
 ---

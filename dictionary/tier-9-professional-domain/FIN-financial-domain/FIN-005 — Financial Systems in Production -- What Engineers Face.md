@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-005
 title: Financial Systems in Production -- What Engineers Face
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /fin/financial-systems-in-production----what-engineers-face/
 ---

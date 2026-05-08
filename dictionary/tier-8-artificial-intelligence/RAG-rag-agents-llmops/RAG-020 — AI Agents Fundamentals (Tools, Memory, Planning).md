@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-020
 title: AI Agents Fundamentals (Tools, Memory, Planning)
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /rag/ai-agents-fundamentals-tools-memory-planning/
 ---

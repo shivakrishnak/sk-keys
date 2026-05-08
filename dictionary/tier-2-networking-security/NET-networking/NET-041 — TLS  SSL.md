@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "TLS / SSL"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /networking/tls-ssl/
 id: NET-041

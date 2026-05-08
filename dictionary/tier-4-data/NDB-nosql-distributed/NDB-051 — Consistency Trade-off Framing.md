@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-051
 title: Consistency Trade-off Framing
 category: NoSQL & Distributed Databases
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /ndb/consistency-trade-off-framing/
 ---

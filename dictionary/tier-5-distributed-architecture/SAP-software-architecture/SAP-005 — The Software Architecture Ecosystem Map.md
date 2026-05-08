@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-005
 title: The Software Architecture Ecosystem Map
 category: Software Architecture Patterns
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /sap/the-software-architecture-ecosystem-map/
 ---

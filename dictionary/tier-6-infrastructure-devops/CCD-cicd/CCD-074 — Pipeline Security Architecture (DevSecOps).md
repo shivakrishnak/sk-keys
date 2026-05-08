@@ -1,4 +1,4 @@
----
+﻿---
 id: CCD-074
 title: Pipeline Security Architecture (DevSecOps)
 category: CI/CD
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 74
 permalink: /ccd/pipeline-security-architecture-devsecops/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-009
 title: Semantic HTML (header, nav, main, article, section)
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /htm/semantic-html-header-nav-main-article-section/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pointcut"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /spring/pointcut/
 id: SPR-037

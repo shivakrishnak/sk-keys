@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Fencing Epoch"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /distributed-systems/dst-026-fencing-epoch/
 id: DST-031

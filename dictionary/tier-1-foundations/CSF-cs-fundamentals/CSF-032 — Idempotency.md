@@ -2,6 +2,7 @@
 layout: default
 title: "Idempotency"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /cs-fundamentals/idempotency/
 id: CSF-032

@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-046
 title: Observability Platform Architecture Design
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /obs/observability-platform-architecture-design/
 ---

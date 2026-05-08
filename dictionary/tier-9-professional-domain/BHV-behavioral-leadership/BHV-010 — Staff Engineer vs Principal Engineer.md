@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Staff Engineer vs Principal Engineer"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /leadership/staff-engineer-vs-principal-engineer/
 id: BHV-010

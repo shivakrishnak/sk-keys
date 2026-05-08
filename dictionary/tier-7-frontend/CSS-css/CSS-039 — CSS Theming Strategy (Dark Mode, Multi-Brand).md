@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-039
 title: CSS Theming Strategy (Dark Mode, Multi-Brand)
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /css/css-theming-strategy-dark-mode-multi-brand/
 ---

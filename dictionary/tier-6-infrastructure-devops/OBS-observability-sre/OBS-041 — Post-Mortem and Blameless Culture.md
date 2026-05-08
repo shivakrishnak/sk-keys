@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-041
 title: Post-Mortem and Blameless Culture
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /obs/post-mortem-and-blameless-culture/
 ---

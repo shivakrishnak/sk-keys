@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-008
 title: HTML Attributes
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /htm/html-attributes/
 ---

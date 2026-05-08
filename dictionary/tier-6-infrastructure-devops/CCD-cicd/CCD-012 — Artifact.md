@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Artifact"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /ci-cd/artifact/
 id: CCD-012

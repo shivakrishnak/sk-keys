@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pipeline as Code"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /ci-cd/pipeline-as-code/
 id: CCD-020

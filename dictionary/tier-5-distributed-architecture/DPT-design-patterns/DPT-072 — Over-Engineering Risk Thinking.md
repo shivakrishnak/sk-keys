@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-072
 title: Over-Engineering Risk Thinking
 category: Design Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 72
 permalink: /dpt/over-engineering-risk-thinking/
 ---

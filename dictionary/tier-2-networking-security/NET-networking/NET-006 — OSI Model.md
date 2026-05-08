@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "OSI Model"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /networking/osi-model/
 id: NET-006

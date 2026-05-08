@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-086
 title: Trade-off Reasoning for Any DS Choice
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 86
 permalink: /dsa/trade-off-reasoning-for-any-ds-choice/
 ---

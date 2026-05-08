@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Fiber / Coroutine"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /operating-systems/fiber-coroutine/
 id: OSY-019

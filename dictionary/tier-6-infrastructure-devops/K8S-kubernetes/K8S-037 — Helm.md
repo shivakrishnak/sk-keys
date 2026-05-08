@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Helm"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /kubernetes/helm/
 id: K8S-037

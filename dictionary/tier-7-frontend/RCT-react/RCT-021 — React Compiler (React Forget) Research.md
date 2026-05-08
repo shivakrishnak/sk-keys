@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-021
 title: React Compiler (React Forget) Research
 category: React
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /rct/react-compiler-react-forget-research/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-010
 title: Angular Services and Dependency Injection
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /ang/angular-services-and-dependency-injection/
 ---

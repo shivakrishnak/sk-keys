@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Quality"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /data-fundamentals/data-quality/
 id: DAT-038

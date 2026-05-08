@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service Mesh"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /distributed-systems/service-mesh/
 id: DST-053

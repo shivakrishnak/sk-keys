@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-020
 title: Angular Signals (v17+)
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /ang/angular-signals-v17/
 ---

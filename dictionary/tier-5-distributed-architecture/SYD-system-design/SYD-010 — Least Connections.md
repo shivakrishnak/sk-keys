@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Least Connections"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /system-design/least-connections/
 id: SYD-010

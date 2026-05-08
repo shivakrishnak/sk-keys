@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "XSS via API"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /http-apis/xss/
 id: API-060

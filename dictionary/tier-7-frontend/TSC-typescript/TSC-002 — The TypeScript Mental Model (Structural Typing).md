@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-002
 title: The TypeScript Mental Model (Structural Typing)
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /tsc/the-typescript-mental-model-structural-typing/
 ---

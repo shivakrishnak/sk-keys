@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Actor Model"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /java-concurrency/actor-model/
 id: JCC-045

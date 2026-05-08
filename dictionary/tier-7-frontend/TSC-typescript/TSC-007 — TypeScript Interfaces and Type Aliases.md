@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-007
 title: TypeScript Interfaces and Type Aliases
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /tsc/typescript-interfaces-and-type-aliases/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-003
 title: LLMs vs Traditional NLP -- What Changed
 category: LLMs & Prompt Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /llm/llms-vs-traditional-nlp----what-changed/
 ---

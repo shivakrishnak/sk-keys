@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-016
 title: KYC and AML Systems (Know Your Customer, Anti-Money Laundering)
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /fin/kyc-and-aml-systems-know-your-customer-anti-money-laundering/
 ---

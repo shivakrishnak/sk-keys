@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Variable  Output  Local"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 66
 permalink: /ci-cd/terraform-variable-output-local/
 id: CCD-066

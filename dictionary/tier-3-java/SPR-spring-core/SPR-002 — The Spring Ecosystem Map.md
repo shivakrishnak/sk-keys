@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-002
 title: The Spring Ecosystem Map
 category: Spring Core
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /spr/the-spring-ecosystem-map/
 ---

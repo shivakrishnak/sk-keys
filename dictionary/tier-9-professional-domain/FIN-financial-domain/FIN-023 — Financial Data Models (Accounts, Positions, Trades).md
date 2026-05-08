@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-023
 title: Financial Data Models (Accounts, Positions, Trades)
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /fin/financial-data-models-accounts-positions-trades/
 ---

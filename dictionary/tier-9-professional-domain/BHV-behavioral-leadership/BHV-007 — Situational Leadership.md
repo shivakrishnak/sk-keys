@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Situational Leadership"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /leadership/situational-leadership/
 id: BHV-007

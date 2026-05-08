@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-007
 title: Zero-Shot, One-Shot, Few-Shot Prompting
 category: LLMs & Prompt Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /llm/zero-shot-one-shot-few-shot-prompting/
 ---

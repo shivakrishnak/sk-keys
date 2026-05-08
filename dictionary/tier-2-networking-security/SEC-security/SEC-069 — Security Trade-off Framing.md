@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-069
 title: Security Trade-off Framing
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 69
 permalink: /sec/security-trade-off-framing/
 ---

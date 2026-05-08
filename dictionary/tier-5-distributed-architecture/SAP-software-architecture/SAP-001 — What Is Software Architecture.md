@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-001
 title: What Is Software Architecture
 category: Software Architecture Patterns
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /sap/what-is-software-architecture/
 ---

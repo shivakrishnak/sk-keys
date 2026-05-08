@@ -2,6 +2,7 @@
 layout: default
 title: "Type Systems (Static vs Dynamic)"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /cs-fundamentals/type-systems/
 id: CSF-012

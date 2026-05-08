@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-067
 title: AWS Cost Optimization Framework
 category: Cloud -- AWS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 67
 permalink: /aws/aws-cost-optimization-framework/
 ---

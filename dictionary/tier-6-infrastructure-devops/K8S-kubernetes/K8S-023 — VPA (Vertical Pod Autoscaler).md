@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "VPA (Vertical Pod Autoscaler)"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /kubernetes/vpa-vertical-pod-autoscaler/
 id: K8S-023

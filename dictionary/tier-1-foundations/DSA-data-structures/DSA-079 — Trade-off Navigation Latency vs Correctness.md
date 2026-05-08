@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-079
 title: Trade-off Navigation: Latency vs Correctness
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 79
 permalink: /dsa/trade-off-navigation-latency-vs-correctness/
 ---

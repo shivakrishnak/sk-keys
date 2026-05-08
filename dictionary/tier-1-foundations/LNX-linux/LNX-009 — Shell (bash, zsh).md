@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Shell (bash, zsh)"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /linux/shell-bash-zsh/
 id: LNX-009

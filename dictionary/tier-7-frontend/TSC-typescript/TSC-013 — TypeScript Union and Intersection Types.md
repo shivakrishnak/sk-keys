@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-013
 title: TypeScript Union and Intersection Types
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /tsc/typescript-union-and-intersection-types/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-020
 title: React Concurrent Mode and Scheduler
 category: React
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /rct/react-concurrent-mode-and-scheduler/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: MVN-004
 title: Dependency Management Mental Model
 category: Maven & Build Tools
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Maven & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /mvn/dependency-management-mental-model/
 ---

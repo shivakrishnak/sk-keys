@@ -1,4 +1,4 @@
----
+﻿---
 id: DAT-044
 title: Data Quality at Scale
 category: Data Fundamentals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /dat/data-quality-at-scale/
 ---

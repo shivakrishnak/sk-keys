@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Well-Architected Framework"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /cloud-aws/well-architected-framework/
 id: AWS-062

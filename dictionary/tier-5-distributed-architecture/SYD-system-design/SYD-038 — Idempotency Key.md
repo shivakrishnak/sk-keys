@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Idempotency Key"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /system-design/idempotency-key/
 id: SYD-038

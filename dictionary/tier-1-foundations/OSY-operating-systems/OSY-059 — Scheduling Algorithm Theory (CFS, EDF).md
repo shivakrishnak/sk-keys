@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-059
 title: Scheduling Algorithm Theory (CFS, EDF)
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /osy/scheduling-algorithm-theory-cfs-edf/
 ---

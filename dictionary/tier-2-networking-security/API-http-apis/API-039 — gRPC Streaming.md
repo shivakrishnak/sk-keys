@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "gRPC Streaming"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /http-apis/grpc-streaming/
 id: API-039

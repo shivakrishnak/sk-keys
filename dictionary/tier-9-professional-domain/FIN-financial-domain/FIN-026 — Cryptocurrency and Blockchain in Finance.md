@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-026
 title: Cryptocurrency and Blockchain in Finance
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /fin/cryptocurrency-and-blockchain-in-finance/
 ---

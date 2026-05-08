@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Tekton"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /ci-cd/tekton/
 id: CCD-018

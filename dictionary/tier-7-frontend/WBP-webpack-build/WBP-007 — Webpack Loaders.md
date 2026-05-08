@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-007
 title: Webpack Loaders
 category: Webpack & Build Tools
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /wbp/webpack-loaders/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-009
 title: Similarity Search (Cosine, Dot Product, Euclidean)
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /rag/similarity-search-cosine-dot-product-euclidean/
 ---

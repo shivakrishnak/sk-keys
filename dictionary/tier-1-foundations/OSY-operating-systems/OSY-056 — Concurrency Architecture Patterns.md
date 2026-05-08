@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-056
 title: Concurrency Architecture Patterns
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /osy/concurrency-architecture-patterns/
 ---

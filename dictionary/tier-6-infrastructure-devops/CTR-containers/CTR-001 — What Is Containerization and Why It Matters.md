@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-001
 title: What Is Containerization and Why It Matters
 category: Containers
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /ctr/what-is-containerization-and-why-it-matters/
 ---

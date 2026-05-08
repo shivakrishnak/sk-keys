@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-004
 title: Spring vs Jakarta EE vs Micronaut vs Quarkus
 category: Spring Core
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /spr/spring-vs-jakarta-ee-vs-micronaut-vs-quarkus/
 ---

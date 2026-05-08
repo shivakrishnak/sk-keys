@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-002
 title: Monolith vs Microservices -- The Real Trade-off
 category: Microservices
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /msv/monolith-vs-microservices----the-real-trade-off/
 ---

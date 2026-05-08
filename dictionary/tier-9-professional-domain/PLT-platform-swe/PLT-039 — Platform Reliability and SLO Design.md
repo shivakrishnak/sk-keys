@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-039
 title: Platform Reliability and SLO Design
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /plt/platform-reliability-and-slo-design/
 ---

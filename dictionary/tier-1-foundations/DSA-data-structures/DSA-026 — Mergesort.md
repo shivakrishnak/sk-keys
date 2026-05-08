@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Mergesort"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /dsa/mergesort/
 id: DSA-026

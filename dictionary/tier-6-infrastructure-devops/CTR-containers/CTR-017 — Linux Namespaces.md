@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Linux Namespaces"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /containers/linux-namespaces/
 id: CTR-017

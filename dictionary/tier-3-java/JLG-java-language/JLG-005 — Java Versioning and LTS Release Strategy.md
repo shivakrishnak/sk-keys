@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-005
 title: Java Versioning and LTS Release Strategy
 category: Java Language
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /jlg/java-versioning-and-lts-release-strategy/
 ---

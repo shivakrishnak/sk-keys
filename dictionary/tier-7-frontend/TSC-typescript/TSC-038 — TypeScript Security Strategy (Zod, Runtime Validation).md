@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-038
 title: TypeScript Security Strategy (Zod, Runtime Validation)
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /tsc/typescript-security-strategy-zod-runtime-validation/
 ---

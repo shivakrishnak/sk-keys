@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GC Tuning"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /java/gc-tuning/
 id: JVM-036

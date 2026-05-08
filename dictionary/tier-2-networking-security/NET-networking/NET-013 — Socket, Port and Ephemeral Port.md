@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Socket, Port and Ephemeral Port"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /networking/socket-port-ephemeral-port/
 id: NET-013

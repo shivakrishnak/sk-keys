@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Auto Scaling Groups"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /cloud-aws/auto-scaling-groups/
 id: AWS-039

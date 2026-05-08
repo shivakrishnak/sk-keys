@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-034
 title: Financial System Architecture Strategy
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /fin/financial-system-architecture-strategy/
 ---

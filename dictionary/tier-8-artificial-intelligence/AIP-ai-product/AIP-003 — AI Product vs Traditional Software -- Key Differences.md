@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-003
 title: AI Product vs Traditional Software -- Key Differences
 category: AI Product Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /aip/ai-product-vs-traditional-software----key-differences/
 ---

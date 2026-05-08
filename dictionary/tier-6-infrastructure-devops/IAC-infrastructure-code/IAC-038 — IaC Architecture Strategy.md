@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-038
 title: IaC Architecture Strategy
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /iac/iac-architecture-strategy/
 ---

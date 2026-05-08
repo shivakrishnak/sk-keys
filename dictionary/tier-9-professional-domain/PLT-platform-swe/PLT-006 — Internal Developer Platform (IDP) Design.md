@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-006
 title: Internal Developer Platform (IDP) Design
 category: Platform & Modern SWE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /plt/internal-developer-platform-idp-design/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-026
 title: LLM Inference Optimization (vLLM, TGI, Ollama)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /llm/llm-inference-optimization-vllm-tgi-ollama/
 ---

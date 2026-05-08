@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "React Performance Profiling (Browser DevTools)"
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /react/react-performance-profiling/
 id: RCT-007

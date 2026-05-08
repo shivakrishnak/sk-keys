@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-004
 title: Document Generation vs Document Editing -- The Difference
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /dgn/document-generation-vs-document-editing----the-difference/
 ---

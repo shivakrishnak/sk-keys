@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-022
 title: Real-Time Payments (RTP, FedNow, Faster Payments)
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /fin/real-time-payments-rtp-fednow-faster-payments/
 ---

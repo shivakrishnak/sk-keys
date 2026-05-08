@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "File Descriptor"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /operating-systems/file-descriptor/
 id: OSY-012
@@ -95,6 +96,7 @@ WHAT HAPPENS:
 
 ```
 Parent:
+grand_parent: "Technical Dictionary"
   fd 0 = stdin
   fd 1 = stdout
   fd 2 = stderr

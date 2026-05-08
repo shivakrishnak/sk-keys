@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Database Sharding"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /databases/database-sharding/
 id: DBF-053

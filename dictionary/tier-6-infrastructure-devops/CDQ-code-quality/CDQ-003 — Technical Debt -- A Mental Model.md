@@ -1,4 +1,4 @@
----
+﻿---
 id: CDQ-003
 title: Technical Debt -- A Mental Model
 category: Code Quality
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /cdq/technical-debt----a-mental-model/
 ---

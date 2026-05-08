@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Randomized Algorithms"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 72
 permalink: /dsa/randomized-algorithms/
 id: DSA-072

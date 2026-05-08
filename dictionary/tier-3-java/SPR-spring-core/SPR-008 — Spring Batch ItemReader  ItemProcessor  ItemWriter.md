@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Batch ItemReader  ItemProcessor  ItemWriter"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /spring/spring-batch-reader-processor-writer/
 id: SPR-008

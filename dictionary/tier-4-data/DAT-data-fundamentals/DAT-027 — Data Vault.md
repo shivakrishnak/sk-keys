@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Vault"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /data-fundamentals/data-vault/
 id: DAT-027

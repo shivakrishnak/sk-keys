@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Docker Secrets"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /containers/docker-secrets/
 id: CTR-040

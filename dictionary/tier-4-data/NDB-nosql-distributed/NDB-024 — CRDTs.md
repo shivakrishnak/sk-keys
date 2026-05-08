@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CRDTs"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /nosql/crdts/
 id: NDB-024

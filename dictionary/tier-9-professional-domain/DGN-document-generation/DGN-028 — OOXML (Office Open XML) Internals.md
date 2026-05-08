@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-028
 title: OOXML (Office Open XML) Internals
 category: Document Generation
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /dgn/ooxml-office-open-xml-internals/
 ---

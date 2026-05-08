@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cross-Cutting Concerns"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /microservices/cross-cutting-concerns/
 id: MSV-049

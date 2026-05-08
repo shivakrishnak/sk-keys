@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-049
 title: AI Safety Architecture
 category: AI Foundations
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /aif/ai-safety-architecture/
 ---

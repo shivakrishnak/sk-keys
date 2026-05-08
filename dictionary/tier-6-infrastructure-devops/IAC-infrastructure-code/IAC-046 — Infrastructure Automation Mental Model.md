@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-046
 title: Infrastructure Automation Mental Model
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /iac/infrastructure-automation-mental-model/
 ---

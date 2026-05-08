@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "A-Star Search"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /dsa/a-star-search/
 id: DSA-064

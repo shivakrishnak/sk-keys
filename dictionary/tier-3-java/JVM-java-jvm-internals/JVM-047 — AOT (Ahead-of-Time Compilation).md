@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AOT (Ahead-of-Time Compilation)"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /java/aot-ahead-of-time-compilation/
 id: JVM-047

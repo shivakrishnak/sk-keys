@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Heap Memory"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /java/heap-memory/
 id: JVM-011

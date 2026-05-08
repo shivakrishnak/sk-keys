@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-003
 title: JVM vs JRE vs JDK
 category: Java & JVM Internals
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /jvm/jvm-vs-jre-vs-jdk/
 ---

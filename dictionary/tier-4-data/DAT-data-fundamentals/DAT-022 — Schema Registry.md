@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Schema Registry"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /data-fundamentals/schema-registry/
 id: DAT-022

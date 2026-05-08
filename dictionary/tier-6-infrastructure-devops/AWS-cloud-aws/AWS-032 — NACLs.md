@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "NACLs"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /cloud-aws/nacls/
 id: AWS-032

@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-050
 title: Spectre and Meltdown (2018)
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /osy/spectre-and-meltdown-2018/
 ---

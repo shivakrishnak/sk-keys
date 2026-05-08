@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-003
 title: Pattern vs Anti-Pattern vs Idiom
 category: Design Patterns
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /dpt/pattern-vs-anti-pattern-vs-idiom/
 ---

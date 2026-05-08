@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Line Coverage"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /code-quality/line-coverage/
 id: CDQ-019

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Package Managers (apt, yum, dnf)"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /linux/package-managers/
 id: LNX-014

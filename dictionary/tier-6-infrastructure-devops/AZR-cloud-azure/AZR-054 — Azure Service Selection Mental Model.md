@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-054
 title: Azure Service Selection Mental Model
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /azr/azure-service-selection-mental-model/
 ---

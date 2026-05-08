@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ApplicationContext"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /spring/applicationcontext/
 id: SPR-021

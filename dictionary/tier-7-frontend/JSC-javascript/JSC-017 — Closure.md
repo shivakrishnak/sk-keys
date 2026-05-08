@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Closure"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /javascript/closure/
 id: JSC-017

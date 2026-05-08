@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-012
 title: DORA Metrics (Deployment Frequency, Lead Time, MTTR, CFR)
 category: Platform & Modern SWE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /plt/dora-metrics-deployment-frequency-lead-time-mttr-cfr/
 ---

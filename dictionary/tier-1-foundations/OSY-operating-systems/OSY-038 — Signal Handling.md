@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Signal Handling"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /operating-systems/signal-handling/
 id: OSY-038

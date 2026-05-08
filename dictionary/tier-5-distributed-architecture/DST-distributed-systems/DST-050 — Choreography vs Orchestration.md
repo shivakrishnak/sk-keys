@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Choreography vs Orchestration"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /distributed-systems/choreography-vs-orchestration/
 id: DST-050

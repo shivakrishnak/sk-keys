@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Leaky Bucket"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /system-design/leaky-bucket/
 id: SYD-030

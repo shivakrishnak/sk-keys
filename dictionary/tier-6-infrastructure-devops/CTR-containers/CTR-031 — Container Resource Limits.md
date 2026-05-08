@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Container Resource Limits"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /containers/container-resource-limits/
 id: CTR-031

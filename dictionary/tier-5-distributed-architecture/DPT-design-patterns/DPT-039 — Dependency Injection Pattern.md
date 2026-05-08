@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Dependency Injection Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /design-patterns/dependency-injection-pattern/
 id: DPT-039

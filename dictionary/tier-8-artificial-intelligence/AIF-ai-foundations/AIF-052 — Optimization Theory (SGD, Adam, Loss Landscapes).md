@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-052
 title: Optimization Theory (SGD, Adam, Loss Landscapes)
 category: AI Foundations
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /aif/optimization-theory-sgd-adam-loss-landscapes/
 ---

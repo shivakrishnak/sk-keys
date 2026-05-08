@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "IAM (Identity and Access Management)"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /cloud-aws/iam/
 id: AWS-027

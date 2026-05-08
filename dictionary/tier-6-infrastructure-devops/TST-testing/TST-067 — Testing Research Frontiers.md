@@ -1,4 +1,4 @@
----
+﻿---
 id: TST-067
 title: Testing Research Frontiers
 category: Testing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 67
 permalink: /tst/testing-research-frontiers/
 ---

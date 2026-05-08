@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "REST"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /http-apis/rest/
 id: API-010

@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-035
 title: Template vs Code-Driven Generation Thinking
 category: Document Generation
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /dgn/template-vs-code-driven-generation-thinking/
 ---

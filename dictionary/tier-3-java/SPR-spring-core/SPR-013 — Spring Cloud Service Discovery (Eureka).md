@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Cloud Service Discovery (Eureka)"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /spring/spring-cloud-service-discovery-eureka/
 id: SPR-013

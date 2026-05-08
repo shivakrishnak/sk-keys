@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pagination — Cursor Offset Keyset"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /http-apis/pagination/
 id: API-046

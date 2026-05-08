@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cross-Functional Collaboration"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /leadership/cross-functional-collaboration/
 id: BHV-023

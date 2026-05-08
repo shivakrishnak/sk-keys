@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "In-Context Learning"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /ai-foundations/in-context-learning/
 id: AIF-031

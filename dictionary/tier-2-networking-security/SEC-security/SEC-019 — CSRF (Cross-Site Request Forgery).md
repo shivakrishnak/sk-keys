@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-019
 title: CSRF (Cross-Site Request Forgery)
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /sec/csrf-cross-site-request-forgery/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-026
 title: OAuth2 Security Model
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /sec/oauth2-security-model/
 ---

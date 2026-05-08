@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Structured Concurrency"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /java-concurrency/structured-concurrency/
 id: JCC-040

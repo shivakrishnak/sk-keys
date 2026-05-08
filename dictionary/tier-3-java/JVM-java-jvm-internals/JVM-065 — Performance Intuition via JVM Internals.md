@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-065
 title: Performance Intuition via JVM Internals
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /jvm/performance-intuition-via-jvm-internals/
 ---

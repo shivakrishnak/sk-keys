@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-041
 title: Async Trade-off Framing (Decoupling vs Complexity)
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /asy/async-trade-off-framing-decoupling-vs-complexity/
 ---

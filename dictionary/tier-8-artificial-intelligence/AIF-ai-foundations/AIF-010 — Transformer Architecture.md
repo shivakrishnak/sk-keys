@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Transformer Architecture"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /ai-foundations/transformer-architecture/
 id: AIF-010

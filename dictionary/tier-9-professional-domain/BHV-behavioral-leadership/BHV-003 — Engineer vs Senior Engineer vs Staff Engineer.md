@@ -1,4 +1,4 @@
----
+﻿---
 id: BHV-003
 title: Engineer vs Senior Engineer vs Staff Engineer
 category: Behavioral & Leadership
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /bhv/engineer-vs-senior-engineer-vs-staff-engineer/
 ---

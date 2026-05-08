@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-029
 title: Cache-Aside vs Write-Through at Scale
 category: Caching
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /cch/cache-aside-vs-write-through-at-scale/
 ---

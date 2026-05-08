@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-018
 title: File Operations (cp, mv, rm, mkdir)
 category: Linux
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /lnx/file-operations-cp-mv-rm-mkdir/
 ---

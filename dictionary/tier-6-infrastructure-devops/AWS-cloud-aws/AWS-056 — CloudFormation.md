@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CloudFormation"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /cloud-aws/cloudformation/
 id: AWS-056

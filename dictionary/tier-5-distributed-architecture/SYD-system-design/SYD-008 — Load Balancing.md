@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Load Balancing"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /system-design/load-balancing/
 id: SYD-008

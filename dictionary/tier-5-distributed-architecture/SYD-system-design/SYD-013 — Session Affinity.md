@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Session Affinity"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /system-design/session-affinity/
 id: SYD-013

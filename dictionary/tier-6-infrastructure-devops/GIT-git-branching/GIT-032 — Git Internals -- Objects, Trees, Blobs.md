@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-032
 title: Git Internals -- Objects, Trees, Blobs
 category: Git & Branching Strategy
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /git/git-internals----objects-trees-blobs/
 ---

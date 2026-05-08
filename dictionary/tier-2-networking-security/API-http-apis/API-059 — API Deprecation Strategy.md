@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Deprecation Strategy"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /http-apis/api-deprecation-strategy/
 id: API-059

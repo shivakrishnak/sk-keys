@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-003
 title: The Internet History and Architecture
 category: Networking
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /net/the-internet-history-and-architecture/
 ---

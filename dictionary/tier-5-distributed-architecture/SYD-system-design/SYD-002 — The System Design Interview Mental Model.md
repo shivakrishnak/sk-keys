@@ -1,4 +1,4 @@
----
+﻿---
 id: SYD-002
 title: The System Design Interview Mental Model
 category: System Design
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /syd/the-system-design-interview-mental-model/
 ---

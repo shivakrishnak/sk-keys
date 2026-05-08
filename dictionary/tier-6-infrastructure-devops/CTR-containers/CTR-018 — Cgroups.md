@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cgroups"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /containers/cgroups/
 id: CTR-018

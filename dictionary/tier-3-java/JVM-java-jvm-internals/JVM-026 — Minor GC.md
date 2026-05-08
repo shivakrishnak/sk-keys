@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Minor GC"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /java/minor-gc/
 id: JVM-026

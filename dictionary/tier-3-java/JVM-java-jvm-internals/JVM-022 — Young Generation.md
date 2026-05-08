@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Young Generation"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /java/young-generation/
 id: JVM-022

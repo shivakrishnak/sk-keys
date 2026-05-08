@@ -1,4 +1,4 @@
----
+﻿---
 id: DBF-001
 title: What Is a Database and Why It Exists
 category: Database Fundamentals
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /dbf/what-is-a-database-and-why-it-exists/
 ---

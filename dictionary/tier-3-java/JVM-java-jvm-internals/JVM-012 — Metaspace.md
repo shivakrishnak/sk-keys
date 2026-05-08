@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Metaspace"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /java/metaspace/
 id: JVM-012

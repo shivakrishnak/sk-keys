@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-042
 title: Java API Design at Scale
 category: Java Language
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /jlg/java-api-design-at-scale/
 ---

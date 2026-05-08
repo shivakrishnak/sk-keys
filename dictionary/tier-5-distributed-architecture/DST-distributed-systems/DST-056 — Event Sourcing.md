@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Event Sourcing"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /distributed-systems/event-sourcing/
 id: DST-056

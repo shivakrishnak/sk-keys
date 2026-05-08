@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Slim  Minimal Images"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /containers/slim-minimal-images/
 id: CTR-037

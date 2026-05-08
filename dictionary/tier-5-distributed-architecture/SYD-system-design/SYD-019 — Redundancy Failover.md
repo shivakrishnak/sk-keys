@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Redundancy Failover"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /system-design/redundancy-failover/
 id: SYD-019

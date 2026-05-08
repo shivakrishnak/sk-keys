@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Clumps"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /code-quality/data-clumps/
 id: CDQ-026

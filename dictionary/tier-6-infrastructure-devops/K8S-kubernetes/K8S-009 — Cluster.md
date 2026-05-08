@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cluster"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /kubernetes/cluster/
 id: K8S-009

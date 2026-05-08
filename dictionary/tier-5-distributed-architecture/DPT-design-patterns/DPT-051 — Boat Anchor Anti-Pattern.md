@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Boat Anchor Anti-Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /design-patterns/boat-anchor-anti-pattern/
 id: DPT-051

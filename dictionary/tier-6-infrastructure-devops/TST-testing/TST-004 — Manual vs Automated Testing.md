@@ -1,4 +1,4 @@
----
+﻿---
 id: TST-004
 title: Manual vs Automated Testing
 category: Testing
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /tst/manual-vs-automated-testing/
 ---

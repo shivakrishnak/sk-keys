@@ -1,4 +1,4 @@
----
+﻿---
 id: DST-076
 title: Consistency Trade-off Framing
 category: Distributed Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 76
 permalink: /dst/consistency-trade-off-framing/
 ---

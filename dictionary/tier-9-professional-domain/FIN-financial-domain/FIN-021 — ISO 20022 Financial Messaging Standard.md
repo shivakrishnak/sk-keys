@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-021
 title: ISO 20022 Financial Messaging Standard
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /fin/iso-20022-financial-messaging-standard/
 ---

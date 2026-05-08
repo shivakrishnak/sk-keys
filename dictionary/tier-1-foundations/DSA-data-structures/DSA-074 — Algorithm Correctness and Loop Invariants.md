@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-074
 title: Algorithm Correctness and Loop Invariants
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 74
 permalink: /dsa/algorithm-correctness-and-loop-invariants/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-029
 title: AI Regulatory Compliance (EU AI Act, FDA AI/ML)
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /aip/ai-regulatory-compliance-eu-ai-act-fda-aiml/
 ---

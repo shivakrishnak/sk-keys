@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Parallel GC"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /java/parallel-gc/
 id: JVM-031

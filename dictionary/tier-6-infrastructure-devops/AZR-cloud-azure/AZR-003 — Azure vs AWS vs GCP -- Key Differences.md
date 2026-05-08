@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-003
 title: Azure vs AWS vs GCP -- Key Differences
 category: Cloud -- Azure
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /azr/azure-vs-aws-vs-gcp----key-differences/
 ---

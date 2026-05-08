@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-037
 title: Node.js Production Deployment Strategy
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /ndj/nodejs-production-deployment-strategy/
 ---

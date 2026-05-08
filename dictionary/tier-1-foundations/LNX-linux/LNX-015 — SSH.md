@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SSH"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /linux/ssh/
 id: LNX-015

@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-031
 title: Package Registry Design Research
 category: npm & Package Management
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /npm/package-registry-design-research/
 ---

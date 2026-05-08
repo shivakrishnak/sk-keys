@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service Decomposition"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /microservices/service-decomposition/
 id: MSV-013

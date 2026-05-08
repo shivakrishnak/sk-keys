@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-066
 title: Pattern Language Theory (Christopher Alexander)
 category: Design Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 66
 permalink: /dpt/pattern-language-theory-christopher-alexander/
 ---

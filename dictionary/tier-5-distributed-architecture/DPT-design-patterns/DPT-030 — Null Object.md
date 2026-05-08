@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Null Object"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /design-patterns/null-object/
 id: DPT-030

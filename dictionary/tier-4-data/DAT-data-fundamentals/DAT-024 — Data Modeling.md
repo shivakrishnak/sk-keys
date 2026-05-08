@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Modeling"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /data-fundamentals/data-modeling/
 id: DAT-024

@@ -2,6 +2,7 @@
 layout: default
 title: "Composition over Inheritance"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /cs-fundamentals/composition-over-inheritance/
 id: CSF-027

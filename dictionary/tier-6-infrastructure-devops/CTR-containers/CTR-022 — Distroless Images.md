@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Distroless Images"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /containers/distroless-images/
 id: CTR-022

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pre-training"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /ai-foundations/pre-training/
 id: AIF-027

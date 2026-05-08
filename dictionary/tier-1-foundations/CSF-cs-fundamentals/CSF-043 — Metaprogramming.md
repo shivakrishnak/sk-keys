@@ -2,6 +2,7 @@
 layout: default
 title: "Metaprogramming"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /cs-fundamentals/metaprogramming/
 id: CSF-043

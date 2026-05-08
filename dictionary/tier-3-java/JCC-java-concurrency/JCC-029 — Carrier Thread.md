@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Carrier Thread"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /java-concurrency/carrier-thread/
 id: JCC-029

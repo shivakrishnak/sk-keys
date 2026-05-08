@@ -1,4 +1,4 @@
----
+﻿---
 id: TST-068
 title: Chaos Engineering Design
 category: Testing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /tst/chaos-engineering-design/
 ---

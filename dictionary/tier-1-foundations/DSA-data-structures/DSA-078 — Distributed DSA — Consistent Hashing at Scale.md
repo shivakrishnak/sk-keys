@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-078
 title: Distributed DSA — Consistent Hashing at Scale
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 78
 permalink: /dsa/distributed-dsa-consistent-hashing-at-scale/
 ---

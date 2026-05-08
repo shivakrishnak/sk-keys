@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Linux Namespaces"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /linux/linux-namespaces/
 id: LNX-047

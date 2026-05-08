@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Class Loader"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /java/class-loader/
 id: JVM-009

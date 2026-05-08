@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Drift Detection"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /ci-cd/terraform-drift-detection/
 id: CCD-065

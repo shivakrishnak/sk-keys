@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-033
 title: AI Competitive Moats and Defensibility
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /aip/ai-competitive-moats-and-defensibility/
 ---

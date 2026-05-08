@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-034
 title: TypeScript Performance (Compilation Speed)
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /tsc/typescript-performance-compilation-speed/
 ---

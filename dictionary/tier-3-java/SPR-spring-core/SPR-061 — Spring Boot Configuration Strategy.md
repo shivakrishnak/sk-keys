@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-061
 title: Spring Boot Configuration Strategy
 category: Spring Core
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /spr/spring-boot-configuration-strategy/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: API-014
 title: JSON vs XML Data Format
 category: HTTP & APIs
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /api/json-vs-xml-data-format/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-037
 title: AI Product Trade-off Framing (Capability vs Safety vs UX)
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /aip/ai-product-trade-off-framing-capability-vs-safety-vs-ux/
 ---

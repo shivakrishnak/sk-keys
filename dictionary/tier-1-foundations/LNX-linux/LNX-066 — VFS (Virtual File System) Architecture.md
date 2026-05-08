@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-066
 title: VFS (Virtual File System) Architecture
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 66
 permalink: /lnx/vfs-virtual-file-system-architecture/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Shell Scripting"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /linux/shell-scripting/
 id: LNX-019

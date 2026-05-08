@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GraphQL Schema"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /http-apis/graphql-schema/
 id: API-040

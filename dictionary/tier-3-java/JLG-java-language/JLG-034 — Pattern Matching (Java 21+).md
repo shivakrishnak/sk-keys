@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pattern Matching (Java 21+)"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /java-language/pattern-matching/
 id: JLG-034

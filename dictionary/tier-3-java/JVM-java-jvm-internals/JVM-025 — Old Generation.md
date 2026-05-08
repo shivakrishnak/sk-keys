@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Old Generation"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /java/old-generation/
 id: JVM-025

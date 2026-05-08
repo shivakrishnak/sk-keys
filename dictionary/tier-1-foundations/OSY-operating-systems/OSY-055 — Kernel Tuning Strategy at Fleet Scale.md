@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-055
 title: Kernel Tuning Strategy at Fleet Scale
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /osy/kernel-tuning-strategy-at-fleet-scale/
 ---

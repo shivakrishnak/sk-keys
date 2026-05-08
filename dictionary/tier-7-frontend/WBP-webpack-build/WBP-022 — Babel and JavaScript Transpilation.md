@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-022
 title: Babel and JavaScript Transpilation
 category: Webpack & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /wbp/babel-and-javascript-transpilation/
 ---

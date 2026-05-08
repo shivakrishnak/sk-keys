@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-021
 title: Functions and Procedures
 category: CS Fundamentals — Paradigms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /csf/functions-and-procedures/
 ---

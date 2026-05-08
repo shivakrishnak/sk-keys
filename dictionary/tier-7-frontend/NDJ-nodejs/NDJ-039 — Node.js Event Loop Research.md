@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-039
 title: Node.js Event Loop Research
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /ndj/nodejs-event-loop-research/
 ---

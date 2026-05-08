@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Change Data Capture (CDC)"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /nosql/change-data-capture-cdc/
 id: NDB-039

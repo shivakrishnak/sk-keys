@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "volatile"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /java-concurrency/volatile/
 id: JCC-014

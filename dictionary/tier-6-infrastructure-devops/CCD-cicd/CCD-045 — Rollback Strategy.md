@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Rollback Strategy"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /ci-cd/rollback-strategy/
 id: CCD-045

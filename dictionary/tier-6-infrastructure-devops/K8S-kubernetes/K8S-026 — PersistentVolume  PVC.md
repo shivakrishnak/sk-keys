@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "PersistentVolume  PVC"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /kubernetes/persistentvolume-pvc/
 id: K8S-026

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Full GC"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /java/full-gc/
 id: JVM-028

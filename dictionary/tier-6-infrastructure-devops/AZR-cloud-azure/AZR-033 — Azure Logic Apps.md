@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-033
 title: Azure Logic Apps
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /azr/azure-logic-apps/
 ---

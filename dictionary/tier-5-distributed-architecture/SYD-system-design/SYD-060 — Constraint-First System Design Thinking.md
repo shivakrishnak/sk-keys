@@ -1,4 +1,4 @@
----
+﻿---
 id: SYD-060
 title: Constraint-First System Design Thinking
 category: System Design
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /syd/constraint-first-system-design-thinking/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: DST-068
 title: Failure Domain Design
 category: Distributed Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /dst/failure-domain-design/
 ---

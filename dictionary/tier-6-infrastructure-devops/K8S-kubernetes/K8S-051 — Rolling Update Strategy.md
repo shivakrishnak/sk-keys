@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Rolling Update Strategy"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /kubernetes/rolling-update-strategy/
 id: K8S-051

@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-026
 title: IaC Security Scanning (tfsec, Bridgecrew)
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /iac/iac-security-scanning-tfsec-bridgecrew/
 ---

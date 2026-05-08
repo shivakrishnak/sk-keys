@@ -1,4 +1,4 @@
----
+﻿---
 id: SYD-051
 title: System Design at Hyperscale
 category: System Design
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /syd/system-design-at-hyperscale/
 ---

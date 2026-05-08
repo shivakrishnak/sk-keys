@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-002
 title: The JavaScript Mental Model (Event Loop, Single Thread)
 category: JavaScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /jsc/the-javascript-mental-model-event-loop-single-thread/
 ---

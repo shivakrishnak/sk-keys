@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-007
 title: HTML Elements and Tags
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /htm/html-elements-and-tags/
 ---

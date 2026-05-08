@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "BASE"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /distributed-systems/base/
 id: DST-014

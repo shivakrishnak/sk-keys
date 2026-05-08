@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Smoke Test"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /testing/smoke-test/
 id: TST-010

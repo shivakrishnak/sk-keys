@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Method References"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /java-language/method-references/
 id: JLG-039

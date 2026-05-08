@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Deployment"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /kubernetes/deployment/
 id: K8S-011

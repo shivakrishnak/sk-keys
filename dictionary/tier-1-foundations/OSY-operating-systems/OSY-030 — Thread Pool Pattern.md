@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-030
 title: Thread Pool Pattern
 category: Operating Systems
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /osy/thread-pool-pattern/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-019
 title: AI Explainability for End Users
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /aip/ai-explainability-for-end-users/
 ---

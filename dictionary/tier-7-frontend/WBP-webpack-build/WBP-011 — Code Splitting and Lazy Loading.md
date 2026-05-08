@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-011
 title: Code Splitting and Lazy Loading
 category: Webpack & Build Tools
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /wbp/code-splitting-and-lazy-loading/
 ---

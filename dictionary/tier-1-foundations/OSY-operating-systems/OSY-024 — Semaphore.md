@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Semaphore"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /operating-systems/semaphore/
 id: OSY-024

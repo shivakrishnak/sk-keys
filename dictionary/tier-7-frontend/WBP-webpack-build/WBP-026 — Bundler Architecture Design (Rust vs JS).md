@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-026
 title: Bundler Architecture Design (Rust vs JS)
 category: Webpack & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /wbp/bundler-architecture-design-rust-vs-js/
 ---

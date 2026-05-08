@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-023
 title: AI Output Caching and Consistency
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /aip/ai-output-caching-and-consistency/
 ---

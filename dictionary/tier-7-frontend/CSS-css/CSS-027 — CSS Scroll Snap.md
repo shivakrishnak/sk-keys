@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-027
 title: CSS Scroll Snap
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /css/css-scroll-snap/
 ---

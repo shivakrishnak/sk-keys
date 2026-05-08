@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Consumer Lag"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /big-data-streaming/consumer-lag/
 id: BIG-023

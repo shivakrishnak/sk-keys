@@ -1,4 +1,4 @@
----
+﻿---
 id: K8S-072
 title: etcd and Consensus in Kubernetes
 category: Kubernetes
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 72
 permalink: /k8s/etcd-and-consensus-in-kubernetes/
 ---

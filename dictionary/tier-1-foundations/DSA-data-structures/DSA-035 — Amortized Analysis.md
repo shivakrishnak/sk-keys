@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Amortized Analysis"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /dsa/amortized-analysis/
 id: DSA-035

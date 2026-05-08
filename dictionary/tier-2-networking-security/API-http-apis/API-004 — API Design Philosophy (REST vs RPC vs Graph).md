@@ -1,4 +1,4 @@
----
+﻿---
 id: API-004
 title: API Design Philosophy (REST vs RPC vs Graph)
 category: HTTP & APIs
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /api/api-design-philosophy-rest-vs-rpc-vs-graph/
 ---

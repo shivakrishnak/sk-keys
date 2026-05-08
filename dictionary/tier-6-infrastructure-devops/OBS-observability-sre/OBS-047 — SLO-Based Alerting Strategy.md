@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-047
 title: SLO-Based Alerting Strategy
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /obs/slo-based-alerting-strategy/
 ---

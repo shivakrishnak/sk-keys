@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DynamoDB Patterns"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /nosql/dynamodb-patterns/
 id: NDB-031

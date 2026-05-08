@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Polling vs Webhooks"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /system-design/polling-vs-webhooks/
 id: SYD-037

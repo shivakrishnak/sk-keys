@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SCP / rsync"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /linux/scp-rsync/
 id: LNX-021

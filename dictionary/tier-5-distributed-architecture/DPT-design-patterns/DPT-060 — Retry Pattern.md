@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Retry Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /design-patterns/retry-pattern/
 id: DPT-060

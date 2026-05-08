@@ -1,4 +1,4 @@
----
+﻿---
 id: MVN-041
 title: Build Tool Internals (Gradle DAG, Maven Lifecycle)
 category: Maven & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Maven & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /mvn/build-tool-internals-gradle-dag-maven-lifecycle/
 ---

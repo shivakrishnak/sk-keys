@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Multi-Level Cache"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /caching/multi-level-cache/
 id: CCH-018

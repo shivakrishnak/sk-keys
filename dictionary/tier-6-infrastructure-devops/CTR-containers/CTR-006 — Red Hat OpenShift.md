@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Red Hat OpenShift"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /containers/red-hat-openshift/
 id: CTR-006

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Redis Data Structures"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /nosql/redis-data-structures/
 id: NDB-028

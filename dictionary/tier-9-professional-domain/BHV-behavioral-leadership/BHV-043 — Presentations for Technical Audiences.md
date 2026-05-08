@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Presentations for Technical Audiences"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /leadership/presentations-for-technical-audiences/
 id: BHV-043

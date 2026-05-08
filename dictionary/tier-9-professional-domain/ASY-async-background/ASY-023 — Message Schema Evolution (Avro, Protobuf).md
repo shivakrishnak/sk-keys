@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-023
 title: Message Schema Evolution (Avro, Protobuf)
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /asy/message-schema-evolution-avro-protobuf/
 ---

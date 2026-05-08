@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-003
 title: Why Spring Boot Changed Java Development
 category: Spring Core
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /spr/why-spring-boot-changed-java-development/
 ---

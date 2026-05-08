@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-012
 title: Git Remote (origin, upstream)
 category: Git & Branching Strategy
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /git/git-remote-origin-upstream/
 ---

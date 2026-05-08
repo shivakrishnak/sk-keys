@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "PACELC"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /distributed-systems/pacelc/
 id: DST-007

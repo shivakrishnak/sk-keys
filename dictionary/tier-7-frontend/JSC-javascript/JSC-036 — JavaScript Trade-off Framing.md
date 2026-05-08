@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-036
 title: JavaScript Trade-off Framing
 category: JavaScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /jsc/javascript-trade-off-framing/
 ---

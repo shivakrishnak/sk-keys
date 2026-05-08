@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kafka Streams"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /big-data-streaming/kafka-streams/
 id: BIG-021

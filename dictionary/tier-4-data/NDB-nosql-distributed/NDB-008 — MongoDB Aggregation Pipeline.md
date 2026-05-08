@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "MongoDB Aggregation Pipeline"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /nosql/mongodb-aggregation-pipeline/
 id: NDB-008

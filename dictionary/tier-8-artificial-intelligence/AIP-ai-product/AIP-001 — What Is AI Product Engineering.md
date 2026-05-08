@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-001
 title: What Is AI Product Engineering
 category: AI Product Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /aip/what-is-ai-product-engineering/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-004
 title: Why Docker Changed Everything
 category: Containers
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /ctr/why-docker-changed-everything/
 ---

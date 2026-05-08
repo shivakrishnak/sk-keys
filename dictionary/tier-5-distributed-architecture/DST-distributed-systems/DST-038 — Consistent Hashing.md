@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Consistent Hashing"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /distributed-systems/consistent-hashing/
 id: DST-038

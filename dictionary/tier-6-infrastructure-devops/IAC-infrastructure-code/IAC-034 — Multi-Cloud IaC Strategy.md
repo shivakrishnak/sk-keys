@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-034
 title: Multi-Cloud IaC Strategy
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /iac/multi-cloud-iac-strategy/
 ---

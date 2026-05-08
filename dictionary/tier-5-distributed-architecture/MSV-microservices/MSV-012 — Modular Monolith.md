@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Modular Monolith"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /microservices/modular-monolith/
 id: MSV-012

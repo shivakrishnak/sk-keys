@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Apollo Client"
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /react/apollo-client/
 id: RCT-010

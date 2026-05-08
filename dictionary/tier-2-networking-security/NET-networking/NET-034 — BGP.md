@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "BGP"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /networking/bgp/
 id: NET-034

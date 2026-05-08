@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "StampedLock"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /java-concurrency/stamped-lock/
 id: JCC-018

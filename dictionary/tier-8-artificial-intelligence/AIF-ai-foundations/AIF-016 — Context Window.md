@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Context Window"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /ai-foundations/context-window/
 id: AIF-016

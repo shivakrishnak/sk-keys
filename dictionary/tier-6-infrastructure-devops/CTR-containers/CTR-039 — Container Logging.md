@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Container Logging"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /containers/container-logging/
 id: CTR-039

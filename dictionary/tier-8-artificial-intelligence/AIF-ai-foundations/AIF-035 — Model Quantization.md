@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Model Quantization"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /ai-foundations/model-quantization/
 id: AIF-035

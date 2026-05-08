@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-053
 title: Concurrent Algorithm Research
 category: Java Concurrency
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /jcc/concurrent-algorithm-research/
 ---

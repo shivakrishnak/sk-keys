@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-031
 title: LLM Benchmarks (MMLU, HumanEval, HELM)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /llm/llm-benchmarks-mmlu-humaneval-helm/
 ---

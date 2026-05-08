@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-001
 title: What Is AWS and the Cloud Model
 category: Cloud -- AWS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /aws/what-is-aws-and-the-cloud-model/
 ---

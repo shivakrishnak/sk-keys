@@ -1,4 +1,4 @@
----
+﻿---
 id: TST-069
 title: Testing Trade-off Framing
 category: Testing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 69
 permalink: /tst/testing-trade-off-framing/
 ---

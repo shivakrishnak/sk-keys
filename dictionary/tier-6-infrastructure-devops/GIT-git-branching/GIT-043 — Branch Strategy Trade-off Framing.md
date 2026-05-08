@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-043
 title: Branch Strategy Trade-off Framing
 category: Git & Branching Strategy
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /git/branch-strategy-trade-off-framing/
 ---

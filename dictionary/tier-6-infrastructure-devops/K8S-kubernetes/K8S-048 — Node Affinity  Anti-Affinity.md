@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Node Affinity  Anti-Affinity"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /kubernetes/node-affinity-anti-affinity/
 id: K8S-048

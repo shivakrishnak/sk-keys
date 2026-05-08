@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "strace / ltrace"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /linux/strace-ltrace/
 id: LNX-036

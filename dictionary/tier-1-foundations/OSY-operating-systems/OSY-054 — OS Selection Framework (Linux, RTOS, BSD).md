@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-054
 title: OS Selection Framework (Linux, RTOS, BSD)
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /osy/os-selection-framework-linux-rtos-bsd/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-009
 title: Express.js Fundamentals (Routing, Middleware)
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /ndj/expressjs-fundamentals-routing-middleware/
 ---

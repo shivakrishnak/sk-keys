@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-032
 title: Azure Event Grid
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /azr/azure-event-grid/
 ---

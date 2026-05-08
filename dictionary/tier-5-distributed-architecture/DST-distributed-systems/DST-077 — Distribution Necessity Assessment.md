@@ -1,4 +1,4 @@
----
+﻿---
 id: DST-077
 title: Distribution Necessity Assessment
 category: Distributed Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 77
 permalink: /dst/distribution-necessity-assessment/
 ---

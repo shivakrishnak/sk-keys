@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-032
 title: PDF Format Research (PDF 2.0, PDF/UA)
 category: Document Generation
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /dgn/pdf-format-research-pdf-20-pdfua/
 ---

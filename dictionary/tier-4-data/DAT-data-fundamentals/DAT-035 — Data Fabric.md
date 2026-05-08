@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Fabric"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /data-fundamentals/data-fabric/
 id: DAT-035

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Deadlock Detection (DB)"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /databases/deadlock-detection/
 id: DBF-040

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "React Accessibility (a11y)"
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /react/react-accessibility-a11y/
 id: RCT-006

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Canary Deployment (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /microservices/canary-deployment-microservices/
 id: MSV-054

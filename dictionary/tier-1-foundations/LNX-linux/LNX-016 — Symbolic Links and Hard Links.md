@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Symbolic Links and Hard Links"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /linux/symbolic-links-hard-links/
 id: LNX-016

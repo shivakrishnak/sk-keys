@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "VLAN"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /networking/vlan/
 id: NET-040

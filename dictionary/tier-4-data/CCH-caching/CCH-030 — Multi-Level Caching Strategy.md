@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-030
 title: Multi-Level Caching Strategy
 category: Caching
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /cch/multi-level-caching-strategy/
 ---

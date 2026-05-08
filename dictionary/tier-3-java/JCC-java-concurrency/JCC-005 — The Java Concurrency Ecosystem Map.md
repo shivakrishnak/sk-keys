@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-005
 title: The Java Concurrency Ecosystem Map
 category: Java Concurrency
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /jcc/the-java-concurrency-ecosystem-map/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Health Check Patterns"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /microservices/health-check-patterns/
 id: MSV-023

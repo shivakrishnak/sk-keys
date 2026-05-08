@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-019
 title: Saga Pattern (Distributed Transactions)
 category: Async & Background Processing
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /asy/saga-pattern-distributed-transactions/
 ---

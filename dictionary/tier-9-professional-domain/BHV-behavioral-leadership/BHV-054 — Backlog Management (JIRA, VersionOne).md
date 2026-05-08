@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Backlog Management (JIRA, VersionOne)"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /leadership/backlog-management-jira-versionone/
 id: BHV-054

@@ -1,7 +1,8 @@
- ,mknnjlio0988//*--
+﻿ ,mknnjlio0988//*--
 layout: default
 title: "Data Mesh"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /data-fundamentals/data-mesh/
 id: DAT-034

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Point-to-Point vs Pub-Sub"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /big-data-streaming/point-to-point-vs-pub-sub/
 id: BIG-040

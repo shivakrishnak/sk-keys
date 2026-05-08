@@ -1,4 +1,4 @@
----
+﻿---
 id: TST-001
 title: Why Testing Matters -- The Cost of Bugs
 category: Testing
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /tst/why-testing-matters----the-cost-of-bugs/
 ---

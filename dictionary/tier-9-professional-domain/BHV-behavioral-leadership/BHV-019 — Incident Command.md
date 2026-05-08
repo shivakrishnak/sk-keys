@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Incident Command"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /leadership/incident-command/
 id: BHV-019

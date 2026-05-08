@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Anti-Patterns Overview"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /design-patterns/anti-patterns-overview/
 id: DPT-042

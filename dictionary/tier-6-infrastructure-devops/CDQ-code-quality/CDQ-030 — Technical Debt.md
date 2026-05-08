@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Technical Debt"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /code-quality/technical-debt/
 id: CDQ-030

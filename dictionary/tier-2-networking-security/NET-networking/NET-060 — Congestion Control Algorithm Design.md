@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-060
 title: Congestion Control Algorithm Design
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /net/congestion-control-algorithm-design/
 ---

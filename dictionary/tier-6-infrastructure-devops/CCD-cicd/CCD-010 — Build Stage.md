@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Build Stage"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /ci-cd/build-stage/
 id: CCD-010

@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-055
 title: SLO Trade-off Framing
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /obs/slo-trade-off-framing/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ArgoCD"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /kubernetes/argocd/
 id: K8S-056

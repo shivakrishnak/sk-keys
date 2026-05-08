@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Backtracking"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /dsa/backtracking/
 id: DSA-040

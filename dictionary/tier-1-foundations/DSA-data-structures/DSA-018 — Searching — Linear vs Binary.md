@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-018
 title: Searching — Linear vs Binary
 category: Data Structures & Algorithms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /dsa/searching-linear-vs-binary/
 ---

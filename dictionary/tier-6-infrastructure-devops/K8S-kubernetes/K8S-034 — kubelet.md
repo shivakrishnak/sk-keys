@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "kubelet"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /kubernetes/kubelet/
 id: K8S-034

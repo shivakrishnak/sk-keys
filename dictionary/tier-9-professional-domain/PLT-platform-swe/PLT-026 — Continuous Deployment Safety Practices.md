@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-026
 title: Continuous Deployment Safety Practices
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /plt/continuous-deployment-safety-practices/
 ---

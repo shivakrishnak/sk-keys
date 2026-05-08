@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Compression (gzip, snappy, zstd, lz4)"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /data-fundamentals/data-compression/
 id: DAT-020

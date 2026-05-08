@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-050
 title: Azure vs AWS Selection Framework
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /azr/azure-vs-aws-selection-framework/
 ---

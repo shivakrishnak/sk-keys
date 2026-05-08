@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-002
 title: The React Mental Model (Declarative UI, Virtual DOM)
 category: React
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /rct/the-react-mental-model-declarative-ui-virtual-dom/
 ---

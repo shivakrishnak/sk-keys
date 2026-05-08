@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-049
 title: Java Language Design History and Rationale
 category: Java Language
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /jlg/java-language-design-history-and-rationale/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "EBS  EFS"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /cloud-aws/ebs-efs/
 id: AWS-044

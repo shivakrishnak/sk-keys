@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-046
 title: Service Security Hardening Basics
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /lnx/service-security-hardening-basics/
 ---

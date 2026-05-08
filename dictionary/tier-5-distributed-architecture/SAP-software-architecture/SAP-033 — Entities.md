@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Entities"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /software-architecture/entities/
 id: SAP-033

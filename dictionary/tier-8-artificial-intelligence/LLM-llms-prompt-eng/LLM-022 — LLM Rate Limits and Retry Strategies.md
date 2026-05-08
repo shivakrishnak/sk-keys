@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-022
 title: LLM Rate Limits and Retry Strategies
 category: LLMs & Prompt Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /llm/llm-rate-limits-and-retry-strategies/
 ---

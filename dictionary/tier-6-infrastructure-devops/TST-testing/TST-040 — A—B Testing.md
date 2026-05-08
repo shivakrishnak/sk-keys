@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "A—B Testing"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /testing/a-b-testing/
 id: TST-040

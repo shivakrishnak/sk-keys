@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS ECS  Fargate"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /cloud-aws/aws-ecs-fargate/
 id: AWS-021

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "S3 Storage Classes"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /cloud-aws/s3-storage-classes/
 id: AWS-042

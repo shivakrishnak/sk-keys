@@ -1,4 +1,4 @@
----
+﻿---
 id: SYD-054
 title: System Evolution Strategy
 category: System Design
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /syd/system-evolution-strategy/
 ---

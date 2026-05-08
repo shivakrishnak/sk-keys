@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-061
 title: Kernel Version Policy at Scale
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /lnx/kernel-version-policy-at-scale/
 ---

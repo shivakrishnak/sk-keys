@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Divergent Change"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /code-quality/divergent-change/
 id: CDQ-029

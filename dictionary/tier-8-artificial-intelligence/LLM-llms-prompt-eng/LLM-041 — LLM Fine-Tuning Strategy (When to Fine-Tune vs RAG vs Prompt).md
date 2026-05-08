@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-041
 title: LLM Fine-Tuning Strategy (When to Fine-Tune vs RAG vs Prompt)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /llm/llm-fine-tuning-strategy-when-to-fine-tune-vs-rag-vs-prompt/
 ---

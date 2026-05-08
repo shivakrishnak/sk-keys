@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-045
 title: Container Image Strategy at Scale
 category: Containers
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /ctr/container-image-strategy-at-scale/
 ---

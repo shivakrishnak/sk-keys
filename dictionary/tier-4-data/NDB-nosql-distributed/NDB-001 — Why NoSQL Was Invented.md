@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-001
 title: Why NoSQL Was Invented
 category: NoSQL & Distributed Databases
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /ndb/why-nosql-was-invented/
 ---

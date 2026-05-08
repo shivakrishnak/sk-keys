@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Open Policy Agent (OPA)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /ci-cd/open-policy-agent-opa/
 id: CCD-050

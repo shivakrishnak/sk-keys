@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-021
 title: TypeScript with React (JSX, Component Typing)
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /tsc/typescript-with-react-jsx-component-typing/
 ---

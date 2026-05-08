@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-064
 title: Pattern-Driven Architecture Design
 category: Design Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /dpt/pattern-driven-architecture-design/
 ---

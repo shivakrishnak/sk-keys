@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-036
 title: XXE Injection
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /sec/xxe-injection/
 ---

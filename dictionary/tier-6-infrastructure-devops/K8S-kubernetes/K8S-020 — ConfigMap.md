@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ConfigMap"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /kubernetes/configmap/
 id: K8S-020

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Network Policy"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /kubernetes/network-policy/
 id: K8S-044

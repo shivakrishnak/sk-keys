@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ElastiCache"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /cloud-aws/elasticache/
 id: AWS-048

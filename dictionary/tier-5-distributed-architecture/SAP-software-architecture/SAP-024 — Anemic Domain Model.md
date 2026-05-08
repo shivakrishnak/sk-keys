@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Anemic Domain Model"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /software-architecture/anemic-domain-model/
 id: SAP-024

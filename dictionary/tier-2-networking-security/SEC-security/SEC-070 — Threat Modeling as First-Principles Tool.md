@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-070
 title: Threat Modeling as First-Principles Tool
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 70
 permalink: /sec/threat-modeling-as-first-principles-tool/
 ---

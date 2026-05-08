@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GraphQL N+1 Problem"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /http-apis/graphql-n-plus-1-problem/
 id: API-042

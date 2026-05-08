@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Versioning Strategy"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /microservices/versioning-strategy/
 id: MSV-061

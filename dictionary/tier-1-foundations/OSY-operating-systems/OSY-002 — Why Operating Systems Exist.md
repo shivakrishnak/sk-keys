@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-002
 title: Why Operating Systems Exist
 category: Operating Systems
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /osy/why-operating-systems-exist/
 ---

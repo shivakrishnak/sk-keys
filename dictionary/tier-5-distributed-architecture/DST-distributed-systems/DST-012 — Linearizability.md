@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Linearizability"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /distributed-systems/linearizability/
 id: DST-012

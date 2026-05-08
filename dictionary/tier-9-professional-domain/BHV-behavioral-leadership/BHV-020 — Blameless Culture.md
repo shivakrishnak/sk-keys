@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Blameless Culture"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /leadership/blameless-culture/
 id: BHV-020

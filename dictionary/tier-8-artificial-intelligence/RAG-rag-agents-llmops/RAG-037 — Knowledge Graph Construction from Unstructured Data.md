@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-037
 title: Knowledge Graph Construction from Unstructured Data
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /rag/knowledge-graph-construction-from-unstructured-data/
 ---

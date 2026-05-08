@@ -1,4 +1,4 @@
----
+﻿---
 id: DBF-061
 title: RDBMS Engine Internals (InnoDB, PostgreSQL)
 category: Database Fundamentals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /dbf/rdbms-engine-internals-innodb-postgresql/
 ---

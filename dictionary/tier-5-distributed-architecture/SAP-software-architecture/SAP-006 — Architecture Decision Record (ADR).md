@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Architecture Decision Record (ADR)"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /software-architecture/architecture-decision-record/
 id: SAP-006

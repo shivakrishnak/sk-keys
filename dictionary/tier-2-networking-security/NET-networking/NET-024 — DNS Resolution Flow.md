@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DNS Resolution Flow"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /networking/dns-resolution-flow/
 id: NET-024

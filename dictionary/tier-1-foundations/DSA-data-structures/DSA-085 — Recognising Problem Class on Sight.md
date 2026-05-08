@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-085
 title: Recognising Problem Class on Sight
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 85
 permalink: /dsa/recognising-problem-class-on-sight/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Back-of-Envelope Estimation"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /system-design/back-of-envelope-estimation/
 id: SYD-026

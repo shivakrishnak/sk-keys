@@ -1,4 +1,4 @@
----
+﻿---
 id: API-070
 title: HTTP Protocol Design Internals
 category: HTTP & APIs
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 70
 permalink: /api/http-protocol-design-internals/
 ---

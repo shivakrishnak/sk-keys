@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SOAP"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /http-apis/soap/
 id: API-052

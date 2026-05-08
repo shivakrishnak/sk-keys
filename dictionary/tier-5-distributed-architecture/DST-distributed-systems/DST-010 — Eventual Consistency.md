@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Eventual Consistency"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /distributed-systems/eventual-consistency/
 id: DST-010

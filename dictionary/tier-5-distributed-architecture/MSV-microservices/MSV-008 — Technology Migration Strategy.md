@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Technology Migration Strategy"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /microservices/technology-migration-strategy/
 id: MSV-008

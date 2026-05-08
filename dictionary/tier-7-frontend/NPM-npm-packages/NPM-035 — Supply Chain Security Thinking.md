@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-035
 title: Supply Chain Security Thinking
 category: npm & Package Management
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /npm/supply-chain-security-thinking/
 ---

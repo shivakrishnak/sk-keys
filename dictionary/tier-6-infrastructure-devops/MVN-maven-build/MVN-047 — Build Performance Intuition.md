@@ -1,4 +1,4 @@
----
+﻿---
 id: MVN-047
 title: Build Performance Intuition
 category: Maven & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Maven & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /mvn/build-performance-intuition/
 ---

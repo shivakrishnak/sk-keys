@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Read-Through"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /caching/read-through/
 id: CCH-007

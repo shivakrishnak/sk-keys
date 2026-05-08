@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DynamoDB"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /cloud-aws/dynamodb/
 id: AWS-047

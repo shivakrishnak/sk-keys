@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DRY (Don't Repeat Yourself)"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /software-architecture/dry/
 id: SAP-044

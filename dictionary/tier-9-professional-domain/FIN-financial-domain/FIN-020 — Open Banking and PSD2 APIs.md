@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-020
 title: Open Banking and PSD2 APIs
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /fin/open-banking-and-psd2-apis/
 ---

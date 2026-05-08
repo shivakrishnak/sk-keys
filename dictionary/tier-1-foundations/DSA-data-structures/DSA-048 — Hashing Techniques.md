@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Hashing Techniques"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /dsa/hashing-techniques/
 id: DSA-048

@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-063
 title: Performance Intuition from First Principles
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /osy/performance-intuition-from-first-principles/
 ---

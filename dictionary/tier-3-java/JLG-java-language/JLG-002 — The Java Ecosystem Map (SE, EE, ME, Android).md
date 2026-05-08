@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-002
 title: The Java Ecosystem Map (SE, EE, ME, Android)
 category: Java Language
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /jlg/the-java-ecosystem-map-se-ee-me-android/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-005
 title: Package Management in Production -- What to Expect
 category: npm & Package Management
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /npm/package-management-in-production----what-to-expect/
 ---

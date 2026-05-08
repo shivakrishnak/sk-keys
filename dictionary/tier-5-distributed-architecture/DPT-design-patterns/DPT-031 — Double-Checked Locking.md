@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Double-Checked Locking"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /design-patterns/double-checked-locking/
 id: DPT-031

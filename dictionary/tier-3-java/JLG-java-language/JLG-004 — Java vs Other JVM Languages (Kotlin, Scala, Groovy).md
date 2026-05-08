@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-004
 title: Java vs Other JVM Languages (Kotlin, Scala, Groovy)
 category: Java Language
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /jlg/java-vs-other-jvm-languages-kotlin-scala-groovy/
 ---

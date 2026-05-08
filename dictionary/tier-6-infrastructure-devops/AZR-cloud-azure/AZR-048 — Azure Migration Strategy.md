@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-048
 title: Azure Migration Strategy
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /azr/azure-migration-strategy/
 ---

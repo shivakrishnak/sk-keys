@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GitLab CI"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /ci-cd/gitlab-ci/
 id: CCD-016

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Blackboard Pattern"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /software-architecture/blackboard-pattern/
 id: SAP-042

@@ -1,4 +1,4 @@
----
+﻿---
 id: BHV-001
 title: What Is Software Engineering Leadership
 category: Behavioral & Leadership
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /bhv/what-is-software-engineering-leadership/
 ---

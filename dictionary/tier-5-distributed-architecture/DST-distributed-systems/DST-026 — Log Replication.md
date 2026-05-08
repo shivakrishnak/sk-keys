@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Log Replication"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /distributed-systems/log-replication/
 id: DST-026

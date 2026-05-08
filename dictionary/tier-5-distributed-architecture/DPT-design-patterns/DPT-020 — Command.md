@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Command"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /design-patterns/command/
 id: DPT-020

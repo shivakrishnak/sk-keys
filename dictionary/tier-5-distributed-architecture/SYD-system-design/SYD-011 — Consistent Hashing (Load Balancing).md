@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Consistent Hashing (Load Balancing)"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /system-design/consistent-hashing/
 id: SYD-011

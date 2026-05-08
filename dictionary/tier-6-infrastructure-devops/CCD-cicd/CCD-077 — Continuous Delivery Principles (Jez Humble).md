@@ -1,4 +1,4 @@
----
+﻿---
 id: CCD-077
 title: Continuous Delivery Principles (Jez Humble)
 category: CI/CD
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 77
 permalink: /ccd/continuous-delivery-principles-jez-humble/
 ---

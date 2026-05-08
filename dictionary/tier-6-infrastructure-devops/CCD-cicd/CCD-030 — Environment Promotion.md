@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Environment Promotion"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /ci-cd/environment-promotion/
 id: CCD-030

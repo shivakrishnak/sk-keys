@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CMS (Concurrent Mark Sweep)"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /java/cms-concurrent-mark-sweep/
 id: JVM-032

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DFS"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /dsa/dfs/
 id: DSA-028

@@ -1,4 +1,4 @@
----
+﻿---
 id: CCD-004
 title: The CI/CD Ecosystem Map (Jenkins, GitHub Actions, GitLab)
 category: CI/CD
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /ccd/the-cicd-ecosystem-map-jenkins-github-actions-gitlab/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-029
 title: Certificate Management Lifecycle
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /sec/certificate-management-lifecycle/
 ---

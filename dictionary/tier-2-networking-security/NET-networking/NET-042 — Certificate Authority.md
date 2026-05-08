@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Certificate Authority"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /networking/certificate-authority/
 id: NET-042

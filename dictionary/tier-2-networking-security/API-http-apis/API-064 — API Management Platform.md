@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Management Platform"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /http-apis/api-management-platform/
 id: API-064

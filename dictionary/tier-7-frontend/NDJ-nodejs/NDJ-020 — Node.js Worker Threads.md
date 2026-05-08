@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-020
 title: Node.js Worker Threads
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /ndj/nodejs-worker-threads/
 ---

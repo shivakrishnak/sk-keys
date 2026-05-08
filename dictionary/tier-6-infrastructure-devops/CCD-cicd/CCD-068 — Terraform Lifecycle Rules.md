@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Lifecycle Rules"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /ci-cd/terraform-lifecycle-rules/
 id: CCD-068

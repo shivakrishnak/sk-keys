@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pulsar"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /big-data-streaming/pulsar/
 id: BIG-037

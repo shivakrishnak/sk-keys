@@ -1,4 +1,4 @@
----
+﻿---
 id: BHV-067
 title: Engineering Communication Mental Model
 category: Behavioral & Leadership
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 67
 permalink: /bhv/engineering-communication-mental-model/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "OSR (On-Stack Replacement)"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /java/osr-on-stack-replacement/
 id: JVM-046

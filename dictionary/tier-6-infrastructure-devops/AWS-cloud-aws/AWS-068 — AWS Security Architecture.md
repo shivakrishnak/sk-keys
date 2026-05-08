@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-068
 title: AWS Security Architecture
 category: Cloud -- AWS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /aws/aws-security-architecture/
 ---

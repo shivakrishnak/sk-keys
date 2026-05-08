@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-022
 title: Open Graph Protocol (og: meta tags)
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /htm/open-graph-protocol-og-meta-tags/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-022
 title: Release Engineering (Release Trains, Freeze, Hotfix)
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /plt/release-engineering-release-trains-freeze-hotfix/
 ---

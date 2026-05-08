@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-011
 title: CSS Display (block, inline, inline-block, none)
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /css/css-display-block-inline-inline-block-none/
 ---

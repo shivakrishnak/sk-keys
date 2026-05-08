@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CRDT"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /distributed-systems/crdt/
 id: DST-061

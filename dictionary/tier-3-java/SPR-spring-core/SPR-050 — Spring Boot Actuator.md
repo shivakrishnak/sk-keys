@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Boot Actuator"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /spring/spring-boot-actuator/
 id: SPR-050

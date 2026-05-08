@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ElastiCache"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /nosql/elasticache/
 id: NDB-014

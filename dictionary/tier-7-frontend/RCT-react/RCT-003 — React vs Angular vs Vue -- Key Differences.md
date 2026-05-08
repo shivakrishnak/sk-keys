@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-003
 title: React vs Angular vs Vue -- Key Differences
 category: React
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /rct/react-vs-angular-vs-vue----key-differences/
 ---

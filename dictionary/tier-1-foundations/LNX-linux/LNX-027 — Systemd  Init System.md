@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Systemd / Init System"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /linux/systemd-init-system/
 id: LNX-027

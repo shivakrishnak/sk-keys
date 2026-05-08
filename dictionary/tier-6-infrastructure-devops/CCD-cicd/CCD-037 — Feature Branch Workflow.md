@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Feature Branch Workflow"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /ci-cd/feature-branch-workflow/
 id: CCD-037

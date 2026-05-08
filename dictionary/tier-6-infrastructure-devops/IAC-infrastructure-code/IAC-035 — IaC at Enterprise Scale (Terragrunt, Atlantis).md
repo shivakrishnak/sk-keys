@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-035
 title: IaC at Enterprise Scale (Terragrunt, Atlantis)
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /iac/iac-at-enterprise-scale-terragrunt-atlantis/
 ---

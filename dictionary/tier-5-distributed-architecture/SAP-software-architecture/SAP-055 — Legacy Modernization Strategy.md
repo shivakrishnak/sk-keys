@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-055
 title: Legacy Modernization Strategy
 category: Software Architecture Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /sap/legacy-modernization-strategy/
 ---

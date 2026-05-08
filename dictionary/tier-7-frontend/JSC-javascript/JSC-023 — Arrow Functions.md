@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Arrow Functions"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /javascript/arrow-functions/
 id: JSC-023

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Leader-Follower Pattern"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /system-design/leader-follower-pattern/
 id: SYD-040

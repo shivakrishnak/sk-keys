@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Congestion Control"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /networking/congestion-control/
 id: NET-020

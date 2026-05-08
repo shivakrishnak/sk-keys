@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-035
 title: LLM Memory Architecture (KV Cache, Flash Attention)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /llm/llm-memory-architecture-kv-cache-flash-attention/
 ---

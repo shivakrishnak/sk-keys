@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-048
 title: Container Runtime Internals (runc, containerd)
 category: Containers
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /ctr/container-runtime-internals-runc-containerd/
 ---

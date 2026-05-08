@@ -1,4 +1,4 @@
----
+﻿---
 id: API-012
 title: URL and URI Structure
 category: HTTP & APIs
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /api/url-and-uri-structure/
 ---

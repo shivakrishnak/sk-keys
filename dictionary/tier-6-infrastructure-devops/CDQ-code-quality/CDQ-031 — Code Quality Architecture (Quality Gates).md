@@ -1,4 +1,4 @@
----
+﻿---
 id: CDQ-031
 title: Code Quality Architecture (Quality Gates)
 category: Code Quality
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /cdq/code-quality-architecture-quality-gates/
 ---

@@ -2,6 +2,7 @@
 layout: default
 title: "Aspect-Oriented Programming"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /cs-fundamentals/aspect-oriented-programming/
 id: CSF-042

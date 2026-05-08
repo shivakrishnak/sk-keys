@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-037
 title: TypeScript Monorepo Strategy (Type Sharing)
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /tsc/typescript-monorepo-strategy-type-sharing/
 ---

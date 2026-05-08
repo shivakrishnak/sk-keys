@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "synchronized"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /java-concurrency/synchronized/
 id: JCC-013

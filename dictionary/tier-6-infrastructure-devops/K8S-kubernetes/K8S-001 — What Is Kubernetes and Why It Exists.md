@@ -1,4 +1,4 @@
----
+﻿---
 id: K8S-001
 title: What Is Kubernetes and Why It Exists
 category: Kubernetes
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /k8s/what-is-kubernetes-and-why-it-exists/
 ---

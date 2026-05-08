@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Rate Limiting (System)"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /system-design/rate-limiting-system/
 id: SYD-028

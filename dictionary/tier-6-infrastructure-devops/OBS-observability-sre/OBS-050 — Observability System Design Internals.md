@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-050
 title: Observability System Design Internals
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /obs/observability-system-design-internals/
 ---

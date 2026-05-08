@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Database Migration"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /databases/database-migration/
 id: DBF-054

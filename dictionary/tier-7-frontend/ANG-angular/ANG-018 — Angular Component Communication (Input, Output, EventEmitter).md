@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-018
 title: Angular Component Communication (Input, Output, EventEmitter)
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /ang/angular-component-communication-input-output-eventemitter/
 ---

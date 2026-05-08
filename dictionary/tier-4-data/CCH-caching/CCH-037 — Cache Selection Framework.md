@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-037
 title: Cache Selection Framework
 category: Caching
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /cch/cache-selection-framework/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Cloud Overview"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /spring/spring-cloud-overview/
 id: SPR-010

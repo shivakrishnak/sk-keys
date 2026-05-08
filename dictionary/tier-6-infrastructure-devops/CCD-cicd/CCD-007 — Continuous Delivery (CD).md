@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Continuous Delivery (CD)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /ci-cd/continuous-delivery/
 id: CCD-007

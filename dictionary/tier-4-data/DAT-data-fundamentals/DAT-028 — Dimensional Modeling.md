@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Dimensional Modeling"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /data-fundamentals/dimensional-modeling/
 id: DAT-028

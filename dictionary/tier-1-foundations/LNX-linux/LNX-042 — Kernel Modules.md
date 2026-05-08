@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kernel Modules"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /linux/kernel-modules/
 id: LNX-042

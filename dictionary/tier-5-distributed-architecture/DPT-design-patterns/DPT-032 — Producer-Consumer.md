@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Producer-Consumer"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /design-patterns/producer-consumer/
 id: DPT-032

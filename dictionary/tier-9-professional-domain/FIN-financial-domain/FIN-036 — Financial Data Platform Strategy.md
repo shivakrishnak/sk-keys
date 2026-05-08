@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-036
 title: Financial Data Platform Strategy
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /fin/financial-data-platform-strategy/
 ---

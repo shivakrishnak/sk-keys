@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-010
 title: RabbitMQ Fundamentals (Exchange, Queue, Binding)
 category: Async & Background Processing
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /asy/rabbitmq-fundamentals-exchange-queue-binding/
 ---

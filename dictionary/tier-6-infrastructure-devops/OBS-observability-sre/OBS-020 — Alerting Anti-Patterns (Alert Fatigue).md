@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-020
 title: Alerting Anti-Patterns (Alert Fatigue)
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /obs/alerting-anti-patterns-alert-fatigue/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Test Diamond"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /testing/test-diamond/
 id: TST-024

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "NP-Complete Problems"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 69
 permalink: /dsa/np-complete-problems/
 id: DSA-069

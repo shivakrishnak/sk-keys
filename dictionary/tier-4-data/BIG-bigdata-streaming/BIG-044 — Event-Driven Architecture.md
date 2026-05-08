@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Event-Driven Architecture"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /big-data-streaming/event-driven-architecture/
 id: BIG-044

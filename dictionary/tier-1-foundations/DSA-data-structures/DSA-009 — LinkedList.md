@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "LinkedList"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /dsa/linkedlist/
 id: DSA-009

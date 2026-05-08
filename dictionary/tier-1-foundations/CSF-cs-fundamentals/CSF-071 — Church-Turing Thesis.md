@@ -2,6 +2,7 @@
 layout: default
 title: "Church-Turing Thesis"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 71
 permalink: /cs-fundamentals/church-turing-thesis/
 id: CSF-071

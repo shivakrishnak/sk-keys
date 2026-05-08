@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pact (Contract Testing)"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /testing/pact-contract-testing/
 id: TST-034

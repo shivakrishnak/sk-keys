@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Object Header"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /java/object-header/
 id: JVM-016

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS Global Infrastructure"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /cloud-aws/aws-global-infrastructure/
 id: AWS-025

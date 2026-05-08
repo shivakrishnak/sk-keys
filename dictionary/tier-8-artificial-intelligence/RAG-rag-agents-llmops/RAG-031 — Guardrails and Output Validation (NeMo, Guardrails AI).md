@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-031
 title: Guardrails and Output Validation (NeMo, Guardrails AI)
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /rag/guardrails-and-output-validation-nemo-guardrails-ai/
 ---

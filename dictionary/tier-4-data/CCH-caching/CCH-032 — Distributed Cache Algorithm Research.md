@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-032
 title: Distributed Cache Algorithm Research
 category: Caching
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /cch/distributed-cache-algorithm-research/
 ---

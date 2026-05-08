@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-036
 title: Platform Engineering Strategy (Build vs Buy)
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /plt/platform-engineering-strategy-build-vs-buy/
 ---

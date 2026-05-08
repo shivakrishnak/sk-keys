@@ -1,4 +1,4 @@
----
+﻿---
 id: DST-073
 title: Formal Models for Distributed Systems (TLA+)
 category: Distributed Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 73
 permalink: /dst/formal-models-for-distributed-systems-tla/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sidecar Pattern (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /microservices/sidecar-pattern-microservices/
 id: MSV-063

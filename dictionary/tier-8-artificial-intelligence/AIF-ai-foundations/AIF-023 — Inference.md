@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Inference"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /ai-foundations/inference/
 id: AIF-023

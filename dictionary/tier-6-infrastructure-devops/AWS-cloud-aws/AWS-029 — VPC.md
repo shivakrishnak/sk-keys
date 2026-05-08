@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "VPC"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /cloud-aws/vpc/
 id: AWS-029

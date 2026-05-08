@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-002
 title: The Box Model -- Everything in CSS Is a Box
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /css/the-box-model----everything-in-css-is-a-box/
 ---

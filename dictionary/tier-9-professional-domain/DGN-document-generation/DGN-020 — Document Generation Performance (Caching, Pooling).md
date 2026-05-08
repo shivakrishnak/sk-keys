@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-020
 title: Document Generation Performance (Caching, Pooling)
 category: Document Generation
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /dgn/document-generation-performance-caching-pooling/
 ---

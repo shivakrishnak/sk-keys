@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Top-p  Top-k Sampling"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /ai-foundations/top-p-top-k-sampling/
 id: AIF-018

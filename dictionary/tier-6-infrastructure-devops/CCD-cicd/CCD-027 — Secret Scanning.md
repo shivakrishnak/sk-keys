@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Secret Scanning"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /ci-cd/secret-scanning/
 id: CCD-027

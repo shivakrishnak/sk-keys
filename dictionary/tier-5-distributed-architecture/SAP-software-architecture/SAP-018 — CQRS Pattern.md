@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CQRS Pattern"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /software-architecture/cqrs-pattern/
 id: SAP-018

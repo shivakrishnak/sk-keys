@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Tabulation (Bottom-Up DP)"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /dsa/tabulation-bottom-up-dp/
 id: DSA-039

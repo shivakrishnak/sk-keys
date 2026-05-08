@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-043
 title: LLM Cost and Latency Architecture Design
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /llm/llm-cost-and-latency-architecture-design/
 ---

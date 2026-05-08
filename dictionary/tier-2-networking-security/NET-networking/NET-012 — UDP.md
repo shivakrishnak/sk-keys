@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "UDP"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /networking/udp/
 id: NET-012

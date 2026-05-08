@@ -1,4 +1,4 @@
----
+﻿---
 id: BHV-065
 title: Organizational Psychology for Engineers
 category: Behavioral & Leadership
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /bhv/organizational-psychology-for-engineers/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "K8s Security Hardening"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /kubernetes/k8s-security-hardening/
 id: K8S-064

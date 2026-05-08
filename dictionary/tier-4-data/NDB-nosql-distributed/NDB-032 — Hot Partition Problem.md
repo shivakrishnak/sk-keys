@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Hot Partition Problem"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /nosql/hot-partition-problem/
 id: NDB-032

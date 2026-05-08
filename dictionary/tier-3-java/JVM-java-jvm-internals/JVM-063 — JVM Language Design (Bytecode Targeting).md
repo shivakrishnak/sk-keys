@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-063
 title: JVM Language Design (Bytecode Targeting)
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /jvm/jvm-language-design-bytecode-targeting/
 ---

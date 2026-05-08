@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Connection Pooling (DB)"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /databases/connection-pooling/
 id: DBF-041

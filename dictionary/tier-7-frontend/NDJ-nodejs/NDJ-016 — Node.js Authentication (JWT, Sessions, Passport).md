@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-016
 title: Node.js Authentication (JWT, Sessions, Passport)
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /ndj/nodejs-authentication-jwt-sessions-passport/
 ---

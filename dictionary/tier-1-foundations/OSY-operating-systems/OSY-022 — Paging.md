@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Paging"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /operating-systems/paging/
 id: OSY-022

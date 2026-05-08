@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-013
 title: Azure SQL Database
 category: Cloud -- Azure
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /azr/azure-sql-database/
 ---

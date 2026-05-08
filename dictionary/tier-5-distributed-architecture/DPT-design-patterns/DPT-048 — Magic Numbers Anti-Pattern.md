@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Magic Numbers Anti-Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /design-patterns/magic-numbers-anti-pattern/
 id: DPT-048

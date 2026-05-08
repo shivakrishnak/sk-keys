@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Fan-Out on Write vs Read"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /system-design/fan-out-on-write-vs-read/
 id: SYD-035

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Container Registry"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /containers/container-registry/
 id: CTR-016

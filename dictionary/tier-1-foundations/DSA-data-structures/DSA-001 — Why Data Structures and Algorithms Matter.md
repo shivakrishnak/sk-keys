@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-001
 title: Why Data Structures and Algorithms Matter
 category: Data Structures & Algorithms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /dsa/why-data-structures-and-algorithms-matter/
 ---

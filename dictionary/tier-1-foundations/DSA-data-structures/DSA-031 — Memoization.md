@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Memoization"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /dsa/memoization/
 id: DSA-031

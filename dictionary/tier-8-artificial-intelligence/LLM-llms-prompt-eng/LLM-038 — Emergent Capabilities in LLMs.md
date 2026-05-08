@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-038
 title: Emergent Capabilities in LLMs
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /llm/emergent-capabilities-in-llms/
 ---

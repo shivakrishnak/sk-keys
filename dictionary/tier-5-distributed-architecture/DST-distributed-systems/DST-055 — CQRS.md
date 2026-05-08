@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CQRS"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /distributed-systems/cqrs/
 id: DST-055

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Mono  Flux"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /spring/mono-flux/
 id: SPR-053

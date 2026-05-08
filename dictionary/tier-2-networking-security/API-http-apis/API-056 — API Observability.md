@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Observability"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /http-apis/api-observability/
 id: API-056

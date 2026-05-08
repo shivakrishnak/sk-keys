@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-019
 title: Angular Standalone Components (v15+)
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /ang/angular-standalone-components-v15/
 ---

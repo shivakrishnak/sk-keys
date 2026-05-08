@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-004
 title: The JavaScript Ecosystem Map (Node, Deno, Bun, Browsers)
 category: JavaScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /jsc/the-javascript-ecosystem-map-node-deno-bun-browsers/
 ---

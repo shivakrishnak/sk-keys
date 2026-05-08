@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-050
 title: Thread Model Selection Framework
 category: Java Concurrency
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /jcc/thread-model-selection-framework/
 ---

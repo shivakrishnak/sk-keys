@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-042
 title: Multi-Model Database Strategy
 category: NoSQL & Distributed Databases
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /ndb/multi-model-database-strategy/
 ---

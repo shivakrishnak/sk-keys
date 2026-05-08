@@ -1,4 +1,4 @@
----
+﻿---
 id: API-075
 title: API Design Trade-off Framing
 category: HTTP & APIs
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 75
 permalink: /api/api-design-trade-off-framing/
 ---

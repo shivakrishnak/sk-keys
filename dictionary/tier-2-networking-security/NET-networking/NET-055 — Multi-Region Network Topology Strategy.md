@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-055
 title: Multi-Region Network Topology Strategy
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /net/multi-region-network-topology-strategy/
 ---

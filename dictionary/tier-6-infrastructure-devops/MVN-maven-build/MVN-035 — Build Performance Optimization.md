@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Build Performance Optimization"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /maven-build/build-performance-optimization/
 id: MVN-035

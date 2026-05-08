@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Boot Startup Lifecycle"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /spring/spring-boot-startup-lifecycle/
 id: SPR-051

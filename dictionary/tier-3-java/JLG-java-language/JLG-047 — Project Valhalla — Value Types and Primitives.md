@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-047
 title: Project Valhalla — Value Types and Primitives
 category: Java Language
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /jlg/project-valhalla-value-types-and-primitives/
 ---

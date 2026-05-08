@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-035
 title: Regulatory Compliance Architecture Design
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /fin/regulatory-compliance-architecture-design/
 ---

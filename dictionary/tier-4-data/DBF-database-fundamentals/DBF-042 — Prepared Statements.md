@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Prepared Statements"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /databases/prepared-statements/
 id: DBF-042

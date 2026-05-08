@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ICMP / ping / traceroute"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /networking/icmp-ping-traceroute/
 id: NET-027

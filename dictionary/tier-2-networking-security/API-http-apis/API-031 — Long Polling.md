@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Long Polling"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /http-apis/long-polling/
 id: API-031

@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-010
 title: Node.js Events and EventEmitter
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /ndj/nodejs-events-and-eventemitter/
 ---

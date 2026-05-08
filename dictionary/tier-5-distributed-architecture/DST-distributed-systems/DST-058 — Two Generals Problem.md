@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Two Generals Problem"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 58
 permalink: /distributed-systems/two-generals-problem/
 id: DST-058

@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-017
 title: TypeScript Modules and Namespaces
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /tsc/typescript-modules-and-namespaces/
 ---

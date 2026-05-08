@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "HMAC"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /http-apis/hmac/
 id: API-036

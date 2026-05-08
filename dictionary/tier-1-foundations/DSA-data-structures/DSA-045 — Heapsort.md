@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Heapsort"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /dsa/heapsort/
 id: DSA-045

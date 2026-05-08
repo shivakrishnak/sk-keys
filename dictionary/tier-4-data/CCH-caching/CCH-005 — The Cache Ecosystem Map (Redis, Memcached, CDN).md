@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-005
 title: The Cache Ecosystem Map (Redis, Memcached, CDN)
 category: Caching
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /cch/the-cache-ecosystem-map-redis-memcached-cdn/
 ---

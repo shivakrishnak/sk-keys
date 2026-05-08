@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-038
 title: Interfaces vs Abstract Classes
 category: CS Fundamentals — Paradigms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /csf/interfaces-vs-abstract-classes/
 ---

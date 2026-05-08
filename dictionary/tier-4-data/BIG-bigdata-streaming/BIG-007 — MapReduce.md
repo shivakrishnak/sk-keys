@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "MapReduce"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /big-data-streaming/mapreduce/
 id: BIG-007

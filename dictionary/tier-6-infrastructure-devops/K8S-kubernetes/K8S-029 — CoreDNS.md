@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CoreDNS"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /kubernetes/coredns/
 id: K8S-029

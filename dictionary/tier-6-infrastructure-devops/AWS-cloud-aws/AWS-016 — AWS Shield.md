@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS Shield"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /cloud-aws/aws-shield/
 id: AWS-016

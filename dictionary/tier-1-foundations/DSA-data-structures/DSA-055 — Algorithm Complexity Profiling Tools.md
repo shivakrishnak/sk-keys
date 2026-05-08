@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-055
 title: Algorithm Complexity Profiling Tools
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /dsa/algorithm-complexity-profiling-tools/
 ---

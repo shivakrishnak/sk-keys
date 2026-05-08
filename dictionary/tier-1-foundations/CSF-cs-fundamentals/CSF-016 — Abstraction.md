@@ -2,6 +2,7 @@
 layout: default
 title: "Abstraction"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /cs-fundamentals/abstraction/
 id: CSF-016

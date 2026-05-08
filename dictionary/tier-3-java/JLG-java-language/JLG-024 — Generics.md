@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Generics"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /java-language/generics/
 id: JLG-024

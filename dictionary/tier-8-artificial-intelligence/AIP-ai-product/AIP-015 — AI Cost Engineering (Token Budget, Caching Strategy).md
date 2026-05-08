@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-015
 title: AI Cost Engineering (Token Budget, Caching Strategy)
 category: AI Product Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /aip/ai-cost-engineering-token-budget-caching-strategy/
 ---

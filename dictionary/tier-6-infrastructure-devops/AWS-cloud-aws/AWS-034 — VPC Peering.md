@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "VPC Peering"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /cloud-aws/vpc-peering/
 id: AWS-034

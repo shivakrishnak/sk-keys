@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bulkhead Pattern"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /microservices/bulkhead-pattern/
 id: MSV-033

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Hallucination"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /ai-foundations/hallucination/
 id: AIF-019

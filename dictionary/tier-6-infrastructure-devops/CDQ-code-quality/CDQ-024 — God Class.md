@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "God Class"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /code-quality/god-class/
 id: CDQ-024

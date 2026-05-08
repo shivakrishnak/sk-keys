@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-030
 title: JavaScript Runtime Selection (Node vs Deno vs Bun)
 category: JavaScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /jsc/javascript-runtime-selection-node-vs-deno-vs-bun/
 ---

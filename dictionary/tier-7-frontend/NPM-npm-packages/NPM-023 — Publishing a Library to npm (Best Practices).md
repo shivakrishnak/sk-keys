@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-023
 title: Publishing a Library to npm (Best Practices)
 category: npm & Package Management
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /npm/publishing-a-library-to-npm-best-practices/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Scheduler Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /design-patterns/scheduler-pattern/
 id: DPT-034

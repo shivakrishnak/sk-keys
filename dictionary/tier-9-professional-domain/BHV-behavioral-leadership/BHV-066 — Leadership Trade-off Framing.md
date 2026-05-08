@@ -1,4 +1,4 @@
----
+﻿---
 id: BHV-066
 title: Leadership Trade-off Framing
 category: Behavioral & Leadership
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 66
 permalink: /bhv/leadership-trade-off-framing/
 ---

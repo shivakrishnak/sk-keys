@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-087
 title: Back-of-Envelope Complexity Estimation
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 87
 permalink: /dsa/back-of-envelope-complexity-estimation/
 ---

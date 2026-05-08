@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-027
 title: Agent Planning Strategies (MCTS, Tree-of-Thought)
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /rag/agent-planning-strategies-mcts-tree-of-thought/
 ---

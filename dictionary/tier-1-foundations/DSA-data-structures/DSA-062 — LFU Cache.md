@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "LFU Cache"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /dsa/lfu-cache/
 id: DSA-062

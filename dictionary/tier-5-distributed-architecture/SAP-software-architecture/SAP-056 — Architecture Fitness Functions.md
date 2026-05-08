@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-056
 title: Architecture Fitness Functions
 category: Software Architecture Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /sap/architecture-fitness-functions/
 ---

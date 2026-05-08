@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-004
 title: Azure Well-Architected Framework
 category: Cloud -- Azure
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /azr/azure-well-architected-framework/
 ---

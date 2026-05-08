@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Batch vs Stream Processing"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /big-data-streaming/batch-vs-stream-processing/
 id: BIG-034

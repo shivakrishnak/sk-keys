@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS Well-Architected Review"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /cloud-aws/aws-well-architected-review/
 id: AWS-024

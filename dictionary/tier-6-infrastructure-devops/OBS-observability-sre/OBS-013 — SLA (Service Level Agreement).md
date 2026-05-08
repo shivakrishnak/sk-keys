@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-013
 title: SLA (Service Level Agreement)
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /obs/sla-service-level-agreement/
 ---

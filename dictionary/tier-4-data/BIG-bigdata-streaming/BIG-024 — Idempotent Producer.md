@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Idempotent Producer"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /big-data-streaming/idempotent-producer/
 id: BIG-024

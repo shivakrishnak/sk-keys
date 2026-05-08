@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "MTTR MTBF"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /system-design/mttr-mtbf/
 id: SYD-017

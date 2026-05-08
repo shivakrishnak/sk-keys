@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "JWT"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /http-apis/jwt/
 id: API-024

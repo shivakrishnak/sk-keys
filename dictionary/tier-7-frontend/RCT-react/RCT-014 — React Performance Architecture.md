@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-014
 title: React Performance Architecture
 category: React
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /rct/react-performance-architecture/
 ---

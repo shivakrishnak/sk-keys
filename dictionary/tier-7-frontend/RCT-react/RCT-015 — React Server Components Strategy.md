@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-015
 title: React Server Components Strategy
 category: React
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /rct/react-server-components-strategy/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: DST-069
 title: Distributed Tracing Architecture
 category: Distributed Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 69
 permalink: /dst/distributed-tracing-architecture/
 ---

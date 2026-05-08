@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "EKS"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /cloud-aws/eks/
 id: AWS-055

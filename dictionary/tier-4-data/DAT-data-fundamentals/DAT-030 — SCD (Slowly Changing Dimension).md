@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SCD (Slowly Changing Dimension)"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /data-fundamentals/scd-slowly-changing-dimension/
 id: DAT-030

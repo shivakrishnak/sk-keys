@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Lock Striping"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /java-concurrency/lock-striping/
 id: JCC-044

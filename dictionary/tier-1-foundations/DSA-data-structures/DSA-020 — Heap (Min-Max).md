@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Heap (Min-Max)"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /dsa/heap-min-max/
 id: DSA-020
@@ -159,10 +160,13 @@ Right child: 2i+2
 ```
 Append: [1, 3, 5, 7, 4, 8, 9, 2] — index 7
 Parent: (7-1)/2 = 3 → array[3]=7 > 2 → swap
+grand_parent: "Technical Dictionary"
         [1, 3, 5, 2, 4, 8, 9, 7]
 Parent: (3-1)/2 = 1 → array[1]=3 > 2 → swap
+grand_parent: "Technical Dictionary"
         [1, 2, 5, 3, 4, 8, 9, 7]
 Parent: (1-1)/2 = 0 → array[0]=1 < 2 → stop
+grand_parent: "Technical Dictionary"
 Result: [1, 2, 5, 3, 4, 8, 9, 7]
 ```
 

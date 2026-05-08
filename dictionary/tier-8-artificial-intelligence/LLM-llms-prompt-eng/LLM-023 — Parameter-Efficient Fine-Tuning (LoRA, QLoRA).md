@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-023
 title: Parameter-Efficient Fine-Tuning (LoRA, QLoRA)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /llm/parameter-efficient-fine-tuning-lora-qlora/
 ---

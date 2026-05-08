@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Network Observability"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /networking/network-observability/
 id: NET-043

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Actionable Alerting Patterns"
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /observability/actionable-alerting-patterns/
 number: "OBS-006"

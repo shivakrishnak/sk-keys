@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Plan  Apply  Destroy"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /ci-cd/terraform-plan-apply-destroy/
 id: CCD-063

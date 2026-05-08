@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-068
 title: Pattern Mining and Discovery Research
 category: Design Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /dpt/pattern-mining-and-discovery-research/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "C1 C2 Compiler"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /java/c1-c2-compiler/
 id: JVM-042

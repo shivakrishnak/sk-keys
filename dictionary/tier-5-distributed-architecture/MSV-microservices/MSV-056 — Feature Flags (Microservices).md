@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Feature Flags (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /microservices/feature-flags-microservices/
 id: MSV-056

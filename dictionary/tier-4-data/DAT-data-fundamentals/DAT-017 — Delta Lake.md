@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Delta Lake"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /data-fundamentals/delta-lake/
 id: DAT-017

@@ -2,6 +2,7 @@
 layout: default
 title: "Concurrency vs Parallelism"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /cs-fundamentals/concurrency-vs-parallelism/
 id: CSF-018

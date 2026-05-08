@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Rate Limiting (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /microservices/rate-limiting-microservices/
 id: MSV-034

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Continuous Integration (CI)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /ci-cd/continuous-integration/
 id: CCD-006

@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-056
 title: Heartbleed Impact on Linux Systems (2014)
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /lnx/heartbleed-impact-on-linux-systems-2014/
 ---

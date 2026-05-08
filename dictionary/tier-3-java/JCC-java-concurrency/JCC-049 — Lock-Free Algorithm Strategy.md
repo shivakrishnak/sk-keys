@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-049
 title: Lock-Free Algorithm Strategy
 category: Java Concurrency
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /jcc/lock-free-algorithm-strategy/
 ---

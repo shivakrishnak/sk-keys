@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SBOM (Software Bill of Materials)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /ci-cd/sbom/
 id: CCD-028

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Distributed Locks"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /system-design/distributed-locks/
 id: SYD-039

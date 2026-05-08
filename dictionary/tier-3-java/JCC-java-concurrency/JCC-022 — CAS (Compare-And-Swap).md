@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CAS (Compare-And-Swap)"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /java-concurrency/cas-compare-and-swap/
 id: JCC-022

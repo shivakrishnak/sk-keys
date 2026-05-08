@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Types (Primitive, Complex, Semi-Structured)"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /data-fundamentals/data-types/
 id: DAT-008

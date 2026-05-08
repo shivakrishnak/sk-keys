@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-032
 title: CSS Performance (Reflow, Repaint, Compositing)
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /css/css-performance-reflow-repaint-compositing/
 ---

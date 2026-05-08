@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "File Permissions (chmod, chown)"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /linux/file-permissions-chmod-chown/
 id: LNX-007

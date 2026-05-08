@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-066
 title: Service Decomposition Strategy
 category: Microservices
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 66
 permalink: /msv/service-decomposition-strategy/
 ---

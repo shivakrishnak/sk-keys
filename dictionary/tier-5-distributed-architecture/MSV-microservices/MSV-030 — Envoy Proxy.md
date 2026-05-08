@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Envoy Proxy"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /microservices/envoy-proxy/
 id: MSV-030

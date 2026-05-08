@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Docker vs VM"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /containers/docker-vs-vm/
 id: CTR-027

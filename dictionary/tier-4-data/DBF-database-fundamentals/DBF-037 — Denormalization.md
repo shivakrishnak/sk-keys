@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Denormalization"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /databases/denormalization/
 id: DBF-037

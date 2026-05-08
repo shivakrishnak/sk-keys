@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Circuit Breaker Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /design-patterns/circuit-breaker-pattern/
 id: DPT-057

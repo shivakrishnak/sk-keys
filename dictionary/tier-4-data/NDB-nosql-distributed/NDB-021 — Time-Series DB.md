@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Time-Series DB"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /nosql/time-series-db/
 id: NDB-021

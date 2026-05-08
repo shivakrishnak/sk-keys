@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Engineering Strategy"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /leadership/engineering-strategy/
 id: BHV-031

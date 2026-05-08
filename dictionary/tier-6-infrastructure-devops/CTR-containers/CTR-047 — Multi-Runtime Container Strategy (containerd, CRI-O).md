@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-047
 title: Multi-Runtime Container Strategy (containerd, CRI-O)
 category: Containers
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /ctr/multi-runtime-container-strategy-containerd-cri-o/
 ---

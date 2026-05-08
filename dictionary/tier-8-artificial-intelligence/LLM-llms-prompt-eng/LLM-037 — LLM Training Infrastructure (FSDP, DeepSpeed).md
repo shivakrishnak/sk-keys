@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-037
 title: LLM Training Infrastructure (FSDP, DeepSpeed)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /llm/llm-training-infrastructure-fsdp-deepspeed/
 ---

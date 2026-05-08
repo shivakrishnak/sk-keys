@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-018
 title: Git Hooks
 category: Git & Branching Strategy
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /git/git-hooks/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Negative Caching"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /caching/negative-caching/
 id: CCH-015

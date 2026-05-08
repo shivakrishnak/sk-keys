@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "K8s Cost Optimization"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /kubernetes/k8s-cost-optimization/
 id: K8S-063

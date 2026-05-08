@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Synchronous vs Async Communication"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /microservices/synchronous-vs-async-communication/
 id: MSV-025

@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-067
 title: Microservices Migration Strategy (Strangler Fig)
 category: Microservices
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 67
 permalink: /msv/microservices-migration-strategy-strangler-fig/
 ---

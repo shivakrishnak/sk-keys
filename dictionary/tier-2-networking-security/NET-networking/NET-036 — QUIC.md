@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "QUIC"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /networking/quic/
 id: NET-036

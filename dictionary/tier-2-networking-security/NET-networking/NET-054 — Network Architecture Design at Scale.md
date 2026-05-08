@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-054
 title: Network Architecture Design at Scale
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /net/network-architecture-design-at-scale/
 ---

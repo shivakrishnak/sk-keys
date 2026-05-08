@@ -2,6 +2,7 @@
 layout: default
 title: "Higher-Order Functions"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /cs-fundamentals/higher-order-functions/
 id: CSF-030

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Zero-Copy (sendfile)"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /operating-systems/zero-copy-sendfile/
 id: OSY-044

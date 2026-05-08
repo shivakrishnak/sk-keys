@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Exactly-Once Semantics"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /big-data-streaming/exactly-once-semantics/
 id: BIG-020

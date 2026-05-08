@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kubernetes Observability"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /kubernetes/kubernetes-observability/
 id: K8S-060

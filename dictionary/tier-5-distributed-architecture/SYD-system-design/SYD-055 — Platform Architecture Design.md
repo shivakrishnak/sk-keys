@@ -1,4 +1,4 @@
----
+﻿---
 id: SYD-055
 title: Platform Architecture Design
 category: System Design
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /syd/platform-architecture-design/
 ---

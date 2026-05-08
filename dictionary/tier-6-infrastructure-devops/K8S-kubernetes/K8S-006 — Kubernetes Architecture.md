@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kubernetes Architecture"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /kubernetes/kubernetes-architecture/
 id: K8S-006

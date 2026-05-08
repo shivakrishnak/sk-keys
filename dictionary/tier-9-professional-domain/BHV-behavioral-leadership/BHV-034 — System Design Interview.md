@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "System Design Interview"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /leadership/system-design-interview/
 id: BHV-034

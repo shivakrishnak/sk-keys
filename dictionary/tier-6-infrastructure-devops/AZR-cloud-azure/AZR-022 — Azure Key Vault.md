@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-022
 title: Azure Key Vault
 category: Cloud -- Azure
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /azr/azure-key-vault/
 ---

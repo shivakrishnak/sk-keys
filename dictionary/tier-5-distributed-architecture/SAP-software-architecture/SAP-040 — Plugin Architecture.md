@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Plugin Architecture"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /software-architecture/plugin-architecture/
 id: SAP-040

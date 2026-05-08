@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Model Weights"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /ai-foundations/model-weights/
 id: AIF-022

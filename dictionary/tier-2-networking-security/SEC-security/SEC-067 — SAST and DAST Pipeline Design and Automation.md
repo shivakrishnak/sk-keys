@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-067
 title: SAST and DAST Pipeline Design and Automation
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 67
 permalink: /sec/sast-and-dast-pipeline-design-and-automation/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sprint Planning"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /leadership/sprint-planning/
 id: BHV-028

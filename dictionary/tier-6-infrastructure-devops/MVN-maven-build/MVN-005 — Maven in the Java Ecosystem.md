@@ -1,4 +1,4 @@
----
+﻿---
 id: MVN-005
 title: Maven in the Java Ecosystem
 category: Maven & Build Tools
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Maven & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /mvn/maven-in-the-java-ecosystem/
 ---

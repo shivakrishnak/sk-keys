@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-009
 title: Webpack Dev Server and HMR
 category: Webpack & Build Tools
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /wbp/webpack-dev-server-and-hmr/
 ---

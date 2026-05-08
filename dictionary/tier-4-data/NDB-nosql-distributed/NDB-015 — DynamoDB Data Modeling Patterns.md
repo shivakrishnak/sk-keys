@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DynamoDB Data Modeling Patterns"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /nosql/dynamodb-data-modeling-patterns/
 id: NDB-015

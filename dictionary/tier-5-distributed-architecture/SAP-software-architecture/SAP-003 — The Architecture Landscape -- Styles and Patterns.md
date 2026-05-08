@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-003
 title: The Architecture Landscape -- Styles and Patterns
 category: Software Architecture Patterns
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /sap/the-architecture-landscape----styles-and-patterns/
 ---

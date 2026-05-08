@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-045
 title: CSS Naming Strategy Thinking
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /css/css-naming-strategy-thinking/
 ---

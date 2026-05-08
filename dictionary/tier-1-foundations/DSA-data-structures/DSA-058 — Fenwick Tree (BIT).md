@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Fenwick Tree (BIT)"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 58
 permalink: /dsa/fenwick-tree-bit/
 id: DSA-058

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kinesis"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /cloud-aws/kinesis/
 id: AWS-051

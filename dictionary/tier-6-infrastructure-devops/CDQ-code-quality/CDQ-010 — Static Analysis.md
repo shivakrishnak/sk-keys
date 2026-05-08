@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Static Analysis"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /code-quality/static-analysis/
 id: CDQ-010

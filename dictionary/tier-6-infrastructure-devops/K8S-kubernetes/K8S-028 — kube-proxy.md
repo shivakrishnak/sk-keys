@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "kube-proxy"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /kubernetes/kube-proxy/
 id: K8S-028

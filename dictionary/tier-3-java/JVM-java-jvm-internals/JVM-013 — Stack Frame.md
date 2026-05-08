@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Stack Frame"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /java/stack-frame/
 id: JVM-013

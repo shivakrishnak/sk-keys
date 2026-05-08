@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ISR (In-Sync Replicas)"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /big-data-streaming/isr-in-sync-replicas/
 id: BIG-018

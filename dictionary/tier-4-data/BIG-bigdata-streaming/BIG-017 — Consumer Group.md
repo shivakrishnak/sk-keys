@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Consumer Group"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /big-data-streaming/consumer-group/
 id: BIG-017

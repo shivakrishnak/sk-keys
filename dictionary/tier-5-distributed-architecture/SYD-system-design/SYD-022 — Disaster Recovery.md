@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Disaster Recovery"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /system-design/disaster-recovery/
 id: SYD-022

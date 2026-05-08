@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-023
 title: State Management Mental Model
 category: React
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /rct/state-management-mental-model/
 ---

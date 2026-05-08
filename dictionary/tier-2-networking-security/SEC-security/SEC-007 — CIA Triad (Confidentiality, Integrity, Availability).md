@@ -1,4 +1,8 @@
----
+﻿---
+layout: default
+parent: "Security"
+grand_parent: "Technical Dictionary"
+nav_order: 7
 id: SEC-007
 title: CIA Triad (Confidentiality, Integrity, Availability)
 category: Security

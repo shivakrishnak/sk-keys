@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CSRF"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /http-apis/csrf/
 id: API-061

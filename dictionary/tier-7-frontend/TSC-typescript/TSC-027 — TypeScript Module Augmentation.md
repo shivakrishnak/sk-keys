@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-027
 title: TypeScript Module Augmentation
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /tsc/typescript-module-augmentation/
 ---

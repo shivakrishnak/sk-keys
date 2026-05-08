@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Stream API"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /java-language/stream-api/
 id: JLG-037

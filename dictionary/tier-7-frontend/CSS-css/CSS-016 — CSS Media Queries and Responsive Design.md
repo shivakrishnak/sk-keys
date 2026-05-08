@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-016
 title: CSS Media Queries and Responsive Design
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /css/css-media-queries-and-responsive-design/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-072
 title: Cloud-Native Architecture Design
 category: Cloud -- AWS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 72
 permalink: /aws/cloud-native-architecture-design/
 ---

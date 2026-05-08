@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-045
 title: Java in Polyglot Architecture
 category: Java Language
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /jlg/java-in-polyglot-architecture/
 ---

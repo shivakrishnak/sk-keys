@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Maven Dependencies"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /maven-build/maven-dependencies/
 id: MVN-012

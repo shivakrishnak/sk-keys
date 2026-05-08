@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-020
 title: Helm -- Kubernetes Package Manager
 category: Infrastructure as Code
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /iac/helm----kubernetes-package-manager/
 ---

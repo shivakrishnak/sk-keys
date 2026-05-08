@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-029
 title: TypeScript Path Aliases
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /tsc/typescript-path-aliases/
 ---

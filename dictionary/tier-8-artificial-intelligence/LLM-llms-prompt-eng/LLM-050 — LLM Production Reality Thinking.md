@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-050
 title: LLM Production Reality Thinking
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /llm/llm-production-reality-thinking/
 ---

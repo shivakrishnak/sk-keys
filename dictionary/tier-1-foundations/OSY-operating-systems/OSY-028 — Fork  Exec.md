@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Fork / Exec"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /operating-systems/fork-exec/
 id: OSY-028

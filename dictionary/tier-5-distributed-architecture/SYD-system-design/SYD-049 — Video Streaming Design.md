@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Video Streaming Design"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /system-design/video-streaming-design/
 id: SYD-049

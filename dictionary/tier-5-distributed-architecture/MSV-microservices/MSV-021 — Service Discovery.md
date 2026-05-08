@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service Discovery"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /microservices/service-discovery/
 id: MSV-021

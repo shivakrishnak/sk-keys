@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Code Review Best Practices"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /code-quality/code-review-best-practices/
 id: CDQ-016

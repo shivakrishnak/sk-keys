@@ -1,4 +1,4 @@
----
+﻿---
 id: API-076
 title: Consumer-First API Thinking
 category: HTTP & APIs
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 76
 permalink: /api/consumer-first-api-thinking/
 ---

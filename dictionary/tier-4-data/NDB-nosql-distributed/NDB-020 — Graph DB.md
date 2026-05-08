@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Graph DB"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /nosql/graph-db/
 id: NDB-020

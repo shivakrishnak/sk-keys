@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CloudWatch"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 58
 permalink: /cloud-aws/cloudwatch/
 id: AWS-058

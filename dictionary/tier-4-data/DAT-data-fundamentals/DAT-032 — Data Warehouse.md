@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Warehouse"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /data-fundamentals/data-warehouse/
 id: DAT-032

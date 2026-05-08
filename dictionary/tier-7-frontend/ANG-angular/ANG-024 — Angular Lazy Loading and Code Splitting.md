@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-024
 title: Angular Lazy Loading and Code Splitting
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /ang/angular-lazy-loading-and-code-splitting/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "OpenSearch  Elasticsearch"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /nosql/opensearch-elasticsearch/
 id: NDB-011

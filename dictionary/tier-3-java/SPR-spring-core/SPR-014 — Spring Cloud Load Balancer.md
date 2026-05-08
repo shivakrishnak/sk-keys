@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Cloud Load Balancer"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /spring/spring-cloud-load-balancer/
 id: SPR-014

@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-002
 title: Why Architecture Decisions Matter
 category: Software Architecture Patterns
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /sap/why-architecture-decisions-matter/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-020
 title: Caching Strategy in Bundlers (Content Hashing)
 category: Webpack & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /wbp/caching-strategy-in-bundlers-content-hashing/
 ---

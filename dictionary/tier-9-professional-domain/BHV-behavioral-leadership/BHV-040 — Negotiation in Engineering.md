@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Negotiation in Engineering"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /leadership/negotiation-in-engineering/
 id: BHV-040

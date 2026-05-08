@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Prototype Chain"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /javascript/prototype-chain/
 id: JSC-019

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Hot Shard"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /system-design/hot-shard/
 id: SYD-032

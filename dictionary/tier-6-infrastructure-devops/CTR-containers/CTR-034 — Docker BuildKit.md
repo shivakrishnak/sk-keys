@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Docker BuildKit"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /containers/docker-buildkit/
 id: CTR-034

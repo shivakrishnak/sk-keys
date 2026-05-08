@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Ports and Adapters"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /software-architecture/ports-and-adapters/
 id: SAP-020

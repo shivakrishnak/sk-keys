@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS Control Tower"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /cloud-aws/aws-control-tower/
 id: AWS-017

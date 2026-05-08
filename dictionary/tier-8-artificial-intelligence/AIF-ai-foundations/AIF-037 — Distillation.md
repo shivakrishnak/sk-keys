@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Distillation"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /ai-foundations/distillation/
 id: AIF-037

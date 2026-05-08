@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Coupling"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /software-architecture/coupling/
 id: SAP-051

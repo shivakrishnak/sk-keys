@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Tell Don't Ask"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /software-architecture/tell-dont-ask/
 id: SAP-048

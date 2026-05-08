@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-052
 title: Distributed Tracing System Architecture
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /obs/distributed-tracing-system-architecture/
 ---

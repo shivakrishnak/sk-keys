@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sidecar Pattern"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /distributed-systems/sidecar-pattern/
 id: DST-054

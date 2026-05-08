@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-031
 title: Document Generation Library Selection Framework
 category: Document Generation
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /dgn/document-generation-library-selection-framework/
 ---

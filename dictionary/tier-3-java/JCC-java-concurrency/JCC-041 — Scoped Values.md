@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Scoped Values"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /java-concurrency/scoped-values/
 id: JCC-041

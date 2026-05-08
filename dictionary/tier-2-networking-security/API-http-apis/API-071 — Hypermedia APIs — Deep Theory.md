@@ -1,4 +1,4 @@
----
+﻿---
 id: API-071
 title: Hypermedia APIs — Deep Theory
 category: HTTP & APIs
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 71
 permalink: /api/hypermedia-apis-deep-theory/
 ---

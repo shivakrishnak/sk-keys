@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Message Ordering"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /big-data-streaming/message-ordering/
 id: BIG-028

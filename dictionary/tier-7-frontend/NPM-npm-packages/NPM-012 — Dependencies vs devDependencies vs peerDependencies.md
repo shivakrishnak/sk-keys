@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-012
 title: Dependencies vs devDependencies vs peerDependencies
 category: npm & Package Management
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /npm/dependencies-vs-devdependencies-vs-peerdependencies/
 ---

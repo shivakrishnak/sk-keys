@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-002
 title: The Document Generation Mental Model (Template + Data + Renderer)
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /dgn/the-document-generation-mental-model-template-data-renderer/
 ---

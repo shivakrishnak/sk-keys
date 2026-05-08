@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DynamoDB Single-Table Design"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /nosql/dynamodb-single-table-design/
 id: NDB-016

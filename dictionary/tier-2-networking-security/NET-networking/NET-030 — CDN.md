@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CDN"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /networking/cdn/
 id: NET-030

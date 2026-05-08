@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-056
 title: Model Selection Mental Model
 category: AI Foundations
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /aif/model-selection-mental-model/
 ---

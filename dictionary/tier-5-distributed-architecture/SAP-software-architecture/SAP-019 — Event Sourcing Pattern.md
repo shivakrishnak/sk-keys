@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Event Sourcing Pattern"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /software-architecture/event-sourcing-pattern/
 id: SAP-019

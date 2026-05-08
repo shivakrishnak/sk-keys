@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "TCP Handshake"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /networking/tcp-handshake/
 id: NET-018

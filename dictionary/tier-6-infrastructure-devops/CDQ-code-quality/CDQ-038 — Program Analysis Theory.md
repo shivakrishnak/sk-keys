@@ -1,4 +1,4 @@
----
+﻿---
 id: CDQ-038
 title: Program Analysis Theory
 category: Code Quality
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /cdq/program-analysis-theory/
 ---

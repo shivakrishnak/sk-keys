@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "PostgreSQL Specific Features"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /databases/postgresql-specific-features/
 id: DBF-014

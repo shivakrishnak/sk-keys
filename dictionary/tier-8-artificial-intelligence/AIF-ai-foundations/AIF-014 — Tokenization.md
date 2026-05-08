@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Tokenization"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /ai-foundations/tokenization/
 id: AIF-014

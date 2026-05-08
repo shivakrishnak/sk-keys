@@ -1,4 +1,4 @@
----
+﻿---
 id: BIG-049
 title: Event-Driven Architecture Strategy
 category: Big Data & Streaming
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /big/event-driven-architecture-strategy/
 ---

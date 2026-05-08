@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Feedback (Giving and Receiving)"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /leadership/feedback/
 id: BHV-022

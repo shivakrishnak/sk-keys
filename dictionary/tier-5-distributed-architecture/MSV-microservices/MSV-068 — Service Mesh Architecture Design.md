@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-068
 title: Service Mesh Architecture Design
 category: Microservices
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /msv/service-mesh-architecture-design/
 ---

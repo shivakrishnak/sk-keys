@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-001
 title: What Is RAG and Why It Matters
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /rag/what-is-rag-and-why-it-matters/
 ---

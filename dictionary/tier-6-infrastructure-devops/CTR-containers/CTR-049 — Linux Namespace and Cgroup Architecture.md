@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-049
 title: Linux Namespace and Cgroup Architecture
 category: Containers
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /ctr/linux-namespace-and-cgroup-architecture/
 ---

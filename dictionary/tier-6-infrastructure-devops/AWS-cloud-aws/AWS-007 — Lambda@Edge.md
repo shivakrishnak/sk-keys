@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Lambda@Edge"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /cloud-aws/lambda-edge/
 id: AWS-007

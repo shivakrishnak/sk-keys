@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Data JPA"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /spring/spring-data-jpa/
 id: SPR-056

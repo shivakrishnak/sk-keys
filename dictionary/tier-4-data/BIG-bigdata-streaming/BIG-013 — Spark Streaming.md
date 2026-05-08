@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spark Streaming"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /big-data-streaming/spark-streaming/
 id: BIG-013

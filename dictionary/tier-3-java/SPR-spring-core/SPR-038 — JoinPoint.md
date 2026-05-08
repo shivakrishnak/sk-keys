@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "JoinPoint"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /spring/joinpoint/
 id: SPR-038

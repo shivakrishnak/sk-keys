@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Engineering Manager vs Tech Lead"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /leadership/engineering-manager-vs-tech-lead/
 id: BHV-009

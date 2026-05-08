@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-046
 title: Concurrency Architecture Patterns in Java
 category: Java Concurrency
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /jcc/concurrency-architecture-patterns-in-java/
 ---

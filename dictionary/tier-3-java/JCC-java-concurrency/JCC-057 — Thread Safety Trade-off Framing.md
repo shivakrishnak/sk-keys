@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-057
 title: Thread Safety Trade-off Framing
 category: Java Concurrency
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /jcc/thread-safety-trade-off-framing/
 ---

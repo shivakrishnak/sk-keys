@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-031
 title: AI Product Strategy (Embedded vs Standalone)
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /aip/ai-product-strategy-embedded-vs-standalone/
 ---

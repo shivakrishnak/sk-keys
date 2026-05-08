@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-024
 title: Crossplane -- Kubernetes-Native IaC
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /iac/crossplane----kubernetes-native-iac/
 ---

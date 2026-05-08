@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Cloud  Enterprise"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /ci-cd/terraform-cloud-enterprise/
 id: CCD-052

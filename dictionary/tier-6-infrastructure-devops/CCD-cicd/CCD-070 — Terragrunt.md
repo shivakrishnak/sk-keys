@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terragrunt"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 70
 permalink: /ci-cd/terragrunt/
 id: CCD-070

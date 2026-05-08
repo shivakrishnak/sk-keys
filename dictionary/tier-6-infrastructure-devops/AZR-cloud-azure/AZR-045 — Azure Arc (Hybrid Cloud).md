@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-045
 title: Azure Arc (Hybrid Cloud)
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /azr/azure-arc-hybrid-cloud/
 ---

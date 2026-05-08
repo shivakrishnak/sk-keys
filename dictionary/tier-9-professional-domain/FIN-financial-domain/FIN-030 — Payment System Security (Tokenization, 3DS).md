@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-030
 title: Payment System Security (Tokenization, 3DS)
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /fin/payment-system-security-tokenization-3ds/
 ---

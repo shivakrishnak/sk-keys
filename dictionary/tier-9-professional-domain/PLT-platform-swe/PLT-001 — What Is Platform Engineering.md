@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-001
 title: What Is Platform Engineering
 category: Platform & Modern SWE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /plt/what-is-platform-engineering/
 ---

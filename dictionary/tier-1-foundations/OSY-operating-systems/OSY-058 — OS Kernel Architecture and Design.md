@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-058
 title: OS Kernel Architecture and Design
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 58
 permalink: /osy/os-kernel-architecture-and-design/
 ---

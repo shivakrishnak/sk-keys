@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-036
 title: HTML Architecture Strategy (Component Libraries, Design Systems)
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /htm/html-architecture-strategy-component-libraries-design-systems/
 ---

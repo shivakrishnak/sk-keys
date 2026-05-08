@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-017
 title: SWIFT and Banking Networks
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /fin/swift-and-banking-networks/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Interpreter"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /design-patterns/interpreter/
 id: DPT-021

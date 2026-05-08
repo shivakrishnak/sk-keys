@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pipeline"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /ci-cd/pipeline/
 id: CCD-009

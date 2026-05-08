@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Snowflake Schema"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /data-fundamentals/snowflake-schema/
 id: DAT-026

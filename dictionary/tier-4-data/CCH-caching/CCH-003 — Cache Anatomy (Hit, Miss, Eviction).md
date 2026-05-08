@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-003
 title: Cache Anatomy (Hit, Miss, Eviction)
 category: Caching
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /cch/cache-anatomy-hit-miss-eviction/
 ---

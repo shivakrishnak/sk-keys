@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Java Performance Tuning"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /java/java-performance-tuning/
 id: JLG-020

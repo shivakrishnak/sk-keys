@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cohesion"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /software-architecture/cohesion/
 id: SAP-050

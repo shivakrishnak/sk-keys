@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-076
 title: Microservices Necessity Assessment
 category: Microservices
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 76
 permalink: /msv/microservices-necessity-assessment/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-013
 title: Vector Database Options (Pinecone, Weaviate, Qdrant, Chroma)
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /rag/vector-database-options-pinecone-weaviate-qdrant-chroma/
 ---

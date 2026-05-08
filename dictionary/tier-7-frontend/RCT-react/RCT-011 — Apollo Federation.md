@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Apollo Federation"
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /react/apollo-federation/
 id: RCT-011

@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-035
 title: AI Product Engineering Research Frontiers
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /aip/ai-product-engineering-research-frontiers/
 ---

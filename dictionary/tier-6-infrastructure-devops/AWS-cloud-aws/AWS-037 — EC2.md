@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "EC2"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /cloud-aws/ec2/
 id: AWS-037

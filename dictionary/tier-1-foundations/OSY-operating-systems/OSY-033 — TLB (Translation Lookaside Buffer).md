@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "TLB (Translation Lookaside Buffer)"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /operating-systems/tlb-translation-lookaside-buffer/
 id: OSY-033

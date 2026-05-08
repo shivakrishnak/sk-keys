@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Varargs"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /java-language/varargs/
 id: JLG-028

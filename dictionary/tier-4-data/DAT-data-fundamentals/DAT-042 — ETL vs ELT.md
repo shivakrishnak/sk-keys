@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ETL vs ELT"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /data-fundamentals/etl-vs-elt/
 id: DAT-042

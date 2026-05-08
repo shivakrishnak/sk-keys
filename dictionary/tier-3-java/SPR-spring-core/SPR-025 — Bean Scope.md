@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bean Scope"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /spring/bean-scope/
 id: SPR-025

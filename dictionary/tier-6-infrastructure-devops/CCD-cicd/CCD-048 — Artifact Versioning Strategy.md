@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Artifact Versioning Strategy"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /ci-cd/artifact-versioning-strategy/
 id: CCD-048

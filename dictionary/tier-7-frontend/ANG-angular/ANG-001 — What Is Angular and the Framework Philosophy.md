@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-001
 title: What Is Angular and the Framework Philosophy
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /ang/what-is-angular-and-the-framework-philosophy/
 ---

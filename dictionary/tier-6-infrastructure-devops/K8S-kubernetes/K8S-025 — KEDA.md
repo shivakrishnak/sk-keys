@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "KEDA"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /kubernetes/keda/
 id: K8S-025

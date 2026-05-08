@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Monte Carlo vs Las Vegas Algorithms"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 81
 permalink: /dsa/monte-carlo-vs-las-vegas/
 id: DSA-081

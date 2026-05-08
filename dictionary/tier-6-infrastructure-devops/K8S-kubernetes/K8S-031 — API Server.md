@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Server"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /kubernetes/api-server/
 id: K8S-031

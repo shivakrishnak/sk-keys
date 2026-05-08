@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Distributed Tracing"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /distributed-systems/distributed-tracing/
 id: DST-051

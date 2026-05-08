@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Auto Scaling"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /system-design/auto-scaling/
 id: SYD-014

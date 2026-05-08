@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-012
 title: CSS Position (static, relative, absolute, fixed, sticky)
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /css/css-position-static-relative-absolute-fixed-sticky/
 ---

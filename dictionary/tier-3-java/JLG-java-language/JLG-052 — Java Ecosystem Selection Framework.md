@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-052
 title: Java Ecosystem Selection Framework
 category: Java Language
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /jlg/java-ecosystem-selection-framework/
 ---

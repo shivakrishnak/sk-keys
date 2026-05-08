@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Retrospective"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /leadership/retrospective/
 id: BHV-029

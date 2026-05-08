@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-005
 title: JavaScript in Production -- What to Expect
 category: JavaScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /jsc/javascript-in-production----what-to-expect/
 ---

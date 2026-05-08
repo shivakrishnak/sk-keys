@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Deadlock"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /operating-systems/deadlock/
 id: OSY-016

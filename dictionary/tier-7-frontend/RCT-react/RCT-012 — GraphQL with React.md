@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GraphQL with React"
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /react/graphql-with-react/
 id: RCT-012

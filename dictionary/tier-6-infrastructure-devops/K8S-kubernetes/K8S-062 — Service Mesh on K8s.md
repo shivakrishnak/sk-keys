@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service Mesh on K8s"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /kubernetes/service-mesh-on-k8s/
 id: K8S-062

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Personal Brand (Engineering)"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /leadership/personal-brand/
 id: BHV-045

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "/sys File System"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /linux/sys-file-system/
 id: LNX-033

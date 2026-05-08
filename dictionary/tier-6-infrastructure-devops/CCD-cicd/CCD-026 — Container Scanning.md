@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Container Scanning"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /ci-cd/container-scanning/
 id: CCD-026

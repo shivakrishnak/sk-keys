@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-011
 title: Node.js Streams
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /ndj/nodejs-streams/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-051
 title: Type Inference
 category: CS Fundamentals — Paradigms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /csf/type-inference/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Clock Skew Clock Drift"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /distributed-systems/clock-skew-clock-drift/
 id: DST-018

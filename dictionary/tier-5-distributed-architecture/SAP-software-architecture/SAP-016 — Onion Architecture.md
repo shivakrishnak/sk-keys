@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Onion Architecture"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /software-architecture/onion-architecture/
 id: SAP-016

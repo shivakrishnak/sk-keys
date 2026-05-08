@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-006
 title: PDF Generation Fundamentals (iText, Apache PDFBox, WeasyPrint)
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /dgn/pdf-generation-fundamentals-itext-apache-pdfbox-weasyprint/
 ---

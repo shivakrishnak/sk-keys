@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Gatling — k6 (Load Testing)"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /testing/gatling-k6-load-testing/
 id: TST-048

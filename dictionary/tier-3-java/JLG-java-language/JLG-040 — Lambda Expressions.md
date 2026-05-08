@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Lambda Expressions"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /java-language/lambda-expressions/
 id: JLG-040

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bean"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /spring/bean/
 id: SPR-023

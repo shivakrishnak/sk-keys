@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-041
 title: Distributed Version Control Theory
 category: Git & Branching Strategy
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /git/distributed-version-control-theory/
 ---

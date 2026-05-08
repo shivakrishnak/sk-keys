@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Vertical Slice Architecture"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /software-architecture/vertical-slice-architecture/
 id: SAP-017

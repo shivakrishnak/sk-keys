@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "BlockingQueue"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /java-concurrency/jcc-039-blockingqueue/
 id: JCC-035

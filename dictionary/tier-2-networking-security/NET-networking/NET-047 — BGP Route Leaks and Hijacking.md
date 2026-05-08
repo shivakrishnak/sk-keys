@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-047
 title: BGP Route Leaks and Hijacking
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /net/bgp-route-leaks-and-hijacking/
 ---

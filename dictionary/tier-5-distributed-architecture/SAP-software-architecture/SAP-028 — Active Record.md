@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Active Record"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /software-architecture/active-record/
 id: SAP-028

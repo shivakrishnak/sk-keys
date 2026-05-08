@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Deoptimization"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /java/deoptimization/
 id: JVM-045

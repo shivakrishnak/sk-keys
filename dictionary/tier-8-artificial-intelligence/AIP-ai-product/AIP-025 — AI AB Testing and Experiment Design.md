@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-025
 title: AI A/B Testing and Experiment Design
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /aip/ai-ab-testing-and-experiment-design/
 ---

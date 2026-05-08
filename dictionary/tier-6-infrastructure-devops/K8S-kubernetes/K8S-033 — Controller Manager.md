@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Controller Manager"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /kubernetes/controller-manager/
 id: K8S-033

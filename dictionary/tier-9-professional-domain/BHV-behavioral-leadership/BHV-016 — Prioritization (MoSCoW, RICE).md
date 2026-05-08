@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Prioritization (MoSCoW, RICE)"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /leadership/prioritization/
 id: BHV-016

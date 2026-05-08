@@ -1,4 +1,4 @@
----
+﻿---
 id: CDQ-039
 title: Software Reliability Engineering Metrics
 category: Code Quality
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /cdq/software-reliability-engineering-metrics/
 ---

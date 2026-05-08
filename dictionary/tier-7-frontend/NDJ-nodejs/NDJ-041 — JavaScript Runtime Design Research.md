@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-041
 title: JavaScript Runtime Design Research
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /ndj/javascript-runtime-design-research/
 ---

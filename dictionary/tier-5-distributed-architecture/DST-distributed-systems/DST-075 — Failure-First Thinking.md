@@ -1,4 +1,4 @@
----
+﻿---
 id: DST-075
 title: Failure-First Thinking
 category: Distributed Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 75
 permalink: /dst/failure-first-thinking/
 ---

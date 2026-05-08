@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-030
 title: Service Catalog and Software Inventory
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /plt/service-catalog-and-software-inventory/
 ---

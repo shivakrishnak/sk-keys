@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cache Stampede"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /caching/cache-stampede/
 id: CCH-013

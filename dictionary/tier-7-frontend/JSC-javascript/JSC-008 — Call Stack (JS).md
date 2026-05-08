@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Call Stack (JS)"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /javascript/call-stack/
 id: JSC-008

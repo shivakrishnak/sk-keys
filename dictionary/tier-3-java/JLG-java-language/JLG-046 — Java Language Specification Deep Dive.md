@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-046
 title: Java Language Specification Deep Dive
 category: Java Language
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /jlg/java-language-specification-deep-dive/
 ---

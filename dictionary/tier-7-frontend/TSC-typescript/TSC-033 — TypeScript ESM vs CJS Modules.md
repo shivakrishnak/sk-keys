@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-033
 title: TypeScript ESM vs CJS Modules
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /tsc/typescript-esm-vs-cjs-modules/
 ---

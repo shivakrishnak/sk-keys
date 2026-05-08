@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS Secrets Manager"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /cloud-aws/aws-secrets-manager/
 id: AWS-013

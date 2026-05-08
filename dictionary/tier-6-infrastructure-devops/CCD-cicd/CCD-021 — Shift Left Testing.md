@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Shift Left Testing"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /ci-cd/shift-left-testing/
 id: CCD-021

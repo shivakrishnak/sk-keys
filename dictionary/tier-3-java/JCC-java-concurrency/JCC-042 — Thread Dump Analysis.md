@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Thread Dump Analysis"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /java-concurrency/jcc-046-thread-dump-analysis/
 id: JCC-042

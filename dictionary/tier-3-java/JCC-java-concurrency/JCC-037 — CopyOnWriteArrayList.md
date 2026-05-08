@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CopyOnWriteArrayList"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /java-concurrency/jcc-041-copyonwritearraylist/
 id: JCC-037

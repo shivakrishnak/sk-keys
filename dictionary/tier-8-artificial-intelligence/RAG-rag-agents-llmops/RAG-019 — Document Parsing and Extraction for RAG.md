@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-019
 title: Document Parsing and Extraction for RAG
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /rag/document-parsing-and-extraction-for-rag/
 ---

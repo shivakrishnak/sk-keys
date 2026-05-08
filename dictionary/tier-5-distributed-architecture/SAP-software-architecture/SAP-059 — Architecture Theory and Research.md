@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-059
 title: Architecture Theory and Research
 category: Software Architecture Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /sap/architecture-theory-and-research/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-030
 title: Bundler Internals Research
 category: Webpack & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /wbp/bundler-internals-research/
 ---

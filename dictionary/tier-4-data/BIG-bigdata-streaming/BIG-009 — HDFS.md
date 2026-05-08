@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "HDFS"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /big-data-streaming/hdfs/
 id: BIG-009

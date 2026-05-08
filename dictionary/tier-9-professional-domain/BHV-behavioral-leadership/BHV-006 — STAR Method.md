@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "STAR Method"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /leadership/star-method/
 id: BHV-006

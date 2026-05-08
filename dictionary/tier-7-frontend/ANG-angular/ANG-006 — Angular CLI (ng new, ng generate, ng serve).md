@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-006
 title: Angular CLI (ng new, ng generate, ng serve)
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /ang/angular-cli-ng-new-ng-generate-ng-serve/
 ---

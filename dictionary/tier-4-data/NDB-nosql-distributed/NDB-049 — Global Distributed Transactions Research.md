@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-049
 title: Global Distributed Transactions Research
 category: NoSQL & Distributed Databases
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /ndb/global-distributed-transactions-research/
 ---

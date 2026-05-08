@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-051
 title: Time-Series Database Design
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /obs/time-series-database-design/
 ---

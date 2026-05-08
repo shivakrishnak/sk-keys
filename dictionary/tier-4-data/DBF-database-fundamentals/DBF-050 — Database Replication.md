@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Database Replication"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /databases/database-replication/
 id: DBF-050

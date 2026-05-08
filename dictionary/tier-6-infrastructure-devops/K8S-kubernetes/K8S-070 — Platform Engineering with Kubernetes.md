@@ -1,4 +1,4 @@
----
+﻿---
 id: K8S-070
 title: Platform Engineering with Kubernetes
 category: Kubernetes
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 70
 permalink: /k8s/platform-engineering-with-kubernetes/
 ---

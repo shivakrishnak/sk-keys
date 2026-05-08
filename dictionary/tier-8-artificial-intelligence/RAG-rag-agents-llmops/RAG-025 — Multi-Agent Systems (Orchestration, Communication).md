@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-025
 title: Multi-Agent Systems (Orchestration, Communication)
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /rag/multi-agent-systems-orchestration-communication/
 ---

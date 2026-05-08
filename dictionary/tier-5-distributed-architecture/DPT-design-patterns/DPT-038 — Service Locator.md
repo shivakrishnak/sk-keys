@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service Locator"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /design-patterns/service-locator/
 id: DPT-038

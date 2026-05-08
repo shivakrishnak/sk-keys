@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Greedy Algorithm"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /dsa/greedy-algorithm/
 id: DSA-037

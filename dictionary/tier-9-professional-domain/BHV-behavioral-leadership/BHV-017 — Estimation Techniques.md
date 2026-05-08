@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Estimation Techniques"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /leadership/estimation-techniques/
 id: BHV-017

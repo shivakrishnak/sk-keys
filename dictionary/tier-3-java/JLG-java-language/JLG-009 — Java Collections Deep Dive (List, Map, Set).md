@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Java Collections Deep Dive (List, Map, Set)"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /java/java-collections-deep-dive/
 id: JLG-009

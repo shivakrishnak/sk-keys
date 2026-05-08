@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-033
 title: JavaScript Specification (ECMAScript) Design
 category: JavaScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /jsc/javascript-specification-ecmascript-design/
 ---

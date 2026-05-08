@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Non-Repeatable Read"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /databases/non-repeatable-read/
 id: DBF-025

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "HPA (Horizontal Pod Autoscaler)"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /kubernetes/hpa-horizontal-pod-autoscaler/
 id: K8S-022

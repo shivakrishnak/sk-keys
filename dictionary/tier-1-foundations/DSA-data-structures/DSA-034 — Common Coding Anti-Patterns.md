@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-034
 title: Common Coding Anti-Patterns
 category: Data Structures & Algorithms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /dsa/common-coding-anti-patterns/
 ---

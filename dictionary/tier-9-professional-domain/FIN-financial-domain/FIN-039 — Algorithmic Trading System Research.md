@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-039
 title: Algorithmic Trading System Research
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /fin/algorithmic-trading-system-research/
 ---

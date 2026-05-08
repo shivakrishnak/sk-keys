@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-006
 title: AI Product Requirements and Acceptance Criteria
 category: AI Product Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /aip/ai-product-requirements-and-acceptance-criteria/
 ---

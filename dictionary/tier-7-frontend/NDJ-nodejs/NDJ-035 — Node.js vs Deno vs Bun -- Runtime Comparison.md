@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-035
 title: Node.js vs Deno vs Bun -- Runtime Comparison
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /ndj/nodejs-vs-deno-vs-bun----runtime-comparison/
 ---

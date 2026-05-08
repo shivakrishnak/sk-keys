@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Container Runtime Interface (CRI)"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /containers/container-runtime-interface-cri/
 id: CTR-042

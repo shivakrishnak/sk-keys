@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Zombie Processes"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /linux/zombie-processes/
 id: LNX-052

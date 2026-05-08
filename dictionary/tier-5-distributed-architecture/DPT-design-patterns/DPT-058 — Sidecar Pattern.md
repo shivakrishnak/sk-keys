@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sidecar Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 58
 permalink: /design-patterns/sidecar-pattern/
 id: DPT-058

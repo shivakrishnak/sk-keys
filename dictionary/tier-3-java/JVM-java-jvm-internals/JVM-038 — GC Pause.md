@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GC Pause"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /java/gc-pause/
 id: JVM-038

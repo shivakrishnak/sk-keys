@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-004
 title: How to Think About Problems Algorithmically
 category: Data Structures & Algorithms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /dsa/how-to-think-about-problems-algorithmically/
 ---

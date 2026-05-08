@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Rate Limiter Design"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /system-design/rate-limiter-design/
 id: SYD-044

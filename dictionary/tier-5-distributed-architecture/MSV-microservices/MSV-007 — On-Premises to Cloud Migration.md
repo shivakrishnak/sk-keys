@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "On-Premises to Cloud Migration"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /microservices/on-premises-to-cloud-migration/
 id: MSV-007

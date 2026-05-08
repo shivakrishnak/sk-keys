@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Maven Plugins"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /maven-build/maven-plugins/
 id: MVN-011

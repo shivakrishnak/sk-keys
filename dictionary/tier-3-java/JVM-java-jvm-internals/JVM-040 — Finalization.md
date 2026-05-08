@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Finalization"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /java/finalization/
 id: JVM-040

@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-035
 title: Azure Policy and RBAC
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /azr/azure-policy-and-rbac/
 ---

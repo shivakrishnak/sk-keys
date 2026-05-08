@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-062
 title: JIT Compilation Research (Truffle, Graal IR)
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /jvm/jit-compilation-research-truffle-graal-ir/
 ---

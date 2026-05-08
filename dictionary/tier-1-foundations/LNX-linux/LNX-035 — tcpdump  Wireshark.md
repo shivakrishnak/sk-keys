@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "tcpdump / Wireshark"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /linux/tcpdump-wireshark/
 id: LNX-035

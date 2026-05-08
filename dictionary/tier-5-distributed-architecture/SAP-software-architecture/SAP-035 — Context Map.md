@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Context Map"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /software-architecture/context-map/
 id: SAP-035

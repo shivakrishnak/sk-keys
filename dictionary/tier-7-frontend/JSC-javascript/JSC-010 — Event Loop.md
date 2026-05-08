@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Event Loop"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /javascript/event-loop/
 id: JSC-010

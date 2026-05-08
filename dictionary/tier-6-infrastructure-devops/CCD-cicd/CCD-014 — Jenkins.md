@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Jenkins"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /ci-cd/jenkins/
 id: CCD-014

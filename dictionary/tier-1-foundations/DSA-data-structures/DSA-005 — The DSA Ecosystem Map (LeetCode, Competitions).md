@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-005
 title: The DSA Ecosystem Map (LeetCode, Competitions)
 category: Data Structures & Algorithms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /dsa/the-dsa-ecosystem-map-leetcode-competitions/
 ---

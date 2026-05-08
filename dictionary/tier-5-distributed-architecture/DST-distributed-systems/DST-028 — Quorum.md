@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Quorum"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /distributed-systems/quorum/
 id: DST-028

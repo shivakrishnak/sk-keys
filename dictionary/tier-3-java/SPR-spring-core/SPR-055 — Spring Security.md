@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Security"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /spring/spring-security/
 id: SPR-055

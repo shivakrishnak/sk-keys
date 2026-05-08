@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "IAM Roles  Policies"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /cloud-aws/iam-roles-policies/
 id: AWS-028

@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-032
 title: DOM Manipulation Performance
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /htm/dom-manipulation-performance/
 ---

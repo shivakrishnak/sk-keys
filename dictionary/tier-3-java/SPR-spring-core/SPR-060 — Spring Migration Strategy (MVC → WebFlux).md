@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-060
 title: Spring Migration Strategy (MVC → WebFlux)
 category: Spring Core
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /spr/spring-migration-strategy-mvc-webflux/
 ---

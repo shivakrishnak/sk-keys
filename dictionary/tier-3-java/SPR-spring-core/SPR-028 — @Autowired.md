@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "@Autowired"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /spring/autowired/
 id: SPR-028

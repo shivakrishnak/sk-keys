@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-015
 title: TypeScript Generics
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /tsc/typescript-generics/
 ---

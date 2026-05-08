@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-044
 title: TypeScript Migration Mindset
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /tsc/typescript-migration-mindset/
 ---

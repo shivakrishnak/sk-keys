@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Abstract Factory"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /design-patterns/abstract-factory/
 id: DPT-008

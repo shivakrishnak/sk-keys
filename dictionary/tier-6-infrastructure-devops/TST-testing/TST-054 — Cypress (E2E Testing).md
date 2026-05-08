@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cypress (E2E Testing)"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /testing/cypress-e2e/
 id: TST-054

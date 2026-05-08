@@ -1,4 +1,4 @@
----
+﻿---
 id: TST-061
 title: Test Automation Strategy at Scale
 category: Testing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /tst/test-automation-strategy-at-scale/
 ---

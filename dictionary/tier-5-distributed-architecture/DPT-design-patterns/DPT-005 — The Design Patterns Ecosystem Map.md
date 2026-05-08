@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-005
 title: The Design Patterns Ecosystem Map
 category: Design Patterns
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /dpt/the-design-patterns-ecosystem-map/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: MVN-042
 title: Custom Plugin Design
 category: Maven & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Maven & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /mvn/custom-plugin-design/
 ---

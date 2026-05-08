@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-008
 title: Angular Templates and Data Binding
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /ang/angular-templates-and-data-binding/
 ---

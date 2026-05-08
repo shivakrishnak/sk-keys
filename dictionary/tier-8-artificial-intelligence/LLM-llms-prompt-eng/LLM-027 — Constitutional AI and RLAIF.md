@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-027
 title: Constitutional AI and RLAIF
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /llm/constitutional-ai-and-rlaif/
 ---

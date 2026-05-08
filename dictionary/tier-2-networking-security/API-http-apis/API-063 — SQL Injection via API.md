@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SQL Injection via API"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /http-apis/sql-injection/
 id: API-063

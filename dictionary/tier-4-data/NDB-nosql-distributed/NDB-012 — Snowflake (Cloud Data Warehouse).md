@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Snowflake (Cloud Data Warehouse)"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /nosql/snowflake-cloud-data-warehouse/
 id: NDB-012

@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-002
 title: The Three Pillars of Observability (Logs, Metrics, Traces)
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /obs/the-three-pillars-of-observability-logs-metrics-traces/
 ---

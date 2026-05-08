@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Deployment Pipeline"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /ci-cd/deployment-pipeline/
 id: CCD-029

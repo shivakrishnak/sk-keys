@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Responsible AI"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /ai-foundations/responsible-ai/
 id: AIF-045

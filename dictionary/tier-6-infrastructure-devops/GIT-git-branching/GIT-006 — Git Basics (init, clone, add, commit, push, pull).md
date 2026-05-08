@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-006
 title: Git Basics (init, clone, add, commit, push, pull)
 category: Git & Branching Strategy
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /git/git-basics-init-clone-add-commit-push-pull/
 ---

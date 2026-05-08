@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Observer"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /design-patterns/observer/
 id: DPT-025

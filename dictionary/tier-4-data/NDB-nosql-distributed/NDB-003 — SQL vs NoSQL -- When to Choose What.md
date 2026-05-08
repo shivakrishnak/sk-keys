@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-003
 title: SQL vs NoSQL -- When to Choose What
 category: NoSQL & Distributed Databases
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /ndb/sql-vs-nosql----when-to-choose-what/
 ---

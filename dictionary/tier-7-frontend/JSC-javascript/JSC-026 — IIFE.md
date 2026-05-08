@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "IIFE"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /javascript/iife/
 id: JSC-026

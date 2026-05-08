@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Time Complexity Big-O"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /dsa/time-complexity-big-o/
 id: DSA-006

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Atomicity"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /databases/atomicity/
 id: DBF-017

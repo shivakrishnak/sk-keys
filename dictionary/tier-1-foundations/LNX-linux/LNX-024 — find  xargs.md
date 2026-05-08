@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "find / xargs"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /linux/find-xargs/
 id: LNX-024

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sliding Window"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /dsa/sliding-window/
 id: DSA-030

@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-004
 title: The Build Tool Ecosystem Map (Frontend)
 category: Webpack & Build Tools
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /wbp/the-build-tool-ecosystem-map-frontend/
 ---

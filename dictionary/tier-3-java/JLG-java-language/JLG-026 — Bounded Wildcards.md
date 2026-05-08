@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bounded Wildcards"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /java-language/bounded-wildcards/
 id: JLG-026

@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-069
 title: Spring Configuration Trade-off Framing
 category: Spring Core
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 69
 permalink: /spr/spring-configuration-trade-off-framing/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-043
 title: Event-Driven vs Request-Response Thinking
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /asy/event-driven-vs-request-response-thinking/
 ---

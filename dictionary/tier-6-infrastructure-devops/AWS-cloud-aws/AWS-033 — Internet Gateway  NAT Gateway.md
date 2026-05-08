@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Internet Gateway  NAT Gateway"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /cloud-aws/internet-gateway-nat-gateway/
 id: AWS-033

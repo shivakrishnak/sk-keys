@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Redis Persistence"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /nosql/redis-persistence/
 id: NDB-029

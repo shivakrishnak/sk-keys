@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Environment Variables"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /linux/environment-variables/
 id: LNX-013

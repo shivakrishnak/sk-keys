@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spark RDD"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /big-data-streaming/spark-rdd/
 id: BIG-011

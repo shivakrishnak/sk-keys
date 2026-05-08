@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "State"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /design-patterns/state/
 id: DPT-026

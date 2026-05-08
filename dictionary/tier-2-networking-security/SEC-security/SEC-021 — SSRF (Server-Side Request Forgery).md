@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-021
 title: SSRF (Server-Side Request Forgery)
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /sec/ssrf-server-side-request-forgery/
 ---

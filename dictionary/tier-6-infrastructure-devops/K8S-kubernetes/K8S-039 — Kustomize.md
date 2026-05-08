@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kustomize"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /kubernetes/kustomize/
 id: K8S-039

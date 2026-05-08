@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Governance"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /data-fundamentals/data-governance/
 id: DAT-039

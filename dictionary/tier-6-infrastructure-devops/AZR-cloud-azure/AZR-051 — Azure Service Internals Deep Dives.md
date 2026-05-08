@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-051
 title: Azure Service Internals Deep Dives
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /azr/azure-service-internals-deep-dives/
 ---

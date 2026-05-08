@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Command-Query Separation (CQS)"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /software-architecture/command-query-separation/
 id: SAP-049

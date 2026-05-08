@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "StatefulSet"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /kubernetes/statefulset/
 id: K8S-013

@@ -1,4 +1,4 @@
----
+﻿---
 id: TST-064
 title: Quality Engineering Strategy
 category: Testing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /tst/quality-engineering-strategy/
 ---

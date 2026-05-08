@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "HTTP Headers"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /http-apis/http-headers/
 id: API-008

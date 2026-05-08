@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Failure Modes"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /distributed-systems/failure-modes/
 id: DST-032

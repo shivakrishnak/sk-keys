@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ReplicaSet"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /kubernetes/replicaset/
 id: K8S-012

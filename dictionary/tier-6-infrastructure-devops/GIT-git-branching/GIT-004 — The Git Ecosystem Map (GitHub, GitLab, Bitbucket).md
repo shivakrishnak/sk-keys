@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-004
 title: The Git Ecosystem Map (GitHub, GitLab, Bitbucket)
 category: Git & Branching Strategy
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /git/the-git-ecosystem-map-github-gitlab-bitbucket/
 ---

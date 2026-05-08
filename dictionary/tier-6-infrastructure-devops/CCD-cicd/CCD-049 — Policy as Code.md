@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Policy as Code"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /ci-cd/policy-as-code/
 id: CCD-049

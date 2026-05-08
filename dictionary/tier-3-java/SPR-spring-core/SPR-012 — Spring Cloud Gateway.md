@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Cloud Gateway"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /spring/spring-cloud-gateway/
 id: SPR-012

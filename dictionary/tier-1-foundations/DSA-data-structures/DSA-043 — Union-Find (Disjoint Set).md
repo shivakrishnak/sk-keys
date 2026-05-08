@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Union-Find (Disjoint Set)"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /dsa/union-find-disjoint-set/
 id: DSA-043

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CQRS Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /design-patterns/cqrs-pattern/
 id: DPT-052

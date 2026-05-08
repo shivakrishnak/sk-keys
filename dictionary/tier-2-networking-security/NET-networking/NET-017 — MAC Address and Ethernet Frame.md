@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-017
 title: MAC Address and Ethernet Frame
 category: Networking
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /net/mac-address-and-ethernet-frame/
 ---

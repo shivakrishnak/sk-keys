@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Trie"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /dsa/trie/
 id: DSA-022

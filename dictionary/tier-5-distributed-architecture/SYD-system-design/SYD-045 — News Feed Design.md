@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "News Feed Design"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /system-design/news-feed-design/
 id: SYD-045

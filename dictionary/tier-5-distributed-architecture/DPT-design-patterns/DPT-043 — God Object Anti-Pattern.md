@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "God Object Anti-Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /design-patterns/god-object-anti-pattern/
 id: DPT-043

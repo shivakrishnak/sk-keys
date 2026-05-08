@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "K8s Multi-Cluster"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /kubernetes/k8s-multi-cluster/
 id: K8S-061

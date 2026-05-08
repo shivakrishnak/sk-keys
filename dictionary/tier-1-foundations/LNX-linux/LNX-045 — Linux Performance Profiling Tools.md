@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-045
 title: Linux Performance Profiling Tools
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /lnx/linux-performance-profiling-tools/
 ---

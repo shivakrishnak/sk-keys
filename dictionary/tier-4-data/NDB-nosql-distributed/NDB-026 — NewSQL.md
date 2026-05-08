@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "NewSQL"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /nosql/newsql/
 id: NDB-026

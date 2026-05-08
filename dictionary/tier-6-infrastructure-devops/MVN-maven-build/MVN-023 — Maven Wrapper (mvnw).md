@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Maven Wrapper (mvnw)"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /maven-build/maven-wrapper-mvnw/
 id: MVN-023

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "N+1 Problem"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /spring/n-plus-1-problem/
 id: SPR-046

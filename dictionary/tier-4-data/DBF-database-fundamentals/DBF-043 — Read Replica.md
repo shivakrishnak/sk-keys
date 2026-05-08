@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Read Replica"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /databases/read-replica/
 id: DBF-043

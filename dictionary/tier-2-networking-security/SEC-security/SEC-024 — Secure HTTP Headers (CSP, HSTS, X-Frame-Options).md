@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-024
 title: Secure HTTP Headers (CSP, HSTS, X-Frame-Options)
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /sec/secure-http-headers-csp-hsts-x-frame-options/
 ---

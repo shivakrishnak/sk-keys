@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Schema Evolution"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /databases/schema-evolution/
 id: DBF-055

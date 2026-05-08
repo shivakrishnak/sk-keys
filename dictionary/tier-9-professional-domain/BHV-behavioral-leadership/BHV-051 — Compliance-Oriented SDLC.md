@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Compliance-Oriented SDLC"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /leadership/compliance-oriented-sdlc/
 id: BHV-051

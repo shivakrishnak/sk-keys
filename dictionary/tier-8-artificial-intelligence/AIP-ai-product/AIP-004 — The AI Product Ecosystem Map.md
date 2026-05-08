@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-004
 title: The AI Product Ecosystem Map
 category: AI Product Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /aip/the-ai-product-ecosystem-map/
 ---

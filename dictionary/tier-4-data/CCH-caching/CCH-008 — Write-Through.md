@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Write-Through"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /caching/write-through/
 id: CCH-008

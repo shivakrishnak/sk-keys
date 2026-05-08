@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-012
 title: Angular Routing
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /ang/angular-routing/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "JIT Compiler"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /java/jit-compiler/
 id: JVM-041

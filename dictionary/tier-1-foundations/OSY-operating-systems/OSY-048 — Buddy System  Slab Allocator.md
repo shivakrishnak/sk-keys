@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Buddy System / Slab Allocator"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /operating-systems/buddy-system-slab-allocator/
 id: OSY-048

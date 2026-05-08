@@ -1,4 +1,4 @@
----
+﻿---
 id: SYD-057
 title: Theoretical Foundations of Scalable Systems
 category: System Design
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /syd/theoretical-foundations-of-scalable-systems/
 ---

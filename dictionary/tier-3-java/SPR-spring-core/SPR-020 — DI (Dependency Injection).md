@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DI (Dependency Injection)"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /spring/di-dependency-injection/
 id: SPR-020

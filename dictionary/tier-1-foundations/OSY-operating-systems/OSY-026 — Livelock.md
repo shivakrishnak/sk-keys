@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Livelock"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /operating-systems/livelock/
 id: OSY-026

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cache Aside vs Read-Through Comparison"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /caching/cache-aside-vs-read-through/
 id: CCH-021

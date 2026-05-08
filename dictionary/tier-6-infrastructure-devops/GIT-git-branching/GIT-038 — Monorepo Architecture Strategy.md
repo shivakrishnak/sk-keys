@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-038
 title: Monorepo Architecture Strategy
 category: Git & Branching Strategy
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /git/monorepo-architecture-strategy/
 ---

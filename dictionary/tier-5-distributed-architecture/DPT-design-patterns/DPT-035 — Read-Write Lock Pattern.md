@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Read-Write Lock Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /design-patterns/read-write-lock-pattern/
 id: DPT-035

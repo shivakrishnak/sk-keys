@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Local Variable Table"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /java/local-variable-table/
 id: JVM-015

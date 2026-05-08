@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Blocking IO"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /operating-systems/blocking-io/
 id: OSY-013

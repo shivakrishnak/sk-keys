@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Escape Analysis"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /java/escape-analysis/
 id: JVM-017

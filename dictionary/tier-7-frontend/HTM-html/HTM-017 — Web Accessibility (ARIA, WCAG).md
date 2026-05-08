@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-017
 title: Web Accessibility (ARIA, WCAG)
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /htm/web-accessibility-aria-wcag/
 ---

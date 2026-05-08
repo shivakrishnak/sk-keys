@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kappa Architecture"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /big-data-streaming/kappa-architecture/
 id: BIG-033

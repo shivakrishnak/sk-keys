@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-016
 title: Terraform Import
 category: Infrastructure as Code
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /iac/terraform-import/
 ---

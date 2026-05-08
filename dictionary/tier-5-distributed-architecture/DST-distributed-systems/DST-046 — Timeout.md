@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Timeout"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /distributed-systems/timeout/
 id: DST-046

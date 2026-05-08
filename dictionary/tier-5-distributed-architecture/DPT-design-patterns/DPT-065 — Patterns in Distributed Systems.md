@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-065
 title: Patterns in Distributed Systems
 category: Design Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /dpt/patterns-in-distributed-systems/
 ---

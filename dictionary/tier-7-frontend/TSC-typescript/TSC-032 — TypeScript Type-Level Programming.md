@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-032
 title: TypeScript Type-Level Programming
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /tsc/typescript-type-level-programming/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-002
 title: The AWS Service Landscape -- A Map
 category: Cloud -- AWS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /aws/the-aws-service-landscape----a-map/
 ---

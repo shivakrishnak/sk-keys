@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-033
 title: Settlement and Clearing System Design
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /fin/settlement-and-clearing-system-design/
 ---

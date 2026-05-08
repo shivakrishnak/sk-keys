@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Push vs Pull Architecture"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /system-design/push-vs-pull-architecture/
 id: SYD-036

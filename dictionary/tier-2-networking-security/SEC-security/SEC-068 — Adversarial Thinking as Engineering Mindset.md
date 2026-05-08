@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-068
 title: Adversarial Thinking as Engineering Mindset
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /sec/adversarial-thinking-as-engineering-mindset/
 ---

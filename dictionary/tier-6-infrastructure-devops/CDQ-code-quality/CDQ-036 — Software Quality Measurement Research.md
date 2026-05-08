@@ -1,4 +1,4 @@
----
+﻿---
 id: CDQ-036
 title: Software Quality Measurement Research
 category: Code Quality
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /cdq/software-quality-measurement-research/
 ---

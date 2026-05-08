@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-018
 title: CSS Pseudo-Classes and Pseudo-Elements
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /css/css-pseudo-classes-and-pseudo-elements/
 ---

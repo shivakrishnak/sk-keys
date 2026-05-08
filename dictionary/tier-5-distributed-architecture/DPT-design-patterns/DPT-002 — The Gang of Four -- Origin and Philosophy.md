@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-002
 title: The Gang of Four -- Origin and Philosophy
 category: Design Patterns
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /dpt/the-gang-of-four----origin-and-philosophy/
 ---

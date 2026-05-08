@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Keep-Alive / Connection Pooling"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /http-apis/keep-alive-connection-pooling/
 id: API-020

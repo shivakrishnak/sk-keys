@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-072
 title: Service-to-Service Protocol Design
 category: Microservices
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 72
 permalink: /msv/service-to-service-protocol-design/
 ---

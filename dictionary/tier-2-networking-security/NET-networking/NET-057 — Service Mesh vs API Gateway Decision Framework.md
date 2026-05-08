@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-057
 title: Service Mesh vs API Gateway Decision Framework
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /net/service-mesh-vs-api-gateway-decision-framework/
 ---

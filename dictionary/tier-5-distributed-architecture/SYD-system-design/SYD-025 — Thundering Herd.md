@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Thundering Herd"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /system-design/thundering-herd-system/
 id: SYD-025

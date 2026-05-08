@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-003
 title: Linux Distributions — The Ecosystem Map
 category: Linux
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /lnx/linux-distributions-the-ecosystem-map/
 ---

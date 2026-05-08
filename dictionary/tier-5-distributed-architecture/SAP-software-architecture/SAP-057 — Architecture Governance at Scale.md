@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-057
 title: Architecture Governance at Scale
 category: Software Architecture Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /sap/architecture-governance-at-scale/
 ---

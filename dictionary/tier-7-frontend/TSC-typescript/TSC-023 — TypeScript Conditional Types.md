@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-023
 title: TypeScript Conditional Types
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /tsc/typescript-conditional-types/
 ---

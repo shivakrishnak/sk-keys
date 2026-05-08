@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "OAuth2"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /http-apis/oauth2/
 id: API-023

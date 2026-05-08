@@ -1,4 +1,4 @@
----
+﻿---
 id: DAT-003
 title: Data vs Information vs Knowledge
 category: Data Fundamentals
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /dat/data-vs-information-vs-knowledge/
 ---

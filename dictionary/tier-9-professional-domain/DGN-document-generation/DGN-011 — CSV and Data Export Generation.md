@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-011
 title: CSV and Data Export Generation
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /dgn/csv-and-data-export-generation/
 ---

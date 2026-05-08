@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Query Optimization"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /databases/query-optimization/
 id: DBF-008

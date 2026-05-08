@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Environment Promotion Strategy"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /ci-cd/environment-promotion-strategy/
 id: CCD-047

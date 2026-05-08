@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Open Host Service"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /software-architecture/open-host-service/
 id: SAP-037

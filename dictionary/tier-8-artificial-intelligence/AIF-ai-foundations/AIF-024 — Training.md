@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Training"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /ai-foundations/training/
 id: AIF-024

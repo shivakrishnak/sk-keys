@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Rate Limiting"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /http-apis/api-rate-limiting/
 id: API-033

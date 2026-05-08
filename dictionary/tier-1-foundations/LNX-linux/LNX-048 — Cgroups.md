@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cgroups"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /linux/cgroups/
 id: LNX-048

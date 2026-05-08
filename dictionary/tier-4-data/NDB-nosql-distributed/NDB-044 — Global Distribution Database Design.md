@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-044
 title: Global Distribution Database Design
 category: NoSQL & Distributed Databases
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /ndb/global-distribution-database-design/
 ---

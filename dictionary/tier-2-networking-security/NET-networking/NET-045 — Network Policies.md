@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Network Policies"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /networking/network-policies/
 id: NET-045

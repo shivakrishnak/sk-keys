@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-021
 title: ReAct Agent Pattern
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /rag/react-agent-pattern/
 ---

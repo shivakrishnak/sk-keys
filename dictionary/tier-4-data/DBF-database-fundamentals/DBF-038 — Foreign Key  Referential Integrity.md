@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Foreign Key  Referential Integrity"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /databases/foreign-key/
 id: DBF-038

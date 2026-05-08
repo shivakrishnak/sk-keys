@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "LRU Cache"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /dsa/lru-cache/
 id: DSA-023

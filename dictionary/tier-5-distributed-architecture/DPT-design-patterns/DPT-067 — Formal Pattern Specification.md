@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-067
 title: Formal Pattern Specification
 category: Design Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 67
 permalink: /dpt/formal-pattern-specification/
 ---

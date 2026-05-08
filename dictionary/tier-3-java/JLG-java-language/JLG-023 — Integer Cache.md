@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Integer Cache"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /java-language/integer-cache/
 id: JLG-023

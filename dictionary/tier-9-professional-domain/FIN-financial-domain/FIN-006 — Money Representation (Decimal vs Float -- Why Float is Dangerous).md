@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-006
 title: Money Representation (Decimal vs Float -- Why Float is Dangerous)
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /fin/money-representation-decimal-vs-float----why-float-is-dangerous/
 ---

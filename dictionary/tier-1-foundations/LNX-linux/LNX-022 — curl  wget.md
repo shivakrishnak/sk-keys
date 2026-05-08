@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "curl / wget"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /linux/curl-wget/
 id: LNX-022

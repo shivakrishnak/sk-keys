@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-005
 title: TypeScript in Production -- What to Expect
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /tsc/typescript-in-production----what-to-expect/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-010
 title: CSS Colors and Typography
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /css/css-colors-and-typography/
 ---

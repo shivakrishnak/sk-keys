@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Multi-Master Replication"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /databases/multi-master-replication/
 id: DBF-052

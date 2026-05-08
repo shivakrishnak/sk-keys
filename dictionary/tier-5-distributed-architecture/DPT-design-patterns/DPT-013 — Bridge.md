@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bridge"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /design-patterns/bridge/
 id: DPT-013

@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-002
 title: The Async Mental Model (Sync vs Async vs Parallel)
 category: Async & Background Processing
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /asy/the-async-mental-model-sync-vs-async-vs-parallel/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-038
 title: Angular State Management Selection (NgRx vs Akita vs Elf)
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /ang/angular-state-management-selection-ngrx-vs-akita-vs-elf/
 ---

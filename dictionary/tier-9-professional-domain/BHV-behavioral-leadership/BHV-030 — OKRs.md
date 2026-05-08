@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "OKRs"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /leadership/okrs/
 id: BHV-030

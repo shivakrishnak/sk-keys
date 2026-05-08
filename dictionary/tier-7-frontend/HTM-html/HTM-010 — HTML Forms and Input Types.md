@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-010
 title: HTML Forms and Input Types
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /htm/html-forms-and-input-types/
 ---

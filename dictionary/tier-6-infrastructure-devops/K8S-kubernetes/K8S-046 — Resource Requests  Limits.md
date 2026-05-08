@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Resource Requests  Limits"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /kubernetes/resource-requests-limits/
 id: K8S-046

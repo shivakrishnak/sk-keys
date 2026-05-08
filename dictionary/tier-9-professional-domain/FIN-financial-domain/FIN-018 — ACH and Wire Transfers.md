@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-018
 title: ACH and Wire Transfers
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /fin/ach-and-wire-transfers/
 ---

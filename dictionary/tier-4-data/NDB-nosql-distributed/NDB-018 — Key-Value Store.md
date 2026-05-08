@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Key-Value Store"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /nosql/key-value-store/
 id: NDB-018

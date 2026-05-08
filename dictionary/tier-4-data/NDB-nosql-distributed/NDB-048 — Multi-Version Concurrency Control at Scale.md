@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-048
 title: Multi-Version Concurrency Control at Scale
 category: NoSQL & Distributed Databases
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /ndb/multi-version-concurrency-control-at-scale/
 ---

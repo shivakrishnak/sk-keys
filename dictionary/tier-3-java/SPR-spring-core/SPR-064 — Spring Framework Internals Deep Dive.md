@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-064
 title: Spring Framework Internals Deep Dive
 category: Spring Core
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /spr/spring-framework-internals-deep-dive/
 ---

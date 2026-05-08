@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Maven BOM (Bill of Materials)"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /maven-build/maven-bom-bill-of-materials/
 id: MVN-017

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Batch Job  Step  Tasklet"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /spring/spring-batch-job-step-tasklet/
 id: SPR-007

@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-025
 title: pnpm Content-Addressable Store Internals
 category: npm & Package Management
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /npm/pnpm-content-addressable-store-internals/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sidecar Container"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /containers/sidecar-container/
 id: CTR-030

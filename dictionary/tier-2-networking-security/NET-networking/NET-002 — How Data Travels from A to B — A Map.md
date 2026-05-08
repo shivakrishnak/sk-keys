@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-002
 title: How Data Travels from A to B — A Map
 category: Networking
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /net/how-data-travels-from-a-to-b-a-map/
 ---

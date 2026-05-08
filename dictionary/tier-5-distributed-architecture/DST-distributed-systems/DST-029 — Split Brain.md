@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Split Brain"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /distributed-systems/split-brain/
 id: DST-029

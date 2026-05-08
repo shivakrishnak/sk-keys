@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-050
 title: NoSQL Engine Architecture
 category: NoSQL & Distributed Databases
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /ndb/nosql-engine-architecture/
 ---

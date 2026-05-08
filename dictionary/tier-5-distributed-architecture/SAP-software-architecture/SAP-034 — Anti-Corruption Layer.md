@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Anti-Corruption Layer"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /software-architecture/anti-corruption-layer/
 id: SAP-034

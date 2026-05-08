@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-058
 title: Heap Sizing and Memory Planning Strategy
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 58
 permalink: /jvm/heap-sizing-and-memory-planning-strategy/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS Service Limits"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /cloud-aws/aws-service-limits/
 id: AWS-064

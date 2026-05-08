@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-027
 title: Dependency Graph Cycles and Resolution
 category: npm & Package Management
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /npm/dependency-graph-cycles-and-resolution/
 ---

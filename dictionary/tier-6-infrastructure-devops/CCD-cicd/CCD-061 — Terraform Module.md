@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Module"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /ci-cd/terraform-module/
 id: CCD-061

@@ -1,4 +1,4 @@
----
+﻿---
 id: SYD-001
 title: What Is System Design
 category: System Design
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /syd/what-is-system-design/
 ---

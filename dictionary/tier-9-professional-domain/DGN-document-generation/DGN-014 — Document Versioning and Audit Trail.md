@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-014
 title: Document Versioning and Audit Trail
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /dgn/document-versioning-and-audit-trail/
 ---

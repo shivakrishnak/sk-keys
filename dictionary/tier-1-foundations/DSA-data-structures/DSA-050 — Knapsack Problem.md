@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Knapsack Problem"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /dsa/knapsack-problem/
 id: DSA-050

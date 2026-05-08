@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-070
 title: Framework Selection Mental Model
 category: Spring Core
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 70
 permalink: /spr/framework-selection-mental-model/
 ---

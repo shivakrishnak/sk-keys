@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bytecode"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /java/bytecode/
 id: JVM-008

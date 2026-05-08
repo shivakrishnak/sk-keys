@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Lava Flow Anti-Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /design-patterns/lava-flow-anti-pattern/
 id: DPT-049

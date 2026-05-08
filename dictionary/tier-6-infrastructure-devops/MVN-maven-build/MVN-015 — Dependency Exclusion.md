@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Dependency Exclusion"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /maven-build/dependency-exclusion/
 id: MVN-015

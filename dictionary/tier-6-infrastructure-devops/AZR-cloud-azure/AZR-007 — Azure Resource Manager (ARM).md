@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-007
 title: Azure Resource Manager (ARM)
 category: Cloud -- Azure
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /azr/azure-resource-manager-arm/
 ---

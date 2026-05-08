@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-054
 title: eBPF (Extended Berkeley Packet Filter)
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /lnx/ebpf-extended-berkeley-packet-filter/
 ---

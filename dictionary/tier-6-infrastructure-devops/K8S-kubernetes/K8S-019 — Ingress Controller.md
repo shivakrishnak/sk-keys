@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Ingress Controller"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /kubernetes/ingress-controller/
 id: K8S-019

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS CloudFront"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /cloud-aws/aws-cloudfront/
 id: AWS-006

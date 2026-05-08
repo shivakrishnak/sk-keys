@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-059
 title: JVM Observability Strategy
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /jvm/jvm-observability-strategy/
 ---

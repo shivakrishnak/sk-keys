@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "MongoDB Normalization vs Denormalization"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /nosql/mongodb-normalization-denormalization/
 id: NDB-007

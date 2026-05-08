@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-002
 title: IaC vs Manual Infrastructure -- The Mental Model
 category: Infrastructure as Code
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /iac/iac-vs-manual-infrastructure----the-mental-model/
 ---

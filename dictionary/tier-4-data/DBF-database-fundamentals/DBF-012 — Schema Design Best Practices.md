@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Schema Design Best Practices"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /databases/schema-design-best-practices/
 id: DBF-012

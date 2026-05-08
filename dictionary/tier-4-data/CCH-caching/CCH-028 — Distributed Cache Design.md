@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-028
 title: Distributed Cache Design
 category: Caching
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /cch/distributed-cache-design/
 ---

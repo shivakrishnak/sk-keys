@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-004
 title: Defense in Depth — The Security Layering Principle
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /sec/defense-in-depth-the-security-layering-principle/
 ---

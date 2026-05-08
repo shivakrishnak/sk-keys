@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-016
 title: Iteration vs Recursion
 category: Data Structures & Algorithms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /dsa/iteration-vs-recursion/
 ---

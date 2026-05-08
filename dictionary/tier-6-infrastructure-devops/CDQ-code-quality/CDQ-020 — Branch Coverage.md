@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Branch Coverage"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /code-quality/branch-coverage/
 id: CDQ-020

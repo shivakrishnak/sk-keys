@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Batch Chunk Processing"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /spring/spring-batch-chunk-processing/
 id: SPR-009

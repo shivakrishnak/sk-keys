@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GitHub Actions"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /ci-cd/github-actions/
 id: CCD-015

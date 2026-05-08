@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Master Data Management"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /data-fundamentals/master-data-management/
 id: DAT-040

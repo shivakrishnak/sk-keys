@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Transfer Learning"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /ai-foundations/transfer-learning/
 id: AIF-028

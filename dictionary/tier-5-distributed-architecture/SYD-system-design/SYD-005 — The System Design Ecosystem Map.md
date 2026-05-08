@@ -1,4 +1,4 @@
----
+﻿---
 id: SYD-005
 title: The System Design Ecosystem Map
 category: System Design
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /syd/the-system-design-ecosystem-map/
 ---

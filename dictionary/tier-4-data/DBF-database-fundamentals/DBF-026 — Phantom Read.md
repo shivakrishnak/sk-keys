@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Phantom Read"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /databases/phantom-read/
 id: DBF-026

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Micronaut Framework"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /spring/micronaut-framework/
 id: SPR-016

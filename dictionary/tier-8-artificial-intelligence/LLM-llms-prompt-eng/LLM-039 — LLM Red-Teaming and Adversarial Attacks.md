@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-039
 title: LLM Red-Teaming and Adversarial Attacks
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /llm/llm-red-teaming-and-adversarial-attacks/
 ---

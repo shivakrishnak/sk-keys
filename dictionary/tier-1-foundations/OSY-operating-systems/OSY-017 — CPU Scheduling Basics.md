@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-017
 title: CPU Scheduling Basics
 category: Operating Systems
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /osy/cpu-scheduling-basics/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DaemonSet"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /kubernetes/daemonset/
 id: K8S-014

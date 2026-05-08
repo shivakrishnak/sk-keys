@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Process vs Thread"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /operating-systems/process-vs-thread/
 id: OSY-008

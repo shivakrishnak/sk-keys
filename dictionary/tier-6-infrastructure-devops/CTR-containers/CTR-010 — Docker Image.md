@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Docker Image"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /containers/docker-image/
 id: CTR-010

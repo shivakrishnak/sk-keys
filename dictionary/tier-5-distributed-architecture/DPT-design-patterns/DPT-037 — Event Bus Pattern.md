@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Event Bus Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /design-patterns/event-bus-pattern/
 id: DPT-037

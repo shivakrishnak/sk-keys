@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-004
 title: The Observability Ecosystem Map
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /obs/the-observability-ecosystem-map/
 ---

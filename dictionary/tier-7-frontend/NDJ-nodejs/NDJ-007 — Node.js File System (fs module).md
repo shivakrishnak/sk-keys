@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-007
 title: Node.js File System (fs module)
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /ndj/nodejs-file-system-fs-module/
 ---

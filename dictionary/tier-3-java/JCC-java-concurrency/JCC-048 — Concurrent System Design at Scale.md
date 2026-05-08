@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-048
 title: Concurrent System Design at Scale
 category: Java Concurrency
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /jcc/concurrent-system-design-at-scale/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "FluxCD"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /kubernetes/fluxcd/
 id: K8S-057

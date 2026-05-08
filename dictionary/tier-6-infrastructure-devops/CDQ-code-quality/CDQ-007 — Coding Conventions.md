@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Coding Conventions"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /code-quality/coding-conventions/
 id: CDQ-007

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Idempotency (Distributed)"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /distributed-systems/idempotency/
 id: DST-045

@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-005
 title: LLMOps -- What It Is and Why It Exists
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /rag/llmops----what-it-is-and-why-it-exists/
 ---

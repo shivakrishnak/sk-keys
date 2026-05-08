@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-047
 title: Privilege Escalation Patterns
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /sec/privilege-escalation-patterns/
 ---

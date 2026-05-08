@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-009
 title: Excel Generation (Apache POI, OpenPyXL, ExcelJS)
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /dgn/excel-generation-apache-poi-openpyxl-exceljs/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Continuous Deployment"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /ci-cd/continuous-deployment/
 id: CCD-008

@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-036
 title: Human-AI Collaboration Design Research
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /aip/human-ai-collaboration-design-research/
 ---

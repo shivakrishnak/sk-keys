@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "TreeMap"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /dsa/treemap/
 id: DSA-019

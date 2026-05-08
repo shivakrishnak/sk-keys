@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-032
 title: Angular Ivy Compiler Internals
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /ang/angular-ivy-compiler-internals/
 ---

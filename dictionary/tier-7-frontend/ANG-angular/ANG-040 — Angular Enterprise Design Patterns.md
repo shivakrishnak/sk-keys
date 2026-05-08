@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-040
 title: Angular Enterprise Design Patterns
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /ang/angular-enterprise-design-patterns/
 ---

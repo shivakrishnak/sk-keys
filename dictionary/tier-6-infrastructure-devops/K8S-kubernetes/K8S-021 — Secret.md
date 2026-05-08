@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Secret"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /kubernetes/secret/
 id: K8S-021

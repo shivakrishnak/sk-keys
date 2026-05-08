@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-019
 title: HTML Templating (Jinja, Thymeleaf, Handlebars)
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /htm/html-templating-jinja-thymeleaf-handlebars/
 ---

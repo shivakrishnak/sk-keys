@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DORA Metrics"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /ci-cd/dora-metrics/
 id: CCD-042

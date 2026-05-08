@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "K8s Upgrade Strategy"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /kubernetes/k8s-upgrade-strategy/
 id: K8S-065

@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-032
 title: Node.js V8 Integration
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /ndj/nodejs-v8-integration/
 ---

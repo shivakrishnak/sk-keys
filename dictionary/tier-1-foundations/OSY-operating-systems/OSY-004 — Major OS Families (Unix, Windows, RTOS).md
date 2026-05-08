@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-004
 title: Major OS Families (Unix, Windows, RTOS)
 category: Operating Systems
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /osy/major-os-families-unix-windows-rtos/
 ---

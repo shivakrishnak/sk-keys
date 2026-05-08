@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Machine Learning Basics"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /ai-foundations/machine-learning-basics/
 id: AIF-006

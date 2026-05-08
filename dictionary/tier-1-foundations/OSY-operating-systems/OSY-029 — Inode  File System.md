@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Inode / File System"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /operating-systems/inode-file-system/
 id: OSY-029

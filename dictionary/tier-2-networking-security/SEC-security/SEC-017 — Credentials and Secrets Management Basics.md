@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-017
 title: Credentials and Secrets Management Basics
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /sec/credentials-and-secrets-management-basics/
 ---

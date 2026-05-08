@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Strangler Fig"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /design-patterns/strangler-fig/
 id: DPT-055

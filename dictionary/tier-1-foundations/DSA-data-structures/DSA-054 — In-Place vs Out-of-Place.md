@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "In-Place vs Out-of-Place"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /dsa/in-place-vs-out-of-place/
 id: DSA-054

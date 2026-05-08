@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "HTTP Status Codes"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /http-apis/http-status-codes/
 id: API-007

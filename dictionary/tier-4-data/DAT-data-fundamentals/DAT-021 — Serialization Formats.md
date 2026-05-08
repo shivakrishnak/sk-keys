@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Serialization Formats"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /data-fundamentals/serialization-formats/
 id: DAT-021

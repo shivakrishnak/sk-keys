@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Protocol Buffers"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /http-apis/protocol-buffers/
 id: API-038

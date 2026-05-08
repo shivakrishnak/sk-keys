@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "IP Addressing"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /networking/ip-addressing/
 id: NET-008

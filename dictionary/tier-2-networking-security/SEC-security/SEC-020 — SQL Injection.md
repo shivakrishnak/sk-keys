@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-020
 title: SQL Injection
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /sec/sql-injection/
 ---

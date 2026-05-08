@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-004
 title: When NOT to Cache
 category: Caching
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /cch/when-not-to-cache/
 ---

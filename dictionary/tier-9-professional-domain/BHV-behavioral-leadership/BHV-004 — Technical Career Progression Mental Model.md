@@ -1,4 +1,4 @@
----
+﻿---
 id: BHV-004
 title: Technical Career Progression Mental Model
 category: Behavioral & Leadership
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /bhv/technical-career-progression-mental-model/
 ---

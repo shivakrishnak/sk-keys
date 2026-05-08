@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Helm Chart"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /kubernetes/helm-chart/
 id: K8S-038

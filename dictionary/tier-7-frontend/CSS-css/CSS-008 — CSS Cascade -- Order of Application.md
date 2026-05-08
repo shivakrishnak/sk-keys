@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-008
 title: CSS Cascade -- Order of Application
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /css/css-cascade----order-of-application/
 ---

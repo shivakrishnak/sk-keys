@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-047
 title: ML Platform Engineering Design
 category: AI Foundations
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /aif/ml-platform-engineering-design/
 ---

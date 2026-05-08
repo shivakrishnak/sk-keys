@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Flyweight"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /design-patterns/flyweight/
 id: DPT-017

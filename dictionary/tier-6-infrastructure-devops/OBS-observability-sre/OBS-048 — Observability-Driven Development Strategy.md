@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-048
 title: Observability-Driven Development Strategy
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /obs/observability-driven-development-strategy/
 ---

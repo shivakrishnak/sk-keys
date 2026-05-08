@@ -1,4 +1,4 @@
----
+﻿---
 id: MVN-003
 title: Build vs Compile vs Package vs Deploy
 category: Maven & Build Tools
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Maven & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /mvn/build-vs-compile-vs-package-vs-deploy/
 ---

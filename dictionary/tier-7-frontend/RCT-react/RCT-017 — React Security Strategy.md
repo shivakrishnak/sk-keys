@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-017
 title: React Security Strategy
 category: React
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /rct/react-security-strategy/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Mediator"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /design-patterns/mediator/
 id: DPT-023

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Read-Heavy vs Write-Heavy Design"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /system-design/read-heavy-vs-write-heavy-design/
 id: SYD-033

@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-018
 title: Memory Allocation Basics
 category: Operating Systems
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /osy/memory-allocation-basics/
 ---

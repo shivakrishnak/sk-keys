@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-001
 title: What Is JavaScript and Why It Rules the Web
 category: JavaScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /jsc/what-is-javascript-and-why-it-rules-the-web/
 ---

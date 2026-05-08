@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-055
 title: perf / flamegraph
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /lnx/perf-flamegraph/
 ---

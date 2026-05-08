@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-026
 title: Progressive Web Apps (PWA, Service Worker, Manifest)
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /htm/progressive-web-apps-pwa-service-worker-manifest/
 ---

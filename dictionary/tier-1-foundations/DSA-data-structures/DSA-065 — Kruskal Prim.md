@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kruskal Prim"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /dsa/kruskal-prim/
 id: DSA-065

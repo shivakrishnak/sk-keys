@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Columnar vs Row Storage"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /data-fundamentals/columnar-vs-row-storage/
 id: DAT-013

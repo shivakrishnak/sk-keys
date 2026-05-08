@@ -1,4 +1,4 @@
----
+﻿---
 id: API-072
 title: Protocol Design Trade-offs at Scale
 category: HTTP & APIs
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 72
 permalink: /api/protocol-design-trade-offs-at-scale/
 ---

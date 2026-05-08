@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-039
 title: Azure Security Center (Defender)
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /azr/azure-security-center-defender/
 ---

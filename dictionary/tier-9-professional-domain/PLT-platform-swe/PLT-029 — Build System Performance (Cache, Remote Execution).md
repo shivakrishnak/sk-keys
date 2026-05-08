@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-029
 title: Build System Performance (Cache, Remote Execution)
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /plt/build-system-performance-cache-remote-execution/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "JDK Dynamic Proxy"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /spring/jdk-dynamic-proxy/
 id: SPR-033

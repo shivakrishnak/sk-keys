@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "MVCC"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /databases/mvcc/
 id: DBF-027

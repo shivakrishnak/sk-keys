@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS SQS"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /cloud-aws/aws-sqs/
 id: AWS-009

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Hinted Handoff"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /distributed-systems/hinted-handoff/
 id: DST-065

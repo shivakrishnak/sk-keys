@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-012
 title: Ledger Systems Design
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /fin/ledger-systems-design/
 ---

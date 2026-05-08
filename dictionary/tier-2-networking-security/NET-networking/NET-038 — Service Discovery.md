@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service Discovery"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /networking/service-discovery/
 id: NET-038

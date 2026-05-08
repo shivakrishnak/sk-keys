@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-018
 title: AI Feature Discoverability and Onboarding
 category: AI Product Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /aip/ai-feature-discoverability-and-onboarding/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Taints and Tolerations"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /kubernetes/taints-and-tolerations/
 id: K8S-049

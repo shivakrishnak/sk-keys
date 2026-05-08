@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-075
 title: Memory Hierarchy Impact on Algorithm Choice
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 75
 permalink: /dsa/memory-hierarchy-impact-on-algorithm-choice/
 ---

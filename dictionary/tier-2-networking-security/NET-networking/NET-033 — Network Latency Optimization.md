@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Network Latency Optimization"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /networking/network-latency-optimization/
 id: NET-033

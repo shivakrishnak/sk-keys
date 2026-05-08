@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-001
 title: What Is Financial Services Software Engineering
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /fin/what-is-financial-services-software-engineering/
 ---

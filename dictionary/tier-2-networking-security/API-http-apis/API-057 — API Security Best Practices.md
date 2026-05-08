@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Security Best Practices"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /http-apis/api-security-best-practices/
 id: API-057

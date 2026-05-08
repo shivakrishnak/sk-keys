@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Local Cache vs Distributed Cache"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /caching/local-vs-distributed/
 id: CCH-025

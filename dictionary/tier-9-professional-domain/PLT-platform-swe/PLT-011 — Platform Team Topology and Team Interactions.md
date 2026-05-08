@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-011
 title: Platform Team Topology and Team Interactions
 category: Platform & Modern SWE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /plt/platform-team-topology-and-team-interactions/
 ---

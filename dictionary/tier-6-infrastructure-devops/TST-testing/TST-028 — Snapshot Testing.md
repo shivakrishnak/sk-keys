@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Snapshot Testing"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /testing/snapshot-testing/
 id: TST-028

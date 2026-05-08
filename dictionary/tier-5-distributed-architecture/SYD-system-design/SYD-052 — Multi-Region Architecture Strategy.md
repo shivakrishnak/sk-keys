@@ -1,4 +1,4 @@
----
+﻿---
 id: SYD-052
 title: Multi-Region Architecture Strategy
 category: System Design
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /syd/multi-region-architecture-strategy/
 ---

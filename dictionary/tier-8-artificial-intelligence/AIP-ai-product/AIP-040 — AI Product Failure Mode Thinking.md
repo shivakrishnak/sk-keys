@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-040
 title: AI Product Failure Mode Thinking
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /aip/ai-product-failure-mode-thinking/
 ---

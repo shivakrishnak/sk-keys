@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-047
 title: Azure Architecture Strategy (Enterprise)
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /azr/azure-architecture-strategy-enterprise/
 ---

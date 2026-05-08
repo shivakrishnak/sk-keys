@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-061
 title: Future Networking — HTTP3 QUIC IPv6 at Scale
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /net/future-networking-http3-quic-ipv6-at-scale/
 ---

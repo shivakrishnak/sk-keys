@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Data Source"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 67
 permalink: /ci-cd/terraform-data-source/
 id: CCD-067

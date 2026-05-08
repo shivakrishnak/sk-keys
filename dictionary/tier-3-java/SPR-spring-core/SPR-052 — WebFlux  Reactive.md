@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "WebFlux  Reactive"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /spring/webflux-reactive/
 id: SPR-052

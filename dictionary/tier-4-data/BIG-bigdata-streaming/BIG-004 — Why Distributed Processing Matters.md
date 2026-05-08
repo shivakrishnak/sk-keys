@@ -1,4 +1,4 @@
----
+﻿---
 id: BIG-004
 title: Why Distributed Processing Matters
 category: Big Data & Streaming
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /big/why-distributed-processing-matters/
 ---

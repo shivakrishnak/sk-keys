@@ -1,4 +1,4 @@
----
+﻿---
 id: BHV-063
 title: Engineering Organization Design
 category: Behavioral & Leadership
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /bhv/engineering-organization-design/
 ---

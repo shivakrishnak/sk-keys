@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Space Complexity"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /dsa/space-complexity/
 id: DSA-007

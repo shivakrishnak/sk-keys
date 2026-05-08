@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Serial GC"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /java/serial-gc/
 id: JVM-030

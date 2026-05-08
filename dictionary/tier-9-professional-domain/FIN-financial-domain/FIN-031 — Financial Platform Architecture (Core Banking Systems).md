@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-031
 title: Financial Platform Architecture (Core Banking Systems)
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /fin/financial-platform-architecture-core-banking-systems/
 ---

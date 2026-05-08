@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-014
 title: Payment Reconciliation
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /fin/payment-reconciliation/
 ---

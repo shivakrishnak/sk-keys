@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Load Test"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /testing/load-test/
 id: TST-013

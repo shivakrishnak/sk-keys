@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Loose Coupling of Frontend Modules"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /software-architecture/loose-coupling-frontend-modules/
 id: SAP-011

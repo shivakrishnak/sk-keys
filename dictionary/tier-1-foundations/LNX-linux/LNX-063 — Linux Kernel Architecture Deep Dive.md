@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-063
 title: Linux Kernel Architecture Deep Dive
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /lnx/linux-kernel-architecture-deep-dive/
 ---

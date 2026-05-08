@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pulumi"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /ci-cd/pulumi/
 id: CCD-033

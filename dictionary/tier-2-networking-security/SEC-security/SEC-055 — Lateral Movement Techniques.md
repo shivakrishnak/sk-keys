@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-055
 title: Lateral Movement Techniques
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /sec/lateral-movement-techniques/
 ---

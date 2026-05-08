@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-001
 title: Why Concurrency Is Hard
 category: Java Concurrency
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /jcc/why-concurrency-is-hard/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Byzantine Fault Tolerance"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /distributed-systems/byzantine-fault-tolerance/
 id: DST-059

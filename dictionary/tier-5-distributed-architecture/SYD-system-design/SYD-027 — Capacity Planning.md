@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Capacity Planning"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /system-design/capacity-planning/
 id: SYD-027

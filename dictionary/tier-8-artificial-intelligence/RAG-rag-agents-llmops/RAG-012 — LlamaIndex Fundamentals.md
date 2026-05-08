@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-012
 title: LlamaIndex Fundamentals
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /rag/llamaindex-fundamentals/
 ---

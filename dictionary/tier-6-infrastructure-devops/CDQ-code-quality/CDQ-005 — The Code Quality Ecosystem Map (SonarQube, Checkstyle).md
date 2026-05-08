@@ -1,4 +1,4 @@
----
+﻿---
 id: CDQ-005
 title: The Code Quality Ecosystem Map (SonarQube, Checkstyle)
 category: Code Quality
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /cdq/the-code-quality-ecosystem-map-sonarqube-checkstyle/
 ---

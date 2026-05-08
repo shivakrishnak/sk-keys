@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "B-Tree"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /databases/b-tree/
 id: DBF-030

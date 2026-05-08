@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Weaving"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /spring/weaving/
 id: SPR-039

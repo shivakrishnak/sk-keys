@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-011
 title: Hashing and Password Storage
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /sec/hashing-and-password-storage/
 ---

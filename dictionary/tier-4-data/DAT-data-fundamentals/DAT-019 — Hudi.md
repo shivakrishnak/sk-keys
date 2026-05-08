@@ -1,7 +1,8 @@
-hhnmmnmmjjjjjjj  ws---
+﻿hhnmmnmmjjjjjjj  ws---
 layout: default
 title: "Hudi"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /data-fundamentals/hudi/
 id: DAT-019

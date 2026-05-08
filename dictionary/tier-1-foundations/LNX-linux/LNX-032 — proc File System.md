@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "/proc File System"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /linux/proc-file-system/
 id: LNX-032

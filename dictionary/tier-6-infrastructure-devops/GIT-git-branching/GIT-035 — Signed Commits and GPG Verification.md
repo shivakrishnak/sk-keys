@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-035
 title: Signed Commits and GPG Verification
 category: Git & Branching Strategy
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /git/signed-commits-and-gpg-verification/
 ---

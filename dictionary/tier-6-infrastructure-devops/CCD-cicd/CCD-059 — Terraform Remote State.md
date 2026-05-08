@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Remote State"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /ci-cd/terraform-remote-state/
 id: CCD-059

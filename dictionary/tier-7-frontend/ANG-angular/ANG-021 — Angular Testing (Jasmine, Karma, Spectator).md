@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-021
 title: Angular Testing (Jasmine, Karma, Spectator)
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /ang/angular-testing-jasmine-karma-spectator/
 ---

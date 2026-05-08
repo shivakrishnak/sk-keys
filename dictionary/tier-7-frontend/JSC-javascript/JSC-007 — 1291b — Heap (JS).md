@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "1291b — Heap (JS)"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /javascript/heap-js/
 id: JSC-007

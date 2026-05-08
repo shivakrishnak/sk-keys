@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Structured vs Unstructured Data"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /data-fundamentals/structured-vs-unstructured-data/
 id: DAT-009

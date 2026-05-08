@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "1300b — Lexical Environment"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /javascript/lexical-environment/
 id: JSC-018

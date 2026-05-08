@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Lead Time for Changes"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /ci-cd/lead-time-for-changes/
 id: CCD-039

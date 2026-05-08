@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Property-Based Testing"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /testing/property-based-testing/
 id: TST-027

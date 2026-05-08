@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Mapper"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /software-architecture/data-mapper/
 id: SAP-029

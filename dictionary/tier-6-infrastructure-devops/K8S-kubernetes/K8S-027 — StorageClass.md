@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "StorageClass"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /kubernetes/storageclass/
 id: K8S-027

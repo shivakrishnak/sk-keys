@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-042
 title: OS Security — Privilege Escalation
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /osy/os-security-privilege-escalation/
 ---

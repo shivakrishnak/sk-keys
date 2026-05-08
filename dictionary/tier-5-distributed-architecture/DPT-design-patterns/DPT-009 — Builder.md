@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Builder"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /design-patterns/builder/
 id: DPT-009

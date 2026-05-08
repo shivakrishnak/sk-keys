@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Composite"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /design-patterns/composite/
 id: DPT-014

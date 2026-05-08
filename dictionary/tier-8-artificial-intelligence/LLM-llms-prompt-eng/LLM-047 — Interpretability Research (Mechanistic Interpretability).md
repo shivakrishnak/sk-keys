@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-047
 title: Interpretability Research (Mechanistic Interpretability)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /llm/interpretability-research-mechanistic-interpretability/
 ---

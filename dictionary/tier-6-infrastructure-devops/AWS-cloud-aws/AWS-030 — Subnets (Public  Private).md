@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Subnets (Public  Private)"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /cloud-aws/subnets-public-private/
 id: AWS-030

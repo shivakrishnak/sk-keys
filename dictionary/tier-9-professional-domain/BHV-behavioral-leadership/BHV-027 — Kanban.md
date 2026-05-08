@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Kanban"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /leadership/kanban/
 id: BHV-027

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "RLHF (Reinforcement Learning from Human Feedback)"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /ai-foundations/rlhf/
 id: AIF-026

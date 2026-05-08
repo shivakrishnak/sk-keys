@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-047
 title: Engineering Metrics Mental Model (Leading vs Lagging)
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /plt/engineering-metrics-mental-model-leading-vs-lagging/
 ---

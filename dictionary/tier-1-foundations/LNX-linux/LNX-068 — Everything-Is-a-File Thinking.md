@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-068
 title: Everything-Is-a-File Thinking
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /lnx/everything-is-a-file-thinking/
 ---

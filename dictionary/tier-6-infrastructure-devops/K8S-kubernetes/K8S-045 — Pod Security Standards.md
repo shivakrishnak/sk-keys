@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pod Security Standards"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /kubernetes/pod-security-standards/
 id: K8S-045

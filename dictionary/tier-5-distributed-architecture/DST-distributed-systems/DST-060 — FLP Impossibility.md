@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "FLP Impossibility"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /distributed-systems/flp-impossibility/
 id: DST-060

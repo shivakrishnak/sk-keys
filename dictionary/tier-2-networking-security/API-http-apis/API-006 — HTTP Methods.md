@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "HTTP Methods"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /http-apis/http-methods/
 id: API-006

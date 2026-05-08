@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-007
 title: Developer Experience (DX) Fundamentals
 category: Platform & Modern SWE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /plt/developer-experience-dx-fundamentals/
 ---

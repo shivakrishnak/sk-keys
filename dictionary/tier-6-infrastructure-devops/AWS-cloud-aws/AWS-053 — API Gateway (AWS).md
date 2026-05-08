@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Gateway (AWS)"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /cloud-aws/api-gateway-aws/
 id: AWS-053

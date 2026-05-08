@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Liquibase"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /databases/liquibase/
 id: DBF-009

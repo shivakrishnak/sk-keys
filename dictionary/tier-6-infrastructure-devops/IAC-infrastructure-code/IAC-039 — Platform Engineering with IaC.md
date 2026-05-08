@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-039
 title: Platform Engineering with IaC
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /iac/platform-engineering-with-iac/
 ---

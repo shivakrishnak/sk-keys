@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Docker Networking Modes"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /containers/docker-networking-modes/
 id: CTR-038

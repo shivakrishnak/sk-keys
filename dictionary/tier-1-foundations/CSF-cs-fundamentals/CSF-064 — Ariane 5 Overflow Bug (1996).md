@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-064
 title: Ariane 5 Overflow Bug (1996)
 category: CS Fundamentals — Paradigms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /csf/ariane-5-overflow-bug-1996/
 ---

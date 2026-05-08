@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-036
 title: TypeScript Architecture Strategy (Strict Typing, Shared Types)
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /tsc/typescript-architecture-strategy-strict-typing-shared-types/
 ---

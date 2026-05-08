@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "TLAB (Thread Local Allocation Buffer)"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /java/tlab-thread-local-allocation-buffer/
 id: JVM-050

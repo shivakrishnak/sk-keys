@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Eventual Consistency (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /microservices/eventual-consistency-microservices/
 id: MSV-041

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Race Condition"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /java-concurrency/race-condition/
 id: JCC-021

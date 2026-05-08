@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DispatcherServlet"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /spring/dispatcherservlet/
 id: SPR-040

@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-022
 title: NgRx State Management
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /ang/ngrx-state-management/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-032
 title: V8 Engine Internals (JIT, Hidden Classes, Turbofan)
 category: JavaScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /jsc/v8-engine-internals-jit-hidden-classes-turbofan/
 ---

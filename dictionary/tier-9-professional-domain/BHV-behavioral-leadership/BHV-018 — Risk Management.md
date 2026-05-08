@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Risk Management"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /leadership/risk-management/
 id: BHV-018

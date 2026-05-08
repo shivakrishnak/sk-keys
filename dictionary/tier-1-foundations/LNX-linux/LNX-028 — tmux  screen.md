@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "tmux / screen"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /linux/tmux-screen/
 id: LNX-028

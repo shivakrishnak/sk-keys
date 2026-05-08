@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Conflict Resolution"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /leadership/conflict-resolution/
 id: BHV-024

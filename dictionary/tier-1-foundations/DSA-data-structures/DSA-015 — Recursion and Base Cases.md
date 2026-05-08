@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-015
 title: Recursion and Base Cases
 category: Data Structures & Algorithms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /dsa/recursion-and-base-cases/
 ---

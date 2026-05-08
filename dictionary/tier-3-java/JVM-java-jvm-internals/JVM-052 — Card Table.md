@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Card Table"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /java/card-table/
 id: JVM-052

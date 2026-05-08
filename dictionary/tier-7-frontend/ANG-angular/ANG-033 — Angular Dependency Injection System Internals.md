@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-033
 title: Angular Dependency Injection System Internals
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /ang/angular-dependency-injection-system-internals/
 ---

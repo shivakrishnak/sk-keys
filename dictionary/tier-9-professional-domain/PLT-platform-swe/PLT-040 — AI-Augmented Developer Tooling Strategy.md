@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-040
 title: AI-Augmented Developer Tooling Strategy
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /plt/ai-augmented-developer-tooling-strategy/
 ---

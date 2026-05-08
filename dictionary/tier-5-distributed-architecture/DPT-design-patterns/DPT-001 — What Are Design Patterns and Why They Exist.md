@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-001
 title: What Are Design Patterns and Why They Exist
 category: Design Patterns
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /dpt/what-are-design-patterns-and-why-they-exist/
 ---

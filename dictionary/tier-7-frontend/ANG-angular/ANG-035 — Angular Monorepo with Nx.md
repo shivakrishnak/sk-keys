@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-035
 title: Angular Monorepo with Nx
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /ang/angular-monorepo-with-nx/
 ---

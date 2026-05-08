@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Two-Phase Commit (2PC)"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /distributed-systems/two-phase-commit/
 id: DST-033

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Java Access Modifiers"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /java/java-access-modifiers/
 id: JLG-014

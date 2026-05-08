@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-045
 title: Security Audit and Code Review
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /sec/security-audit-and-code-review/
 ---

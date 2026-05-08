@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "OIDC"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /http-apis/oidc/
 id: API-035

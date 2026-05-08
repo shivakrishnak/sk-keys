@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Feature Envy"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /code-quality/feature-envy/
 id: CDQ-025

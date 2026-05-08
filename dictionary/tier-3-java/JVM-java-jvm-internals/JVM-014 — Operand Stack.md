@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Operand Stack"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /java/operand-stack/
 id: JVM-014

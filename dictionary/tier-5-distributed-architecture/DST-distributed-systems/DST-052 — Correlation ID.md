@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Correlation ID"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /distributed-systems/correlation-id/
 id: DST-052

@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-062
 title: Linux-Based Platform Engineering
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /lnx/linux-based-platform-engineering/
 ---

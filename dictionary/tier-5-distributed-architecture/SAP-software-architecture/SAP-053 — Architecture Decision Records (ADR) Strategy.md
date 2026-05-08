@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-053
 title: Architecture Decision Records (ADR) Strategy
 category: Software Architecture Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /sap/architecture-decision-records-adr-strategy/
 ---

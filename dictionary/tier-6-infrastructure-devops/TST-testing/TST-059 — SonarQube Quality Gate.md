@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SonarQube Quality Gate"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /testing/tst-054-sonarqube-quality-gate/
 id: TST-059

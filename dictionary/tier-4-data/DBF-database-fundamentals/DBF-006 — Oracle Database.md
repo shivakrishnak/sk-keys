@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Oracle Database"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /databases/oracle-database/
 id: DBF-006

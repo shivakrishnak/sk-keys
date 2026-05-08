@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Testing (Terratest)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 71
 permalink: /ci-cd/terraform-testing-terratest/
 id: CCD-071

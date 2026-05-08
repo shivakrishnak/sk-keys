@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Ansible"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /ci-cd/ansible/
 id: CCD-034

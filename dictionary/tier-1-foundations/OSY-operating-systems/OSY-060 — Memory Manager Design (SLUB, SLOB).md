@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-060
 title: Memory Manager Design (SLUB, SLOB)
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /osy/memory-manager-design-slub-slob/
 ---

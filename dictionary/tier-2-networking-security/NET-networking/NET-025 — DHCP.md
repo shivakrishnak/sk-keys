@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "DHCP"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /networking/dhcp/
 id: NET-025

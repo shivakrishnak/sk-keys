@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-034
 title: Responsible AI Product Design
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /aip/responsible-ai-product-design/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-038
 title: LLMOps Platform Design (MLflow, W&B, ZenML)
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /rag/llmops-platform-design-mlflow-wb-zenml/
 ---

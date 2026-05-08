@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pipe and Filter"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /software-architecture/pipe-and-filter/
 id: SAP-041

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Linux Performance Tuning"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /linux/linux-performance-tuning/
 id: LNX-053

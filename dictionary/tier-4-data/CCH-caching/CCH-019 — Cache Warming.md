@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cache Warming"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /caching/cache-warming/
 id: CCH-019

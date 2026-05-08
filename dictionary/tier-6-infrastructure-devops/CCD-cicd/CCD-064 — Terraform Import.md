@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Import"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /ci-cd/terraform-import/
 id: CCD-064

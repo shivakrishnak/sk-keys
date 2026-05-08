@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bug Triage Process"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /leadership/bug-triage-process/
 id: BHV-047

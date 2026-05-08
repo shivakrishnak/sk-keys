@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Change Failure Rate"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /ci-cd/change-failure-rate/
 id: CCD-040

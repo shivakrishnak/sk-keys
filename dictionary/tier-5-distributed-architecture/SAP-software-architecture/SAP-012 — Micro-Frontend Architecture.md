@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Micro-Frontend Architecture"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /software-architecture/micro-frontend-architecture/
 id: SAP-012

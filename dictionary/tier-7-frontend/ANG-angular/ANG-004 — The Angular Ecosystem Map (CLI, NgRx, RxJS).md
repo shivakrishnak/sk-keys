@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-004
 title: The Angular Ecosystem Map (CLI, NgRx, RxJS)
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /ang/the-angular-ecosystem-map-cli-ngrx-rxjs/
 ---

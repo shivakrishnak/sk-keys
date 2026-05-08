@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-004
 title: How Code Becomes Execution — Big Picture
 category: CS Fundamentals — Paradigms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /csf/how-code-becomes-execution-big-picture/
 ---

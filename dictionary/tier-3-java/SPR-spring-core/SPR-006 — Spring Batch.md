@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Batch"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /spring/spring-batch/
 id: SPR-006

@@ -1,4 +1,4 @@
----
+﻿---
 id: MVN-002
 title: The Build Tool Ecosystem Map (Maven, Gradle, Ant)
 category: Maven & Build Tools
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Maven & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /mvn/the-build-tool-ecosystem-map-maven-gradle-ant/
 ---

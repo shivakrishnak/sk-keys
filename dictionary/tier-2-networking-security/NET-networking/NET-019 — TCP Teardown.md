@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "TCP Teardown"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /networking/tcp-teardown/
 id: NET-019

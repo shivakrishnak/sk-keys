@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-030
 title: Security Logging and Monitoring
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /sec/security-logging-and-monitoring/
 ---

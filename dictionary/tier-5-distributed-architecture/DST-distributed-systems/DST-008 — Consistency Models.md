@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Consistency Models"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /distributed-systems/consistency-models/
 id: DST-008

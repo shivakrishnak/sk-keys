@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Java Memory Model (JMM)"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /java-concurrency/java-memory-model/
 id: JCC-020

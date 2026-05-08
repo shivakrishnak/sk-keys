@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Records (Java 16+)"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /java-language/records/
 id: JLG-032

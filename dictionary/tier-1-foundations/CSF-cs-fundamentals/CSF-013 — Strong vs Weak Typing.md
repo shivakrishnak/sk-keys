@@ -2,6 +2,7 @@
 layout: default
 title: "Strong vs Weak Typing"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /cs-fundamentals/strong-vs-weak-typing/
 id: CSF-013

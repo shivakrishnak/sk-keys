@@ -2,6 +2,7 @@
 layout: default
 title: "Declarative Programming"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /cs-fundamentals/declarative-programming/
 id: CSF-007

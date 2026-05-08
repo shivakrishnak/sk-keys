@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "MySQL Specific Features"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /databases/mysql-specific-features/
 id: DBF-015

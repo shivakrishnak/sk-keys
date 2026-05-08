@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-015
 title: Event-Driven Architecture Patterns
 category: Async & Background Processing
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /asy/event-driven-architecture-patterns/
 ---

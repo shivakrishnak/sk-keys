@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-049
 title: Prompt Engineering Mental Model
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /llm/prompt-engineering-mental-model/
 ---

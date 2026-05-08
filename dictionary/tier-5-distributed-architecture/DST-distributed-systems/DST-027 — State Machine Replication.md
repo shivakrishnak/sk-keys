@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "State Machine Replication"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /distributed-systems/state-machine-replication/
 id: DST-027

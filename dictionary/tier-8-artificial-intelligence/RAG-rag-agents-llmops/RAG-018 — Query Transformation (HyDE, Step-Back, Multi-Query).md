@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-018
 title: Query Transformation (HyDE, Step-Back, Multi-Query)
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /rag/query-transformation-hyde-step-back-multi-query/
 ---

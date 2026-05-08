@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Autoboxing Unboxing"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /java-language/autoboxing-unboxing/
 id: JLG-022

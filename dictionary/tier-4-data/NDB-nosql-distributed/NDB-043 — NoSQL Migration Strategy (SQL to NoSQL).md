@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-043
 title: NoSQL Migration Strategy (SQL to NoSQL)
 category: NoSQL & Distributed Databases
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /ndb/nosql-migration-strategy-sql-to-nosql/
 ---

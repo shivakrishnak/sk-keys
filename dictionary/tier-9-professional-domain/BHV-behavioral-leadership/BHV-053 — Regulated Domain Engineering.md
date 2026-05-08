@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Regulated Domain Engineering"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /leadership/regulated-domain-engineering/
 id: BHV-053

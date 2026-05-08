@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-045
 title: Type-First Design Thinking
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /tsc/type-first-design-thinking/
 ---

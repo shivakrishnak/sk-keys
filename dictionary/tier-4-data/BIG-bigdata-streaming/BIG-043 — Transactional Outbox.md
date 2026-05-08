@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Transactional Outbox"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /big-data-streaming/transactional-outbox/
 id: BIG-043

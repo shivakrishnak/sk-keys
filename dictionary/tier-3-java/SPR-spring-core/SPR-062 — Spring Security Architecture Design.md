@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-062
 title: Spring Security Architecture Design
 category: Spring Core
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /spr/spring-security-architecture-design/
 ---

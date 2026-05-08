@@ -1,4 +1,4 @@
----
+﻿---
 id: API-016
 title: Stateless Design Principle
 category: HTTP & APIs
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /api/stateless-design-principle/
 ---

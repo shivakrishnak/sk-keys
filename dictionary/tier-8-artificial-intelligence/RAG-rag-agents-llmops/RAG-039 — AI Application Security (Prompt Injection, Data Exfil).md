@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-039
 title: AI Application Security (Prompt Injection, Data Exfil)
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /rag/ai-application-security-prompt-injection-data-exfil/
 ---

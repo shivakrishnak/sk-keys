@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-047
 title: Virtual Thread Migration Strategy (Loom)
 category: Java Concurrency
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /jcc/virtual-thread-migration-strategy-loom/
 ---

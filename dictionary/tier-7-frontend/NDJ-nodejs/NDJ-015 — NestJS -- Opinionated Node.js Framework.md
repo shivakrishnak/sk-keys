@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-015
 title: NestJS -- Opinionated Node.js Framework
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /ndj/nestjs----opinionated-nodejs-framework/
 ---

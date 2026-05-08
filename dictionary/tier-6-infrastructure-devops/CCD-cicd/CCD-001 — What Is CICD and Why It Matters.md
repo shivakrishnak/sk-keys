@@ -1,4 +1,4 @@
----
+﻿---
 id: CCD-001
 title: What Is CI/CD and Why It Matters
 category: CI/CD
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /ccd/what-is-cicd-and-why-it-matters/
 ---

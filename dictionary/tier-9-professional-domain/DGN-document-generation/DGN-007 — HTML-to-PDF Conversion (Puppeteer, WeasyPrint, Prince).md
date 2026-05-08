@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-007
 title: HTML-to-PDF Conversion (Puppeteer, WeasyPrint, Prince)
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /dgn/html-to-pdf-conversion-puppeteer-weasyprint-prince/
 ---

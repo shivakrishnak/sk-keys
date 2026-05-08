@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-033
 title: Cache Replacement Policy Design
 category: Caching
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /cch/cache-replacement-policy-design/
 ---

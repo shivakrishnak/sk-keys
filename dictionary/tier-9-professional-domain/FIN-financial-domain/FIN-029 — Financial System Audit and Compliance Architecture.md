@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-029
 title: Financial System Audit and Compliance Architecture
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /fin/financial-system-audit-and-compliance-architecture/
 ---

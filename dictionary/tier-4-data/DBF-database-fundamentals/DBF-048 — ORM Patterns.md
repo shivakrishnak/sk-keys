@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ORM Patterns"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /databases/orm-patterns/
 id: DBF-048

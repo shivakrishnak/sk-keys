@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spring Cloud Circuit Breaker"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /spring/spring-cloud-circuit-breaker/
 id: SPR-015

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Attention Mechanism"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /ai-foundations/attention-mechanism/
 id: AIF-011

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Prettier"
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /react/prettier/
 id: RCT-009

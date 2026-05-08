@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bean Lifecycle"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /spring/bean-lifecycle/
 id: SPR-024

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Outbox Pattern"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /distributed-systems/outbox-pattern/
 id: DST-057

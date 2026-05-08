@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Chat System Design"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /system-design/chat-system-design/
 id: SYD-048

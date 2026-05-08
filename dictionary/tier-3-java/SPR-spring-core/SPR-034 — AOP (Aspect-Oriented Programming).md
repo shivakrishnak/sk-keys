@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AOP (Aspect-Oriented Programming)"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /spring/aop/
 id: SPR-034

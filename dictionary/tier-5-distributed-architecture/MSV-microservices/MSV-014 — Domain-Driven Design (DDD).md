@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Domain-Driven Design (DDD)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /microservices/domain-driven-design/
 id: MSV-014

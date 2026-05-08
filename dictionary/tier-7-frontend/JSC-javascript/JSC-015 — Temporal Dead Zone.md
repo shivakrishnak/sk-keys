@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Temporal Dead Zone"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /javascript/temporal-dead-zone-tdz/
 id: JSC-015

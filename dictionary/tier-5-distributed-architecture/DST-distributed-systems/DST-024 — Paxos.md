@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Paxos"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /distributed-systems/paxos/
 id: DST-024

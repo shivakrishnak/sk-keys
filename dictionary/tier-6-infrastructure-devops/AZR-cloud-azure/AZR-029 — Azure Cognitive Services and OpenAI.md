@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-029
 title: Azure Cognitive Services and OpenAI
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /azr/azure-cognitive-services-and-openai/
 ---

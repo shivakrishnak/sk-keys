@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-031
 title: User Permission Anti-Pattern (run as root)
 category: Linux
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /lnx/user-permission-anti-pattern-run-as-root/
 ---

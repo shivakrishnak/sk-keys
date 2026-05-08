@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-044
 title: Cascade Mental Model (Specificity Wars)
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /css/cascade-mental-model-specificity-wars/
 ---

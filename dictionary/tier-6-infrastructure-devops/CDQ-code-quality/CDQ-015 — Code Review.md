@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Code Review"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /code-quality/code-review/
 id: CDQ-015

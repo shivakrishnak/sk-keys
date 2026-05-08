@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-005
 title: React in Production -- What to Expect
 category: React
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /rct/react-in-production----what-to-expect/
 ---

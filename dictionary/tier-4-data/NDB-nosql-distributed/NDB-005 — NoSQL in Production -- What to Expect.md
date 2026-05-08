@@ -1,4 +1,4 @@
----
+﻿---
 id: NDB-005
 title: NoSQL in Production -- What to Expect
 category: NoSQL & Distributed Databases
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /ndb/nosql-in-production----what-to-expect/
 ---

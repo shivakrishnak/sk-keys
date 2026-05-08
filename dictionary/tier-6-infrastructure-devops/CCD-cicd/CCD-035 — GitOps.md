@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GitOps"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /ci-cd/gitops/
 id: CCD-035

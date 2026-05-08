@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Server-Sent Events (SSE)"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /http-apis/server-sent-events/
 id: API-030

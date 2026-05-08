@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Process"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /operating-systems/process/
 id: OSY-006

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Load Balancer L4 and L7"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /networking/load-balancer-l4-l7/
 id: NET-032

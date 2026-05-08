@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-025
 title: HTML Performance (Critical Path, Lazy Loading, Preload)
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /htm/html-performance-critical-path-lazy-loading-preload/
 ---

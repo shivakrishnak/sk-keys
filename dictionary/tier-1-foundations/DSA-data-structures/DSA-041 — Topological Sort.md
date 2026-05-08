@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Topological Sort"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /dsa/topological-sort/
 id: DSA-041

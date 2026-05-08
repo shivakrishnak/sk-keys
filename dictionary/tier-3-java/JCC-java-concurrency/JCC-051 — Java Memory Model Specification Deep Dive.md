@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-051
 title: Java Memory Model Specification Deep Dive
 category: Java Concurrency
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /jcc/java-memory-model-specification-deep-dive/
 ---

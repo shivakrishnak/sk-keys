@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-029
 title: Git Reflog -- Recovery from Mistakes
 category: Git & Branching Strategy
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /git/git-reflog----recovery-from-mistakes/
 ---

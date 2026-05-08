@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-040
 title: Azure Landing Zone Architecture
 category: Cloud -- Azure
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /azr/azure-landing-zone-architecture/
 ---

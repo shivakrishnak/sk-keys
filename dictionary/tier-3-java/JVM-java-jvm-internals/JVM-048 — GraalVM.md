@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GraalVM"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /java/graalvm/
 id: JVM-048

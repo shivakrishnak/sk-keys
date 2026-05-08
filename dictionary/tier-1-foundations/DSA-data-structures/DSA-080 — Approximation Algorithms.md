@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Approximation Algorithms"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 80
 permalink: /dsa/approximation-algorithms/
 id: DSA-080

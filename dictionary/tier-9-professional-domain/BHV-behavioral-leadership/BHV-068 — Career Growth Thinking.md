@@ -1,4 +1,4 @@
----
+﻿---
 id: BHV-068
 title: Career Growth Thinking
 category: Behavioral & Leadership
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /bhv/career-growth-thinking/
 ---

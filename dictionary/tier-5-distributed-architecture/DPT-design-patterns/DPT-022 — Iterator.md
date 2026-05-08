@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Iterator"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /design-patterns/iterator/
 id: DPT-022

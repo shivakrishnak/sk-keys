@@ -1,4 +1,4 @@
----
+﻿---
 id: K8S-002
 title: The Kubernetes Mental Model (Desired State)
 category: Kubernetes
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /k8s/the-kubernetes-mental-model-desired-state/
 ---

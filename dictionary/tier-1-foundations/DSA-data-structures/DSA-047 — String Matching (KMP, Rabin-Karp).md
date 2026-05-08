@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "String Matching (KMP, Rabin-Karp)"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /dsa/string-matching/
 id: DSA-047

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Content Negotiation"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /http-apis/content-negotiation/
 id: API-015

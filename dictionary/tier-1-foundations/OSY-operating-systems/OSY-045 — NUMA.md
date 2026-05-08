@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "NUMA"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /operating-systems/numa/
 id: OSY-045

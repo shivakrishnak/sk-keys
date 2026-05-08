@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-032
 title: Log Aggregation at Scale
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /obs/log-aggregation-at-scale/
 ---

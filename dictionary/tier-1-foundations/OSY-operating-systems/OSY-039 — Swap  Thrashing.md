@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Swap / Thrashing"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /operating-systems/swap-thrashing/
 id: OSY-039

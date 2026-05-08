@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-055
 title: GC Tuning Strategy for Production JVMs
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /jvm/gc-tuning-strategy-for-production-jvms/
 ---

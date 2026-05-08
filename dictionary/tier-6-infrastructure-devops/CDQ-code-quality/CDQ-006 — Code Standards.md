@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Code Standards"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /code-quality/code-standards/
 id: CDQ-006

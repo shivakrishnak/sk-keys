@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spinlock"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /operating-systems/spinlock/
 id: OSY-037

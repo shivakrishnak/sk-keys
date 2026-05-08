@@ -1,4 +1,4 @@
----
+﻿---
 id: BIG-054
 title: Fault Tolerance in Distributed Pipelines
 category: Big Data & Streaming
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /big/fault-tolerance-in-distributed-pipelines/
 ---

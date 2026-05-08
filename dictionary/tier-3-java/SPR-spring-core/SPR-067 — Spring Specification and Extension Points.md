@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-067
 title: Spring Specification and Extension Points
 category: Spring Core
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 67
 permalink: /spr/spring-specification-and-extension-points/
 ---

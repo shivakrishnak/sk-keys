@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-036
 title: Async Architecture Pattern Selection (Queue vs Stream vs Choreography)
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /asy/async-architecture-pattern-selection-queue-vs-stream-vs-choreography/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Domain Model"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /software-architecture/domain-model/
 id: SAP-023

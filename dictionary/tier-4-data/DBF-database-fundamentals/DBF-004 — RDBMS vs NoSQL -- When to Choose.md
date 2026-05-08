@@ -1,4 +1,4 @@
----
+﻿---
 id: DBF-004
 title: RDBMS vs NoSQL -- When to Choose
 category: Database Fundamentals
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /dbf/rdbms-vs-nosql----when-to-choose/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-019
 title: TypeScript Declaration Files (.d.ts)
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /tsc/typescript-declaration-files-dts/
 ---

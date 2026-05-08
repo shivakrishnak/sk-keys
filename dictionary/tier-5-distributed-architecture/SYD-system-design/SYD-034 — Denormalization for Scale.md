@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Denormalization for Scale"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /system-design/denormalization-for-scale/
 id: SYD-034

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "TCP"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /networking/tcp/
 id: NET-011

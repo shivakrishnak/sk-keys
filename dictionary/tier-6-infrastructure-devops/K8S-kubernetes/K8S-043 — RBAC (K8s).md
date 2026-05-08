@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "RBAC (K8s)"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /kubernetes/rbac-k8s/
 id: K8S-043

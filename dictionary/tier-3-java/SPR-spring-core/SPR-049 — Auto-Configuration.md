@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Auto-Configuration"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /spring/auto-configuration/
 id: SPR-049

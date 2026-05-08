@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Continuation"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /java-concurrency/continuation/
 id: JCC-030

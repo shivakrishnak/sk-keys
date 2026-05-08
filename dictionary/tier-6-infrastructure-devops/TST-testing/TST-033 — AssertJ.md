@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AssertJ"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /testing/assertj/
 id: TST-033

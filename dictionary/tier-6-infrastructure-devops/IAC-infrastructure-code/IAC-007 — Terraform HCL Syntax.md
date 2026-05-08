@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-007
 title: Terraform HCL Syntax
 category: Infrastructure as Code
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /iac/terraform-hcl-syntax/
 ---

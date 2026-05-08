@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-045
 title: Transformer Architecture Research (xFormers, State Space Models)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /llm/transformer-architecture-research-xformers-state-space-models/
 ---

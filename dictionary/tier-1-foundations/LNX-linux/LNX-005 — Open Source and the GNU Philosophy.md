@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-005
 title: Open Source and the GNU Philosophy
 category: Linux
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /lnx/open-source-and-the-gnu-philosophy/
 ---

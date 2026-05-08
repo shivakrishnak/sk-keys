@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-004
 title: The LLM Ecosystem Map (GPT, Claude, Gemini, Llama)
 category: LLMs & Prompt Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /llm/the-llm-ecosystem-map-gpt-claude-gemini-llama/
 ---

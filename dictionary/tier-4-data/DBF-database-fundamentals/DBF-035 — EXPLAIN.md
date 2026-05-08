@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "EXPLAIN"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /databases/explain/
 id: DBF-035

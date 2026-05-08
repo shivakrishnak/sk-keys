@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "TCP/IP Stack"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /networking/tcpip-stack/
 id: NET-007

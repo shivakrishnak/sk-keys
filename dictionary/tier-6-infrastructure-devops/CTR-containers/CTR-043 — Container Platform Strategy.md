@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-043
 title: Container Platform Strategy
 category: Containers
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /ctr/container-platform-strategy/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "iptables / nftables"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /linux/iptables-nftables/
 id: LNX-034

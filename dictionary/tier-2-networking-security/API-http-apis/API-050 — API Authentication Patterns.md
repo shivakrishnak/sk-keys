@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Authentication Patterns"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /http-apis/api-authentication/
 id: API-050

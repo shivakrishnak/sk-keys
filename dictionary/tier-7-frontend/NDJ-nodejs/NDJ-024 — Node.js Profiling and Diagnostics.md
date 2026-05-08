@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-024
 title: Node.js Profiling and Diagnostics
 category: Node.js
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /ndj/nodejs-profiling-and-diagnostics/
 ---

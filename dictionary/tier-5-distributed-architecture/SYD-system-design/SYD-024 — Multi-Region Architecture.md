@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Multi-Region Architecture"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /system-design/multi-region-architecture/
 id: SYD-024

@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-021
 title: Consumer Group and Partition Strategy (Kafka)
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /asy/consumer-group-and-partition-strategy-kafka/
 ---

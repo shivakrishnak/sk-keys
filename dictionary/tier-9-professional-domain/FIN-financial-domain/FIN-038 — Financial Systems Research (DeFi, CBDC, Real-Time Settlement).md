@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-038
 title: Financial Systems Research (DeFi, CBDC, Real-Time Settlement)
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /fin/financial-systems-research-defi-cbdc-real-time-settlement/
 ---

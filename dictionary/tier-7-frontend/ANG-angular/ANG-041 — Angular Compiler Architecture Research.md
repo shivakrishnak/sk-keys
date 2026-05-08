@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-041
 title: Angular Compiler Architecture Research
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /ang/angular-compiler-architecture-research/
 ---

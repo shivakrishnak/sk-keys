@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Stack"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /dsa/stack/
 id: DSA-010

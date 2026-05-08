@@ -1,4 +1,4 @@
----
+﻿---
 id: SAP-064
 title: Technical Debt Mental Model
 category: Software Architecture Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /sap/technical-debt-mental-model/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-010
 title: Template Engines (Thymeleaf, Jinja2, Handlebars, FreeMarker)
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /dgn/template-engines-thymeleaf-jinja2-handlebars-freemarker/
 ---

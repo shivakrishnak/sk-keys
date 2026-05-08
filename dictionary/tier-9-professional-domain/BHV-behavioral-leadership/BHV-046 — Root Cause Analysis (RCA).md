@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Root Cause Analysis (RCA)"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /leadership/root-cause-analysis-rca/
 id: BHV-046

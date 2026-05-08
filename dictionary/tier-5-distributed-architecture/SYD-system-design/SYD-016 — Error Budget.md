@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Error Budget"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /system-design/error-budget/
 id: SYD-016

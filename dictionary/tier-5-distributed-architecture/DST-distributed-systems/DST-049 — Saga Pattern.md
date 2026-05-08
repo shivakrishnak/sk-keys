@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Saga Pattern"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /distributed-systems/saga-pattern/
 id: DST-049

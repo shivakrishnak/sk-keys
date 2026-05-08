@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Binary Formats (Avro, Parquet, ORC, Protobuf)"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /data-fundamentals/binary-formats/
 id: DAT-012

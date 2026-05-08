@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "OpenShift vs Kubernetes"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /containers/openshift-vs-kubernetes/
 id: CTR-007

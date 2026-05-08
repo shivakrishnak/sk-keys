@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Starvation"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /operating-systems/starvation/
 id: OSY-027

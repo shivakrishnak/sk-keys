@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-003
 title: Node.js vs Browser JavaScript -- Key Differences
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /ndj/nodejs-vs-browser-javascript----key-differences/
 ---

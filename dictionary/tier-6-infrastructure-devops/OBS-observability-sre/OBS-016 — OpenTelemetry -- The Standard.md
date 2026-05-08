@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-016
 title: OpenTelemetry -- The Standard
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /obs/opentelemetry----the-standard/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Binary Search"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /dsa/binary-search/
 id: DSA-024

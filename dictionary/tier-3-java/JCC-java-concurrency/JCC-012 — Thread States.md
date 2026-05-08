@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Thread States"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /java-concurrency/thread-states/
 id: JCC-012

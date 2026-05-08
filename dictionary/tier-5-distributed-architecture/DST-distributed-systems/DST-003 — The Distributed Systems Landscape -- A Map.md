@@ -1,4 +1,4 @@
----
+﻿---
 id: DST-003
 title: The Distributed Systems Landscape -- A Map
 category: Distributed Systems
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /dst/the-distributed-systems-landscape----a-map/
 ---

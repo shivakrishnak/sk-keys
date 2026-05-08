@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-048
 title: Responsible AI and Bias Mitigation Strategy
 category: AI Foundations
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /aif/responsible-ai-and-bias-mitigation-strategy/
 ---

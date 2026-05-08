@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-054
 title: Cryptographic Protocol Design Flaws
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /sec/cryptographic-protocol-design-flaws/
 ---

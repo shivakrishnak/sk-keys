@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Container Networking"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /containers/container-networking/
 id: CTR-019

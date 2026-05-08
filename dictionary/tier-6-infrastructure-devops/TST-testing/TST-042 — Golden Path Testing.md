@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Golden Path Testing"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /testing/golden-path-testing/
 id: TST-042

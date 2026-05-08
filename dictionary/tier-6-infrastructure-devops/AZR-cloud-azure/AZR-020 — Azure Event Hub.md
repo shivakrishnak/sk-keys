@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-020
 title: Azure Event Hub
 category: Cloud -- Azure
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /azr/azure-event-hub/
 ---

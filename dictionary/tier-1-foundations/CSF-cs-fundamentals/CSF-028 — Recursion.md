@@ -2,6 +2,7 @@
 layout: default
 title: "Recursion"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /cs-fundamentals/recursion/
 id: CSF-028

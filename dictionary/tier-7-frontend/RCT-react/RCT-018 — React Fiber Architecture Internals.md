@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-018
 title: React Fiber Architecture Internals
 category: React
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /rct/react-fiber-architecture-internals/
 ---

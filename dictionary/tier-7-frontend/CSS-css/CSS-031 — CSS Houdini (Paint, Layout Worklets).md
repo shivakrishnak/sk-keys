@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-031
 title: CSS Houdini (Paint, Layout Worklets)
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /css/css-houdini-paint-layout-worklets/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Image Scanning"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /containers/image-scanning/
 id: CTR-023

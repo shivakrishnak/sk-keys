@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sealed Classes (Java 17+)"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /java-language/sealed-classes/
 id: JLG-033

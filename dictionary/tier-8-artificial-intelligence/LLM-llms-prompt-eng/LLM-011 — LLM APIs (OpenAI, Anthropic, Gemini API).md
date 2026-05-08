@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-011
 title: LLM APIs (OpenAI, Anthropic, Gemini API)
 category: LLMs & Prompt Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /llm/llm-apis-openai-anthropic-gemini-api/
 ---

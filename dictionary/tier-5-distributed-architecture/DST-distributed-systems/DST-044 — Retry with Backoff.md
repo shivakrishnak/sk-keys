@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Retry with Backoff"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /distributed-systems/retry-with-backoff/
 id: DST-044

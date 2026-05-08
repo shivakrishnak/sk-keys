@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Image Tag Strategy"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /containers/image-tag-strategy/
 id: CTR-033

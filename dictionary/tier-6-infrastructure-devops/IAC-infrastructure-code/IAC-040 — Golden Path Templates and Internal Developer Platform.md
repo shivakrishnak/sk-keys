@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-040
 title: Golden Path Templates and Internal Developer Platform
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /iac/golden-path-templates-and-internal-developer-platform/
 ---

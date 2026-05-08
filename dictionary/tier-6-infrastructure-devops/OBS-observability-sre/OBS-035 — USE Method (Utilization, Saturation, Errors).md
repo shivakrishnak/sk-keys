@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-035
 title: USE Method (Utilization, Saturation, Errors)
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /obs/use-method-utilization-saturation-errors/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Space-Time Trade-off"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /dsa/space-time-tradeoff/
 id: DSA-052

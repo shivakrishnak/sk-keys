@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-022
 title: Kafka Consumer Lag and Monitoring
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /asy/kafka-consumer-lag-and-monitoring/
 ---

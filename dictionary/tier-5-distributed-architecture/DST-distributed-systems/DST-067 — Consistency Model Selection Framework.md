@@ -1,4 +1,4 @@
----
+﻿---
 id: DST-067
 title: Consistency Model Selection Framework
 category: Distributed Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 67
 permalink: /dst/consistency-model-selection-framework/
 ---

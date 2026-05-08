@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "User Space vs Kernel Space"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /operating-systems/user-space-vs-kernel-space/
 id: OSY-009

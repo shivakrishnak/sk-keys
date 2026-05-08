@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "VarHandle"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /java-concurrency/jcc-043-varhandle/
 id: JCC-039

@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-026
 title: AI Accessibility in Products
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /aip/ai-accessibility-in-products/
 ---

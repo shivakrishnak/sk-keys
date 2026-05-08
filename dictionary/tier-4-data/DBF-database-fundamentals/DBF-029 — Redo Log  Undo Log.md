@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Redo Log  Undo Log"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /databases/redo-log-undo-log/
 id: DBF-029

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Gradle vs Maven"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /maven-build/gradle-vs-maven/
 id: MVN-024

@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-002
 title: The Financial Systems Mental Model (Money, Settlement, Risk)
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /fin/the-financial-systems-mental-model-money-settlement-risk/
 ---

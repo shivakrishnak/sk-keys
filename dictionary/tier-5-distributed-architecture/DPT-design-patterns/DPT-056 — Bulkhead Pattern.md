@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bulkhead Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /design-patterns/bulkhead-pattern/
 id: DPT-056

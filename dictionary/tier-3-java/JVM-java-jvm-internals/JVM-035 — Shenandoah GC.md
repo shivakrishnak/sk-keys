@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Shenandoah GC"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /java/shenandoah-gc/
 id: JVM-035

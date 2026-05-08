@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-064
 title: JVM-First Debugging Mental Model
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /jvm/jvm-first-debugging-mental-model/
 ---

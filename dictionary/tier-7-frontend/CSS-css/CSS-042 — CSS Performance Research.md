@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-042
 title: CSS Performance Research
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /css/css-performance-research/
 ---

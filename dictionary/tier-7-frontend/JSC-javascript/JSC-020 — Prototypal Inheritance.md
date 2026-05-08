@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Prototypal Inheritance"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /javascript/prototypal-inheritance/
 id: JSC-020

@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-017
 title: Basic Text Editors (vim, nano)
 category: Linux
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /lnx/basic-text-editors-vim-nano/
 ---

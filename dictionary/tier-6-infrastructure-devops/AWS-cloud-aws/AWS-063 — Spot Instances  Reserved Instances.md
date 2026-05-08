@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spot Instances  Reserved Instances"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /cloud-aws/spot-instances-reserved-instances/
 id: AWS-063

@@ -1,4 +1,4 @@
----
+﻿---
 id: API-013
 title: Request / Response Lifecycle
 category: HTTP & APIs
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /api/request-response-lifecycle/
 ---

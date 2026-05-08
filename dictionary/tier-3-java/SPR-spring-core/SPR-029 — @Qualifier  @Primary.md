@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "@Qualifier  @Primary"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /spring/qualifier-primary/
 id: SPR-029

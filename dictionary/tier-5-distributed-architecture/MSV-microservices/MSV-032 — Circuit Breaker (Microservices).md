@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Circuit Breaker (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /microservices/circuit-breaker/
 id: MSV-032

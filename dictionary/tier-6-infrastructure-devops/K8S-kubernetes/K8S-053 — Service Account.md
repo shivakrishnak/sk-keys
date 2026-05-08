@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service Account"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 53
 permalink: /kubernetes/service-account/
 id: K8S-053

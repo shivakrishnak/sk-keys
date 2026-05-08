@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-064
 title: Kernel Development and Patch Contribution
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /lnx/kernel-development-and-patch-contribution/
 ---

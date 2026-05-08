@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-056
 title: JVM Architecture Decisions at Scale
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /jvm/jvm-architecture-decisions-at-scale/
 ---

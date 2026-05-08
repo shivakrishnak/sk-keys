@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ClusterIP  NodePort  LoadBalancer"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /kubernetes/clusterip-nodeport-loadbalancer/
 id: K8S-017

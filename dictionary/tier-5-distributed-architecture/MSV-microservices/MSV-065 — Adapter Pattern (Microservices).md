@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Adapter Pattern (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /microservices/adapter-pattern-microservices/
 id: MSV-065

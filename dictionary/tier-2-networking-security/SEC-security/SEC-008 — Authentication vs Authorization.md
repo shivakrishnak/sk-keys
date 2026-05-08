@@ -1,4 +1,8 @@
----
+﻿---
+layout: default
+parent: "Security"
+grand_parent: "Technical Dictionary"
+nav_order: 8
 id: SEC-008
 title: Authentication vs Authorization
 category: Security

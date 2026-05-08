@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Aspect"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /spring/aspect/
 id: SPR-035

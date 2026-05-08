@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Checkstyle"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /code-quality/checkstyle/
 id: CDQ-012

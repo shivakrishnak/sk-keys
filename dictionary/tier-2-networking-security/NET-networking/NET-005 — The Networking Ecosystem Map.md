@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-005
 title: The Networking Ecosystem Map
 category: Networking
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /net/the-networking-ecosystem-map/
 ---

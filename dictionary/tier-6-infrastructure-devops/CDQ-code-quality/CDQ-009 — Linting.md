@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Linting"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /code-quality/linting/
 id: CDQ-009

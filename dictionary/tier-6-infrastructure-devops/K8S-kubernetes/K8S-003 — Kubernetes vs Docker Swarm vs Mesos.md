@@ -1,4 +1,4 @@
----
+﻿---
 id: K8S-003
 title: Kubernetes vs Docker Swarm vs Mesos
 category: Kubernetes
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /k8s/kubernetes-vs-docker-swarm-vs-mesos/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-031
 title: JavaScript Module Format Evolution (AMD, CJS, ESM)
 category: Webpack & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /wbp/javascript-module-format-evolution-amd-cjs-esm/
 ---

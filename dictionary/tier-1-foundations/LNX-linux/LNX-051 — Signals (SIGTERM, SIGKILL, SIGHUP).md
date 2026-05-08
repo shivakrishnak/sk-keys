@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Signals (SIGTERM, SIGKILL, SIGHUP)"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /linux/signals/
 id: LNX-051

@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-008
 title: npm install / ci / update
 category: npm & Package Management
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /npm/npm-install-ci-update/
 ---

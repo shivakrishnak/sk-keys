@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Layered Architecture"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /software-architecture/layered-architecture/
 id: SAP-013

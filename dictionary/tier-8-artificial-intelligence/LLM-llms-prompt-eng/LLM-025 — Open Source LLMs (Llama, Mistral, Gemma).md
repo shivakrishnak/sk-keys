@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-025
 title: Open Source LLMs (Llama, Mistral, Gemma)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /llm/open-source-llms-llama-mistral-gemma/
 ---

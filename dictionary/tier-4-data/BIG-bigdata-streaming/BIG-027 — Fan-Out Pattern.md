@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Fan-Out Pattern"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /big-data-streaming/fan-out-pattern/
 id: BIG-027

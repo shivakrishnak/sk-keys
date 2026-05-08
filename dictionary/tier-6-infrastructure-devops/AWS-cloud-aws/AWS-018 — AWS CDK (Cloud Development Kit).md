@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS CDK (Cloud Development Kit)"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /cloud-aws/aws-cdk/
 id: AWS-018

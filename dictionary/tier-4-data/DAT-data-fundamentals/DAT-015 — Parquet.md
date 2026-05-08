@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Parquet"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /data-fundamentals/parquet/
 id: DAT-015

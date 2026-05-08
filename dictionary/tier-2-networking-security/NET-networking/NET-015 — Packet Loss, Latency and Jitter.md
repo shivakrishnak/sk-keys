@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Packet Loss, Latency and Jitter"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /networking/packet-loss-latency-jitter/
 id: NET-015

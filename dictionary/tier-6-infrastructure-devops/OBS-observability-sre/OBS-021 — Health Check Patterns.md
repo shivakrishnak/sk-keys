@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-021
 title: Health Check Patterns
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /obs/health-check-patterns/
 ---

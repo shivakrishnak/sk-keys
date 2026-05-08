@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Psychological Safety"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /leadership/psychological-safety/
 id: BHV-021

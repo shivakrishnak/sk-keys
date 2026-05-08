@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Page Fault"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /operating-systems/page-fault/
 id: OSY-032

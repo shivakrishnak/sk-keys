@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Fine-Tuning"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /ai-foundations/fine-tuning/
 id: AIF-025

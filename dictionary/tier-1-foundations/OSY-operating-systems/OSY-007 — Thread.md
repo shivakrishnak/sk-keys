@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Thread"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /operating-systems/thread/
 id: OSY-007

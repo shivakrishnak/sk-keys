@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "PL/SQL"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 2141
 permalink: /databases/pl-sql/
 number: "2141"

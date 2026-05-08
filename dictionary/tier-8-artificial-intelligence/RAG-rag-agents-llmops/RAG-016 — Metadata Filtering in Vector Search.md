@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-016
 title: Metadata Filtering in Vector Search
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /rag/metadata-filtering-in-vector-search/
 ---

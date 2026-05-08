@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-010
 title: npm publish and the Registry
 category: npm & Package Management
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /npm/npm-publish-and-the-registry/
 ---

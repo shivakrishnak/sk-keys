@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Architecture Review"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /software-architecture/architecture-review/
 id: SAP-008

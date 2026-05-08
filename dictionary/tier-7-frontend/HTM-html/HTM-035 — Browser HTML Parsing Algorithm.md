@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-035
 title: Browser HTML Parsing Algorithm
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /htm/browser-html-parsing-algorithm/
 ---

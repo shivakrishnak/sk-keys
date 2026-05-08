@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Stop-The-World (STW)"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /java/stop-the-world-stw/
 id: JVM-029

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ArgoCD"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /ci-cd/argocd/
 id: CCD-019

@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-004
 title: How to Recognize When a Pattern Applies
 category: Design Patterns
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /dpt/how-to-recognize-when-a-pattern-applies/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: TST-071
 title: Testing ROI Thinking
 category: Testing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 71
 permalink: /tst/testing-roi-thinking/
 ---

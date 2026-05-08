@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-016
 title: Chart and Graph Generation in Documents
 category: Document Generation
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /dgn/chart-and-graph-generation-in-documents/
 ---

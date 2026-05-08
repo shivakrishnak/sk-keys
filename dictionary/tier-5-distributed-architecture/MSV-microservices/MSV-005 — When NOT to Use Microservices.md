@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-005
 title: When NOT to Use Microservices
 category: Microservices
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /msv/when-not-to-use-microservices/
 ---

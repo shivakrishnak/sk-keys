@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-030
 title: IaC Module Versioning Strategy
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /iac/iac-module-versioning-strategy/
 ---

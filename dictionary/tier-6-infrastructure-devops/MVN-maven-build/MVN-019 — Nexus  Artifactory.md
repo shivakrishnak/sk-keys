@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Nexus  Artifactory"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /maven-build/nexus-artifactory/
 id: MVN-019

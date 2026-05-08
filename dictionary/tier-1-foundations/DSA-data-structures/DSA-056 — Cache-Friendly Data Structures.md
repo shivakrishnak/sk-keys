@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-056
 title: Cache-Friendly Data Structures
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 56
 permalink: /dsa/cache-friendly-data-structures/
 ---

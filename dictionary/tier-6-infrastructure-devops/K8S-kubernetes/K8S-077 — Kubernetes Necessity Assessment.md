@@ -1,4 +1,4 @@
----
+﻿---
 id: K8S-077
 title: Kubernetes Necessity Assessment
 category: Kubernetes
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 77
 permalink: /k8s/kubernetes-necessity-assessment/
 ---

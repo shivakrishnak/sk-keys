@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "BFS"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /dsa/bfs/
 id: DSA-027

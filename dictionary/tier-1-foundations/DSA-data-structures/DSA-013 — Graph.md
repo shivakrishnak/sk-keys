@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Graph"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /dsa/graph/
 id: DSA-013

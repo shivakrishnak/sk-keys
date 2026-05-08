@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Spaghetti Code"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /design-patterns/spaghetti-code/
 id: DPT-044

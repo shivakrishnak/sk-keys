@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-030
 title: Kafka Exactly-Once Semantics (EOS)
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /asy/kafka-exactly-once-semantics-eos/
 ---

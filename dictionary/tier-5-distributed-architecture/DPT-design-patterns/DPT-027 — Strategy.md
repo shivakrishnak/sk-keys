@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Strategy"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /design-patterns/strategy/
 id: DPT-027

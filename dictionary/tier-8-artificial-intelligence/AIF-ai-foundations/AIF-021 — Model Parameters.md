@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Model Parameters"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /ai-foundations/model-parameters/
 id: AIF-021

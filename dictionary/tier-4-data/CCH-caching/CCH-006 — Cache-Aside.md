@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cache-Aside"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /caching/cache-aside/
 id: CCH-006

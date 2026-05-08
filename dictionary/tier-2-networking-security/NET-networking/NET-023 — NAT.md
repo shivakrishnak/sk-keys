@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "NAT"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /networking/nat/
 id: NET-023

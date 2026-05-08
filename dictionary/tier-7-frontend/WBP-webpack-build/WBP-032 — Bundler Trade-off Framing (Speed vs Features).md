@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-032
 title: Bundler Trade-off Framing (Speed vs Features)
 category: Webpack & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /wbp/bundler-trade-off-framing-speed-vs-features/
 ---

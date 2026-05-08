@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Technology Roadmap"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /software-architecture/technology-roadmap/
 id: SAP-007

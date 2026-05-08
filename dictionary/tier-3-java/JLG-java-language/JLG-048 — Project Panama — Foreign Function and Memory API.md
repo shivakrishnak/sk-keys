@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-048
 title: Project Panama — Foreign Function and Memory API
 category: Java Language
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /jlg/project-panama-foreign-function-and-memory-api/
 ---

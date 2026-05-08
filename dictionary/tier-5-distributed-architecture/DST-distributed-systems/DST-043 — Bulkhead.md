@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bulkhead"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /distributed-systems/bulkhead/
 id: DST-043

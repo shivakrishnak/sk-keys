@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-003
 title: The History of Programming Languages
 category: CS Fundamentals — Paradigms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /csf/the-history-of-programming-languages/
 ---

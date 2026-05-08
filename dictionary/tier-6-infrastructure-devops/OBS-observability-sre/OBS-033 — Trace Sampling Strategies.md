@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-033
 title: Trace Sampling Strategies
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /obs/trace-sampling-strategies/
 ---

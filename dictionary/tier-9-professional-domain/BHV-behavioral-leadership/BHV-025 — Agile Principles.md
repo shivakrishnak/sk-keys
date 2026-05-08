@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Agile Principles"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /leadership/agile-principles/
 id: BHV-025

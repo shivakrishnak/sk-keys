@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Atomic Classes"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /java-concurrency/jcc-042-atomic-classes/
 id: JCC-038

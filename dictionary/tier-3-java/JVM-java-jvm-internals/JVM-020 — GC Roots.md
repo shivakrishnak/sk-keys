@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GC Roots"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /java/gc-roots/
 id: JVM-020

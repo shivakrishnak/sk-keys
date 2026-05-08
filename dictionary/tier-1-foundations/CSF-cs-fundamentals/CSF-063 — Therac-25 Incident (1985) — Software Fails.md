@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-063
 title: Therac-25 Incident (1985) — Software Fails
 category: CS Fundamentals — Paradigms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /csf/therac-25-incident-1985-software-fails/
 ---

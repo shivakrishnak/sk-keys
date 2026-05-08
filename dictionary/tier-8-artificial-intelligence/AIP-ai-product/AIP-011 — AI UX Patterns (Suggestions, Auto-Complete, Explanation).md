@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-011
 title: AI UX Patterns (Suggestions, Auto-Complete, Explanation)
 category: AI Product Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /aip/ai-ux-patterns-suggestions-auto-complete-explanation/
 ---

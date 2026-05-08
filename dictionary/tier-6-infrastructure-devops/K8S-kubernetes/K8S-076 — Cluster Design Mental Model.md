@@ -1,4 +1,4 @@
----
+﻿---
 id: K8S-076
 title: Cluster Design Mental Model
 category: Kubernetes
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 76
 permalink: /k8s/cluster-design-mental-model/
 ---

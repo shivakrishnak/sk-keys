@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Lambda Architecture"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /big-data-streaming/lambda-architecture/
 id: BIG-032

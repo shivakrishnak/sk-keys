@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Throttling"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 55
 permalink: /http-apis/api-throttling/
 id: API-055

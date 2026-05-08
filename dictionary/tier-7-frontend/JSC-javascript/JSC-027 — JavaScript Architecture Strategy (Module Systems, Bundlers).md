@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-027
 title: JavaScript Architecture Strategy (Module Systems, Bundlers)
 category: JavaScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /jsc/javascript-architecture-strategy-module-systems-bundlers/
 ---

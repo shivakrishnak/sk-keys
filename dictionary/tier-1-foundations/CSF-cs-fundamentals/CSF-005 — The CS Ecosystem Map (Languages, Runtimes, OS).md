@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-005
 title: The CS Ecosystem Map (Languages, Runtimes, OS)
 category: CS Fundamentals — Paradigms
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /csf/the-cs-ecosystem-map-languages-runtimes-os/
 ---

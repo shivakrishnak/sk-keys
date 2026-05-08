@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS Cost Optimization"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /cloud-aws/aws-cost-optimization/
 id: AWS-060

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Optimistic Locking (Java)"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /java-concurrency/optimistic-locking/
 id: JCC-023

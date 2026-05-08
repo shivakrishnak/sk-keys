@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Polyglot Persistence"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /nosql/polyglot-persistence/
 id: NDB-034

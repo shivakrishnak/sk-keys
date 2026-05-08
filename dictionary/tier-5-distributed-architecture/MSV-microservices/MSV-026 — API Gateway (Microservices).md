@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Gateway (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /microservices/api-gateway/
 id: MSV-026

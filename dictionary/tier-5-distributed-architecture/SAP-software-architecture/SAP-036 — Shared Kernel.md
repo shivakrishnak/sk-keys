@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Shared Kernel"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /software-architecture/shared-kernel/
 id: SAP-036

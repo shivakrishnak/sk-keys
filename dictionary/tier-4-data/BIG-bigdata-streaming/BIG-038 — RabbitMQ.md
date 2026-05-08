@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "RabbitMQ"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /big-data-streaming/rabbitmq/
 id: BIG-038

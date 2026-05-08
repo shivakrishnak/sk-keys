@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Ride-Sharing System Design"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /system-design/ride-sharing-system-design/
 id: SYD-050

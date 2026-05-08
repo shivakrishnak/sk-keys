@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-065
 title: Spring Reactive Model (Project Reactor Internals)
 category: Spring Core
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /spr/spring-reactive-model-project-reactor-internals/
 ---

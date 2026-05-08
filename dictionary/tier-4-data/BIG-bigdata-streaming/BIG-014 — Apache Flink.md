@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Apache Flink"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /big-data-streaming/apache-flink/
 id: BIG-014

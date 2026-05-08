@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-035
 title: Multi-Cloud Platform Strategy
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /plt/multi-cloud-platform-strategy/
 ---

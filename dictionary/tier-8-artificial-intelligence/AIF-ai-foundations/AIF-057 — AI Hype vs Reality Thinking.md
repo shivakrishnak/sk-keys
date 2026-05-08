@@ -1,4 +1,4 @@
----
+﻿---
 id: AIF-057
 title: AI Hype vs Reality Thinking
 category: AI Foundations
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /aif/ai-hype-vs-reality-thinking/
 ---

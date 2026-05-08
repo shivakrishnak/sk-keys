@@ -1,4 +1,4 @@
----
+﻿---
 id: DBF-058
 title: Multi-Database Strategy (Polyglot Persistence)
 category: Database Fundamentals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 58
 permalink: /dbf/multi-database-strategy-polyglot-persistence/
 ---

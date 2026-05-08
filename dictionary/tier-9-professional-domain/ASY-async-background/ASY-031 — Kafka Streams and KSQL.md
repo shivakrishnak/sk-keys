@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-031
 title: Kafka Streams and KSQL
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /asy/kafka-streams-and-ksql/
 ---

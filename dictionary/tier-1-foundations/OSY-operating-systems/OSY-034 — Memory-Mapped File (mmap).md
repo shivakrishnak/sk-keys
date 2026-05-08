@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Memory-Mapped File (mmap)"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /operating-systems/memory-mapped-file-mmap/
 id: OSY-034

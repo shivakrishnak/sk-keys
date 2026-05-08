@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-015
 title: OWASP Top 10 — Overview
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /sec/owasp-top-10-overview/
 ---

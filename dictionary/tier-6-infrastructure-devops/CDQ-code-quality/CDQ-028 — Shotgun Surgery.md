@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Shotgun Surgery"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /code-quality/shotgun-surgery/
 id: CDQ-028

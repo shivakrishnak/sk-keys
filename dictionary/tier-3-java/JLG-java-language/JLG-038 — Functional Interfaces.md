@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Functional Interfaces"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /java-language/functional-interfaces/
 id: JLG-038

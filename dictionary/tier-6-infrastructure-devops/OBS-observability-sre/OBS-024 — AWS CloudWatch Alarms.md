@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS CloudWatch Alarms"
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /observability/aws-cloudwatch-alarms/
 number: "OBS-002"

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Distributed Computing"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /big-data-streaming/distributed-computing/
 id: BIG-006

@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-031
 title: JavaScript at Scale (TypeScript, Monorepos, Large Apps)
 category: JavaScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /jsc/javascript-at-scale-typescript-monorepos-large-apps/
 ---

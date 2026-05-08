@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "GraphQL Subscriptions"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /http-apis/graphql-subscriptions/
 id: API-043

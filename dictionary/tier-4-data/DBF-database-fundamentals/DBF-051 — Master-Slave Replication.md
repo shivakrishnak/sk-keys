@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Master-Slave Replication"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /databases/master-slave-replication/
 id: DBF-051

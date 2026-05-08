@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Operators"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /kubernetes/operators/
 id: K8S-040

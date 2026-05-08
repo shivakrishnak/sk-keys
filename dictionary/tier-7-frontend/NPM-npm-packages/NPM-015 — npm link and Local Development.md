@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-015
 title: npm link and Local Development
 category: npm & Package Management
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /npm/npm-link-and-local-development/
 ---

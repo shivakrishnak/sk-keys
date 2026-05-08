@@ -1,4 +1,4 @@
----
+﻿---
 id: AZR-024
 title: Azure Monitor and Log Analytics
 category: Cloud -- Azure
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- Azure"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /azr/azure-monitor-and-log-analytics/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Behavioral Interview Patterns"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /leadership/behavioral-interview-patterns/
 id: BHV-035

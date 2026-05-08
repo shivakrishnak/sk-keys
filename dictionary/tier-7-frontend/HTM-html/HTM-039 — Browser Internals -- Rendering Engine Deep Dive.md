@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-039
 title: Browser Internals -- Rendering Engine Deep Dive
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /htm/browser-internals----rendering-engine-deep-dive/
 ---

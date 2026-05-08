@@ -1,4 +1,4 @@
----
+﻿---
 id: DAT-002
 title: The Data Ecosystem -- A Map
 category: Data Fundamentals
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /dat/the-data-ecosystem----a-map/
 ---

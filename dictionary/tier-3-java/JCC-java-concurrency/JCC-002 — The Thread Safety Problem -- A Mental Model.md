@@ -1,4 +1,4 @@
----
+﻿---
 id: JCC-002
 title: The Thread Safety Problem -- A Mental Model
 category: Java Concurrency
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /jcc/the-thread-safety-problem----a-mental-model/
 ---

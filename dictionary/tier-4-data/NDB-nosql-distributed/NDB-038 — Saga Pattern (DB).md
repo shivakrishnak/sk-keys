@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Saga Pattern (DB)"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /nosql/saga-pattern-db/
 id: NDB-038

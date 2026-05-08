@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pod Disruption Budget"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /kubernetes/pod-disruption-budget/
 id: K8S-050

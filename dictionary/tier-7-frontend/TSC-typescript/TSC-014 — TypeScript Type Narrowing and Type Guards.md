@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-014
 title: TypeScript Type Narrowing and Type Guards
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /tsc/typescript-type-narrowing-and-type-guards/
 ---

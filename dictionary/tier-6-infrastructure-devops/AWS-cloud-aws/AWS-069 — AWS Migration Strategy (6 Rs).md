@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-069
 title: AWS Migration Strategy (6 Rs)
 category: Cloud -- AWS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 69
 permalink: /aws/aws-migration-strategy-6-rs/
 ---

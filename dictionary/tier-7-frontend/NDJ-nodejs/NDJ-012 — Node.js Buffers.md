@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-012
 title: Node.js Buffers
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /ndj/nodejs-buffers/
 ---

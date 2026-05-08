@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-061
 title: Formal Verification of OS Components
 category: Operating Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 61
 permalink: /osy/formal-verification-of-os-components/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Gradle Convention Plugins"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /maven-build/gradle-convention-plugins/
 id: MVN-029

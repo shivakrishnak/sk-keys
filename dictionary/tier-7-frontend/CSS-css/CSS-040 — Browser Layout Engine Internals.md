@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-040
 title: Browser Layout Engine Internals
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /css/browser-layout-engine-internals/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-029
 title: AWS Step Functions
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /asy/aws-step-functions/
 ---

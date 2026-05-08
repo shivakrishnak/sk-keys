@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "G1GC"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /java/jvm-030-g1gc/
 id: JVM-033

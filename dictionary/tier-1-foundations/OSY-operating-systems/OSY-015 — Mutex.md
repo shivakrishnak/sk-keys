@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Mutex"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /operating-systems/mutex/
 id: OSY-015

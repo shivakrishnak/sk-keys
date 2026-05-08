@@ -1,4 +1,4 @@
----
+﻿---
 id: CTR-044
 title: Container Security Architecture
 category: Containers
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /ctr/container-security-architecture/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "JSP (Java Server Pages)"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /java/jsp-java-server-pages/
 id: JLG-007

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "HATEOAS"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /http-apis/hateoas/
 id: API-034

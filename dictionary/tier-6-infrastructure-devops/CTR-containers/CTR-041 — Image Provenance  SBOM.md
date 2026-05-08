@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Image Provenance  SBOM"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /containers/image-provenance-sbom/
 id: CTR-041

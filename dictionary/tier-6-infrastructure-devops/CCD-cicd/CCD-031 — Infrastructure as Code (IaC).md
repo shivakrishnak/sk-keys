@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Infrastructure as Code (IaC)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /ci-cd/infrastructure-as-code/
 id: CCD-031

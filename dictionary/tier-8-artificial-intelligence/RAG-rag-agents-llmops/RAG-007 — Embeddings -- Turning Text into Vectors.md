@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-007
 title: Embeddings -- Turning Text into Vectors
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /rag/embeddings----turning-text-into-vectors/
 ---

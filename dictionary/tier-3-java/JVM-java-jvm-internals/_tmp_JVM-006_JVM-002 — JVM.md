@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "JVM"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /java/jvm/
 number: "JVM-002"

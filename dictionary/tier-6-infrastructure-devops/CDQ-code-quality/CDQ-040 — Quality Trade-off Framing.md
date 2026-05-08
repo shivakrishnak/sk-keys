@@ -1,4 +1,4 @@
----
+﻿---
 id: CDQ-040
 title: Quality Trade-off Framing
 category: Code Quality
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /cdq/quality-trade-off-framing/
 ---

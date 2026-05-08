@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-018
 title: ELK / EFK Stack -- Log Management
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /obs/elk-efk-stack----log-management/
 ---

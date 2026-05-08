@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "epoll / kqueue / io_uring"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /operating-systems/epoll-kqueue-io-uring/
 id: OSY-035

@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-046
 title: LLM Scaling Laws (Chinchilla, Kaplan)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /llm/llm-scaling-laws-chinchilla-kaplan/
 ---

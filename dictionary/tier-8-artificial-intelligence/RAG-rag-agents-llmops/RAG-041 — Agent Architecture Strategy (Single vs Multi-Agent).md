@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-041
 title: Agent Architecture Strategy (Single vs Multi-Agent)
 category: RAG & Agents & LLMOps
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /rag/agent-architecture-strategy-single-vs-multi-agent/
 ---

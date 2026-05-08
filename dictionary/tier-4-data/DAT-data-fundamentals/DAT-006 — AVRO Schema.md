@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AVRO Schema"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /data-fundamentals/avro-schema/
 id: DAT-006

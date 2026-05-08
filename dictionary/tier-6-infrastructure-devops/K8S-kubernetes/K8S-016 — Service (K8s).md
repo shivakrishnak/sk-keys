@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service (K8s)"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /kubernetes/service-k8s/
 id: K8S-016

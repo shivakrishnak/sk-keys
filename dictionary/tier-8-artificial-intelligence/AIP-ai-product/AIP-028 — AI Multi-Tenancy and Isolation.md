@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-028
 title: AI Multi-Tenancy and Isolation
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /aip/ai-multi-tenancy-and-isolation/
 ---

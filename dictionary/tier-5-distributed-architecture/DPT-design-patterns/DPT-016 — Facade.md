@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Facade"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /design-patterns/facade/
 id: DPT-016

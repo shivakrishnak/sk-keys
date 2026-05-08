@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-005
 title: The JVM Ecosystem Map (OpenJDK, GraalVM, Languages)
 category: Java & JVM Internals
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /jvm/the-jvm-ecosystem-map-openjdk-graalvm-languages/
 ---

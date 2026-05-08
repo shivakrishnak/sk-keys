@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-011
 title: Transaction Atomicity and Financial Consistency
 category: Financial Services Domain
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /fin/transaction-atomicity-and-financial-consistency/
 ---

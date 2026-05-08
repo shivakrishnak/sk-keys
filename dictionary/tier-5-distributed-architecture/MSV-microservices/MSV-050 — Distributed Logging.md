@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Distributed Logging"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 50
 permalink: /microservices/distributed-logging/
 id: MSV-050

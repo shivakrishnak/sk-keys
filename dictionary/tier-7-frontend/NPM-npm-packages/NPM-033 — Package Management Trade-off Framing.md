@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-033
 title: Package Management Trade-off Framing
 category: npm & Package Management
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /npm/package-management-trade-off-framing/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cargo Cult Programming"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /design-patterns/cargo-cult-programming/
 id: DPT-046

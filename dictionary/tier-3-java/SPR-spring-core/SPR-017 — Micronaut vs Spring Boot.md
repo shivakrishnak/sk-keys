@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Micronaut vs Spring Boot"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /spring/micronaut-vs-spring-boot/
 id: SPR-017

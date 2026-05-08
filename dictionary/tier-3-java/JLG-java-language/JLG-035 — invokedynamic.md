@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "invokedynamic"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /java-language/invokedynamic/
 id: JLG-035

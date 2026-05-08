@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-017
 title: Quartz Scheduler (Java)
 category: Async & Background Processing
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /asy/quartz-scheduler-java/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: DPT-063
 title: Anti-Pattern Recognition and Refactoring
 category: Design Patterns
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 63
 permalink: /dpt/anti-pattern-recognition-and-refactoring/
 ---

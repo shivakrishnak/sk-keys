@@ -2,6 +2,7 @@
 layout: default
 title: "Object-Oriented Programming (OOP)"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /cs-fundamentals/object-oriented-programming/
 id: CSF-009

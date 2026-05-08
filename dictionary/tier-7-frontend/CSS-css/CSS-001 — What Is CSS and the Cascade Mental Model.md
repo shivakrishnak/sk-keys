@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-001
 title: What Is CSS and the Cascade Mental Model
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /css/what-is-css-and-the-cascade-mental-model/
 ---

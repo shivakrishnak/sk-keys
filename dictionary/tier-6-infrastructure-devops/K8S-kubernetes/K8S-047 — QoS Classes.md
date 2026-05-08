@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "QoS Classes"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /kubernetes/qos-classes/
 id: K8S-047

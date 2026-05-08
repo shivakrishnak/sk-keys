@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-032
 title: Terraform Provider Development
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /iac/terraform-provider-development/
 ---

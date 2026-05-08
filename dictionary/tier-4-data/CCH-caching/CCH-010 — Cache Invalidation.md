@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cache Invalidation"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /caching/cache-invalidation/
 id: CCH-010

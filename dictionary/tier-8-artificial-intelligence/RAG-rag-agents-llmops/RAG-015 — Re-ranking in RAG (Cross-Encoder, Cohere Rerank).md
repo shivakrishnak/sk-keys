@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-015
 title: Re-ranking in RAG (Cross-Encoder, Cohere Rerank)
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /rag/re-ranking-in-rag-cross-encoder-cohere-rerank/
 ---

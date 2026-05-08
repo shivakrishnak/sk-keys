@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-031
 title: TypeScript Compiler API
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /tsc/typescript-compiler-api/
 ---

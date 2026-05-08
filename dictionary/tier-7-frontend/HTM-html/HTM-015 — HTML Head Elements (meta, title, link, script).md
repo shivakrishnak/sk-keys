@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-015
 title: HTML Head Elements (meta, title, link, script)
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /htm/html-head-elements-meta-title-link-script/
 ---

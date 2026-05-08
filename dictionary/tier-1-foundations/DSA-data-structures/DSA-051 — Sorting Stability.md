@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sorting Stability"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 51
 permalink: /dsa/sorting-stability/
 id: DSA-051

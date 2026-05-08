@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Maven Release Plugin"
 parent: "Maven & Build Tools (Java)"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /maven-build/maven-release-plugin/
 id: MVN-031

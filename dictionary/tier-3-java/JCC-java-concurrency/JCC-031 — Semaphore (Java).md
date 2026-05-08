@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Semaphore (Java)"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /java-concurrency/semaphore/
 id: JCC-031

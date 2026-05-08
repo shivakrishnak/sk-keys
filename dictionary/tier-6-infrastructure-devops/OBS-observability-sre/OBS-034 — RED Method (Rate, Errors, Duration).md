@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-034
 title: RED Method (Rate, Errors, Duration)
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /obs/red-method-rate-errors-duration/
 ---

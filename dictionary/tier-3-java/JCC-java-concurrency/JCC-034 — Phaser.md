@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Phaser"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /java-concurrency/jcc-038-phaser/
 id: JCC-034

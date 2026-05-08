@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Benchmark (AI)"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 43
 permalink: /ai-foundations/benchmark-ai/
 id: AIF-043

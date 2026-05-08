@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "MongoDB Document Schema Design"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /nosql/mongodb-document-schema-design/
 id: NDB-006

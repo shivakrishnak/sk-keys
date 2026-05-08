@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-030
 title: Incident Management Process
 category: Observability & SRE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /obs/incident-management-process/
 ---

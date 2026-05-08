@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Database Proxy (PgBouncer)"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /nosql/database-proxy-pgbouncer/
 id: NDB-040

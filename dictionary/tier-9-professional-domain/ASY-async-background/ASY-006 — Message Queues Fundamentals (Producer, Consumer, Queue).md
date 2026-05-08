@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-006
 title: Message Queues Fundamentals (Producer, Consumer, Queue)
 category: Async & Background Processing
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /asy/message-queues-fundamentals-producer-consumer-queue/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform Reusable Module Pattern"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /ci-cd/terraform-reusable-module-pattern/
 id: CCD-062

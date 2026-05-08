@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ETag / Cache-Control"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /http-apis/etag-cache-control/
 id: API-045

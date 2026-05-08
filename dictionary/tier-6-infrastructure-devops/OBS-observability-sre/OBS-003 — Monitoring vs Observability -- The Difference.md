@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-003
 title: Monitoring vs Observability -- The Difference
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /obs/monitoring-vs-observability----the-difference/
 ---

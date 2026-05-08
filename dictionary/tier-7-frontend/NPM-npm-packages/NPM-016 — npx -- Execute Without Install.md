@@ -1,4 +1,4 @@
----
+﻿---
 id: NPM-016
 title: npx -- Execute Without Install
 category: npm & Package Management
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "npm & Package Management"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /npm/npx----execute-without-install/
 ---

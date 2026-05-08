@@ -1,4 +1,4 @@
----
+﻿---
 id: RCT-019
 title: React Reconciliation Algorithm Deep Dive
 category: React
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /rct/react-reconciliation-algorithm-deep-dive/
 ---

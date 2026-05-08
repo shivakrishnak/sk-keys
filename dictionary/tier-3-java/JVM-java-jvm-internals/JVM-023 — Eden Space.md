@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Eden Space"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /java/eden-space/
 id: JVM-023

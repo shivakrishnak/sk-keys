@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Monolith vs Microservices"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /microservices/monolith-vs-microservices/
 id: MSV-011

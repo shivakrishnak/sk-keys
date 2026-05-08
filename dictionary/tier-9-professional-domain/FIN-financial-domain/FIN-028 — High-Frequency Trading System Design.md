@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-028
 title: High-Frequency Trading System Design
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /fin/high-frequency-trading-system-design/
 ---

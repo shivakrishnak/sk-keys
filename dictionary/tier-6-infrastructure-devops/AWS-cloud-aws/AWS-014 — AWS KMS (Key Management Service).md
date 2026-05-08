@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS KMS (Key Management Service)"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /cloud-aws/aws-kms/
 id: AWS-014

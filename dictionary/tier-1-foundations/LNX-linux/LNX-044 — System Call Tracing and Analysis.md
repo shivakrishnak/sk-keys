@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-044
 title: System Call Tracing and Analysis
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /lnx/system-call-tracing-and-analysis/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-027
 title: Progressive Delivery (Canary, Dark Launch, A/B)
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /plt/progressive-delivery-canary-dark-launch-ab/
 ---

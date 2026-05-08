@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Distributed Transaction"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /microservices/distributed-transaction/
 id: MSV-039

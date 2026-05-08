@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bloom Filter"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 60
 permalink: /dsa/bloom-filter/
 id: DSA-060

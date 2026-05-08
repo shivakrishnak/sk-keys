@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Service Layer"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /software-architecture/service-layer/
 id: SAP-026

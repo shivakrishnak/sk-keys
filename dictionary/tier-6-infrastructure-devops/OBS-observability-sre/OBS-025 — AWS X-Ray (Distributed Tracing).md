@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS X-Ray (Distributed Tracing)"
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /observability/aws-x-ray-distributed-tracing/
 number: "OBS-005"

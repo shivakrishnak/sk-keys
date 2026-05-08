@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "OpenTelemetry (Microservices)"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /microservices/opentelemetry-microservices/
 id: MSV-052

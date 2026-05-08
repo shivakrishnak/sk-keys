@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Memory Barrier"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /java/memory-barrier/
 id: JVM-018

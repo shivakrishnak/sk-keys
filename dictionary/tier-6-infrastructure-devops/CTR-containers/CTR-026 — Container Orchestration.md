@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Container Orchestration"
 parent: "Containers"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /containers/container-orchestration/
 id: CTR-026

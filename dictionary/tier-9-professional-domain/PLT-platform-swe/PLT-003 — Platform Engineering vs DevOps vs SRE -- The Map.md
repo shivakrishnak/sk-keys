@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-003
 title: Platform Engineering vs DevOps vs SRE -- The Map
 category: Platform & Modern SWE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /plt/platform-engineering-vs-devops-vs-sre----the-map/
 ---

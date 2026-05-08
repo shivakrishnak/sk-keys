@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Factory Method"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /design-patterns/factory-method/
 id: DPT-007

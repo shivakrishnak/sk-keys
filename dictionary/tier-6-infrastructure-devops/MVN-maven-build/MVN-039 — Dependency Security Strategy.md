@@ -1,4 +1,4 @@
----
+﻿---
 id: MVN-039
 title: Dependency Security Strategy
 category: Maven & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Maven & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /mvn/dependency-security-strategy/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Apache Spark"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /big-data-streaming/apache-spark/
 id: BIG-010

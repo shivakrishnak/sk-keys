@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-023
 title: HTML Security (XSS Prevention, CSP)
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /htm/html-security-xss-prevention-csp/
 ---

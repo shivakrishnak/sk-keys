@@ -1,4 +1,4 @@
----
+﻿---
 id: API-002
 title: The Client-Server Model — A Map
 category: HTTP & APIs
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /api/the-client-server-model-a-map/
 ---

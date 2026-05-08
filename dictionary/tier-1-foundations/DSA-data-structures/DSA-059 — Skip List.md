@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Skip List"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /dsa/skip-list/
 id: DSA-059

@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-030
 title: LLM Context Window Extension (RoPE, ALiBi)
 category: LLMs & Prompt Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /llm/llm-context-window-extension-rope-alibi/
 ---

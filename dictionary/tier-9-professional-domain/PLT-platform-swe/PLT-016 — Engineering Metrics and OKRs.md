@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-016
 title: Engineering Metrics and OKRs
 category: Platform & Modern SWE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /plt/engineering-metrics-and-okrs/
 ---

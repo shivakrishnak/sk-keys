@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "False Sharing"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /operating-systems/false-sharing/
 id: OSY-047

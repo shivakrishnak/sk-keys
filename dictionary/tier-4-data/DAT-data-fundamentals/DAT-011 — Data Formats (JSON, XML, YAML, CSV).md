@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Formats (JSON, XML, YAML, CSV)"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /data-fundamentals/data-formats/
 id: DAT-011

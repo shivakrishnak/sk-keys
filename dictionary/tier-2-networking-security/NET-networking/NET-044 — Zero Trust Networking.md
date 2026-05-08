@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Zero Trust Networking"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /networking/zero-trust-networking/
 id: NET-044

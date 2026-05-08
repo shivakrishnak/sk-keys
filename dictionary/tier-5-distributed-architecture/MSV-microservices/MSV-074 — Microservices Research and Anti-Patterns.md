@@ -1,4 +1,4 @@
----
+﻿---
 id: MSV-074
 title: Microservices Research and Anti-Patterns
 category: Microservices
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 74
 permalink: /msv/microservices-research-and-anti-patterns/
 ---

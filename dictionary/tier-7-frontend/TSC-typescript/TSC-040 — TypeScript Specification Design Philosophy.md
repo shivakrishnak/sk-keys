@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-040
 title: TypeScript Specification Design Philosophy
 category: TypeScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /tsc/typescript-specification-design-philosophy/
 ---

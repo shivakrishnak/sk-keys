@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-001
 title: What Is Infrastructure as Code
 category: Infrastructure as Code
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /iac/what-is-infrastructure-as-code/
 ---

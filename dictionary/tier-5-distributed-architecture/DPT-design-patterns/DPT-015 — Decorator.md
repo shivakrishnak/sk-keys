@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Decorator"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /design-patterns/decorator/
 id: DPT-015

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Pod"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /kubernetes/pod/
 id: K8S-007

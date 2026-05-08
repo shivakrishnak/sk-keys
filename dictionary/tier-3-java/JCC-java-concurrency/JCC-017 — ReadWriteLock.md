@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ReadWriteLock"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /java-concurrency/read-write-lock/
 id: JCC-017

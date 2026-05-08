@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "IoC (Inversion of Control)"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /spring/ioc-inversion-of-control/
 id: SPR-019

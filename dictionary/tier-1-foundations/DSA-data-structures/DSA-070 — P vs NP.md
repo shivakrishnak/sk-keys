@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "P vs NP"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 70
 permalink: /dsa/p-vs-np/
 id: DSA-070

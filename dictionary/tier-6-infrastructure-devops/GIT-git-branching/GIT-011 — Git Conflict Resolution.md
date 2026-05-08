@@ -1,4 +1,4 @@
----
+﻿---
 id: GIT-011
 title: Git Conflict Resolution
 category: Git & Branching Strategy
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Git & Branching Strategy"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /git/git-conflict-resolution/
 ---

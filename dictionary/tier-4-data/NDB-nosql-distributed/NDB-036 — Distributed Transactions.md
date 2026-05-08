@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Distributed Transactions"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /nosql/distributed-transactions/
 id: NDB-036

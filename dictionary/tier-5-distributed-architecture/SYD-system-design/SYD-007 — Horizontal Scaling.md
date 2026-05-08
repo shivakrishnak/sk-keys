@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Horizontal Scaling"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /system-design/horizontal-scaling/
 id: SYD-007

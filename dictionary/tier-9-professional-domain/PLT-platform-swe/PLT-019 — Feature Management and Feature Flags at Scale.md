@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-019
 title: Feature Management and Feature Flags at Scale
 category: Platform & Modern SWE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /plt/feature-management-and-feature-flags-at-scale/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Design Best Practices"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /http-apis/api-design-best-practices/
 id: API-065

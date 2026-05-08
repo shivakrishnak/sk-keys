@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-028
 title: Build Performance Strategy (Caching, Parallelism)
 category: Webpack & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /wbp/build-performance-strategy-caching-parallelism/
 ---

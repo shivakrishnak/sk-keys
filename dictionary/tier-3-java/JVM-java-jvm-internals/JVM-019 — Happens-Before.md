@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Happens-Before"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 19
 permalink: /java/happens-before/
 id: JVM-019

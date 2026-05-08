@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Survivor Space"
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /java/survivor-space/
 id: JVM-024

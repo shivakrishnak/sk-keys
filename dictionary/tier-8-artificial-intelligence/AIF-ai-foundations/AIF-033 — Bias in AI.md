@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Bias in AI"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /ai-foundations/bias-in-ai/
 id: AIF-033

@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-036
 title: IaC Drift and Reconciliation Strategy
 category: Infrastructure as Code
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /iac/iac-drift-and-reconciliation-strategy/
 ---

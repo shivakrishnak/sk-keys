@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SpotBugs"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /code-quality/spotbugs/
 id: CDQ-014

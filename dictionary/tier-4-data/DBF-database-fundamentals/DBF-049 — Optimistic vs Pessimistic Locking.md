@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Optimistic vs Pessimistic Locking"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 49
 permalink: /databases/optimistic-vs-pessimistic-locking/
 id: DBF-049

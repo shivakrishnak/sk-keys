@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Higher-Order Functions (JS)"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /javascript/higher-order-functions/
 id: JSC-025

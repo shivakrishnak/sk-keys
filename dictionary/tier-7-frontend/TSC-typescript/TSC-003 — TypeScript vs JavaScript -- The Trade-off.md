@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-003
 title: TypeScript vs JavaScript -- The Trade-off
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /tsc/typescript-vs-javascript----the-trade-off/
 ---

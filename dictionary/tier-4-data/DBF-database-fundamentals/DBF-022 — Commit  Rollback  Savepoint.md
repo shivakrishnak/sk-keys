@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Commit  Rollback  Savepoint"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /databases/commit-rollback-savepoint/
 id: DBF-022

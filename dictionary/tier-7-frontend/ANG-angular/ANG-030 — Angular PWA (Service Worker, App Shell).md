@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-030
 title: Angular PWA (Service Worker, App Shell)
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /ang/angular-pwa-service-worker-app-shell/
 ---

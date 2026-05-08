@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-066
 title: Formal Verification of Security Properties
 category: Security
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 66
 permalink: /sec/formal-verification-of-security-properties/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: DST-066
 title: Distributed System Architecture Strategy
 category: Distributed Systems
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 66
 permalink: /dst/distributed-system-architecture-strategy/
 ---

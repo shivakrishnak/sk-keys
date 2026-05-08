@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Priority Queue"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /dsa/priority-queue/
 id: DSA-021

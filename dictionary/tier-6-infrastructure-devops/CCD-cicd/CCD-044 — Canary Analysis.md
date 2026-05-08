@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Canary Analysis"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /ci-cd/canary-analysis/
 id: CCD-044

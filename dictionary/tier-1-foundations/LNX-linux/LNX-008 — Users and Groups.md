@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Users and Groups"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /linux/users-and-groups/
 id: LNX-008

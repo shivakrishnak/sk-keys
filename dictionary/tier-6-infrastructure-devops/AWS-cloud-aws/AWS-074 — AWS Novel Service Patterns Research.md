@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-074
 title: AWS Novel Service Patterns Research
 category: Cloud -- AWS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 74
 permalink: /aws/aws-novel-service-patterns-research/
 ---

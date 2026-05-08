@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sliding Window"
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /networking/sliding-window/
 id: NET-022

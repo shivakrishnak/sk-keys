@@ -1,4 +1,4 @@
----
+﻿---
 id: AWS-005
 title: The AWS Ecosystem Map
 category: Cloud -- AWS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Cloud -- AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /aws/the-aws-ecosystem-map/
 ---

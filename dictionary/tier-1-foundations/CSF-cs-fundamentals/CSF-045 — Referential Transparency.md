@@ -2,6 +2,7 @@
 layout: default
 title: "Referential Transparency"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /cs-fundamentals/referential-transparency/
 id: CSF-045

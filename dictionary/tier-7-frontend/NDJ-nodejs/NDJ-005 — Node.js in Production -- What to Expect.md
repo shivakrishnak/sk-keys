@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-005
 title: Node.js in Production -- What to Expect
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 5
 permalink: /ndj/nodejs-in-production----what-to-expect/
 ---

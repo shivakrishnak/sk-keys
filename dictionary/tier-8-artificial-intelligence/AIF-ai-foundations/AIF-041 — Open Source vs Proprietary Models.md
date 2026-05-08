@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Open Source vs Proprietary Models"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /ai-foundations/open-source-vs-proprietary-models/
 id: AIF-041

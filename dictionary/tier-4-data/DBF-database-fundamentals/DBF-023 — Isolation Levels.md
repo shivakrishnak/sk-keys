@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Isolation Levels"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /databases/isolation-levels/
 id: DBF-023

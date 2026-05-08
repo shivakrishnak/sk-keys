@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "String Pool String Interning"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 21
 permalink: /java-language/string-pool-string-interning/
 id: JLG-021

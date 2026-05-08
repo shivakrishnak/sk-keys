@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CyclicBarrier"
 parent: "Java Concurrency"
+grand_parent: "Technical Dictionary"
 nav_order: 33
 permalink: /java-concurrency/jcc-037-cyclicbarrier/
 id: JCC-033

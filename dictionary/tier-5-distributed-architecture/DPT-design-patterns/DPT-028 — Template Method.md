@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Template Method"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /design-patterns/template-method/
 id: DPT-028

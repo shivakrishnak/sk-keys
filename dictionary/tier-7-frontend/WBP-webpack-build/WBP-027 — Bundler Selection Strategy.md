@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-027
 title: Bundler Selection Strategy
 category: Webpack & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /wbp/bundler-selection-strategy/
 ---

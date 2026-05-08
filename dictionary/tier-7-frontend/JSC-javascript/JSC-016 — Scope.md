@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Scope"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /javascript/scope/
 id: JSC-016

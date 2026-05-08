@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Transaction Isolation Levels"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /spring/transaction-isolation-levels/
 id: SPR-045

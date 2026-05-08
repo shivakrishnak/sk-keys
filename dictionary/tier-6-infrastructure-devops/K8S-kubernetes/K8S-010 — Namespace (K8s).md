@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Namespace (K8s)"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /kubernetes/namespace-k8s/
 id: K8S-010

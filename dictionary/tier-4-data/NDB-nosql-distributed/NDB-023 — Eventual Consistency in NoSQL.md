@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Eventual Consistency in NoSQL"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /nosql/eventual-consistency/
 id: NDB-023

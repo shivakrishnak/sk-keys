@@ -1,4 +1,4 @@
----
+﻿---
 id: OBS-001
 title: What Is Observability and Why It Matters
 category: Observability & SRE
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /obs/what-is-observability-and-why-it-matters/
 ---

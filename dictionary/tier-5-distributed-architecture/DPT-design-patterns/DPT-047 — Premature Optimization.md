@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Premature Optimization"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /design-patterns/premature-optimization/
 id: DPT-047

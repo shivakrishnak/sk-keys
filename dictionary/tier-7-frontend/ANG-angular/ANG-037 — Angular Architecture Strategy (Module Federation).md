@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-037
 title: Angular Architecture Strategy (Module Federation)
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /ang/angular-architecture-strategy-module-federation/
 ---

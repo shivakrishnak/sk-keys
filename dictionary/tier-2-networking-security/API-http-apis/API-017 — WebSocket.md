@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "WebSocket"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /http-apis/websocket/
 id: API-017

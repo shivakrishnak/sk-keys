@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ESLint (React)"
 parent: "React"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /react/eslint-react/
 id: RCT-008

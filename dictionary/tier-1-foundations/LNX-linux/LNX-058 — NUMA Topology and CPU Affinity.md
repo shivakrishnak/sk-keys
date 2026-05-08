@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-058
 title: NUMA Topology and CPU Affinity
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 58
 permalink: /lnx/numa-topology-and-cpu-affinity/
 ---

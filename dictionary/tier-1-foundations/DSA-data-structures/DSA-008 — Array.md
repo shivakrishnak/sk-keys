@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Array"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 8
 permalink: /dsa/array/
 id: DSA-008

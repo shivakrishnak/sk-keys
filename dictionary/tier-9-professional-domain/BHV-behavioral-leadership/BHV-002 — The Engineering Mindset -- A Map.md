@@ -1,4 +1,4 @@
----
+﻿---
 id: BHV-002
 title: The Engineering Mindset -- A Map
 category: Behavioral & Leadership
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /bhv/the-engineering-mindset----a-map/
 ---

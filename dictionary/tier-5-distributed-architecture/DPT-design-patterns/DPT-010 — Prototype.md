@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Prototype"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /design-patterns/prototype/
 id: DPT-010

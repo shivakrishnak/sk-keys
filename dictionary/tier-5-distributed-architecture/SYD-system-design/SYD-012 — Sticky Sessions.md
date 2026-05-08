@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sticky Sessions"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /system-design/sticky-sessions/
 id: SYD-012

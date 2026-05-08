@@ -1,4 +1,4 @@
----
+﻿---
 id: JSC-038
 title: JavaScript Ecosystem Fatigue Thinking
 category: JavaScript
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /jsc/javascript-ecosystem-fatigue-thinking/
 ---

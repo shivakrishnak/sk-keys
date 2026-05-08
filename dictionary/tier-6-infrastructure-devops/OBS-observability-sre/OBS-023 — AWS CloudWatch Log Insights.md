@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "AWS CloudWatch Log Insights"
 parent: "Observability & SRE"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /observability/aws-cloudwatch-log-insights/
 number: "OBS-004"

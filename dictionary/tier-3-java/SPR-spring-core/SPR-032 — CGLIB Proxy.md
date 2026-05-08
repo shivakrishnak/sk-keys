@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CGLIB Proxy"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /spring/cglib-proxy/
 id: SPR-032

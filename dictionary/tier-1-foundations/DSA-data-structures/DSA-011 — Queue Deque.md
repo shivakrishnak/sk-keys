@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Queue Deque"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /dsa/queue-deque/
 id: DSA-011

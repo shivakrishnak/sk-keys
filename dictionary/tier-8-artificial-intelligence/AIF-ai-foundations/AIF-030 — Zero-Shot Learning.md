@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Zero-Shot Learning"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /ai-foundations/zero-shot-learning/
 id: AIF-030

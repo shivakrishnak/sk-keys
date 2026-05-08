@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Published Language"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /software-architecture/published-language/
 id: SAP-038

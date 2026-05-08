@@ -1,4 +1,4 @@
----
+﻿---
 id: DGN-024
 title: Multi-Language and Unicode in Documents
 category: Document Generation
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Document Generation"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /dgn/multi-language-and-unicode-in-documents/
 ---

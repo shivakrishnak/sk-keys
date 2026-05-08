@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-070
 title: Compiler/Runtime Selection at Scale
 category: CS Fundamentals — Paradigms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 70
 permalink: /csf/compilerruntime-selection-at-scale/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Proxy"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 18
 permalink: /design-patterns/proxy/
 id: DPT-018

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Technical Debt Management"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /leadership/technical-debt-management/
 id: BHV-015

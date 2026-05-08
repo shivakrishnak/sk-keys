@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Windowing (Tumbling, Sliding, Session)"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /big-data-streaming/windowing/
 id: BIG-029

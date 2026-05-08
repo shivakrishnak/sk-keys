@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Dead Letter Queue (DLQ)"
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 26
 permalink: /big-data-streaming/dead-letter-queue/
 id: BIG-026

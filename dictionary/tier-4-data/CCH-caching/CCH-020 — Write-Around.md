@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Write-Around"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /caching/write-around/
 id: CCH-020

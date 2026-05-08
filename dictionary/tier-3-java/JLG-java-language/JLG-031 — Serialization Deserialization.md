@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Serialization Deserialization"
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /java-language/serialization-deserialization/
 id: JLG-031

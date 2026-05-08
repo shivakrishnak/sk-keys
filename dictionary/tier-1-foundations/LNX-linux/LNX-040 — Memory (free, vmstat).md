@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Memory (free, vmstat)"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /linux/memory-free-vmstat/
 id: LNX-040

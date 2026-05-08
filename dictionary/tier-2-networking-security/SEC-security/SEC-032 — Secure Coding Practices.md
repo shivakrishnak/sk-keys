@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-032
 title: Secure Coding Practices
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /sec/secure-coding-practices/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Normalization"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /databases/normalization/
 id: DBF-036

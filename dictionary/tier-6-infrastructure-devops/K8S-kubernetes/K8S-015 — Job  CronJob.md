@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Job  CronJob"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 15
 permalink: /kubernetes/job-cronjob/
 id: K8S-015

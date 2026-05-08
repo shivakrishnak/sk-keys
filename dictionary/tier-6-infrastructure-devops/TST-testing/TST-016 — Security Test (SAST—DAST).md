@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Security Test (SAST—DAST)"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /testing/security-test-sast-dast/
 id: TST-016

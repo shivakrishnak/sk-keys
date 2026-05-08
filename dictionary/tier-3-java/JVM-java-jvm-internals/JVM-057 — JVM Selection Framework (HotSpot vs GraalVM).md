@@ -1,4 +1,4 @@
----
+﻿---
 id: JVM-057
 title: JVM Selection Framework (HotSpot vs GraalVM)
 category: Java & JVM Internals
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java & JVM Internals"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /jvm/jvm-selection-framework-hotspot-vs-graalvm/
 ---

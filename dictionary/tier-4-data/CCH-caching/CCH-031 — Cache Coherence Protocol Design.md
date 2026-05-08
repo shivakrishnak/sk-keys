@@ -1,4 +1,4 @@
----
+﻿---
 id: CCH-031
 title: Cache Coherence Protocol Design
 category: Caching
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /cch/cache-coherence-protocol-design/
 ---

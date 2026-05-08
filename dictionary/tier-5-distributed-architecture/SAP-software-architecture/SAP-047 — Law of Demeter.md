@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Law of Demeter"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /software-architecture/law-of-demeter/
 id: SAP-047

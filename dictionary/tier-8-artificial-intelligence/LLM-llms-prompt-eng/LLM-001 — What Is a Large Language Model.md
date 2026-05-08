@@ -1,4 +1,4 @@
----
+﻿---
 id: LLM-001
 title: What Is a Large Language Model
 category: LLMs & Prompt Engineering
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "LLMs & Prompt Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /llm/what-is-a-large-language-model/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-042
 title: Message Delivery Guarantee Mental Model
 category: Async & Background Processing
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /asy/message-delivery-guarantee-mental-model/
 ---

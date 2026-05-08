@@ -1,4 +1,4 @@
----
+﻿---
 id: RAG-002
 title: The RAG Mental Model (Retrieve, Augment, Generate)
 category: RAG & Agents & LLMOps
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "RAG & Agents & LLMOps"
+grand_parent: "Technical Dictionary"
 nav_order: 2
 permalink: /rag/the-rag-mental-model-retrieve-augment-generate/
 ---

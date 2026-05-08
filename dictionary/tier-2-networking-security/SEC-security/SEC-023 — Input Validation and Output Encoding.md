@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-023
 title: Input Validation and Output Encoding
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /sec/input-validation-and-output-encoding/
 ---

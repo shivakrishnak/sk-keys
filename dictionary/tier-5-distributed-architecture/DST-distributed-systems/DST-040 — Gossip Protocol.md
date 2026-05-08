@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Gossip Protocol"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 40
 permalink: /distributed-systems/gossip-protocol/
 id: DST-040

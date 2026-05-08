@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Circular Dependency"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /spring/circular-dependency/
 id: SPR-031

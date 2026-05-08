@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "MongoDB Indexing Strategies"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /nosql/mongodb-indexing-strategies/
 id: NDB-009

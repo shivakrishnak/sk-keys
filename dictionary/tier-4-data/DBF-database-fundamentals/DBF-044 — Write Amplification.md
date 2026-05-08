@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Write Amplification"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /databases/write-amplification/
 id: DBF-044

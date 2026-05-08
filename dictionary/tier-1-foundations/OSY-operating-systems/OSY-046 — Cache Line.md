@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Cache Line"
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /operating-systems/cache-line/
 id: OSY-046

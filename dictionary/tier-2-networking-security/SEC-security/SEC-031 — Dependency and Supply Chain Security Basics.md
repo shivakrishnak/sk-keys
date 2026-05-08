@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-031
 title: Dependency and Supply Chain Security Basics
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /sec/dependency-and-supply-chain-security-basics/
 ---

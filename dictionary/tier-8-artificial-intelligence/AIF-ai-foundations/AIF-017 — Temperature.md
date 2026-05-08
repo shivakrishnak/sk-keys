@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Temperature"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /ai-foundations/temperature/
 id: AIF-017

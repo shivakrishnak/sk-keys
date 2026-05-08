@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Scheduler (K8s)"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /kubernetes/scheduler-k8s/
 id: K8S-032

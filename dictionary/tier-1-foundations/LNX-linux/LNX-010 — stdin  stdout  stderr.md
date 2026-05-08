@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "stdin / stdout / stderr"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 10
 permalink: /linux/stdin-stdout-stderr/
 id: LNX-010

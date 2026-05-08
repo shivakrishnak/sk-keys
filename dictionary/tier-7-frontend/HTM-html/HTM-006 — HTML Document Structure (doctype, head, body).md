@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-006
 title: HTML Document Structure (doctype, head, body)
 category: HTML
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /htm/html-document-structure-doctype-head-body/
 ---

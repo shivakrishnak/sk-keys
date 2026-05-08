@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Lineage"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /data-fundamentals/data-lineage/
 id: DAT-036

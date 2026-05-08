@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Linux File System Hierarchy"
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /linux/linux-file-system-hierarchy/
 id: LNX-006

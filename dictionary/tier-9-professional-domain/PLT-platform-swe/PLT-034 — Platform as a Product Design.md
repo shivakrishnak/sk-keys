@@ -1,4 +1,4 @@
----
+﻿---
 id: PLT-034
 title: Platform as a Product Design
 category: Platform & Modern SWE
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Platform & Modern SWE"
+grand_parent: "Technical Dictionary"
 nav_order: 34
 permalink: /plt/platform-as-a-product-design/
 ---

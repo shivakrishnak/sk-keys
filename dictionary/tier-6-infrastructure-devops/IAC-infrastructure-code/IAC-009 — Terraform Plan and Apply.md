@@ -1,4 +1,4 @@
----
+﻿---
 id: IAC-009
 title: Terraform Plan and Apply
 category: Infrastructure as Code
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Infrastructure as Code"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /iac/terraform-plan-and-apply/
 ---

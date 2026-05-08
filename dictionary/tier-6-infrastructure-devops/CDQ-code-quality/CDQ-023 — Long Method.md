@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Long Method"
 parent: "Code Quality"
+grand_parent: "Technical Dictionary"
 nav_order: 23
 permalink: /code-quality/long-method/
 id: CDQ-023

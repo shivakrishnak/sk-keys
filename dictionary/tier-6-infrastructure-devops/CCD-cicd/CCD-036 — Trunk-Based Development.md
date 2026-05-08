@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Trunk-Based Development"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /ci-cd/trunk-based-development/
 id: CCD-036

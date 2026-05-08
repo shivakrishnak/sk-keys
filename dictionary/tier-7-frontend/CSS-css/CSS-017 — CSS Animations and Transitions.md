@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-017
 title: CSS Animations and Transitions
 category: CSS
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /css/css-animations-and-transitions/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Document Store"
 parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /nosql/document-store/
 id: NDB-017

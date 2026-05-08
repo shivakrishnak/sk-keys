@@ -1,4 +1,4 @@
----
+﻿---
 id: TSC-006
 title: TypeScript Basic Types (string, number, boolean, any, unknown)
 category: TypeScript
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "TypeScript"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /tsc/typescript-basic-types-string-number-boolean-any-unknown/
 ---

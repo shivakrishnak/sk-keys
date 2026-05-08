@@ -1,4 +1,4 @@
----
+﻿---
 id: CSS-035
 title: CSS Paint API
 category: CSS
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CSS"
+grand_parent: "Technical Dictionary"
 nav_order: 35
 permalink: /css/css-paint-api/
 ---

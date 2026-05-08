@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "CAP Theorem"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /distributed-systems/cap-theorem/
 id: DST-006

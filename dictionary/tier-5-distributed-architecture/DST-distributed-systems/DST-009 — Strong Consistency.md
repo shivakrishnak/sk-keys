@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Strong Consistency"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /distributed-systems/strong-consistency/
 id: DST-009

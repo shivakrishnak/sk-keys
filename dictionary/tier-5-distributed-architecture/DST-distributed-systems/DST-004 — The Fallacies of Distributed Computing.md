@@ -1,4 +1,4 @@
----
+﻿---
 id: DST-004
 title: The Fallacies of Distributed Computing
 category: Distributed Systems
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 4
 permalink: /dst/the-fallacies-of-distributed-computing/
 ---

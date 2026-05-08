@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "1292b — Web APIs"
 parent: "JavaScript"
+grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /javascript/web-apis/
 id: JSC-009

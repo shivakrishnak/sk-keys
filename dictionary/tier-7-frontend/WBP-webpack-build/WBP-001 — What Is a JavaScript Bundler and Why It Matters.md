@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-001
 title: What Is a JavaScript Bundler and Why It Matters
 category: Webpack & Build Tools
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 1
 permalink: /wbp/what-is-a-javascript-bundler-and-why-it-matters/
 ---

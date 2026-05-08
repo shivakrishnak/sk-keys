@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Object Pool"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /design-patterns/object-pool/
 id: DPT-011

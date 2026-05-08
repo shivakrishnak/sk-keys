@@ -1,4 +1,4 @@
----
+﻿---
 id: AIP-024
 title: AI Error Handling and Recovery
 category: AI Product Engineering
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /aip/ai-error-handling-and-recovery/
 ---

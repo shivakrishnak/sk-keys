@@ -2,6 +2,7 @@
 layout: default
 title: "Encapsulation"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /cs-fundamentals/encapsulation/
 id: CSF-024

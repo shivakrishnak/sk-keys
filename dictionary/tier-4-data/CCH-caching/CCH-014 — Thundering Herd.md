@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Thundering Herd"
 parent: "Caching"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /caching/thundering-herd/
 id: CCH-014

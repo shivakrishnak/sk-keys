@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-038
 title: Web Accessibility Strategy
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 38
 permalink: /htm/web-accessibility-strategy/
 ---

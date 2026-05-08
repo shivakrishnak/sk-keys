@@ -1,4 +1,4 @@
----
+﻿---
 id: WBP-024
 title: Webpack Dependency Graph Internals
 category: Webpack & Build Tools
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Webpack & Build Tools"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /wbp/webpack-dependency-graph-internals/
 ---

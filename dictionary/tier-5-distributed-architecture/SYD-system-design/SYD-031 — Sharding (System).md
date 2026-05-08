@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Sharding (System)"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 31
 permalink: /system-design/sharding-system/
 id: SYD-031

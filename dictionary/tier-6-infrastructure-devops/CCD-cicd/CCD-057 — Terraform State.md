@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform State"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /ci-cd/terraform-state/
 id: CCD-057

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Failure Stories (Learning from Mistakes)"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 36
 permalink: /leadership/failure-stories/
 id: BHV-036

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Ambassador Pattern"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 64
 permalink: /microservices/ambassador-pattern/
 id: MSV-064

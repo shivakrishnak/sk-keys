@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Filter vs Interceptor"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /spring/filter-vs-interceptor/
 id: SPR-042

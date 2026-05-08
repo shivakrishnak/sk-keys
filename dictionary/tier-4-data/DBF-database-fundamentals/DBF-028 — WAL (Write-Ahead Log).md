@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "WAL (Write-Ahead Log)"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 28
 permalink: /databases/wal/
 id: DBF-028

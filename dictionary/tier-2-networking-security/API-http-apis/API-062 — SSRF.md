@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SSRF"
 parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
 nav_order: 62
 permalink: /http-apis/ssrf/
 id: API-062

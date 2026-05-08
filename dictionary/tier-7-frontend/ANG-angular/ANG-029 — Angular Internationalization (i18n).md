@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-029
 title: Angular Internationalization (i18n)
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /ang/angular-internationalization-i18n/
 ---

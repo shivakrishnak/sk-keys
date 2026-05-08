@@ -1,4 +1,4 @@
----
+﻿---
 id: SPR-068
 title: IoC-First Thinking
 category: Spring Core
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 68
 permalink: /spr/ioc-first-thinking/
 ---

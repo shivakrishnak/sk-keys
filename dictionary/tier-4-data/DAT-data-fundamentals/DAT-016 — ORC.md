@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "ORC"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /data-fundamentals/orc/
 id: DAT-016

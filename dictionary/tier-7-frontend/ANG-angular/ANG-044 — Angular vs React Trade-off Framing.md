@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-044
 title: Angular vs React Trade-off Framing
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /ang/angular-vs-react-trade-off-framing/
 ---

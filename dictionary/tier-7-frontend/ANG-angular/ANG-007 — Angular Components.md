@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-007
 title: Angular Components
 category: Angular
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /ang/angular-components/
 ---

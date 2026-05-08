@@ -1,4 +1,4 @@
----
+﻿---
 id: JLG-044
 title: Java Performance Profiling at Scale
 category: Java Language
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Java Language"
+grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /jlg/java-performance-profiling-at-scale/
 ---

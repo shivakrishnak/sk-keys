@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Distributed Locking"
 parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 37
 permalink: /distributed-systems/distributed-locking/
 id: DST-037

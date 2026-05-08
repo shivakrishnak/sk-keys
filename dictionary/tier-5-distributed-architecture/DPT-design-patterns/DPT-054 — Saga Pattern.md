@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Saga Pattern"
 parent: "Design Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 54
 permalink: /design-patterns/saga-pattern/
 id: DPT-054

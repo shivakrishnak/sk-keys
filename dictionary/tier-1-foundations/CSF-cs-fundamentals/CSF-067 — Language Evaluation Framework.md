@@ -1,4 +1,4 @@
----
+﻿---
 id: CSF-067
 title: Language Evaluation Framework
 category: CS Fundamentals — Paradigms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 67
 permalink: /csf/language-evaluation-framework/
 ---

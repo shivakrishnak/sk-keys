@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "etcd"
 parent: "Kubernetes"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /kubernetes/etcd/
 id: K8S-030

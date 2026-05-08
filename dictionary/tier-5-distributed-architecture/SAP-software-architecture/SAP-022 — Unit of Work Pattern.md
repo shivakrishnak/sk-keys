@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Unit of Work Pattern"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /software-architecture/unit-of-work-pattern/
 id: SAP-022

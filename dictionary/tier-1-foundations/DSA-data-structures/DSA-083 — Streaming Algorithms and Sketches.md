@@ -1,4 +1,4 @@
----
+﻿---
 id: DSA-083
 title: Streaming Algorithms and Sketches
 category: Data Structures & Algorithms
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 83
 permalink: /dsa/streaming-algorithms-and-sketches/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "BeanFactoryPostProcessor"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 27
 permalink: /spring/beanfactorypostprocessor/
 id: SPR-027

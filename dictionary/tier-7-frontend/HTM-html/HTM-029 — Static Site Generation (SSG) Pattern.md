@@ -1,4 +1,4 @@
----
+﻿---
 id: HTM-029
 title: Static Site Generation (SSG) Pattern
 category: HTML
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "HTML"
+grand_parent: "Technical Dictionary"
 nav_order: 29
 permalink: /htm/static-site-generation-ssg-pattern/
 ---

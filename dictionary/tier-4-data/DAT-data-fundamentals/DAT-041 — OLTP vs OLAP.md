@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "OLTP vs OLAP"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /data-fundamentals/oltp-vs-olap/
 id: DAT-041

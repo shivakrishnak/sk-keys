@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Influence Without Authority"
 parent: "Behavioral & Leadership"
+grand_parent: "Technical Dictionary"
 nav_order: 39
 permalink: /leadership/influence-without-authority/
 id: BHV-039

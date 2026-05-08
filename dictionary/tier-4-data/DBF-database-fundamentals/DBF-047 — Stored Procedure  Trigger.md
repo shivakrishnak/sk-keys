@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Stored Procedure  Trigger"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /databases/stored-procedure-trigger/
 id: DBF-047

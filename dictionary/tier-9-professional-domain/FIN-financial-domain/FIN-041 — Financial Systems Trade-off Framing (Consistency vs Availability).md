@@ -1,4 +1,4 @@
----
+﻿---
 id: FIN-041
 title: Financial Systems Trade-off Framing (Consistency vs Availability)
 category: Financial Services Domain
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Financial Services Domain"
+grand_parent: "Technical Dictionary"
 nav_order: 41
 permalink: /fin/financial-systems-trade-off-framing-consistency-vs-availability/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Rich Domain Model"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 25
 permalink: /software-architecture/rich-domain-model/
 id: SAP-025

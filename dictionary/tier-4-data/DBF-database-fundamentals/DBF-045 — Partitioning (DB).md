@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Partitioning (DB)"
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /databases/partitioning/
 id: DBF-045

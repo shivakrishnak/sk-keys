@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "HashMap"
 parent: "Data Structures & Algorithms"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /dsa/hashmap/
 id: DSA-012

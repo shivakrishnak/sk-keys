@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Terraform"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 32
 permalink: /ci-cd/terraform/
 id: CCD-032

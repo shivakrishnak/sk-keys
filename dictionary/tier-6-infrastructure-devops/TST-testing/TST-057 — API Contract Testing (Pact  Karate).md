@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "API Contract Testing (Pact  Karate)"
 parent: "Testing"
+grand_parent: "Technical Dictionary"
 nav_order: 57
 permalink: /testing/api-contract-testing/
 id: TST-057

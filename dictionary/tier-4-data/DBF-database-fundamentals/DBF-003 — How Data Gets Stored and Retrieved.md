@@ -1,4 +1,4 @@
----
+﻿---
 id: DBF-003
 title: How Data Gets Stored and Retrieved
 category: Database Fundamentals
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Database Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /dbf/how-data-gets-stored-and-retrieved/
 ---

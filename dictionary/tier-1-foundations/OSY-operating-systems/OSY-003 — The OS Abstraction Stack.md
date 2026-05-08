@@ -1,4 +1,4 @@
----
+﻿---
 id: OSY-003
 title: The OS Abstraction Stack
 category: Operating Systems
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Operating Systems"
+grand_parent: "Technical Dictionary"
 nav_order: 3
 permalink: /osy/the-os-abstraction-stack/
 ---

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Hexagonal Architecture"
 parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
 nav_order: 14
 permalink: /software-architecture/hexagonal-architecture/
 id: SAP-014

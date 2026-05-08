@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "X-Ray"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /cloud-aws/x-ray/
 id: AWS-059

@@ -1,4 +1,4 @@
----
+﻿---
 id: NET-048
 title: DDoS Attack Patterns and Mitigation
 category: Networking
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Networking"
+grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /net/ddos-attack-patterns-and-mitigation/
 ---

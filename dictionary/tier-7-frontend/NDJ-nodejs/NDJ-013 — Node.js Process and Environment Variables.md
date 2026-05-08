@@ -1,4 +1,4 @@
----
+﻿---
 id: NDJ-013
 title: Node.js Process and Environment Variables
 category: Node.js
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Node.js"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /ndj/nodejs-process-and-environment-variables/
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 id: ASY-007
 title: At-Least-Once vs Exactly-Once vs At-Most-Once Delivery
 category: Async & Background Processing
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Async & Background Processing"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /asy/at-least-once-vs-exactly-once-vs-at-most-once-delivery/
 ---

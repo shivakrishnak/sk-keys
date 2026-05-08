@@ -1,4 +1,4 @@
----
+﻿---
 id: SEC-012
 title: HTTPS and TLS Basics
 category: Security
@@ -16,6 +16,7 @@ status: draft
 version: 1
 layout: default
 parent: "Security"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /sec/https-and-tls-basics/
 ---

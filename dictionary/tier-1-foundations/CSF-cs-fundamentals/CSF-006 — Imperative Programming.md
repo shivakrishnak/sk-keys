@@ -2,6 +2,7 @@
 layout: default
 title: "Imperative Programming"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 6
 permalink: /cs-fundamentals/imperative-programming/
 id: CSF-006

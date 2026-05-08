@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Data Isolation per Service"
 parent: "Microservices"
+grand_parent: "Technical Dictionary"
 nav_order: 42
 permalink: /microservices/data-isolation-per-service/
 id: MSV-042

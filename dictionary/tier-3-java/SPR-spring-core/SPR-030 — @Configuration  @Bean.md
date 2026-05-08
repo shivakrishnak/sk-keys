@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "@Configuration  @Bean"
 parent: "Spring Core"
+grand_parent: "Technical Dictionary"
 nav_order: 30
 permalink: /spring/configuration-bean/
 id: SPR-030

@@ -1,4 +1,4 @@
----
+﻿---
 id: LNX-059
 title: Linux Fleet Standardisation Strategy
 category: Linux
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Linux"
+grand_parent: "Technical Dictionary"
 nav_order: 59
 permalink: /lnx/linux-fleet-standardisation-strategy/
 ---

@@ -2,6 +2,7 @@
 layout: default
 title: "Event-Driven Programming"
 parent: "CS Fundamentals — Paradigms"
+grand_parent: "Technical Dictionary"
 nav_order: 11
 permalink: /cs-fundamentals/event-driven-programming/
 id: CSF-011

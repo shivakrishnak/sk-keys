@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "SCA (Software Composition Analysis)"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /ci-cd/sca/
 id: CCD-024

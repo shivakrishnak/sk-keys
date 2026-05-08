@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Artifact Registry"
 parent: "CI/CD"
+grand_parent: "Technical Dictionary"
 nav_order: 13
 permalink: /ci-cd/artifact-registry/
 id: CCD-013

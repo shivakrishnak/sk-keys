@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Schema Registry (Confluent)"
 parent: "Data Fundamentals"
+grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /data-fundamentals/schema-registry-confluent/
 id: DAT-007

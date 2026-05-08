@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Self-Attention"
 parent: "AI Foundations"
+grand_parent: "Technical Dictionary"
 nav_order: 12
 permalink: /ai-foundations/self-attention/
 id: AIF-012

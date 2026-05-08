@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Notification System Design"
 parent: "System Design"
+grand_parent: "Technical Dictionary"
 nav_order: 47
 permalink: /system-design/notification-system-design/
 id: SYD-047

@@ -1,7 +1,8 @@
----
+﻿---
 layout: default
 title: "Aurora"
 parent: "Cloud — AWS"
+grand_parent: "Technical Dictionary"
 nav_order: 46
 permalink: /cloud-aws/aurora/
 id: AWS-046

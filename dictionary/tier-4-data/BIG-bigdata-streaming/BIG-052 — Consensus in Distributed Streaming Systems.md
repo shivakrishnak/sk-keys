@@ -1,4 +1,4 @@
----
+﻿---
 id: BIG-052
 title: Consensus in Distributed Streaming Systems
 category: Big Data & Streaming
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Big Data & Streaming"
+grand_parent: "Technical Dictionary"
 nav_order: 52
 permalink: /big/consensus-in-distributed-streaming-systems/
 ---

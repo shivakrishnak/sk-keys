@@ -1,4 +1,4 @@
----
+﻿---
 id: ANG-045
 title: Angular Opinionated Framework Mental Model
 category: Angular
@@ -17,6 +17,7 @@ status: draft
 version: 1
 layout: default
 parent: "Angular"
+grand_parent: "Technical Dictionary"
 nav_order: 45
 permalink: /ang/angular-opinionated-framework-mental-model/
 ---
