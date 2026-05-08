@@ -1,0 +1,25 @@
+---
+id: HTM-010
+title: HTML Forms and Input Types
+category: HTML
+tier: tier-7-frontend
+folder: HTM-html
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - htm
+  - foundational
+  - first-principles
+status: draft
+version: 1
+layout: default
+parent: "HTML"
+nav_order: 10
+permalink: /htm/html-forms-and-input-types/
+---
+
+# HTM-010 — HTML Forms and Input Types
+
+> Entry stub. Generate full content using Master Prompt v3.0.
