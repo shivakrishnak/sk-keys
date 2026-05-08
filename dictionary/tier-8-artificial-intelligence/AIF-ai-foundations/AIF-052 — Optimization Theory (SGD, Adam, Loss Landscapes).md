@@ -1,0 +1,26 @@
+---
+id: AIF-052
+title: Optimization Theory (SGD, Adam, Loss Landscapes)
+category: AI Foundations
+tier: tier-8-artificial-intelligence
+folder: AIF-ai-foundations
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - aif
+  - advanced
+  - deep-dive
+  - first-principles
+status: draft
+version: 1
+layout: default
+parent: "AI Foundations"
+nav_order: 52
+permalink: /aif/optimization-theory-sgd-adam-loss-landscapes/
+---
+
+# AIF-052 — Optimization Theory (SGD, Adam, Loss Landscapes)
+
+> Entry stub. Generate full content using Master Prompt v3.0.
