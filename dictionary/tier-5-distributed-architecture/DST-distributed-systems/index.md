@@ -11,7 +11,7 @@ permalink: /distributed-systems/
 
 CAP theorem, consistency models, consensus algorithms, distributed locking, failure modes, and resilience patterns.
 
-**Keywords:** DST-001–DST-077 (77 terms)
+**Keywords:** DST-001–DST-077 (72 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -32,9 +32,7 @@ CAP theorem, consistency models, consensus algorithms, distributed locking, fail
 | DST-015 | Lamport Clock | ★★★ |
 | DST-016 | Vector Clock | ★★★ |
 | DST-017 | Clock Skew - Clock Drift | ★★☆ |
-| DST-018 | Clock Skew Clock Drift | ★★★ |
 | DST-019 | Total Order - Partial Order | ★★★ |
-| DST-020 | Total Order Partial Order | ★★★ |
 | DST-021 | Happened-Before | ★★★ |
 | DST-022 | Leader Election | ★★★ |
 | DST-023 | Raft | ★★★ |
@@ -45,12 +43,9 @@ CAP theorem, consistency models, consensus algorithms, distributed locking, fail
 | DST-028 | Quorum | ★★★ |
 | DST-029 | Split Brain | ★★★ |
 | DST-030 | Fencing - Epoch | ★★★ |
-| DST-031 | Fencing Epoch | ★★★ |
 | DST-032 | Failure Modes | ★★★ |
 | DST-033 | Two-Phase Commit (2PC) | ★★★ |
-| DST-034 | Two-Phase Commit | ★★★ |
 | DST-035 | Three-Phase Commit (3PC) | ★★★ |
-| DST-036 | Three-Phase Commit | ★★★ |
 | DST-037 | Distributed Locking | ★★★ |
 | DST-038 | Consistent Hashing | ★★★ |
 | DST-039 | Virtual Nodes | ★★★ |
