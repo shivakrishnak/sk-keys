@@ -2,23 +2,47 @@
 
 This workspace is the **sk-keys Technical Dictionary** - a comprehensive software engineering reference containing 1,770+ keyword entries across 50 categories in 9 tiers.
 
+Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. Apply each category independently — rules within a category work together, but do not apply a rule from one category to resolve a conflict in another.
+
 ## Default Behaviour
 
 When asked to generate, create, upgrade, or edit any keyword entry `.md` file, apply all rules from the spec below without being asked. Do not ask for confirmation before generating.
 
-**Content rules:** Include all 22 required sections in order (5.1–5.22). Show BAD pattern before GOOD pattern in code examples. Provide min 4 misconception rows and min 3 failure modes.
+**1. Content rules:**
+- Include all 22 required sections in the exact sequence (5.1–5.22) without any reordering.
+- Show BAD pattern before GOOD pattern in code examples.
+- Provide min 4 misconception rows and min 3 failure modes.
 
-**Conditional sections:** Include section 5.15 (`### 🔁 Flow / Lifecycle`) only for concepts with a distinct multi-phase lifecycle. Include section 5.14 (`### ⚖️ Comparison Table`) only when meaningful alternatives or variants exist. Include section 5.13 (`### 💻 Code Example`) only when the concept has a programmatic expression. Omit conditional sections entirely when the condition is not met.
+**2. Conditional sections** — include only when the condition is clearly met; omit entirely otherwise:
 
-**Formatting rules:** Precede every `###` with a `---` horizontal rule. Keep ASCII diagrams ≤59 chars wide. Keep code lines ≤70 chars.
+> **Quick decision rule:** Default to omitting a conditional section. Include it only if the primary Include condition is unambiguously met. When in doubt, check the Borderline guidance column against the concrete concept you are writing.
 
-**YAML rules:** All required frontmatter fields must be present. Double-quote any title value containing `: `. Never use em dashes (`—`) anywhere in the file.
+| Section | Include when… | Omit when… | Borderline guidance |
+|:--------|:--------------|:-----------|:--------------------|
+| 5.13 `### 💻 Code Example` | Concept has direct programmatic expression (class, API call, config flag) | Purely theoretical / organizational concept (e.g. CAP Theorem) | If you can write 5 or more lines of code that directly implement or illustrate the concept: include it. Example borderline: CAP Theorem — omit (no direct API). Example borderline: Circuit Breaker — include (state machine in code). |
+| 5.14 `### ⚖️ Comparison Table` | Two or more named alternatives or variants exist | Concept is unique with no comparable alternative | If only one alternative exists but the contrast is instructive: include a 2-row table. Example: Mutex vs Semaphore — include. Example: BOM (no alternative) — omit. |
+| 5.15 `### 🔁 Flow / Lifecycle` | Concept has a distinct ordered multi-phase lifecycle (e.g. request lifecycle, GC phases) | Concept is a data structure, algorithm, or single-mechanism pattern | If the concept has exactly 2 phases: omit — not enough phases to warrant a lifecycle section. Example: HTTP Request lifecycle (5 phases) — include. Example: Hash Map (no phases) — omit. |
+
+**3. Formatting rules:**
+- Precede every `###` with a `---` horizontal rule (blank line before and after both).
+- Keep ASCII diagrams ≤59 chars wide. Keep code lines ≤70 chars.
+
+**4. YAML rules:**
+- All required frontmatter fields must be present.
+- Double-quote any title value containing `: `.
+- Never use em dashes (`—`) anywhere in the file.
 
 ---
 
 ## Technical Dictionary Generator - Master Prompt v3.0
 
-> **Rules summary:** Content rules · Conditional sections · Formatting rules · YAML rules are listed under **Default Behaviour** above. The sections below provide the full specification.
+> **Rules summary:** Four rule categories govern every entry — apply them in order:
+> 1. **Content** — exact section sequence, BAD-before-GOOD code, min rows/modes
+> 2. **Conditional sections** — decision table in Default Behaviour above
+> 3. **Formatting** — `---` before `###`, diagram width, code line length
+> 4. **YAML** — required fields, quoting, no em dashes
+>
+> The sections below are the full specification; the Default Behaviour summary above takes precedence for quick lookup.
 
 ### Persona & Teaching Philosophy
 
