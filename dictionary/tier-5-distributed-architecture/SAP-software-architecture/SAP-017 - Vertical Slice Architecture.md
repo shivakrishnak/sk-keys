@@ -1,37 +1,36 @@
 ﻿---
+id: SAP-017
+title: Vertical Slice Architecture
+category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
+difficulty: ★★★
+depends_on: SAP-013, SAP-043
+used_by: SAP-039
+related: SAP-013, SAP-014, SAP-015, SAP-018
+tags:
+  - architecture
+  - pattern
+  - advanced
+  - tradeoff
+status: complete
+version: 1
 layout: default
-title: "Vertical Slice Architecture"
 parent: "Software Architecture Patterns"
 grand_parent: "Technical Dictionary"
 nav_order: 17
 permalink: /software-architecture/vertical-slice-architecture/
-id: SAP-017
-category: Software Architecture Patterns
-difficulty: ★★★
-depends_on: Layered Architecture, CQRS Pattern, Separation of Concerns, MediatR
-used_by: CQRS Pattern, Microservices, Feature Teams vs Component Teams
-related: Layered Architecture, Clean Architecture, Modular Monolith Patterns, CQRS Pattern
-tags:
-  - architecture
-  - pattern
-  - deep-dive
-  - advanced
-  - tradeoff
 ---
 
 # SAP-017 - Vertical Slice Architecture
 
 ⚡ TL;DR - Vertical Slice Architecture organises code by feature rather than by technical layer, keeping everything for one feature together in a single slice.
 
----
-
-### 📊 Entry Metadata
-
-| #730            | Category: Software Architecture Patterns                                          | Difficulty: ★★★ |
-| :-------------- | :-------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Layered Architecture, CQRS Pattern, Separation of Concerns, MediatR               |                 |
-| **Used by:**    | CQRS Pattern, Microservices, Feature Teams vs Component Teams                     |                 |
-| **Related:**    | Layered Architecture, Clean Architecture, Modular Monolith Patterns, CQRS Pattern |                 |
+| Field          | Value                              |
+| -------------- | ---------------------------------- |
+| **Depends on** | SAP-013, SAP-043                   |
+| **Used by**    | SAP-039                            |
+| **Related**    | SAP-013, SAP-014, SAP-015, SAP-018 |
 
 ---
 
@@ -45,6 +44,9 @@ A new developer joins and asks: "Show me all the code for creating an invoice." 
 
 **THE INVENTION MOMENT:**
 This is exactly why Vertical Slice Architecture was created - to keep everything that changes together, located together, so that understanding and changing a feature requires touching one place, not six.
+
+**EVOLUTION:**
+Jimmy Bogard popularised Vertical Slice Architecture around 2018 through his MediatR library and NDC conference talks. MediatR's handler-per-request model provides the mechanical implementation: each request type gets exactly one handler class that contains all the logic for that feature. The pattern was implicit in feature-flag-driven development and microservices slicing long before Bogard named it explicitly. Today, .NET developers using MediatR with Vertical Slices is one of the most common architectural patterns for medium-to-large ASP.NET Core applications, and the idea has been adopted in Java through command bus frameworks.
 
 ---
 
@@ -448,22 +450,40 @@ grep -rn "import.*Handler" \
 
 ---
 
-### 🔗 Related Keywords
+### � Transferable Wisdom
+
+**Reusable Engineering Principle:** Organise by what changes together, not by what looks similar. The axis of decomposition should match the axis of change - code that changes for the same reason belongs in the same place, not in the same technical category.
+
+**Where else this pattern appears:**
+
+- **Git commits:** a good commit contains exactly the files that changed for one reason - the vertical slice of a feature, not "all the service classes edited today" - because commits are reviewed and reverted as units.
+- **Team organisation:** Conway's Law predicts that feature teams (each team owns their feature end-to-end) naturally produce vertical slices, while component teams (each team owns a technical layer) naturally produce layered architecture.
+- **Microservice decomposition:** each microservice IS a vertical slice - it contains its own data store, business logic, and API, organised around a business capability rather than a technical tier.
+
+---
+
+### 💡 The Surprising Truth
+
+Vertical Slice Architecture does not eliminate technical layers - it relocates them. Each slice typically still has its own handler (controller equivalent), validation (service equivalent), and data access (repository equivalent). The difference is that these layers are private to the slice, not shared globally across the application. An internal structure of `Handler`, `Validator`, `Query` classes inside each slice folder is expected and correct. VSA is frequently misunderstood as "no layers" when it is actually "private layers per feature" rather than "public shared layers across features."
+
+---
+
+### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
-- `Layered Architecture` - what Vertical Slice Architecture explicitly reacts against
-- `CQRS Pattern` - the most common companion pattern (separates command slices from query slices)
-- `Separation of Concerns` - the principle VSA applies at a different axis than layered architecture
+- SAP-013 - Layered Architecture (what Vertical Slice Architecture explicitly reacts against; understanding the problem makes the solution clear)
+- SAP-043 - SOLID Principles (specifically Single Responsibility Principle applied at the feature/module level, not just the class level)
 
 **Builds On This (learn these next):**
 
-- `Modular Monolith Patterns` - slices naturally evolve into modules
-- `Microservices` - slices are natural microservice candidates with pre-defined boundaries
+- SAP-039 - Modular Monolith Patterns (slices naturally evolve into modules; a modular monolith is VSA with enforced inter-module boundaries)
+- SAP-018 - CQRS Pattern (the most common companion pattern; command slices handle writes, query slices handle reads)
 
 **Alternatives / Comparisons:**
 
-- `Layered Architecture` - organises by technical tier instead of feature
+- SAP-013 - Layered Architecture (organises by technical tier instead of feature; preferred when teams are organised by technical specialty)
+- SAP-015 - Clean Architecture (organises by dependency direction and ring; more prescriptive about cross-feature structure)
 - `Clean Architecture` - organises by dependency direction; more prescriptive about ring structure
 - `Modular Monolith Patterns` - adds module-level boundaries to vertical slices
 
@@ -504,4 +524,12 @@ grep -rn "import.*Handler" \
 
 **Q1.** In a Vertical Slice Architecture, you have a "Create Order" slice and a "Verify Customer Credit" slice. The order creation process requires a customer credit check. If you call the credit verification handler from the order creation handler, you create cross-slice coupling. If you duplicate the credit check logic, you have two places to update when credit rules change. What is the architecturally correct resolution, and how does it affect slice independence?
 
+*Hint:* Research how Jimmy Bogard addresses the "shared logic" problem in VSA - specifically the pattern of extracting shared logic into a "SharedKernel" or "Common" folder (not a slice) that contains pure domain logic with no handler infrastructure, and the rule that only stateless pure domain logic should be shared; handler orchestration should never be shared between slices.
+
 **Q2.** A system uses Vertical Slice Architecture with 200 features/slices. Analysis shows that 40 slices all query the same "customer account balance" data in slightly different ways. A team proposes extracting a shared `AccountBalanceService` that all 40 slices call. What is the precise architectural consequence of this extraction, and under what conditions would you accept vs reject the proposal?
+
+*Hint:* Research the "Bounded Context" concept from DDD and apply it to this problem - specifically whether "customer account balance" is a concept that belongs in a separate bounded context (which would mean the 40 slices should call an internal service for that context, not a shared service class), versus whether the variations are cosmetic query differences that a single read model can serve.
+
+**Q3.** In a Vertical Slice Architecture, each slice is meant to be independently understandable and changeable. Cross-cutting concerns (authentication, logging, validation, error handling) affect all slices. How does VSA handle cross-cutting concerns without creating cross-slice coupling, and what mechanism makes this architectural separation possible?
+
+*Hint:* Research MediatR's `IPipelineBehavior<TRequest, TResponse>` interface - specifically how pipeline behaviours implement cross-cutting concerns (logging, validation, caching) as middleware that wraps every handler WITHOUT any handler knowing about it. The handler knows nothing about logging; the logger knows nothing about the handler's domain logic. This is the VSA answer to cross-cutting concerns.

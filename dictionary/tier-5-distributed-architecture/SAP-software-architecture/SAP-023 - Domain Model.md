@@ -1,37 +1,36 @@
 ﻿---
-layout: default
-title: "Domain Model"
-parent: "Software Architecture Patterns"
-grand_parent: "Technical Dictionary"
-nav_order: 23
-permalink: /software-architecture/domain-model/
 id: SAP-023
+title: Domain Model
 category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
 difficulty: ★★★
-depends_on: Object-Oriented Design, Ubiquitous Language, Aggregate Root, Repository Pattern
-used_by: Clean Architecture, Hexagonal Architecture, CQRS Pattern, Domain Events
-related: Anemic Domain Model, Rich Domain Model, Domain Events, Bounded Context
+depends_on: SAP-043, SAP-050, SAP-051
+used_by: SAP-024, SAP-025
+related: SAP-024, SAP-025, SAP-030
 tags:
   - architecture
   - ddd
   - pattern
-  - deep-dive
   - advanced
+status: complete
+version: 1
+layout: default
+parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
+nav_order: 23
+permalink: /software-architecture/domain-model/
 ---
 
 # SAP-023 - Domain Model
 
 ⚡ TL;DR - A Domain Model is an object-oriented representation of the business domain that encapsulates both data AND behavior, where objects enforce business rules and speak the language of the business.
 
----
-
-### 📊 Entry Metadata
-
-| #736            | Category: Software Architecture Patterns                                        | Difficulty: ★★★ |
-| :-------------- | :------------------------------------------------------------------------------ | :-------------- |
-| **Depends on:** | Object-Oriented Design, Ubiquitous Language, Aggregate Root, Repository Pattern |                 |
-| **Used by:**    | Clean Architecture, Hexagonal Architecture, CQRS Pattern, Domain Events         |                 |
-| **Related:**    | Anemic Domain Model, Rich Domain Model, Domain Events, Bounded Context          |                 |
+| Field          | Value                     |
+| -------------- | ------------------------- |
+| **Depends on** | SAP-043, SAP-050, SAP-051 |
+| **Used by**    | SAP-024, SAP-025          |
+| **Related**    | SAP-024, SAP-025, SAP-030 |
 
 ---
 
@@ -45,6 +44,9 @@ As the system grows, the code becomes an unmaintainable mess of procedural scrip
 
 **THE INVENTION MOMENT:**
 Eric Evans's Domain-Driven Design introduced the Domain Model as a central pattern: put behavior where the data is. A `Product` object should know whether it can be discounted. An `Inventory` object should know whether it has sufficient stock. The domain model is the shared mental model of the business, expressed as code.
+
+**EVOLUTION:**
+Martin Fowler documented the Domain Model pattern in "Patterns of Enterprise Application Architecture" (2002), positioning it as the most complex but most appropriate choice for business logic-rich applications. Eric Evans's "Domain-Driven Design" (2003) deepened the pattern significantly, introducing bounded contexts, aggregates, and ubiquitous language as the design methodology for producing rich domain models. The pattern became foundational for DDD practitioners in the 2010s. Today, language features like Kotlin data classes with `copy()` and Java 16+ records have reduced the boilerplate cost of rich domain model objects, making the pattern more accessible.
 
 ---
 
@@ -349,23 +351,37 @@ public class Order {
 
 ---
 
-### 🔗 Related Keywords
+### � Transferable Wisdom
 
-**Prerequisites:**
+**Reusable Engineering Principle:** Co-locating data and the rules that govern that data produces a single authoritative source of truth. When logic is separated from data (in service classes, stored procedures, or validation scripts), the same rule inevitably appears in multiple places with divergent implementations.
 
-- `Object-Oriented Design` - Domain Model is a rich OO design
-- `Ubiquitous Language` - the vocabulary used in domain model construction
+**Where else this pattern appears:**
+- **Financial instruments:** a `Bond` object knows its yield calculation; a `Derivative` knows its valuation model; the financial object is the authoritative home for the mathematics that governs it - separating the math from the instrument would require every calculator to re-implement it.
+- **Legal contracts:** a contract document embeds the rules that govern its interpretation; the contract is not a data record that a separate rules engine evaluates - the rules and the data are inseparable.
+- **Physical systems:** a circuit breaker "knows" its trip threshold and resets itself when conditions are right - the behaviour is built into the device, not into a separate monitoring system that inspects the device.
 
-**Builds On This:**
+---
 
-- `Aggregate Root` - the key pattern for managing domain object consistency
-- `Domain Events` - domain objects raise events when significant things happen
-- `Bounded Context` - the scope within which a domain model applies
+### 💡 The Surprising Truth
 
-**Alternatives:**
+A Domain Model is not just object-oriented programming - it requires deliberately designing object boundaries around the language of the business, not around the structure of the database. Most "OO" codebases have entity classes that mirror database tables exactly and service classes that contain all the logic - this is the Anemic Domain Model anti-pattern despite using Java or C# classes. A true Domain Model requires domain experts and developers to agree on a shared vocabulary (Ubiquitous Language) and to draw object boundaries that reflect business concepts, not persistence concerns.
 
-- `Anemic Domain Model` - simpler but leads to scattered logic
-- `Transaction Script` - procedural approach without an object model
+---
+
+### �🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- SAP-043 - SOLID Principles (the Domain Model is the application of OOP principles to business domain design; SOLID provides the guiding constraints)
+- SAP-050 - Cohesion and SAP-051 - Coupling (a well-designed Domain Model has high cohesion per object and low coupling between objects)
+
+**Builds On This (learn these next):**
+- SAP-024 - Anemic Domain Model (the anti-pattern to understand and recognise in existing codebases)
+- SAP-025 - Rich Domain Model (the concrete expression of the Domain Model pattern with full behavior encapsulation)
+- SAP-030 - Aggregate Root (how to define consistency boundaries within a larger domain model)
+
+**Alternatives / Comparisons:**
+- SAP-024 - Anemic Domain Model (simpler; correct for pure CRUD with no meaningful business rules)
+- Transaction Script - procedural approach without an object model; appropriate for simple scripting scenarios
 
 ---
 
@@ -393,4 +409,12 @@ public class Order {
 
 **Q1.** A `Customer` domain object has a `purchaseHistory` collection that could contain thousands of items. Loading the entire history every time a Customer object is created would be prohibitively expensive. Yet the `Customer.calculateLifetimeValue()` method needs that data. How do you balance the "domain object owns its behavior" principle with the practical need to avoid loading gigabytes of data just to call one method?
 
+*Hint:* Research JPA lazy loading and the aggregate root boundary - specifically Evans' rule that repositories load complete aggregates. If `purchaseHistory` is too large to load eagerly, it signals that `PurchaseHistory` should be its own aggregate root with its own repository, not a collection within `Customer`. Then `Customer.calculateLifetimeValue()` becomes a domain service that takes both the `Customer` and a `PurchaseSummary` query result as parameters.
+
 **Q2.** Two Bounded Contexts both have an `Order` concept, but they model it differently - the `Shipping` context cares about delivery addresses and tracking, while the `Billing` context cares about payments and invoices. Should there be one shared `Order` domain model, or two? What are the implications of each choice?
+
+*Hint:* Research Evans' Bounded Context pattern - specifically the "context map" concept and the rule that each bounded context has its own domain model. A shared `Order` class serving two contexts will inevitably accumulate fields and methods that are irrelevant to one context, creating coupling. The correct solution is two separate `Order` classes (one per context) with an anti-corruption layer translating between them when the contexts need to interact.
+
+**Q3.** A team adopts Domain Model but finds that their rich domain objects are difficult to serialise for REST APIs. The `Order` object has private fields, no public setters, and throws exceptions for invalid states - but JSON serialisers (Jackson, Gson) require no-arg constructors and public setters to deserialise. How do you design the boundary between the rich domain model and the API serialisation layer without compromising domain integrity?
+
+*Hint:* Research the "Data Transfer Object" (DTO) pattern and specifically how the "Application Service" ring in Clean Architecture maps between DTOs (which can be serialised freely) and domain objects (which enforce invariants). Look at Jackson's `@JsonCreator` and `@JsonProperty` annotations on constructor parameters as an alternative to public setters, and Kotlin's `data class` as a language feature that provides value-based equality and copy semantics without mutable setters.

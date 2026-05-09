@@ -1,37 +1,36 @@
 ﻿---
+id: SAP-016
+title: Onion Architecture
+category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
+difficulty: ★★★
+depends_on: SAP-014, SAP-015, SAP-023
+used_by: SAP-018, SAP-019
+related: SAP-014, SAP-015, SAP-017
+tags:
+  - architecture
+  - pattern
+  - advanced
+  - first-principles
+status: complete
+version: 1
 layout: default
-title: "Onion Architecture"
 parent: "Software Architecture Patterns"
 grand_parent: "Technical Dictionary"
 nav_order: 16
 permalink: /software-architecture/onion-architecture/
-id: SAP-016
-category: Software Architecture Patterns
-difficulty: ★★★
-depends_on: Hexagonal Architecture, Clean Architecture, Domain Model, Dependency Inversion Principle
-used_by: Domain-Driven Design, CQRS Pattern, Microservices, Event Sourcing Pattern
-related: Clean Architecture, Hexagonal Architecture, Layered Architecture, Vertical Slice Architecture
-tags:
-  - architecture
-  - pattern
-  - deep-dive
-  - advanced
-  - first-principles
 ---
 
 # SAP-016 - Onion Architecture
 
 ⚡ TL;DR - Onion Architecture wraps the domain in concentric layers where every layer depends only on layers closer to the centre, never on layers further out.
 
----
-
-### 📊 Entry Metadata
-
-| #729            | Category: Software Architecture Patterns                                                      | Difficulty: ★★★ |
-| :-------------- | :-------------------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Hexagonal Architecture, Clean Architecture, Domain Model, Dependency Inversion Principle      |                 |
-| **Used by:**    | Domain-Driven Design, CQRS Pattern, Microservices, Event Sourcing Pattern                     |                 |
-| **Related:**    | Clean Architecture, Hexagonal Architecture, Layered Architecture, Vertical Slice Architecture |                 |
+| Field          | Value                     |
+| -------------- | ------------------------- |
+| **Depends on** | SAP-014, SAP-015, SAP-023 |
+| **Used by**    | SAP-018, SAP-019          |
+| **Related**    | SAP-014, SAP-015, SAP-017 |
 
 ---
 
@@ -45,6 +44,9 @@ You want to introduce a new persistence mechanism for high-traffic reads. You pr
 
 **THE INVENTION MOMENT:**
 This is exactly why Onion Architecture was created - to invert the dependency structure so that the domain is at the centre and infrastructure wraps around it, making the domain the most independent layer rather than the most dependent.
+
+**EVOLUTION:**
+Jeffrey Palermo coined Onion Architecture in 2008, building explicitly on Hexagonal Architecture (2005) and identifying that it lacked a named boundary between application services and domain logic. Palermo made the Domain Services ring explicit - a ring for domain logic spanning multiple entities - which Hexagonal Architecture had left implicit. The "Onion" metaphor emphasised the concentric, layered structure more than the hexagonal diagram. Clean Architecture (2017) later synthesized Onion, Hexagonal, and BCE (Jacobson, 1992) into a unified model. Onion Architecture remains the most influential precursor to Clean Architecture.
 
 ---
 
@@ -403,25 +405,41 @@ grep -rn "if\|switch\|for\|while" \
 
 ---
 
-### 🔗 Related Keywords
+### � Transferable Wisdom
+
+**Reusable Engineering Principle:** Concentric protection structures are a general mechanism for isolating the most stable and valuable core from volatile external dependencies. The innermost ring is the most protected because it has the fewest outward dependencies - any change in infrastructure cannot propagate inward past the port interface.
+
+**Where else this pattern appears:**
+
+- **OS CPU rings:** hardware enforces ring-0 (kernel) protection from ring-3 (user mode); a crash in a user-space process cannot corrupt kernel state - the architecture guarantees isolation through hardware-enforced boundaries.
+- **Network security zones:** DMZ wraps the internal network which wraps the trusted core; outer zones expose services inward but the trusted core never initiates connections outward to the DMZ.
+- **International law hierarchy:** UN Charter principles constrain national constitutions, which constrain national laws, which constrain regulations - inner documents cannot be overridden by outer documents; the dependency direction is inward only.
+
+---
+
+### 💡 The Surprising Truth
+
+The "Onion" metaphor misleads many readers into thinking all rings should be approximately equal in size. In practice, the Domain Model ring (innermost) should be the largest - it contains all business logic. The Infrastructure ring (outermost) should be the thinnest - it is mostly wiring code. A production Onion Architecture where the outer rings contain most of the code is an architectural warning sign: business logic has leaked into infrastructure, making the innermost ring an empty shell.
+
+---
+
+### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
-- `Layered Architecture` - the simpler predecessor showing the basic top-to-bottom structure
-- `Dependency Inversion Principle` - the SOLID principle enabling inner interfaces, outer implementations
-- `Domain Model` - the innermost ring's content
+- SAP-014 - Hexagonal Architecture (direct predecessor; Onion Architecture explicitly extends it with named Domain Services and Application Services rings)
+- SAP-015 - Clean Architecture (synthesises Onion Architecture with Hexagonal and BCE into a unified model; understand the relationship)
+- SAP-023 - Domain Model (the content of the innermost ring; understanding domain modelling fills the Onion meaningfully)
 
 **Builds On This (learn these next):**
 
-- `Domain-Driven Design` - the design methodology that fills the inner rings with rich content
-- `CQRS Pattern` - commonly applied at the Application Services ring for read/write separation
-- `Aggregate Root` - the DDD concept that defines the boundary of Domain Model objects
+- SAP-018 - CQRS Pattern (commonly applied at the Application Services ring for read/write separation within the onion structure)
+- SAP-019 - Event Sourcing Pattern (domain events in the Domain Model ring are the natural integration point with event sourcing strategies)
 
 **Alternatives / Comparisons:**
 
-- `Clean Architecture` - similar rings; Clean Architecture adds explicit Use Case/Presenter ring
-- `Hexagonal Architecture` - same dependency direction, simpler two-zone model
-- `Vertical Slice Architecture` - orthogonal slicing by feature rather than by concern ring
+- SAP-015 - Clean Architecture (synthesises Onion with explicit Use Case ring naming; more prescriptive about the application services layer)
+- SAP-017 - Vertical Slice Architecture (orthogonal slicing by feature rather than by dependency ring; a different axis of organisation)
 
 ---
 
@@ -460,4 +478,12 @@ grep -rn "if\|switch\|for\|while" \
 
 **Q1.** In Onion Architecture, the Domain Services ring is supposed to contain business logic that spans multiple entities. A new requirement arrives: calculate the discounted price for a customer based on their membership tier, purchase history, and current promotional rules - each of which is a separate entity. Trace precisely which ring each piece of this calculation lives in, and what happens when promotional rules change weekly: which ring changes, and how are the other rings protected?
 
+*Hint:* Research the rule for assigning responsibility to the Domain Services ring: logic that spans multiple aggregates but has no natural home in any single entity belongs in a Domain Service. The promotional rules are a Value Object or Entity in the Domain Model ring; the `PriceCalculationService` that combines them is a Domain Service. Research how Evans distinguishes services at each ring level (Domain Service vs Application Service vs Infrastructure Service).
+
 **Q2.** A team implements Onion Architecture, but after six months discovers their application has 4 rings with 3 layers each, 47 interface definitions, and 47 corresponding implementations. Most of their logic is simple CRUD on 20 entities. At what point does the ring-based architecture's isolation benefit become an overhead that exceeds the cost of the occasional infrastructure coupling it prevents?
+
+*Hint:* Research the concept of "fitness functions" and specifically the "last responsible moment" principle from Lean Software Development - the architectural pattern should be applied at the last moment before the problem it solves becomes painful, not in anticipation of pain that may never arrive. Look at how Martin Fowler's "Bliki" entry on "Is Design Dead?" addresses the cost/benefit of architecture investment in different domain complexities.
+
+**Q3.** Two teams each implement a separate Bounded Context using Onion Architecture. Both contexts need a `Money` value object and a `CustomerId` type. Team A argues for a "shared kernel" package that both onions import as a dependency in their Domain Model ring. Team B argues each context should have its own `Money` and `CustomerId` to maintain independence. What does the Shared Kernel DDD pattern say about this, and how does importing a shared package into an inner ring affect each context's ability to evolve independently?
+
+*Hint:* Research the "Shared Kernel" pattern from Evans' DDD - specifically the governance constraint that shared kernel code can only change by agreement of both teams, and compare with the "anti-corruption layer" alternative where each context maintains its own types and translates at the boundary. Consider: what happens when Team A needs `Money` to support cryptocurrency and Team B only uses fiat currency?

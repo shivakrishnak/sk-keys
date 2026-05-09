@@ -1,37 +1,36 @@
 ﻿---
+id: SAP-020
+title: Ports and Adapters
+category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
+difficulty: ★★★
+depends_on: SAP-013, SAP-043
+used_by: SAP-014
+related: SAP-014, SAP-015, SAP-021, SAP-034
+tags:
+  - architecture
+  - pattern
+  - advanced
+  - first-principles
+status: complete
+version: 1
 layout: default
-title: "Ports and Adapters"
 parent: "Software Architecture Patterns"
 grand_parent: "Technical Dictionary"
 nav_order: 20
 permalink: /software-architecture/ports-and-adapters/
-id: SAP-020
-category: Software Architecture Patterns
-difficulty: ★★★
-depends_on: Hexagonal Architecture, Dependency Inversion Principle, Interface Segregation Principle
-used_by: Hexagonal Architecture, Clean Architecture, Microservices, Domain-Driven Design
-related: Hexagonal Architecture, Clean Architecture, Repository Pattern, Anti-Corruption Layer
-tags:
-  - architecture
-  - pattern
-  - deep-dive
-  - advanced
-  - first-principles
 ---
 
 # SAP-020 - Ports and Adapters
 
 ⚡ TL;DR - Ports and Adapters is the original name for Hexagonal Architecture: ports are interfaces the domain defines; adapters are the concrete implementations that plug into those interfaces.
 
----
-
-### 📊 Entry Metadata
-
-| #733            | Category: Software Architecture Patterns                                                | Difficulty: ★★★ |
-| :-------------- | :-------------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Hexagonal Architecture, Dependency Inversion Principle, Interface Segregation Principle |                 |
-| **Used by:**    | Hexagonal Architecture, Clean Architecture, Microservices, Domain-Driven Design         |                 |
-| **Related:**    | Hexagonal Architecture, Clean Architecture, Repository Pattern, Anti-Corruption Layer   |                 |
+| Field          | Value                              |
+| -------------- | ---------------------------------- |
+| **Depends on** | SAP-013, SAP-043                   |
+| **Used by**    | SAP-014                            |
+| **Related**    | SAP-014, SAP-015, SAP-021, SAP-034 |
 
 ---
 
@@ -45,6 +44,9 @@ The domain is completely untestable in isolation because it has no isolation. Th
 
 **THE INVENTION MOMENT:**
 This is exactly why Ports and Adapters was created - to introduce explicit seams (ports) where real infrastructure can be swapped for any alternative, including test doubles, giving the domain complete independence from how it talks to the world.
+
+**EVOLUTION:**
+Alistair Cockburn introduced Ports and Adapters (the naming) alongside Hexagonal Architecture (the diagrammatic shape) in a 2005 paper, after experimenting with the concept since the late 1990s. The two names refer to the same architecture - "Ports and Adapters" describes the mechanism; "Hexagonal Architecture" describes the resulting shape. Cockburn originally intended the hexagon to represent the application boundary with multiple input and output facets. The pattern became industrially mainstream through DDD's popularisation in the 2010s and is now one of the most widely cited architectural patterns in enterprise software design.
 
 ---
 
@@ -405,22 +407,41 @@ grep -rn "import.*Adapter\|import.*Repository\
 
 ---
 
-### 🔗 Related Keywords
+### � Transferable Wisdom
+
+**Reusable Engineering Principle:** Defining the interface (port) on the consumer side (the domain), not the provider side (the infrastructure), inverts the traditional dependency and creates substitutability. Any conforming implementation can be substituted without changing the consumer.
+
+**Where else this pattern appears:**
+
+- **Electrical standards:** IEC 60083 defines the socket shape (the port) and any compliant appliance (the adapter) works with any compliant socket - the interface is defined by the power network, which is the consumer of appliances from an energy perspective.
+- **OS device drivers:** the OS kernel defines the driver interface (the port); hardware vendors implement drivers (the adapters); the OS never changes to accommodate a specific device - substitutability without recompilation.
+- **Payment gateway APIs:** the merchant's application defines what it needs from a payment processor (charge, refund, void - the port); Stripe, Adyen, and Braintree each provide an adapter implementation - the domain owns the contract, infrastructure conforms.
+
+---
+
+### 💡 The Surprising Truth
+
+The asymmetry between "driving ports" and "driven ports" is the insight most readers miss. Driving ports (left of the hexagon) are where the outside world calls into the domain - the domain is passive, being driven by HTTP or Kafka or CLI. Driven ports (right of the hexagon) are where the domain calls out to infrastructure - the domain is active, driving database or email or external API. This asymmetry means the domain is simultaneously callable-by-anything (any delivery mechanism can drive it) and calls-nothing-directly (any infrastructure can implement its driven ports). The double independence is what makes the domain fully testable in isolation.
+
+---
+
+### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
-- `Hexagonal Architecture` - the architectural pattern of which Ports and Adapters is the naming convention
-- `Dependency Inversion Principle` - the SOLID principle that makes ports point inward
+- SAP-013 - Layered Architecture (the simpler predecessor; understanding its limitations explains why Ports and Adapters inverts the dependency direction)
+- SAP-043 - SOLID Principles (specifically the Dependency Inversion Principle that the port/adapter pattern implements mechanically)
 
 **Builds On This (learn these next):**
 
-- `Repository Pattern` - a specific application of a driven port to persistence
-- `Anti-Corruption Layer` - a more complex driven adapter that translates between domain models
+- SAP-014 - Hexagonal Architecture (the same pattern described as a shape; Ports and Adapters is the mechanism, Hexagonal is the architecture)
+- SAP-021 - Repository Pattern (a specific application of a driven port to database persistence; the most common concrete example)
+- SAP-034 - Anti-Corruption Layer (a more complex driven adapter that translates between two domain models at a bounded context boundary)
 
 **Alternatives / Comparisons:**
 
-- `DAO (Data Access Object)` - a simpler access pattern without domain-first port ownership
-- `Service Locator` - an alternative to injection; ports avoid the need for service locator
+- DAO (Data Access Object) - a simpler persistence pattern without domain-first port ownership; the DAO defines the interface, not the domain
+- Service Locator - an alternative to injection; ports with DI eliminate the need for service locator entirely
 
 ---
 
@@ -460,4 +481,12 @@ grep -rn "import.*Adapter\|import.*Repository\
 
 **Q1.** You have a `PaymentPort` driven port with method `charge(Money amount, PaymentDetails details)`. Your business rules say: "If the payment provider is unavailable, retry up to 3 times with exponential backoff." Should this retry logic live in the Port definition, in the Adapter, or in the Domain Service that calls the port? What architectural principle determines the answer, and what changes if the retry is a business rule ("our policy is to retry") versus an infrastructure concern ("the network is flaky")?
 
+*Hint:* The test for which ring logic belongs in: "Would the business analyst specify this rule in the requirements document?" If yes, it is a domain rule and belongs in the Domain Service. If no (it is a technical network resilience concern), it belongs in the adapter. Research how Resilience4j and Polly (C#) implement retry as adapter-level decorators, and how Spring Retry can be applied at the adapter layer without the domain knowing about it.
+
 **Q2.** A microservice exposes its business logic via three protocols simultaneously: REST HTTP for external clients, gRPC for internal service-to-service calls, and Kafka messages for event-driven consumers. How do Ports and Adapters handle this scenario? How many ports exist, how many adapters, and where does the protocol-specific behaviour live relative to the domain?
+
+*Hint:* Research the Actor model (Akka) and how Spring Boot's `@RestController`, `@GrpcService`, and `@KafkaListener` annotations on separate classes calling the same Spring Bean implement the Ports and Adapters pattern in practice. The Spring Bean IS the domain; each annotated class IS a driving adapter. Count: 1 driving port (the domain service interface), 3 driving adapters (HTTP, gRPC, Kafka controllers). Also count the driven side.
+
+**Q3.** An adapter's job is to translate between the external protocol and the domain port interface. When testing, you want to verify the adapter translates correctly. How do you write tests for an adapter that, by design, must connect to real infrastructure (a real database or real HTTP server) - and what is the exact architectural boundary between what an adapter test verifies versus what a port/domain test verifies?
+
+*Hint:* Research "adapter testing" in hexagonal architecture - specifically the split between "domain tests" (test the port contract with an in-memory adapter; verify business behaviour) and "adapter tests" (test the adapter's translation against real infrastructure using Testcontainers; verify protocol mapping). The domain test NEVER starts a database; the adapter test ALWAYS uses the real driver. This split is the definition of the test pyramid in a hexagonal context.

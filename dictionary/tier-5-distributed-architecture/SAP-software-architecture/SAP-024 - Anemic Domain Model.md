@@ -1,37 +1,36 @@
 ﻿---
+id: SAP-024
+title: Anemic Domain Model
+category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
+difficulty: ★★★
+depends_on: SAP-023
+used_by: SAP-025
+related: SAP-023, SAP-025
+tags:
+  - architecture
+  - ddd
+  - antipattern
+  - advanced
+status: complete
+version: 1
 layout: default
-title: "Anemic Domain Model"
 parent: "Software Architecture Patterns"
 grand_parent: "Technical Dictionary"
 nav_order: 24
 permalink: /software-architecture/anemic-domain-model/
-id: SAP-024
-category: Software Architecture Patterns
-difficulty: ★★★
-depends_on: Domain Model, Object-Oriented Design, Service Layer
-used_by: Transaction Script, Service Layer, CRUD-based architectures
-related: Domain Model, Rich Domain Model, Transaction Script, Service Layer
-tags:
-  - architecture
-  - ddd
-  - anti-pattern
-  - deep-dive
-  - advanced
 ---
 
 # SAP-024 - Anemic Domain Model
 
 ⚡ TL;DR - An Anemic Domain Model is an anti-pattern where domain objects contain only data (getters/setters) with no business behavior - all logic is pushed into service classes, violating encapsulation and scattering business rules.
 
----
-
-### 📊 Entry Metadata
-
-| #737            | Category: Software Architecture Patterns                           | Difficulty: ★★★ |
-| :-------------- | :----------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Domain Model, Object-Oriented Design, Service Layer                |                 |
-| **Used by:**    | Transaction Script, Service Layer, CRUD-based architectures        |                 |
-| **Related:**    | Domain Model, Rich Domain Model, Transaction Script, Service Layer |                 |
+| Field          | Value            |
+| -------------- | ---------------- |
+| **Depends on** | SAP-023          |
+| **Used by**    | SAP-025          |
+| **Related**    | SAP-023, SAP-025 |
 
 ---
 
@@ -45,6 +44,9 @@ Developers trained in relational databases or procedural programming naturally m
 
 **THE HIDDEN COST:**
 The anemic model seems simpler and more flexible at first. Any service can access any field of any object and do anything with it. But as the system grows, the same logic appears in five different services with five slight variations, and there is no canonical place that owns the business rule. The business domain becomes invisible in the code.
+
+**EVOLUTION:**
+Martin Fowler identified and named the Anemic Domain Model as an anti-pattern in a 2003 blog post ("bliki" entry), calling it "a fundamentally bad thing." The pattern is not a deliberate design choice - it emerges naturally when developers trained in procedural or database-centric thinking write object-oriented code. ORMs (JPA/Hibernate) actually encourage the anemic model by requiring mutable entities with public setters and no-arg constructors. The anti-pattern remains the most common domain design in enterprise Java applications today, despite being named and criticised over two decades ago.
 
 ---
 
@@ -357,20 +359,34 @@ grep -rn "\.setStatus\|\.setState\|\.setAmount" \
 
 ---
 
-### 🔗 Related Keywords
+### � Transferable Wisdom
 
-**Prerequisites:**
+**Reusable Engineering Principle:** Separating data from the rules that govern that data forces every consumer to re-implement those rules. When logic is not co-located with data, duplication is architectural, not accidental.
 
-- `Domain Model` - the rich alternative to the anemic model
+**Where else this pattern appears:**
+- **Plain SQL stored procedures:** all business logic in stored procedures with tables as data stores is the Anemic Domain Model at the database level - the tables have no behaviour, the procedures do everything.
+- **REST API anti-patterns:** a data API that exposes CRUD operations on resources (PUT /orders/123 with arbitrary JSON) is an anemic model at the API level - clients must know all the business rules and apply them externally.
+- **Configuration-driven systems:** systems where all business rules are in XML/YAML configuration files and the code is a generic rule executor are the Anemic Domain Model applied to the rules layer.
 
-**Builds On This:**
+---
 
-- `Rich Domain Model` - the solution that replaces the anemic model
+### 💡 The Surprising Truth
 
-**Alternatives:**
+Martin Fowler himself acknowledged that the Anemic Domain Model is sometimes the correct choice. For simple CRUD applications with no meaningful business logic, there is nothing to put in the domain object - the "rich" model would contain only getter wrappers. The anti-pattern label applies specifically when the domain has real business rules that end up scattered in service classes. In practice, many successful systems use an anemic model for simple domains and a rich model only where complexity justifies the investment.
 
-- `Transaction Script` - a legitimate alternative for simple domains
-- `Active Record` - partial middle ground
+---
+
+### �🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- SAP-023 - Domain Model (the concept that the anemic model violates; understanding the rich domain model is required to recognise the anti-pattern)
+
+**Builds On This (learn these next):**
+- SAP-025 - Rich Domain Model (the solution that replaces the anemic model when business logic complexity justifies it)
+
+**Alternatives / Comparisons:**
+- Transaction Script - a legitimate procedural alternative for simple domains where no object model is needed
+- SAP-025 - Rich Domain Model (the correct approach for domains with meaningful business rules)
 
 ---
 
@@ -399,4 +415,12 @@ grep -rn "\.setStatus\|\.setState\|\.setAmount" \
 
 **Q1.** Your team is debating whether to refactor a large existing codebase from an anemic model to a rich domain model. The codebase has 40 service classes, 20 domain entities, and 600 tests that test services. Refactoring would move logic from services into domain objects. What is the migration risk, and what strategy would you use to migrate safely without breaking the existing 600 tests?
 
+*Hint:* Research the "strangler fig" refactoring pattern and the "Mikado Method" - specifically the technique of introducing rich domain behavior incrementally: start by adding methods to domain objects that call through to the existing service logic (delegation), then slowly migrate the logic into the domain object while keeping the service test coverage green. The 600 service tests can migrate to domain object tests as logic moves.
+
 **Q2.** A developer argues: "Our application is a form-based admin tool that does mostly CRUD - an anemic model is fine for us." Another developer argues: "Even CRUD apps get business rules added over time, so we should start with a rich model." Who is right, and what factors should guide the decision?
+
+*Hint:* Research Martin Fowler's "When to use a Rich Domain Model" guidance and specifically the factors: complexity of business logic NOW (not anticipated future complexity), team's DDD expertise, rate of business rule change. The key insight is that starting with a rich model for simple CRUD adds overhead with no benefit - but there is a clear threshold where the anemic model's logic duplication becomes more expensive than refactoring to a rich model.
+
+**Q3.** A team discovers their `OrderService` has 47 methods. After analysis, they find that 30 of these methods could be moved directly onto the `Order` domain object without any external dependencies (no repository calls, no event publishing). The other 17 require infrastructure access. How do you use this analysis to prioritise the refactoring from anemic to rich model, and what is the precise test that determines whether a method belongs on the domain object or in a service?
+
+*Hint:* Research the "Tell Don't Ask" principle (SAP-048) applied to this analysis - specifically: a method belongs on a domain object if it only uses data that the object already has (its fields and methods) and makes a decision based purely on that data. A method belongs in a service if it requires data from outside the object (repository, external service, configuration) to make its decision. This is the precise test for the anemic model refactoring boundary.

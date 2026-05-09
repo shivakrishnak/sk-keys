@@ -1,37 +1,36 @@
 ﻿---
-layout: default
-title: "Rich Domain Model"
-parent: "Software Architecture Patterns"
-grand_parent: "Technical Dictionary"
-nav_order: 25
-permalink: /software-architecture/rich-domain-model/
 id: SAP-025
+title: Rich Domain Model
 category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
 difficulty: ★★★
-depends_on: Domain Model, Anemic Domain Model, Value Objects, Aggregate Root
-used_by: DDD, Clean Architecture, Hexagonal Architecture, Event Sourcing
-related: Domain Model, Anemic Domain Model, Aggregate Root, Domain Events, Value Objects
+depends_on: SAP-023, SAP-024
+used_by: SAP-030
+related: SAP-023, SAP-030
 tags:
   - architecture
   - ddd
   - pattern
-  - deep-dive
   - advanced
+status: complete
+version: 1
+layout: default
+parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
+nav_order: 25
+permalink: /software-architecture/rich-domain-model/
 ---
 
 # SAP-025 - Rich Domain Model
 
 ⚡ TL;DR - A Rich Domain Model is a domain model where objects encapsulate both state and behavior: they enforce their own invariants, use the language of the business, and are the authoritative home for all business logic concerning that object.
 
----
-
-### 📊 Entry Metadata
-
-| #738            | Category: Software Architecture Patterns                                        | Difficulty: ★★★ |
-| :-------------- | :------------------------------------------------------------------------------ | :-------------- |
-| **Depends on:** | Domain Model, Anemic Domain Model, Value Objects, Aggregate Root                |                 |
-| **Used by:**    | DDD, Clean Architecture, Hexagonal Architecture, Event Sourcing                 |                 |
-| **Related:**    | Domain Model, Anemic Domain Model, Aggregate Root, Domain Events, Value Objects |                 |
+| Field          | Value            |
+| -------------- | ---------------- |
+| **Depends on** | SAP-023, SAP-024 |
+| **Used by**    | SAP-030          |
+| **Related**    | SAP-023, SAP-030 |
 
 ---
 
@@ -42,6 +41,9 @@ As business logic grows more complex, it scatters across service classes if doma
 
 **THE SOLUTION:**
 Make domain objects the single authoritative home for the logic that governs them. When an `Loan` object is the only place that knows whether a loan can be approved, when an `Order` is the only place that enforces shipping eligibility, the business rules are concentrated, visible, and testable without infrastructure.
+
+**EVOLUTION:**
+Eric Evans's "Domain-Driven Design" (2003) made the Rich Domain Model the gold standard for complex business domains, providing an entire methodology (aggregates, repositories, domain events, bounded contexts) for building them. Allen Holub's "Tell Don't Ask" principle and Robert Martin's SOLID principles provided the design rules for individual rich domain objects. The pattern faced its most significant practical challenge with JPA/Hibernate, which requires mutable entities with no-arg constructors - a direct conflict with "always valid" rich domain objects. Kotlin records and Java 16+ records have partially resolved this by providing immutable value objects with less boilerplate.
 
 ---
 
@@ -400,18 +402,35 @@ void approved_loan_raises_LoanApprovedEvent() {
 
 ---
 
-### 🔗 Related Keywords
+### � Transferable Wisdom
 
-**Prerequisites:**
+**Reusable Engineering Principle:** Objects that guard their own invariants remove the burden of invariant enforcement from every caller. The object is the single point of truth for what is valid. This encapsulation principle scales from individual objects to systems.
 
-- `Domain Model` - the concept this implements
-- `Anemic Domain Model` - the anti-pattern this replaces
+**Where else this pattern appears:**
+- **Vending machines:** the machine enforces all its own rules (insufficient funds, unknown denomination, out of stock) internally; no external system needs to validate each operation before triggering it.
+- **Type systems:** a strong type system is a rich domain model at the language level - a `NonEmptyString` type enforces the invariant "this string is never empty" at compile time without any caller needing to check.
+- **Electrical safety standards:** a circuit breaker enforces the "maximum current" invariant internally and trips itself; no external monitoring system needs to detect overcurrent and then command the breaker.
 
-**Builds On This:**
+---
 
-- `Aggregate Root` - how to define consistency boundaries in a rich model
-- `Domain Events` - raised by rich model objects
-- `Value Objects` - used within rich domain models
+### 💡 The Surprising Truth
+
+Rich domain models are the hardest design to persist with most ORMs. JPA/Hibernate requires mutable entities with public or package-private setters and a no-arg constructor - exactly the design that a Rich Domain Model forbids (no public setters, always-valid construction only). The practical result is that teams using JPA with DDD must choose between: (1) using JPA entity classes AS domain objects (compromising invariant enforcement), (2) maintaining separate JPA entity classes and domain objects (mapping overhead), or (3) using a different persistence mechanism (e.g., R2DBC with manual mapping, or Document stores). This ORM impedance mismatch is the most underestimated practical challenge in DDD adoption.
+
+---
+
+### �🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- SAP-023 - Domain Model (the foundational concept; Rich Domain Model is the concrete expression of the Domain Model pattern)
+- SAP-024 - Anemic Domain Model (the anti-pattern; understanding what a Rich Domain Model replaces reveals why the investment is worthwhile)
+
+**Builds On This (learn these next):**
+- SAP-030 - Aggregate Root (how to define consistency boundaries in a system of rich domain objects; aggregates are the organizing principle for rich models)
+
+**Alternatives / Comparisons:**
+- SAP-024 - Anemic Domain Model (correct for simple CRUD with no meaningful business rules; the trade-off is explicit)
+- Transaction Script - procedural alternative; correct for simple workflows with no need for an object model
 
 ---
 
@@ -440,4 +459,12 @@ void approved_loan_raises_LoanApprovedEvent() {
 
 **Q1.** Your `Order` aggregate has grown to include 15 methods and references to `Customer`, `Product`, `Inventory`, and `Payment` domain objects. It's becoming difficult to understand and test. How do you decide which behaviors belong on `Order` itself versus in a domain service, and what rule helps you make that distinction?
 
+*Hint:* Research Evans' rule for Domain Services: behavior that naturally belongs to no single entity or value object should live in a Domain Service. Specifically, if the behavior requires data from MULTIPLE aggregates (Order + Inventory + Customer) it does not naturally belong on any one of them. The test: "If I delete this method from Order and put it in a service, does Order still make sense?" If yes, the service is correct.
+
 **Q2.** You need to import legacy data from an old system that doesn't conform to your rich domain model's invariants (for example, some historical orders have a `null` customer). How do you handle this in a system where your domain model strictly enforces that an order always has a customer?
+
+*Hint:* Research the "Anti-Corruption Layer" pattern (SAP-034) and specifically the technique of using a separate "import" aggregate or "migration" bounded context that accepts legacy data without invariant enforcement, then transforms it into valid domain events that the main bounded context can consume. Also look at database migration strategies that accept legacy nulls during import but enforce NOT NULL constraints after cleanup.
+
+**Q3.** A Rich Domain Model enforces the "always valid" principle: a domain object must never be in an invalid state. But during a multi-step business process (a loan application with 5 stages), the `LoanApplication` object transitions through partially-complete states that would fail a "fully valid" check. How do you design an `LoanApplication` that enforces appropriate invariants at each stage without introducing a god-object with 50 validity conditions?
+
+*Hint:* Research the "State Pattern" applied to Domain objects and specifically the concept of "stage-specific invariants" - a `LoanApplication` in `DRAFT` state has different valid invariants than one in `SUBMITTED` or `APPROVED` state. Look at how Evans treats this with separate domain concepts per stage (DraftApplication, SubmittedApplication, ApprovedApplication) versus a single entity with a state machine.

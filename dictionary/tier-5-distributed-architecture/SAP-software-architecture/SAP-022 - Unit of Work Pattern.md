@@ -1,37 +1,36 @@
 ﻿---
+id: SAP-022
+title: Unit of Work Pattern
+category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
+difficulty: ★★★
+depends_on: SAP-021, SAP-023
+used_by: SAP-021
+related: SAP-021, SAP-029
+tags:
+  - architecture
+  - pattern
+  - database
+  - advanced
+status: complete
+version: 1
 layout: default
-title: "Unit of Work Pattern"
 parent: "Software Architecture Patterns"
 grand_parent: "Technical Dictionary"
 nav_order: 22
 permalink: /software-architecture/unit-of-work-pattern/
-id: SAP-022
-category: Software Architecture Patterns
-difficulty: ★★★
-depends_on: Repository Pattern, Domain Model, Transaction Management, Aggregate Root
-used_by: Repository Pattern, CQRS Pattern, Domain-Driven Design, Spring Core
-related: Repository Pattern, Transaction Script, Active Record, Outbox Pattern
-tags:
-  - architecture
-  - pattern
-  - deep-dive
-  - database
-  - advanced
 ---
 
 # SAP-022 - Unit of Work Pattern
 
 ⚡ TL;DR - The Unit of Work tracks all domain object changes during a business operation and commits them to the database in a single atomic transaction.
 
----
-
-### 📊 Entry Metadata
-
-| #735            | Category: Software Architecture Patterns                                 | Difficulty: ★★★ |
-| :-------------- | :----------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Repository Pattern, Domain Model, Transaction Management, Aggregate Root |                 |
-| **Used by:**    | Repository Pattern, CQRS Pattern, Domain-Driven Design, Spring Core      |                 |
-| **Related:**    | Repository Pattern, Transaction Script, Active Record, Outbox Pattern    |                 |
+| Field          | Value            |
+| -------------- | ---------------- |
+| **Depends on** | SAP-021, SAP-023 |
+| **Used by**    | SAP-021          |
+| **Related**    | SAP-021, SAP-029 |
 
 ---
 
@@ -45,6 +44,9 @@ Without a mechanism to group all changes from one business operation into a sing
 
 **THE INVENTION MOMENT:**
 This is exactly why the Unit of Work pattern was created - to buffer all changes made during a business operation and apply them atomically as a single database transaction, ensuring either all changes commit or none do.
+
+**EVOLUTION:**
+Martin Fowler documented the Unit of Work in "Patterns of Enterprise Application Architecture" (2002). The JPA `EntityManager` is the canonical Java implementation - when a Spring `@Transactional` method completes, the EntityManager's Unit of Work flushes all pending changes in a single transaction. Hibernate's Session and .NET's Entity Framework DbContext both implement the same pattern. The pattern predates ORM frameworks - ADO.NET's `SqlTransaction` is a manual implementation. Modern Event Sourcing systems extend the Unit of Work concept to include publishing domain events atomically alongside database writes via the Outbox Pattern.
 
 ---
 
@@ -436,24 +438,40 @@ grep -rn "EntityManager\|@PersistenceContext" \
 
 ---
 
-### 🔗 Related Keywords
+### � Transferable Wisdom
+
+**Reusable Engineering Principle:** Buffering changes during an operation and committing them atomically in a single transaction is a general mechanism for ensuring all-or-nothing consistency. This pattern appears wherever a set of related changes must succeed or fail together.
+
+**Where else this pattern appears:**
+
+- **Git staging area:** `git add` buffers changes into the staging area (the Unit of Work); `git commit` atomically writes all staged changes as a single commit - the same deferred, batched write pattern.
+- **Shopping cart checkout:** all items are in the cart (buffered); the checkout process attempts to atomically place the order, charge payment, and reduce inventory - a business-level Unit of Work across multiple systems.
+- **Database batch inserts:** buffering 1,000 rows and writing in a single `INSERT ... VALUES (...)` batch is more efficient than 1,000 individual inserts - the same deferred-write principle applied for performance rather than consistency.
+
+---
+
+### 💡 The Surprising Truth
+
+The JPA `EntityManager` IS the Unit of Work - and Spring's `@Transactional` annotation creates one automatically. When a developer writes a Spring `@Service` method annotated with `@Transactional`, they are using the Unit of Work pattern without necessarily knowing it. The `EntityManager` tracks every entity it has loaded (the "identity map"), detects changes during dirty checking at commit time, and generates the minimum SQL to persist those changes. The Unit of Work is not an optional pattern in JPA - it is the only way JPA works.
+
+---
+
+### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
-- `Repository Pattern` - the Unit of Work coordinates multiple repositories
-- `Transaction Management` - the database transaction is the underlying mechanism
-- `Domain Model` - Unit of Work tracks domain object changes
+- SAP-021 - Repository Pattern (the Unit of Work coordinates multiple repositories; you must understand repositories before the coordination pattern makes sense)
+- SAP-023 - Domain Model (Unit of Work tracks domain object changes; the objects being tracked are domain model entities)
 
 **Builds On This (learn these next):**
 
-- `Outbox Pattern` - extends Unit of Work to reliably publish events alongside database writes
-- `Optimistic Locking` - handles concurrent Unit of Work conflicts
+- SAP-021 - Repository Pattern (repositories participate in a Unit of Work; understanding both together reveals the full persistence pattern)
+- SAP-029 - Data Mapper (the mapping layer that translates between domain objects and database rows, which the Unit of Work coordinates)
 
 **Alternatives / Comparisons:**
 
-- `Saga Pattern` - eventual consistency across services when Unit of Work scope can't span services
-- `Transaction Script` - simpler pattern without change tracking; each save is explicit
-- `Active Record` - each object manages its own persistence; no centralised change coordination
+- Saga Pattern - eventual consistency across services when Unit of Work scope cannot span multiple services or databases
+- Transaction Script - simpler pattern without change tracking; each save is explicit and immediate, no buffering
 
 ---
 
@@ -492,4 +510,12 @@ grep -rn "EntityManager\|@PersistenceContext" \
 
 **Q1.** A business operation transfers money between two accounts in different banks. Each bank has its own database. A classic Unit of Work (single database transaction) cannot span two databases. The operation must still be atomic from the business perspective - either both databases reflect the transfer, or neither does. What mechanism replaces the Unit of Work in this distributed scenario, and what consistency guarantee can it actually provide versus what the Unit of Work guarantees in a single database?
 
+*Hint:* Research the Saga Pattern (also see the CAP theorem and "exactly-once" delivery) - specifically the difference between ACID atomicity (guaranteed by the Unit of Work within a single database) and eventual consistency with compensating transactions (the best guarantee available across distributed databases). Look at the two variants: choreography-based sagas (events trigger compensations) and orchestration-based sagas (a saga orchestrator manages the steps).
+
 **Q2.** In a JPA application with `@Transactional`, a developer loads an `Order` aggregate (with 50 `OrderItem` children), adds one item, and commits. JPA dirty checking compares the current state to the snapshot and generates SQL for the change. As the `Order` aggregate grows to thousands of items over its lifetime, what performance implications does dirty checking at commit time introduce, and how does the Unit of Work's change tracking mechanism turn into a performance bottleneck?
+
+*Hint:* Research JPA/Hibernate dirty checking performance - specifically the O(n) entity comparison at flush time where n is the number of entities in the session. Look at Hibernate's "byte code enhancement" for dirty tracking (comparing only changed fields rather than all fields) and the "stateless session" pattern for bulk operations that bypass the Unit of Work entirely.
+
+**Q3.** A `@Transactional` service method A calls `@Transactional` service method B. What transaction propagation mode determines whether B participates in A's Unit of Work or starts a new one? What are the consequences if B has REQUIRES_NEW propagation and throws an exception - does A's transaction roll back, and does B's commit persist even though A ultimately fails?
+
+*Hint:* Research Spring's `@Transactional(propagation = ...)` modes - specifically REQUIRED (default: joins existing or creates new), REQUIRES_NEW (always creates new, suspends outer), NESTED (savepoint within outer). Look at the specific case of REQUIRES_NEW: B commits before A returns, so B's writes persist even if A subsequently throws. This is the behaviour that the Outbox Pattern was designed to avoid.

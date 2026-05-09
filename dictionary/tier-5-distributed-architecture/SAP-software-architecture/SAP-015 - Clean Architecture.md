@@ -442,15 +442,18 @@ Uncle Bob himself has acknowledged that Clean Architecture is not appropriate fo
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-014 - Hexagonal Architecture (the direct predecessor; Clean Architecture explicitly builds on Ports and Adapters)
 - SAP-043 - SOLID Principles (specifically the Dependency Inversion Principle - the Dependency Rule is a ring-level application of DIP)
 - SAP-023 - Domain Model (the Entity ring content; understanding domain modelling is required to populate the inner rings meaningfully)
 
 **Builds On This (learn these next):**
+
 - SAP-016 - Onion Architecture (a very similar concentric ring pattern with a named domain service ring between entities and adapters)
 - SAP-017 - Vertical Slice Architecture (an alternative that reorganises around features rather than rings; useful for evaluating the trade-off)
 
 **Alternatives / Comparisons:**
+
 - SAP-014 - Hexagonal Architecture (same dependency direction, less prescriptive ring naming, no explicit Use Case ring)
 - SAP-013 - Layered Architecture (simpler; allows infrastructure influence on domain; conventional rather than mechanically enforced)
 
@@ -491,12 +494,12 @@ Uncle Bob himself has acknowledged that Clean Architecture is not appropriate fo
 
 **Q1.** In Clean Architecture, the Use Case (inner ring) needs to trigger an email notification after an order is placed. Email sending is infrastructure (outer ring). The Dependency Rule forbids inner rings from referencing outer rings directly. Trace step by step how an architecturally compliant implementation enables the Use Case to trigger an email - including all intermediate classes and where each one lives in the ring structure.
 
-*Hint:* Research the Output Port pattern from Clean Architecture - the Use Case defines an output port interface (e.g. `NotificationPort`) in the use case ring; the infrastructure ring implements it (`EmailNotificationAdapter`); the DI container wires the adapter to the port at startup. This is the Dependency Inversion Principle applied at the ring boundary.
+_Hint:_ Research the Output Port pattern from Clean Architecture - the Use Case defines an output port interface (e.g. `NotificationPort`) in the use case ring; the infrastructure ring implements it (`EmailNotificationAdapter`); the DI container wires the adapter to the port at startup. This is the Dependency Inversion Principle applied at the ring boundary.
 
 **Q2.** A team practises Clean Architecture strictly. After 18 months, they report that feature development is 40% slower than their previous layered architecture, but bug rates are 70% lower and the system has survived two major framework migrations without domain changes. At what team size, application complexity level, and business volatility does the Clean Architecture trade-off become the correct choice? What metrics would you use to make this decision?
 
-*Hint:* Research the concept of "fitness functions" from Building Evolutionary Architectures (Ford, Parsons, Kua) - specifically the idea of measuring cost-of-change metrics over time: how much does a business rule change cost in implementation hours, test hours, and deployment risk? Clean Architecture pays back when the marginal cost of each change decreases over time rather than increases.
+_Hint:_ Research the concept of "fitness functions" from Building Evolutionary Architectures (Ford, Parsons, Kua) - specifically the idea of measuring cost-of-change metrics over time: how much does a business rule change cost in implementation hours, test hours, and deployment risk? Clean Architecture pays back when the marginal cost of each change decreases over time rather than increases.
 
 **Q3.** The Screaming Architecture principle says the top-level folder structure should reflect business concepts, not framework choices. A team's top-level packages are `controllers`, `services`, `repositories`, `entities`. Another team's are `ordering`, `payments`, `inventory`, `notifications`. Describe the specific set of changes (package moves, interface extractions, dependency inversions) required to refactor the first team's structure into the second - and identify which changes are purely cosmetic versus which ones actually enforce the Dependency Rule.
 
-*Hint:* Research the "package by layer vs package by feature" debate (Coding the Architecture blog by Simon Brown) and specifically Tom Hombergs' work on "hexagonal architecture in practice" which shows the exact directory structure differences between layer-first and feature-first Clean Architecture organisation.
+_Hint:_ Research the "package by layer vs package by feature" debate (Coding the Architecture blog by Simon Brown) and specifically Tom Hombergs' work on "hexagonal architecture in practice" which shows the exact directory structure differences between layer-first and feature-first Clean Architecture organisation.
