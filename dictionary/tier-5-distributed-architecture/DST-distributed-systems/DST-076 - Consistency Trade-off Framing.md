@@ -26,11 +26,11 @@ permalink: /dst/consistency-trade-off-framing/
 
 ⚡ TL;DR - Consistency trade-off framing is the practice of explicitly mapping the business cost of each consistency anomaly so that the consistency model selection becomes a business decision, not a technical default.
 
-| DST-076 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | DST-006, DST-008, DST-009, DST-010, DST-067 | |
-| **Used by:** | DST-067 | |
-| **Related:** | DST-006, DST-008, DST-067, DST-077 | |
+| DST-076         | Category: Distributed Systems               | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------ | :-------------- |
+| **Depends on:** | DST-006, DST-008, DST-009, DST-010, DST-067 |                 |
+| **Used by:**    | DST-067                                     |                 |
+| **Related:**    | DST-006, DST-008, DST-067, DST-077          |                 |
 
 ---
 
@@ -113,6 +113,7 @@ than the cost of the anomaly it prevents?
 ### 🔩 First Principles Explanation
 
 **ANOMALY COST MAPPING:**
+
 ```
 Anomaly: Stale Read
   Model that prevents it: strong consistency
@@ -140,6 +141,7 @@ Anomaly: Write Skew
 ```
 
 **THE PACELC EXTENSION:**
+
 ```
 CAP theorem: C vs A during Partition (P)
 PACELC: also asks: Else (E, no partition):
@@ -174,6 +176,7 @@ You are designing a ride-sharing platform. Map five
 data domains to consistency models using cost framing.
 
 **COST-FRAMED SELECTION:**
+
 ```
 Domain 1: Driver location
   Anomaly if stale (5s): driver shown at wrong location
@@ -226,6 +229,7 @@ applied only where the anomaly cost is highest (payment).
 > all "unacceptable" cells in its column.
 
 **Element mapping:**
+
 - Matrix row = anomaly type
 - Matrix column = data domain
 - Cell = business cost of that anomaly in that domain
@@ -273,6 +277,7 @@ decisions become implicit assumptions that later engineers
 miss; they introduce bugs when the code changes.
 
 **Expert Thinking Cues:**
+
 - In design review: ask "what anomalies does this consistency choice allow?"
 - Document consistency decisions with explicit anomaly cost justification.
 - PACELC > CAP for practical decisions: CAP only applies during partitions; PACELC applies always.
@@ -282,26 +287,32 @@ miss; they introduce bugs when the code changes.
 ### ⚙️ How It Works (Mechanism)
 
 **ADR template for consistency decision:**
+
 ```markdown
 # ADR-042: Consistency Model for Inventory Domain
 
 ## Decision
+
 Use linearizable reads and writes for inventory decrement.
 Use eventual reads for inventory display (product page).
 
 ## Anomaly Analysis
-| Anomaly       | Display Path | Decrement Path | Cost     |
-|---------------|-------------|----------------|----------|
-| Stale read    | Acceptable  | Unacceptable   | Oversell |
-| Lost update   | Acceptable  | Unacceptable   | Oversell |
-| Write skew    | Acceptable  | Unacceptable   | Oversell |
+
+| Anomaly     | Display Path | Decrement Path | Cost     |
+| ----------- | ------------ | -------------- | -------- |
+| Stale read  | Acceptable   | Unacceptable   | Oversell |
+| Lost update | Acceptable   | Unacceptable   | Oversell |
+| Write skew  | Acceptable   | Unacceptable   | Oversell |
 
 ## Business Cost of Oversell
+
 Oversell: item shipped that doesn't exist -> refund cost
-+ customer experience damage.
-Estimated cost per incident: $50 + 30% churn risk
+
+- customer experience damage.
+  Estimated cost per incident: $50 + 30% churn risk
 
 ## Implementation
+
 Display path: Cassandra, ONE
 Decrement path: Postgres, REPEATABLE READ + row lock
 Review trigger: if oversell rate > 0.01%
@@ -312,6 +323,7 @@ Review trigger: if oversell rate > 0.01%
 ### 🔄 The Complete Picture - End-to-End Flow
 
 **Consistency trade-off framing process:**
+
 ```
 Data domain identified:              <- YOU ARE HERE
   e.g., "inventory level"
@@ -341,24 +353,24 @@ Implement; add fitness function:
 
 ### ⚖️ Comparison Table
 
-| Anomaly | Prevents | Anomaly Cost (Finance) | Anomaly Cost (Social) | Model Needed |
-|---|---|---|---|---|
-| Stale read | Eventual | High (double spend) | Low (stale count) | Strong / Eventual |
-| Lost update | Causal+ | High (duplicate charge) | Low (like undercount) | Serializable / Eventual |
-| Write skew | Serializable | High (double booking) | Low | Serializable / None |
-| Read uncommitted | None | Very High | Rare | Read committed minimum |
+| Anomaly          | Prevents     | Anomaly Cost (Finance)  | Anomaly Cost (Social) | Model Needed            |
+| ---------------- | ------------ | ----------------------- | --------------------- | ----------------------- |
+| Stale read       | Eventual     | High (double spend)     | Low (stale count)     | Strong / Eventual       |
+| Lost update      | Causal+      | High (duplicate charge) | Low (like undercount) | Serializable / Eventual |
+| Write skew       | Serializable | High (double booking)   | Low                   | Serializable / None     |
+| Read uncommitted | None         | Very High               | Rare                  | Read committed minimum  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Strong consistency is always the safe default" | Strong consistency pays latency cost; for low-anomaly-cost domains, this cost is wasted |
-| "Eventual consistency = bugs" | Eventual consistency = correct for domains where anomaly cost is acceptable |
-| "CAP is the right frame for consistency decisions" | PACELC is better: CAP only applies during partitions; most operations happen without partitions |
-| "The same DB must use the same consistency everywhere" | Tunable consistency per operation (Cassandra, DynamoDB) allows different levels per domain |
-| "Consistency is a database choice, not a business choice" | Consistency model has business consequences; it IS a business choice made by engineers |
+| Misconception                                             | Reality                                                                                         |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| "Strong consistency is always the safe default"           | Strong consistency pays latency cost; for low-anomaly-cost domains, this cost is wasted         |
+| "Eventual consistency = bugs"                             | Eventual consistency = correct for domains where anomaly cost is acceptable                     |
+| "CAP is the right frame for consistency decisions"        | PACELC is better: CAP only applies during partitions; most operations happen without partitions |
+| "The same DB must use the same consistency everywhere"    | Tunable consistency per operation (Cassandra, DynamoDB) allows different levels per domain      |
+| "Consistency is a database choice, not a business choice" | Consistency model has business consequences; it IS a business choice made by engineers          |
 
 ---
 
@@ -384,6 +396,7 @@ Implement; add fitness function:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[DST-006 - CAP Theorem]]
 - [[DST-008 - Consistency Models]]
 - [[DST-009 - Strong Consistency]]
@@ -391,9 +404,11 @@ Implement; add fitness function:
 - [[DST-067 - Consistency Model Selection Framework]]
 
 **Builds On This (learn these next):**
+
 - [[DST-077 - Distribution Necessity Assessment]]
 
 **Alternatives / Comparisons:**
+
 - PACELC theorem (extends CAP with latency dimension)
 
 ---
@@ -417,6 +432,7 @@ Implement; add fitness function:
 ```
 
 **If you remember only 3 things:**
+
 1. Map anomaly cost before selecting model: what is the business consequence of a stale read / lost update / write skew in this domain?
 2. Use minimum consistency level that prevents intolerable anomalies; over-constraining wastes performance.
 3. Document in ADR with explicit anomaly cost justification; undocumented consistency decisions become hidden bugs.
@@ -438,6 +454,7 @@ cache TTL selection, API pagination defaults, retry
 strategies, logging verbosity.
 
 **Where else this pattern appears:**
+
 - **Cache TTL design** — map cost of stale cache to choose TTL; same pattern as consistency framing
 - **Database isolation level** — map anomaly cost to isolation level (read committed vs serializable)
 - **API versioning policy** — map cost of breaking change to versioning strategy
@@ -472,7 +489,7 @@ read" anomaly. Map the business cost of this specific
 anomaly and determine whether stronger consistency
 is justified.
 
-*Hint:* Business cost: user confusion; perceived platform
+_Hint:_ Business cost: user confusion; perceived platform
 bug. Quantify: does this cause churn? At Facebook scale:
 0.1% churn on 3B users = 3M users. At small startup:
 negligible. Monotonic read consistency (not full strong)
@@ -489,7 +506,7 @@ the additional latency cost per checkout and the total
 monthly compute cost of this latency premium vs using
 a regional Postgres with eventual-consistency replicas.
 
-*Hint:* 3 Spanner operations x 7ms = 21ms added per
+_Hint:_ 3 Spanner operations x 7ms = 21ms added per
 checkout vs <1ms for regional Postgres. At 500 TPS:
 500 x 21ms = 10,500ms additional wait per second
 (but async). Wall-clock impact on user: 21ms added
@@ -507,9 +524,10 @@ consistency for lower latency in the financial domain?
 Describe a specific scenario where EL (eventual, low
 latency) is acceptable even in fintech.
 
-*Hint:* Financial display (read path): show account balance
+_Hint:_ Financial display (read path): show account balance
 on dashboard. Stale by 2 seconds is acceptable (user is
 browsing, not transacting). EL for display: reads from
 read replica (lower latency). EC for write path (transfers,
 payments): always strong. PACELC allows EL on read path
-+ EC on write path as a hybrid design.
+
+- EC on write path as a hybrid design.

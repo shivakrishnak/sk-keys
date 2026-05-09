@@ -8,22 +8,26 @@ permalink: /design-patterns/visitor/
 id: DPT-029
 category: Design Patterns
 difficulty: ★★★
-depends_on: Object-Oriented Programming (OOP), Double Dispatch, Polymorphism, Open-Closed Principle
-used_by: AST Traversal, Compiler Design, Document Rendering, Report Generation
-related: Composite, Iterator, Strategy, Interpreter, Double Dispatch
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - deep-dive
   - architecture
   - java
   - advanced
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-029 - Visitor
 
 ⚡ TL;DR - Visitor lets you add new operations to an object hierarchy without modifying its classes, by separating algorithms from the objects they operate on.
 
-| #789 | Category: Design Patterns | Difficulty: ★★★ |
+| DPT-029 | Category: Design Patterns | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Double Dispatch, Polymorphism, Open-Closed Principle | |
 | **Used by:** | AST Traversal, Compiler Design, Document Rendering, Report Generation | |
@@ -41,6 +45,19 @@ Node classes are extended by dozens of teams across the compiler codebase. Addin
 
 **THE INVENTION MOMENT:**
 This is exactly why the Visitor pattern was created. Each operation (pretty-printer, type-checker, code-generator) becomes its own class. The node classes remain stable - they only implement `accept(Visitor v)`. Adding a new operation is adding one class; node classes don't change.
+
+**EVOLUTION:**
+Visitor was designed to add operations to class hierarchies
+without modifying them -- critical when you cannot change
+the element classes. Java's `instanceof` operator (and later
+`switch` with `instanceof` in Java 16+, sealed classes in
+Java 17) provided a syntactically simpler alternative for
+simple cases. Compilers heavily use Visitor for AST traversal
+(type checking, code generation, optimisation passes). Java's
+`javax.annotation.processing` API uses Visitor for annotation
+processing. javax.lang.model's `TypeVisitor` and
+`ElementVisitor` are textbook Visitor implementations
+embedded in the Java compiler infrastructure.
 
 ---
 
@@ -498,11 +515,69 @@ public class CycleSafeVisitor implements AstVisitor {
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+When you need to add many distinct operations to a stable
+type hierarchy without modifying the types, externalise
+the operations into a visitor. The types accept the visitor;
+the visitor implements the operation for each type.
+
+**Where else this pattern appears:**
+- **Compiler AST passes:** A Java compiler applies separate
+  Visitor passes over the AST for: parsing, name resolution,
+  type checking, bytecode generation -- each is a visitor;
+  the AST nodes are elements.
+- **JSON serialization (Jackson):** `ObjectMapper` traverses
+  object graphs using a visitor-like mechanism -- each field
+  type is "visited" and serialised according to its type.
+- **CSS selector matching (browser rendering engine):** The
+  rendering engine visits each DOM node, applying matched
+  CSS rules -- the DOM nodes accept the style visitor.
+
+---
+
+### 💡 The Surprising Truth
+
+Java 21's pattern matching for switch -- `switch (shape) {
+case Circle c -> ...; case Rectangle r -> ...; }` -- is the
+language's native alternative to Visitor for sealed type
+hierarchies. The Java language designers added it specifically
+because Visitor's double-dispatch mechanism is "ugly and
+fragile." Sealed classes + pattern matching switches provide
+exhaustiveness checking (the compiler warns if you miss a
+case) and type narrowing -- both things Visitor achieves at
+the cost of significant boilerplate. Java is the first major
+OOP language to formally acknowledge that Visitor is a
+workaround for a language limitation.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A compiler team uses Visitor for 22 AST node types and 15 visitor passes. A new language feature requires adding 3 new AST node types: `LambdaExpression`, `TryCatch`, and `Yield`. Calculate exactly how many methods must be added across the codebase. Identify which of the 15 passes definitely need real implementations vs which can use no-ops, and describe how an abstract base visitor class changes this maintenance cost calculation.
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** Java 21 sealed classes allow exhaustive pattern matching in `switch` statements: `switch (node) { case IfStatement s -> ...; case WhileLoop w -> ...; }`. Compare this to Visitor for the operator of "add a new operation (e.g., a linter pass)." Then compare both approaches for the orthogonal operation of "add a new element type." In which dimension does each approach excel, and under what project conditions would you choose Visitor over sealed+switch in a new Java 21 codebase?
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A document model has nodes:
+`Paragraph`, `Heading`, `Image`, `Table`, `TableRow`,
+`TableCell`. Operations needed: (1) render to HTML,
+(2) render to PDF, (3) extract all text for indexing,
+(4) count words. Java 17 sealed classes make the hierarchy
+closed. Compare implementing these as: (a) 4 separate
+Visitor classes, (b) 4 `switch` expressions on the sealed
+type, (c) virtual dispatch methods on each node class.
+State when each is the best choice.
+
+*Hint: The Comparison Table and Level 4 address open vs.
+closed extension -- the key is how often nodes are added
+(favouring virtual dispatch) vs. how often operations
+are added (favouring Visitor).*

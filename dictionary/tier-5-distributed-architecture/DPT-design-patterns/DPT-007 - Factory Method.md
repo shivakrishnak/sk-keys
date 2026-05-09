@@ -7,23 +7,27 @@ nav_order: 7
 permalink: /design-patterns/factory-method/
 id: DPT-007
 category: Design Patterns
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 difficulty: ★★☆
-depends_on: Object-Oriented Programming (OOP), Polymorphism, Inheritance, Interface
-used_by: Abstract Factory, Dependency Injection Pattern, Framework Extension Points
-related: Abstract Factory, Builder, Prototype, Abstract Class
+depends_on:
+used_by: DPT-008, DPT-039
+related: DPT-008, DPT-009, DPT-010
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - bestpractice
+status: complete
+version: 1
 ---
 
 # DPT-007 - Factory Method
 
 ⚡ TL;DR - Factory Method lets subclasses decide which class to instantiate, decoupling object creation from the code that uses the object.
 
-| #767 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-007 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Polymorphism, Inheritance, Interface | |
 | **Used by:** | Abstract Factory, Dependency Injection Pattern, Framework Extension Points | |
@@ -41,6 +45,16 @@ The framework's entire value is reusability. But `new WindowsButton()` in the ba
 
 **THE INVENTION MOMENT:**
 This is exactly why the Factory Method pattern was created. Instead of calling `new Button()` directly, the base class calls an abstract method `createButton()`. Subclasses override `createButton()` to return the specific type they need. The base class stays generic; subclasses stay specific.
+
+**EVOLUTION:**
+In classic Java (pre-2004), Factory Method required inheritance — a
+subclass was mandatory. Java 5 generics, Java 8 lambda expressions,
+and DI frameworks changed the calculus: `DriverManager.getConnection()`
+in JDBC is a static factory method without inheritance. Spring's
+`BeanFactory` uses the pattern but injects via configuration rather
+than subclassing. Modern Java prefers static factory methods
+(`List.of()`, `Optional.of()`) and provider-style interfaces over
+the classical inheritance-based variant.
 
 ---
 
@@ -443,9 +457,72 @@ Ensure the factory method return type is the interface/abstract class. Callers o
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Define an interface for creating something but let the user of that
+interface decide what to create. Defer decisions downward to the
+most knowledgeable party.
+
+**Where else this pattern appears:**
+- **HTTP frameworks:** `HttpHandler` in Java's `HttpServer` is a
+  factory — the framework calls `handle(HttpExchange)` and the
+  developer provides the response type.
+- **CI/CD pipelines:** A pipeline defines stages (build, test,
+  deploy); each team provides their own implementation of each
+  stage without changing the pipeline contract.
+- **Database drivers:** JDBC's `DriverManager.getConnection()`
+  returns a `Connection` whose concrete type (MySQL, PostgreSQL)
+  is decided by the registered driver — callers never use `new`.
+
+---
+
+### 💡 The Surprising Truth
+
+Java's standard library uses Factory Method far more than Abstract
+Factory or Builder, yet most developers never recognise it.
+`Collections.unmodifiableList()`, `List.of()`, `Optional.of()`,
+`Path.of()` — these are all static factory methods, the modern
+descendant of Factory Method. The pattern evolved from an OOP
+inheritance mechanism into the language's preferred alternative
+to `new`, eliminating the need for subclasses entirely while
+keeping the core principle intact: the caller asks for an object
+without knowing its concrete type.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
-**Q1.** A logging framework uses Factory Method: `Logger createLogger()` is abstract in `BaseAppender`, with `FileAppender` returning `FileLogger` and `ConsoleAppender` returning `ConsoleLogger`. A performance test shows that `ConsoleAppender.createLogger()` is being called 10,000 times per second, creating 10,000 `ConsoleLogger` objects. Trace the memory and GC impact of this, and describe how you would modify the pattern to avoid it without changing the caller's interface.
+**Q1.** A logging framework uses Factory Method:
+`Logger createLogger()` is abstract in `BaseAppender`, with
+`FileAppender` returning `FileLogger` and `ConsoleAppender`
+returning `ConsoleLogger`. A performance test shows that
+`ConsoleAppender.createLogger()` is called 10,000 times/second,
+creating 10,000 `ConsoleLogger` objects. Trace the memory and GC
+impact, and describe how to modify the pattern to avoid it
+without changing the caller's interface.
 
-**Q2.** A developer says: "I'll just use `if-else` based on a config string to decide which database driver to instantiate - that's simpler than Factory Method." Compare the maintainability of the `if-else` approach versus Factory Method when the application grows from 2 database types to 12 over three years. At what specific point does each approach break down, and what metric would you use to decide when to refactor?
+*Hint: The How It Works section shows the factory method is called
+per-operation. The Object Pool pattern (DPT-011) addresses exactly
+this problem — look at how pooling composes with creation patterns.*
 
+**Q2.** A developer says: "I'll use `if-else` on a config string
+to decide which database driver to instantiate — simpler than
+Factory Method." Compare maintainability of `if-else` versus
+Factory Method as the app grows from 2 database types to 12 over
+three years. At what specific point does each approach break down?
+
+*Hint: The Failure Modes section addresses OCP violations. Count
+the `if-else` branches needed for 12 types and compare to the
+class count in the Factory Method approach — which scales linearly?*
+
+**Q3 (Design Trade-off):** Java's `ServiceLoader` mechanism lets
+plugins register factory implementations at runtime via
+`META-INF/services` files. Is `ServiceLoader` an implementation of
+Factory Method, Abstract Factory, or neither? Justify by mapping
+its participants to the pattern's roles.
+
+*Hint: Map `ServiceLoader` to the pattern structure in How It Works
+— identify the Creator, the ConcreteCreator, and the Product roles.
+Then check whether Abstract Factory's multi-product-family
+constraint is satisfied.*

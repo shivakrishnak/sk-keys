@@ -8,22 +8,26 @@ permalink: /design-patterns/adapter/
 id: DPT-012
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Object-Oriented Programming (OOP), Interface, Polymorphism, Composition over Inheritance
-used_by: Legacy System Integration, Third-party Library Wrappers, API Gateways
-related: Bridge, Decorator, Proxy, Facade, Wrapper
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - bestpractice
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-012 - Adapter
 
 ⚡ TL;DR - Adapter converts one interface into another that clients expect, enabling incompatible interfaces to work together without changing either.
 
-| #772 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-012 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Interface, Polymorphism, Composition over Inheritance | |
 | **Used by:** | Legacy System Integration, Third-party Library Wrappers, API Gateways | |
@@ -41,6 +45,17 @@ Option 3 is the usual choice under time pressure. Now Stripe-specific `ChargePar
 
 **THE INVENTION MOMENT:**
 This is exactly why the Adapter pattern was created. Build a `StripePaymentAdapter implements PaymentGateway`. This adapter receives `Payment` (the system's type), translates it to `ChargeParams` (Stripe's type), calls Stripe's API, and translates the result back. The rest of the application never knows Stripe exists. Switching to PayPal: write `PayPalPaymentAdapter`, swap the instance. Zero changes to any caller.
+
+**EVOLUTION:**
+Adapter was critical in the era of proprietary interfaces and
+incompatible libraries. Java's introduction of generic
+interfaces (`List`, `Comparator`, `Iterator`) provided standard
+contracts that reduced the need for adapters between common
+data structures. Modern adaptation scenarios shifted to:
+REST/gRPC protocol adapters, database vendor adapters (JDBC
+driver implementations), and cloud provider adapters (AWS SDK
+abstracting S3, GCS). Spring's `HandlerAdapter` is a classic
+production Adapter that maps HTTP requests to handler methods.
 
 ---
 
@@ -493,11 +508,62 @@ Extract business logic to a dedicated service or domain object. The adapter beco
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+When you cannot change an interface but must use it with code
+expecting a different interface, create a thin translation layer
+rather than sprawling conditional code. Isolate the translation.
+
+**Where else this pattern appears:**
+- **Hardware device drivers:** The OS exposes a uniform device
+  interface (`read()`, `write()`, `ioctl()`); each device vendor
+  provides an adapter (driver) that translates to the device's
+  actual protocol.
+- **Currency exchange:** A currency adapter converts between
+  monetary systems -- the underlying value is the same; the
+  representation is adapted to the local context.
+- **Protocol gateways (REST-to-SOAP):** An API gateway adapts
+  REST calls to legacy SOAP services -- callers use modern
+  HTTP/JSON; the adapter translates to XML and SOAP envelopes.
+
+---
+
+### 💡 The Surprising Truth
+
+Java's `Arrays.asList()` returns a fixed-size `List` that is an
+adapter over an array -- mutations to the list are reflected
+in the underlying array and vice versa. Most Java developers
+treat it as a standard `List`, not an Adapter, yet it is a
+textbook two-way Adapter: the array is the adaptee, the `List`
+interface is the target, and `Arrays.asList()` is the adapter
+factory. The pattern is so embedded in the standard library
+that engineers use it daily without recognising it.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your system has a `StorageService` interface with methods `upload(File f)` and `download(String key)`. You have an S3 adapter and an Azure Blob adapter. A new requirement: all file uploads must be virus-scanned before storage. Where exactly should the virus-scanning logic live - in each adapter, in a new class, or somewhere else? Justify your answer by explaining what principle is violated if you put it in the adapters.
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** An Adapter for a legacy Oracle-based `CustomerRepository` translates the new domain's `Customer` object to the legacy `LegacyCustomerRecord` DTO. The legacy system uses a 6-character customer code (e.g., "SMITH1") while the new domain uses a UUID. The adapter maps new UUIDs to legacy codes using an in-memory `Map`. Identify the failure mode when the application restarts and describe what architectural component is missing from this adapter design.
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A team must integrate with a legacy
+SOAP service (exposing WSDL) from a modern Spring REST service.
+They debate three approaches: (1) Adapter class wrapping the
+SOAP client, (2) generating a REST facade service that calls SOAP,
+(3) using Spring's integration framework. Map each option to
+pattern territory and state the criteria for choosing each.
+
+*Hint: The Comparison Table shows Adapter vs Facade -- option 1
+is Adapter, option 2 is Facade+Adapter. The decision criteria
+are ownership (can you change the SOAP side?) and blast radius
+(how many callers need the translation?).*

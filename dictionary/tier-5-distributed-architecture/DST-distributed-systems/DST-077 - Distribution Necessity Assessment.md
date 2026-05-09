@@ -26,11 +26,11 @@ permalink: /dst/distribution-necessity-assessment/
 
 ⚡ TL;DR - Distribution necessity assessment is the structured process of determining whether a system genuinely needs to be distributed — most systems don't, and the cost of unnecessary distribution is significant; the answer to "should we distribute?" should always be evidence-based.
 
-| DST-077 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | DST-001, DST-002, DST-066, DST-076 | |
-| **Used by:** | | |
-| **Related:** | DST-001, DST-002, DST-066, DST-076 | |
+| DST-077         | Category: Distributed Systems      | Difficulty: ★★★ |
+| :-------------- | :--------------------------------- | :-------------- |
+| **Depends on:** | DST-001, DST-002, DST-066, DST-076 |                 |
+| **Used by:**    |                                    |                 |
+| **Related:**    | DST-001, DST-002, DST-066, DST-076 |                 |
 
 ---
 
@@ -117,6 +117,7 @@ exceed the cost?"
 ### 🔩 First Principles Explanation
 
 **FOUR DIMENSIONS OF DISTRIBUTION NECESSITY:**
+
 ```
 1. SCALE
    Question: Can a single machine (vertical scale) meet
@@ -178,6 +179,7 @@ exceed the cost?"
 ```
 
 **COST OF DISTRIBUTION:**
+
 ```
 For a 5-engineer team:
   Kubernetes cluster:     1 engineer x 20% = 0.2 FTE
@@ -208,6 +210,7 @@ A B2B SaaS startup has 500 enterprise customers,
 peak, a 5-engineer team.
 
 **DISTRIBUTION NECESSITY ASSESSMENT:**
+
 ```
 Dimension 1: Scale
   1,000 req/sec = trivially handled by:
@@ -255,6 +258,7 @@ ASSESSMENT RESULT:
 > that arrives immediately.
 
 **Element mapping:**
+
 - Yagni for features = don't build what you don't need
 - Yagni for distribution = don't distribute what doesn't need distributing
 - "We might need it" = premature distribution anti-pattern
@@ -305,6 +309,7 @@ for a specific, measured reason. The anti-pattern:
 extract first, find the reason later.
 
 **Expert Thinking Cues:**
+
 - When someone proposes microservices: ask "what specific requirement cannot be met by a modular monolith?"
 - Distribution is a cost that must earn its keep with a specific, measurable benefit.
 - The monolith is not a failure state; it is the appropriate architecture for most systems at most scales.
@@ -314,34 +319,41 @@ extract first, find the reason later.
 ### ⚙️ How It Works (Mechanism)
 
 **Distribution necessity scorecard:**
+
 ```markdown
 ## Distribution Necessity Assessment
 
 ### Scale
+
 - [ ] Peak traffic > 50% of single machine capacity?
 - [ ] Data volume > single machine storage?
 - [ ] CPU-bound computation requiring parallel machines?
 
 ### Reliability
+
 - [ ] SLA requires >99.99% (beyond single machine MTBF)?
 - [ ] Geographic redundancy required?
 - [ ] Zero-downtime deployment required AND cannot achieve
       with rolling restart?
 
 ### Team Autonomy
+
 - [ ] Multiple teams requiring truly independent deployment?
 - [ ] Dramatically different scaling profiles per component?
 - [ ] Regulatory separation required?
 
 ### Compliance
+
 - [ ] Data residency requirements (GDPR etc.)?
 
 ### Scoring
+
 0-1 YES: Strong recommendation against distribution
 2 YES: Consider targeted distribution of specific bottleneck
 3+ YES: Distribution is justified
 
 ### Current assessment: [0/4 YES]
+
 ### Recommendation: modular monolith + vertical scale
 ```
 
@@ -350,6 +362,7 @@ extract first, find the reason later.
 ### 🔄 The Complete Picture - End-to-End Flow
 
 **Distribution decision flow:**
+
 ```
 New system or refactor proposed:     <- YOU ARE HERE
   |
@@ -380,23 +393,23 @@ Document decision:
 
 ### ⚖️ Comparison Table
 
-| Architecture | Complexity | Team Size Sweet Spot | Distribution Trigger |
-|---|---|---|---|
-| Monolith | Low | 1-10 engineers | None |
-| Modular monolith | Low-Medium | 10-50 engineers | Team module ownership |
-| Macroservices (3-5) | Medium | 20-100 engineers | Scale/reliability triggers |
-| Microservices (10+) | High | 50+ engineers | All 4 triggers met |
+| Architecture        | Complexity | Team Size Sweet Spot | Distribution Trigger       |
+| ------------------- | ---------- | -------------------- | -------------------------- |
+| Monolith            | Low        | 1-10 engineers       | None                       |
+| Modular monolith    | Low-Medium | 10-50 engineers      | Team module ownership      |
+| Macroservices (3-5) | Medium     | 20-100 engineers     | Scale/reliability triggers |
+| Microservices (10+) | High       | 50+ engineers        | All 4 triggers met         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Monolith = legacy = bad" | Monolith = appropriate architecture for specific scale and team size; not inherently bad |
-| "Microservices = scalable" | Microservices enable independent scaling; they don't automatically make a system faster |
-| "We should prepare for scale" | Premature optimisation; distribute when scale is measured, not predicted |
-| "Netflix/Amazon use microservices" | Netflix/Amazon have specific requirements that justify microservices; most companies don't |
+| Misconception                              | Reality                                                                                              |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| "Monolith = legacy = bad"                  | Monolith = appropriate architecture for specific scale and team size; not inherently bad             |
+| "Microservices = scalable"                 | Microservices enable independent scaling; they don't automatically make a system faster              |
+| "We should prepare for scale"              | Premature optimisation; distribute when scale is measured, not predicted                             |
+| "Netflix/Amazon use microservices"         | Netflix/Amazon have specific requirements that justify microservices; most companies don't           |
 | "Microservices = one service per engineer" | Team size and service count are independent; one team can own multiple services or one large service |
 
 ---
@@ -407,11 +420,13 @@ Document decision:
 **Symptom:** 15 microservices all deployed together; distributed transactions everywhere; slow velocity.
 **Root Cause:** Services are logically tightly coupled despite physical separation.
 **Diagnostic:**
+
 ```bash
 # Count cross-service synchronous calls in a single request
 # If a single request touches >5 services: distributed monolith
 grep -r 'RestTemplate\|WebClient\|feign' src/ | wc -l
 ```
+
 **Fix:** Re-evaluate: merge highly coupled services; use asynchronous event-driven communication.
 
 **Mode 2: Under-distribution (Single Point of Failure)**
@@ -429,15 +444,18 @@ grep -r 'RestTemplate\|WebClient\|feign' src/ | wc -l
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[DST-001 - What Is a Distributed System]]
 - [[DST-002 - Why Distribution Is Hard]]
 - [[DST-066 - Distributed System Architecture Strategy]]
 
 **Builds On This (learn these next):**
+
 - Modular monolith patterns
 - Conway's Law
 
 **Alternatives / Comparisons:**
+
 - Vertical scaling (scale up before scaling out)
 
 ---
@@ -462,6 +480,7 @@ grep -r 'RestTemplate\|WebClient\|feign' src/ | wc -l
 ```
 
 **If you remember only 3 things:**
+
 1. Four triggers for distribution: scale exceeds single machine, SLA requires multi-machine, team requires independent deployment, compliance forces geographic separation.
 2. Most systems (< 100,000 TPS, < 50 engineers) are better served by a well-engineered modular monolith than by microservices.
 3. Distribute specific bottlenecks, not the entire system; keep the rest as modular monolith until additional triggers are met.
@@ -484,6 +503,7 @@ question is always "what specific problem does this
 solve, and what is the evidence?"
 
 **Where else this pattern appears:**
+
 - **Caching** — add cache only when DB query is measured to be a bottleneck; not preemptively
 - **Indexes** — add index only for measured slow queries; not on every column "just in case"
 - **Abstraction layers** — add abstraction only when variation is measured to be needed; not speculatively
@@ -517,7 +537,7 @@ complexity to users served for each. What does this
 tell you about the relationship between distribution
 and scale?
 
-*Hint:* Stack Overflow: 9 servers / 50M users = 0.18 servers
+_Hint:_ Stack Overflow: 9 servers / 50M users = 0.18 servers
 per million users. Startup: 30 services / 0.05M users =
 600 services per million users. Ratio: 3,300x more
 complexity per user for the startup. Distribution does
@@ -531,7 +551,7 @@ has 8 engineers and 1,000 patients. Apply the 4-dimension
 assessment: which dimensions justify distribution,
 which don't, and what is the minimum architecture?
 
-*Hint:* Scale: 1,000 patients = trivially single machine.
+_Hint:_ Scale: 1,000 patients = trivially single machine.
 Reliability: healthcare SLA varies; but 99.9% achievable
 with single multi-AZ. Autonomy: 8 engineers; modular
 monolith is fine. Compliance: HIPAA isolation = service
@@ -545,7 +565,7 @@ platform that started as a modular monolith extract its
 first service? Define the measurement criteria, the
 specific trigger value, and which service to extract first.
 
-*Hint:* Measurement: instrument monolith; identify hotspot
+_Hint:_ Measurement: instrument monolith; identify hotspot
 (CPU/memory/DB bottleneck). First trigger: DB CPU > 70%
 sustained, OR specific module responsible for >80% of
 DB queries. First extraction: the module causing the

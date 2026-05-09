@@ -8,22 +8,26 @@ permalink: /design-patterns/prototype/
 id: DPT-010
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Object-Oriented Programming (OOP), Cloning, Deep Copy vs Shallow Copy
-used_by: Object Caching, Game Entity Systems, Document Templates
-related: Factory Method, Builder, Singleton, Object Pool
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - performance
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-010 - Prototype
 
 ⚡ TL;DR - Prototype creates new objects by cloning an existing instance, avoiding expensive re-initialisation when object construction is costly.
 
-| #770 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-010 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Cloning, Deep Copy vs Shallow Copy | |
 | **Used by:** | Object Caching, Game Entity Systems, Document Templates | |
@@ -41,6 +45,17 @@ Most of that 120 ms is redundant. Every enemy of the same "type" has identical m
 
 **THE INVENTION MOMENT:**
 This is exactly why the Prototype pattern was created. Create one "prototype" enemy by doing the full 120 ms initialisation once. Clone the prototype for each new enemy - copying its state in-memory, which takes microseconds. Only patch the per-instance values (position, ID) after cloning. 5,000 enemies: 120 ms once + 4,999 × 0.1 ms = 620 ms total. Level loads in under a second.
+
+**EVOLUTION:**
+Prototype was critical in languages without stack allocation and
+in environments where object construction was expensive. Modern
+JVM JIT compilation and object pooling reduced the performance
+motivation significantly. Today Prototype survives in JavaScript
+(prototype-chain inheritance), serialization-based cloning, and
+copy-with semantics in immutable object libraries. Lombok's
+`@Builder(toBuilder=true)` and Kotlin's `data class copy()`
+provide the same "clone-with-modifications" pattern without
+manual `clone()` implementation.
 
 ---
 
@@ -436,11 +451,62 @@ Every subclass must override `clone()`. With copy constructors, the subclass's c
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+When creating a new thing that is mostly like an existing thing,
+start from the existing thing and change only the differences.
+Duplication of the common state is wasteful; copying and
+modifying is efficient.
+
+**Where else this pattern appears:**
+- **Git branching:** A new branch starts from the current HEAD
+  (the prototype) and diverges only with new commits -- the
+  shared history is not duplicated.
+- **Database row versioning (temporal tables):** A new record
+  version is created by copying the current row and applying
+  only the changed columns -- not recomputing the whole record.
+- **Container images (Docker layers):** Each layer is a
+  prototype -- new images inherit all layers from the base
+  and add only the new layer on top.
+
+---
+
+### 💡 The Surprising Truth
+
+Java's `Object.clone()` method -- the built-in mechanism for
+Prototype -- is widely considered one of Java's worst design
+decisions. Joshua Bloch dedicated an entire item in Effective
+Java to advising against it: `clone()` creates objects without
+calling a constructor, bypassing all constructor validation, and
+requires implementors to understand a complex contract that is
+"extralinguistic." The GoF Prototype pattern is sound; Java's
+`clone()` mechanism for implementing it is so broken that Bloch
+recommends copy constructors or copy factories instead.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A game entity prototype holds a `pathfindingGraph` object (a cyclic graph of 50,000 nodes representing the level map). You want all enemies to share this graph (read-only), but each enemy's path state (current path, next waypoint) must be independent. Design the copy strategy for `pathfindingGraph` in the clone operation - considering immutability, memory usage, and the risk of one enemy's state corrupting another's - and identify which parts must be deep-copied and which can be safely shallow-copied.
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** In a distributed system, a service creates `RequestContext` objects by cloning a prototype that includes a database connection pool reference. The service runs 50 instances (pods), each with its own prototype and connection pool. A developer proposes storing the prototype in a shared distributed cache (Redis) and cloning from it on each pod, claiming it will "share the expensive prototype state cluster-wide." What specific failure will occur with the database connection pool reference when clones are deserialised from Redis onto a different pod, and what architectural rule does this violate?
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A team implements deep cloning of
+a complex `OrderGraph` (Order → LineItems → Products → Suppliers)
+using Prototype/clone. A performance test shows the deep clone
+takes 8ms per call at 1000 req/s. Identify two alternative
+approaches that avoid the deep clone entirely while preserving
+the required immutability guarantees.
+
+*Hint: Consider the Complete Picture section's "what changes
+at scale" note -- persistent data structures and structural
+sharing (as in functional languages) are the key insight.*

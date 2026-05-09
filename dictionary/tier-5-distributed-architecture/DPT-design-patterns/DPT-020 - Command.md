@@ -8,22 +8,26 @@ permalink: /design-patterns/command/
 id: DPT-020
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Object-Oriented Programming (OOP), Interface, Encapsulation, Queue Data Structure
-used_by: Undo/Redo Systems, Task Queues, Macro Recording, Transaction Logs
-related: Chain of Responsibility, Strategy, Observer, Memento
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - bestpractice
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-020 - Command
 
 ⚡ TL;DR - Command encapsulates a request as an object so it can be queued, logged, undone, or parameterised independently of the sender.
 
-| #780 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-020 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Interface, Encapsulation, Queue Data Structure | |
 | **Used by:** | Undo/Redo Systems, Task Queues, Macro Recording, Transaction Logs | |
@@ -41,6 +45,19 @@ Three distinct problems emerge from calling operations directly: (1) **No undo**
 
 **THE INVENTION MOMENT:**
 This is exactly why the Command pattern was created. Each operation becomes a `Command` object: `BoldCommand`, `ItalicCommand`. The command encapsulates the receiver (`document`), all parameters needed to execute, and optionally the state needed to undo. Undo: call `command.undo()`. Queue: put commands in a `BlockingQueue`. Audit log: log `command.getClass().getName()` before execution. Every capability lives in the command object - no changes to the 50 operation methods.
+
+**EVOLUTION:**
+Command was critical in GUI applications for undo/redo and
+macro recording -- the primary Use Cases in GoF (1994). Java
+Swing's `Action` interface and `UndoManager` implement it
+directly. In modern backend systems, Command evolved into:
+CQRS write commands (capturing user intent as a named
+command object), task queues (serialised commands sent to
+workers), and event sourcing (persisting commands as the
+source of truth). JavaScript's promise chains and async/
+await are also conceptually Command-based: each `.then()`
+is a deferred command. Today Command is foundational in
+messaging and distributed systems.
 
 ---
 
@@ -496,11 +513,66 @@ command.execute();
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Encapsulate a request as an independent object. This separates
+the *what* (the command object) from the *when* and *where*
+(the invoker and timing). Commands become first-class values:
+storable, serialisable, queueable, and replayable.
+
+**Where else this pattern appears:**
+- **Message queues (Kafka, RabbitMQ):** Messages are
+  serialised Command objects sent asynchronously to consumers
+  -- the producer issues the command; the consumer executes it
+  at its own pace.
+- **SQL transactions:** BEGIN → commands (INSERT, UPDATE) →
+  COMMIT forms a command log -- transactions can be replayed
+  from the log, which is how replication works.
+- **CI/CD pipelines:** Each pipeline stage (build, test, deploy)
+  is a Command object -- stages are queued, retried, and their
+  output stored independently of execution order.
+
+---
+
+### 💡 The Surprising Truth
+
+Java's `Runnable` and `Callable` interfaces are stripped-down
+Command objects -- they encapsulate "a unit of work" as an
+object that can be passed to an `Executor`. Every
+`ExecutorService.submit(Runnable)` call is therefore a Command
+pattern instantiation at the system level. The `Future`
+returned represents the command's eventual result. This means
+Java's concurrency model is built on Command, and every
+`CompletableFuture` chain is a composed sequence of Command
+objects -- a fact rarely acknowledged when teaching `Runnable`
+to beginners.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A text editor uses Command+Memento for undo. A user types 10,000 characters in one session. Each `TypeCommand` stores the full document snapshot in its Memento before executing so that `undo()` can restore it. Calculate the memory used by the undo stack if the document averages 50 KB after each keypress. Then redesign the state capture strategy to reduce memory usage by at least 10× without sacrificing undo correctness.
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** An e-commerce platform implements order placement as a Command queued to Kafka. The `PlaceOrderCommand` includes: deduct inventory, charge payment, create shipping label. Network failure occurs between the payment charge and the shipping label creation. The command is retried by Kafka. Trace exactly which operations execute on the second attempt, which produce duplicate effects (and what the user experiences), and describe an idempotency mechanism that prevents the double-charge without making the command non-retryable.
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** An order processing system uses
+Command pattern with undo. An `PlaceOrderCommand.undo()` must
+reverse a `PaymentCharge`, a `StockReservation`, and an
+`EmailConfirmation`. The email was already sent.
+What are the fundamental limits of undo for commands with
+irreversible side effects, and what alternative pattern
+addresses this without breaking the Command interface?
+
+*Hint: Look at the WHAT CHANGES AT SCALE section and the
+Failure Modes -- the Saga pattern (DPT-054) exists precisely
+because "compensation" (not true undo) is required for
+distributed irreversible actions.*

@@ -26,11 +26,11 @@ permalink: /dst/formal-models-for-distributed-systems-tla/
 
 ⚡ TL;DR - TLA+ is a formal specification language that lets you mathematically prove that a distributed algorithm is correct before implementing it — AWS uses it to verify Dynamo, S3, and EBS designs because bugs found by TLA+ cost minutes; bugs found in production cost millions.
 
-| DST-073 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | DST-023, DST-060, DST-071 | |
-| **Used by:** | | |
-| **Related:** | DST-023, DST-060, DST-071, DST-074 | |
+| DST-073         | Category: Distributed Systems      | Difficulty: ★★★ |
+| :-------------- | :--------------------------------- | :-------------- |
+| **Depends on:** | DST-023, DST-060, DST-071          |                 |
+| **Used by:**    |                                    |                 |
+| **Related:**    | DST-023, DST-060, DST-071, DST-074 |                 |
 
 ---
 
@@ -116,6 +116,7 @@ this without infinite test cases.
 ### 🔩 First Principles Explanation
 
 **TLA+ CORE CONCEPTS:**
+
 ```
 State: a snapshot of all variables
   state1: {leader: A, term: 1, log: []}
@@ -140,6 +141,7 @@ Temporal property: holds over sequences
 ```
 
 **WHAT TLC (MODEL CHECKER) DOES:**
+
 ```
 Input: TLA+ spec with invariants
 Process:
@@ -168,6 +170,7 @@ You implement a distributed lock. Invariant: at most
 one holder at any time.
 
 **WITHOUT TLA+:**
+
 ```
 Testing:
   Test 1: Lock A, Lock B (B waits). A releases. B gets lock.
@@ -182,6 +185,7 @@ Testing:
 ```
 
 **WITH TLA+:**
+
 ```
 Spec: DLock.tla
   Variables: holder, requesters, network
@@ -219,6 +223,7 @@ TLC model check:
 > will interpret it this way — here's exactly how."
 
 **Element mapping:**
+
 - Contract = distributed algorithm specification
 - Contract clauses = actions and invariants
 - Lawyer = TLC model checker
@@ -262,12 +267,14 @@ verified: S3, DynamoDB, EBS, internal locking services.
 In each case: TLC found bugs that existing tests did
 not. The bugs were in 15-event sequences that no random
 test had explored. The ROI calculation: specification
-+ model checking time = 2 weeks. Bug found in production
-= 6 months engineering time + customer data loss. TLA+
-is economically justified for any algorithm where a
-bug in production has high cost.
+
+- model checking time = 2 weeks. Bug found in production
+  = 6 months engineering time + customer data loss. TLA+
+  is economically justified for any algorithm where a
+  bug in production has high cost.
 
 **Expert Thinking Cues:**
+
 - TLA+ is not a replacement for testing: it verifies the algorithm; tests verify the implementation.
 - The most valuable TLA+ practice: write the spec first; the spec is the design; the code follows the spec.
 - Start with PlusCal; it compiles to TLA+; more readable for engineers not trained in formal methods.
@@ -277,6 +284,7 @@ bug in production has high cost.
 ### ⚙️ How It Works (Mechanism)
 
 **PlusCal distributed lock example:**
+
 ```tla
 ---- MODULE DistributedLock ----
 EXTENDS Naturals, Sequences
@@ -316,6 +324,7 @@ Spec == Init /\ [][Next]_vars
 ### 🔄 The Complete Picture - End-to-End Flow
 
 **TLA+ workflow in distributed systems design:**
+
 ```
 Algorithm design (whiteboard):      <- YOU ARE HERE
   |
@@ -346,25 +355,25 @@ Code tested (unit, integration, chaos) ->
 
 ### ⚖️ Comparison Table
 
-| Tool | Approach | Strength | Barrier | Use Case |
-|---|---|---|---|---|
-| TLA+ / TLC | State space exploration | Exhaustive; counter-examples | Learning curve | Distributed algorithms |
-| Alloy | Relational logic | Object models | Moderate | Data models, APIs |
-| Isabelle/HOL | Full theorem prover | Highest rigour | Very high | Research, safety-critical |
-| QuickCheck | Property-based testing | Accessible; no spec language | Low | Code-level properties |
-| Jepsen | Empirical testing under failure | Tests real implementation | Medium | Database correctness |
+| Tool         | Approach                        | Strength                     | Barrier        | Use Case                  |
+| ------------ | ------------------------------- | ---------------------------- | -------------- | ------------------------- |
+| TLA+ / TLC   | State space exploration         | Exhaustive; counter-examples | Learning curve | Distributed algorithms    |
+| Alloy        | Relational logic                | Object models                | Moderate       | Data models, APIs         |
+| Isabelle/HOL | Full theorem prover             | Highest rigour               | Very high      | Research, safety-critical |
+| QuickCheck   | Property-based testing          | Accessible; no spec language | Low            | Code-level properties     |
+| Jepsen       | Empirical testing under failure | Tests real implementation    | Medium         | Database correctness      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "TLA+ is only for academics" | AWS, Microsoft, MongoDB, and many production teams use TLA+ for critical distributed systems |
-| "TLA+ proves the code is correct" | TLA+ proves the algorithm model is correct; code must still be tested separately |
-| "Model checking = testing" | Testing explores specific paths; model checking explores ALL reachable states |
-| "State space explosion makes TLA+ impractical" | Symmetry reduction + model constraints make TLC practical for 3-7 node systems |
-| "You must learn TLA+ to benefit" | PlusCal (compiles to TLA+) is more accessible; and writing specs without TLC improves design |
+| Misconception                                  | Reality                                                                                      |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| "TLA+ is only for academics"                   | AWS, Microsoft, MongoDB, and many production teams use TLA+ for critical distributed systems |
+| "TLA+ proves the code is correct"              | TLA+ proves the algorithm model is correct; code must still be tested separately             |
+| "Model checking = testing"                     | Testing explores specific paths; model checking explores ALL reachable states                |
+| "State space explosion makes TLA+ impractical" | Symmetry reduction + model constraints make TLC practical for 3-7 node systems               |
+| "You must learn TLA+ to benefit"               | PlusCal (compiles to TLA+) is more accessible; and writing specs without TLC improves design |
 
 ---
 
@@ -390,14 +399,17 @@ Code tested (unit, integration, chaos) ->
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[DST-023 - Raft]]
 - [[DST-060 - FLP Impossibility]]
 - [[DST-071 - Distributed Consensus Algorithm Design (Raft, Paxos)]]
 
 **Builds On This (learn these next):**
+
 - [[DST-074 - Research Frontiers in Distributed Systems]]
 
 **Alternatives / Comparisons:**
+
 - Jepsen (empirical correctness testing of real implementations)
 - Alloy (relational formal specification)
 
@@ -424,6 +436,7 @@ Code tested (unit, integration, chaos) ->
 ```
 
 **If you remember only 3 things:**
+
 1. TLA+ proves an algorithm model correct; it does not prove the code correct; both are needed.
 2. TLC model checking exhaustively explores all reachable states; it finds bugs that no random test can.
 3. Start with PlusCal (higher-level syntax); it compiles to TLA+ and is more accessible for engineers.
@@ -445,6 +458,7 @@ in earlier discovery for proportionally higher-stakes
 algorithms.
 
 **Where else this pattern appears:**
+
 - **Security threat modelling** — model all possible attacker actions before building; find vulnerabilities in design
 - **Compiler design** — type systems are a form of formal verification applied at development time
 - **Database query planning** — query optimizer explores the space of possible execution plans formally
@@ -478,7 +492,7 @@ nodes N where each node has a `role` (Leader/Follower)
 and a `term` (integer). What does your invariant catch
 that basic unit tests would not?
 
-*Hint:* Invariant: at most one node has role=Leader per
+_Hint:_ Invariant: at most one node has role=Leader per
 term. TLA+ form: ForAll n1, n2 in N: if n1.role=Leader
 and n2.role=Leader, then n1.term != n2.term. Unit tests
 check one scenario; TLA+ verifies this holds under
@@ -491,7 +505,7 @@ existing only with N > 3 nodes are missed? Give an
 example of a real distributed algorithm property that
 only manifests with N > 3.
 
-*Hint:* Most safety properties hold for small N by induction
+_Hint:_ Most safety properties hold for small N by induction
 or symmetry. Bugs unique to N > 3: Paxos with N=4 has
 an even number of nodes; quorum = 3; specific tie-breaking
 behaviours differ from N=3. In practice: if the bug
@@ -504,10 +518,11 @@ distributed algorithms designed per year) does investing
 in TLA+ expertise pay off? What factors determine the
 ROI threshold for adopting formal methods?
 
-*Hint:* AWS: 150 engineers trained, 10+ protocols verified.
+_Hint:_ AWS: 150 engineers trained, 10+ protocols verified.
 ROI factors: (1) cost of production bug (higher for
 financial/safety-critical); (2) frequency of new protocol
 design; (3) difficulty of testing (concurrent race
 conditions are hard to test). For teams designing
+
 > 1 new distributed protocol/year with high production
-bug cost: TLA+ ROI is positive. For CRUD apps: overkill.
+> bug cost: TLA+ ROI is positive. For CRUD apps: overkill.

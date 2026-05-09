@@ -8,22 +8,26 @@ permalink: /design-patterns/decorator/
 id: DPT-015
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Composition over Inheritance, Interface, Polymorphism, Object-Oriented Programming (OOP)
-used_by: Java I/O Streams, Web Middleware, Logging Wrappers, HTTP Request Pipelines
-related: Proxy, Adapter, Composite, Bridge, Chain of Responsibility
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - bestpractice
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-015 - Decorator
 
 ⚡ TL;DR - Decorator adds behaviour to an object at runtime without changing its class by wrapping it in objects that implement the same interface.
 
-| #775 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-015 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Composition over Inheritance, Interface, Polymorphism, Object-Oriented Programming (OOP) | |
 | **Used by:** | Java I/O Streams, Web Middleware, Logging Wrappers, HTTP Request Pipelines | |
@@ -41,6 +45,18 @@ A user wants to read a gzip-compressed, encrypted, buffered network stream. To a
 
 **THE INVENTION MOMENT:**
 This is exactly why the Decorator pattern was created. Java's I/O library uses it correctly: each feature is a separate decorator class. To read a gzip-compressed, encrypted, buffered stream: `new BufferedInputStream(new GzipInputStream(new EncryptedInputStream(socket.getInputStream())))`. Three independent decorators, composed dynamically. Adding a fourth feature: add one class. Zero subclass explosion.
+
+**EVOLUTION:**
+Decorator was the standard solution for cross-cutting concerns
+in pre-AOP Java. Spring AOP and AspectJ (early 2000s) largely
+replaced manual decorator chains for logging, security, and
+transaction management by weaving these concerns at the
+bytecode level. Decorator survived and thrived in I/O streams
+(Java's `InputStream`/`OutputStream` hierarchy uses it
+pervasively) and in functional composition (`Function.andThen()`,
+`Stream.filter(...).map(...)`). Modern annotations + AOP cover
+most cross-cutting use cases, while Decorator remains the
+primary pattern for streaming I/O and functional pipelines.
 
 ---
 
@@ -609,11 +625,64 @@ Document the correct construction order. Verify by comparing input and output da
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Add behaviour to objects dynamically by wrapping them in
+decorator objects that delegate to the wrapped object and
+add their layer of logic before or after the delegation.
+Compose complex behaviour from simple interchangeable layers.
+
+**Where else this pattern appears:**
+- **HTTP middleware stacks (Express.js, ASP.NET Core):** Each
+  middleware "wraps" the request/response pipeline -- logging
+  middleware decorates the next handler, and authentication
+  middleware decorates that, etc.
+- **Java I/O streams:** `new BufferedReader(new InputStreamReader(
+  new FileInputStream("file.txt")))` -- classic three-layer
+  Decorator: buffering decorates encoding which decorates bytes.
+- **React Higher-Order Components (HOC):** A HOC wraps a
+  component and adds props or behaviour -- e.g.,
+  `withAuth(MyComponent)` decorates MyComponent with auth logic.
+
+---
+
+### 💡 The Surprising Truth
+
+Java's I/O stream API -- `InputStream`, `OutputStream`,
+`Reader`, `Writer` -- is the most-used Decorator implementation
+in all of Java, used by virtually every Java program that
+reads or writes data. Yet surveys of Java developers show
+that fewer than 30% recognize it as a Decorator pattern.
+The GoF specifically cited Java's I/O streams as their primary
+motivating example for Decorator in "Design Patterns" (1994),
+making Java streams the pattern's canonical illustration
+before Java was even widely adopted.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Java's `java.util.Collections.synchronizedList(list)` is a Decorator that wraps any `List` to make it thread-safe. But the Javadoc says: "It is imperative that the user manually synchronize on the returned list when traversing it via Iterator." This means the synchronisation decorator is incomplete - iterators bypass it. Trace the exact mechanism by which an iterator on `synchronizedList` is NOT thread-safe despite the wrapper, and describe what the Decorator pattern would need to change to make iterators thread-safe.
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** A team uses Decorators to implement HTTP request middleware: `AuthDecorator` → `RateLimitDecorator` → `LoggingDecorator` → `BaseHttpClient`. A new requirement: "if rate limiting blocks the request, the auth token should NOT be consumed." This means the `AuthDecorator` needs to know whether `RateLimitDecorator` blocked the request BEFORE the auth token is recorded as used. Describe whether this can be solved within the Decorator pattern, and if not, what design pattern better handles this conditional, cross-concern coordination.
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A `PriceCalculator` decorator chain
+is: `TaxDecorator(DiscountDecorator(ShippingDecorator(base)))`.
+A customer reports the wrong final price. Describe a systematic
+debugging strategy for identifying which decorator in the chain
+is producing the wrong calculation, without modifying any
+decorator's production code.
+
+*Hint: The Failure Modes section shows the debugging challenge
+of deep decorator chains. Think about how the decorator's
+transparent interface design -- the very feature that makes
+it powerful -- is also what makes debugging hard.*

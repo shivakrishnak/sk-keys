@@ -8,22 +8,26 @@ permalink: /design-patterns/template-method/
 id: DPT-028
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Object-Oriented Programming (OOP), Inheritance, Abstract Classes, Polymorphism
-used_by: Framework Design, Data Processing Pipelines, Test Lifecycle, HTTP Servlets
-related: Strategy, Hook Method, Factory Method, Spring AbstractController
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - bestpractice
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-028 - Template Method
 
 ⚡ TL;DR - Template Method defines the skeleton of an algorithm in a base class and lets subclasses fill in specific steps without changing the algorithm's overall structure.
 
-| #788 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-028 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Inheritance, Abstract Classes, Polymorphism | |
 | **Used by:** | Framework Design, Data Processing Pipelines, Test Lifecycle, HTTP Servlets | |
@@ -41,6 +45,19 @@ The invariant parts (connect, send) keep diverging because they're duplicated. A
 
 **THE INVENTION MOMENT:**
 This is exactly why the Template Method pattern was created. The invariant steps live in the base class. Only the variant steps are abstract - subclasses fill in the specific logic for their report type without touching the structure.
+
+**EVOLUTION:**
+Template Method was the dominant "framework extension hook"
+pattern before Java interfaces gained default methods (Java 8)
+and dependency injection became mainstream. Many Java EE
+lifecycle hooks (`init()`, `destroy()` in servlets) are
+Template Method variants. Spring's `JdbcTemplate`,
+`RestTemplate`, and `TransactionTemplate` all follow the
+pattern -- the template handles the invariant parts
+(connection management, error handling) and calls abstract
+methods for the variable parts. Java 8 default methods on
+interfaces provided an alternative: no inheritance required
+for skeleton implementations.
 
 ---
 
@@ -475,11 +492,71 @@ public abstract class AbstractReport {
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Define the invariant structure of an algorithm in one place.
+Mark the variable parts as extension points. Subclasses
+(or passed functions) provide only the variable parts --
+never the structure.
+
+**Where else this pattern appears:**
+- **JUnit test lifecycle:** `@BeforeAll → @BeforeEach →
+  @Test → @AfterEach → @AfterAll` is a template method --
+  JUnit defines the structure; your test class fills in
+  the `@Test` body.
+- **Spring `JdbcTemplate`:** The template manages
+  connection acquisition, statement compilation, result
+  processing, connection release. The caller provides only
+  the SQL and the row mapper -- the variable parts.
+- **HTML template engines (Thymeleaf, Freemarker):** The
+  template defines the page structure with placeholders;
+  the "extension points" are filled at render time with
+  model data.
+
+---
+
+### 💡 The Surprising Truth
+
+Spring's most important classes -- `JdbcTemplate`,
+`RestTemplate`, `TransactionTemplate`, `HibernateTemplate` --
+are named "Template" specifically because they implement the
+Template Method pattern. This naming convention is consistent
+enough that "Template" in a Spring class name reliably signals
+Template Method: the class handles boilerplate lifecycle code
+and calls your code at the variable points. Ironically,
+`RestTemplate` (deprecated) was replaced by `WebClient`
+precisely because the Template Method structure (subclass
+to override) didn't compose well with reactive/async code --
+revealing the pattern's fundamental limitation when
+asynchronous composition is required.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A team uses Template Method for a data pipeline base class. Over two years, the base class has accumulated 14 hook methods, 6 abstract methods, and 3 concrete methods. The class has 22 subclasses. A new requirement says: "Some pipelines need step 3 before step 2 in certain conditions." Describe exactly why Template Method cannot satisfy this requirement, and explain why this signals that the team should migrate to a different pattern - including the specific migration steps.
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** Template Method and Strategy solve the same problem - varying algorithm behaviour - but one uses inheritance and the other uses composition. A team argues that Template Method is always replaceable by Strategy. Is this strictly true? Identify one scenario where Template Method's inheritance mechanism provides something Strategy cannot replicate without adding extra complexity, and one scenario where Template Method's inheritance creates a problem that Strategy's composition avoids.
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** Spring's `JdbcTemplate` uses
+Template Method for database operations. For reactive
+database access, the team uses R2DBC's `DatabaseClient`,
+which uses a functional/builder style instead of template
+inheritance. Map the Template Method roles to the functional
+equivalent in `DatabaseClient` and explain why reactive
+programming requires replacing Template Method with a
+function-composition model.
+
+*Hint: Template Method requires blocking on steps; async
+requires non-blocking composition. The Level 4 explanation
+hints at this. Strategy (lambda) applied at each step
+replaces the overrideable method in the async world.*

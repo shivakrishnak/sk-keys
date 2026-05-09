@@ -7,23 +7,27 @@ nav_order: 6
 permalink: /design-patterns/singleton/
 id: DPT-006
 category: Design Patterns
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 difficulty: ★☆☆
-depends_on: Object-Oriented Programming (OOP), Classes and Objects, Static Methods
-used_by: Object Pool, Service Locator, Dependency Injection Pattern
-related: Factory Method, Object Pool, Dependency Injection Pattern
+depends_on:
+used_by: DPT-011, DPT-038, DPT-039
+related: DPT-007, DPT-011, DPT-039
 tags:
   - pattern
   - foundational
   - architecture
   - java
   - bestpractice
+status: complete
+version: 1
 ---
 
 # DPT-006 - Singleton
 
 ⚡ TL;DR - Singleton ensures a class has exactly one instance and provides a global access point to it.
 
-| #766 | Category: Design Patterns | Difficulty: ★☆☆ |
+| DPT-006 | Category: Design Patterns | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Classes and Objects, Static Methods | |
 | **Used by:** | Object Pool, Service Locator, Dependency Injection Pattern | |
@@ -41,6 +45,15 @@ The concrete failure is resource exhaustion and state inconsistency. Multiple in
 
 **THE INVENTION MOMENT:**
 This is exactly why the Singleton pattern was created. By guaranteeing that only one instance of a class exists and providing a single controlled access point, all clients share the same state and the same resource handle. The OS sees one file handle, the database sees one connection manager, and the configuration is read once.
+
+**EVOLUTION:**
+The GoF Singleton (1994) was designed for single-process, single-JVM
+applications — before dependency injection existed. By the mid-2000s,
+Spring and Guice introduced container-managed singleton scope, delivering
+the same guarantee without global state or private constructors. Today,
+hand-rolled Singletons are largely replaced by `@Singleton`-scoped DI
+beans; the pattern survives as an idiom in constrained environments
+(Android, embedded) and as the enum Singleton for framework-free contexts.
 
 ---
 
@@ -450,9 +463,69 @@ static void resetForTest() {
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+When a resource must be shared without duplication, control creation
+at the source rather than trusting callers to coordinate. One
+authoritative owner beats distributed negotiation.
+
+**Where else this pattern appears:**
+- **Database connection pools:** A single pool object manages all
+  connections; every DAO borrows from the same pool rather than
+  opening its own connection.
+- **Operating systems:** The kernel maintains one process table,
+  one file descriptor table per process - single authoritative
+  registries for finite resources.
+- **Hardware:** A CPU's L3 cache is shared by all cores; one
+  shared resource serves multiple consumers without duplication.
+
+---
+
+### 💡 The Surprising Truth
+
+The GoF themselves anticipated Singleton's abuse. In "Design Patterns"
+(1994) they wrote: "It's easy to make a Singleton. It's hard to make it
+right." Joshua Bloch later documented in "Effective Java" (2001) that
+every non-enum Singleton implementation is vulnerable to reflection
+attacks and serialization cloning - two Java mechanisms that can bypass
+the private constructor and create a second instance. The enum Singleton
+(Bloch's recommendation) is the only variant immune to both attacks,
+yet it remains the least-used variant in production codebases.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
-**Q1.** You have a Singleton `CacheManager` that holds 500 MB of in-memory cached data. Your application is deployed to a Kubernetes cluster that auto-scales from 2 to 20 pods under load. A user updates a product price, which should invalidate the product's cache entry. Trace exactly what happens to cache consistency across all 20 pods, and describe two different architectural approaches to solve this without removing the Singleton from each pod.
+**Q1.** You have a Singleton `CacheManager` that holds 500 MB of
+in-memory cached data. Your application is deployed to a Kubernetes
+cluster that auto-scales from 2 to 20 pods under load. A user updates
+a product price, which should invalidate the product's cache entry.
+Trace exactly what happens to cache consistency across all 20 pods,
+and describe two architectural approaches to solve this without
+removing the Singleton from each pod.
 
-**Q2.** A junior engineer argues: "I'll use a Singleton for our `UserSessionStore` because there should only ever be one session store." You know the application runs behind a load balancer across 4 servers. What specific failure will occur when User A's session is written on Server 1 and User A's next request is routed to Server 2? What is the fundamental design error in the engineer's reasoning, and what should they use instead?
+*Hint: Trace the Failure Modes section's "Singleton in distributed
+system" path — each pod has its own instance. Then look at What
+Changes At Scale for the externalisation strategy.*
 
+**Q2.** A junior engineer argues: "I'll use a Singleton for our
+`UserSessionStore` because there should only ever be one session
+store." The application runs behind a load balancer across 4 servers.
+What specific failure occurs when User A's session is written on
+Server 1 and their next request is routed to Server 2? What is
+the fundamental design error, and what should replace it?
+
+*Hint: The Comparison Table shows DI container singleton scope
+as an alternative — why does it also fail here? The issue is
+not instance count but process boundary.*
+
+**Q3 (Design Trade-off):** A team debates: "Should we use a hand-
+rolled enum Singleton for our `MetricsRegistry`, or a Spring
+`@Component` singleton?" The application runs in a Spring Boot
+context. List the specific criteria that should decide the choice,
+and state which wins for this context.
+
+*Hint: The Level 4 explanation and Comparison Table both address
+this directly — focus on testability and lifecycle management
+differences between the two approaches.*

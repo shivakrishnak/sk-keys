@@ -8,22 +8,26 @@ permalink: /design-patterns/null-object/
 id: DPT-030
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Object-Oriented Programming (OOP), Interface, Polymorphism, Null Safety
-used_by: Logger Implementations, No-Op Strategies, Default Handlers, Optional Collaborators
-related: Proxy, Strategy, Special Case Pattern, Optional, Decorator
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - bestpractice
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-030 - Null Object
 
 ⚡ TL;DR - Null Object replaces `null` checks with a real object that does nothing - so callers never need to handle the absence case explicitly.
 
-| #790 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-030 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Interface, Polymorphism, Null Safety | |
 | **Used by:** | Logger Implementations, No-Op Strategies, Default Handlers, Optional Collaborators | |
@@ -41,6 +45,19 @@ Every caller of `user.getDiscountStrategy()` must null-check before using the re
 
 **THE INVENTION MOMENT:**
 This is exactly why the Null Object pattern was created. Instead of returning `null`, return a `NoDiscountStrategy` that implements `DiscountStrategy.apply(price) { return price; }` - does nothing, correctly. Callers use it identically to a real strategy. The null check is gone; the behaviour is correct.
+
+**EVOLUTION:**
+Null Object appeared as a named pattern after decades of
+null-check proliferation in object-oriented code. Java's
+`Optional<T>` (Java 8) provided a stdlib alternative for
+return values: `Optional.empty()` plays the Null Object
+role without requiring a domain class. The two approaches
+have different applicability: `Optional` is for values that
+might be absent (return types); Null Object is for objects
+that must always be callable (dependencies and collaborators).
+Modern languages (Kotlin, Swift, Rust) with null safety
+built into the type system reduce Null Object's need by
+making the null case explicit at the type level.
 
 ---
 
@@ -476,11 +493,67 @@ public BigDecimal apply(BigDecimal cost) {
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Replace null checks with default behaviour. Provide an
+implementation that performs no-op or safe default logic
+when a real implementation is absent. Callers are freed
+from knowing whether the object is "real" or "absent."
+
+**Where else this pattern appears:**
+- **`Collections.emptyList()`:** Returns a list that is
+  always iterable, always has `size() == 0`, and always
+  throws on mutations -- a Null Object for lists.
+- **`NoOpLogger` (logging):** A logger that discards all
+  messages -- used in tests to silence output without
+  changing the code under test.
+- **`VoidFuture`:** A `CompletableFuture` that is already
+  completed with no value -- used to satisfy APIs that
+  require a `Future` but where no async work is actually needed.
+
+---
+
+### 💡 The Surprising Truth
+
+`Optional<T>` in Java is not a Null Object -- it is a wrapper
+that _represents the possible absence_ of a value. The critical
+difference: Null Object replaces the null _entirely_ with a
+callable object; `Optional` still requires the caller to
+check for absence (via `isPresent()` or `ifPresent()`). Using
+`Optional` where Null Object is appropriate still distributes
+null-checking logic to callers, just with a different syntax.
+The correct choice depends on whether absence should be
+_handled_ by the caller (use `Optional`) or _ignored_ by the
+caller with safe default behaviour (use Null Object).
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A `NotificationService` has a `NotificationStrategy` dependency. In tests, a `NullNotificationStrategy` is injected - it records calls but sends nothing. In production, `EmailNotificationStrategy` is injected. A new requirement: "If notification fails, silently skip it." A developer implements this by catching exceptions in the caller: `try { strategy.notify(user, msg); } catch (Exception e) { log.warn("Skipped"); }`. Another developer says the correct fix is to wrap the real strategy in an `ErrorSuppressingNotificationProxy`. Evaluate both approaches: when is each correct, and when does each create a new problem?
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** A team has 40 services, all returning `null` for optional collaborators and relying on defensive null checks scattered throughout. They want to refactor to Null Objects. The refactoring has a subtle risk: some null returns are intentional "valid absence" (Null Object appropriate), but some are "programming error - should never be null" (Null Object would hide the bug). Describe a systematic approach to distinguished the two categories before applying the pattern, using only code analysis (not asking the original authors).
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A payment system uses Null Object:
+`NoOpFraudDetector implements FraudDetector` replaces null
+when fraud detection is disabled. A security audit requires
+that every place fraud detection is skipped must be audited.
+This means the no-op cannot truly be silent. Describe how
+to modify the Null Object to satisfy the audit requirement
+while preserving the caller's ignorance of which implementation
+is active.
+
+*Hint: The Null Object is allowed to do *something* -- it
+just shouldn't represent absence of behaviour. An auditing
+no-op that logs "fraud check skipped" is still a valid
+Null Object. Consider the Decorator pattern (DPT-015)
+wrapping the Null Object.*

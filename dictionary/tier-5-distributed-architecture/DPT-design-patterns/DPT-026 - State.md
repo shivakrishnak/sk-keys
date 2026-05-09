@@ -8,22 +8,26 @@ permalink: /design-patterns/state/
 id: DPT-026
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Object-Oriented Programming (OOP), Polymorphism, Interface, Finite State Machine
-used_by: Workflow Engines, Game AI, Order Processing, UI Component Lifecycle
-related: Strategy, Command, Memento, Finite State Machine
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - bestpractice
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-026 - State
 
 ⚡ TL;DR - State lets an object change its behaviour completely based on its internal state, as if the object changed its class.
 
-| #786 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-026 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Polymorphism, Interface, Finite State Machine | |
 | **Used by:** | Workflow Engines, Game AI, Order Processing, UI Component Lifecycle | |
@@ -41,6 +45,19 @@ When a new `HELD_FOR_FRAUD_REVIEW` status is added, the developer must find and 
 
 **THE INVENTION MOMENT:**
 This is exactly why the State pattern was created. Each state is an object. State-specific behaviour lives in the state object, not in the context. Adding a new state means adding a new class - not modifying existing ones.
+
+**EVOLUTION:**
+State was used in early game development and protocol
+implementation for explicit finite state machine modelling.
+Java's `enum` with abstract methods (Java 5+) became the
+idiomatic State implementation, replacing subclass-heavy
+structures. Modern event-driven systems use state machines
+at the infrastructure level: Spring State Machine framework,
+AWS Step Functions, and Akka FSM. XState (JavaScript) made
+state machines mainstream in frontend development.
+Saga patterns in distributed systems use explicit state
+machines to track long-running transaction phases -- a
+scaled-up State pattern.
 
 ---
 
@@ -457,11 +474,65 @@ public class DeliveredState implements OrderState {
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+When an object's behaviour changes based on its current
+state, make the states explicit objects rather than
+scattering `if/switch` statements throughout the codebase.
+The state graph becomes the design documentation.
+
+**Where else this pattern appears:**
+- **TCP connection lifecycle:** A TCP socket transitions through
+  LISTEN → SYN_SENT → ESTABLISHED → CLOSE_WAIT → CLOSED states,
+  each with different legal operations -- the kernel implements
+  this as an explicit state machine.
+- **Order lifecycle (e-commerce):** PENDING → PAID → FULFILLING
+  → SHIPPED → DELIVERED → RETURNED -- each state permits
+  different actions (cancel is allowed in PENDING, not SHIPPED).
+- **CI/CD pipeline stages:** QUEUED → RUNNING → PASSED/FAILED →
+  CANCELLED -- the pipeline engine enforces valid transitions
+  and triggers appropriate webhooks per state.
+
+---
+
+### 💡 The Surprising Truth
+
+Every `enum` in Java with abstract methods is an implicit
+State pattern implementation. Java's enum can define abstract
+methods that each enum constant overrides -- this is exactly
+the State pattern's "each ConcreteState overrides the
+behavior" mechanism. `enum Planet { MERCURY { double weight(
+double mass) {...} }, VENUS { double weight(double mass) {...}
+} }` is a State pattern where the "state" is the planet and
+"behaviour" is the gravity calculation. This means Java enums
+are both value types and State pattern implementations
+simultaneously -- a dual nature most Java developers overlook.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** An `Order` starts in PENDING state. Five concurrent HTTP requests all call `order.pay()` simultaneously on the same order in a Spring application. The State pattern is implemented correctly in memory with `CopyOnWriteArrayList` for thread safety. Describe exactly what can happen, why the State pattern alone is insufficient, and what exactly needs to happen at the database layer to make this correct.
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** The State pattern distributes state transition logic across many classes - `PendingState` knows it transitions to `PaidState`, and `PaidState` knows it transitions to `ShippedState`. A product manager asks: "Can I see the entire state machine in one diagram from reading the code?" Currently the answer is no. Design an alternative State pattern variant (using a different structure, not a different pattern) that makes the full state machine visible in one place, while keeping each state's behaviour in its own class.
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** An `Order` state machine has
+5 states and 8 transitions. A requirement says: any state
+transition must be logged with the old state, new state,
+timestamp, and actor ID. Using the State pattern as the
+base, describe two ways to add this cross-cutting logging
+requirement and compare the approaches on coupling and testability.
+
+*Hint: Option 1: add logging inside each concrete state's
+transition method. Option 2: use the State pattern with an
+AOP/Decorator layer around transitions. The Proxy and
+Decorator patterns (DPT-018, DPT-015) apply here.*

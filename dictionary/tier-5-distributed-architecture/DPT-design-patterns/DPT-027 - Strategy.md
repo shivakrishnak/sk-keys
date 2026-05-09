@@ -8,22 +8,26 @@ permalink: /design-patterns/strategy/
 id: DPT-027
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Object-Oriented Programming (OOP), Interface, Composition over Inheritance, Polymorphism
-used_by: Sorting Algorithms, Payment Processing, Compression, Routing Logic
-related: State, Template Method, Command, Decorator, Policy Pattern
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - bestpractice
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-027 - Strategy
 
 ⚡ TL;DR - Strategy defines a family of algorithms, encapsulates each one, and makes them interchangeable so behaviour can vary independently from the clients that use it.
 
-| #787 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-027 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Interface, Composition over Inheritance, Polymorphism | |
 | **Used by:** | Sorting Algorithms, Payment Processing, Compression, Routing Logic | |
@@ -41,6 +45,19 @@ Every new payment provider touches production code. A bug in the new PayPal inte
 
 **THE INVENTION MOMENT:**
 This is exactly why the Strategy pattern was created. Each payment algorithm is encapsulated behind a `PaymentStrategy` interface. `CheckoutService` holds a `PaymentStrategy` and calls `strategy.process(amount)`. Adding Apple Pay = adding a new class. Zero changes to checkout.
+
+**EVOLUTION:**
+Strategy was a cornerstone pattern for algorithm substitution
+in pre-lambda Java. The explicit Strategy interface + multiple
+ConcreteStrategy classes became boilerplate-heavy. Java 8
+(2014) transformed Strategy: a `Comparator` lambda replaces
+a `ComparatorStrategy` class; a sorting algorithm is passed
+as a `Function`. Template Method's static structure gave
+way to Strategy's dynamic composition. Modern Java uses
+`java.util.function` interfaces (Predicate, Function,
+Consumer) as single-method Strategy contracts. Spring's
+`ResourceLoader`, `TransactionManager`, and `CacheManager`
+are injectable Strategy interfaces used throughout the framework.
 
 ---
 
@@ -499,11 +516,67 @@ public ExportService(List<ExportStrategy> strategies) {
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Separate the algorithm (the how) from the context that uses
+it (the what). Express the algorithm as a first-class value
+that can be substituted at runtime. The context becomes
+algorithm-agnostic.
+
+**Where else this pattern appears:**
+- **Sorting algorithms:** `List.sort(comparator)` accepts any
+  `Comparator` -- `naturalOrder()`, `reverseOrder()`, or a
+  custom multi-key comparator. The list's sort mechanism is
+  the context; the comparator is the strategy.
+- **Payment processing:** A `PaymentService` accepts a
+  `PaymentStrategy` -- `StripeStrategy`, `PayPalStrategy`,
+  `CryptoStrategy`. The processing workflow is fixed; the
+  payment mechanism is substitutable.
+- **Compression utilities (zip, gzip, brotli):** I/O stream
+  compressors accept a `Codec` strategy -- the stream wrapper
+  is fixed; the compression algorithm is substituted per format.
+
+---
+
+### 💡 The Surprising Truth
+
+Java 8 lambdas made Strategy so lightweight that many developers
+stopped recognising it as a pattern. `list.sort((a, b) ->
+a.age - b.age)` is a Strategy pattern -- the lambda is a
+`Comparator` (concrete strategy), passed to `sort()` (the
+context). The pattern did not disappear with lambdas; it became
+invisible because Java's functional interface mechanism
+eliminates the need for an explicit strategy class. The lesson:
+patterns manifest differently in different language generations.
+In Java 14+, `switch` expressions with sealed interfaces can
+replace Strategy entirely for finite algorithm sets -- the
+pattern evolves as the language evolves.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A `PricingEngine` uses a `DiscountStrategy` to calculate order discounts. In production, 10 different strategies exist: seasonal, loyalty, bulk, employee, etc. Each order type requires a different combination of strategies (e.g., loyalty + bulk together). A single `DiscountStrategy` interface assumption breaks - you need to apply multiple strategies and combine results. Describe two design approaches that extend the Strategy pattern to support composable multi-strategy execution, and identify the trade-offs of each.
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** A `SortStrategy` is injected into a `DataGrid` component that displays thousands of rows. The strategy is currently selected at page-load time from user preferences. The PM now wants to make sorting strategy switchable in real-time as the user interacts. Trace the exact design change needed, describe the thread-safety risks when switching strategies on a live grid that is simultaneously being rendered, and prescribe the fix.
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A `ReportGenerator` uses Strategy
+to select between PDF, Excel, and HTML output formats. A new
+requirement: "generate all three formats simultaneously."
+Modify the design to support multi-strategy execution, then
+evaluate whether the result is still Strategy or has evolved
+into Composite, Observer, or a different pattern.
+
+*Hint: The First Principles CORE INVARIANTS say one strategy
+is selected at a time. When multiple strategies execute
+simultaneously, the context has changed -- map this to the
+Composite pattern (DPT-014) or a collection-based dispatcher.*

@@ -8,22 +8,26 @@ permalink: /design-patterns/memento/
 id: DPT-024
 category: Design Patterns
 difficulty: ★★★
-depends_on: Encapsulation, Object-Oriented Programming (OOP), Command, Immutability
-used_by: Undo/Redo Systems, State Snapshots, Transaction Rollback, Game Save States
-related: Command, Prototype, Iterator, State
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - deep-dive
   - architecture
   - java
   - bestpractice
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-024 - Memento
 
 ⚡ TL;DR - Memento captures and externalises an object's internal state so it can be restored to that state later, without violating encapsulation.
 
-| #784 | Category: Design Patterns | Difficulty: ★★★ |
+| DPT-024 | Category: Design Patterns | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | Encapsulation, Object-Oriented Programming (OOP), Command, Immutability | |
 | **Used by:** | Undo/Redo Systems, State Snapshots, Transaction Rollback, Game Save States | |
@@ -41,6 +45,18 @@ Every approach to external state capture compromises encapsulation. If the `Docu
 
 **THE INVENTION MOMENT:**
 This is exactly why the Memento pattern was created. The `Document` creates a `Memento` object - an opaque state container. Only `Document` knows how to interpret its own Memento (how to create it and how to restore from it). `DocumentHistory` stores Mementos but cannot read or modify state from them - it holds opaque objects. Encapsulation is preserved: the history system can save/restore state without ever seeing what the state contains.
+
+**EVOLUTION:**
+Memento was the definitive undo/redo pattern in pre-command-
+sourcing applications. As event sourcing and CQRS (2000s-2010s)
+matured, storing the full command history became the preferred
+alternative to storing state snapshots -- commands are more
+compact and composable. Memento survives in: browser History
+API (pushState/popState), game save states, text editor undo
+stacks (with snapshot compression), and IDE incremental build
+state caches. Persistent/immutable data structures (as in
+Clojure, Immutable.js) achieve Memento semantics structurally
+by sharing unchanged subtrees between snapshots.
 
 ---
 
@@ -506,11 +522,65 @@ Add Memento versioning. `restore(Memento m)` checks `m.version` and applies migr
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+When you need to restore an object to a previous state,
+capture the state as an opaque snapshot at the important
+checkpoint. Store the snapshots externally from the object.
+Restoration is simply replacing current state with the snapshot.
+
+**Where else this pattern appears:**
+- **Database SAVEPOINT/ROLLBACK:** A `SAVEPOINT` is a Memento --
+  a named snapshot of transaction state. `ROLLBACK TO SAVEPOINT`
+  restores the snapshot. The transaction log is the sequence of Mementos.
+- **Virtual machine snapshots (VMware, VirtualBox):** A VM
+  snapshot captures entire machine state -- RAM, disk, CPU
+  registers -- as a Memento. Restore = load the snapshot.
+- **Git stash:** `git stash` captures the working directory
+  state as a Memento; `git stash pop` restores it -- the
+  stash stack is a sequence of state snapshots.
+
+---
+
+### 💡 The Surprising Truth
+
+Git's entire data model is essentially a persistent Memento
+system. Every commit is a Memento (snapshot of the full repo
+tree state), not a diff -- Git stores the complete file tree
+hash at each commit, not the changes between commits.
+The apparent efficiency comes from content-addressable storage:
+unchanged files share the same blob object across commits.
+This is why `git checkout <commit>` works in O(1) -- it's
+restoring a Memento, not replaying a sequence of patches.
+Git's "time travel" capability is Memento operated at
+version control system scale.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A game "CheckpointSystem" uses Memento to save the player's full game state (position, inventory, health, quest state). The inventory contains 500 items; each item has mutable attributes (weapon durability degrades). On save, the CheckpointSystem calls `game.save()` which creates a Memento storing references to the 500 item objects (not copies). The player loads the checkpoint and continues playing - item durability keeps degrading. Two game sessions later, the checkpoint shows items at their CURRENT (degraded) values, not their values AT SAVE TIME. Trace the exact object reference chain that causes this, prove it with a minimal code example, and provide the one-line fix.
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** A cloud database service uses Memento to implement point-in-time recovery. Every 5 minutes, a full database state Memento is serialised and stored in S3. The database has 1 TB of data. Calculate the storage cost of 30 days of 5-minute Mementos. Then redesign the snapshot strategy to achieve the same recovery objective (restore to any 5-minute interval in the last 30 days) with at least 90% less storage - without changing the recovery interface.
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A photo editor stores Mementos
+for undo. After 50 edits, the undo stack holds 50 full-
+resolution image snapshots (50 × 10 MB = 500 MB of RAM).
+The user closes and reopens the app; the undo history is lost.
+Design a persistence strategy for the Memento stack that
+reduces memory, survives restart, and maintains reasonable
+undo performance.
+
+*Hint: The WHAT CHANGES AT SCALE section addresses snapshot
+size. Consider delta compression between snapshots vs.
+periodic full snapshots (the same strategy databases use
+for transaction logs + checkpoints).*

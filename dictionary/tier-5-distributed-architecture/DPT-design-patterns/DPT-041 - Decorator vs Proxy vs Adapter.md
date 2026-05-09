@@ -8,22 +8,26 @@ permalink: /design-patterns/decorator-vs-proxy-vs-adapter/
 id: DPT-041
 category: Design Patterns
 difficulty: ★★★
-depends_on: Decorator, Proxy, Adapter, Object-Oriented Programming (OOP), Interface
-used_by: Framework Design, AOP, API Integration, Cross-Cutting Concerns
-related: Decorator, Proxy, Adapter, Bridge, Facade, Wrapper Pattern
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - deep-dive
   - architecture
   - java
   - tradeoff
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-041 - Decorator vs Proxy vs Adapter
 
 ⚡ TL;DR - Decorator adds behaviour, Proxy controls access, Adapter changes interface - all wrap an object but for fundamentally different reasons.
 
-| #801 | Category: Design Patterns | Difficulty: ★★★ |
+| DPT-041 | Category: Design Patterns | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | Decorator, Proxy, Adapter, Object-Oriented Programming (OOP), Interface | |
 | **Used by:** | Framework Design, AOP, API Integration, Cross-Cutting Concerns | |
@@ -41,6 +45,20 @@ Without a clear mental model distinguishing the three, developers choose structu
 
 **THE INVENTION MOMENT:**
 This is why understanding the distinction between all three matters. The intent - not the structure - defines the pattern.
+
+**EVOLUTION:**
+The confusion between Decorator, Proxy, and Adapter persisted
+through the GoF era partly because all three use the "wrap an
+object" technique. As Java frameworks matured, each pattern
+found its canonical home: Proxy in Spring AOP (bytecode-generated
+proxies), Decorator in I/O streams and validation pipelines,
+Adapter in JDBC driver layers and legacy integrations. The
+confusion was further reduced by naming conventions: Spring
+classes with "Proxy" or "Interceptor" are Proxies; those with
+"Wrapper" or "Decorator" are Decorators; those with "Adapter"
+or "Bridge" are Adapters. Java records (Java 16+) and sealed
+classes make adapter and decorator patterns detectable at the
+type level through implements/extends analysis.
 
 ---
 
@@ -451,11 +469,66 @@ AopUtils.getTargetClass(bean) // reveals proxy layers
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Three patterns use the same object-wrapping structure but
+serve distinct purposes. The intent determines which pattern
+applies -- not the implementation. When choosing between them,
+start with intent: am I changing an interface (Adapter),
+adding behaviour (Decorator), or controlling access (Proxy)?
+
+**Where else this pattern appears:**
+- **Network proxies, VPNs, CDNs:** All are Proxy -- they forward
+  to the same ultimate destination, with added access control
+  (VPN) or caching (CDN).
+- **Data format converters (CSV->JSON):** Adapter -- aligns
+  incompatible data formats; the content is the same, the
+  representation is translated.
+- **Middleware pipelines (Express.js, Spring filters):** Decorator
+  -- each middleware adds a layer of behaviour to the request
+  handling; the ultimate handler is reached at the bottom.
+
+---
+
+### 💡 The Surprising Truth
+
+All three patterns (Decorator, Proxy, Adapter) are structurally
+identical in many static analysis tools -- they all show as "a
+class holding a reference to another class of the same type."
+This means automated pattern detection tools frequently
+misclassify them. The only reliable differentiator is **intent**:
+the question to ask is "what would break if I removed this wrapper?"
+If the client would fail to call the wrapped object (Adapter),
+if the wrapped object would lose added behaviour (Decorator),
+or if access policy would be bypassed (Proxy), you have your
+answer. Pattern identity is semantic, not structural.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A `SecurityWrapper` class wraps a `UserService`. It implements the same `UserService` interface. It checks the current user's role before any method call. If the user is admin, it calls the real service. If not, it throws `AccessDeniedException`. A manager asks: "Can we add multiple SecurityWrappers for different role levels?" Classify this wrapper (Decorator/Proxy/Adapter), justify the classification using all three invariants from the First Principles section, and explain why stacking multiple SecurityWrappers may or may not be safe.
 
+*Hint: Look at the First Principles section for the core invariants and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** Java's `Collections.unmodifiableList(list)` returns an `UnmodifiableList` that wraps the original list. `get()`, `size()`, and `iterator()` delegate to the inner list. `add()`, `remove()`, and `set()` throw `UnsupportedOperationException`. Classify this wrapper - Decorator, Proxy, or Adapter? Justify using all three pattern invariants. If a debate arises about whether this is Proxy or Decorator, identify the precise invariant where both arguments have merit and explain which classification is most accurate and why.
 
+
+
+*Hint: The Comparison Table and Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A code review finds a class
+`LoggingPaymentGateway implements PaymentGateway` that wraps
+another `PaymentGateway`, logs every `charge()` call, and
+also converts between the internal `Money` type and the
+gateway's `BigDecimal` type. Classify this as Decorator,
+Adapter, Proxy, or a combination of patterns, and recommend
+whether these concerns should be in one class or separated.
+
+*Hint: The Comparison Table in this entry maps intent to
+each pattern. Two separate responsibilities (logging = Decorator;
+type conversion = Adapter) in one class violates Single
+Responsibility -- recommend separation.*

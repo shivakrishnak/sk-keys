@@ -8,22 +8,26 @@ permalink: /design-patterns/service-locator/
 id: DPT-038
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Object-Oriented Programming (OOP), Dependency Injection Pattern, Interface, IoC
-used_by: Legacy Systems, Plugin Frameworks, OSGi, JavaEE JNDI Lookup
-related: Dependency Injection Pattern, Factory Method, Registry Pattern, IoC Container
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - antipattern
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-038 - Service Locator
 
 ⚡ TL;DR - Service Locator is a central registry that provides a global access point to look up services by name or type - widely considered an anti-pattern compared to Dependency Injection.
 
-| #798 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-038 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Dependency Injection Pattern, Interface, IoC | |
 | **Used by:** | Legacy Systems, Plugin Frameworks, OSGi, JavaEE JNDI Lookup | |
@@ -41,6 +45,18 @@ Direct instantiation couples the class to its concrete dependencies. Unit tests 
 
 **THE INVENTION MOMENT:**
 This is why the Service Locator pattern was created. A central `ServiceLocator` registry holds service instances. Classes request what they need: `ServiceLocator.get(PaymentGateway.class)`. The registry decides which concrete implementation to provide. This was the dominant dependency management pattern before Dependency Injection frameworks became mainstream.
+
+**EVOLUTION:**
+Service Locator was the dominant dependency management pattern
+before IoC containers matured (circa 1998-2004). Rod Johnson's
+"Expert One-on-One J2EE Design and Development" (2002) and
+Martin Fowler's "Inversion of Control Containers and the
+Dependency Injection Pattern" (2004) systematically argued that
+DI was superior to Service Locator for testability and explicit
+dependencies. Spring popularised constructor injection (2003-2005),
+effectively retiring Service Locator as a primary pattern. It
+survives in OSGi container contexts and legacy code bases where
+refactoring to DI is impractical.
 
 ---
 
@@ -456,11 +472,66 @@ grep "ServiceLocator.register\|@Bean" src/ -rn
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Centralise service registration and lookup in one registry.
+This removes the creation knowledge from callers -- callers
+ask for a service by name or type rather than calling `new`.
+
+**Where else this pattern appears:**
+- **JNDI (Java Naming and Directory Interface):** Application
+  servers publish DataSources, EJBs, and JMS queues to JNDI;
+  clients look them up by name string. JNDI is Service Locator
+  at Java EE scale.
+- **DNS:** DNS is a global Service Locator for network services --
+  clients ask "where is service X?" by name; DNS returns the
+  address. Service Locator's failure mode (hidden dependency) is
+  also DNS's: remove a record, everything silently breaks.
+- **OSGi service registry:** Components publish services to the
+  OSGi service registry; consumers look them up dynamically --
+  a type-safe Service Locator for modular Java applications.
+
+---
+
+### 💡 The Surprising Truth
+
+Martin Fowler did not declare Service Locator an anti-pattern in
+his 2004 article -- he said it was "less preferred" than DI. The
+conflation of "less preferred" with "anti-pattern" led to its
+wholesale removal from codebases that could have reasonably used
+it. Service Locator remains the correct pattern in specific
+contexts: plugin architectures where dependencies are not known
+at compile time, OSGi bundles with dynamic service binding, and
+test harnesses that need to replace services without DI framework
+support. The pattern is a legitimate tool; its overuse as a
+substitute for DI is the actual anti-pattern.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A legacy application uses Service Locator extensively. A team wants to migrate to Spring DI incrementally (one class at a time). `LegacyOrderService` uses `ServiceLocator.get(PaymentGateway.class)` and is not yet migrated. `ModernPaymentGateway` is now managed by Spring as a `@Bean`. Describe the exact coexistence strategy: how do you ensure `LegacyOrderService` receives the Spring-managed `ModernPaymentGateway` from the locator, and what risk does this introduce during the transition period?
 
+*Hint: Look at the First Principles section for the core invariants and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** Both Service Locator and Dependency Injection are implementations of Inversion of Control. A developer argues: "Service Locator achieves better modularity because the class isn't coupled to the specific implementations - it just asks for what it needs." A second developer argues: "DI achieves better modularity for a different reason." Who is right in what sense? Identify the precise technical claim where each developer is correct, and identify the one testability metric where DI is objectively superior to Service Locator in all cases.
 
+
+
+*Hint: The Comparison Table and Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** An OSGi-based plugin system uses
+Service Locator: plugins register services on startup;
+the host application looks them up by interface type. A new
+requirement: multiple implementations of the same service
+type must coexist (e.g., two `PaymentGateway` implementations).
+Describe the Service Locator API changes needed to support
+this and compare this with how Spring's `@Autowired List<T>`
+handles the same scenario.
+
+*Hint: The Comparison Table's Service Locator vs DI row is
+the relevant starting point. Consider qualifier-based
+selection vs. collection injection as the two models.*

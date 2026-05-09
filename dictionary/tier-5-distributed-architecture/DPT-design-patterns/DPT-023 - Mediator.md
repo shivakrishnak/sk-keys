@@ -8,22 +8,26 @@ permalink: /design-patterns/mediator/
 id: DPT-023
 category: Design Patterns
 difficulty: ★★★
-depends_on: Object-Oriented Programming (OOP), Interface, Coupling, Observer
-used_by: Chat Systems, Air Traffic Control, UI Component Coordination, Event Bus
-related: Observer, Facade, Command, Event Bus Pattern
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - deep-dive
   - architecture
   - java
   - distributed
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-023 - Mediator
 
 ⚡ TL;DR - Mediator centralises complex communication between many objects so they communicate through a shared mediator instead of directly with each other.
 
-| #783 | Category: Design Patterns | Difficulty: ★★★ |
+| DPT-023 | Category: Design Patterns | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Interface, Coupling, Observer | |
 | **Used by:** | Chat Systems, Air Traffic Control, UI Component Coordination, Event Bus | |
@@ -41,6 +45,18 @@ With 10 components each potentially connected to 9 others, the connections form 
 
 **THE INVENTION MOMENT:**
 This is exactly why the Mediator pattern was created. Each component knows only the Mediator. When `CountryDropdown` changes, it tells the Mediator: `mediator.notify(this, "countryChanged", "US")`. The Mediator contains all the coordination logic: update state dropdown, reset zip validation, update phone code, disable submit. Components are decoupled from each other - they only know the Mediator. Adding a new component: register it with the Mediator, add its coordination logic there. Zero changes to existing components.
+
+**EVOLUTION:**
+Mediator's classical form -- centralising interactions between
+UI components -- declined as reactive and data-binding frameworks
+(Angular, React) provided declarative state management. The
+pattern's core concept migrated to: message brokers (Kafka,
+RabbitMQ as infrastructure mediators), CQRS command buses
+(Spring's `CommandGateway`), and event buses. Redux (React
+state management) is a Mediator: the store mediates between
+actions and reducers, ensuring all state changes go through
+one central point. Spring's `ApplicationEventPublisher` is
+a built-in Mediator for intra-application events.
 
 ---
 
@@ -505,11 +521,67 @@ Add `mediator.deregister(oldComponent)` when replacing components. Use weak refe
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+When components or services need to communicate in complex
+many-to-many patterns, introduce a central coordinator that
+owns the communication logic. Components speak only to the
+mediator; the mediator knows the routing.
+
+**Where else this pattern appears:**
+- **Air traffic control (ATC):** Aircraft communicate only with
+  ATC, not with each other -- the controller mediates all
+  routing decisions, preventing collision from uncoordinated
+  direct communication.
+- **Message brokers (Kafka):** Producers and consumers don't
+  know about each other -- the broker mediates asynchronous
+  delivery, partitioning, and offset management.
+- **Redux store:** React components dispatch actions to the
+  store (mediator); the store calls reducers and notifies
+  subscribers -- no component communicates directly with another.
+
+---
+
+### 💡 The Surprising Truth
+
+The Mediator pattern and the Service Bus / Message Broker
+are architecturally identical -- the difference is purely one
+of scale. A Mediator is a class-level coordinator inside a
+process; a Service Bus is a network-level coordinator between
+processes. This means teams that adopt an ESB (Enterprise
+Service Bus) or message broker have, knowingly or not, scaled
+the Mediator pattern to infrastructure. The well-known problem
+with enterprise ESBs ("the ESB becomes a God Object") is
+the distributed version of Mediator's own failure mode:
+the mediator accumulates too much logic and becomes a
+bottleneck.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A gaming lobby system uses Mediator: a `LobbyMediator` coordinates `PlayerSlot` components. When a player joins, the Mediator marks a slot as taken, checks if the lobby is full, starts a countdown, and notifies the host. With 100 lobbies active simultaneously, each with its own `LobbyMediator` instance, and 10,000 join/leave events per second, profile the coordination overhead. Then describe an architecture where the Mediator's coordination logic is stateless and shared across all lobby instances - reducing memory from N mediator instances to 1, without compromising per-lobby state isolation.
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** A checkout form uses Mediator for component coordination. The product team wants to A/B test two coordination behaviours: Variant A (standard flow) vs Variant B (coupon code field triggers early price recalculation). Without the Mediator pattern, this requires conditional code in each affected component. With Mediator, describe exactly which files change, what the minimum code change is, and how the A/B test flag would be propagated into the Mediator to switch between coordination strategies at runtime.
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A monolith uses an in-process
+`EventBus` (Mediator) for all inter-module communication.
+The team is splitting the monolith into microservices. They
+must decide: (1) keep the event bus in-process within each
+service, (2) use Kafka as an inter-service event bus, or
+(3) use direct REST calls. State the decision criteria and
+map each approach to the correct interaction pattern.
+
+*Hint: The WHAT CHANGES AT SCALE section addresses this
+directly. Consider what happens to the Mediator when the
+"colleagues" are on different servers with network partitions
+between them.*

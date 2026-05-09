@@ -8,22 +8,26 @@ permalink: /design-patterns/double-checked-locking/
 id: DPT-031
 category: Design Patterns
 difficulty: ★★★
-depends_on: Singleton, Java Memory Model (JMM), volatile, Happens-Before, Concurrency
-used_by: Singleton Pattern, Lazy Initialisation, Cache Initialisation, JVM Internals
-related: Singleton, volatile, AtomicReference, Initialization-on-Demand Holder, Lazy Loading
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - deep-dive
   - java
   - concurrency
   - internals
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-031 - Double-Checked Locking
 
 ⚡ TL;DR - Double-Checked Locking initialises a shared resource lazily with minimal synchronisation overhead by checking for null twice - once without a lock and once inside a lock.
 
-| #791 | Category: Design Patterns | Difficulty: ★★★ |
+| DPT-031 | Category: Design Patterns | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | Singleton Pattern, Java Memory Model (JMM), volatile, Happens-Before, Concurrency | |
 | **Used by:** | Singleton Pattern, Lazy Initialisation, Cache Initialisation, JVM Internals | |
@@ -41,6 +45,17 @@ Profiling shows 30% of request time is spent waiting on `getInstance()` lock, ev
 
 **THE INVENTION MOMENT:**
 This is exactly why Double-Checked Locking was created. The first check (outside the lock) handles the common case: after initialisation, return immediately with no locking. Only the uncommon case (first-time initialisation) pays the synchronisation cost.
+
+**EVOLUTION:**
+Double-Checked Locking was infamously listed as a "broken pattern"
+in Java before the Java Memory Model (JMM) was specified in Java 5
+(JSR-133, 2004). Pre-Java 5 JVMs could reorder instructions in ways
+that exposed partially-constructed objects. The `volatile` keyword
+semantics were tightened in Java 5 to prevent this, making DCL safe
+specifically when the field is `volatile`. The debate was so
+significant that Bill Pugh's "Initialization-on-demand Holder" was
+proposed as the canonical thread-safe lazy singleton that avoids
+DCL entirely. Modern IDEs flag DCL without `volatile` as a warning.
 
 ---
 
@@ -474,11 +489,63 @@ public static Singleton getInstance() {
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Separate the fast-path check from the slow-path critical section.
+A null check without locking handles 99.9% of cases; the lock only
+guards the rare creation path. Pay the synchronisation cost only
+when necessary.
+
+**Where else this pattern appears:**
+- **CPU branch prediction:** Processors predict common code paths
+  (the "not null" fast path) and only stall for mispredictions.
+  The principle is identical: optimize for the common case, pay
+  cost for the exceptional case.
+- **Database optimistic locking:** Read without locking (fast path);
+  validate and retry with a lock only on conflict (slow path).
+- **ReentrantReadWriteLock:** Multiple concurrent reads (fast path,
+  no exclusive lock) vs. single-thread write (slow path, exclusive).
+  Read-heavy workloads spend most time in the lock-free path.
+
+---
+
+### 💡 The Surprising Truth
+
+Double-Checked Locking was broken in Java for 9 years (1995-2004)
+-- every Java textbook that showed DCL before Java 5 showed broken
+code. The bug was subtle: the JVM could write the pointer to the
+new object before the object's fields were initialised, allowing
+Thread B to see a non-null but uninitialised object. This was a
+Java Memory Model hole, not a DCL design flaw. When JMM was fixed
+in Java 5 with `volatile` semantics, DCL became safe -- but the
+pattern's reputation, and the "Bill Pugh Holder" alternative, had
+already displaced it in most style guides.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A team implements a `ConfigurationManager` singleton with correct DCL (using `volatile`). The class is loaded by a custom ClassLoader in a plugin framework. Each plugin gets its own ClassLoader. Explain what happens to the "singleton guarantee" in this scenario, trace the exact mechanism by which multiple instances can be created, and describe what change to the design would actually enforce single-instance semantics in a multi-ClassLoader environment.
 
+*Hint: Look at the First Principles section for the core invariants and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** A developer argues: "I'll skip volatile and just flush the CPU cache manually using an `AtomicInteger` increment before returning the instance - that provides the same memory visibility." Is this correct? Trace the exact guarantee provided by `AtomicInteger.incrementAndGet()` vs `volatile`, and identify whether the developer's approach correctly prevents the partial construction visibility problem. If it doesn't, explain exactly why.
 
+
+
+*Hint: The Comparison Table and Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A team reviews a DCL implementation
+and finds the `volatile` keyword was removed "to improve
+performance" in a recent refactoring. The JVM is Java 11. The
+code works correctly in all tests. Explain: (1) why tests are
+insufficient to detect the bug, (2) what CPU architecture the
+bug manifests on most reliably, and (3) the correct fix.
+
+*Hint: The How It Works section and Failure Modes cover the
+volatile visibility issue. The bug requires two concurrent
+threads AND a JVM/CPU that reorders stores -- x86 rarely
+reorders, ARM does. That's why it "works in testing."*

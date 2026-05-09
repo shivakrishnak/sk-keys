@@ -26,9 +26,10 @@ permalink: /dst/failure-first-thinking/
 
 ⚡ TL;DR - Failure-first thinking is the discipline of designing distributed systems by starting with failure scenarios rather than the happy path — systems designed failure-first are resilient by construction, not by accident.
 
-| DST-075 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | DST-001, DST-002, DST-004, DST-042, DST-043 | |
+| DST-075         | Category: Distributed Systems               | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------ | :-------------- |
+| **Depends on:** | DST-001, DST-002, DST-004, DST-042, DST-043 |                 |
+
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
@@ -104,6 +105,7 @@ is automatically correct. The reverse is not true.
 ### 🔩 First Principles Explanation
 
 **FAILURE-FIRST DESIGN CHECKLIST (per component):**
+
 ```
 For every service, dependency, and operation:
 
@@ -140,6 +142,7 @@ For every service, dependency, and operation:
 ```
 
 **APPLICATION TO EVERY OUTBOUND CALL:**
+
 ```java
 // WRONG: happy path first
 public Order placeOrder(OrderRequest req) {
@@ -175,6 +178,7 @@ You are designing a notification service that sends
 SMS via a third-party provider.
 
 **HAPPY-PATH-FIRST DESIGN:**
+
 ```
 notificationService.send(userId, message)
   -> smsProvider.send(phone, message)
@@ -186,6 +190,7 @@ What could go wrong?
 ```
 
 **FAILURE-FIRST DESIGN:**
+
 ```
 Failure modes:
   1. smsProvider: timeout (network issue)
@@ -225,6 +230,7 @@ is the simplest path through this design.
 > who skip briefings have higher complication rates.
 
 **Element mapping:**
+
 - Surgery = distributed operation
 - Complication = failure mode
 - Briefing = failure-first design session
@@ -271,6 +277,7 @@ Chaos engineering is a culture change tool as much
 as a testing tool.
 
 **Expert Thinking Cues:**
+
 - Design review question: "What is the failure mode of this service call?"
 - Every call without a timeout is a bug waiting to express itself.
 - The most dangerous failures are silent: no error, just wrong data.
@@ -280,6 +287,7 @@ as a testing tool.
 ### ⚙️ How It Works (Mechanism)
 
 **FMEA table for a service design:**
+
 ```
 | Component       | Failure Mode   | Impact  | P | Handling          |
 |-----------------|---------------|---------|---|-------------------|
@@ -300,6 +308,7 @@ Handling = designed response
 ### 🔄 The Complete Picture - End-to-End Flow
 
 **Failure-first design process:**
+
 ```
 System design kickoff:               <- YOU ARE HERE
   |
@@ -335,24 +344,24 @@ Chaos engineering:
 
 ### ⚖️ Comparison Table
 
-| Approach | When Failure Design Happens | Discovery Cost | Resilience Quality |
-|---|---|---|---|
-| Happy-path-first | After production incident | Very High | Low (patchy) |
-| Failure-first | At design time | Low | High (by construction) |
-| Chaos engineering | After deployment | Medium | Medium (finding gaps) |
-| FMEA at design review | At design review | Low | High (systematic) |
+| Approach              | When Failure Design Happens | Discovery Cost | Resilience Quality     |
+| --------------------- | --------------------------- | -------------- | ---------------------- |
+| Happy-path-first      | After production incident   | Very High      | Low (patchy)           |
+| Failure-first         | At design time              | Low            | High (by construction) |
+| Chaos engineering     | After deployment            | Medium         | Medium (finding gaps)  |
+| FMEA at design review | At design review            | Low            | High (systematic)      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Failure-first is pessimistic" | It is realistic: distributed systems fail constantly at scale |
-| "Chaos engineering tests failure-first" | Chaos tests that failure handling works; failure-first designs the handling before chaos |
-| "Adding retry handles all failures" | Retry without idempotency causes duplicate operations; retry without circuit breaker causes cascading |
-| "Happy-path-first, then add resilience" | Resilience added to existing code is always patchier than resilience designed from scratch |
-| "Cloud providers handle failures" | Cloud SLA covers availability, not per-call reliability; fallacies of distributed computing apply in the cloud |
+| Misconception                           | Reality                                                                                                        |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| "Failure-first is pessimistic"          | It is realistic: distributed systems fail constantly at scale                                                  |
+| "Chaos engineering tests failure-first" | Chaos tests that failure handling works; failure-first designs the handling before chaos                       |
+| "Adding retry handles all failures"     | Retry without idempotency causes duplicate operations; retry without circuit breaker causes cascading          |
+| "Happy-path-first, then add resilience" | Resilience added to existing code is always patchier than resilience designed from scratch                     |
+| "Cloud providers handle failures"       | Cloud SLA covers availability, not per-call reliability; fallacies of distributed computing apply in the cloud |
 
 ---
 
@@ -379,6 +388,7 @@ Chaos engineering:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[DST-001 - What Is a Distributed System]]
 - [[DST-002 - Why Distribution Is Hard]]
 - [[DST-004 - The Fallacies of Distributed Computing]]
@@ -386,9 +396,11 @@ Chaos engineering:
 - [[DST-043 - Bulkhead]]
 
 **Builds On This (learn these next):**
+
 - [[DST-068 - Failure Domain Design]]
 
 **Alternatives / Comparisons:**
+
 - Chaos engineering (tests failure-first assumptions after implementation)
 
 ---
@@ -413,6 +425,7 @@ Chaos engineering:
 ```
 
 **If you remember only 3 things:**
+
 1. Every external call has failure modes; design them before implementing the happy path.
 2. The most dangerous failures are silent: no error thrown, but wrong data returned or action not taken.
 3. FMEA (Failure Mode and Effects Analysis) is the systematic tool: enumerate, rate, design, verify.
@@ -435,6 +448,7 @@ failure, design rollback), and team process (assume
 members leave, design knowledge transfer).
 
 **Where else this pattern appears:**
+
 - **Security design** — threat modelling: enumerate all attacker actions before designing defences
 - **Data migrations** — design rollback before executing forward migration
 - **Deployment pipelines** — design rollback and canary failure criteria before deploying
@@ -468,7 +482,7 @@ to a live production database with 10M rows and rolling
 deployments where old application code must coexist
 with the new schema during the rollout window.
 
-*Hint:* Old code doesn't write the new column -> NOT NULL
+_Hint:_ Old code doesn't write the new column -> NOT NULL
 violation. Migration takes > 30s -> table locked, all
 writes blocked. Rollback: column added, hard to remove
 if data written. Failure-first design: expand-contract
@@ -481,7 +495,7 @@ benefit outweigh the risk of causing an actual customer-
 facing incident from the injected failure? How do they
 ensure the chaos doesn't violate their own SLA?
 
-*Hint:* Chaos Monkey is run only in business hours
+_Hint:_ Chaos Monkey is run only in business hours
 (engineers available to respond). Designed failures should
 have zero customer impact (if failure-first design is
 correct). If Chaos Monkey causes an outage: failure-first
@@ -496,7 +510,7 @@ failure rate." Use expected value to refute or support
 this argument. At what failure rate does failure-first
 design become unjustified by expected value calculation?
 
-*Hint:* Expected value = probability × impact. 0.1% failure
+_Hint:_ Expected value = probability × impact. 0.1% failure
 rate × $1M incident cost = $1,000 expected loss. If
 failure-first design costs 8 hours ($800 engineer time),
 the expected value is positive even at 0.1% failure rate.

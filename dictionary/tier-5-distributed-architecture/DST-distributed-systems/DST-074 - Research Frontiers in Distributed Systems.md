@@ -26,11 +26,11 @@ permalink: /dst/research-frontiers-in-distributed-systems/
 
 ⚡ TL;DR - The current research frontiers in distributed systems are: CRDTs (avoid coordination entirely), geo-distributed consensus (reduce cross-region latency), deterministic simulation testing (find bugs impossible to find in real systems), and FoundationDB-style verified designs.
 
-| DST-074 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | DST-060, DST-071, DST-073 | |
-| **Used by:** | | |
-| **Related:** | DST-060, DST-071, DST-073 | |
+| DST-074         | Category: Distributed Systems | Difficulty: ★★★ |
+| :-------------- | :---------------------------- | :-------------- |
+| **Depends on:** | DST-060, DST-071, DST-073     |                 |
+| **Used by:**    |                               |                 |
+| **Related:**    | DST-060, DST-071, DST-073     |                 |
 
 ---
 
@@ -112,6 +112,7 @@ development fundamentally changes.
 ### 🔩 First Principles Explanation
 
 **FRONTIER 1: COORDINATION AVOIDANCE (CRDTs + CALM)**
+
 ```
 CALM Theorem (Consistency As Logical Monotonicity):
   A program can be computed consistently without
@@ -136,6 +137,7 @@ CRDT types:
 ```
 
 **FRONTIER 2: GEO-DISTRIBUTED CONSENSUS**
+
 ```
 Raft/Paxos commit latency (2 round trips minimum):
   1 round trip = leader -> quorum (100ms cross-continent)
@@ -159,6 +161,7 @@ Calvin (2012, current: RAFT + deterministic execution):
 ```
 
 **FRONTIER 3: DETERMINISTIC SIMULATION TESTING**
+
 ```
 Traditional testing limitations:
   Real network: timing non-deterministic; hard to reproduce
@@ -186,6 +189,7 @@ Tiger Beetle (2022):
 ```
 
 **FRONTIER 4: VERIFIABLE DISTRIBUTED SYSTEMS**
+
 ```
 TLA+ (already production at AWS): see DST-073
 Jepsen (Kyle Kingsbury):
@@ -214,6 +218,7 @@ You're building a collaborative document editor (like
 Google Docs). Multiple users type simultaneously.
 
 **APPLYING RESEARCH FRONTIERS:**
+
 ```
 Frontier 1 (CRDTs):
   Character insertion/deletion = sequence CRDT (RGA)
@@ -256,6 +261,7 @@ Frontier 4 (TLA+):
 > mode before building.
 
 **Element mapping:**
+
 - Rope bridge = ad-hoc coordination (unsafe)
 - Suspension bridge = Raft/Paxos (correct; single leader)
 - Cable-stayed = EPaxos (multiple anchors; better latency)
@@ -305,6 +311,7 @@ engineering discipline: if it can't be simulated, it
 can't be tested.
 
 **Expert Thinking Cues:**
+
 - When designing a new operation: apply CALM test first. Is it monotone? If yes: use CRDT, no coordination.
 - EPaxos: not yet production-ready in most open-source systems; use Raft for now; watch CockroachDB.
 - Deterministic simulation: invest if building new distributed infrastructure; skip for standard application code.
@@ -314,6 +321,7 @@ can't be tested.
 ### ⚙️ How It Works (Mechanism)
 
 **CRDT G-Counter (coordination-free):**
+
 ```java
 // G-Counter: each node maintains its own increment
 // Merge: take max of each node's counter
@@ -354,6 +362,7 @@ class GCounter {
 ### 🔄 The Complete Picture - End-to-End Flow
 
 **Frontier adoption roadmap:**
+
 ```
 Today (2024):                        <- YOU ARE HERE
   CRDTs: production (Automerge, Redis, Cassandra)
@@ -376,24 +385,24 @@ Long term:
 
 ### ⚖️ Comparison Table
 
-| Frontier | Maturity | Industry Adoption | Key Trade-off |
-|---|---|---|---|
-| CRDTs | High (production libraries) | Redis, Cassandra, Automerge | Monotone ops only; non-trivial semantics |
-| EPaxos | Medium (research + experimental) | CockroachDB concepts | Implementation complexity |
-| Deterministic simulation | Medium (FoundationDB, TigerBeetle) | Niche (DB builders) | Infrastructure investment |
-| TLA+ / formal verification | High (AWS, MongoDB) | Critical protocols | Learning curve |
+| Frontier                   | Maturity                           | Industry Adoption           | Key Trade-off                            |
+| -------------------------- | ---------------------------------- | --------------------------- | ---------------------------------------- |
+| CRDTs                      | High (production libraries)        | Redis, Cassandra, Automerge | Monotone ops only; non-trivial semantics |
+| EPaxos                     | Medium (research + experimental)   | CockroachDB concepts        | Implementation complexity                |
+| Deterministic simulation   | Medium (FoundationDB, TigerBeetle) | Niche (DB builders)         | Infrastructure investment                |
+| TLA+ / formal verification | High (AWS, MongoDB)                | Critical protocols          | Learning curve                           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "CRDTs replace all coordination" | CRDTs only work for monotone operations; non-monotone operations require coordination |
-| "Deterministic simulation = chaos testing" | Chaos = real failures; simulation = all possible orderings in a controlled environment |
-| "EPaxos is better than Raft" | EPaxos is lower latency for non-conflicting ops; but more complex; Raft is the right default for now |
+| Misconception                                 | Reality                                                                                               |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| "CRDTs replace all coordination"              | CRDTs only work for monotone operations; non-monotone operations require coordination                 |
+| "Deterministic simulation = chaos testing"    | Chaos = real failures; simulation = all possible orderings in a controlled environment                |
+| "EPaxos is better than Raft"                  | EPaxos is lower latency for non-conflicting ops; but more complex; Raft is the right default for now  |
 | "Research frontiers are not production-ready" | CRDTs and TLA+ are production-ready now; simulation testing is production in FoundationDB/TigerBeetle |
-| "These replace Raft/Paxos" | They complement: CRDTs for non-coordination ops; Raft/EPaxos for coordination |
+| "These replace Raft/Paxos"                    | They complement: CRDTs for non-coordination ops; Raft/EPaxos for coordination                         |
 
 ---
 
@@ -419,15 +428,18 @@ Long term:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[DST-060 - FLP Impossibility]]
 - [[DST-071 - Distributed Consensus Algorithm Design (Raft, Paxos)]]
 - [[DST-073 - Formal Models for Distributed Systems (TLA+)]]
 
 **Builds On This (learn these next):**
+
 - CRDT research papers (Shapiro et al. 2011)
 - FoundationDB simulation testing (open source)
 
 **Alternatives / Comparisons:**
+
 - Jepsen (empirical testing vs simulation; different approach to same problem)
 
 ---
@@ -452,6 +464,7 @@ Long term:
 ```
 
 **If you remember only 3 things:**
+
 1. CALM theorem: a program needs coordination only for non-monotone operations; CRDTs are the tool for monotone.
 2. Deterministic simulation (FoundationDB model): replaces all I/O with controllable simulators; finds bugs that years of production testing cannot.
 3. EPaxos: 1-round-trip commit for non-conflicting ops vs Raft's 2; the future of geo-distributed consensus.
@@ -474,6 +487,7 @@ principle transfers to: database lock granularity
 and API design (idempotent = monotone; non-idempotent = non-monotone).
 
 **Where else this pattern appears:**
+
 - **Cache design** — reads are monotone (always read from cache or miss); invalidation is non-monotone (requires coordination with DB)
 - **Event sourcing** — appending events is monotone; compaction (removing old events) is non-monotone
 - **Distributed counters** — increment is monotone (G-Counter CRDT); balance check against limit is non-monotone
@@ -506,7 +520,7 @@ or non-monotone: (1) Adding an item to a shopping cart,
 a view counter, (4) Checking if a username is taken
 before registering, (5) Recording a vote (once per user).
 
-*Hint:* (1) Monotone: set grows. CRDT (OR-Set).
+_Hint:_ (1) Monotone: set grows. CRDT (OR-Set).
 (2) Non-monotone: set shrinks. Coordination needed.
 (3) Monotone: counter grows. CRDT (G-Counter).
 (4) Non-monotone: checking against a global set (non-monotone
@@ -521,7 +535,7 @@ fundamental architectural constraint. What are the
 preconditions for adopting this approach in an existing
 distributed system, and what refactoring would be required?
 
-*Hint:* Preconditions: (1) all I/O must go through
+_Hint:_ Preconditions: (1) all I/O must go through
 abstractions (not direct system calls); (2) time must
 be injectable (no `System.currentTimeMillis()` directly);
 (3) threading must be cooperative (not preemptive).
@@ -537,7 +551,7 @@ after 5 years and 1B follow/unfollow operations, what
 is the storage overhead of an OR-Set vs a simple
 current-state set? Is this trade-off still worthwhile?
 
-*Hint:* OR-Set: each add has a unique tag; each remove
+_Hint:_ OR-Set: each add has a unique tag; each remove
 referenced the tag. After compaction: only unreferenced
 tags can be removed. Practical: OR-Set needs garbage
 collection (remove tags for confirmed-removed elements).

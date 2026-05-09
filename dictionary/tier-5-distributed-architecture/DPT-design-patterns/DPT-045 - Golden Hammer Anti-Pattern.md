@@ -8,22 +8,26 @@ permalink: /design-patterns/golden-hammer-anti-pattern/
 id: DPT-045
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Anti-Patterns Overview, Design Patterns, SOLID Principles, Software Architecture Patterns
-used_by: Architecture Decision Records, Technology Selection, Code Quality
-related: Cargo Cult Programming, Anti-Patterns Overview, Premature Optimization, Service Locator
+depends_on:
+used_by:
+related:
 tags:
   - antipattern
   - architecture
   - pattern
   - intermediate
   - tradeoff
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-045 - Golden Hammer Anti-Pattern
 
 ⚡ TL;DR - The Golden Hammer is applying a familiar tool or pattern to every problem regardless of fit, because you know it well and it worked before.
 
-| #805 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-045 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Anti-Patterns Overview, Design Patterns, SOLID Principles, Software Architecture Patterns | |
 | **Used by:** | Architecture Decision Records, Technology Selection, Code Quality | |
@@ -41,6 +45,19 @@ Every new tool proposed in architecture review is rejected in favour of "the thi
 
 **THE INVENTION MOMENT:**
 This is exactly why the Golden Hammer anti-pattern was named - to identify the cognitive bias of over-applying a familiar solution, regardless of whether it is the right fit for the current context.
+
+**EVOLUTION:**
+Golden Hammer was catalogued in the AntiPatterns book (1998) as
+"Familiar Technology." The pattern cycles with each new technology
+wave: in the 2000s it was J2EE/EJB for everything; in the 2010s,
+NoSQL for everything, then microservices for everything, then
+Kubernetes for everything; in the 2020s, LLMs for everything.
+Each wave produces its own Golden Hammer incidents: teams adding
+Kubernetes to two-service applications, using MongoDB for
+relational data, or adding LLM calls to problems solvable with
+`if-else`. The antidote remains unchanged: requirements before
+tools, fit-for-purpose selection, and comfort with using different
+tools for different problems.
 
 ---
 
@@ -439,11 +456,67 @@ grep -r "import.*kafka\|KafkaProducer\|KafkaConsumer" \
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Select tools based on problem requirements, not familiarity.
+Expertise in a tool is valuable; applying it beyond its
+problem domain is wasteful and risky. Maintain a repertoire
+of different tools for different problem classes.
+
+**Where else this pattern appears:**
+- **Medical overdiagnosis:** A specialist who sees every problem
+  through their specialty's lens (a surgeon who recommends surgery,
+  a radiologist who recommends imaging) -- the Golden Hammer is
+  the specialist's primary intervention.
+- **Marketing always predicting viral growth:** Marketing teams
+  trained in viral/social campaigns apply the same playbook to
+  B2B enterprise software -- the wrong tool for the wrong audience.
+- **Infrastructure teams defaulting to VMs:** Before containers,
+  every deployment was a VM -- containers, serverless, and PaaS
+  were resisted because "we know VMs."'
+
+---
+
+### 💡 The Surprising Truth
+
+The Kubernetes Golden Hammer is the most documented recent
+instance of this anti-pattern. CNCF survey data shows that
+teams running 1-3 microservices deploy to Kubernetes in
+significant numbers -- adding 30,000+ lines of K8s configuration
+to systems that would run correctly in a single Docker Compose
+file or a simple PaaS deployment. The operational complexity
+of Kubernetes (certificate management, networking, autoscaling,
+secret management) exceeds the benefit for small deployments.
+The anti-pattern's motivation is honest: teams want to learn
+production-grade tools. The mistake is using production users
+as the learning environment.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A team has been using PostgreSQL for everything: relational data, session storage, job queues, and full-text search. They are considering adding graph analysis (friend-of-friend queries, 5 hops deep, millions of nodes). A senior engineer argues: "PostgreSQL can do recursive CTEs, we already know it, no need for a graph database." A junior engineer says: "Let's use Neo4j." Design the fitness analysis the team should run to make this decision. What are the constraints to evaluate, and what criteria would tip you toward each option?
 
+*Hint: Look at the First Principles section for the core invariants and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** An organisation has standardised on AWS Lambda for all compute. This reduces operational overhead and onboarding time. A new use case requires a long-running stateful process that aggregates events over 15-minute windows. The team's instinct is to use Lambda. Is this a Golden Hammer? Use the three invariants from First Principles to classify the decision, and describe exactly what the fitness analysis would need to show to justify either using Lambda or deviating from the standard.
 
+
+
+*Hint: The Comparison Table and Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A 3-person startup uses Kubernetes
+with Istio service mesh to deploy 2 microservices and a
+database. The CTO argues "we'll need it when we scale."
+Apply the YAGNI principle to evaluate this architecture
+decision, and describe the concrete engineering cost being
+paid now for unvalidated future requirements.
+
+*Hint: The Failure Modes section covers premature optimisation
+as a related failure. Quantify: Kubernetes requires 3+ nodes
+for HA, a full DevOps pipeline, and significant operational
+expertise. Map these costs to the team's actual current
+requirements.*

@@ -8,22 +8,26 @@ permalink: /design-patterns/proxy/
 id: DPT-018
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Object-Oriented Programming (OOP), Interface, Polymorphism, Lazy Loading
-used_by: Spring AOP, Hibernate Lazy Loading, Remote Proxies, Security Interceptors
-related: Decorator, Adapter, Facade, Dynamic Proxy, AOP
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - performance
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-018 - Proxy
 
 ⚡ TL;DR - Proxy provides a surrogate or placeholder for another object, controlling access to it for security, caching, lazy loading, or remote communication.
 
-| #778 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-018 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Interface, Polymorphism, Lazy Loading | |
 | **Used by:** | Spring AOP, Hibernate Lazy Loading, Remote Proxies, Security Interceptors | |
@@ -41,6 +45,18 @@ Two concrete problems: (1) Eager resource loading wastes bandwidth, memory, and 
 
 **THE INVENTION MOMENT:**
 This is exactly why the Proxy pattern was created. A `ImageProxy` implements the same `Image` interface as `RealImage`. When displayed, it loads the real image lazily on first access. All other operations (metadata query, resize preview) work on the lightweight proxy without triggering the 50 MB load. For security: a `SecurityProxy` implements the same service interface, checks permissions, logs access, then delegates to the real service.
+
+**EVOLUTION:**
+Proxy's classical use -- remote proxies for CORBA/RMI remote
+method invocation -- largely disappeared as REST/gRPC replaced
+RPC frameworks. Spring AOP popularised the **dynamic proxy**
+variant: at runtime, Spring wraps beans in JDK dynamic proxies
+or CGLIB proxies to intercept method calls for transactions
+(`@Transactional`), security (`@PreAuthorize`), and caching
+(`@Cacheable`). Virtual proxies appeared in ORM (Hibernate's
+lazy-loading proxies). Today, service mesh sidecars (Envoy,
+Istio) are infrastructure-level proxies that intercept all
+network calls for observability, retries, and mTLS.
 
 ---
 
@@ -515,11 +531,66 @@ Make `RealServiceImpl` package-private or move to an internal package. All exter
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+When you need to control access to, add behaviour around, or
+defer the creation of an object, place a surrogate in front
+of it that has the same interface as the real object. Callers
+never know they're talking to the proxy.
+
+**Where else this pattern appears:**
+- **Service mesh (Envoy/Istio sidecar):** Every service gets
+  a sidecar proxy that intercepts all inbound/outbound traffic
+  for mTLS, observability, and circuit breaking -- the service
+  code is unchanged; the proxy is invisible.
+- **CDN (Content Delivery Network):** A CDN node is a caching
+  proxy for origin servers -- clients request content from the
+  CDN (proxy) which serves from cache or delegates to origin.
+- **Nginx reverse proxy:** Sits in front of application servers
+  and intercepts all HTTP calls for SSL termination, load
+  balancing, and rate limiting.
+
+---
+
+### 💡 The Surprising Truth
+
+Spring's `@Transactional` annotation works exclusively through
+a Proxy. When you inject a Spring bean annotated with
+`@Transactional` and call a method, you are not calling the
+method on your class -- you are calling it on a Proxy object
+that wraps your bean. This has a non-obvious consequence:
+calling a `@Transactional` method from *within the same class*
+bypasses the proxy entirely, and the transaction annotation
+is silently ignored. This "self-invocation" problem is
+Spring's most common transactional bug, and it exists
+entirely because transactions are implemented as Proxy.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Caching Proxy for `ProductService.getProduct(id)` uses an in-memory `HashMap` as the cache. The product team updates product prices in the database every 15 minutes. After a price update, users are seeing stale prices for up to 4 hours. Trace the exact mechanism: (a) how the stale cached value is returned, (b) why the 15-minute update cycle doesn't invalidate the cache, (c) what three different cache invalidation strategies could fix this and the trade-offs of each.
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** Spring creates CGLIB proxies for `@Service` classes and JDK dynamic proxies for interface-typed beans. A developer annotates a `FinalClass` (with the `final` keyword) with `@Transactional`. Spring throws `Cannot subclass final class: FinalClass`. Explain exactly why `final` prevents proxy generation for CGLIB but not JDK dynamic proxies, and describe two code changes that resolve the exception without removing `final` from the class.
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A team uses Spring's `@Transactional`
+on a service method `processOrder()` which calls private helper
+`validateOrder()`. They then move the `processOrder()` logic
+into `validateOrder()` for reuse from another non-transactional
+method. Trace exactly what happens to transaction behaviour
+in both call paths, and explain the structural reason for
+the difference.
+
+*Hint: The Surprising Truth explains self-invocation bypassing
+the proxy. The Failure Modes section has this as a known mode
+-- trace through the Proxy interception model to understand
+why the private internal call takes a different path.*

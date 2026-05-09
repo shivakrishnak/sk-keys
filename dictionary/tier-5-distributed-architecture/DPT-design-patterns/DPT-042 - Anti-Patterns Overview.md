@@ -8,22 +8,26 @@ permalink: /design-patterns/anti-patterns-overview/
 id: DPT-042
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Design Patterns, Object-Oriented Programming (OOP), SOLID Principles, Refactoring
-used_by: Code Quality, Technical Debt, Refactoring, Code Review
-related: God Object Anti-Pattern, Spaghetti Code, Lava Flow Anti-Pattern, Golden Hammer Anti-Pattern
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - antipattern
   - architecture
   - bestpractice
   - intermediate
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-042 - Anti-Patterns Overview
 
 ⚡ TL;DR - Anti-patterns are proven bad solutions that feel right at first but reliably cause pain, and naming them is the first step to avoiding them.
 
-| #802 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-042 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Design Patterns, Object-Oriented Programming (OOP), SOLID Principles, Refactoring | |
 | **Used by:** | Code Quality, Technical Debt, Refactoring, Code Review | |
@@ -41,6 +45,18 @@ Without a catalogue of named anti-patterns, bad architecture spreads silently. A
 
 **THE INVENTION MOMENT:**
 This is exactly why Anti-Patterns were catalogued. William Brown and colleagues published "AntiPatterns" (1998) following the GoF Design Patterns book, applying the same discipline to bad solutions: name them, describe why they arise, document their consequences, and specify the refactoring to escape them.
+
+**EVOLUTION:**
+Anti-patterns as a named concept were popularised by Andrew Koenig
+(1995) and comprehensively catalogued by Brown, Malveau, McCormick,
+and Mowbray in "AntiPatterns: Refactoring Software, Architectures,
+and Projects in Crisis" (1998). The domain expanded from OOP
+anti-patterns to distributed systems anti-patterns (distributed
+monolith, chatty service), cloud anti-patterns (pet servers,
+snowflake servers), and data anti-patterns (God Table, EAV model
+abuse). Modern engineering retrospective practices treat anti-
+pattern recognition as a core team skill -- post-mortems frequently
+identify anti-patterns as root causes.
 
 ---
 
@@ -383,11 +399,67 @@ grep -r "implements.*Facade\|new.*Manager" src/ --include="*.java"
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Named solutions to named problems (patterns) have equal value
+when applied to named anti-solutions: naming the bad thing
+enables recognition, communication, and systematic avoidance.
+Vocabulary for failure is as important as vocabulary for success.
+
+**Where else this pattern appears:**
+- **Medicine (disease classification):** Naming a disease pattern
+  (diabetes, hypertension) enables diagnosis, treatment protocols,
+  and prevention research -- unnamed conditions cannot be treated
+  systematically.
+- **Aviation safety (accident patterns):** NTSB categorises
+  accident causes ("controlled flight into terrain", "runway
+  incursion") -- named patterns enable targeted training and
+  checklist development.
+- **Finance (market bubble identification):** Named market phases
+  (irrational exuberance, dead cat bounce) provide vocabulary
+  for risk management that vague descriptions cannot.
+
+---
+
+### 💡 The Surprising Truth
+
+The term "anti-pattern" was coined by Andrew Koenig in a 1995
+article referencing the GoF "Design Patterns" book, but the concept
+was in widespread use under different names for decades before.
+"Code smell" (Martin Fowler, 1999) describes individual lines;
+"anti-pattern" describes recurring structural failures in systems.
+The most striking anti-patterns -- God Object, Spaghetti Code,
+Golden Hammer -- were already being discussed in software engineering
+papers in the 1970s and 1980s without the "anti-pattern" label.
+The GoF and Koenig gave us vocabulary, not discovery: the problems
+existed since the first multi-kloc software systems.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A team scans their codebase and finds three anti-patterns: a God Object at the core of their payment service, Spaghetti Code in their legacy billing module, and Magic Numbers scattered through their discount calculation engine. All three are causing friction. They have one sprint. Using the anti-pattern framework, how would you prioritise which to fix first, and what criteria would you use to make that decision?
 
+*Hint: Look at the First Principles section for the core invariants and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** A senior engineer argues: "Anti-patterns are just design patterns applied in the wrong context - the Singleton is a great pattern, but Singleton Overuse is an anti-pattern. Therefore the distinction between pattern and anti-pattern is not about the solution itself but about whether the context fits." Do you agree? Identify one design pattern from the GoF catalogue that becomes an anti-pattern when applied outside its intended context, and explain precisely what the context mismatch is.
 
+
+
+*Hint: The Comparison Table and Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A team's retrospective identifies
+that their codebase exhibits three anti-patterns: God Object
+(one 5,000-line service class), Spaghetti Code (circular
+dependencies), and Golden Hammer (Kafka used for all component
+communication including synchronous request-response calls).
+Prioritise which anti-pattern to address first and describe
+the decision criteria for prioritisation.
+
+*Hint: The Failure Modes section suggests impact-based
+prioritisation. Consider which anti-pattern has the broadest
+blast radius (prevents new features vs. causes bugs),
+and which is most reversible.*

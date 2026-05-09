@@ -26,11 +26,11 @@ permalink: /dst/distributed-transaction-theory/
 
 ⚡ TL;DR - Distributed transaction theory addresses how to make multiple independent systems behave atomically: 2PC provides atomicity with blocking risk; saga provides eventual consistency with compensation; outbox bridges reliability and decoupling.
 
-| DST-072 | Category: Distributed Systems | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | DST-012, DST-013, DST-014, DST-035, DST-036 | |
-| **Used by:** | DST-070 | |
-| **Related:** | DST-012, DST-013, DST-014, DST-035, DST-036, DST-037 | |
+| DST-072         | Category: Distributed Systems                        | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------- | :-------------- |
+| **Depends on:** | DST-012, DST-013, DST-014, DST-035, DST-036          |                 |
+| **Used by:**    | DST-070                                              |                 |
+| **Related:**    | DST-012, DST-013, DST-014, DST-035, DST-036, DST-037 |                 |
 
 ---
 
@@ -114,6 +114,7 @@ availability and autonomy at the cost of complexity.
 ### 🔩 First Principles Explanation
 
 **TWO-PHASE COMMIT (2PC):**
+
 ```
 Phase 1: PREPARE
   Coordinator -> Participant A: "Can you commit?"
@@ -144,6 +145,7 @@ FAILURE SCENARIO:
 ```
 
 **SAGA PATTERN:**
+
 ```
 Orchestration saga (coordinator):
   Saga Orchestrator -> Order Service: CreateOrder
@@ -168,6 +170,7 @@ Choreography saga (event-driven):
 ```
 
 **OUTBOX PATTERN:**
+
 ```
 Dual-write problem without outbox:
   1. DB.write(order)
@@ -201,6 +204,7 @@ E-commerce checkout: 3 services: Order, Inventory, Payment.
 Order must be atomic: all complete or none.
 
 **2PC APPROACH (WHY IT FAILS IN MICROSERVICES):**
+
 ```
 2PC coordinator (Order service) sends PREPARE to:
   Inventory (different team, different DB)
@@ -218,6 +222,7 @@ Conclusion: 2PC is not viable across independently
 ```
 
 **SAGA APPROACH (CORRECT DESIGN):**
+
 ```
 Choreography saga:
   1. OrderService: creates order (PENDING)
@@ -256,6 +261,7 @@ Properties:
 > is the responsibility of the organiser).
 
 **Element mapping:**
+
 - Restaurant reservation = distributed transaction
 - Each person = one service
 - Credit card hold = 2PC prepare/lock
@@ -309,6 +315,7 @@ semantically correct (undo the business effect, not
 just the data change).
 
 **Expert Thinking Cues:**
+
 - When designing a saga: design compensations before the happy path; they're harder.
 - Compensations must be idempotent: called once or multiple times must have the same outcome.
 - Choreography sagas are harder to debug (implicit flow); orchestration sagas are explicit and traceable.
@@ -318,6 +325,7 @@ just the data change).
 ### ⚙️ How It Works (Mechanism)
 
 **Outbox pattern with Debezium:**
+
 ```java
 // Same transaction: order + outbox entry
 @Transactional
@@ -346,6 +354,7 @@ public Order createOrder(OrderRequest req) {
 ### 🔄 The Complete Picture - End-to-End Flow
 
 **Saga with outbox - order checkout:**
+
 ```
 Checkout request:                    <- YOU ARE HERE
   |
@@ -378,25 +387,25 @@ On payment.failed:
 
 ### ⚖️ Comparison Table
 
-| Mechanism | Atomicity | Availability | Coupling | Compensation |
-|---|---|---|---|---|
-| 2PC | True ACID | Blocking under failure | Tight | None needed |
-| Saga orchestration | Eventual | High | Loose | Explicit + idempotent |
-| Saga choreography | Eventual | High | Very loose | Event-driven |
-| Outbox pattern | At-least-once event | High | Decoupled | N/A (event delivery) |
-| CQRS + Event sourcing | Eventual | High | Very loose | Replay + project |
+| Mechanism             | Atomicity           | Availability           | Coupling   | Compensation          |
+| --------------------- | ------------------- | ---------------------- | ---------- | --------------------- |
+| 2PC                   | True ACID           | Blocking under failure | Tight      | None needed           |
+| Saga orchestration    | Eventual            | High                   | Loose      | Explicit + idempotent |
+| Saga choreography     | Eventual            | High                   | Very loose | Event-driven          |
+| Outbox pattern        | At-least-once event | High                   | Decoupled  | N/A (event delivery)  |
+| CQRS + Event sourcing | Eventual            | High                   | Very loose | Replay + project      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "2PC is safe for microservices" | 2PC creates tight coupling and blocks under coordinator failure; sagas are the correct microservices approach |
-| "Saga compensation = database rollback" | Compensation is a new forward transaction; it doesn't undo DB changes; it creates a new change that semantically reverses the effect |
-| "Outbox guarantees exactly-once delivery" | Outbox guarantees at-least-once; consumers must be idempotent for effective exactly-once |
-| "Eventual consistency means data can be wrong" | Eventual means temporarily stale; the system converges; with correct compensations, no data is permanently wrong |
-| "Choreography sagas are simpler than orchestration" | Choreography is simpler to deploy but harder to debug and reason about; orchestration has an explicit state machine |
+| Misconception                                       | Reality                                                                                                                              |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| "2PC is safe for microservices"                     | 2PC creates tight coupling and blocks under coordinator failure; sagas are the correct microservices approach                        |
+| "Saga compensation = database rollback"             | Compensation is a new forward transaction; it doesn't undo DB changes; it creates a new change that semantically reverses the effect |
+| "Outbox guarantees exactly-once delivery"           | Outbox guarantees at-least-once; consumers must be idempotent for effective exactly-once                                             |
+| "Eventual consistency means data can be wrong"      | Eventual means temporarily stale; the system converges; with correct compensations, no data is permanently wrong                     |
+| "Choreography sagas are simpler than orchestration" | Choreography is simpler to deploy but harder to debug and reason about; orchestration has an explicit state machine                  |
 
 ---
 
@@ -422,16 +431,19 @@ On payment.failed:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[DST-012 - ACID]]
 - [[DST-013 - Two-Phase Commit (2PC)]]
 - [[DST-014 - Saga Pattern]]
 - [[DST-035 - Outbox Pattern]]
 
 **Builds On This (learn these next):**
+
 - [[DST-036 - Event Sourcing]]
 - [[DST-037 - CQRS]]
 
 **Alternatives / Comparisons:**
+
 - TCC (Try-Confirm-Cancel): alternative to saga for specific use cases
 
 ---
@@ -455,6 +467,7 @@ On payment.failed:
 ```
 
 **If you remember only 3 things:**
+
 1. 2PC is wrong for microservices: blocking under failure; tight coupling; use saga instead.
 2. Saga compensations must be idempotent and total; design them before the happy path.
 3. Outbox pattern: write state + event to same DB transaction; separate process publishes; eliminates dual-write race.
@@ -476,6 +489,7 @@ applies wherever cross-system coordination is needed
 and 2PC is impractical.
 
 **Where else this pattern appears:**
+
 - **E-commerce returns** — a purchase (saga step) has a defined compensation (return/refund)
 - **Hotel booking systems** — reservation has a cancellation (compensation) with explicit policy
 - **Financial corrections** — debit entry has a credit correction; journal entries are compensable
@@ -507,7 +521,7 @@ now must decide: was the payment processed or not?
 Describe the complete decision tree and the correct
 handling for each outcome.
 
-*Hint:* Timeout -> ambiguous: payment may have succeeded,
+_Hint:_ Timeout -> ambiguous: payment may have succeeded,
 failed, or partially processed. Query payment status
 via idempotency key. If confirmed: proceed to step 4.
 If not found: retry step 3 (idempotency key prevents
@@ -521,7 +535,7 @@ in production, the team finds debugging incidents takes
 they refactor to orchestration? What are the migration
 risks and when is choreography still worth it?
 
-*Hint:* Choreography advantages: no single point of failure,
+_Hint:_ Choreography advantages: no single point of failure,
 services more autonomous. Orchestration advantages: explicit
 state machine, observable, debuggable. Migration risk:
 orthestrator becomes new SPOF; if orchestrator is down,
@@ -537,7 +551,7 @@ rate, the outbox table receives 30,000 writes/second.
 Design the outbox processing architecture to handle
 this throughput without becoming a bottleneck.
 
-*Hint:* 30K writes/second in Postgres outbox is feasible
+_Hint:_ 30K writes/second in Postgres outbox is feasible
 (Postgres handles 100K+ writes/second). Debezium CDC
 reads WAL; no polling overhead. Partitioned Kafka topics:
 partition by order_id for ordering guarantee. Multiple

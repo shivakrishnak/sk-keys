@@ -8,22 +8,26 @@ permalink: /design-patterns/dependency-injection-pattern/
 id: DPT-039
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Object-Oriented Programming (OOP), Interface, Inversion of Control (IoC), Coupling
-used_by: Spring Core, Testing, Service Locator Replacement, Plugin Frameworks
-related: Service Locator, IoC Container, Strategy, Factory Method, Proxy
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - intermediate
   - architecture
   - java
   - bestpractice
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-039 - Dependency Injection Pattern
 
 ⚡ TL;DR - Dependency Injection hands an object its dependencies from outside rather than letting the object create them - making classes testable, configurable, and loosely coupled.
 
-| #799 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-039 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Interface, Inversion of Control (IoC), Coupling | |
 | **Used by:** | Spring Core, Testing, Service Locator Replacement, Plugin Frameworks | |
@@ -41,6 +45,18 @@ Direct instantiation couples the class to its dependencies' concrete types AND t
 
 **THE INVENTION MOMENT:**
 This is exactly why DI was formalised. The object receives a `PaymentGateway` interface reference. Someone outside (the IoC container, the test, the main method) decides which concrete implementation to provide. The object doesn't create or find its dependencies - it receives them.
+
+**EVOLUTION:**
+Dependency Injection as a named pattern emerged from Martin
+Fowler's 2004 article formalising what Spring Framework (Rod
+Johnson, 2002) had demonstrated in code. Spring popularised
+constructor injection; later field injection (`@Autowired`)
+became common despite being less testable. Spring Boot (2013)
+added auto-configuration, creating zero-XML DI. Jakarta EE
+standardised DI with CDI (Contexts and Dependency Injection,
+2009). Micronaut and Quarkus (2018-2019) moved DI processing
+to compile time, eliminating reflection overhead. Java 21 records
+and sealed classes enable lightweight manual DI without a container.
 
 ---
 
@@ -473,11 +489,67 @@ public class OrderService {
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+An object should not be responsible for acquiring its own
+dependencies. Dependencies should be provided by an external
+caller or container. This externalises the "who provides what"
+decision, making it observable, changeable, and testable.
+
+**Where else this pattern appears:**
+- **Restaurant supply chain:** A chef does not source their own
+  ingredients -- the restaurant manager (the container) provides
+  standardised supplies. The chef (the component) specifies what
+  it needs; the manager provides it.
+- **Unix process environment variables:** A process declares
+  what environment variables it reads; the OS (container) injects
+  the values at process start. No hard-coded paths in the binary.
+- **Kubernetes ConfigMap/Secret injection:** Pods declare named
+  environment variables or volume mounts; Kubernetes injects the
+  values from ConfigMaps and Secrets at pod start.
+
+---
+
+### 💡 The Surprising Truth
+
+Field injection with `@Autowired` -- by far the most common DI
+style in Spring applications -- is actively discouraged by the
+Spring team itself. The Spring documentation states: "Always use
+constructor injection in your beans." Field injection makes
+dependencies invisible in the public API, allows object creation
+without all dependencies present (a partially-constructed bean),
+and makes unit testing without a Spring context impossible without
+reflection-based hacks. The pattern that made Spring famous also
+has a widely-used anti-pattern variant that the framework's own
+authors warn against on every page of their documentation.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A class `ReportGenerator` has 9 constructor parameters (all injected via Spring). A code reviewer says "this is an indication of a design smell, not a problem with DI." Explain the specific design smell that 9 constructor parameters most likely indicates (name the principle being violated), describe the refactoring that would address it, and explain why reducing to constructor injection with 3 dependencies makes the class better-designed - not just cosmetically tidier.
 
+*Hint: Look at the First Principles section for the core invariants and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** A Spring service `AccountService` is a `@Singleton` bean. It injects a `UserPreferencesRepository` which is a `@RequestScope` bean. Explain the exact problem that occurs when Spring wires these, describe the Spring mechanism that resolves this problem (by name), and identify the one scenario where even this mechanism does not work correctly.
 
+
+
+*Hint: The Comparison Table and Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A `PaymentService` uses constructor
+injection for `PaymentGateway`, `FraudDetector`, and
+`AuditLogger`. A new requirement: `PaymentService` should also
+optionally use a `CurrencyConverter`, but not all deployments
+have one available. Design the injection model for the optional
+dependency and compare: (a) nullable constructor parameter,
+(b) `Optional<CurrencyConverter>` constructor parameter,
+(c) `@Autowired(required=false)` field injection.
+
+*Hint: The First Principles CORE INVARIANTS say dependencies
+should be declared, not discovered. Each option makes the
+optional dependency more or less explicit -- map to testability
+and clarity in the code review.*

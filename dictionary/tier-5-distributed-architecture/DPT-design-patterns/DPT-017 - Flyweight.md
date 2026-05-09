@@ -8,22 +8,26 @@ permalink: /design-patterns/flyweight/
 id: DPT-017
 category: Design Patterns
 difficulty: ★★★
-depends_on: Object-Oriented Programming (OOP), Immutability, Object Pool, Caching
-used_by: String Interning, Character Rendering, Particle Systems, Icon Caching
-related: Object Pool, Singleton, Prototype, Composite
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - deep-dive
   - performance
   - memory
   - java
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-017 - Flyweight
 
 ⚡ TL;DR - Flyweight reduces memory usage by sharing immutable intrinsic state among many fine-grained objects, storing only extrinsic (context-specific) state externally.
 
-| #777 | Category: Design Patterns | Difficulty: ★★★ |
+| DPT-017 | Category: Design Patterns | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | Object-Oriented Programming (OOP), Immutability, Object Pool, Caching | |
 | **Used by:** | String Interning, Character Rendering, Particle Systems, Icon Caching | |
@@ -41,6 +45,18 @@ In graphical applications, game engines, and text rendering systems, tens of tho
 
 **THE INVENTION MOMENT:**
 This is exactly why the Flyweight pattern was created. Separate object state into: **intrinsic** (shared, immutable - the glyph data for "A") and **extrinsic** (per-instance, context-dependent - position, selection state). The intrinsic state is shared: one object for all "A"s. The extrinsic state is passed in at use time. 10,000 characters use at most 256 Flyweight glyph objects. Memory: 256 × 2 KB + 10,000 × 10 bytes = ≈512 KB + 100 KB = **612 KB** vs 20 MB.
+
+**EVOLUTION:**
+Flyweight was essential in 1990s applications where RAM was
+measured in megabytes and every object allocation mattered.
+Modern JVMs with multi-GB heaps made Flyweight less critical
+for general objects. The pattern migrated to specific high-
+volume scenarios: `String.intern()` for deduplicating strings,
+Java's `Integer.valueOf()` caching (-128 to 127), font glyph
+caches, and game engines rendering millions of particles.
+Flyweight's core principle -- share immutable state, segregate
+mutable extrinsic state -- became the foundation of modern
+immutable data structure libraries and event sourcing.
 
 ---
 
@@ -469,11 +485,66 @@ Move `position` to the client-side `Character` record. Pass it as a parameter to
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Separate intrinsic state (shared, immutable, independent of
+context) from extrinsic state (per-instance, mutable, context-
+dependent). Share the intrinsic state across all instances
+that have the same value.
+
+**Where else this pattern appears:**
+- **Font rendering:** A font engine stores each glyph shape
+  once (intrinsic). Position, colour, and size are extrinsic
+  and passed in per-render-call -- the same glyph object
+  renders "A" at any position in any colour.
+- **Game engines (particles, sprites):** A bullet texture is
+  shared by all 1,000 bullets on screen -- position and velocity
+  are extrinsic, stored separately in a component array.
+- **String interning (JVM):** The JVM string pool holds one copy
+  of each string literal -- every reference to `"hello"` in
+  code points to the same pooled object.
+
+---
+
+### 💡 The Surprising Truth
+
+Java's auto-boxing of `Integer` values between -128 and 127
+is a Flyweight implementation baked into the language itself.
+`Integer.valueOf(127) == Integer.valueOf(127)` returns `true`
+because both return the same cached `Integer` object from the
+Flyweight pool. But `Integer.valueOf(128) == Integer.valueOf(128)`
+returns `false` because values outside the cache range create
+new instances. This means Java code that compares `Integer`
+objects with `==` works "by accident" for small numbers but
+fails for large ones -- a subtle Flyweight implementation
+detail that causes real production bugs.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A game has 5 types of projectiles (bullet, arrow, rocket, fireball, ice). Each projectile type has a shared visual (texture: 500 KB), audio clip (200 KB), and hit detection polygon (10 KB). Per-instance state: position (16 bytes), velocity (16 bytes), damage (4 bytes), owner (8 bytes). Using Flyweight, calculate: (a) memory for 100,000 simultaneous projectiles with and without Flyweight, (b) the exact threshold (number of projectiles) above which Flyweight becomes beneficial, (c) what happens to memory calculations if the hit detection polygon must be mutated per-instance (e.g., deformed on impact).
 
+*Hint: Look at the First Principles section for the core invariants, and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** Java's `Integer.valueOf(int)` returns cached flyweight instances for values -128 to 127. A developer writes: `Integer a = 1000; Integer b = 1000; if (a == b) sendPayment();`. The payment is never sent despite `a` and `b` representing the same value. Then the developer changes `1000` to `100` and the payment IS sent. Explain the exact mechanism causing this inconsistency, why the flyweight cache boundary at 127 makes this particularly dangerous in financial code, and what the correct comparison should always be.
 
+
+
+*Hint: The Comparison Table and the Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A text editor uses Flyweight for
+`Character` objects: each unique character (a-z, A-Z, 0-9,
+etc.) is shared; position and formatting (bold, italic, font
+size) are extrinsic. When the user selects a range of 10,000
+characters and changes font size, describe the memory model
+change and compare it to an alternative: storing each
+character as a full object with all formatting baked in.
+
+*Hint: The How It Works section shows the extrinsic context
+map structure. Consider what the 10,000-character selection
+means for the context map allocation and whether the Flyweight
+still saves memory in this scenario.*

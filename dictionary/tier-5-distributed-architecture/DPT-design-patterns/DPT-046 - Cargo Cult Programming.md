@@ -8,21 +8,25 @@ permalink: /design-patterns/cargo-cult-programming/
 id: DPT-046
 category: Design Patterns
 difficulty: ★★☆
-depends_on: Anti-Patterns Overview, Design Patterns, SOLID Principles
-used_by: Code Quality, Code Review, Technical Debt
-related: Golden Hammer Anti-Pattern, Premature Optimization, Copy-Paste Programming, Anti-Patterns Overview
+depends_on:
+used_by:
+related:
 tags:
   - antipattern
   - pattern
   - intermediate
   - bestpractice
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-046 - Cargo Cult Programming
 
 ⚡ TL;DR - Cargo cult programming is copying code or patterns without understanding why they work, producing ritually correct-looking code that fails under slightly different conditions.
 
-| #806 | Category: Design Patterns | Difficulty: ★★☆ |
+| DPT-046 | Category: Design Patterns | Difficulty: ★★☆ |
 |:---|:---|:---|
 | **Depends on:** | Anti-Patterns Overview, Design Patterns, SOLID Principles | |
 | **Used by:** | Code Quality, Code Review, Technical Debt | |
@@ -40,6 +44,18 @@ Cargo cult code passes code review because it looks correct. It passes unit test
 
 **THE INVENTION MOMENT:**
 This is exactly why Cargo Cult Programming was named - after WWII cargo cults where South Pacific islanders built fake runways and control towers hoping to attract supply flights, replicating the form of the ritual without understanding the causal mechanism. Code that replicates the form without the understanding will, like those runways, fail to achieve the desired outcome.
+
+**EVOLUTION:**
+Cargo Cult Programming was named by Richard Feynman in his 1974
+Caltech commencement address, though software practitioners
+applied the term to programming practices informally for decades
+before it appeared in software engineering literature. The pattern
+intensified with Stack Overflow (2008) -- copy-paste without
+understanding became mechanically easier. AI code generation
+(GitHub Copilot, ChatGPT, 2021-2023) created a new cargo cult
+risk: LLM-generated code copied without verifying correctness,
+security, or applicability. The antidote evolved: shift from
+"accept the suggestion" to "understand the suggestion."'
 
 ---
 
@@ -446,11 +462,69 @@ curl -s "https://api.payment.com/charges" \
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Replicate solutions only after understanding the problem they
+solve. The form without the function is cargo. Understand
+the context, constraints, and forces before applying a
+solution from elsewhere.
+
+**Where else this pattern appears:**
+- **Financial cargo culting:** Copying trading strategies from
+  publications without understanding their underlying signal --
+  the signal decays as more participants use it; cargo culters
+  get the form (trade at 9:30 AM) without the function (arbitrage
+  opportunity that no longer exists).
+- **Business process cargo culting:** Adopting the "daily standup"
+  format from Agile without understanding its information-sharing
+  purpose -- standups become status reports to managers instead
+  of team self-organisation tools.
+- **Scientific cargo culting:** Running clinical trials that
+  mimic the form (double-blind, control group) without the
+  function (statistical power, correct primary endpoints).
+
+---
+
+### 💡 The Surprising Truth
+
+Richard Feynman's Cargo Cult Science speech (1974) was about
+psychology research fraud -- not software at all. He described
+scientists who ran the rituals of science (controlled experiments,
+statistics, publication) without the substance (honest reporting
+of negative results, testing alternative hypotheses). The speech
+had zero impact on software engineering for 20 years. The
+application of "cargo cult" to programming practices -- where
+developers follow the form of good practices (having tests,
+using design patterns, doing code review) without the substance
+(tests that verify behaviour, patterns applied to real
+problems, reviews that catch real issues) -- emerged from the
+Agile and XP communities in the early 2000s as self-criticism.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A team uses AI code generation extensively. An engineer generates a concurrent hash map update pattern and pastes it into the codebase. The code is syntactically correct and passes all tests. A senior engineer reviews it and says: "This might be cargo cult code." What specific questions should the senior engineer ask to determine whether the juniro engineer understands the pattern vs. cargo-culted it? Design a five-question code review checklist specifically for AI-generated concurrency patterns.
 
+*Hint: Look at the First Principles section for the core invariants and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** Cargo cult programming and legitimate pattern reuse look identical in a code diff - both involve copying a pattern from somewhere else. What is the precise distinction between "Cargo Cult Programming" and "correct pattern reuse" - and how would you make that distinction visible in a code review, in automated tooling, or in an onboarding process?
 
+
+
+*Hint: The Comparison Table and Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A team adopts CQRS because "it's
+what Netflix uses." Their application has 50 users, one
+database, and simple CRUD operations. Apply the Cargo Cult
+framework to evaluate this decision: identify the "ritual"
+being copied, the "substance" CQRS provides Netflix, and
+the conditions under which the substance applies to this team.
+
+*Hint: The Failure Modes section and the Golden Hammer entry
+(DPT-045) together provide the diagnostic framework. CQRS
+solves read/write scalability divergence -- quantify whether
+this team has that problem.*

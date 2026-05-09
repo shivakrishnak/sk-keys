@@ -8,22 +8,26 @@ permalink: /design-patterns/strangler-fig/
 id: DPT-055
 category: Design Patterns
 difficulty: ★★★
-depends_on: Design Patterns, Strangler Fig Pattern, Microservices, Anti-Corruption Layer, Facade
-used_by: Microservices, System Design, Legacy Migration, Refactoring
-related: Anti-Corruption Layer, Saga Pattern, Branch by Abstraction, Big Ball of Mud
+depends_on:
+used_by:
+related:
 tags:
   - pattern
   - architecture
   - deep-dive
   - microservices
   - refactoring
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-055 - Strangler Fig
 
 ⚡ TL;DR - The Strangler Fig pattern incrementally replaces a legacy system by routing traffic to new code piece by piece until the old system is fully replaced - with zero big-bang rewrite.
 
-| #815 | Category: Design Patterns | Difficulty: ★★★ |
+| DPT-055 | Category: Design Patterns | Difficulty: ★★★ |
 |:---|:---|:---|
 | **Depends on:** | Design Patterns, Strangler Fig Pattern, Microservices, Anti-Corruption Layer, Facade | |
 | **Used by:** | Microservices, System Design, Legacy Migration, Refactoring | |
@@ -41,6 +45,19 @@ Every legacy migration faces the same dilemma: the old system is too risky to re
 
 **THE INVENTION MOMENT:**
 Martin Fowler named the Strangler Fig pattern after the strangler fig tree, which grows around a host tree using it as a scaffold, eventually replacing it entirely. Applied to software: a new system grows around the legacy system, routing increasing traffic to the new code, until the legacy system is no longer needed and can be removed - incrementally, safely, with zero big-bang.
+
+**EVOLUTION:**
+Strangler Fig Pattern was coined by Martin Fowler in 2004,
+inspired by the strangler fig tree that grows around a host tree
+and eventually replaces it. It gained prominence with the
+microservices movement (2014-2018) as the standard approach
+to decomposing monolithic applications incrementally. Netflix,
+Amazon, and Uber publicly documented their Strangler Fig
+migrations. Sam Newman's "Building Microservices" (2015) and
+"Monolith to Microservices" (2019) formalised the pattern with
+detailed migration strategies. The Pattern is now considered
+the safest known approach to legacy system modernisation in
+production environments.
 
 ---
 
@@ -408,11 +425,69 @@ curl http://api-gateway/admin/routes \
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Migrate a legacy system by building the replacement alongside it,
+routing traffic incrementally from old to new, and removing
+the old system only after the new system has absorbed all
+its traffic. Never perform a "big bang" cutover.
+
+**Where else this pattern appears:**
+- **Database schema migration (expand-contract):** Add new
+  columns/tables (expand), migrate data to them, update code
+  to use new structure, remove old structure (contract) --
+  the Strangler Fig pattern applied to database evolution.
+- **Infrastructure blue-green deployment:** New infrastructure
+  is built ("green") while old continues running ("blue");
+  traffic is shifted from blue to green incrementally.
+- **Feature flag rollouts:** New feature code coexists with old
+  code behind a flag; traffic is incrementally shifted to the
+  new path; old code is removed when migration is complete.
+
+---
+
+### 💡 The Surprising Truth
+
+Martin Fowler's original Strangler Fig article (2004) described
+the pattern for migrating to a new website, not for
+microservices decomposition. The microservices community adopted
+it wholesale as a legacy decomposition strategy -- a perfectly
+valid application, but one Fowler did not anticipate. The
+irony: the original motivation (website migration) is now
+considered the simpler use case. The microservices application
+(migrating from a monolith to distributed services) is
+significantly more complex because it involves not just routing
+but also data migration, distributed transaction handling,
+and service boundary definition -- problems invisible in
+the original website migration scenario.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A Strangler Fig migration is 70% complete (7 of 10 modules migrated). The new system is in production and healthy. The remaining 3 modules (authentication, billing, and admin) are deeply entangled with the legacy data model and share state with the 7 migrated modules. The CTO is considering stopping the migration at 70% and running both systems indefinitely. What is the engineering cost of stopping at 70% vs. completing the final 30%, and what criteria would you use to decide whether to proceed or plateau?
 
+*Hint: Look at the First Principles section for the core invariants and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** A team uses the Strangler Fig to migrate a monolith to microservices. After 6 months, 5 services have been extracted successfully. A post-migration review shows that the routing layer (nginx) is handling 15,000 requests/second and has become the most critical component in the system - any change to it requires extensive testing. The routing layer has itself become a legacy bottleneck. Design the Strangler Fig for the routing layer itself: how would you incrementally replace the monolithic routing layer with a more distributed approach?
 
+
+
+*Hint: The Comparison Table and Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A team is strangling a monolith's
+`OrderManagement` module into a new `OrderService`. They use
+an API gateway to route 5% of order creation traffic to
+the new service. The new service uses a separate database.
+After two weeks, they discover 15 orders are duplicated --
+both the monolith and the new service processed the same
+order IDs. Trace the root cause and describe the structural
+changes needed before increasing traffic beyond 5%.
+
+*Hint: The Failure Modes section covers data consistency during
+migration. The duplicate ID issue arises from shared state
+(the order ID sequence or database) being split -- the two
+services need a coordination mechanism during the migration.*

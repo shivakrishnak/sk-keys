@@ -8,21 +8,25 @@ permalink: /design-patterns/magic-numbers-anti-pattern/
 id: DPT-048
 category: Design Patterns
 difficulty: ★☆☆
-depends_on: Anti-Patterns Overview, Variables, Constants
-used_by: Code Quality, Refactoring, Code Review Best Practices
-related: Spaghetti Code, Copy-Paste Programming, Anti-Patterns Overview, Code Standards
+depends_on:
+used_by:
+related:
 tags:
   - antipattern
   - pattern
   - foundational
   - bestpractice
+status: complete
+version: 1
+tier: tier-5-distributed-architecture
+folder: DPT-design-patterns
 ---
 
 # DPT-048 - Magic Numbers Anti-Pattern
 
 ⚡ TL;DR - Magic numbers are unexplained numeric (or string) literals in code that force readers to guess their meaning, making maintenance error-prone and dangerous.
 
-| #808 | Category: Design Patterns | Difficulty: ★☆☆ |
+| DPT-048 | Category: Design Patterns | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | Anti-Patterns Overview, Variables, Constants | |
 | **Used by:** | Code Quality, Refactoring, Code Review Best Practices | |
@@ -40,6 +44,19 @@ The literal `1.085` carries no meaning in the code. It could be a tax rate, a ma
 
 **THE INVENTION MOMENT:**
 This is exactly why Named Constants were invented and Magic Numbers were named as an anti-pattern - to give teams the vocabulary to require that every literal value in code has a name that communicates intent, a single definition point, and a single location to change.
+
+**EVOLUTION:**
+Magic Numbers were identified as a code smell in the earliest
+structured programming literature. Symbolic constants (`#define`,
+`final static`) were the first remediation. With OOP, constants
+moved to classes and interfaces. Java enums (Java 5) provided
+type-safe named values that replaced integer/string magic
+constants entirely. Code analysis tools (PMD, SonarQube) added
+automated detection for numeric literals in code. Modern linting
+rules enforce zero magic numbers in production code. The pattern
+remains in databases (magic integer codes in lookup tables,
+status fields with undocumented values) as a persistent
+data-model anti-pattern.
 
 ---
 
@@ -407,11 +424,67 @@ grep -rn "timeout\|retry\|maxConn" \
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Every value with domain meaning belongs in a named constant.
+Names communicate intent; raw values communicate nothing.
+The cost of a constant declaration is negligible; the cost
+of understanding undocumented values is recurring.
+
+**Where else this pattern appears:**
+- **Database status codes (magic integers):** `status = 3` in
+  the `orders` table meaning "shipped" -- the name is in a
+  spreadsheet in the DBA's email, not in the code.
+- **HTTP status codes:** HTTP status codes themselves are named
+  (200 OK, 404 Not Found, 500 Internal Server Error) -- the
+  numbers are standardised magic numbers that the HTTP
+  specification named to prevent ambiguity.
+- **Network protocol packet types:** Binary protocol fields
+  with type codes 0x01, 0x02, 0x03 meaning different message
+  types -- magic numbers at the wire format level.
+
+---
+
+### 💡 The Surprising Truth
+
+HTTP status codes are the world's most widely-used standard
+magic numbers -- and they are extensively documented precisely
+because the alternative (remembering raw numbers) is error-prone.
+RFC 9110 (HTTP Semantics) dedicates significant text to defining
+what each status code means, effectively building a global
+"constant registry" because there is no other mechanism to
+prevent different endpoints from interpreting the same number
+differently. The RFC is proof that even globally standardised
+numbers require names: `200` became `HTTP_OK` in every HTTP
+client library because `200` alone communicates nothing to
+a reader who hasn't memorised the RFC.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A code review shows `if (response.code() == 200 || response.code() == 201)`. One reviewer says "this is a magic number, extract to a constant." Another says "200 and 201 are HTTP status codes - every developer knows what they mean, they don't need a constant." Who is right? What is the precise criterion for determining when a literal is obvious enough to not require extraction?
 
+*Hint: Look at the First Principles section for the core invariants and the Failure Modes section for where this scenario appears as a documented issue.*
+
 **Q2.** A microservice has a timeout of 5000ms defined as `PAYMENT_TIMEOUT_MS = 5000` in `PaymentConfig.java`. During a production incident, operations wants to raise the timeout to 8000ms without redeploying. They cannot - the value is in a compiled constant. Should this value have been a named constant, an externalised configuration parameter, or something else? Design the correct implementation that allows operations to tune it at runtime without a redeploy while still making the value discoverable and documented.
 
+
+
+*Hint: The Comparison Table and Level 3-4 explanations contain the mechanism that determines which approach wins in this scenario.*
+
+**Q3 (Design Trade-off):** A database table `orders` has a
+`status` column with values 1, 2, 3, 4, 5 stored as integers.
+The enum mapping exists in a Java `OrderStatus` enum but not
+in the database. A new analytics team queries the database
+directly and encounters the magic integers. Describe the
+tradeoff between (a) adding database-level CHECK constraints
+with named values vs. (b) adding a lookup table vs. (c) adding
+database comments per value.
+
+*Hint: This is a data-layer magic numbers problem. The Failure
+Modes section covers documentation drift -- each approach
+has different blast radius when the mapping changes.*
