@@ -1,315 +1,530 @@
-﻿---
-layout: default
-title: "Raft"
-parent: "Distributed Systems"
-grand_parent: "Technical Dictionary"
-nav_order: 23
-permalink: /distributed-systems/raft/
+---
 id: DST-023
+title: Raft
 category: Distributed Systems
+tier: tier-5-distributed-architecture
+folder: DST-distributed-systems
 difficulty: ★★★
-depends_on: Leader Election, Log Replication, Quorum, Consensus, State Machine Replication
-used_by: etcd, Kubernetes, CockroachDB, TiKV, Distributed Locking
-related: Paxos, Zab, Multi-Paxos, Log Replication, State Machine Replication
+depends_on: DST-022, DST-026, DST-028
+used_by: DST-027
+related: DST-024, DST-026, DST-027
 tags:
   - distributed
   - consensus
   - algorithm
   - deep-dive
   - reliability
+status: complete
+version: 1
+layout: default
+parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
+nav_order: 23
+permalink: /distributed-systems/raft/
 ---
 
 # DST-023 - Raft
 
-⚡ TL;DR - Raft is a consensus algorithm designed to be understandable: it decomposes the consensus problem into leader election, log replication, and safety, allowing a cluster of servers to agree on a sequence of values even as servers fail and recover.
+⚡ TL;DR - Raft is a consensus algorithm designed for understandability that solves replicated log agreement by decomposing the problem into three independently-reasoned subproblems: leader election, log replication, and safety.
 
-| #586            | Category: Distributed Systems                                                  | Difficulty: ★★★ |
-| :-------------- | :----------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Leader Election, Log Replication, Quorum, Consensus, State Machine Replication |                 |
-| **Used by:**    | etcd, Kubernetes, CockroachDB, TiKV, Distributed Locking                       |                 |
-| **Related:**    | Paxos, Zab, Multi-Paxos, Log Replication, State Machine Replication            |                 |
+| Metadata        |                           |     |
+| :-------------- | :------------------------ | :-- |
+| **Depends on:** | DST-022, DST-026, DST-028 |     |
+| **Used by:**    | DST-027                   |     |
+| **Related:**    | DST-024, DST-026, DST-027 |     |
 
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-Paxos was the dominant consensus algorithm for decades - and nearly everyone who tried to implement it described it as notoriously difficult to understand and even harder to extend to practical systems (leader election, log compaction, cluster membership changes). Google's Chubby, Yahoo's ZooKeeper, and many databases implemented bespoke consensus variants. Every implementation was different. Every implementation had different correctness trade-offs. And most of them had bugs.
+You have a replicated database. Five nodes. The primary accepts all writes and asynchronously replicates to replicas. The primary crashes. Which replica has the most up-to-date data? How do you elect a new primary without data loss? How do you ensure no two replicas believe they're the primary simultaneously? Without a formal consensus protocol, these questions have no safe answers — every implementation either loses data, creates split-brain, or requires manual operator intervention.
+
+**THE BREAKING POINT:**
+Paxos (the dominant consensus algorithm from 1989-2013) is notoriously difficult to understand and implement correctly. Google's Paxos implementation took years and required writing a clarifying paper ("Paxos Made Live") that still didn't fully specify the algorithm. Independent implementations diverged in subtle ways. The distributed systems community lacked a reference algorithm that engineers could implement correctly from the specification alone.
 
 **THE INVENTION MOMENT:**
-Diego Ongaro and John Ousterhout, motivated by the Paxos understandability crisis, designed Raft in 2014 with a primary goal: make consensus comprehensible. They decomposed consensus into three independent subproblems - leader election, log replication, and safety - and chose design decisions that prioritise clarity over message-count efficiency. Raft is now the most widely implemented consensus algorithm in production systems.
+Diego Ongaro and John Ousterhout at Stanford published "In Search of an Understandable Consensus Algorithm" (USENIX ATC 2014 — originally a PhD dissertation). Raft's core insight: decompose consensus into three independent subproblems — leader election, log replication, safety — each specified in complete, unambiguous terms. The paper included a formal safety proof and a TLA+ specification. Undergraduate students with no distributed systems background could implement a correct Raft node from the paper alone.
+
+**EVOLUTION:**
+2014: Raft paper published. 2015: etcd adopts Raft (powers all Kubernetes state). 2015: CockroachDB adopts Raft (multi-Raft per range). 2015: TiKV adopts Raft. 2016: JRaft (Java Raft library). 2018: InfluxDB uses Raft. 2022: Apache Kafka KRaft mode (Kafka-native Raft, replaces ZooKeeper). 2023: FoundationDB, Rook, numerous cloud-native databases use Raft. Raft is now the most widely-deployed consensus algorithm in production distributed systems.
 
 ---
 
 ### 📘 Textbook Definition
 
-**Raft** is a consensus algorithm that ensures a cluster of servers maintain identical replicated logs. One server is elected **leader** per term; the leader accepts all client requests, appends them to its log, and replicates them to followers using `AppendEntries` RPCs. An entry is **committed** when stored on a majority (`N/2 + 1`) of servers. Committed entries are applied to state machines in order. Raft guarantees: **Election Safety** (at most one leader per term); **Leader Append-Only** (a leader never overwrites its log); **Log Matching** (if two logs have an entry with the same index and term, logs are identical through that index); **Leader Completeness** (a committed entry must be present in all future leaders' logs); **State Machine Safety** (if any server has applied a log entry at index i, no server will apply a different log entry at index i).
+**Raft** is a consensus algorithm that manages a replicated log: a sequence of commands that all servers apply to their state machines in the same order, producing identical state on all replicas. Raft guarantees: (1) **Election Safety:** at most one leader per term. (2) **Leader Append-Only:** a leader never overwrites or deletes entries in its log; it only appends. (3) **Log Matching:** if two logs contain an entry with the same index and term, the logs are identical in all entries up through that index. (4) **Leader Completeness:** if a log entry is committed in a given term, that entry will be present in the logs of all leaders for higher-numbered terms. (5) **State Machine Safety:** if a server has applied a log entry at a given index to its state machine, no other server will ever apply a different log entry for that index. These five properties together guarantee safety even under arbitrary server failures.
 
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-Raft is the consensus algorithm that finally made distributed agreement easy enough to get right: one leader, a shared append-only log, and a majority vote.
+**One line:** Raft elects a leader to sequence all writes, replicates each write to a majority before confirming it, and re-elects automatically when the leader fails.
 
-**One analogy:**
+> Raft is like a company with a single authorized signer. Only the CEO (leader) can sign contracts (commit entries). Every contract must be co-signed by a majority of board members (replicated to quorum) before it's legally binding (committed). If the CEO becomes incapacitated, the board holds an emergency election and picks a new CEO. The new CEO only signs contracts from their tenure onward — old CEO's unsigned contracts are either ratified or discarded.
 
-> Raft is like a distributed secretary: the elected secretary (leader) receives all meeting minutes (client commands), writes them down in order, sends copies to every committee member (follower), and a decision is final when more than half confirm they've written it down. If the secretary quits, the committee elects a new one whose notes are the most complete.
-
-**One insight:**
-Raft's key insight over Paxos: by having a strong leader that is authoritative for the entire log, Raft avoids the need for complex "promise" and "accept" two-phase voting per slot. The leader linearises all decisions. This simplification costs some throughput (all writes must go through one node) but makes the algorithm dramatically easier to understand, implement, and debug.
+**One insight:** The key to Raft's correctness is that committed entries are never lost because: (a) a majority must replicate before commit, and (b) the new leader must have gotten votes from a majority — which overlaps with the majority that received the committed entries. This intersection means the new leader always has all committed entries.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**THE THREE SUBPROBLEMS:**
+**CORE INVARIANTS:**
 
-```
-┌──────────────────────────────────────────────────────────┐
-│  1. LEADER ELECTION                                      │
-│     Problem: pick exactly one authoritative node         │
-│     Solution: randomised timeouts → RequestVote RPC      │
-│              win majority → LEADER; term monotonically ↑│
-│                                                          │
-│  2. LOG REPLICATION                                      │
-│     Problem: replicate leader's log to all followers     │
-│     Solution: AppendEntries RPC (also doubles as heartbeat│
-│              commit when N/2+1 acknowledge               │
-│              leader applies → notifies followers to apply│
-│                                                          │
-│  3. SAFETY (LOG MATCHING INVARIANT)                      │
-│     Problem: ensure all committed entries are preserved  │
-│              across leader changes                       │
-│     Solution: log completeness check in vote grant       │
-│              only vote for candidates with logs ≥ own    │
-└──────────────────────────────────────────────────────────┘
-```
+1. **One leader per term:** The leader sequences all operations. Two leaders in the same term would create conflicting logs. The quorum requirement makes this impossible.
+2. **Commit only after majority replication:** An uncommitted entry can be lost if the leader fails before replication. Once replicated to a majority and committed: the quorum overlap invariant guarantees any future leader has the entry.
+3. **Leader log is authoritative:** Leaders never change their own committed entries. Followers adopt the leader's log by overwriting conflicting entries (after learning the leader's log matching point).
+4. **Log Matching Property:** If two nodes have an entry with the same (index, term): all preceding entries are also identical. This follows from: leaders append one entry at a time, and AppendEntries consistency check rejects divergent logs.
 
-**RAFT LOG REPLICATION FLOW:**
+**DERIVED DESIGN:**
+Three subproblems with independent specifications: (1) Leader election (DST-022): who sequences? (2) Log replication: how does the sequence propagate? (3) Safety: what invariants are maintained under all failure scenarios? By specifying each independently, Raft becomes implementable in stages without conflating concerns.
 
-```
-Client: "SET x=42"
-          │
-          ▼
-    Leader (N1, term=3)
-    1. Append to local log: {index:7, term:3, cmd:"SET x=42"}
-    │
-    ├──AppendEntries{term:3, index:7, entry:{...}}──▶ N2 (follower)
-    ├──AppendEntries{term:3, index:7, entry:{...}}──▶ N3 (follower)
-    └──AppendEntries{term:3, index:7, entry:{...}}──▶ N4 (follower)
-    │
-    N2 ──▶ ACK         ← majority achieved (N1+N2+N3 = 3/5)
-    N3 ──▶ ACK
-    │
-    Leader commits entry 7, applies to state machine
-    Leader responds "OK" to client
-    Leader's next AppendEntries includes commitIndex=7
-    N2, N3 apply entry 7 on receiving updated commitIndex
-```
+**THE TRADE-OFFS:**
+**Gain:** Formally specified, implementable from paper, proven correct, strong safety properties.
+**Cost:** Leader is a bottleneck (all writes route through one node). Leader failure causes write unavailability for election duration. Multi-Raft required for horizontal throughput scaling.
 
-**LOG MATCHING PROPERTY:**
-
-```
-If two logs contain an entry with same (index, term):
-  → All entries BEFORE that index are identical in both logs
-
-Why? Leader sends AppendEntries with prevLogIndex+prevLogTerm.
-     Follower REJECTS if its prevLog doesn't match.
-     Leader decrements prevLogIndex, retries.
-     Eventually finds matching point → follower overwrites diverged entries.
-     This backtracking ensures leader's log is the truth.
-```
-
-**LEADER ELECTION SAFETY:**
-
-```
-Candidate gets vote from N only if:
-  candidate's lastLog.term > voter's lastLog.term  OR
-  (terms equal AND candidate's log.length >= voter's log.length)
-
-→ Only a candidate with the most complete log can win an election.
-→ All committed entries (majority knows them) will be in any future leader's log.
-→ Leader Completeness property: committed entries are NEVER lost.
-```
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Consensus in an asynchronous network with crash failures (Fischer-Lynch-Paterson: impossible to solve deterministically). Raft is a practical solution: it provides safety always, liveness only when a stable majority can communicate.
+**Accidental:** Paxos's ambiguity about leadership, multi-Paxos, the role of acceptors vs. learners — Raft eliminates all of this through explicit design.
 
 ---
 
 ### 🧪 Thought Experiment
 
-**LEADER FAILURE DURING REPLICATION:**
-Cluster: N1 (leader), N2, N3, N4, N5. Log entry X is appended.
+**SETUP:** 3-node Raft cluster. Leader L replicates entry E to Node A (success) but NOT Node B before crashing. Quorum = 2. Was E committed?
 
-**Case A:** N1 sends to N2 and N3 (majority). N2 and N3 ACK. N1 commits entry X.
-N1 crashes before notifying N4, N5. N3 starts election. N3 voted in the old ACK,
-so N3's log includes X. N3 wins election (most up-to-date log wins). N3 replicates
-X to N4, N5. **Entry X is not lost.** ✓
+**ANALYSIS:**
 
-**Case B:** N1 appends X locally. Sends to N2 only. N1 crashes before N2 ACKs.
-Entry X is NOT committed (only 2/5 nodes: N1+N2 know it). N3 or N4 starts election.
-N3's log doesn't have X (only N1 and N2 do). N3 could win election if N3's log
-matches N4 and N5. N3 becomes leader. N3's log DOES NOT include X. N3 OVERWRITES
-N2's copy of X. **Entry X is lost.** ✓ - This is CORRECT: X was never committed.
-The client never got an ACK. The client will retry. Safety is preserved.
+- E replicated to L + A = 2 nodes = majority of 3. L committed E and responded "success" to client.
+- L crashes after committing but before sending "committed" to A and B.
+- New election: A or B can win (both are candidates for next term).
+- If A wins: A has E in its log. A sends AppendEntries to B (with E). B adopts A's log. E is now on all nodes. Correct.
+- If B wins: B's log is missing E. But B CANNOT win: A has a more up-to-date log (has E). A won't vote for B. Only A can win (has log at least as complete as itself). A wins. E survives.
 
-**THE GUARANTEE:** Raft only confirms a write to the client after a COMMITTED ACK
-(majority replication). A write that only reached one follower before leader crash
-was never confirmed to the client. Retrying is the client's responsibility.
+**THE INSIGHT:** The quorum overlap between "nodes that replicated E" and "nodes that can vote for the new leader" guarantees that committed entries always survive leader failure. This is the most important correctness argument in Raft — the intersection of two majorities is always non-empty in a cluster of N ≥ 2f+1 nodes.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> Raft is like a distributed append-only ledger with a rotating notary.
-> The notary (leader) is the only person authorised to add new entries.
-> An entry is "official" when the notary stamps it AND at least N/2 witnesses
-> co-sign. If the notary steps down, the new notary is chosen from whoever
-> has the most complete signed ledger. The new notary starts from where
-> the old one left off - no entries are lost, no double-entries are possible.
+> Raft is like a committee that uses a designated chairperson to reach decisions. The chair (leader) proposes motions (log entries). A motion passes only when a majority of members acknowledge it (replicated to quorum). The chair announces passed motions to all members. If the chair is absent (leader crash), the committee elects a new chair. The new chair only has authority for new motions — but will first check with members to see if there are pending passed-but-not-announced motions from the previous chair.
+
+**Mapping:**
+
+- **Chairperson** → Raft leader
+- **Motion proposal** → AppendEntries RPC
+- **Motion passed (majority acknowledge)** → log entry committed
+- **New chair election** → leader election (new term)
+- **Checking for pending passed motions** → new leader learning committed entries from quorum
+- **Chair tenure number** → term number
+
+Where this analogy breaks down: in committees, all members vote on all motions. In Raft, only the leader proposes — followers only replicate and acknowledge.
 
 ---
 
 ### 📶 Gradual Depth - Four Levels
 
-**Level 1:** Raft is a "distributed agreement" protocol. One node is the leader; it receives all writes, puts them in an ordered log, and gets a majority of other nodes to confirm each entry. If the leader fails, nodes vote on a replacement who takes over the log.
+**Level 1 - What it is (anyone can understand):**
+Raft ensures that 3 (or 5) servers all agree on the same sequence of operations. One server is the "leader" — it accepts all requests and makes sure at least half the servers record each request before confirming it to the client. If the leader crashes, the remaining servers automatically elect a new one and continue without any data loss.
 
-**Level 2:** Every write goes through three phases: (1) leader appends to local log; (2) leader replicates to followers (AppendEntries); (3) leader commits when majority ACK. The commit message is piggybacked on the next AppendEntries. Only committed entries are applied to the state machine and acknowledged to clients.
+**Level 2 - How to use it (junior developer):**
+Use Raft through a library: etcd for cluster coordination and key-value storage, CockroachDB or TiKV for distributed SQL/NoSQL, Consul for service discovery. Key operational parameters: heartbeat interval (default 100-500ms), election timeout (10× heartbeat), snapshot threshold (how many log entries before compaction). Monitor: leader election frequency (>1/hour is a problem), replication lag (followers' commit index vs. leader's commit index), snapshot size.
 
-**Level 3:** Raft's safety comes from two invariants: Log Matching (if two logs agree at index i, they agree on all previous indices - enforced by the AppendEntries consistency check) and Leader Completeness (a new leader always has all committed entries - enforced by only voting for candidates with the most up-to-date log). Together these ensure the replicated log is an append-only, irreversible history of committed operations.
+**Level 3 - How it works (mid-level engineer):**
+Raft's log replication: (1) Client sends command to leader. (2) Leader appends command to its log (with current term). (3) Leader sends AppendEntries to all followers (in parallel). (4) Followers append entry to their log, reply "success." (5) Once leader receives success from a majority: marks entry as committed, applies to state machine, responds to client. (6) Leader includes commit index in next AppendEntries — followers apply committed entries. Consistency check in AppendEntries: leader sends (prevLogIndex, prevLogTerm) for the preceding entry. Follower rejects if its (prevLogIndex) entry doesn't match prevLogTerm. Leader backs up and retries with earlier entries until a match is found.
 
-**Level 4:** Raft's simplicity has a performance cost: all writes go through the leader (single bottleneck). Production optimisations: pipelining AppendEntries (don't wait for one to commit before sending next), batch commits (accumulate N entries before sending), leader/follower read scaling (read from committed followers for linearisable reads using Raft ticks, or use lease-based reads). Log compaction via snapshots (snapshotting the state machine, discarding old log entries) is essential for bounded storage. Raft's joint consensus for cluster membership changes (add/remove nodes) uses a two-phase approach to avoid split-brain during the membership transition.
+**Level 4 - Why it was designed this way (senior/staff):**
+Raft's "Leader Append-Only" and "Log Matching" invariants work together: the leader never modifies its log (Append-Only) → all forks in follower logs are resolved by adopting the leader's version → Log Matching holds by induction on AppendEntries. This is in contrast to Paxos where the prepare phase allows the leader to learn about uncommitted entries from acceptors and decide their fate — introducing a third party role (acceptors) that Raft eliminates by making the leader the authoritative source. Raft's joint consensus for cluster membership changes (adding/removing servers) solves the otherwise-treacherous problem of configuration changes during normal operation by requiring a two-phase transition through an intermediate configuration.
+
+**Expert Thinking Cues:**
+
+- "Is my write safely committed?" → Check commit index, not just leader acknowledgment. An acknowledged-but-not-committed entry can be lost in a crash.
+- "Why is my Raft throughput limited?" → Single leader = single sequencer. Use multi-Raft (shard-level leaders) for horizontal scaling.
+- "Why does my follower have a shorter log than the leader?" → Normal: replication is async. Check `match_index` on leader to see replication progress.
+- "What happens during a network partition?" → Majority partition: continues normally. Minority partition: stops accepting writes (no leader can be elected). After healing: minority adopts majority's log.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-**Raft AppendEntries RPC:**
+**Raft log replication state machine:**
 
 ```
-Leader → Follower:
-  AppendEntries {
-    term:         3,          // leader's current term
-    leaderId:     "N1",
-    prevLogIndex: 6,          // index of log entry before new ones
-    prevLogTerm:  3,          // term of prevLogIndex entry
-    entries:      [{index:7, term:3, cmd:"SET x=42"}],
-    leaderCommit: 6           // leader's commitIndex
-  }
+Leader receives client request "cmd":
+  1. Append (term=T, index=N, cmd) to leader log
+  2. Broadcast AppendEntries to all followers:
+       prevLogIndex=N-1, prevLogTerm=T',
+       entries=[(T,N,cmd)], leaderCommit=C
 
-Follower reply:
-  success: true/false
-  term:    follower's term (if > leader.term, leader steps down)
+Follower receives AppendEntries:
+  a. if msg.term < currentTerm: reject
+  b. if log[prevLogIndex].term != prevLogTerm:
+       reject (consistency check failure)
+       [leader will decrement nextIndex and retry]
+  c. Append entries to log (delete conflicting entries)
+  d. if leaderCommit > commitIndex:
+       commitIndex = min(leaderCommit, lastLogIndex)
+  e. Reply success
 
-Safety check on follower:
-  if log[prevLogIndex].term != prevLogTerm:
-    return success=false  ← leader will decrement prevLogIndex and retry
-  else:
-    append entries, update commitIndex if leaderCommit > commitIndex
-    return success=true
+Leader receives majority success:
+  commitIndex = N
+  Apply cmd to state machine
+  Reply to client
+  Next AppendEntries will carry leaderCommit=N
+  (followers will apply cmd on receipt)
+
+Log compaction (snapshot):
+  When log exceeds threshold:
+  Take snapshot of state machine at index S
+  Discard log entries [1..S]
+  InstallSnapshot RPC for lagging followers
 ```
 
-**etcd Raft State (production):**
+**AppendEntries consistency check:**
+
+```
+Leader log:  [1,T3]─[2,T3]─[3,T5]─[4,T5]
+Follower:    [1,T3]─[2,T3]─[3,T4]  (diverges at index 3)
+
+Leader sends: prevLogIndex=2, prevLogTerm=T3
+Follower: log[2].term == T3 → MATCH at index 2
+Leader: sends entries [3,T5][4,T5]
+Follower: deletes [3,T4], appends [3,T5][4,T5]
+Logs now identical.
+```
+
+---
+
+### 🔄 The Complete Picture - End-to-End Flow
+
+**NORMAL FLOW (write request to committed response):**
+
+```
+Client      Leader(L)    Follower(A)   Follower(B)
+  │             │              │              │
+  │──write X──▶│              │              │
+  │            │──AppendEntry─▶│              │
+  │            │──AppendEntry──────────────▶│
+  │            │              │              │
+  │            │◀─── ack ────│              │
+  │            │◀─── ack ──────────────────│
+  │            │ (majority=2 acks: commit!) │
+  │            │ apply X to state machine   │
+  │◀─success──│              │              │
+  │            │──AppendEntry─▶│ (leaderCommit=N)
+  │            │              │ apply X     │
+  │            │──AppendEntry──────────────▶│
+  │            │              │        apply X
+  │            ← YOU ARE HERE (write is committed and applied)
+```
+
+**FAILURE PATH (leader crashes after commit, before notifying followers):**
+Followers don't know X is committed. New election. New leader has X (was replicated to majority, so new leader has it by quorum overlap). New leader replicates X with its term number. X gets committed again under new term. Followers apply X. Idempotent: state machine applies X only once (by index tracking). Client may retry (received no response) — idempotent write semantics required.
+
+**WHAT CHANGES AT SCALE:**
+At 1000 keys/sec: single Raft leader handles all writes. At 100,000 keys/sec: need multi-Raft. CockroachDB splits data into 512MB ranges, each range has its own Raft group. 100 ranges × 1000 writes/range/sec = 100,000 writes/sec total. Leader count = number of ranges (hot ranges are rebalanced). Key metric: p99 Raft apply latency — should be < 10ms for most workloads.
+
+**CONCURRENCY & DISTRIBUTED IMPLICATIONS:**
+Read scalability: followers can serve stale reads (eventual consistency). For linearizable reads: (1) ReadIndex: leader checks its commit index, ensures no newer leader by getting quorum heartbeats, returns read from state machine at that index. (2) Lease reads: leader uses a time-bounded lease (no new leader can be elected for this duration) to serve reads without quorum heartbeat. Lease reads break if leader's clock runs fast — mitigate with TrueTime (Spanner) or conservative lease margins.
+
+---
+
+### 💻 Code Example
+
+**BAD - Manual leader tracking without Raft safety guarantees:**
+
+```java
+// Ad-hoc "leader" election: last writer wins
+// No quorum check → split-brain if network partitions
+public class UnsafeReplicatedMap {
+    private final Map<String, String> store = new HashMap<>();
+    private String leaderIp;
+
+    public void write(String key, String value) {
+        // Any node can accept writes
+        // No consensus → diverging state
+        store.put(key, value);
+        broadcastToReplicas(key, value); // async, best-effort
+        // Client receives "success" — but:
+        // 1. Replication may fail silently
+        // 2. Two nodes may both accept different values
+        // 3. No way to determine which value is "correct"
+    }
+}
+```
+
+**GOOD - Using etcd (Raft-backed) for safe replicated state:**
+
+```java
+// etcd provides Raft consensus via its gRPC API
+// All writes are linearizable by default
+import io.etcd.jetcd.Client;
+import io.etcd.jetcd.KV;
+import io.etcd.jetcd.kv.PutResponse;
+import io.etcd.jetcd.ByteSequence;
+
+public class RaftBackedConfig {
+    private final KV kvClient;
+
+    public RaftBackedConfig(String etcdEndpoints) {
+        Client client = Client.builder()
+            .endpoints(etcdEndpoints.split(","))
+            .build();
+        this.kvClient = client.getKVClient();
+        // etcd uses Raft internally — this client
+        // automatically routes to leader
+    }
+
+    // Linearizable write (Raft-committed before returning)
+    public void setConfig(String key, String value)
+        throws Exception {
+        ByteSequence k = ByteSequence.from(key.getBytes());
+        ByteSequence v = ByteSequence.from(value.getBytes());
+        // Only returns after Raft commits to majority
+        PutResponse resp = kvClient.put(k, v).get();
+        // resp.getHeader().getRevision() = Raft index
+        // Use this for causal ordering of subsequent reads
+        System.out.printf(
+            "Committed at Raft index: %d%n",
+            resp.getHeader().getRevision()
+        );
+    }
+
+    // For compare-and-swap (atomic update):
+    public boolean compareAndSet(
+        String key, String expected, String newValue
+    ) throws Exception {
+        ByteSequence k = ByteSequence.from(key.getBytes());
+        ByteSequence exp =
+            ByteSequence.from(expected.getBytes());
+        ByteSequence nv =
+            ByteSequence.from(newValue.getBytes());
+        // Raft-safe CAS using etcd transactions
+        return kvClient.txn().If(
+            new Cmp(k, Cmp.Op.EQUAL,
+                CmpTarget.value(exp))
+        ).Then(
+            Op.put(k, nv, PutOption.DEFAULT)
+        ).commit().get().isSucceeded();
+    }
+}
+```
+
+**How to test / verify correctness:**
 
 ```bash
-# Check Raft leader and term:
-etcdctl endpoint status --cluster -w table
-# Shows: leader ID, current term, committed index, applied index for all members
+# Verify Raft cluster health and leader state:
+ETCDCTL_API=3 etcdctl --endpoints=$ETCD_ENDPOINTS \
+  endpoint status --write-out=table
+# Output shows: leader, term, raft index, applied index
+# applied_index should equal raft_index (no lag)
 
-# Watch for election events:
-journalctl -u etcd -f | grep -E "became leader|started election|term"
+# Simulate leader failure and measure recovery:
+LEADER_EP=$(ETCDCTL_API=3 etcdctl endpoint status \
+  --write-out=json | jq -r \
+  '.[] | select(.Status.leader != 0) | .Endpoint')
+# Kill leader container, measure write recovery time:
+docker kill $(docker ps | grep etcd | head -1 | awk '{print $1}')
+time ETCDCTL_API=3 etcdctl put recovery-test 1 \
+  --endpoints=$ETCD_ENDPOINTS 2>&1
+# Expected: < 500ms (Raft election + leader commit)
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Property           | Raft                       | Paxos (Multi-Paxos)             |
-| ------------------ | -------------------------- | ------------------------------- |
-| Understandability  | High (primary design goal) | Low (notoriously complex)       |
-| Leader-based       | Yes (strong leader)        | Yes (proposer) but weaker       |
-| Log compaction     | Built-in (snapshots)       | Not specified (impl-dependent)  |
-| Membership change  | Joint consensus (built-in) | Not specified                   |
-| Throughput         | Good (pipelining)          | Slightly better (more flexible) |
-| Production systems | etcd, CockroachDB, TiKV    | Chubby, some internal systems   |
+| Property                   | Raft                    | Paxos                    | ZAB (ZooKeeper)   |
+| :------------------------- | :---------------------- | :----------------------- | :---------------- |
+| Understandability          | High (designed for it)  | Low                      | Medium            |
+| Leader role                | Explicit, central       | Implicit (varies)        | Explicit primary  |
+| Log replication            | AppendEntries RPC       | Accept phase             | Broadcast         |
+| Leader election            | Term-based, quorum      | Prepare phase            | Epoch-based       |
+| Cluster membership changes | Joint consensus         | Not specified            | Separate protocol |
+| Production use             | etcd, CockroachDB, TiKV | Google Chubby (historic) | ZooKeeper         |
+| Formal spec                | TLA+ available          | Multiple, conflicting    | Incomplete        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception                         | Reality                                                                                                                                               |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Raft is slow because of single leader | Pipelining and batching give Raft competitive throughput. Single-leader IS a bottleneck for geo-distributed systems but fine for cluster coordination |
-| Raft 100% guarantees no data loss     | Raft guarantees no loss of COMMITTED entries. Un-committed entries (acknowledged to client before majority ACK - which shouldn't happen) CAN be lost  |
-| Raft requires all nodes to be up      | Raft requires only a MAJORITY (N/2+1). A 5-node Raft cluster remains functional with 2 node failures                                                  |
-| etcd IS Raft                          | etcd implements Raft but adds its own storage layer, watch mechanism, transaction KV API on top                                                       |
+| Misconception                                  | Reality                                                                                                                                                                                                                   |
+| :--------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Raft is faster than Paxos"                    | Raft and Paxos have equivalent latency (both require 1 round-trip for normal operation after leader established). Raft's advantage is correctness and understandability, not speed.                                       |
+| "Followers can serve read requests safely"     | Followers serve STALE reads. Linearizable reads require ReadIndex (leader confirmation) or lease reads. A follower 100ms behind the leader may return old data.                                                           |
+| "Raft guarantees no data loss"                 | Raft guarantees committed data is not lost. Acknowledged-but-not-committed data (client received "success" but leader crashed before quorum replication) CAN be lost. Distinguish acknowledged vs. committed.             |
+| "Raft requires 3 nodes minimum"                | Raft works with 1 node (trivially), 2 nodes (no fault tolerance — any failure loses quorum), or 3+ nodes. A 3-node cluster tolerates 1 failure; 5-node tolerates 2. Most production deployments use 3 or 5.               |
+| "Increasing cluster size improves performance" | Larger clusters tolerate more failures but DECREASE write throughput (more nodes to replicate to) and INCREASE election time. 5 nodes is the most common production choice for 2-fault tolerance with acceptable latency. |
 
 ---
 
 ### 🚨 Failure Modes & Diagnosis
 
-**Slow Commit Latency (Replication Bottleneck)**
+**Failure Mode 1: Follower Replication Lag Causes Stale Reads**
 
-**Symptom:** Write latency is consistently at 2× single-machine latency;
-leader CPU is low but throughput is capped.
-
-**Root Cause:** Each write waits for follower ACK before next write dispatched
-(not pipelining). Or: network latency between leader and followers is high.
-
-**Fix:** Enable AppendEntries pipelining. For geo-distributed Raft, use MultiRaft
-(multiple independent Raft groups with different leaders) to avoid single-region
-leader bottleneck. CockroachDB uses MultiRaft with one Raft group per range.
-
----
-
-**Leader Flapping During Network Instability**
-
-**Symptom:** Rapid leader changes; high term numbers; etcd alarms.
-
-**Root Cause:** Follower election timeouts misconfigured too short for network jitter.
-
-**Fix:** `--election-timeout` should be ≥ 10× `--heartbeat-interval` and ≥ 5× the
-99th-percentile network RTT between nodes.
+**Symptom:** Users see stale data — a read returns a value that was already overwritten seconds ago. "I just updated this and it shows the old value."
+**Root Cause:** Read routed to a Raft follower whose `applied_index` is behind the leader's `commit_index`. Follower is replicating but applying entries slowly (CPU-bound state machine, slow disk).
+**Diagnostic:**
 
 ```bash
-# etcd tuning:
-etcd --heartbeat-interval=100 --election-timeout=1000  # (ms)
-# General rule: election-timeout ≥ 10 * heartbeat-interval
+# Check replication lag across cluster nodes:
+ETCDCTL_API=3 etcdctl --endpoints=$ETCD_ENDPOINTS \
+  endpoint status --write-out=json | jq \
+  '.[].Status | {endpoint: .header.member_id,
+    raftIndex: .raftIndex,
+    appliedIndex: .appliedIndex}'
+# If appliedIndex << raftIndex on a follower:
+# That follower is lagging — route reads to leader
+# Or: use ReadIndex for linearizable reads
 ```
+
+**Fix:**
+BAD: Routing all reads to followers without checking their applied_index.
+GOOD: For linearizable reads, use etcd's `--consistency=l` flag (ReadIndex) or configure application to always read from leader. For acceptable staleness: monitor replication lag and alert if > SLA.
+**Prevention:** Monitor `etcd_server_apply_duration_seconds` — if p99 > 10ms, applier is too slow.
+
+**Failure Mode 2: Log Divergence After Incorrect Cluster Resize**
+
+**Symptom:** After adding a new node to the cluster, the new node's log diverges from the leader. `applied_index` on the new node never catches up. Requests return errors intermittently.
+**Root Cause:** New node added to cluster before leader has compacted old log entries. New node can't replay from log entry 1 (already compacted). Leader should send a snapshot via InstallSnapshot, but snapshot size exceeds RPC timeout.
+**Diagnostic:**
+
+```bash
+# Check if new member is receiving snapshot:
+grep "InstallSnapshot" /var/log/etcd/etcd.log | tail -20
+# If InstallSnapshot repeatedly fails:
+# Snapshot too large for default gRPC message size limit
+# Check:
+grep "grpc: received message larger than" \
+  /var/log/etcd/etcd.log
+```
+
+**Fix:**
+BAD: Increasing snapshot send rate without increasing gRPC message size limit.
+GOOD: Increase etcd `--max-request-bytes` (default 1.5MB). Use etcd's learner mode: add new member as learner (non-voting), let it catch up via snapshot, promote to voter after caught up.
+**Prevention:** Always add nodes as learners first. Monitor learner catch-up time before promotion.
+
+**Failure Mode 3: Security - etcd Raft Cluster Without mTLS**
+
+**Symptom:** Audit reveals that inter-node Raft traffic (port 2380) is unencrypted. A man-in-the-middle can inject AppendEntries messages with crafted log entries, corrupting the replicated state machine.
+**Root Cause:** etcd deployed without `--peer-cert-file` / `--peer-key-file` / `--peer-trusted-ca-file` configuration. Peer traffic on port 2380 uses plain HTTP.
+**Diagnostic:**
+
+```bash
+# Check if peer communication uses TLS:
+curl -v http://etcd-node1:2380/members 2>&1 | \
+  grep "Connected to"
+# If it responds without TLS error: NOT secured
+# Check etcd startup flags:
+ps aux | grep etcd | grep peer-cert
+# If no peer-cert in output: mTLS not configured
+```
+
+**Fix:**
+BAD: Running etcd cluster without peer TLS: `etcd --listen-peer-urls http://0.0.0.0:2380`
+GOOD: Enable peer mTLS:
+
+```bash
+etcd \
+  --peer-cert-file=/etc/etcd/peer.crt \
+  --peer-key-file=/etc/etcd/peer.key \
+  --peer-trusted-ca-file=/etc/etcd/ca.crt \
+  --peer-client-cert-auth=true \
+  --listen-peer-urls=https://0.0.0.0:2380
+```
+
+**Prevention:** Kubeadm and managed Kubernetes (EKS, GKE, AKS) configure etcd mTLS by default. Self-managed etcd clusters must configure this manually. Audit with `etcdctl endpoint health` — if it requires TLS flags, the cluster is correctly secured.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Leader Election` - the first phase of Raft; defines how a leader is chosen per term
-- `Log Replication` - the second phase; defines how entries are replicated to followers
-- `Paxos` - the predecessor/alternative; Raft was designed as a more understandable Paxos
-- `State Machine Replication` - the target application of Raft: identical state machines via identical logs
-- `etcd` - the most widely deployed Raft implementation (powers Kubernetes)
+**Prerequisites (understand these first):**
+
+- DST-022 - Leader Election (Raft's first subproblem — who sequences operations)
+- DST-026 - Log Replication (Raft's second subproblem — how operations propagate)
+- DST-028 - Quorum (the mathematical basis for Raft's safety guarantees)
+
+**Builds On This (learn these next):**
+
+- DST-027 - State Machine Replication (Raft as the consensus layer for SMR)
+- DST-024 - Paxos (the alternative consensus algorithm; compare trade-offs)
+
+**Alternatives / Comparisons:**
+
+- DST-024 - Paxos (equivalent safety properties, different design philosophy)
+- DST-026 - Log Replication (the mechanism Raft uses for state propagation)
 
 ---
 
 ### 📌 Quick Reference Card
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│  RAFT = Leader Election + Log Replication + Safety       │
-│                                                          │
-│  Write path: client → leader → AppendEntries → ACK N/2+1│
-│              → commit → apply state machine → respond    │
-│                                                          │
-│  Safety invariants:                                      │
-│    Log Matching: if logs agree at i, they agree at [0,i] │
-│    Leader Completeness: new leader has ALL committed logs│
-│                                                          │
-│  Key: only committed entries guaranteed durable          │
-│  Used by: etcd, CockroachDB, TiKV, Consul               │
-└──────────────────────────────────────────────────────────┘
++------------------+--------------------------------+
+| WHAT IT IS       | Consensus algorithm: replicated|
+|                  | log with leader-based ordering |
++------------------+--------------------------------+
+| PROBLEM SOLVED   | Safe distributed state machine |
+|                  | with automatic failure recovery|
++------------------+--------------------------------+
+| KEY INSIGHT      | Quorum overlap: committed      |
+|                  | entry always on next leader    |
++------------------+--------------------------------+
+| USE WHEN         | Replicated databases, config   |
+|                  | stores, distributed locks      |
++------------------+--------------------------------+
+| AVOID WHEN       | Leaderless Dynamo-style is ok  |
+|                  | (BASE semantics acceptable)    |
++------------------+--------------------------------+
+| TRADE-OFF        | Strong consistency + safety vs |
+|                  | write throughput (single leader)|
++------------------+--------------------------------+
+| ONE-LINER        | Leader sequences, quorum       |
+|                  | commits, logs replicate safely |
++------------------+--------------------------------+
+| NEXT EXPLORE     | DST-024 Paxos,                 |
+|                  | DST-027 State Machine Replication|
++------------------+--------------------------------+
 ```
+
+**If you remember only 3 things:**
+
+1. Raft = leader election + log replication + safety. Leader sequences all writes; a write is committed only after replication to a majority.
+2. Quorum overlap guarantees committed entries survive any leader failure: majority-replicated + majority-votes = new leader always has committed entries.
+3. Leader failure = write unavailability for election duration (150-500ms). Use multi-Raft for horizontal write scaling; use ReadIndex for linearizable reads from followers.
+
+**Interview one-liner:**
+"Raft is a consensus algorithm that decomposes replicated log agreement into leader election, log replication, and safety invariants. The leader appends each client request to its log, replicates it to a majority via AppendEntries, and commits (applies to state machine and responds to client) only after majority acknowledgment — guaranteeing that committed entries survive any leader failure due to the quorum intersection of replication majority and election majority."
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Decompose complex distributed problems into independent, separately-specifiable subproblems. Raft's success came not from a fundamentally different algorithm (Paxos achieves the same safety guarantees) but from recognizing that consensus has three distinct concerns (who leads, how state replicates, what invariants must hold) and designing each independently. When a distributed problem seems impossibly complex: look for the hidden subproblems and separate them.
+
+**Where else this pattern appears:**
+
+- **Two-Phase Commit (2PC) vs. Raft:** 2PC decomposes distributed transactions into "prepare" (can you commit?) and "commit" (do commit) — two independent phases with independent protocols. The coordinator failure problem in 2PC is analogous to leader failure in Raft — both require a recovery protocol for the "who decides?" subproblem. Raft solves "who decides?" elegantly; 2PC punts it to external recovery mechanisms.
+- **TCP connection lifecycle:** TCP decomposes reliable byte stream delivery into: (1) connection establishment (SYN/ACK handshake), (2) data transfer (sliding window, acknowledgment, retransmission), (3) connection teardown (FIN/ACK sequence). Each phase has its own state machine. This decomposition into phases is structurally identical to Raft's subproblem decomposition — same engineering insight applied to transport-layer reliability.
+- **Kubernetes controller pattern:** The Kubernetes controller decomposition separates: (1) leadership (who runs the controller — etcd Raft leader election), (2) state observation (watch API for current state), (3) reconciliation (drive current state to desired state). Three independently-specifiable subproblems. The same principle that made Raft understandable makes Kubernetes controllers testable and composable.
+
+---
+
+### 💡 The Surprising Truth
+
+Raft was originally considered too simple to be publishable. Multiple reviewers at OSDI 2013 (where it was first submitted) rejected it on the grounds that it was "not novel enough" — Paxos already solved consensus. Ongaro resubmitted to USENIX ATC 2014, where it was accepted and went on to become the most-cited systems paper of the 2010s. The surprising truth: the most impactful algorithmic contribution of the decade was nearly rejected because it was "too easy to understand." Correctness and usability are treated as engineering concerns in systems research — but Raft proved they're research contributions of the highest order. The ~50 production Raft implementations deployed globally (powering Kubernetes, CockroachDB, TiKV, Consul, and dozens more) exist because one paper prioritized "can an engineer implement this correctly?" over "can we publish a novel algorithm?" The practical impact per citation ratio of Raft may be higher than any distributed systems paper in history.
 
 ---
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** A 5-node Raft cluster has leader N1 with log entries up to index 10 (all committed). N1 appends entry 11 locally, sends AppendEntries to N2 and N3, but N2 and N3 crash before responding. N4 and N5 haven't received entry 11. N1 then crashes too. Who can become leader? What happens to entry 11? Walk through the election, the log state of each candidate, and the exact Raft rules that govern the outcome.
+**Q1 (C - Design Trade-off):** Raft requires all writes to go through a single leader. Multi-Raft (as used in CockroachDB and TiKV) partitions data into ranges, each with its own Raft group. A transaction that spans multiple ranges requires coordinating across multiple Raft leaders. What problem does cross-range coordination introduce, and how does it relate to the classic distributed transaction problem?
+_Hint:_ A cross-range transaction must atomically commit to multiple Raft groups. Each group independently commits or rolls back. If one commits and another fails: partial commit. This is the distributed transaction problem. CockroachDB uses a two-phase commit (2PC) protocol coordinated by a "transaction coordinator" across Raft groups. How is this 2PC coordinator's failure handled? What happens to in-flight transactions if the coordinator crashes between prepare and commit?
 
-**Q2.** You're designing a Raft-based key-value store that needs to serve linearisable reads WITHOUT routing every read through the leader. Describe the "read index" optimisation that allows followers to serve linearisable reads, what guarantee it requires from the leader, and why naively serving reads from a follower's local state without this mechanism violates linearisability.
+**Q2 (B - Scale):** A Raft cluster has 5 nodes. The leader is handling 50,000 writes/second. You want to scale to 500,000 writes/second. What are the options, and what are their trade-offs?
+_Hint:_ Option A: Add more nodes to the Raft group → increases replication fan-out, makes each write SLOWER (more ACKs needed). Option B: Use multi-Raft (shard the data, each shard has its own 3-node Raft group) → scales writes horizontally but introduces cross-shard transaction complexity. Option C: Switch to leaderless replication (Dynamo-style) → loses strong consistency. Which option preserves strong consistency while scaling writes?
+
+**Q3 (D - Root Cause):** You're debugging a CockroachDB cluster where some transactions are taking 10-30 seconds instead of the expected <100ms. Raft replication lag is normal (< 5ms). No disk I/O issues. CPU is normal. What is the most likely cause, and what specific metric would pinpoint it?
+_Hint:_ If Raft replication is fast but transaction latency is high: the bottleneck is likely not in the Raft log replication layer. CockroachDB uses distributed transactions with MVCC and a transaction coordinator. High transaction latency with normal Raft latency often indicates: (1) lock contention — a transaction is waiting for a lock held by a slow transaction, (2) intent resolution — many uncommitted intents in the MVCC layer, (3) clock skew between nodes forcing transaction restarts. What CockroachDB metric specifically tracks transaction restart count due to clock skew?
+
