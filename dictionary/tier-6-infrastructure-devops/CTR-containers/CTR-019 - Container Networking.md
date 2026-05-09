@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Container Networking"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 19
-permalink: /containers/container-networking/
+---
 id: CTR-019
+title: "Container Networking"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Linux Namespaces, Docker, Networking, Container
-used_by: Docker Compose, Container Security, Kubernetes Architecture, Docker Networking Modes
-related: Docker Networking Modes, Linux Namespaces, Container Security, Docker Compose, Kubernetes Architecture
+depends_on: CTR-017, CTR-009, NET-001, CTR-008
+used_by: CTR-015, CTR-021, K8S-001, CTR-038
+related: CTR-038, CTR-017, CTR-021, CTR-015, K8S-001
 tags:
   - containers
   - networking
   - docker
   - advanced
   - architecture
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 19
+permalink: /containers/container-networking/
 ---
 
 # CTR-019 - Container Networking
@@ -41,6 +45,8 @@ Network namespace isolation creates security and isolation by default. But pract
 
 **THE INVENTION MOMENT:**
 This is exactly why container networking was designed - virtual Ethernet pairs (veth), Linux bridges, iptables NAT - a set of kernel networking primitives assembled to connect container network namespaces to the host network and to each other, without violating namespace isolation.
+
+**EVOLUTION:** Docker's networking model shipped in 2013 with a default bridge (docker0). Docker 1.9 (2015) added user-defined overlay networks for multi-host communication. CNI (Container Network Interface) spec (2015) separated network plugins from the runtime. Kubernetes adopted CNI and popularised Calico, Flannel, Cilium. Cilium's eBPF-based networking (2021+) replaced iptables rules for high-performance pod networking.
 
 ---
 
@@ -102,6 +108,10 @@ User-defined bridge networks add container DNS - containers discover each other 
 **THE TRADE-OFFS:**
 **Gain:** Containers have isolated IP stacks while being connectable; service discovery by name; port namespace separation.
 **Cost:** NAT overhead for external traffic; iptables rules grow with ports and containers; default bridge network lacks DNS; host-mode networking removes isolation (but eliminates NAT overhead).
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Isolated processes need controlled network connectivity - both to each other and to external systems. Providing isolated network stacks with controlled routing is inherently necessary for multi-tenant containerised workloads.
+**Accidental:** The specific Docker bridge networking, veth pair implementation, iptables NAT rules, and overlay network encapsulation (VXLAN/Geneve) are implementation choices. CNI plugins provide alternatives at each layer.
 
 ---
 

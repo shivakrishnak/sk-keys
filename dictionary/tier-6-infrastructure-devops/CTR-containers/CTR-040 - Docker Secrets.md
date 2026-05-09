@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Docker Secrets"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 40
-permalink: /containers/docker-secrets/
+---
 id: CTR-040
+title: "Docker Secrets"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Docker, Container Security, Docker Compose, Dockerfile, Volume Mounts
-used_by: CI/CD, Container Security, Image Provenance / SBOM
-related: Container Security, Kubernetes Secrets Management, Docker BuildKit, Image Scanning, Distroless Images
+depends_on: CTR-009, CTR-021, CTR-015, CTR-012, CTR-020
+used_by: CTR-021
+related: CTR-021, CTR-034, CTR-023, CTR-022
 tags:
   - containers
   - docker
   - security
   - advanced
   - production
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 40
+permalink: /containers/docker-secrets/
 ---
 
 # CTR-040 - Docker Secrets

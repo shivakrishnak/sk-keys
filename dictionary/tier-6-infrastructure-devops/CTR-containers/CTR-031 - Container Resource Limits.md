@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Container Resource Limits"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 31
-permalink: /containers/container-resource-limits/
+---
 id: CTR-031
+title: "Container Resource Limits"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★☆
-depends_on: Container, Cgroups, Linux Namespaces, Docker, Kubernetes Architecture
-used_by: Kubernetes Architecture, QoS Classes, HPA, Container Health Check
-related: Cgroups, QoS Classes, Resource Requests / Limits, Container Orchestration, Container Health Check
+depends_on: CTR-008, CTR-018, CTR-017, CTR-009, K8S-001
+used_by: K8S-001, CTR-032
+related: CTR-018, CTR-026, CTR-032
 tags:
   - containers
   - kubernetes
   - performance
   - intermediate
   - production
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 31
+permalink: /containers/container-resource-limits/
 ---
 
 # CTR-031 - Container Resource Limits

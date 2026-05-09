@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Distroless Images"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 22
-permalink: /containers/distroless-images/
+---
 id: CTR-022
+title: "Distroless Images"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Docker Image, Multi-Stage Build, Container Security, Dockerfile
-used_by: Image Scanning, Container Security, Image Tag Strategy
-related: Multi-Stage Build, Container Security, Slim / Minimal Images, Image Scanning, Dockerfile
+depends_on: CTR-010, CTR-014, CTR-021, CTR-012
+used_by: CTR-023, CTR-021, CTR-033
+related: CTR-014, CTR-021, CTR-023, CTR-012
 tags:
   - containers
   - docker
   - security
   - advanced
   - bestpractice
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 22
+permalink: /containers/distroless-images/
 ---
 
 # CTR-022 - Distroless Images

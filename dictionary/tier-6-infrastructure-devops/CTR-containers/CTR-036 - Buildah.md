@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Buildah"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 36
-permalink: /containers/buildah/
+---
 id: CTR-036
+title: "Buildah"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Docker, Dockerfile, OCI Standard, Podman, Linux Namespaces
-used_by: CI/CD, Image Scanning, Image Provenance / SBOM
-related: Podman, Docker BuildKit, Multi-Stage Build, OCI Standard, Container Security
+depends_on: CTR-009, CTR-012, CTR-024, CTR-035, CTR-017
+used_by: CTR-023
+related: CTR-035, CTR-034, CTR-014, CTR-024, CTR-021
 tags:
   - containers
   - build
   - security
   - advanced
   - linux
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 36
+permalink: /containers/buildah/
 ---
 
 # CTR-036 - Buildah

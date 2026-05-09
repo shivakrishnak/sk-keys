@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Multi-Stage Build"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 14
-permalink: /containers/multi-stage-build/
+---
 id: CTR-014
+title: "Multi-Stage Build"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★☆
-depends_on: Dockerfile, Docker Layer, Docker Image, Docker Build Context
-used_by: Distroless Images, Container Security, Image Tag Strategy, Docker BuildKit
-related: Dockerfile, Docker Layer, Distroless Images, Docker BuildKit, Slim / Minimal Images
+depends_on: CTR-012, CTR-011, CTR-010, CTR-013
+used_by: CTR-022, CTR-021, CTR-033, CTR-034
+related: CTR-012, CTR-011, CTR-022, CTR-034
 tags:
   - containers
   - docker
   - intermediate
   - bestpractice
   - security
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 14
+permalink: /containers/multi-stage-build/
 ---
 
 # CTR-014 - Multi-Stage Build
@@ -41,6 +45,8 @@ Build-time dependencies and runtime dependencies are fundamentally different con
 
 **THE INVENTION MOMENT:**
 This is exactly why multi-stage builds were added to Docker 17.05 - a single Dockerfile can now define multiple `FROM` stages, where the final stage copies only the built artifacts from earlier stages, discarding all build-time cruft.
+
+**EVOLUTION:** Multi-stage builds shipped in Docker 17.05 (2017). Before this, the community workaround was the 'builder pattern': two separate Dockerfiles, a build image and a runtime image, with a shell script extracting artifacts. Multi-stage builds formalised this in a single Dockerfile. BuildKit (2021) added parallel stage execution and --target flag for building specific stages.
 
 ---
 
@@ -104,6 +110,10 @@ With BuildKit, stages that do not depend on each other can be built in parallel.
 **THE TRADE-OFFS:**
 **Gain:** Dramatically smaller runtime images; no build-time tools in production; single reproducible Dockerfile for entire pipeline; build tools cannot be exploited in production.
 **Cost:** Slightly more complex Dockerfile; build cache is now spread across stages; errors in one stage are isolated, which can make debugging less obvious.
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Producing a minimal runtime artifact from a fat build environment is inherently necessary whenever the build toolchain (compiler, test runner, dev deps) must not be present in the production image.
+**Accidental:** The specific Dockerfile COPY --from=stage syntax, the sequential stage naming convention, and the --target build flag are Docker's implementation choices for this pattern.
 
 ---
 

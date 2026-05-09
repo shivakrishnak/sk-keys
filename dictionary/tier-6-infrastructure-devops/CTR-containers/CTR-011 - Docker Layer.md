@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Docker Layer"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 11
-permalink: /containers/docker-layer/
+---
 id: CTR-011
+title: "Docker Layer"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★☆
-depends_on: Docker Image, Dockerfile, OCI Standard, Container
-used_by: Multi-Stage Build, Distroless Images, Docker BuildKit, Image Scanning
-related: Docker Image, Dockerfile, Multi-Stage Build, Docker BuildKit, OCI Standard
+depends_on: CTR-010, CTR-012, CTR-024, CTR-008
+used_by: CTR-014, CTR-022, CTR-034, CTR-023
+related: CTR-010, CTR-012, CTR-014, CTR-034, CTR-024
 tags:
   - containers
   - docker
   - intermediate
   - architecture
   - performance
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 11
+permalink: /containers/docker-layer/
 ---
 
 # CTR-011 - Docker Layer
@@ -41,6 +45,8 @@ Container ecosystems need to ship application updates fast. If every update requ
 
 **THE INVENTION MOMENT:**
 This is exactly why Docker images are built from layers - each Dockerfile step that modifies the filesystem creates an immutable layer. Unchanged layers are never transferred or stored twice. Only the diff between versions travels over the network.
+
+**EVOLUTION:** Docker V1 (2013) used sequential integer layer IDs. V2 (2014) switched to SHA256 content-addressed IDs enabling deduplication. AUFS was the original Union FS; overlay2 (Linux 4.0+, 2015) became the standard. OCI Distribution Spec (2017) formalised the registry layer API. BuildKit (2021+) introduces more efficient layer diffing and cache exporting for CI pipelines.
 
 ---
 
@@ -91,6 +97,10 @@ If all three: cache hit, layer reused. Otherwise: cache miss, layer rebuilt, all
 **THE TRADE-OFFS:**
 **Gain:** Pull only changed layers (fast updates); storage deduplication; incremental build caching.
 **Cost:** Whiteout files do not shrink the image - a layer that deletes files is recorded as a whiteout, but the original layer is still present and occupies space. Over-layering (many small layers) adds OverlayFS overhead. Layer cache is invalidated by any change, including a comment in a preceding `RUN`.
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** To distribute a filesystem efficiently across versions, you need some form of delta/diff transmission - storing only changes is inherent if bandwidth and storage efficiency matter.
+**Accidental:** The specific TAR-based layer format, overlay2 driver implementation, and blobs/sha256/ registry path format are Docker/OCI implementation choices that could be implemented differently.
 
 ---
 

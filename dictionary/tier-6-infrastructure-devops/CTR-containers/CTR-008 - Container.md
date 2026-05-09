@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Container"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 8
-permalink: /containers/container/
+---
 id: CTR-008
+title: "Container"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★☆☆
-depends_on: Linux Namespaces, Operating Systems, Virtualization
-used_by: Docker, Docker Image, Container Orchestration, Kubernetes Architecture
-related: Docker, Docker vs VM, Linux Namespaces, Cgroups, Container Runtime Interface (CRI)
+depends_on: CTR-017, OSY-001
+used_by: CTR-009, CTR-010, CTR-026, K8S-001
+related: CTR-009, CTR-027, CTR-017, CTR-018, CTR-042
 tags:
   - containers
   - docker
   - linux
   - foundational
   - devops
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 8
+permalink: /containers/container/
 ---
 
 # CTR-008 - Container
@@ -41,6 +45,8 @@ A developer writes an application that works perfectly on their laptop (Python 3
 
 **THE INVENTION MOMENT:**
 This is exactly why containers were created - a lightweight, portable unit that packages the application AND its complete runtime environment, isolating it from other processes on the same host using Linux kernel features (namespaces + cgroups), without needing a separate OS per application.
+
+**EVOLUTION:** Containers evolved from Unix chroot (1979) to Solaris Zones (2004) to LXC (2008) to Docker (2013). OCI Runtime Spec (2015) standardised the container definition. Post-2017, the Kubernetes pod became the production unit. Modern additions include SBOM attestation and user namespace remapping for rootless operation.
 
 ---
 
@@ -92,6 +98,10 @@ The container is constructed by the Linux kernel from three primitives:
 **THE TRADE-OFFS:**
 **Gain:** Fast startup (ms); low overhead; portable; reproducible; high density on host.
 **Cost:** Shares host kernel - a kernel vulnerability affects all containers; weaker isolation than VMs; root inside container = not truly unprivileged without user namespaces.
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** The need to isolate a process's filesystem, network, and PID view while sharing the kernel is inherent - you cannot have both full isolation AND shared kernel without namespace-style primitives.
+**Accidental:** The specific implementation choices (overlayFS, runc, OCI manifests) are Docker's design, not the only possible container implementation.
 
 ---
 

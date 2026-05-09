@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "OCI Standard"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 24
-permalink: /containers/oci-standard/
+---
 id: CTR-024
+title: "OCI Standard"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Docker Image, Docker Layer, Container, Docker
-used_by: containerd, Container Runtime Interface (CRI), Image Scanning, Image Provenance / SBOM
-related: Docker, containerd, Container Runtime Interface (CRI), Image Scanning, Podman
+depends_on: CTR-010, CTR-011, CTR-008, CTR-009
+used_by: CTR-025, CTR-042, CTR-023
+related: CTR-009, CTR-025, CTR-042, CTR-023, CTR-035
 tags:
   - containers
   - docker
   - internals
   - advanced
   - protocol
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 24
+permalink: /containers/oci-standard/
 ---
 
 # CTR-024 - OCI Standard

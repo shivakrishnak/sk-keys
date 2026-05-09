@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Docker Networking Modes"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 38
-permalink: /containers/docker-networking-modes/
+---
 id: CTR-038
+title: "Docker Networking Modes"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Container, Docker, Container Networking, Linux Namespaces, Networking
-used_by: Container Orchestration, Kubernetes Architecture, Container Security
-related: Container Networking, Linux Namespaces, Kubernetes Architecture, Overlay Networks, Container Security
+depends_on: CTR-008, CTR-009, CTR-019, CTR-017, NET-001
+used_by: CTR-026, K8S-001, CTR-021
+related: CTR-019, CTR-017, K8S-001, CTR-021
 tags:
   - containers
   - docker
   - networking
   - advanced
   - internals
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 38
+permalink: /containers/docker-networking-modes/
 ---
 
 # CTR-038 - Docker Networking Modes

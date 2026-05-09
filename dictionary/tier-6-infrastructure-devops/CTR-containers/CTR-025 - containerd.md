@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "containerd"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 25
-permalink: /containers/containerd/
+---
 id: CTR-025
+title: "containerd"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Docker, Container, Linux Namespaces, Cgroups, OCI Standard
-used_by: Container Runtime Interface (CRI), Kubernetes Architecture, kubelet
-related: Docker, Container Runtime Interface (CRI), OCI Standard, Podman, Container Orchestration
+depends_on: CTR-009, CTR-008, CTR-017, CTR-018, CTR-024
+used_by: CTR-042, K8S-001
+related: CTR-009, CTR-042, CTR-024, CTR-035, CTR-026
 tags:
   - containers
   - docker
   - internals
   - kubernetes
   - advanced
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 25
+permalink: /containers/containerd/
 ---
 
 # CTR-025 - containerd

@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Container Logging"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 39
-permalink: /containers/container-logging/
+---
 id: CTR-039
+title: "Container Logging"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★☆
-depends_on: Container, Docker, Sidecar Container, Container Orchestration
-used_by: Observability & SRE, Kubernetes Architecture, Container Health Check
-related: Sidecar Container, Structured Logging, Observability, ELK Stack, Loki
+depends_on: CTR-008, CTR-009, CTR-030, CTR-026
+used_by: K8S-001, CTR-032
+related: CTR-030
 tags:
   - containers
   - docker
   - observability
   - logging
   - intermediate
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 39
+permalink: /containers/container-logging/
 ---
 
 # CTR-039 - Container Logging

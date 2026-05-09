@@ -1,16 +1,13 @@
-﻿---
-layout: default
-title: "Image Scanning"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 23
-permalink: /containers/image-scanning/
+---
 id: CTR-023
+title: "Image Scanning"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Docker Image, Docker Layer, Container Security, Distroless Images, Dockerfile
-used_by: Image Provenance / SBOM, CI/CD, Container Scanning
-related: Container Security, Distroless Images, Image Provenance / SBOM, OCI Standard, SBOM
+depends_on: CTR-010, CTR-011, CTR-021, CTR-022, CTR-012
+used_by: 
+related: CTR-021, CTR-022, CTR-024
 tags:
   - containers
   - docker
@@ -18,6 +15,13 @@ tags:
   - devops
   - advanced
   - bestpractice
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 23
+permalink: /containers/image-scanning/
 ---
 
 # CTR-023 - Image Scanning

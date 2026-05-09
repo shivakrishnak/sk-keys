@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Container Registry"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 16
-permalink: /containers/container-registry/
+---
 id: CTR-016
+title: "Container Registry"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★☆
-depends_on: Docker, Docker Image, OCI Standard, Image Tag Strategy
-used_by: Image Scanning, Image Tag Strategy, Docker BuildKit, Container Orchestration
-related: Docker Image, Image Tag Strategy, Image Scanning, OCI Standard, Docker
+depends_on: CTR-009, CTR-010, CTR-024, CTR-033
+used_by: CTR-023, CTR-033, CTR-034, CTR-026
+related: CTR-010, CTR-033, CTR-023, CTR-024, CTR-009
 tags:
   - containers
   - docker
   - devops
   - intermediate
   - architecture
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 16
+permalink: /containers/container-registry/
 ---
 
 # CTR-016 - Container Registry
@@ -41,6 +45,8 @@ Build once, run anywhere requires a neutral distribution point - a "package repo
 
 **THE INVENTION MOMENT:**
 This is exactly why container registries were created - a versioned, accessible, HTTP-based storage service for OCI images that any authorised client (`docker pull`) can retrieve the same image from, regardless of where it was built.
+
+**EVOLUTION:** Docker Hub launched in 2013 as the first public container registry. The Docker Registry HTTP API V2 (2014) became the distribution standard. OCI Distribution Spec (2017) formalised V2 as an open specification. Docker Hub introduced rate limits in 2020 (100 pulls/6h unauthenticated), driving migration to ECR, GCR, GHCR, and self-hosted Harbor. SBOMs and supply-chain attestations stored as OCI artifacts became standard practice from 2022+.
 
 ---
 
@@ -92,6 +98,10 @@ A registry implements the OCI Distribution Specification API:
 **THE TRADE-OFFS:**
 **Gain:** Single source of truth for images; version history; layer deduplication (shared base layers stored once).
 **Cost:** Registry is now a critical dependency for deploys - registry downtime = deployment downtime; large images with many tags consume expensive registry storage; without immutable tags, reproducibility is broken.
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Distributing immutable versioned artifacts reliably to multiple consumers at scale requires a specialised content-addressed store with access control - this need is inherent in any software distribution system.
+**Accidental:** The specific registry API, the blob/manifest storage model, the tag mutable reference system, and rate limiting policies are implementation choices that differ between Docker Hub, ECR, GCR, and self-hosted registries.
 
 ---
 

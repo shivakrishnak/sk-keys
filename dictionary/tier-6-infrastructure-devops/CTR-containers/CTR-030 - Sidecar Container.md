@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Sidecar Container"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 30
-permalink: /containers/sidecar-container/
+---
 id: CTR-030
+title: "Sidecar Container"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Container, Pod, Container Networking, Linux Namespaces, Kubernetes Architecture
-used_by: Service Mesh, Istio, Envoy Proxy, Container Logging
-related: Init Container, Ephemeral Container, Sidecar Pattern, Service Mesh, Ambassador Pattern
+depends_on: CTR-008, K8S-001, CTR-019, CTR-017
+used_by: CTR-039
+related: CTR-029, CTR-028
 tags:
   - containers
   - kubernetes
   - pattern
   - architecture
   - advanced
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 30
+permalink: /containers/sidecar-container/
 ---
 
 # CTR-030 - Sidecar Container

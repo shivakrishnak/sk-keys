@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Image Tag Strategy"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 33
-permalink: /containers/image-tag-strategy/
+---
 id: CTR-033
+title: "Image Tag Strategy"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★☆
-depends_on: Docker Image, Docker, Container Registry, OCI Standard
-used_by: CI/CD, Image Scanning, Image Provenance / SBOM, Container Orchestration
-related: Container Registry, OCI Standard, Image Scanning, Image Provenance / SBOM, CI/CD
+depends_on: CTR-010, CTR-009, CTR-016, CTR-024
+used_by: CTR-023, CTR-026
+related: CTR-016, CTR-024, CTR-023
 tags:
   - containers
   - docker
   - devops
   - intermediate
   - bestpractice
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 33
+permalink: /containers/image-tag-strategy/
 ---
 
 # CTR-033 - Image Tag Strategy

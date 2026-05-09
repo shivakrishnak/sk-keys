@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Podman"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 35
-permalink: /containers/podman/
+---
 id: CTR-035
+title: "Podman"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Container, Docker, Linux Namespaces, Cgroups, OCI Standard
-used_by: Buildah, Container Security, Container Orchestration
-related: Docker, containerd, Buildah, Docker BuildKit, Container Security
+depends_on: CTR-008, CTR-009, CTR-017, CTR-018, CTR-024
+used_by: CTR-036, CTR-021, CTR-026
+related: CTR-009, CTR-025, CTR-036, CTR-034, CTR-021
 tags:
   - containers
   - docker
   - security
   - advanced
   - linux
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 35
+permalink: /containers/podman/
 ---
 
 # CTR-035 - Podman

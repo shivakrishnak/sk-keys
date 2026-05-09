@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Init Container"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 29
-permalink: /containers/init-container/
+---
 id: CTR-029
+title: "Init Container"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Container, Pod, Kubernetes Architecture, Linux Namespaces
-used_by: Pod, Sidecar Container, Kubernetes Architecture
-related: Sidecar Container, Ephemeral Container, Pod, Container Health Check, Kubernetes Architecture
+depends_on: CTR-008, K8S-001, CTR-017
+used_by: K8S-001, CTR-030
+related: CTR-030, CTR-028, K8S-001, CTR-032
 tags:
   - containers
   - kubernetes
   - pattern
   - advanced
   - architecture
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 29
+permalink: /containers/init-container/
 ---
 
 # CTR-029 - Init Container

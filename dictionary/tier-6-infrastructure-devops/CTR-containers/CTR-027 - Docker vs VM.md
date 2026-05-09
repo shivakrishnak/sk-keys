@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Docker vs VM"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 27
-permalink: /containers/docker-vs-vm/
+---
 id: CTR-027
+title: "Docker vs VM"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★☆☆
-depends_on: Container, Docker, Linux Namespaces, Cgroups
-used_by: Container Orchestration, Container Security, containerd
-related: Container, Linux Namespaces, Cgroups, Docker, Container Security
+depends_on: CTR-008, CTR-009, CTR-017, CTR-018
+used_by: CTR-026, CTR-021, CTR-025
+related: CTR-008, CTR-017, CTR-018, CTR-009, CTR-021
 tags:
   - containers
   - docker
   - foundational
   - architecture
   - mental-model
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 27
+permalink: /containers/docker-vs-vm/
 ---
 
 # CTR-027 - Docker vs VM

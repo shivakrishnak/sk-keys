@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Docker Build Context"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 13
-permalink: /containers/docker-build-context/
+---
 id: CTR-013
+title: "Docker Build Context"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★☆
-depends_on: Dockerfile, Docker Image, Docker Layer, Docker
-used_by: Multi-Stage Build, Docker BuildKit, Container Security
-related: Dockerfile, Docker Layer, Docker BuildKit, Multi-Stage Build, Container Security
+depends_on: CTR-012, CTR-010, CTR-011, CTR-009
+used_by: CTR-014, CTR-034, CTR-021
+related: CTR-012, CTR-011, CTR-034, CTR-014, CTR-021
 tags:
   - containers
   - docker
   - devops
   - intermediate
   - performance
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 13
+permalink: /containers/docker-build-context/
 ---
 
 # CTR-013 - Docker Build Context
@@ -41,6 +45,8 @@ The Docker build model separates the daemon (server that builds images) from the
 
 **THE INVENTION MOMENT:**
 This is exactly why the build context concept and `.dockerignore` exist - so engineers can precisely control which files are sent to the Docker daemon, keeping context small, builds fast, and images lean.
+
+**EVOLUTION:** The build context concept shipped with Docker 0.1 (2013). The .dockerignore file was added in Docker 1.1 (2014) to control what is sent. BuildKit (2021) introduced lazy context loading - context files are only transferred when actually referenced by a COPY instruction, drastically reducing unnecessary transfers for large monorepos.
 
 ---
 
@@ -89,6 +95,10 @@ When you run `docker build -t myapp:1.0 .`:
 **THE TRADE-OFFS:**
 **Gain:** Any file in the context is accessible to COPY; context is versioned with the code.
 **Cost:** Large contexts add build startup latency; forgotten secrets in context can end up in the image; context size is not visible without inspection.
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** A build tool needs to know which files are inputs to the build - the concept of a build context (the set of files available during build) is inherent in any hermetic build system.
+**Accidental:** The specific mechanism of sending context as a TAR archive to the Docker daemon over a Unix socket or TCP connection is Docker's implementation choice; BuildKit's lazy context is an improvement on this model.
 
 ---
 

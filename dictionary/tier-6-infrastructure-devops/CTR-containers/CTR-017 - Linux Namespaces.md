@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Linux Namespaces"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 17
-permalink: /containers/linux-namespaces/
+---
 id: CTR-017
+title: "Linux Namespaces"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Container, Operating Systems, Linux, Cgroups
-used_by: Container, Docker, containerd, Container Security, Container Networking
-related: Cgroups, Container, Container Security, Container Networking, containerd
+depends_on: CTR-008, OSY-001, LNX-001, CTR-018
+used_by: CTR-008, CTR-009, CTR-025, CTR-021, CTR-019
+related: CTR-018, CTR-008, CTR-021, CTR-019, CTR-025
 tags:
   - containers
   - linux
   - internals
   - advanced
   - security
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 17
+permalink: /containers/linux-namespaces/
 ---
 
 # CTR-017 - Linux Namespaces
@@ -41,6 +45,8 @@ Running multiple isolated applications on the same host requires per-application
 
 **THE INVENTION MOMENT:**
 This is exactly why Linux namespaces were created - a kernel mechanism to virtualise global resources at the process level, giving each process (or group of processes) its own isolated view of PIDs, network, filesystem, users, and more.
+
+**EVOLUTION:** Linux namespaces were introduced incrementally: mount namespaces (kernel 2.4.19, 2002), UTS and IPC (2.6.19, 2006), PID and network (2.6.24, 2008), user namespaces (3.8, 2013). Docker (2013) was the first widely-adopted user of all six namespace types together. Kernel 5.6 (2020) added time namespaces. User namespaces enabled rootless containers - a container process runs as root inside its namespace but as an unprivileged user on the host.
 
 ---
 
@@ -90,6 +96,10 @@ Maps container UIDs to host UIDs. UID 0 (root) inside the container maps to an u
 **THE TRADE-OFFS:**
 **Gain:** Lightweight, kernel-native isolation; shared kernel (no hardware virtualisation overhead); millisecond container startup.
 **Cost:** Shared kernel means a kernel vulnerability affects all containers; without USER namespaces, container root = host root (security risk); namespace configuration errors can break isolation.
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Isolating a process's view of the system (filesystem mounts, hostnames, process trees, network interfaces, user IDs) while sharing the kernel is an inherent requirement for multi-tenant compute isolation at the OS level.
+**Accidental:** The specific six namespace types (mnt, uts, ipc, pid, net, user), the clone() syscall flags, and the /proc/PID/ns/ representation are Linux kernel implementation choices.
 
 ---
 

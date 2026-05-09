@@ -1,16 +1,13 @@
-﻿---
-layout: default
-title: "Image Provenance  SBOM"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 41
-permalink: /containers/image-provenance-sbom/
+---
 id: CTR-041
+title: "Image Provenance  SBOM"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Docker Image, OCI Standard, Image Scanning, Image Tag Strategy, Docker BuildKit
-used_by: CI/CD, Container Security, Container Runtime Interface (CRI)
-related: Image Scanning, OCI Standard, Image Tag Strategy, Container Security, Docker BuildKit
+depends_on: CTR-010, CTR-024, CTR-023, CTR-033, CTR-034
+used_by: CTR-021, CTR-042
+related: CTR-023, CTR-024, CTR-033, CTR-021, CTR-034
 tags:
   - containers
   - security
@@ -18,6 +15,13 @@ tags:
   - advanced
   - bestpractice
   - production
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 41
+permalink: /containers/image-provenance-sbom/
 ---
 
 # CTR-041 - Image Provenance  SBOM

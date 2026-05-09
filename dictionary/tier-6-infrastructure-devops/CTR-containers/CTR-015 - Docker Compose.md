@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Docker Compose"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 15
-permalink: /containers/docker-compose/
+---
 id: CTR-015
+title: "Docker Compose"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★☆
-depends_on: Docker, Dockerfile, Container Networking, Volume Mounts
-used_by: Container Orchestration, Container Health Check, Container Logging
-related: Docker, Container Networking, Volume Mounts, Container Orchestration, Kubernetes Architecture
+depends_on: CTR-009, CTR-012, CTR-019, CTR-020
+used_by: CTR-026, CTR-032, CTR-039
+related: CTR-009, CTR-019, CTR-020, CTR-026, K8S-001
 tags:
   - containers
   - docker
   - devops
   - intermediate
   - architecture
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 15
+permalink: /containers/docker-compose/
 ---
 
 # CTR-015 - Docker Compose
@@ -41,6 +45,8 @@ Multi-container applications need a declarative way to define the full stack - a
 
 **THE INVENTION MOMENT:**
 This is exactly why Docker Compose was created - a single `compose.yaml` file that describes the entire multi-service application. One `docker compose up` brings everything online. One `docker compose down` tears it all down.
+
+**EVOLUTION:** Docker Compose was originally a standalone tool (docker-compose, Python-based) acquired by Docker Inc in 2014. Compose V2 (2021) rewrote it in Go as a Docker CLI plugin (docker compose). The compose.yaml specification became a CNCF-donated standard. Compose is now used as the canonical local development pattern and increasingly for simple production on single-node systems.
 
 ---
 
@@ -109,6 +115,10 @@ networks:
 **THE TRADE-OFFS:**
 **Gain:** Single-command stack startup; reproducible developer environments; declarative, version-controlled config; service discovery by DNS name.
 **Cost:** Not designed for production (no multi-host scheduling, no self-healing, no rolling deploys); `depends_on` only waits for health check, not application readiness; secrets management is basic (env vars in plain text unless using Compose secrets).
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Running multiple interdependent containers locally requires defining their relationships, startup order, networking, and volumes - this orchestration need is inherent regardless of the tool.
+**Accidental:** The specific compose.yaml YAML syntax, the Docker network bridge model, service name DNS resolution, and the docker compose up command are Docker's implementation choices.
 
 ---
 

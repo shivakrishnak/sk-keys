@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Volume Mounts"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 20
-permalink: /containers/volume-mounts/
+---
 id: CTR-020
+title: "Volume Mounts"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★☆
-depends_on: Container, Docker, Linux Namespaces, Dockerfile
-used_by: Docker Compose, Container Security, Container Health Check, Container Logging
-related: Docker Compose, Container Security, Container Logging, Ephemeral Container, Docker
+depends_on: CTR-008, CTR-009, CTR-017, CTR-012
+used_by: CTR-015, CTR-021, CTR-032, CTR-039
+related: CTR-015, CTR-021, CTR-039, CTR-028, CTR-009
 tags:
   - containers
   - docker
   - devops
   - intermediate
   - architecture
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 20
+permalink: /containers/volume-mounts/
 ---
 
 # CTR-020 - Volume Mounts
@@ -41,6 +45,8 @@ Containers are designed to be ephemeral - created, run, destroyed, and replaced.
 
 **THE INVENTION MOMENT:**
 This is exactly why volume mounts were created - a mechanism to mount host filesystem paths or managed Docker volumes into a container's MNT namespace, providing persistent storage that the container can read and write, but that is not part of the container's ephemeral writable layer.
+
+**EVOLUTION:** Docker volumes shipped in Docker 0.1 (2013). Named volumes (docker volume create) arrived in Docker 1.9 (2015). The Container Storage Interface (CSI) spec was donated to CNCF in 2017 and became Kubernetes's standard storage plugin API. CSI enabled cloud-provider storage (EBS, EFS, GCS) to integrate with Kubernetes through a standardised interface. NFS and hostPath volumes remain common for on-premises clusters.
 
 ---
 

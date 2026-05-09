@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Container Runtime Interface (CRI)"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 42
-permalink: /containers/container-runtime-interface-cri/
+---
 id: CTR-042
+title: "Container Runtime Interface (CRI)"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Container, containerd, Kubernetes Architecture, OCI Standard, Docker
-used_by: Kubernetes Architecture, kubelet, Pod
-related: containerd, Kubernetes Architecture, kubelet, OCI Standard, Container Orchestration
+depends_on: CTR-008, CTR-025, K8S-001, CTR-024, CTR-009
+used_by: K8S-001
+related: CTR-025, K8S-001, CTR-024, CTR-026
 tags:
   - containers
   - kubernetes
   - internals
   - advanced
   - architecture
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 42
+permalink: /containers/container-runtime-interface-cri/
 ---
 
 # CTR-042 - Container Runtime Interface (CRI)

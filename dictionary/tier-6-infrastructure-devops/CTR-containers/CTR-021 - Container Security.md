@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Container Security"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 21
-permalink: /containers/container-security/
+---
 id: CTR-021
+title: "Container Security"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Linux Namespaces, Cgroups, Docker, Container, Volume Mounts
-used_by: Image Scanning, Distroless Images, Container Runtime Interface (CRI), Container Orchestration
-related: Linux Namespaces, Cgroups, Image Scanning, Distroless Images, Container Resource Limits
+depends_on: CTR-017, CTR-018, CTR-009, CTR-008, CTR-020
+used_by: CTR-023, CTR-022, CTR-042, CTR-026
+related: CTR-017, CTR-018, CTR-023, CTR-022, CTR-031
 tags:
   - containers
   - security
   - docker
   - advanced
   - production
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 21
+permalink: /containers/container-security/
 ---
 
 # CTR-021 - Container Security

@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Docker"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 9
-permalink: /containers/docker/
+---
 id: CTR-009
+title: "Docker"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★☆☆
-depends_on: Container, Linux Namespaces, Cgroups, OCI Standard
-used_by: Docker Image, Dockerfile, Docker Compose, Container Registry, Multi-Stage Build
-related: Container, Podman, containerd, OCI Standard, Docker vs VM
+depends_on: CTR-008, CTR-017, CTR-018, CTR-024
+used_by: CTR-010, CTR-012, CTR-015, CTR-016, CTR-014
+related: CTR-008, CTR-035, CTR-025, CTR-024, CTR-027
 tags:
   - containers
   - docker
   - devops
   - foundational
   - linux
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 9
+permalink: /containers/docker/
 ---
 
 # CTR-009 - Docker
@@ -41,6 +45,8 @@ Containers were powerful but inaccessible. The complexity barrier prevented adop
 
 **THE INVENTION MOMENT:**
 This is exactly why Docker was built - a user-friendly abstraction layer over Linux containers. One `Dockerfile` to define the image. One `docker build` to create it. One `docker push` to share it. One `docker run` to execute it anywhere. Docker democratised containers.
+
+**EVOLUTION:** Docker 0.1 (2013): basic run/build/push. Docker 1.0 (2014): production-ready. Docker 1.9 (2015): overlay networking. OCI formed (2015). Multi-stage builds (2017). Kubernetes deprecates Docker as runtime (2020). BuildKit stable (2021). Docker Scout supply-chain analytics (2023). Today Docker CLI is the standard interface; the backend uses BuildKit plus containerd.
 
 ---
 
@@ -82,6 +88,10 @@ Docker implements three things that realise these invariants:
 **THE TRADE-OFFS:**
 **Gain:** Universal packaging; consistent environments; fast distribution; strong ecosystem (Docker Hub, Compose, BuildKit).
 **Cost:** dockerd daemon runs as root (historically a security concern); the daemon is a single point of failure; Podman emerged partly to address rootless and daemonless needs.
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Developers need to build, distribute, and run containers - these three operations are inherently necessary regardless of the tool or implementation.
+**Accidental:** The specific Docker CLI syntax, Docker daemon architecture, layered TAR format, and Docker Hub rate limits are Docker's implementation choices, not fundamental container requirements.
 
 ---
 

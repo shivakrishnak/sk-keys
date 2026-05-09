@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Container Orchestration"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 26
-permalink: /containers/container-orchestration/
+---
 id: CTR-026
+title: "Container Orchestration"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★☆
-depends_on: Container, Docker, Container Networking, Volume Mounts, Docker Compose
-used_by: Kubernetes Architecture, Pod, Deployment, Container Resource Limits
-related: Docker Compose, Kubernetes Architecture, containerd, Container Networking, Container Health Check
+depends_on: CTR-008, CTR-009, CTR-019, CTR-020, CTR-015
+used_by: K8S-001, CTR-031
+related: CTR-015, K8S-001, CTR-025, CTR-019, CTR-032
 tags:
   - containers
   - kubernetes
   - orchestration
   - intermediate
   - architecture
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 26
+permalink: /containers/container-orchestration/
 ---
 
 # CTR-026 - Container Orchestration

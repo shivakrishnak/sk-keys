@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Cgroups"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 18
-permalink: /containers/cgroups/
+---
 id: CTR-018
+title: "Cgroups"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Linux Namespaces, Container, Operating Systems, Linux
-used_by: Container, Docker, Container Resource Limits, Container Security, containerd
-related: Linux Namespaces, Container Resource Limits, Container, Container Security, Container Health Check
+depends_on: CTR-017, CTR-008, OSY-001, LNX-001
+used_by: CTR-008, CTR-009, CTR-031, CTR-021, CTR-025
+related: CTR-017, CTR-031, CTR-008, CTR-021, CTR-032
 tags:
   - containers
   - linux
   - internals
   - advanced
   - performance
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 18
+permalink: /containers/cgroups/
 ---
 
 # CTR-018 - Cgroups
@@ -41,6 +45,8 @@ Linux namespaces provide isolation of *visibility* - each container sees only it
 
 **THE INVENTION MOMENT:**
 This is exactly why cgroups were created - a kernel mechanism that puts processes into groups and enforces maximum resource consumption per group. "This container gets at most 2 CPUs and 512 MB of RAM. No more. Ever."
+
+**EVOLUTION:** Control groups (cgroups) were developed at Google by Paul Menage and Rohit Seth, merged into Linux kernel 2.6.24 (2008). Cgroups v2 (unified hierarchy) merged in kernel 4.5 (2016) and became the systemd and Docker default from 2021. Cgroups v2 adds pressure stall information (PSI) for memory and CPU pressure monitoring and unified resource accounting.
 
 ---
 
@@ -98,6 +104,10 @@ Cgroups and namespaces are complementary. Namespaces provide *isolation* (what y
 **THE TRADE-OFFS:**
 **Gain:** Resource guarantee per container; scoped OOM kills (container does not take down host); resource accounting (observability); fair CPU scheduling under contention.
 **Cost:** Setting limits incorrectly causes premature OOM kills (under-limit) or allows noisy neighbours (over-limit); cgroup overhead is negligible for most workloads but significant for high-syscall-rate applications.
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Limiting and accounting for a process group's resource consumption (CPU, memory, I/O, network) without requiring separate VMs is an inherent need for multi-tenant workloads sharing a host.
+**Accidental:** The specific cgroup v1/v2 hierarchy structure, the CPU shares vs quota distinction, and the memory.limit_in_bytes interface are kernel implementation choices that evolved between v1 and v2.
 
 ---
 

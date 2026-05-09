@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Container Health Check"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 32
-permalink: /containers/container-health-check/
+---
 id: CTR-032
+title: "Container Health Check"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★☆
-depends_on: Container, Docker, Container Orchestration, Container Resource Limits
-used_by: Kubernetes Architecture, Readiness vs Liveness vs Startup Probe, Container Orchestration
-related: Readiness vs Liveness vs Startup Probe, Container Resource Limits, Container Orchestration, Init Container, Kubernetes Architecture
+depends_on: CTR-008, CTR-009, CTR-026, CTR-031
+used_by: K8S-001, CTR-026
+related: CTR-031, CTR-026, CTR-029, K8S-001
 tags:
   - containers
   - kubernetes
   - reliability
   - intermediate
   - production
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 32
+permalink: /containers/container-health-check/
 ---
 
 # CTR-032 - Container Health Check

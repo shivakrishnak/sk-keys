@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Docker Image"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 10
-permalink: /containers/docker-image/
+---
 id: CTR-010
+title: "Docker Image"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★☆☆
-depends_on: Docker, Container, Dockerfile, OCI Standard
-used_by: Docker Layer, Multi-Stage Build, Container Registry, Image Tag Strategy, Distroless Images
-related: Docker Layer, Dockerfile, Container Registry, Multi-Stage Build, Image Tag Strategy
+depends_on: CTR-009, CTR-008, CTR-012, CTR-024
+used_by: CTR-011, CTR-014, CTR-016, CTR-033, CTR-022
+related: CTR-011, CTR-012, CTR-016, CTR-014, CTR-033
 tags:
   - containers
   - docker
   - devops
   - foundational
   - architecture
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 10
+permalink: /containers/docker-image/
 ---
 
 # CTR-010 - Docker Image
@@ -41,6 +45,8 @@ The core problem: the application and its runtime environment were managed separ
 
 **THE INVENTION MOMENT:**
 This is exactly why Docker images exist - treating the application AND its complete runtime environment as a single, versioned, immutable artifact. The image is the unit of deployment. It never changes after it is built. Deploy it to any host and you get exactly the same result.
+
+**EVOLUTION:** Docker V1 format (2013) used content-addressable IDs. V2 schema (2014) introduced SHA256 manifests. OCI Image Spec (2015) formalised V2 as a standard. Multi-arch manifests (2017) enable a single tag to serve amd64/arm64. OCI Artifacts (2019+) extended registries to store Helm charts, SBOMs, and Sigstore signatures. Today images carry SLSA provenance attestations for supply-chain security.
 
 ---
 
@@ -89,6 +95,10 @@ The final image is the union of all layers. When a container starts, OverlayFS m
 **THE TRADE-OFFS:**
 **Gain:** Immutability guarantees reproducibility; layer sharing reduces storage and bandwidth; content addressing prevents image tampering.
 **Cost:** Large images waste network bandwidth on every pull; improper layer ordering defeats the cache; every `RUN apt-get install` creates a new layer, so bad practices cause image bloat.
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Distributing software reproducibly across machines requires a versioned, content-addressed snapshot of the filesystem and runtime configuration - this is inherent regardless of implementation.
+**Accidental:** The layered TAR format, Union FS driver, manifest JSON structure, and OCI Image Config fields are Docker's design choices, not fundamental requirements for software distribution.
 
 ---
 

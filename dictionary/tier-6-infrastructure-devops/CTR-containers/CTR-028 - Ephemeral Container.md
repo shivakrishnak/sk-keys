@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Ephemeral Container"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 28
-permalink: /containers/ephemeral-container/
+---
 id: CTR-028
+title: "Ephemeral Container"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Container, Docker, Pod, Kubernetes Architecture, Linux Namespaces
-used_by: Container Security, Kubernetes Architecture
-related: Init Container, Sidecar Container, Pod, Distroless Images, Container Security
+depends_on: CTR-008, CTR-009, K8S-001, CTR-017
+used_by: CTR-021, K8S-001
+related: CTR-029, CTR-030, K8S-001, CTR-022, CTR-021
 tags:
   - containers
   - kubernetes
   - debugging
   - advanced
   - production
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 28
+permalink: /containers/ephemeral-container/
 ---
 
 # CTR-028 - Ephemeral Container

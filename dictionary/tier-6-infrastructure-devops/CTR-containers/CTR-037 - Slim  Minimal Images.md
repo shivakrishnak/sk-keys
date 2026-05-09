@@ -1,16 +1,13 @@
-﻿---
-layout: default
-title: "Slim  Minimal Images"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 37
-permalink: /containers/slim-minimal-images/
+---
 id: CTR-037
+title: "Slim  Minimal Images"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Docker Image, Dockerfile, Multi-Stage Build, Distroless Images, Image Scanning
-used_by: Image Scanning, Container Security, CI/CD, Image Tag Strategy
-related: Distroless Images, Multi-Stage Build, Container Security, Image Scanning, Docker BuildKit
+depends_on: CTR-010, CTR-012, CTR-014, CTR-022, CTR-023
+used_by: CTR-023, CTR-021, CTR-033
+related: CTR-022, CTR-014, CTR-021, CTR-023, CTR-034
 tags:
   - containers
   - docker
@@ -18,6 +15,13 @@ tags:
   - performance
   - advanced
   - bestpractice
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 37
+permalink: /containers/slim-minimal-images/
 ---
 
 # CTR-037 - Slim  Minimal Images

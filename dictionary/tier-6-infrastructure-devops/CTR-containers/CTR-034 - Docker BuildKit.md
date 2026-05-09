@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Docker BuildKit"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 34
-permalink: /containers/docker-buildkit/
+---
 id: CTR-034
+title: "Docker BuildKit"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Docker, Dockerfile, Docker Image, Docker Layer, Multi-Stage Build
-used_by: CI/CD, Image Tag Strategy, Distroless Images
-related: Multi-Stage Build, Dockerfile, Buildah, Podman, OCI Standard
+depends_on: CTR-009, CTR-012, CTR-010, CTR-011, CTR-014
+used_by: CTR-033, CTR-022
+related: CTR-014, CTR-012, CTR-036, CTR-035, CTR-024
 tags:
   - containers
   - docker
   - build
   - advanced
   - performance
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 34
+permalink: /containers/docker-buildkit/
 ---
 
 # CTR-034 - Docker BuildKit

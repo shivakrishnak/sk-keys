@@ -1,22 +1,26 @@
-﻿---
-layout: default
-title: "Dockerfile"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 12
-permalink: /containers/dockerfile/
+---
 id: CTR-012
+title: "Dockerfile"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★☆☆
-depends_on: Docker, Docker Image, Docker Layer, Container
-used_by: Docker Build Context, Multi-Stage Build, Docker BuildKit, Container Security
-related: Docker Layer, Multi-Stage Build, Docker Build Context, Docker BuildKit, Container Security
+depends_on: CTR-009, CTR-010, CTR-011, CTR-008
+used_by: CTR-013, CTR-014, CTR-034, CTR-021
+related: CTR-011, CTR-014, CTR-013, CTR-034, CTR-021
 tags:
   - containers
   - docker
   - devops
   - foundational
   - bestpractice
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 12
+permalink: /containers/dockerfile/
 ---
 
 # CTR-012 - Dockerfile
@@ -41,6 +45,8 @@ Reproducible build environments needed a standardised, simple, declarative forma
 
 **THE INVENTION MOMENT:**
 This is exactly why the Dockerfile was created - a declarative text file where each line is an instruction that builds up an image layer by layer, readable by humans and executed by Docker's build engine.
+
+**EVOLUTION:** Dockerfiles were introduced with Docker 0.1 (2013). Docker 17.05 added multi-stage builds. BuildKit (shipped stable 2021) added syntax directives (#syntax= at top), heredoc support (Docker 23+), and mount cache (--mount=type=cache). The Dockerfile remains the dominant image authoring format; alternatives like Buildpacks and kaniko-compatible configs remain niche.
 
 ---
 
@@ -97,6 +103,10 @@ Key Dockerfile instructions and their purpose:
 **THE TRADE-OFFS:**
 **Gain:** Human-readable, version-controllable image specification; reproducible builds; declarative format.
 **Cost:** Requires understanding layer ordering for performance; easy to accidentally include secrets; verbose for complex multi-stage builds.
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Any reproducible build system needs a declarative specification of the build environment and steps - this is inherent in reproducible software packaging.
+**Accidental:** The specific Dockerfile instruction syntax (FROM, RUN, COPY, CMD, ENTRYPOINT, ENV), the build-time vs runtime instruction distinction, and the BuildKit syntax directive format are Docker's implementation choices.
 
 ---
 

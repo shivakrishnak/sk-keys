@@ -1,21 +1,25 @@
-﻿---
-layout: default
-title: "OpenShift vs Kubernetes"
-parent: "Containers"
-grand_parent: "Technical Dictionary"
-nav_order: 7
-permalink: /containers/openshift-vs-kubernetes/
+---
 id: CTR-007
+title: "OpenShift vs Kubernetes"
 category: Containers
+tier: tier-6-infrastructure-devops
+folder: CTR-containers
 difficulty: ★★★
-depends_on: Red Hat OpenShift, Kubernetes
-used_by: Containers
-related: Red Hat OpenShift, Kubernetes, AWS ECS  Fargate
+depends_on: CTR-006, K8S-001
+used_by: 
+related: CTR-006, K8S-001
 tags:
   - kubernetes
   - containers
   - advanced
   - tradeoff
+status: complete
+version: 1
+layout: default
+parent: "Containers"
+grand_parent: "Technical Dictionary"
+nav_order: 7
+permalink: /containers/openshift-vs-kubernetes/
 ---
 
 # CTR-007 - OpenShift vs Kubernetes
@@ -37,6 +41,8 @@ tags:
 **THE BREAKING POINT:** An organisation chooses vanilla Kubernetes to avoid lock-in, then spends six months assembling a production-grade platform: Ingress controller, image registry, build pipelines, network policies, PSA configuration, monitoring stack, and break-glass upgrade procedures. An organisation chooses OpenShift, then discovers their containerised apps fail SCC admission and must be rearchitected.
 
 **THE INVENTION MOMENT:** Understanding the precise delta between OpenShift and Kubernetes - not a sales comparison but an engineering one - allows architects to make an evidence-based build-vs-buy decision for each layer of the platform.
+
+**EVOLUTION:** OpenShift 3.x used Docker and custom SDN networking. OCP 4.x (2019) rewrote on RHCOS, CRI-O, OVN-K, and the Operator framework. OCP 4.14 deprecated DeploymentConfig. The 2024+ direction prioritises multi-cluster ACM and GitOps-first delivery via OpenShift GitOps (ArgoCD).
 
 ---
 
@@ -421,6 +427,12 @@ GOOD: Extend OCP's cluster monitoring via `user-workload-monitoring` feature; ad
 
 1. **(Type F - Comparison)** OpenShift uses SCCs (ServiceAccount-scoped) while upstream Kubernetes uses PodSecurityAdmission (namespace-scoped). What class of multi-tenant security requirements can SCCs satisfy that PSA's three fixed modes cannot - and does this justify the complexity difference?
 
+   *Hint:* Research how OpenShift SCCs interact with OCI image build pipelines and how hadolint DL3002 maps to SCC runAsNonRoot enforcement.
+
 2. **(Type B - Scale)** The Cluster Version Operator enables automated minor-version upgrades of OpenShift clusters. At what cluster size and workload criticality does the operational risk of automated control-plane upgrades outweigh the operational cost of manual upgrade processes?
 
+   *Hint:* Look at OpenShift's SCC implementation - it runs as a compiled admission plugin inside the API server binary, avoiding the network hop that external webhooks require.
+
 3. **(Type C - Design Trade-off)** A team choosing between EKS and OpenShift calculates that OCP licensing costs £200K/year but saves two platform engineers. Under what conditions is the build-vs-buy trade-off clearly in favour of OCP - and what factors would flip the decision toward vanilla EKS?
+
+   *Hint:* Compare OCP Deployment plus ArgoCD image updater to DeploymentConfig image-change triggers; research GitOps tools that provide equivalent push-based deploy on new image push.
