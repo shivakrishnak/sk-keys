@@ -361,3 +361,164 @@ grep "POST /messages" access.log | wc -l
 # Ratio: infrastructure services / messages_per_day
 # > 1:1000 signals over-engineered infrastructure
 ```
+
+**Fix:**
+Remove infrastructure components that cannot be justified by
+current load. Redeploy using the simplest stack that meets today's
+requirements with a documented upgrade path for when load grows.
+
+**Prevention:** Infrastructure complexity gate: each infrastructure
+component must be justified by a measured requirement. "Future
+scale" is not a measured requirement until it is measured.
+
+---
+
+### 🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- `DPT-071 - Pattern Trade-off Framing` - the decision framework
+  that identifies when a pattern's cost exceeds its benefit
+- `DPT-047 - Premature Optimization` - the performance-specific
+  variant of over-engineering
+- `DPT-045 - Golden Hammer Anti-Pattern` - the tool-familiarity
+  driver of over-engineering
+
+**Builds On This (learn these next):**
+- `DPT-063 - Anti-Pattern Recognition and Refactoring` - the
+  systematic approach to identifying and removing over-engineering
+- `DPT-061 - Pattern Selection Framework` - the positive framing:
+  how to choose the right pattern rather than avoiding over-choice
+- `SAP - Software Architecture Patterns` - architecture-level
+  decisions where over-engineering risk is highest
+
+**Alternatives / Comparisons:**
+- `DPT-004 - How to Recognize When a Pattern Applies` - the
+  inverse: recognising when a pattern IS needed vs. over-applying
+- `DPT-072` is a meta-pattern: a thinking framework applied
+  to all other patterns
+
+---
+
+### 📌 Quick Reference Card
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ WHAT IT IS   │ A decision framework for recognising and  │
+│              │ preventing unnecessary complexity          │
+├──────────────┼───────────────────────────────────────────┤
+│ PROBLEM IT   │ Engineers add patterns/layers/components  │
+│ SOLVES       │ for hypothetical future needs             │
+├──────────────┼───────────────────────────────────────────┤
+│ KEY INSIGHT  │ Complexity has a carrying cost even when  │
+│              │ not actively causing bugs                 │
+├──────────────┼───────────────────────────────────────────┤
+│ USE WHEN     │ Reviewing any architectural decision,     │
+│              │ technical debt audit, design review       │
+├──────────────┼───────────────────────────────────────────┤
+│ AVOID WHEN   │ The context IS genuinely complex and      │
+│              │ complexity is load-bearing, not speculative│
+├──────────────┼───────────────────────────────────────────┤
+│ TRADE-OFF    │ Simplicity now vs. refactoring cost later │
+│              │ as requirements grow                      │
+├──────────────┼───────────────────────────────────────────┤
+│ ONE-LINER    │ "Add complexity only when the current     │
+│              │  problem demands it - not before."        │
+├──────────────┼───────────────────────────────────────────┤
+│ NEXT EXPLORE │ Pattern Trade-off Framing → Pattern       │
+│              │ Selection Framework → Anti-Pattern Recog. │
+└──────────────────────────────────────────────────────────┘
+```
+
+**If you remember only 3 things:**
+1. Complexity has a carrying cost even when not actively failing
+2. "We might need it later" must be weighed against "add-later
+   cost" - most YAGNI cases have low add-later cost
+3. The reversibility question: can this decision be undone at low
+   cost? If yes, choose the simpler option now
+
+**Interview one-liner:**
+"Over-engineering is risk shifted from the present to the future
+by adding complexity for problems that haven't materialised - the
+carrying cost is paid immediately, the benefit never arrives."
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Complexity is inventory. Like physical inventory, it has a
+carrying cost whether or not it provides value. Minimise
+the complexity you carry; increase it only when current demand
+justifies the carrying cost.
+
+**Where else this pattern appears:**
+- **Lean manufacturing (just-in-time):** Toyota's production
+  system minimises work-in-progress inventory -- only produce what
+  is needed when needed. "Speculative inventory" is waste;
+  "speculative complexity" is its software equivalent.
+- **Financial hedging:** Over-hedging a position costs premium
+  for protection against risks that never materialise -- paying
+  complexity cost for flexibility that is never exercised.
+- **Product management (MVP principle):** Launch the minimum
+  viable product before adding features -- the same YAGNI
+  principle applied to product development rather than
+  implementation.
+
+---
+
+### 💡 The Surprising Truth
+
+Over-engineering is not primarily caused by bad engineers --
+it is caused by good engineers with the wrong incentives.
+Studies of software project retrospectives consistently find
+that over-engineering correlates with: (1) engineers who are
+rewarded for technical sophistication, not simplicity;
+(2) lack of time pressure (over-engineering is more common in
+greenfield projects than in urgent bug-fix cycles); and
+(3) fear of being "wrong" about future requirements. Engineers
+who add complexity "just in case" are doing risk management --
+they are just doing it incorrectly by systematically
+underestimating the cost of carrying unused complexity.
+
+---
+
+### 🧠 Think About This Before We Continue
+
+**Q1 (First Principles):** A senior engineer argues: "We should
+design for 10x current load because that's what Google does."
+The current load is 100 requests/minute; the 10x target is
+1,000 requests/minute. The engineering cost of the 10x design
+is 3 weeks; the simple design takes 1 week. Apply YAGNI and
+reversibility analysis to evaluate this argument.
+
+*Hint: Look at the First Principles section for the cost-benefit
+framework. The key question is: what is the cost of scaling
+to 1,000 req/min if reached in 6 months vs. the cost of
+carrying the 10x design for 6 months if never reached?*
+
+**Q2 (System Interaction):** An event-sourcing system is
+proposed for a CRUD employee directory with 500 users and
+5 updates/day. The team argues "event sourcing gives us an
+audit log for free." Evaluate using the over-engineering
+framework: identify the forces event sourcing resolves vs.
+forces it introduces for this specific context.
+
+*Hint: The Comparison Table and the How It Works section on
+force analysis provide the analytical tools. List the forces
+explicitly: what scale, consistency, and auditability
+requirements does this system actually have?*
+
+**Q3 (Design Trade-off):** A startup has 3 engineers, 200
+daily active users, and one monolith. The CTO wants to
+migrate to microservices "because it's the industry standard."
+Apply the reversibility analysis framework from First
+Principles to evaluate whether to comply, defer, or refuse.
+State the specific threshold at which microservices become
+justified for this system.
+
+*Hint: The Gradual Depth Level 4 and the Failure Modes section
+both address the cost-carrying analysis. The specific
+threshold is defined by organisational size, deployment
+frequency, and team autonomy requirements -- not by
+line-of-code count.*
+

@@ -486,7 +486,7 @@ Apply the pattern/anti-pattern taxonomy formally: what
 changed between 1994 and now that inverted the value
 label?
 
-_Hint:_ 1994 context: no DI containers; explicit global
+*Hint:_ 1994 context: no DI containers; explicit global
 access was the only way to share a single instance.
 Forces for Singleton: controlled access to single
 instance; saves initialisation cost. Modern context:
@@ -502,7 +502,7 @@ globally as `flask.request`. Is this an implementation
 of the Service Locator anti-pattern, an idiom, or a
 pattern? Justify your answer.
 
-_Hint:_ Flask's `request` is a thread-local, not a true
+*Hint:_ Flask's `request` is a thread-local, not a true
 global. The forces are different from Service Locator:
 the context (HTTP request handling) makes the thread-local
 request a natural, safe idiom in that framework. Testing:
@@ -518,7 +518,7 @@ review suggests using composition instead (holding a
 `list` internally). Analyse the forces: when is
 inheritance from a built-in type an idiom vs an anti-pattern?
 
-_Hint:_ Inheriting from `list` is a Python idiom for
+*Hint:_ Inheriting from `list` is a Python idiom for
 extending list behaviour (IS-A relationship). Forces:
 if the custom list adds methods and IS-A list (used
 everywhere a list is used), inheritance is correct.

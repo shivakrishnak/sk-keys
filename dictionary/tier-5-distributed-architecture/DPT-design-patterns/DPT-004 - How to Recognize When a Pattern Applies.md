@@ -504,7 +504,7 @@ and individual objects." Map this to a concrete file
 system problem and explain why the force (ignoring
 the difference) is essential.
 
-_Hint:_ File system: file and directory should respond
+*Hint:_ File system: file and directory should respond
 to the same interface (`size()`, `list()`). A directory's
 `size()` recursively sums children. A file's `size()`
 returns its own size. Client code: `getSize(item)` works
@@ -519,7 +519,7 @@ hook methods (variant steps the caller provides).
 Why is this a better design than giving callers raw
 `Connection` and `PreparedStatement` access?
 
-_Hint:_ Template (invariant): get connection, create
+*Hint:_ Template (invariant): get connection, create
 statement, execute, handle exceptions, release connection.
 Hook (variant): the SQL string, parameter binding,
 result mapping. Without Template Method: callers must
@@ -535,7 +535,7 @@ Decorator pattern; (C) use AOP (Proxy pattern). Apply
 pattern recognition: what forces determine which
 option to choose?
 
-_Hint:_ Force: cross-cutting concern (logging across many
+*Hint:_ Force: cross-cutting concern (logging across many
 classes). Force: do not modify each class. Force: number
 of classes. (A): violates DRY; maintenance burden.
 (B) Decorator: add logging to specific classes; manual

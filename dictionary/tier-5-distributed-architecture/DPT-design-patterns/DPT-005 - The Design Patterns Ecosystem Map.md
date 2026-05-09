@@ -476,7 +476,7 @@ and Level 5 (cloud-native) patterns does this
 architectural choice naturally call for? Describe the
 cascade of pattern decisions.
 
-_Hint:_ Level 1 -> event-driven. Level 4: events crossing
+*Hint:_ Level 1 -> event-driven. Level 4: events crossing
 service boundaries -> Outbox Pattern (reliable event
 publishing); consumers -> Dead Letter Queue. Level 2:
 processing handler per event type -> Command Pattern
@@ -490,7 +490,7 @@ Resilijence4j implements them at the application level
 in Java code. When would you choose Resilience4j over
 Istio Circuit Breaker, and vice versa?
 
-_Hint:_ Istio Circuit Breaker: uniform policy across all
+*Hint:_ Istio Circuit Breaker: uniform policy across all
 services; no code changes; works for any language;
 but limited to HTTP/gRPC. Resilience4j: fine-grained
 per-method control; works for non-HTTP calls (DB calls,
@@ -504,7 +504,7 @@ when a distributed transaction fails. Why can't a
 GoF pattern (Level 2) solve this problem? What specific
 limitation of GoF patterns makes them insufficient?
 
-_Hint:_ GoF patterns assume in-process execution: shared
+*Hint:_ GoF patterns assume in-process execution: shared
 memory, synchronous calls, ACID transactions via the
 DB. Saga is needed when operations span multiple services
 with separate databases (no shared ACID transaction).

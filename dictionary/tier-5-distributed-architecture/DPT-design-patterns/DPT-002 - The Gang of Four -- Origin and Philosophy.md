@@ -483,7 +483,7 @@ a rule. Describe a case where inheritance is clearly
 the correct mechanism and composition would be more
 complicated and less correct.
 
-_Hint:_ Polymorphism: when the IS-A relationship is genuine
+*Hint:_ Polymorphism: when the IS-A relationship is genuine
 (a `Dog` IS-A `Animal`), inheritance correctly models
 the relationship. Template Method pattern requires
 inheritance: the base class defines the algorithm
@@ -495,7 +495,7 @@ additional interface layer.
 uses many GoF patterns. Name three patterns that Spring
 uses and explain what problem each solves within Spring.
 
-_Hint:_ Proxy: Spring AOP wraps beans in proxies for
+*Hint:_ Proxy: Spring AOP wraps beans in proxies for
 transaction management and security. Factory: ApplicationContext
 is an Abstract Factory for Spring beans. Singleton:
 Spring beans are singletons by default within the
@@ -509,7 +509,7 @@ Command, Observer) expressible as single-line lambda
 expressions without explicit interface classes.
 Does this mean these patterns are obsolete in Java 8+?
 
-_Hint:_ The pattern is the structural relationship, not
+*Hint:_ The pattern is the structural relationship, not
 the implementation. `list.sort(Comparator.comparing(Person::getName))`
 IS the Strategy pattern (interchangeable comparison
 algorithm) implemented as a lambda. The pattern is

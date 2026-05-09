@@ -484,7 +484,7 @@ that handles all the plumbing." Evaluate this claim.
 At what level does the framework eliminate the need
 for patterns, and at what level do patterns still apply?
 
-_Hint:_ Frameworks implement patterns (Spring uses Factory,
+*Hint:_ Frameworks implement patterns (Spring uses Factory,
 Proxy, Template Method internally). But your application
 code still faces recurring structural problems above
 the framework layer (how to decouple business logic
@@ -496,7 +496,7 @@ widely used for event notification. At what scale does
 the synchronous in-process Observer pattern break down,
 and what distributed pattern replaces it?
 
-_Hint:_ Observer is in-process and synchronous; when events
+*Hint:_ Observer is in-process and synchronous; when events
 cross service boundaries or require durable delivery,
 it breaks down. The distributed equivalent: Publish-Subscribe
 (message broker: Kafka, RabbitMQ). The forces are the
@@ -509,7 +509,7 @@ an interface and three implementations now, even though
 we only have one algorithm today." Evaluate this
 decision using the pattern trade-off framework.
 
-_Hint:_ Pattern trade-off: flexibility gained vs complexity
+*Hint:_ Pattern trade-off: flexibility gained vs complexity
 cost. With one implementation: zero flexibility value,
 positive complexity cost. YAGNI applies. The correct
 decision: implement directly; introduce Strategy when
