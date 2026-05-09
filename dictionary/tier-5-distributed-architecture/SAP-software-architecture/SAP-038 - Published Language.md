@@ -373,6 +373,7 @@ curl -X POST \
 **Reusable Engineering Principle:** Systems that must exchange data long-term need a common language that is independent of either system's internal representation. The common language must be versioned, documented, and stable; it is the contract both sides depend on.
 
 **Where else this pattern appears:**
+
 - **Legal contract language:** Legal documents use a precise, formally defined vocabulary ("hereinafter," "consideration," "force majeure") that is independent of either party's internal terminology. Both parties translate their intent into this neutral legal language.
 - **Musical notation:** Sheet music is a Published Language for music - a formal, agreed-upon notation that any trained musician (any system) can read and perform. The composer's internal mental model and the performer's interpretation are both separate from the notation.
 - **GeoJSON/GPX formats:** Geographic data exchange formats define a Published Language for location data. Navigation apps, mapping services, and GPS devices all speak GeoJSON, regardless of their internal data structures.
@@ -388,14 +389,17 @@ The hardest part of a Published Language is NOT the initial design - it is versi
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-037 - Open Host Service (the OHS publishes a language; understanding OHS explains the context in which Published Language is defined and maintained)
 - SAP-035 - Context Map (the Context Map shows which contexts are connected by Published Language relationships; understanding Context Map provides the strategic picture)
 
 **Builds On This (learn these next):**
+
 - SAP-037 - Open Host Service (complementary; OHS is the service boundary, Published Language is the exchange format; they are designed together)
 - SAP-035 - Context Map (the Context Map shows where Published Language relationships exist; completing the strategic DDD picture)
 
 **Alternatives / Comparisons:**
+
 - SAP-036 - Shared Kernel (alternative exchange approach: share code rather than define a neutral language; lower translation overhead but higher coupling)
 - Domain-specific schema languages (OpenAPI, Avro, Protobuf - tools for defining Published Language formally; not alternatives but implementation mechanisms)
 
@@ -426,12 +430,12 @@ The hardest part of a Published Language is NOT the initial design - it is versi
 
 **Q1.** You're designing the Published Language for an `OrderPlaced` event. The event needs to carry product information (product IDs, names, quantities). Should the Published Language include the full product name and description, or just the product ID? What are the implications of each choice for consumers who need to display order details to customers?
 
-*Hint:* Research the "fat event" vs "thin event" design choice - specifically the trade-off between self-contained events (include all data consumers might need - fat) and reference events (include only IDs, consumers look up data - thin). Fat events: consumers don't need extra API calls but the event payload grows and may contain stale data. Thin events: smaller payloads but consumers must call the product service to get names, creating a dependency. Research the "event-carried state transfer" pattern as a middle ground.
+_Hint:_ Research the "fat event" vs "thin event" design choice - specifically the trade-off between self-contained events (include all data consumers might need - fat) and reference events (include only IDs, consumers look up data - thin). Fat events: consumers don't need extra API calls but the event payload grows and may contain stale data. Thin events: smaller payloads but consumers must call the product service to get names, creating a dependency. Research the "event-carried state transfer" pattern as a middle ground.
 
 **Q2.** Your event's Published Language uses `totalAmountPence: long` (amount in pence/cents). A new requirement needs to support Japanese Yen (no fractional currency) and Kuwaiti Dinar (3 decimal places). The current schema only supports 2-decimal currencies. Designing a backward-compatible evolution of this schema - what changes, what stays, and how do you handle existing events with the old format?
 
-*Hint:* Research how financial message standards (ISO 20022, FIX Protocol) handle multi-currency amount representation - specifically the pattern of `{ amount: long, currencyCode: string, minorUnit: int }` where `minorUnit` specifies the number of decimal places for the currency (2 for USD/EUR, 0 for JPY, 3 for KWD). The evolution: add `currencyCode` and `minorUnit` fields alongside `totalAmountPence`. Old events default `currencyCode` to the original currency and `minorUnit` to 2. New events populate all three fields.
+_Hint:_ Research how financial message standards (ISO 20022, FIX Protocol) handle multi-currency amount representation - specifically the pattern of `{ amount: long, currencyCode: string, minorUnit: int }` where `minorUnit` specifies the number of decimal places for the currency (2 for USD/EUR, 0 for JPY, 3 for KWD). The evolution: add `currencyCode` and `minorUnit` fields alongside `totalAmountPence`. Old events default `currencyCode` to the original currency and `minorUnit` to 2. New events populate all three fields.
 
 **Q3.** Three teams must share a Published Language for product catalog data. Team A owns the OHS and wants to use Avro (binary, schema-enforced). Team B prefers JSON (human-readable, widely supported). Team C wants Protobuf (performance-focused). The three teams cannot agree on the serialization format. How do you resolve this technical and political disagreement, and what principle should guide the choice?
 
-*Hint:* Research the "upstream/downstream" power dynamic in OHS - the team publishing the OHS (Team A) decides the Published Language format; consuming teams (Teams B and C) use ACLs to translate the Published Language into their preferred internal format. The OHS provider should choose the format that is best for their production needs (Avro with Schema Registry for event streaming makes sense). Consumers use ACLs - not to avoid the OHS, but to translate its format into their internal representation. Research Apache Kafka Connect's converters as infrastructure that performs this translation transparently.
+_Hint:_ Research the "upstream/downstream" power dynamic in OHS - the team publishing the OHS (Team A) decides the Published Language format; consuming teams (Teams B and C) use ACLs to translate the Published Language into their preferred internal format. The OHS provider should choose the format that is best for their production needs (Avro with Schema Registry for event streaming makes sense). Consumers use ACLs - not to avoid the OHS, but to translate its format into their internal representation. Research Apache Kafka Connect's converters as infrastructure that performs this translation transparently.

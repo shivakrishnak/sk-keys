@@ -323,6 +323,7 @@ public class StripePaymentProvider
 **Reusable Engineering Principle:** Define stable interfaces for the points of variation in a system. Code that implements those interfaces (plugins) can evolve independently of the core. The interface is the contract; the implementations are replaceable.
 
 **Where else this pattern appears:**
+
 - **USB ports:** A USB port is a plugin interface. Any USB-compliant device (keyboard, drive, phone charger) plugs in without the computer needing to know what it is. The interface (USB spec) is the contract; devices are plugins.
 - **Browser extensions:** Chrome/Firefox publish a browser extension API. Extension developers implement the API to add features (ad blocking, password management, dev tools). The browser core never changes for a new extension.
 - **Gradle build plugins:** Gradle publishes the `Plugin<Project>` interface. The Kotlin plugin, Java plugin, Spring Boot plugin all implement it. Adding a new build capability means writing a new plugin, not modifying Gradle's core.
@@ -338,14 +339,17 @@ Plugin Architecture and Hexagonal Architecture solve the same fundamental proble
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-043 - SOLID Principles (specifically the Open-Closed Principle: open for extension via plugins, closed for modification; and Dependency Inversion: depend on abstractions = depend on plugin interfaces)
 - SAP-050 - Cohesion and SAP-051 - Coupling (plugin architecture reduces coupling between the core and implementations; understanding these principles explains why the pattern works)
 
 **Builds On This (learn these next):**
+
 - SAP-039 - Modular Monolith Patterns (plugins are a way to extend a modular monolith without modifying its core modules)
 - SAP-041 - Pipe and Filter (filters in a pipeline are often implemented as plugins; the pipeline framework defines the filter interface, implementations are plugins)
 
 **Alternatives / Comparisons:**
+
 - SAP-014 - Hexagonal Architecture (closely related; hexagonal ports are plugin interfaces; adapters are plugin implementations; hexagonal is the DDD-influenced cousin of Plugin Architecture)
 - Service Locator (alternative extension mechanism; instead of dependency injection, components look up implementations at runtime; more flexible but less testable)
 
@@ -378,12 +382,12 @@ Plugin Architecture and Hexagonal Architecture solve the same fundamental proble
 
 **Q1.** Your Plugin Architecture-based system has a `NotificationProvider` interface with three implementations: Email, SMS, Push. A new requirement needs "notification routing": send high-priority notifications via SMS, low-priority via Email. This routing logic needs to know about all providers and coordinate between them. Where does this routing logic live - in the core, in a new plugin, or in one of the existing plugins? How does this affect your extension point design?
 
-*Hint:* Research the "Composite" design pattern applied to Plugin Architecture - specifically creating a `CompositeNotificationProvider` that itself implements `NotificationProvider` and contains multiple providers with routing logic. This keeps the core unaware of routing decisions (the composite IS a plugin from the core's perspective) while encapsulating the coordination logic. This is also the "Chain of Responsibility" pattern at work: each provider decides whether to handle a notification based on its rules.
+_Hint:_ Research the "Composite" design pattern applied to Plugin Architecture - specifically creating a `CompositeNotificationProvider` that itself implements `NotificationProvider` and contains multiple providers with routing logic. This keeps the core unaware of routing decisions (the composite IS a plugin from the core's perspective) while encapsulating the coordination logic. This is also the "Chain of Responsibility" pattern at work: each provider decides whether to handle a notification based on its rules.
 
 **Q2.** Two payment provider plugins both use different versions of the same HTTP client library: `stripe-plugin` requires `okhttp:4.9.0` and `paypal-plugin` requires `okhttp:4.12.0`. In a standard Java classpath (not OSGi), only one version of OkHttp can be loaded. How would you resolve this plugin dependency conflict, and what architectural mechanism (like classloader isolation) could prevent this class of problem?
 
-*Hint:* Research OSGi (Open Services Gateway initiative) and specifically its class-loader-per-bundle model - each OSGi bundle (plugin) has its own classloader, allowing different versions of the same library to coexist. Eclipse IDE plugins use this model. Research Java's URLClassLoader as the lower-level mechanism for creating isolated class loading contexts. For simpler cases, research the "fat jar with shading" approach (Maven Shade plugin's relocation) which relocates one plugin's transitive dependencies under a new package prefix to avoid conflicts.
+_Hint:_ Research OSGi (Open Services Gateway initiative) and specifically its class-loader-per-bundle model - each OSGi bundle (plugin) has its own classloader, allowing different versions of the same library to coexist. Eclipse IDE plugins use this model. Research Java's URLClassLoader as the lower-level mechanism for creating isolated class loading contexts. For simpler cases, research the "fat jar with shading" approach (Maven Shade plugin's relocation) which relocates one plugin's transitive dependencies under a new package prefix to avoid conflicts.
 
 **Q3.** You're building a Plugin Architecture for a data processing application. Plugins are loaded from a database at runtime (not from a classpath). Each plugin is a compiled Java JAR stored as a BLOB in the database. How do you implement hot-loading (loading a new plugin version without restarting the application) safely, and what risks does dynamic class loading introduce?
 
-*Hint:* Research Java's dynamic class loading using `URLClassLoader.newInstance()` and specifically the security implications: (1) A malicious JAR could execute arbitrary code when loaded; (2) ClassLoader leaks can cause `OutOfMemoryError` in PermGen/Metaspace if old plugin classes are not garbage collected; (3) Thread safety issues if a plugin update occurs while old instances are executing. Research how OSGi addresses these with bundle lifecycle management, and how Java Security Manager (deprecated in Java 17) provided sandboxing for dynamically loaded code.
+_Hint:_ Research Java's dynamic class loading using `URLClassLoader.newInstance()` and specifically the security implications: (1) A malicious JAR could execute arbitrary code when loaded; (2) ClassLoader leaks can cause `OutOfMemoryError` in PermGen/Metaspace if old plugin classes are not garbage collected; (3) Thread safety issues if a plugin update occurs while old instances are executing. Research how OSGi addresses these with bundle lifecycle management, and how Java Security Manager (deprecated in Java 17) provided sandboxing for dynamically loaded code.

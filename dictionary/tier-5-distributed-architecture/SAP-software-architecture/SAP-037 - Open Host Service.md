@@ -351,6 +351,7 @@ public record StockDepletedEvent(
 **Reusable Engineering Principle:** When one system must serve many consumers with different needs, publish ONE stable protocol optimized for integration rather than customizing separately for each consumer. The protocol absorbs consumer diversity; the implementation doesn't.
 
 **Where else this pattern appears:**
+
 - **Electrical power outlets:** Each country defines one standard power outlet format (its Open Host Service). Every appliance manufacturer adapts their device to the standard (or uses a travel adapter = ACL). The power grid doesn't customise its output per device.
 - **Public transit schedules:** A train network publishes one unified GTFS (General Transit Feed Specification) data feed. All navigation apps (Google Maps, Citymapper, Transit) integrate against this standard. The transit authority doesn't produce custom feeds per app.
 - **Banking SWIFT messages:** SWIFT defines the Published Language for international bank transfers. All banks implement SWIFT. No bank builds custom bilateral protocols for each correspondent bank - one standard serves all.
@@ -366,14 +367,17 @@ Open Host Service and Anti-Corruption Layer are complementary, not opposing patt
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-035 - Context Map (OHS is one of the relationship patterns on a Context Map; understanding Context Map shows when OHS is the right pattern versus Shared Kernel, Conformist, or Separate Ways)
 - SAP-034 - Anti-Corruption Layer (the consumer-side companion to OHS; understanding ACL from the consumer perspective completes the picture of how OHS relationships work in practice)
 
 **Builds On This (learn these next):**
+
 - SAP-038 - Published Language (the schema and contract that the OHS publishes; OHS defines the service boundary, Published Language defines the exchange format)
 - SAP-035 - Context Map (after understanding OHS, the Context Map shows where OHS relationships appear in the full architecture)
 
 **Alternatives / Comparisons:**
+
 - SAP-034 - Anti-Corruption Layer (complementary from the consumer side; ACL translates the OHS's Published Language into the consumer's domain model)
 - SAP-036 - Shared Kernel (alternative integration approach; shares code instead of publishing a service protocol; lower latency but higher coupling)
 
@@ -403,12 +407,12 @@ Open Host Service and Anti-Corruption Layer are complementary, not opposing patt
 
 **Q1.** Your Inventory service's Open Host Service REST API is consumed by 8 services. You need to change the response format for `GET /v1/stock/{productId}` - the `quantity` field needs to become a nested object `{ available: int, reserved: int }` instead of a single integer. This is a breaking change. Design the complete migration strategy: how do you introduce v2, support both v1 and v2, notify consumers, and eventually deprecate v1?
 
-*Hint:* Research URL path versioning (`/v1/` vs `/v2/`) versus header-based versioning (`Accept: application/vnd.inventory.v2+json`). The standard approach: implement `/v2/stock/{productId}` alongside existing `/v1/`, notify all 8 consumers, give a deprecation period (e.g., 3 months), then remove `/v1/`. Research how Stripe's API versioning strategy handles this: they preserve old behavior per API key version, so consumers never break until they explicitly upgrade.
+_Hint:_ Research URL path versioning (`/v1/` vs `/v2/`) versus header-based versioning (`Accept: application/vnd.inventory.v2+json`). The standard approach: implement `/v2/stock/{productId}` alongside existing `/v1/`, notify all 8 consumers, give a deprecation period (e.g., 3 months), then remove `/v1/`. Research how Stripe's API versioning strategy handles this: they preserve old behavior per API key version, so consumers never break until they explicitly upgrade.
 
 **Q2.** An Open Host Service typically means the upstream team defines the integration contract. But what about API design quality? If the OHS has a poorly designed Published Language (verbose, confusing field names, inconsistent formats), should consumers just use ACLs to hide the poor design? Or should they push back on the OHS provider to improve the design? What's the governance process for improving OHS quality?
 
-*Hint:* Research the "Customer/Supplier" relationship pattern from Evans's DDD - specifically the governance model where downstream teams are customers with influence over the upstream team's (supplier's) API roadmap. The question reveals a political dimension of Context Map patterns: Conformist relationships occur when downstream has no influence; Customer/Supplier occurs when downstream teams can negotiate API improvements. The ACL should be a temporary solution while the OHS improves, not a permanent acceptance of poor design.
+_Hint:_ Research the "Customer/Supplier" relationship pattern from Evans's DDD - specifically the governance model where downstream teams are customers with influence over the upstream team's (supplier's) API roadmap. The question reveals a political dimension of Context Map patterns: Conformist relationships occur when downstream has no influence; Customer/Supplier occurs when downstream teams can negotiate API improvements. The ACL should be a temporary solution while the OHS improves, not a permanent acceptance of poor design.
 
 **Q3.** Your platform team publishes an OHS for authentication (`AuthService`). All 15 application services depend on it. When `AuthService` is down, all 15 services cannot authenticate new requests. The OHS has created a single point of failure. How do you design the OHS and its consumers to maintain some level of operation when the OHS is temporarily unavailable?
 
-*Hint:* Research the "Circuit Breaker" pattern (from Microservices patterns) applied to OHS consumer resilience - specifically how a consumer that caches authentication decisions for a configurable TTL can serve requests from cache during `AuthService` outages. Research JWT tokens as a Published Language for authentication that embeds expiry and claims, enabling consumers to validate tokens locally without calling `AuthService` for every request. This converts a synchronous OHS dependency into a stateless validation operation.
+_Hint:_ Research the "Circuit Breaker" pattern (from Microservices patterns) applied to OHS consumer resilience - specifically how a consumer that caches authentication decisions for a configurable TTL can serve requests from cache during `AuthService` outages. Research JWT tokens as a Published Language for authentication that embeds expiry and claims, enabling consumers to validate tokens locally without calling `AuthService` for every request. This converts a synchronous OHS dependency into a stateless validation operation.

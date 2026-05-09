@@ -315,6 +315,7 @@ private String databaseUrl;
 **Reusable Engineering Principle:** The complexity of a solution should not exceed the complexity of the problem it solves. When the solution complexity exceeds the problem complexity, the solution has become the problem.
 
 **Where else this pattern appears:**
+
 - **Aircraft design:** Lockheed's original KISS context - military aircraft must be repairable in field conditions by mechanics with basic tools. A fighter jet with components requiring factory maintenance is not field-maintainable. Complexity must match operational context.
 - **Tax forms:** The original US 1040-EZ was a single page for simple tax situations. The standard 1040 has dozens of schedules for complex situations. The right form complexity matches the situation's actual complexity.
 - **Cooking recipes:** A recipe with 30 ingredients and 15 steps is hard to reproduce consistently. Professional chefs often apply KISS deliberately - "how do I get this flavor with 5 ingredients?" Simplicity in recipes correlates with consistent results and teachability.
@@ -330,14 +331,17 @@ KISS and DRY are frequently in tension, and DRY often loses correctly. The most 
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-043 - SOLID Principles (SOLID and KISS must be balanced; SOLID without KISS leads to over-engineered abstractions; understanding SOLID provides the context for KISS as a counterweight)
 - SAP-046 - YAGNI (closely related; YAGNI prevents features you don't need; KISS prevents complexity you don't need; they are complementary restraint principles)
 
 **Builds On This (learn these next):**
+
 - SAP-046 - YAGNI (the feature-level companion to KISS; KISS governs implementation complexity, YAGNI governs feature complexity)
 - SAP-044 - DRY (in tension with KISS; understanding both helps navigate the "extract to shared abstraction" versus "keep it separate and simple" decision)
 
 **Alternatives / Comparisons:**
+
 - SAP-046 - YAGNI (complementary: YAGNI = don't build features you don't need; KISS = don't make features complex when they can be simple)
 - Accidental Complexity (the specific anti-pattern KISS prevents; complexity introduced by the implementation, not required by the problem)
 
@@ -371,12 +375,12 @@ KISS and DRY are frequently in tension, and DRY often loses correctly. The most 
 
 **Q1.** A new developer on your team is building a feature to send a single marketing email campaign once a month. They propose using RabbitMQ with a dead-letter queue, retry logic, a separate consumer microservice, and monitoring dashboards. You feel this violates KISS. How do you explain your concern without dismissing their valid concerns about reliability, and what would a KISS-compliant first version look like?
 
-*Hint:* Research the concept of "reliability budget" - specifically: what is the actual reliability requirement for a monthly marketing email? If sending fails, the business impact is low (resend next week). The KISS version: a scheduled Spring Batch job that runs once a month, calls `emailService.sendCampaign()`, logs success/failure, and alerts the team on failure. RabbitMQ adds reliability for high-frequency, time-critical operations - not for once-a-month low-stakes jobs. Research how to frame this as "match the solution's reliability mechanism to the problem's reliability requirement."
+_Hint:_ Research the concept of "reliability budget" - specifically: what is the actual reliability requirement for a monthly marketing email? If sending fails, the business impact is low (resend next week). The KISS version: a scheduled Spring Batch job that runs once a month, calls `emailService.sendCampaign()`, logs success/failure, and alerts the team on failure. RabbitMQ adds reliability for high-frequency, time-critical operations - not for once-a-month low-stakes jobs. Research how to frame this as "match the solution's reliability mechanism to the problem's reliability requirement."
 
 **Q2.** At what point does a simple solution become too simple? Give an example where starting with the KISS solution (a single database, synchronous calls, no caching) would later require a painful redesign - and describe how you would identify that point BEFORE it becomes a crisis, so you can proactively add the right complexity at the right time.
 
-*Hint:* Research the concept of "scaling thresholds" - specific measurable metrics that trigger architectural changes. For a single database: when p95 query latency exceeds 100ms under production load, investigate read replicas or caching. For synchronous calls: when a downstream service's p99 latency exceeds your SLA budget, introduce async + circuit breaker. The key: establish the threshold BEFORE you hit it (during load testing or capacity planning), so the complexity addition is planned, not reactive. Research Martin Fowler's "DesignStaminaHypothesis" for the theoretical model.
+_Hint:_ Research the concept of "scaling thresholds" - specific measurable metrics that trigger architectural changes. For a single database: when p95 query latency exceeds 100ms under production load, investigate read replicas or caching. For synchronous calls: when a downstream service's p99 latency exceeds your SLA budget, introduce async + circuit breaker. The key: establish the threshold BEFORE you hit it (during load testing or capacity planning), so the complexity addition is planned, not reactive. Research Martin Fowler's "DesignStaminaHypothesis" for the theoretical model.
 
 **Q3.** A team has been religiously applying KISS for 2 years on a growing e-commerce platform. Their codebase is 80,000 lines in a single Spring Boot application (a monolith). Database queries are taking 3 seconds because a `Product` query joins 12 tables. Adding a new feature now takes 3 weeks because developers fear breaking the tangled codebase. Has KISS caused this problem, or has the team misapplied KISS? What is the correct diagnosis, and what does KISS prescribe as the next step?
 
-*Hint:* Research the difference between "simple" and "easy" (Rich Hickey's "Simple Made Easy" talk, 2011) - specifically that KISS is about avoiding accidental complexity, not about avoiding necessary complexity. The 12-table join and tangled codebase are symptoms of a different problem: the application has grown beyond the complexity that a monolith architecture handles well. KISS does NOT say "stay a monolith forever"; it says "don't add complexity beyond what the problem requires." The problem NOW requires modular separation. The KISS prescription: refactor to a modular monolith (see SAP-039), not to microservices (unless independent scaling is required).
+_Hint:_ Research the difference between "simple" and "easy" (Rich Hickey's "Simple Made Easy" talk, 2011) - specifically that KISS is about avoiding accidental complexity, not about avoiding necessary complexity. The 12-table join and tangled codebase are symptoms of a different problem: the application has grown beyond the complexity that a monolith architecture handles well. KISS does NOT say "stay a monolith forever"; it says "don't add complexity beyond what the problem requires." The problem NOW requires modular separation. The KISS prescription: refactor to a modular monolith (see SAP-039), not to microservices (unless independent scaling is required).

@@ -296,6 +296,7 @@ find shared-kernel/src/main/java -name "*.java" | wc -l
 **Reusable Engineering Principle:** Shared ownership is the most expensive form of ownership. Every concept, module, or library that two independent teams must both agree to change creates a coordination tax. Minimize the surface area of what is shared.
 
 **Where else this pattern appears:**
+
 - **Shared custody legal frameworks:** When two parties jointly own something (property, custody), changes require agreement from both. Joint ownership works only when changes are rare and coordination is feasible - which is why courts minimize jointly owned assets in divorce settlements.
 - **Open-source core libraries:** Java's `java.lang` package is a Shared Kernel for the entire Java ecosystem. Nobody changes it unilaterally - any change requires the JCP process and broad consensus. The extreme stability of `java.lang` is the price of it being universally shared.
 - **Database schemas for multiple applications:** A database schema shared by three applications is a Shared Kernel at the persistence level. Any schema change requires all three applications to be updated, tested, and deployed together - the classic multi-application coupling problem.
@@ -311,12 +312,15 @@ Most DDD practitioners recommend AGAINST using Shared Kernel as a first-choice p
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-035 - Context Map (the Shared Kernel is one of the relationship patterns on a Context Map; understanding Context Map provides the strategic picture within which Shared Kernel is a specific choice)
 
 **Builds On This (learn these next):**
+
 - SAP-035 - Context Map (after understanding Shared Kernel as a pattern, the Context Map shows where to use it versus ACL, OHS, or Separate Ways)
 
 **Alternatives / Comparisons:**
+
 - SAP-034 - Anti-Corruption Layer (alternative for isolation: instead of sharing a kernel, each context defines its own model and translates at the boundary; more work upfront, more independence long-term)
 - SAP-037 - Open Host Service (alternative for sharing: instead of sharing a library, one context publishes a stable service API; other contexts consume the API, not the source code)
 
@@ -346,12 +350,12 @@ Most DDD practitioners recommend AGAINST using Shared Kernel as a first-choice p
 
 **Q1.** Your Shared Kernel currently contains `OrderId`, `CustomerId`, and `Money`. A new team wants to integrate with your system. They suggest adding their `SubscriptionId` and `InvoiceId` to the Shared Kernel because they'll need to reference orders and customers. Should these be added to the Shared Kernel? What criteria should guide this decision?
 
-*Hint:* Research Evans's criterion for the Shared Kernel boundary: "Include in the kernel only concepts that are genuinely shared between the teams and that both teams use in the same way." The key test: do BOTH existing teams (Order Management AND the new team) need `SubscriptionId`, or only the new team? If only the new team needs it, it belongs in their bounded context, not the shared kernel. Research the "gravitational pull" problem: shared kernels tend to grow because adding to the kernel is cheaper than creating an ACL, but growth increases coordination cost.
+_Hint:_ Research Evans's criterion for the Shared Kernel boundary: "Include in the kernel only concepts that are genuinely shared between the teams and that both teams use in the same way." The key test: do BOTH existing teams (Order Management AND the new team) need `SubscriptionId`, or only the new team? If only the new team needs it, it belongs in their bounded context, not the shared kernel. Research the "gravitational pull" problem: shared kernels tend to grow because adding to the kernel is cheaper than creating an ACL, but growth increases coordination cost.
 
 **Q2.** The Shared Kernel between `Order Management` and `Shipping` contains `OrderId`. Both teams agree. But now `Order Management` needs to change `OrderId` from a `UUID` to a 10-character alphanumeric code for human readability. How do you manage this breaking change to the Shared Kernel without disrupting the `Shipping` service that's in production?
 
-*Hint:* Research semantic versioning applied to shared library releases - specifically the strategy of publishing `shared-kernel:2.0.0` with the new `OrderId` type, running `shared-kernel:1.x.x` and `2.0.0` in parallel during a migration period, updating Shipping to use `2.0.0`, then deprecating `1.x.x`. Also research "expand and contract" migration pattern: first expand (add `alphanumericOrderId` alongside existing `uuidOrderId`), migrate consumers, then contract (remove `uuidOrderId`).
+_Hint:_ Research semantic versioning applied to shared library releases - specifically the strategy of publishing `shared-kernel:2.0.0` with the new `OrderId` type, running `shared-kernel:1.x.x` and `2.0.0` in parallel during a migration period, updating Shipping to use `2.0.0`, then deprecating `1.x.x`. Also research "expand and contract" migration pattern: first expand (add `alphanumericOrderId` alongside existing `uuidOrderId`), migrate consumers, then contract (remove `uuidOrderId`).
 
 **Q3.** A team discovers that their Shared Kernel has grown to 47 classes across 15 packages and is now a 500KB JAR that every service depends on. Three services have different sub-sets of needs: Service A needs IDs only, Service B needs domain events only, Service C needs both plus value objects. How do you decompose the bloated Shared Kernel to minimize coupling while preserving the shared vocabulary benefits?
 
-*Hint:* Research the concept of "nano-libraries" and specifically the Module System (Java 9 JPMS) approach to fine-grained modularization. The technique: split the Shared Kernel into multiple small, focused libraries (`shared-ids:1.0.0`, `shared-events:1.0.0`, `shared-value-objects:1.0.0`). Each service depends only on the sub-library it needs. This reduces coupling without abandoning shared vocabulary. Research how Spring Framework achieves this with its many fine-grained `spring-*` modules.
+_Hint:_ Research the concept of "nano-libraries" and specifically the Module System (Java 9 JPMS) approach to fine-grained modularization. The technique: split the Shared Kernel into multiple small, focused libraries (`shared-ids:1.0.0`, `shared-events:1.0.0`, `shared-value-objects:1.0.0`). Each service depends only on the sub-library it needs. This reduces coupling without abandoning shared vocabulary. Research how Spring Framework achieves this with its many fine-grained `spring-*` modules.

@@ -385,6 +385,7 @@ public class FraudController {
 **Reusable Engineering Principle:** When a problem cannot be solved by a single algorithm but can be approached by multiple specialized algorithms that each contribute partial solutions, provide a shared workspace where specialists can publish partial results and react to each other's contributions.
 
 **Where else this pattern appears:**
+
 - **Hospital trauma team:** When a trauma patient arrives, multiple specialists (cardiologist, orthopedic surgeon, neurologist) simultaneously examine the patient and share findings verbally. Each specialist activates when they see something in their domain. The patient is the blackboard.
 - **Financial trading floors:** Multiple traders (specialists in different instruments) share a central order book (blackboard). Each trader adds bids, offers, or executes trades based on what they see on the order book. The state emerges from multiple specialists acting on shared state.
 - **Wiki collaborative editing:** A shared document (blackboard) is updated by multiple domain experts (knowledge sources). Each expert reads what others have written and adds their contribution. The final article emerges from collaborative, non-sequential contributions.
@@ -400,13 +401,16 @@ The Blackboard Pattern is experiencing a renaissance in the LLM/multi-agent AI e
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-043 - SOLID Principles (specifically the Open-Closed Principle: new knowledge sources extend the system without modifying the controller or other knowledge sources)
 
 **Builds On This (learn these next):**
+
 - SAP-040 - Plugin Architecture (knowledge sources are typically implemented as plugins; the blackboard framework defines the knowledge source interface)
 - SAP-041 - Pipe and Filter (contrasting pattern: Pipe and Filter uses fixed order with predetermined transformations; Blackboard uses opportunistic, order-independent contributions; knowing both clarifies when each applies)
 
 **Alternatives / Comparisons:**
+
 - SAP-041 - Pipe and Filter (for sequential processing where the order of transformations is known and fixed; simpler and more predictable than Blackboard)
 - Rule Engines (Drools, Rete algorithm: similar to Blackboard in that rules fire opportunistically when conditions are met; Drools's Working Memory is a Blackboard implementation)
 
@@ -439,12 +443,12 @@ The Blackboard Pattern is experiencing a renaissance in the LLM/multi-agent AI e
 
 **Q1.** Your Blackboard-based fraud detection system runs 5 Knowledge Sources in sequence. Under high load (10,000 transactions/second), this is too slow. You want to parallelize Knowledge Source execution. What concurrency issues arise from multiple Knowledge Sources writing to the Blackboard simultaneously, and how do you design the Blackboard data structure to allow safe parallel writes?
 
-*Hint:* Research concurrent data structures for the Blackboard - specifically `ConcurrentHashMap<String, AtomicReference<Signal>>` for signal storage, or immutable message passing (each KS produces a new version of the signal set rather than mutating in place). The key design choice: "optimistic" concurrency (KS reads blackboard, computes, CAS-writes result - retry on conflict) versus "pessimistic" concurrency (lock the entire signal set during KS execution - correct but sequential). Research how Prolog's backtracking and constraint logic programming handle concurrent hypothesis exploration.
+_Hint:_ Research concurrent data structures for the Blackboard - specifically `ConcurrentHashMap<String, AtomicReference<Signal>>` for signal storage, or immutable message passing (each KS produces a new version of the signal set rather than mutating in place). The key design choice: "optimistic" concurrency (KS reads blackboard, computes, CAS-writes result - retry on conflict) versus "pessimistic" concurrency (lock the entire signal set during KS execution - correct but sequential). Research how Prolog's backtracking and constraint logic programming handle concurrent hypothesis exploration.
 
 **Q2.** The Blackboard Controller currently uses a simple sequential strategy: run all eligible KS, check if done, repeat. You want to add a confidence-based early exit: if any single KS produces a signal with confidence >= 0.95, skip remaining KS and immediately make the decision. How do you modify the Controller loop to support this optimization while ensuring that lower-confidence individual signals still benefit from multi-KS aggregation?
 
-*Hint:* Research the "Agenda" pattern from Drools - specifically how the rule engine's agenda orders rule firing based on salience (priority) and conditions. The Controller becomes an event-driven scheduler: after each KS writes to the Blackboard, re-evaluate which KS should fire next AND check early exit conditions. Confidence >= 0.95 triggers an early exit event; the Controller handles it by draining the remaining KS queue and committing the decision.
+_Hint:_ Research the "Agenda" pattern from Drools - specifically how the rule engine's agenda orders rule firing based on salience (priority) and conditions. The Controller becomes an event-driven scheduler: after each KS writes to the Blackboard, re-evaluate which KS should fire next AND check early exit conditions. Confidence >= 0.95 triggers an early exit event; the Controller handles it by draining the remaining KS queue and committing the decision.
 
 **Q3.** You're designing a Blackboard-based medical diagnosis system where 8 specialized Knowledge Sources analyze patient symptoms, lab results, and imaging data. The system runs in a clinical environment where decisions must be explainable ("why did you suggest this diagnosis?"). How do you design the Blackboard to produce an explainable reasoning chain alongside the diagnosis?
 
-*Hint:* Research "explainable AI" (XAI) patterns and specifically the "reasoning trace" approach: the Blackboard stores not just current signal values but the entire history of contributions (which KS wrote what, in what order, based on what evidence). The final explanation is the reasoning trace - a timeline of "KS-A detected symptom X with confidence 0.7, which triggered KS-D to check lab value Y, which confirmed diagnosis Z." Research how IBM Watson's medical diagnosis system (early Watson Health) implemented similar reasoning traces for clinical explainability.
+_Hint:_ Research "explainable AI" (XAI) patterns and specifically the "reasoning trace" approach: the Blackboard stores not just current signal values but the entire history of contributions (which KS wrote what, in what order, based on what evidence). The final explanation is the reasoning trace - a timeline of "KS-A detected symptom X with confidence 0.7, which triggered KS-D to check lab value Y, which confirmed diagnosis Z." Research how IBM Watson's medical diagnosis system (early Watson Health) implemented similar reasoning traces for clinical explainability.

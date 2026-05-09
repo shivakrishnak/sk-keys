@@ -289,6 +289,7 @@ public class OrderService {
 **Reusable Engineering Principle:** Design software so that changes are local. A requirement change should require modifying exactly one unit of code (one class, one module, one service). When a single requirement change ripples through five files, the design is wrong.
 
 **Where else this pattern appears:**
+
 - **Electronics circuit design:** A well-designed circuit board separates concerns into components (capacitors, resistors, ICs) connected by a standard interface (electrical signals). Replacing one component doesn't require redesigning the board - this is OCP at the hardware level.
 - **Restaurant kitchen stations:** A kitchen is organized by stations (grill, sauté, pastry), each with single responsibility. The grill cook doesn't know how to plate desserts. New menu items can be added to a single station without reorganizing the kitchen - SRP and OCP applied to kitchen design.
 - **Legal code structure:** Laws are organized so that a change to tax law doesn't require changes to criminal law. Each legal domain has its own codification (SRP). New legal frameworks extend existing law without modifying it (OCP at societal scale).
@@ -304,16 +305,19 @@ SOLID principles were formulated for object-oriented class design but are often 
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-050 - Cohesion (SRP is the object-level application of cohesion; understanding cohesion provides the conceptual foundation for SRP)
 - SAP-051 - Coupling (DIP and ISP both reduce coupling; understanding coupling explains why these principles matter)
 
 **Builds On This (learn these next):**
+
 - SAP-044 - DRY (complementary principle about code duplication; DRY and SOLID often reinforce each other)
 - SAP-045 - KISS (counterbalancing principle; SOLID without KISS leads to over-engineered abstractions)
 - SAP-046 - YAGNI (another counterbalancing principle; DIP requires abstractions, YAGNI warns against premature abstraction)
 - SAP-047 - Law of Demeter (closely related to ISP; LoD enforces low coupling at the method call level)
 
 **Alternatives / Comparisons:**
+
 - SAP-044 - DRY (complementary, not alternative; DRY governs code duplication, SOLID governs class design)
 - Functional programming principles (immutability, pure functions, function composition) - alternative design principles for non-OOP code; SOLID doesn't translate directly to FP
 
@@ -342,12 +346,12 @@ SOLID principles were formulated for object-oriented class design but are often 
 
 **Q1.** You have a `ReportGenerator` class with methods: `generatePdfReport()`, `generateCsvReport()`, `emailReport()`, `archiveReport()`, and `logReportGeneration()`. Identify all the SOLID violations, name the principle each violates, and describe the refactored class design.
 
-*Hint:* Research SRP violation: `ReportGenerator` has multiple reasons to change (report format changes, email provider changes, archive location changes, logging format changes). ISP violation: any caller that only needs `generatePdfReport()` must still depend on the interface that includes email and archiving. DIP violation: if the class directly instantiates concrete email and PDF libraries. Refactored: `PdfReportGenerator`, `CsvReportGenerator` (format); `EmailSender` (notification); `ReportArchiver` (storage); `ReportAuditLogger` (logging); an `ApplicationService` orchestrates them.
+_Hint:_ Research SRP violation: `ReportGenerator` has multiple reasons to change (report format changes, email provider changes, archive location changes, logging format changes). ISP violation: any caller that only needs `generatePdfReport()` must still depend on the interface that includes email and archiving. DIP violation: if the class directly instantiates concrete email and PDF libraries. Refactored: `PdfReportGenerator`, `CsvReportGenerator` (format); `EmailSender` (notification); `ReportArchiver` (storage); `ReportAuditLogger` (logging); an `ApplicationService` orchestrates them.
 
 **Q2.** A `Bird` interface has methods `fly()` and `makeSound()`. A `Penguin` class implements `Bird` but its `fly()` method throws `UnsupportedOperationException`. Which SOLID principle is violated? What are two different ways to fix this design - one using interface segregation and one using a different inheritance hierarchy?
 
-*Hint:* Research LSP violation (Liskov Substitution Principle): code that uses `Bird bird = new Penguin()` and calls `bird.fly()` will throw an exception - the substitution breaks the caller's assumptions. ISP fix: split `Bird` into `FlyingBird` (with `fly()`) and `Bird` (with `makeSound()` only); `Penguin` implements `Bird` only. Inheritance hierarchy fix: `Animal` base with `makeSound()`; `FlyingAnimal extends Animal` adds `fly()`; `Penguin extends Animal` without `fly()`; `Eagle extends FlyingAnimal`.
+_Hint:_ Research LSP violation (Liskov Substitution Principle): code that uses `Bird bird = new Penguin()` and calls `bird.fly()` will throw an exception - the substitution breaks the caller's assumptions. ISP fix: split `Bird` into `FlyingBird` (with `fly()`) and `Bird` (with `makeSound()` only); `Penguin` implements `Bird` only. Inheritance hierarchy fix: `Animal` base with `makeSound()`; `FlyingAnimal extends Animal` adds `fly()`; `Penguin extends Animal` without `fly()`; `Eagle extends FlyingAnimal`.
 
 **Q3.** A senior developer argues: "SOLID makes our codebase more complex. We have 47 interfaces for 47 classes - every interface has exactly one implementation. The indirection makes the code harder to read and debug. SOLID is causing more harm than good here." How do you evaluate this critique, and what counter-argument or agreement would you give?
 
-*Hint:* Research Robert Martin's response to this criticism - specifically the distinction between "incidental abstractions" (interfaces created just to follow SOLID rules) and "meaningful abstractions" (interfaces that represent conceptual boundaries or variation points). An interface with only one implementation that never changes is an incidental abstraction - it adds indirection without value. A `PaymentGateway` interface with one implementation TODAY but planned multiple implementations is a meaningful abstraction. The test: "If I remove this interface and use the concrete class directly, what would become harder?" If the answer is "nothing," the interface is not justified.
+_Hint:_ Research Robert Martin's response to this criticism - specifically the distinction between "incidental abstractions" (interfaces created just to follow SOLID rules) and "meaningful abstractions" (interfaces that represent conceptual boundaries or variation points). An interface with only one implementation that never changes is an incidental abstraction - it adds indirection without value. A `PaymentGateway` interface with one implementation TODAY but planned multiple implementations is a meaningful abstraction. The test: "If I remove this interface and use the concrete class directly, what would become harder?" If the answer is "nothing," the interface is not justified.

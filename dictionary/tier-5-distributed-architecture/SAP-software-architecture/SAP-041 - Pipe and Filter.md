@@ -324,6 +324,7 @@ List<CsvRecord> results = rawLines.stream()
 **Reusable Engineering Principle:** Decompose complex processing into independent, single-responsibility stages connected by well-defined data contracts. Each stage is testable in isolation, recomposable into different sequences, and replaceable without affecting other stages.
 
 **Where else this pattern appears:**
+
 - **Industrial assembly lines:** Henry Ford's assembly line is Pipe and Filter at industrial scale - each worker (filter) adds one component, then the car (data) moves to the next worker. No worker knows what the previous or next worker does.
 - **Compilers:** Lexer → Parser → Semantic Analysis → Optimization → Code Generation. Each compiler stage transforms the data representation (tokens → AST → annotated AST → IR → machine code). Classic Pipe and Filter.
 - **Unix shell pipelines:** `cat access.log | grep 404 | awk '{print $7}' | sort | uniq -c | sort -rn | head -20`. Each program reads stdin, transforms, writes stdout. Programs don't know about each other - only the data format (text lines) matters.
@@ -339,14 +340,17 @@ The Pipe and Filter pattern trades flexibility for order-dependency. Filters mus
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-043 - SOLID Principles (specifically SRP: each filter has one responsibility; OCP: new processing stages are added as new filters, not by modifying existing ones)
 - SAP-050 - Cohesion (each filter should be highly cohesive - one transformation only; understanding cohesion explains why filters should be small)
 
 **Builds On This (learn these next):**
+
 - SAP-040 - Plugin Architecture (filters are often implemented as plugins to a pipeline framework; the framework defines the filter interface, implementations are plugins)
 - SAP-042 - Blackboard Pattern (an alternative for non-sequential, opportunistic processing; contrasting with Pipe and Filter clarifies when order matters versus when it doesn't)
 
 **Alternatives / Comparisons:**
+
 - SAP-042 - Blackboard Pattern (for problems where processing order is not predetermined and specialists activate opportunistically based on available data)
 - Chain of Responsibility design pattern (similar chain structure but for request handling with optional pass-through; filters always transform, chain of responsibility may stop processing)
 
@@ -378,12 +382,12 @@ The Pipe and Filter pattern trades flexibility for order-dependency. Filters mus
 
 **Q1.** You're designing an order fraud detection pipeline: Parse → ValidateSchema → EnrichWithCustomerHistory → ScoreRisk → RouteHighRisk → Persist. The `EnrichWithCustomerHistory` filter calls an external customer service (50ms latency). At 1,000 events/second, this enrichment step is the bottleneck. Describe three different strategies to increase the pipeline's throughput, and what trade-offs each introduces.
 
-*Hint:* Research (1) Parallel filter execution: run `EnrichWithCustomerHistory` in a thread pool so multiple enrichments happen concurrently; trade-off: increased memory pressure and latency variance. (2) Async filter with Reactive Streams: use `CompletableFuture` or Project Reactor to make the enrichment non-blocking; trade-off: complexity of backpressure handling. (3) Pre-fetching/batching: batch multiple records and call `getCustomerHistoryBatch()` once; trade-off: increases latency per record but reduces I/O overhead. Also research Apache Kafka Streams's `asyncProcessorSupplier` for handling async external calls in streaming pipelines.
+_Hint:_ Research (1) Parallel filter execution: run `EnrichWithCustomerHistory` in a thread pool so multiple enrichments happen concurrently; trade-off: increased memory pressure and latency variance. (2) Async filter with Reactive Streams: use `CompletableFuture` or Project Reactor to make the enrichment non-blocking; trade-off: complexity of backpressure handling. (3) Pre-fetching/batching: batch multiple records and call `getCustomerHistoryBatch()` once; trade-off: increases latency per record but reduces I/O overhead. Also research Apache Kafka Streams's `asyncProcessorSupplier` for handling async external calls in streaming pipelines.
 
 **Q2.** Your ETL pipeline has a `DeduplicationFilter` that checks if a record already exists in a Redis cache. For this filter to work correctly across restarts, the deduplication state must survive application restarts. But if the Redis cache grows without bound, it becomes a memory problem. How do you design the deduplication filter to be: a) durable across restarts, b) bounded in memory, and c) still eventually correct (no duplicates) over a sliding time window?
 
-*Hint:* Research Redis's TTL (Time To Live) feature for key expiry - specifically setting a TTL of N hours on each deduplication key. Records seen in the last N hours are deduplicated; records older than N hours may be re-processed (acceptable if the source system doesn't resend old records after N hours). Research Bloom filters as an alternative: probabilistic data structure with bounded memory that has no false negatives (never misses a duplicate) but accepts a small false positive rate (may flag unique records as duplicates).
+_Hint:_ Research Redis's TTL (Time To Live) feature for key expiry - specifically setting a TTL of N hours on each deduplication key. Records seen in the last N hours are deduplicated; records older than N hours may be re-processed (acceptable if the source system doesn't resend old records after N hours). Research Bloom filters as an alternative: probabilistic data structure with bounded memory that has no false negatives (never misses a duplicate) but accepts a small false positive rate (may flag unique records as duplicates).
 
 **Q3.** A financial transactions processing pipeline has 7 filters. A regulatory requirement now mandates that every transaction must be audited with: (1) a record of the input to each filter, (2) the output from each filter, and (3) which filter version processed it. How do you add audit logging to all 7 filters without modifying any of the existing filter implementations?
 
-*Hint:* Research the "Decorator" design pattern applied to pipeline filters - specifically wrapping each filter in an `AuditingFilterDecorator` that (1) captures the input, (2) calls the wrapped filter, (3) captures the output, (4) writes both to an audit store, then passes the output to the next filter. The decorator is transparent to the pipeline framework - it implements the same filter interface as the wrapped filter. Research how Spring's `HandlerInterceptor` and Servlet Filters implement this pattern for HTTP request auditing.
+_Hint:_ Research the "Decorator" design pattern applied to pipeline filters - specifically wrapping each filter in an `AuditingFilterDecorator` that (1) captures the input, (2) calls the wrapped filter, (3) captures the output, (4) writes both to an audit store, then passes the output to the next filter. The decorator is transparent to the pipeline framework - it implements the same filter interface as the wrapped filter. Research how Spring's `HandlerInterceptor` and Servlet Filters implement this pattern for HTTP request auditing.

@@ -1,22 +1,24 @@
 ﻿---
+id: SAP-048
 layout: default
 title: "Tell Don't Ask"
 parent: "Software Architecture Patterns"
 grand_parent: "Technical Dictionary"
 nav_order: 48
 permalink: /software-architecture/tell-dont-ask/
-id: SAP-048
 category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
 difficulty: ★★☆
-depends_on: Object-Oriented Programming, Encapsulation, Law of Demeter
-used_by: OO design, Domain Model design, Code review
-related: Law of Demeter, Encapsulation, Anemic Domain Model, Command Pattern
+depends_on: SAP-043, SAP-047
+used_by: 
+related: SAP-047, SAP-049
 tags:
   - architecture
   - principles
-  - oop
-  - intermediate
-  - design
+  - pattern
+status: complete
+version: 1
 ---
 
 # SAP-048 - Tell Don't Ask
@@ -24,16 +26,7 @@ tags:
 ⚡ TL;DR - Tell Don't Ask (TDA) states that you should tell objects what to do rather than asking for their state and making decisions externally - behavior should be in the class that owns the data, not scattered in callers.
 
 ---
-
-### 📊 Entry Metadata
-
-| #761            | Category: Software Architecture Patterns                            | Difficulty: ★★☆ |
-| :-------------- | :------------------------------------------------------------------ | :-------------- |
-| **Depends on:** | Object-Oriented Programming, Encapsulation, Law of Demeter          |                 |
-| **Used by:**    | OO design, Domain Model design, Code review                         |                 |
-| **Related:**    | Law of Demeter, Encapsulation, Anemic Domain Model, Command Pattern |                 |
-
----
+id: SAP-048
 
 ### 🔥 The Problem This Solves
 
@@ -60,13 +53,10 @@ order.startProcessing(inventory);
 
 `Order.startProcessing()` encapsulates the rule: check status, check payment, update status, set timestamp, trigger inventory reservation. Callers tell `Order` what to do. `Order` knows whether it can do it and how.
 
----
-
-### 📘 Textbook Definition
-
-Tell Don't Ask (TDA) is an OO design principle formulated by Andy Hunt and Dave Thomas (The Pragmatic Programmers), stated as: "Tell objects what you want them to do; don't ask them questions about their state, make a decision, and then tell them what to do." The principle is the behavioral complement to encapsulation: encapsulation says hide data, TDA says hide decisions. Data and the logic that operates on that data belong together in the same class. If you find yourself asking an object for data, making a decision based on that data, and then acting on the object, the decision should be inside the object.
+**EVOLUTION:** Tell Don't Ask was articulated by Andy Hunt and Dave Thomas (The Pragmatic Programmers) in their influential "Pragmatic Programmer" book (1999) and later refined in their columns and essays. The principle gained renewed importance in the 2000s with the formalization of the Anemic Domain Model anti-pattern by Martin Fowler (2003), which named the exact failure mode TDA prevents. Domain-Driven Design (Evans, 2003) built on TDA as a core principle of rich domain models. The pattern experienced a backlash with the rise of functional programming (2010s), where immutable data structures and pure functions deliberately separate data from behavior - TDA applies specifically to object-oriented designs where encapsulation is the primary tool for managing complexity. (The Pragmatic Programmers), stated as: "Tell objects what you want them to do; don't ask them questions about their state, make a decision, and then tell them what to do." The principle is the behavioral complement to encapsulation: encapsulation says hide data, TDA says hide decisions. Data and the logic that operates on that data belong together in the same class. If you find yourself asking an object for data, making a decision based on that data, and then acting on the object, the decision should be inside the object.
 
 ---
+id: SAP-048
 
 ### ⏱️ Understand It in 30 Seconds
 
@@ -81,6 +71,7 @@ Move the "if/then" decision inside the object that owns the data - callers say w
 Anemic Domain Models are a systemic violation of Tell Don't Ask. When a class has only getters/setters and all business logic is in service classes that manipulate the data objects, every piece of business logic is "asking" for state and deciding externally. Moving business logic into the domain model (Rich Domain Model) is the systematic application of TDA.
 
 ---
+id: SAP-048
 
 ### 🔩 First Principles Explanation
 
@@ -145,6 +136,7 @@ Anemic Domain Models are a systemic violation of Tell Don't Ask. When a class ha
 ```
 
 ---
+id: SAP-048
 
 ### 🧪 Thought Experiment
 
@@ -161,12 +153,14 @@ The difference between Anemic and Rich Domain Models is fundamentally about TDA.
 The Rich Model **tells** objects to do things. The Anemic Model **asks** for data and does things to objects. TDA is the reason to prefer Rich Domain Models.
 
 ---
+id: SAP-048
 
 ### 🧠 Mental Model / Analogy
 
 > Tell Don't Ask is like a good manager versus a micromanager. A micromanager asks the employee "what's your current task status?" then "what are the next three steps?" then "do step one." A good manager tells the employee: "Complete the user login feature by Friday." The employee knows their own state (current task, dependencies, blockers) and manages their own work. The manager gets results without needing to know all the implementation details.
 
 ---
+id: SAP-048
 
 ### 📶 Gradual Depth - Four Levels
 
@@ -183,6 +177,7 @@ TDA creates a design tension with functional-style code that chains transformati
 TDA is the behavioral specification of Domain-Driven Design's Rich Domain Model. In DDD: Aggregate Roots (like `Order`) are responsible for their own invariants. The rule "an Order can only be submitted if it has at least one item and payment is confirmed" is an invariant of `Order`. `Order.submit()` enforces this invariant by checking preconditions internally and throwing a domain exception if violated. External code (application services) TELLS aggregates to perform commands; it doesn't ask for internal state to decide whether a command is valid. This keeps business rules in the domain model, not scattered in application services. When rules change, one change - in the aggregate - is sufficient.
 
 ---
+id: SAP-048
 
 ### ⚙️ How It Works (Mechanism)
 
@@ -214,6 +209,7 @@ TDA is the behavioral specification of Domain-Driven Design's Rich Domain Model.
 ```
 
 ---
+id: SAP-048
 
 ### 🔄 The Complete Picture
 
@@ -241,6 +237,7 @@ TDA is the behavioral specification of Domain-Driven Design's Rich Domain Model.
 ```
 
 ---
+id: SAP-048
 
 ### 💻 Code Example
 
@@ -313,6 +310,7 @@ public class OrderApplicationService {
 ```
 
 ---
+id: SAP-048
 
 ### ⚖️ Comparison Table
 
@@ -323,6 +321,7 @@ public class OrderApplicationService {
 | Functional (immutable) | In the caller     | Returns new value  | Functional code, value transformations |
 
 ---
+id: SAP-048
 
 ### ⚠️ Common Misconceptions
 
@@ -334,6 +333,7 @@ public class OrderApplicationService {
 | TDA means objects can't collaborate | Objects can call methods on other objects (their direct collaborators); they just shouldn't expose their internal state for external decision-making |
 
 ---
+id: SAP-048
 
 ### 🚨 Failure Modes & Diagnosis
 
@@ -346,20 +346,46 @@ public class OrderApplicationService {
 **Fix:** Gradually move business logic from services into domain objects. Start with the most self-contained rules (order state machine, account balance checks). Introduce domain methods (`order.submit()`, `account.withdraw()`) and have services call them instead of managing state directly. This is the "Rich Domain Model" refactoring.
 
 ---
+id: SAP-048
 
-### 🔗 Related Keywords
+### 💎 Transferable Wisdom
 
-**Prerequisites:**
+**Reusable Engineering Principle:** The class that owns the data should own the decisions about that data. External decision-making on another class's data is the root cause of both duplicated logic and fragile coupling to internal state.
 
-- `Encapsulation` - TDA is the behavioral complement to data encapsulation
-- `Law of Demeter` - LoD and TDA are both about respecting object boundaries
+**Where else this pattern appears:**
 
-**Related:**
-
-- `Anemic Domain Model` - the pattern that results from systematic TDA violation
-- `Rich Domain Model` - the pattern that results from systematic TDA application
+- **Medical diagnosis:** A doctor (the object) decides on treatment based on their own assessment of your condition (their data). You don't tell the doctor "your diagnosis showed X and Y, therefore apply treatment Z" - you tell the doctor "I have these symptoms" and the doctor decides. TDA at the human expert level.
+- **ATM machines:** You tell the ATM "withdraw £200"; the ATM decides whether to allow it based on its own balance information, daily limit rules, and PIN verification. You don't ask the ATM for your balance, check it against your daily limit yourself, and tell it to dispense - the ATM encapsulates that decision.
+- **Smart home automation:** You tell the thermostat "I want 22°C"; the thermostat manages heating and cooling decisions. You don't ask for current temperature, calculate when to turn on heating, and send a command. The thermostat owns its data and behavior.
 
 ---
+id: SAP-048
+
+### 💡 The Surprising Truth
+
+Tell Don't Ask and functional programming's separation of data and behavior are fundamentally at odds - and both are correct in their respective contexts. TDA says: put behavior in the class that owns the data (OOP enriched domain model). Functional programming says: keep data structures pure and separate from the functions that operate on them (data + pure functions). The resolution: TDA applies in OOP domain models where object identity, lifecycle, and consistency invariants matter (your bank account MUST enforce its own balance rules). FP separation applies in data transformation pipelines where the same data needs to be processed by many different functions without coupling them to each other. Choosing between OOP TDA and FP data separation is one of the most important architectural decisions in system design.
+
+---
+id: SAP-048
+
+### �🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+
+- SAP-043 - SOLID Principles (SRP: TDA violations scatter related logic across callers; SRP says cohesive logic belongs in one class; TDA is the behavioral application of SRP)
+- SAP-047 - Law of Demeter (LoD and TDA address the same problem from different angles: LoD says don't navigate to distant objects; TDA says don't ask for state and decide externally; applying both together eliminates most structural coupling)
+
+**Builds On This (learn these next):**
+
+- SAP-049 - Command-Query Separation (CQS complements TDA: commands tell objects to do things and return nothing; queries ask objects about their state; TDA says commands are always preferable to ask-and-then-command sequences)
+
+**Alternatives / Comparisons:**
+
+- Anemic Domain Model (the anti-pattern TDA prevents: data classes with no behavior, all logic in services; appropriate for functional/CQRS architectures, wrong for OOP rich domain models)
+- Rich Domain Model (the result of consistently applying TDA; all domain logic in the domain objects; the object-oriented answer to the anemic domain model)
+
+---
+id: SAP-048
 
 ### 📌 Quick Reference Card
 
@@ -382,9 +408,18 @@ public class OrderApplicationService {
 ```
 
 ---
+id: SAP-048
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You have a `BankAccount` class with `getBalance()` and `setBalance()`. A `TransferService` does: `if (from.getBalance() >= amount) { from.setBalance(from.getBalance() - amount); to.setBalance(to.getBalance() + amount); }`. Rewrite this to follow Tell Don't Ask. What method(s) do you add to `BankAccount`, what do they do internally, and what does `TransferService.transfer()` look like after the refactoring?
 
+*Hint:* Research the Tell Don't Ask refactoring: `BankAccount.debit(amount)` throws `InsufficientFundsException` if balance < amount, otherwise decrements; `BankAccount.credit(amount)` increments. `TransferService.transfer()` calls `from.debit(amount)` then `to.credit(amount)`. The business rule "balance must be sufficient" moves into `BankAccount` where the data lives. Key insight: `setBalance()` disappears entirely - no external caller should ever set a balance directly; only domain operations (`debit`, `credit`, `refund`) mutate balance.
+
 **Q2.** Tell Don't Ask says put decisions in the object. But you're building a UI form that needs to show/hide a "Submit Order" button based on whether the order can be submitted. If the decision is inside `order.submit()`, how do you let the UI know whether submission is currently possible - without duplicating the business rule logic?
+
+*Hint:* Research two patterns: (1) `order.canSubmit(): boolean` - a Query that exposes the submittability condition without mutating state; the UI calls `canSubmit()` to set button state. This is CQS-compliant (read-only) and TDA-compliant (the rule lives in Order). (2) Domain events: the Order publishes an `OrderSubmittabilityChanged` event when its state changes; the UI subscribes and updates the button. Pattern 1 is simpler for most cases; Pattern 2 is better for reactive UIs with complex state machines.
+
+**Q3.** A team applies Tell Don't Ask strictly and moves all business logic into domain objects. After 6 months, the `Order` class has 45 methods, 18 fields, and 700 lines of code. Unit testing it requires setting up 8 collaborators. Has TDA been applied correctly? What is the alternative design when a domain object grows to this complexity?
+
+*Hint:* Research the distinction between "rich domain model" and "god object" - when an object accumulates ALL behavior related to its concept, it violates SRP (multiple reasons to change). The fix: decompose the `Order` object using Domain-Driven Design's aggregate pattern. `Order` (aggregate root) delegates to `OrderItems` (value object), `PaymentInformation` (entity), `ShippingDetails` (value object). Each sub-component has its own TDA-compliant methods. The `Order` root coordinates but doesn't contain all logic itself. Research how the DDD aggregate pattern imposes natural size limits on domain objects.

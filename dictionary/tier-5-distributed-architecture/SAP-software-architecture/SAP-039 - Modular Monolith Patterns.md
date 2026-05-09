@@ -341,6 +341,7 @@ class ModuleConfiguration {
 **Reusable Engineering Principle:** Enforce module boundaries at the code level, not just through team conventions. If the boundary can be bypassed by any developer who imports a class directly, it will eventually be bypassed. Code enforcement (package access rules, module system constraints) is stronger than documentation enforcement.
 
 **Where else this pattern appears:**
+
 - **Departmental budgets:** A company operates as a single organization (monolith) but enforces department-level budget accountability. Each department has its own budget, its own P&L, and cross-department requests go through formal approval channels, not informal hallway requests.
 - **Microkernel operating systems:** The OS kernel provides core services (the monolith), but device drivers and filesystem implementations are separate modules loaded at runtime. The kernel boundary is enforced by the privilege level of the CPU - modules can't bypass it.
 - **Java Platform Module System (JPMS):** Java 9+ enforces module boundaries at compile time and runtime - a class in a module cannot be accessed by code outside the module unless explicitly exported. This is module boundary enforcement at the language/runtime level.
@@ -356,15 +357,18 @@ The Modular Monolith is often the correct FINAL architecture for a product, not 
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-013 - Layered Architecture (modular monolith is an evolution of layered architecture where the horizontal layers are replaced by vertical modules with their own layers)
 - SAP-050 - Cohesion and SAP-051 - Coupling (the principles that define module boundaries; high cohesion within modules, low coupling between modules)
 
 **Builds On This (learn these next):**
+
 - SAP-011 - Loose Coupling of Frontend Modules (the frontend equivalent of Modular Monolith; same principles applied to JavaScript/TypeScript frontend module organization)
 - SAP-012 - Micro-Frontend Architecture (the distributed form of Modular Monolith for frontends; understanding Modular Monolith first helps avoid premature micro-frontend adoption)
 - SAP-040 - Plugin Architecture (a way to extend the modular monolith without modifying core modules)
 
 **Alternatives / Comparisons:**
+
 - Microservices (distributed form; same bounded context boundaries but separate deployment units; appropriate when independent scalability, technology choice, or team autonomy justifies the operational overhead)
 - SAP-017 - Vertical Slice Architecture (complementary; vertical slices are an internal organization pattern within each module of a modular monolith)
 
@@ -395,12 +399,12 @@ The Modular Monolith is often the correct FINAL architecture for a product, not 
 
 **Q1.** Your Modular Monolith has an `Orders` module and an `Inventory` module that communicate through a public interface. The `Orders` module calls `InventoryService.reserveStock()` synchronously during `order.submit()`. This call is slow (50ms) and occasionally times out. How do you redesign the cross-module communication to make order submission resilient to inventory service slowness, while still ensuring stock is reserved before the order is confirmed?
 
-*Hint:* Research the "Saga" pattern applied to in-process module communication - specifically the "eventual consistency within a monolith" approach where `Orders` publishes an `OrderSubmitted` in-process event, and `Inventory` subscribes and reserves stock asynchronously. The order is placed in "pending" state; it moves to "confirmed" when inventory reservation succeeds. Research Spring Modulith's `@ApplicationModuleListener` which delivers events asynchronously between modules while maintaining transactional guarantees.
+_Hint:_ Research the "Saga" pattern applied to in-process module communication - specifically the "eventual consistency within a monolith" approach where `Orders` publishes an `OrderSubmitted` in-process event, and `Inventory` subscribes and reserves stock asynchronously. The order is placed in "pending" state; it moves to "confirmed" when inventory reservation succeeds. Research Spring Modulith's `@ApplicationModuleListener` which delivers events asynchronously between modules while maintaining transactional guarantees.
 
 **Q2.** You've built a Modular Monolith with 8 modules. The `Orders` module is now handling 10x the traffic of other modules and needs to scale independently - something a monolith deployment can't do per-module. What is the extraction path to make Orders a separate microservice, and what specifically needs to change in the remaining monolith when Orders is extracted?
 
-*Hint:* Research the "Strangler Fig" pattern for module extraction and specifically: what changes when Orders becomes a separate service? (1) Cross-module interface calls become HTTP/gRPC calls or events; (2) Shared database tables must be split (Orders gets its own DB schema); (3) Cross-module transactions become Sagas; (4) The remaining monolith modules that depended on `OrdersModule` now depend on an `OrdersClient` ACL. Research how the modular monolith's clean boundaries make this extraction 10x easier than extracting from a spaghetti monolith.
+_Hint:_ Research the "Strangler Fig" pattern for module extraction and specifically: what changes when Orders becomes a separate service? (1) Cross-module interface calls become HTTP/gRPC calls or events; (2) Shared database tables must be split (Orders gets its own DB schema); (3) Cross-module transactions become Sagas; (4) The remaining monolith modules that depended on `OrdersModule` now depend on an `OrdersClient` ACL. Research how the modular monolith's clean boundaries make this extraction 10x easier than extracting from a spaghetti monolith.
 
 **Q3.** A team is starting a new greenfield project. Should they start with a Modular Monolith or Microservices? What decision criteria should guide this choice, and how do you design the system to keep the eventual migration to microservices cheap if it becomes necessary?
 
-*Hint:* Research Sam Newman's "When to use Microservices" decision framework from "Monolith to Microservices" (2019) - specifically the three scenarios where microservices are justified from day one: (1) you need different technology stacks per service, (2) you need independent scaling by service, (3) you have independent teams who own separate services. For all other cases, start with Modular Monolith. The key design decision that keeps migration cheap: ensure module-to-module communication uses only in-process interfaces (no direct DB access across modules), so extraction only requires replacing those interfaces with HTTP clients.
+_Hint:_ Research Sam Newman's "When to use Microservices" decision framework from "Monolith to Microservices" (2019) - specifically the three scenarios where microservices are justified from day one: (1) you need different technology stacks per service, (2) you need independent scaling by service, (3) you have independent teams who own separate services. For all other cases, start with Modular Monolith. The key design decision that keeps migration cheap: ensure module-to-module communication uses only in-process interfaces (no direct DB access across modules), so extraction only requires replacing those interfaces with HTTP clients.
