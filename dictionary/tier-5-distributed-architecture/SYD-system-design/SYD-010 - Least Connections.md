@@ -1,22 +1,25 @@
 ﻿---
+id: SYD-010
+title: Least Connections
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★☆
+depends_on: SYD-008, SYD-009
+used_by:
+related: SYD-009, SYD-008, SYD-011
+tags:
+  - algorithm
+  - intermediate
+  - networking
+  - performance
+status: complete
+version: 1
 layout: default
-title: "Least Connections"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 10
-permalink: /system-design/least-connections/
-id: SYD-010
-category: System Design
-difficulty: ★★☆
-depends_on: Load Balancing, Round Robin, Connection Pooling
-used_by: Load Balancing, Distributed Systems
-related: Round Robin, Weighted Round Robin, Consistent Hashing
-tags:
-  - algorithm
-  - load-balancing
-  - adaptive
-  - intermediate
-  - distribution
+permalink: /syd/least-connections/
 ---
 
 # SYD-010 - Least Connections
@@ -41,6 +44,9 @@ Round robin doesn't account for how long requests take. When request times vary,
 
 **THE INVENTION MOMENT:**
 "This is why least connections was created-pick the server with fewest active requests, so slower servers get fewer requests."
+
+**EVOLUTION:**
+Least connections was developed as a direct response to round robin's blindness to server load. Early implementations required the load balancer to track active connections in memory - feasible with the small server counts of the 1990s. As server fleets grew to thousands of nodes, tracking per-server connection counts became a distributed coordination problem. Modern implementations use approximate counters with eventual consistency, or delegate to application-layer service mesh sidecar proxies. Least connections is now standard in HAProxy, Nginx, AWS ALB, and Envoy Proxy - and its core insight influenced power-of-two-choices and join-the-shortest-queue algorithms used in hyperscale systems.
 
 ---
 
@@ -459,22 +465,15 @@ Health checks must detect unavailable backends (not just /health endpoint up, bu
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `Load Balancing` - the context where this is used
-- `Round Robin` - the simpler algorithm to compare against
-- `Connection Pooling` - how clients maintain connections
+- [[SYD-008 - Load Balancing]] - the context where this algorithm is applied
+- [[SYD-009 - Round Robin]] - the simpler algorithm to compare against
 
 **Builds On This (learn these next):**
-
-- `Weighted Round Robin` - for heterogeneous servers
-- `Adaptive Load Balancing` - even more sophisticated (considers latency, not just connections)
-- `Circuit Breaker` - to handle cascading failures in LC
+- [[SYD-011 - Consistent Hashing (Load Balancing)]] - advanced algorithm for distributed state routing
 
 **Alternatives / Comparisons:**
-
-- `Round Robin` - simpler but less adaptive
-- `IP Hash` - for sticky sessions
-- `Weighted Algorithms` - for heterogeneous servers
+- [[SYD-009 - Round Robin]] - simpler but less adaptive to varying request durations
+- [[SYD-011 - Consistent Hashing (Load Balancing)]] - better when client-server affinity matters
 
 ---
 
@@ -515,8 +514,34 @@ Health checks must detect unavailable backends (not just /health endpoint up, bu
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Feedback-driven distribution outperforms uniform distribution when work items have variable duration. If you have no feedback about the recipient's current state, distribute uniformly; if you have feedback, use it. This is why database connection poolers route to the least-busy server, why Kubernetes considers actual node utilisation when scheduling pods, and why call centres route to the agent with the shortest queue.
+
+**Where else this pattern appears:**
+- **Database connection poolers:** PgBouncer's pool routing prefers idle server connections - a least-connections analogue for database query distribution.
+- **Kubernetes scheduling:** The LeastAllocated priority function routes pods to nodes with the most available resources - the resource-based equivalent of least connections.
+- **Supermarket checkout:** People naturally join the shortest queue - an emergent least-connections algorithm with imperfect visibility into queue duration.
+
+---
+
+### 💡 The Surprising Truth
+
+Least connections can be defeated by heavy connections: a single long-running query holding a database connection counts the same as a 1ms API call. A server with one 10-minute connection appears loaded while being almost completely idle in CPU and memory terms. This is why modern algorithms track not just connection count but connection age, latency, or pending request count separately. HAProxy's leastconn algorithm weights active connections higher than idle ones - but most engineers assume it simply counts all open sockets equally, leading to misconfigured pools under long-running workloads.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Least connections routes to server with minimum active connections. If Server 1 becomes unresponsive (hanging connections never close), its connection count rises indefinitely. LC stops routing to it (good), but those hanging connections never drain. How is this problem solved in practice-what mechanism closes them?
+**Q1.** Least connections routes to the server with minimum active connections. If Server 1 becomes unresponsive (hanging connections never close), its connection count rises indefinitely. LC stops routing to it (good), but those hanging connections never drain. How is this problem solved in practice - what mechanism closes them?
 
-**Q2.** Connection pooling: Client opens 10 persistent connections to the LB. Each goes to a different server initially (round-robin by TCP 4-tuple). Now all future requests on each connection stick to that server. Is LC broken, or is this the correct behavior? Should the LB rebalance mid-connection?
+*Hint:* Think about what happens to a connection's count when it hangs - does it stay open indefinitely, and does the connection count ever decrease on its own? Explore TCP keepalive, idle timeout, and the difference between a connection the OS considers open and one the application considers active.
+
+**Q2.** Connection pooling: a client opens 10 persistent connections to the LB. Each initially goes to a different server via LC. Now all future requests on each connection stick to that server. Is LC broken, or is this the correct behaviour? Should the LB rebalance mid-connection?
+
+*Hint:* Think about whether LC is a per-request decision or a per-connection decision - once a connection is established (pinned to a server), does LC continue influencing which server subsequent requests go to? Explore whether HTTP/2 multiplexing makes this question irrelevant for modern traffic.
+
+**Q3 (Failure Mode):** A server in your least-connections pool has a memory leak. Every request increases memory by 10 MB but the request completes normally - connections drop to zero after each request. After 1,000 requests the server is OOM and starts returning 500s. Does least connections protect you, and why or why not?
+
+*Hint:* Think about what metric least connections tracks (active connections) versus what metric reveals a memory leak (memory utilisation, error rate, response time). Explore what health check configuration would detect the server's degradation before it reaches OOM.

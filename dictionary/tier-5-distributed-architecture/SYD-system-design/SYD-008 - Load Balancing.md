@@ -1,22 +1,26 @@
 ﻿---
+id: SYD-008
+title: Load Balancing
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★☆
+depends_on: SYD-007
+used_by: SYD-009, SYD-010, SYD-011, SYD-012, SYD-013, SYD-014
+related: SYD-009, SYD-010, SYD-011, SYD-012
+tags:
+  - networking
+  - performance
+  - foundational
+  - distributed
+  - architecture
+status: complete
+version: 1
 layout: default
-title: "Load Balancing"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 8
-permalink: /system-design/load-balancing/
-id: SYD-008
-category: System Design
-difficulty: ★★☆
-depends_on: Horizontal Scaling, Networking, HTTP & APIs
-used_by: Auto Scaling, High Availability, Distributed Systems
-related: Round Robin, Least Connections, Consistent Hashing
-tags:
-  - scaling
-  - distributed
-  - networking
-  - infrastructure
-  - intermediate
+permalink: /syd/load-balancing/
 ---
 
 # SYD-008 - Load Balancing
@@ -41,6 +45,9 @@ Horizontal scaling requires a way to split traffic fairly across all machines. W
 
 **THE INVENTION MOMENT:**
 "This is why load balancers were invented-to stand between clients and servers, distributing traffic intelligently so all servers share the work."
+
+**EVOLUTION:**
+Load balancing began as hardware appliances - F5 and Citrix devices costing tens of thousands of dollars, installed in front of server farms. Software load balancers (HAProxy, Nginx) democratised the technique in the 2000s. Cloud providers then made load balancers a managed commodity: AWS ALB/NLB scale to millions of requests per second without operator intervention. The discipline evolved from hardware appliance management to algorithm selection: Layer 4 vs Layer 7, health check configuration, and connection draining now define the practice. Service meshes (Istio, Linkerd) pushed load balancing inside the application network, enabling per-request routing decisions invisible to application code.
 
 ---
 
@@ -472,22 +479,16 @@ Monitor LB CPU and network utilization. When LB CPU > 70%, scale LB capacity. Us
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `Horizontal Scaling` - the use case that makes load balancers necessary
-- `Networking` - TCP/IP, ports, connections
-- `HTTP & APIs` - Layer 7 load balancing uses HTTP semantics
+- [[SYD-007 - Horizontal Scaling]] - the use case that makes load balancers necessary
 
 **Builds On This (learn these next):**
-
-- `Round Robin` - one load balancing algorithm
-- `Least Connections` - alternative algorithm for uneven load
-- `Consistent Hashing` - advanced algorithm for distributed caches/databases
+- [[SYD-009 - Round Robin]] - one load balancing algorithm
+- [[SYD-010 - Least Connections]] - alternative algorithm for uneven load
+- [[SYD-011 - Consistent Hashing (Load Balancing)]] - advanced algorithm for distributed caches
 
 **Alternatives / Comparisons:**
-
-- `DNS Round-Robin` - poor-man's load balancing using DNS; doesn't monitor health
-- `Sticky Sessions` - keeping one client's requests on same server (works with LB)
-- `Session Affinity` - similar to sticky sessions; LB aware
+- [[SYD-012 - Sticky Sessions]] - keeping one client's requests on same server (works with LB)
+- [[SYD-013 - Session Affinity]] - similar to sticky sessions; LB-aware routing
 
 ---
 
@@ -528,8 +529,34 @@ Monitor LB CPU and network utilization. When LB CPU > 70%, scale LB capacity. Us
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+The component that distributes work becomes the component that defines system capacity. Any system with a central dispatcher - a load balancer, a task queue consumer, a thread pool - has its throughput ceiling set by the dispatcher's ability to distribute work without becoming the bottleneck itself. Designing the distributor to be transparent (stateless, fast, horizontally scalable) is the key invariant.
+
+**Where else this pattern appears:**
+- **Database connection pooling:** PgBouncer acts as a load balancer for database connections - distributing application queries across a limited pool of server connections.
+- **Message broker consumers:** Kafka consumer groups are a load balancing mechanism - each partition is a server and each consumer is a request handler.
+- **DNS round-robin:** The simplest load balancer - return multiple A records for the same domain and let the client pick one.
+
+---
+
+### 💡 The Surprising Truth
+
+A load balancer does not make a system more available - it makes an already-redundant system more efficient. If you have one server behind a load balancer, the load balancer is a single point of failure and the load balancer-server pair is less available than the server alone. High availability only emerges when at least two healthy servers exist behind the balancer. Teams routinely add load balancers to single-server setups believing they've improved availability, when they've actually added a failure point without adding redundancy.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A load balancer distributes requests round-robin across 10 servers. One server becomes 10x slower (due to a memory leak). The load balancer still sends it 10% of traffic. What algorithm should you use instead, and why does it solve the problem?
 
-**Q2.** Your load balancer is the single point of failure-if it crashes, all traffic stops. You want HA. Design a redundant load balancing setup. What happens if Primary LB crashes while a request is mid-flight?
+*Hint:* Think about what metric round robin uses to choose the next server (none - it's position-based) versus what metric least connections or least response time uses. Explore how quickly the alternative algorithm detects and reacts to a degrading server.
+
+**Q2.** Your load balancer is the single point of failure - if it crashes, all traffic stops. You want HA. Design a redundant load balancing setup. What happens if the Primary LB crashes while a request is mid-flight?
+
+*Hint:* Think about what mid-flight request means at the TCP level - has the load balancer forwarded the connection to a backend before failing? Explore Active-Active vs Active-Passive LB topologies and what a floating VIP (virtual IP) provides during failover.
+
+**Q3 (System Interaction):** You have a Layer 4 load balancer (TCP) routing to 10 backend servers. You need to add tenant-based routing: requests from tenant A must go to server group A, and tenant B to server group B. What must change in your architecture, and what are the latency and operational implications?
+
+*Hint:* Think about what information is available at Layer 4 (IP/port only) vs Layer 7 (HTTP headers, URL path, cookies) and what must be parsed to identify the tenant. Explore whether a service mesh or API gateway can perform this routing without replacing the load balancer.

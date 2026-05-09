@@ -1,22 +1,25 @@
 ﻿---
+id: SYD-015
+title: SLA SLO SLI
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★☆
+depends_on:
+used_by: SYD-016, SYD-017
+related: SYD-016, SYD-017
+tags:
+  - reliability
+  - intermediate
+  - architecture
+  - observability
+status: complete
+version: 1
 layout: default
-title: "SLA SLO SLI"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 15
-permalink: /system-design/sla-slo-sli/
-id: SYD-015
-category: System Design
-difficulty: ★★☆
-depends_on: Monitoring, High Availability, System Design
-used_by: Production Systems, Operations, Service Reliability
-related: Error Budget, MTTR, Observability, Service Level Management
-tags:
-  - reliability
-  - operations
-  - sre
-  - intermediate
-  - service-management
+permalink: /syd/sla-slo-sli/
 ---
 
 # SYD-015 - SLA SLO SLI
@@ -41,6 +44,9 @@ Without clear commitments and measurements, service reliability becomes a finger
 
 **THE INVENTION MOMENT:**
 "This is why SLA/SLO/SLI were created-define what 'reliable' means, commit to targets, and measure reality."
+
+**EVOLUTION:**
+SLA as a legal contract predates software engineering - telecommunications companies used SLAs in the 1970s to define service quality commitments. The Google SRE book (2016) transformed SLAs from legal boilerplate into engineering tools: SLOs gave teams internal targets to aim for, SLIs gave them metrics to measure against, and error budgets gave them permission to ship. The framework spread beyond Google to become the standard reliability discipline across the industry. Modern implementations extend the concept to synthetic monitoring (measuring SLIs from the user's perspective), multi-tier SLAs, and SLOs as code (SLO configuration in version control).
 
 ---
 
@@ -466,22 +472,15 @@ Set SLO reasonable. Industry: SLA usually 99–99.5%, SLO 99.5–99.99%. Don't e
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `Monitoring` - how SLI is measured
-- `High Availability` - infrastructure ensuring SLA/SLO
-- `System Design` - design decisions affecting SLA/SLO
+- [[SYD-014 - Auto Scaling]] - infrastructure decisions affect achievable SLO
 
 **Builds On This (learn these next):**
-
-- `Error Budget` - derived from SLA/SLO
-- `MTTR / MTBF` - metrics affecting SLA achievement
-- `Observability` - tools to track SLI and debug SLO misses
+- [[SYD-016 - Error Budget]] - derived directly from SLO
+- [[SYD-017 - MTTR MTBF]] - complementary operational metrics that affect SLA achievement
 
 **Alternatives / Comparisons:**
-
-- `Error Budget` - error budget derived from SLA/SLO
-- `Uptime` - simpler version of availability
-- `Service Reliability Engineering (SRE)` - discipline using SLA/SLO/SLI
+- [[SYD-016 - Error Budget]] - error budget is the operational tool derived from SLA/SLO
+- [[SYD-017 - MTTR MTBF]] - different but complementary reliability metrics
 
 ---
 
@@ -521,8 +520,34 @@ Set SLO reasonable. Industry: SLA usually 99–99.5%, SLO 99.5–99.99%. Don't e
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Making a commitment explicit forces alignment. An SLA is a commitment to a customer. An SLO is a commitment within the team. The principle - define the target explicitly before measuring - applies everywhere: capacity planning (define threshold before monitoring), performance tuning (define acceptable latency before optimising), and hiring (define success criteria before interviewing). Ambiguous targets produce ambiguous outcomes.
+
+**Where else this pattern appears:**
+- **Capacity planning:** A capacity threshold (CPU < 70%) is an internal SLO for infrastructure - you monitor against it and provision to maintain it.
+- **Test coverage targets:** A team's 80% coverage target is an SLO for code quality - it creates shared accountability without being a customer-facing commitment.
+- **Delivery SLAs:** A product team's commitment to deliver a feature by Q3 is an SLA - with the same structure of measurement, target, and consequence.
+
+---
+
+### 💡 The Surprising Truth
+
+Google's original SRE insight - that 100% availability is the wrong target - was counterintuitive when published. The argument: if your SLA is 99.9% uptime, the remaining 0.1% (43.8 minutes per month) is your error budget - time you are allowed to fail. Using that budget on planned maintenance, risky deploys, or experiments is not a violation; it is rational allocation of allowed failure. The real problem is not the 0.1% downtime - it is teams that design for 100% uptime and are then paralysed when something breaks because they have no framework for accepting planned failure.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your service has SLA = 99.5% (monthly), SLO = 99.9%. Monday, you deploy a risky feature that could improve performance 10%. It has a 1% chance of causing 1-hour outage. Do you deploy? How does error budget inform the decision?
 
-**Q2.** Your SLI is 99.92% this month-well above SLO (99.9%) and SLA (99.5%). But your P99 latency is 450ms, approaching your SLA limit of 500ms. Should you treat this as "all good" because uptime is fine, or as a warning sign?
+*Hint:* Think about what deploying a risky feature means for error budget consumption in the worst case (1% chance of 1-hour outage). Calculate the expected error budget burn and compare to remaining budget - then explore whether expected value calculation captures the risk correctly or whether tail risk matters more.
+
+**Q2.** Your SLI is 99.92% this month - well above SLO (99.9%) and SLA (99.5%). But your P99 latency is 450ms, approaching your SLA limit of 500ms. Should you treat this as all good because uptime is fine, or as a warning sign?
+
+*Hint:* Think about whether your SLA contract covers uptime only or also latency - is the service responding but slowly a breach? Explore whether P99 latency approaching the SLA limit is a leading indicator that your actual SLA metric will be breached in the future.
+
+**Q3 (Design Trade-off):** You're designing SLOs for a new microservice that depends on a third-party payment API with SLA = 99.9%. Your service's customer-facing SLA is 99.95%. Is this achievable, and what architectural changes does it force?
+
+*Hint:* Think about what achievable means when your component's availability ceiling is your dependency's SLA. Explore whether circuit breakers, fallback payment methods, or async payment processing can decouple your availability from the payment API's availability.

@@ -1,22 +1,25 @@
 ﻿---
-layout: default
+id: SYD-011
 title: "Consistent Hashing (Load Balancing)"
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★★
+depends_on: SYD-008, SYD-009
+used_by: SYD-031
+related: SYD-031, SYD-009, SYD-008
+tags:
+  - algorithm
+  - deep-dive
+  - distributed
+  - advanced
+status: complete
+version: 1
+layout: default
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 11
-permalink: /system-design/consistent-hashing/
-id: SYD-011
-category: System Design
-difficulty: ★★★
-depends_on: Hash Functions, Load Balancing, Distributed Systems
-used_by: Caching, Distributed Databases, Content Delivery
-related: Hash Functions, Sharding, Rendezvous Hashing
-tags:
-  - algorithm
-  - distributed
-  - hashing
-  - scaling
-  - deep-dive
+permalink: /syd/consistent-hashing/
 ---
 
 # SYD-011 - Consistent Hashing (Load Balancing)
@@ -41,6 +44,9 @@ Simple modulo hashing doesn't scale. Adding one server causes cache invalidation
 
 **THE INVENTION MOMENT:**
 "This is why consistent hashing was invented-add servers without reshuffling most data."
+
+**EVOLUTION:**
+Consistent hashing was invented by Karger et al. in 1997 to solve CDN cache invalidation at internet scale - when a cache server is added or removed, only 1/N of keys should move, not all of them. Amazon's Dynamo (2007) brought consistent hashing to production databases, making it a foundational distributed systems pattern. Modern implementations add token-based partitioning (Cassandra), bounded load (Google), and virtual node counts tuned to the expected cluster size. Today, consistent hashing is the default partitioning strategy for distributed caches, databases, and service mesh load balancers.
 
 ---
 
@@ -424,22 +430,15 @@ Have a single source of truth for server list (config server, service discovery)
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `Hash Functions` - understanding hash properties is prerequisite
-- `Load Balancing` - the distribution problem this solves
-- `Distributed Systems` - context where this applies
+- [[SYD-008 - Load Balancing]] - the distribution problem this solves
+- [[SYD-009 - Round Robin]] - the simpler algorithm to compare against
 
 **Builds On This (learn these next):**
-
-- `Sharding` - uses consistent hashing to partition data across servers
-- `Virtual Nodes` - optimization of consistent hashing
-- `Rendezvous Hashing` - alternative approach to same problem
+- [[SYD-031 - Sharding (System)]] - uses consistent hashing to partition data across nodes
 
 **Alternatives / Comparisons:**
-
-- `Simple Modulo Hashing` - naive approach, causes full rehashing
-- `Rendezvous Hashing` - similar properties, different mechanics
-- `Jump Hash` - by Google, some properties of consistent hashing
+- [[SYD-009 - Round Robin]] - simpler, no affinity, correct for stateless workloads
+- [[SYD-010 - Least Connections]] - adaptive but no cache/session affinity
 
 ---
 
@@ -477,8 +476,34 @@ Have a single source of truth for server list (config server, service discovery)
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Minimise the amount of work required to rebalance when the cluster changes. This principle appears in every partitioning system: database sharding adds extra partitions for flexibility, Kafka over-partitions topics to allow consumer rebalancing, and virtual nodes in consistent hashing absorb failures without full rehashing. The invariant: design for change with minimal disruption.
+
+**Where else this pattern appears:**
+- **Cassandra token ring:** Each node owns a range of tokens on a consistent hash ring - adding a node splits existing ranges rather than redistributing all data.
+- **Redis Cluster:** Uses a 16,384-slot consistent hashing variant where slots are assigned to nodes and migrate incrementally when nodes are added.
+- **CDN edge routing:** Consistent hashing routes requests for the same URL to the same edge server - maximising cache hit rate across the fleet.
+
+---
+
+### 💡 The Surprising Truth
+
+The original consistent hashing paper by Karger et al. was written specifically to solve the CDN cache problem: when a web cache server is added or removed, how do you avoid invalidating all cached content? The ring abstraction solved a CDN problem but became the foundation of every major distributed database. Cassandra, Riak, Amazon DynamoDB, and CockroachDB all use consistent hashing variants - not because of load balancing but because of the CDN insight about minimising key movement during cluster topology changes.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
-**Q1.** With consistent hashing, adding one server rehashes ~1/N keys. With N=1000 servers and 1 billion keys, that's 1 million migrations. They happen in background. But what if a client queries a key that hasn't migrated yet-it's still on the old server? How does the system handle this during migration window?
+**Q1.** With consistent hashing, adding one server rehashes ~1/N keys. With N=1000 servers and 1 billion keys, that is 1 million migrations. They happen in the background. But what if a client queries a key that hasn't migrated yet - it's still on the old server? How does the system handle this during the migration window?
 
-**Q2.** A server crashes. Keys map to next server clockwise (automatic failover). But if you add a replacement server at the same position on the ring, old keys migrate back. What happens to data on the new server-is it overwritten? How do you handle "keys on two servers temporarily"?
+*Hint:* Think about what migrated means from the client's perspective - does the client know which server owns a key, and how quickly does migration happen? Explore whether the migration is atomic (all-at-once switch) or gradual (background copy with dual reads).
+
+**Q2.** A server crashes. Keys map to next server clockwise (automatic failover). But if you add a replacement server at the same position on the ring, old keys migrate back. What happens to data on the new server - is it overwritten? How do you handle keys on two servers temporarily?
+
+*Hint:* Think about what happens to data on the replacement server when old keys migrate back - do clients write to the new server before, during, or after the migration? Explore how distributed databases handle this with read repair or hinted handoff.
+
+**Q3 (Root Cause):** A consistent hashing ring has 10 servers. Server 5 is removed. Server 6 now owns all of Server 5's keys. Server 6's load triples and it starts to slow down. How does this hotspot form, and what prevents it in production systems?
+
+*Hint:* Think about how many virtual nodes each server has and whether virtual node distribution was uniform across the ring. Explore how bounded load extensions to consistent hashing cap the maximum load ratio on any single server.

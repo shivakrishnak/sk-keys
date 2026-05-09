@@ -1,22 +1,25 @@
 ﻿---
+id: SYD-006
+title: Vertical Scaling
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★☆☆
+depends_on: SYD-008, SYD-027
+used_by: SYD-007, SYD-014
+related: SYD-007, SYD-014, SYD-027
+tags:
+  - performance
+  - architecture
+  - foundational
+  - distributed
+status: complete
+version: 1
 layout: default
-title: "Vertical Scaling"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 6
-permalink: /system-design/vertical-scaling/
-id: SYD-006
-category: System Design
-difficulty: ★☆☆
-depends_on: Load Balancing, Capacity Planning
-used_by: Horizontal Scaling, Auto Scaling, Multi-Region Architecture
-related: Horizontal Scaling, Resource Optimization, Performance Tuning
-tags:
-  - scaling
-  - performance
-  - infrastructure
-  - capacity
-  - foundational
+permalink: /syd/vertical-scaling/
 ---
 
 # SYD-006 - Vertical Scaling
@@ -41,6 +44,9 @@ A single machine has finite resources. When your application maxes out its CPU o
 
 **THE INVENTION MOMENT:**
 "This is why vertical scaling was created-because sometimes buying one huge machine beats buying ten mediocre ones, at least for a time."
+
+**EVOLUTION:**
+Vertical scaling began as the default strategy because early hardware was cheap to upgrade and distributed systems were complex to build. The cloud era changed the economics: auto-provisioned VMs made horizontal scaling accessible to any team. Today, cloud providers offer instances with up to 192 vCPUs and 24 TB of RAM - but per-core costs grow superlinearly at the top of the range. The discipline evolved: vertical scaling is now a deliberate choice for specific workloads - in-memory databases, single-threaded latency-critical services, and legacy monoliths awaiting decomposition - not the default path.
 
 ---
 
@@ -430,22 +436,16 @@ Practice migrations in staging first. Measure baseline migration time. Plan main
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `Load Balancing` - the infrastructure you'll eventually need when vertical scaling maxes out
-- `Capacity Planning` - how to forecast when you'll need to scale
-- `Performance Tuning` - optimize code before throwing hardware at the problem
+- [[SYD-008 - Load Balancing]] - the infrastructure you'll eventually need when vertical scaling maxes out
+- [[SYD-027 - Capacity Planning]] - how to forecast when you'll need to scale
 
 **Builds On This (learn these next):**
-
-- `Horizontal Scaling` - the next step when one machine isn't enough
-- `Auto Scaling` - automating vertical and horizontal scaling decisions
-- `Disaster Recovery` - how to keep systems up during maintenance windows
+- [[SYD-007 - Horizontal Scaling]] - the next step when one machine isn't enough
+- [[SYD-014 - Auto Scaling]] - automating vertical and horizontal scaling decisions
 
 **Alternatives / Comparisons:**
-
-- `Horizontal Scaling` - opposite strategy; distribute load across many smaller machines instead of one large one
-- `Caching` - improve performance without hardware upgrades by reducing work per request
-- `Database Replication` - scale reads by replicating data across machines
+- [[SYD-007 - Horizontal Scaling]] - opposite strategy; distribute load across many smaller machines
+- [[SYD-027 - Capacity Planning]] - forecast whether vertical can sustain your growth curve
 
 ---
 
@@ -485,8 +485,34 @@ Practice migrations in staging first. Measure baseline migration time. Plan main
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Every resource has a ceiling. Optimising within one physical boundary buys time but does not remove the boundary. The invariant applies everywhere: a single database, a single process, a single team - all hit ceilings that eventually force a structural change, not just a bigger box.
+
+**Where else this pattern appears:**
+- **Thread pools:** Increasing thread count improves concurrency to a point, then context-switching overhead degrades performance - the same ceiling dynamic.
+- **Single-database scaling:** Read replicas and connection pooling extend the ceiling, but eventually you need sharding (horizontal) or a different storage topology.
+- **Organisational scaling:** Adding more work to one team is vertical scaling - it works until the communication overhead exceeds the throughput gains.
+
+---
+
+### 💡 The Surprising Truth
+
+The largest available cloud instances - 192 vCPUs and 24 TB RAM - cost more per unit of compute than a cluster of mid-tier instances. Vertical scaling is not always simpler or cheaper: at the extreme top of the hardware tier, you pay a premium for the physical limitation of fitting more silicon into one rack unit. The point where horizontal becomes economically superior is often lower than engineers expect - typically around 8-16 vCPUs for stateless workloads.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You're running an e-commerce API on a single `c5.2xlarge` instance (8 CPUs, 16 GB RAM). During peak Black Friday traffic, CPU hits 95%, but memory stays at 40%. You have two options: (a) upgrade to `c5.4xlarge` (16 CPUs, 32 GB RAM), or (b) add a second instance and set up horizontal scaling with a load balancer. What's the correct choice, and what's the decision framework?
 
+*Hint:* Think about the time dimension - the spike is immediate, but a new horizontal instance takes minutes to bootstrap and register with the load balancer. Explore what "in the moment of the spike" looks like versus "steady state after scaling."
+
 **Q2.** If your company's technical debt makes horizontal scaling "impossible right now" (legacy monolithic code, no session handling), does that mean you can scale vertically indefinitely? What's the hard limit you'll eventually hit, and what does that force you to do?
+
+*Hint:* Think about what "impossible right now" actually means architecturally - what specific property of the monolith (stateful sessions, global shared memory, single database write path) makes horizontal scaling hard, and whether fixing each property requires a rewrite or a targeted refactor.
+
+**Q3 (Design Trade-off):** Your Java monolith runs on a 96-core machine at 20% average CPU. CPU is projected to hit 95% in 6 months. A microservices rewrite takes 18 months. Should you vertically scale now and plan the rewrite, or start the rewrite immediately and risk the interim period?
+
+*Hint:* Think about the hard ceiling on your current machine (can you still go bigger?), the risk window during the rewrite, and whether the monolith's database write path is the actual bottleneck rather than CPU.

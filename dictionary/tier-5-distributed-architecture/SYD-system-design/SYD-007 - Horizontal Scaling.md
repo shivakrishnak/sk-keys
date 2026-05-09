@@ -1,22 +1,25 @@
 ﻿---
+id: SYD-007
+title: Horizontal Scaling
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★☆☆
+depends_on: SYD-006, SYD-008
+used_by: SYD-014
+related: SYD-006, SYD-008, SYD-014, SYD-027
+tags:
+  - performance
+  - foundational
+  - distributed
+  - architecture
+status: complete
+version: 1
 layout: default
-title: "Horizontal Scaling"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 7
-permalink: /system-design/horizontal-scaling/
-id: SYD-007
-category: System Design
-difficulty: ★☆☆
-depends_on: Load Balancing, Vertical Scaling, Stateless Design
-used_by: Auto Scaling, Microservices, Distributed Systems
-related: Vertical Scaling, Load Balancing, Sharding
-tags:
-  - scaling
-  - distributed
-  - performance
-  - infrastructure
-  - foundational
+permalink: /syd/horizontal-scaling/
 ---
 
 # SYD-007 - Horizontal Scaling
@@ -41,6 +44,9 @@ A single machine has a ceiling. Once you hit it, there's nowhere to go. No matte
 
 **THE INVENTION MOMENT:**
 "This is why horizontal scaling was created-because at some point, you need to stop scaling UP and start scaling OUT."
+
+**EVOLUTION:**
+Horizontal scaling was pioneered at internet scale by Google and Amazon in the mid-2000s, who published papers on Bigtable, Dynamo, and MapReduce as proof that commodity servers could outperform mainframes at a fraction of the cost. The cloud era democratised horizontal scaling: managed load balancers, auto-scaling groups, and container orchestration removed the operational barrier. The discipline evolved from a large-company technique to the default architectural assumption for any stateless service - though making stateful systems horizontally scalable (databases, caches, message queues) remains an active area of distributed systems research.
 
 ---
 
@@ -447,22 +453,16 @@ Use homogeneous instance types. Use adaptive load balancing (least-connections/l
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `Vertical Scaling` - the single-machine approach; understand before comparing to horizontal
-- `Load Balancing` - the infrastructure that makes horizontal scaling possible
-- `Stateless Design` - required for horizontal scaling to work correctly
+- [[SYD-006 - Vertical Scaling]] - the single-machine approach; understand before comparing to horizontal
+- [[SYD-008 - Load Balancing]] - the infrastructure that makes horizontal scaling possible
 
 **Builds On This (learn these next):**
-
-- `Auto Scaling` - automate horizontal scaling based on metrics
-- `Microservices` - architecture designed for horizontal scaling
-- `Database Replication` - scale database layer horizontally via read replicas
+- [[SYD-014 - Auto Scaling]] - automate horizontal scaling based on metrics
+- [[SYD-027 - Capacity Planning]] - forecast how many instances you need at each load level
 
 **Alternatives / Comparisons:**
-
-- `Vertical Scaling` - opposite strategy; upgrade one machine instead of adding more
-- `Caching` - improve performance without scaling machines (addresses throughput differently)
-- `Sharding` - distribute data across machines instead of replicating to all machines
+- [[SYD-006 - Vertical Scaling]] - opposite strategy; upgrade one machine instead of adding more
+- [[SYD-028 - Rate Limiting (System)]] - protect the shared bottlenecks that horizontal scaling exposes
 
 ---
 
@@ -501,8 +501,34 @@ Use homogeneous instance types. Use adaptive load balancing (least-connections/l
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Statelessness is the precondition for horizontal scalability. Any shared mutable state in a component is a horizontal scaling barrier. The principle applies beyond web servers: stateless functions, idempotent message handlers, and side-effect-free API calls are horizontally scalable by default; anything with local state is not.
+
+**Where else this pattern appears:**
+- **Microservices:** Each service should be independently horizontally scalable - which requires stateless design within each service boundary.
+- **Lambda/serverless:** Functions scale to thousands of concurrent executions because each invocation is completely stateless by design.
+- **Database read replicas:** Read-only queries are stateless relative to write state - they can be distributed horizontally, while writes remain vertically limited.
+
+---
+
+### 💡 The Surprising Truth
+
+Adding more servers can slow a system down. When horizontal scaling reveals a shared bottleneck - a single database primary, a shared cache with lock contention, or a central message broker - traffic that was previously absorbed by a single slow server now floods the shared resource simultaneously from many fast servers. Teams discover this horizontal scaling inversion when they triple their app server count and response times get worse, not better. The bottleneck was invisible at small scale and only revealed itself when the horizontal layer was fast enough to saturate it.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You have 10 app servers behind a load balancer, all querying a single database. Traffic increases 5x. You add 50 more app servers. Response times stay slow (2s instead of 100ms). Why didn't adding more servers help, and what should you have done instead?
 
+*Hint:* Think about where the requests actually spend their time - is the database doing 60 app-server queries in parallel or 1? Explore whether the database is the bottleneck and what architectural change (read replicas, caching, CQRS) addresses the read vs write bottleneck differently.
+
 **Q2.** Your application stores user sessions in a local in-memory dictionary. You want to horizontally scale it to 10 servers. What architectural changes must you make, and what new failure modes do you introduce by centralizing session state in Redis?
+
+*Hint:* Think about what happens when the Redis cluster itself becomes unavailable - is a Redis outage worse than a session loss? Explore the trade-off between centralised session durability and the new single point of failure you've introduced.
+
+**Q3 (First Principles):** Horizontal scaling is often described as stateless scaling. But a shopping cart is stateful. Design a checkout flow that is horizontally scalable without requiring sticky sessions. What architectural decisions does that force?
+
+*Hint:* Think about where cart state lives (client-side token, external store, or database), what the consistency requirements are between the cart and inventory, and whether eventual consistency is acceptable for a cart that hasn't yet been purchased.

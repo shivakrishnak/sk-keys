@@ -1,22 +1,25 @@
 ﻿---
+id: SYD-014
+title: Auto Scaling
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★☆
+depends_on: SYD-007, SYD-008, SYD-027
+used_by:
+related: SYD-027, SYD-008, SYD-007
+tags:
+  - cloud
+  - performance
+  - intermediate
+  - architecture
+status: complete
+version: 1
 layout: default
-title: "Auto Scaling"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 14
-permalink: /system-design/auto-scaling/
-id: SYD-014
-category: System Design
-difficulty: ★★☆
-depends_on: Horizontal Scaling, Load Balancing, Monitoring
-used_by: Cloud Systems, Microservices, Production Infrastructure
-related: Horizontal Scaling, Load Balancing, Capacity Planning
-tags:
-  - scaling
-  - automation
-  - infrastructure
-  - cloud
-  - intermediate
+permalink: /syd/auto-scaling/
 ---
 
 # SYD-014 - Auto Scaling
@@ -41,6 +44,9 @@ Manual scaling is too slow for rapid traffic changes. Humans are slow; traffic s
 
 **THE INVENTION MOMENT:**
 "This is why auto-scaling was invented-automatically add servers when load spikes, remove them when traffic drops."
+
+**EVOLUTION:**
+Auto-scaling began as a proprietary cloud feature - AWS Auto Scaling launched in 2009, the first managed service to automatically provision and terminate EC2 instances based on CloudWatch metrics. The concept was quickly adopted across all cloud providers. Kubernetes Horizontal Pod Autoscaler (2016) brought auto-scaling to containerised workloads. Modern implementations added predictive scaling (ML-based pre-warming before traffic arrives), scale-to-zero (serverless), and per-metric scaling (scale on queue depth, latency percentiles, or custom business metrics). The discipline evolved from reactive capacity management to proactive traffic shaping.
 
 ---
 
@@ -490,22 +496,16 @@ Design applications to handle gradual resource reduction. Don't rely on specific
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `Horizontal Scaling` - the underlying technique that auto-scaling automates
-- `Load Balancing` - required to distribute traffic to new instances
-- `Monitoring` - provides metrics that trigger scaling decisions
+- [[SYD-007 - Horizontal Scaling]] - the underlying technique that auto-scaling automates
+- [[SYD-008 - Load Balancing]] - required to distribute traffic to new instances
+- [[SYD-027 - Capacity Planning]] - forecasting to set auto-scaling parameters correctly
 
 **Builds On This (learn these next):**
-
-- `Capacity Planning` - forecasting to set auto-scaling parameters
-- `Circuit Breaker` - handles cascading failures during scale events
-- `Graceful Shutdown` - connection draining on scale-down
+- [[SYD-025 - Thundering Herd]] - failure mode that auto-scaling can trigger or amplify
 
 **Alternatives / Comparisons:**
-
-- `Manual Scaling` - operator-driven, not automated
-- `Reserved Instances` - for stable baseline load
-- `Scheduled Scaling` - predictable patterns, not reactive
+- [[SYD-006 - Vertical Scaling]] - manual alternative; scale up one machine instead of out
+- [[SYD-027 - Capacity Planning]] - complementary: forecasting replaces reactive scaling for predictable load
 
 ---
 
@@ -544,8 +544,34 @@ Design applications to handle gradual resource reduction. Don't rely on specific
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+A system that self-adjusts based on observed load applies feedback control - the same principle as a thermostat, PID controller, or TCP congestion control. The key design question is always: what is the lag between measurement and adjustment? In auto-scaling, instance launch time is the lag; in TCP, round-trip time is the lag; in thermostats, thermal mass is the lag. Minimising or compensating for lag determines the quality of the control loop.
+
+**Where else this pattern appears:**
+- **TCP congestion control:** AIMD (additive increase, multiplicative decrease) adjusts send rate based on packet loss signals - a feedback loop with network RTT as lag.
+- **Database connection pools:** Pool size adjusts based on connection wait time - auto-scaling at the connection management layer.
+- **Cache warming:** Predictive cache pre-loading based on traffic patterns is proactive auto-scaling for cache capacity.
+
+---
+
+### 💡 The Surprising Truth
+
+Auto-scaling can amplify failure cascades. When a dependency becomes slow (database latency spikes), requests queue up, CPU stays high (requests are running, not completing), and auto-scaling adds more instances. More instances means more concurrent requests to the already-slow database, making the database slower. This is the thundering herd auto-scaler failure mode: auto-scaling responds correctly to CPU signals but amplifies the root cause. Production systems add circuit breakers and rate limits specifically to prevent auto-scaling from making database failures worse.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Auto-scaling launches new instances based on CPU > 70%. But what if the spike is transient (1 second spike, then drops)? New instances take 2 minutes to launch. By the time they're ready, traffic has passed. Worse, now you have excess capacity that triggers scale-down. How do you avoid this wasted provisioning?
+**Q1.** Auto-scaling launches new instances based on CPU > 70%. But what if the spike is transient (1-second spike, then drops)? New instances take 2 minutes to launch. By the time they're ready, traffic has passed. Worse, now you have excess capacity that triggers scale-down. How do you avoid this wasted provisioning?
 
-**Q2.** An instance is marked for termination (graceful shutdown). It drains existing connections but takes 5 minutes. During those 5 minutes, other instances become overloaded (one less in the pool). Their CPU spikes, triggering scale-up. New instances launch. But the terminating instance finally completes, and scale-down triggers again. How do you coordinate these events to prevent thrashing?
+*Hint:* Think about what happens to the scaling decision lag when the spike is shorter than the instance launch time. Explore whether pre-warming (launching instances before the spike) or caching (reducing per-request backend load) addresses the problem better than faster launch times.
+
+**Q2.** An instance is marked for termination (graceful shutdown). It drains existing connections but takes 5 minutes. During those 5 minutes, other instances become overloaded. Their CPU spikes, triggering scale-up. New instances launch. But the terminating instance finally completes, and scale-down triggers again. How do you coordinate these events to prevent thrashing?
+
+*Hint:* Think about what 5 minutes to drain means for the total pool size during that period - the pool effectively shrinks by 1. Explore whether setting a minimum cool-down period between scale-down events prevents the chain reaction.
+
+**Q3 (Scale):** Your auto-scaler triggers on CPU > 70%. A bug in a new deployment causes infinite loops in 5% of requests - those requests never complete, so CPU stays high. Auto-scaling keeps adding instances. The bug is not caught for 30 minutes. Design safeguards to prevent runaway scaling in this scenario.
+
+*Hint:* Think about what metrics auto-scaling cannot distinguish (CPU from bad requests looks the same as CPU from good requests) and what signals would catch the infinite loop (error rate, P99 latency, memory growth per request). Explore whether a maximum scaling ceiling or a canary deployment strategy would have contained the blast radius.

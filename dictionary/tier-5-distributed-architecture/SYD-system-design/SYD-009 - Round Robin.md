@@ -1,22 +1,25 @@
 ﻿---
+id: SYD-009
+title: Round Robin
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★☆☆
+depends_on: SYD-008, SYD-007
+used_by: SYD-010
+related: SYD-008, SYD-010, SYD-011
+tags:
+  - algorithm
+  - foundational
+  - networking
+  - performance
+status: complete
+version: 1
 layout: default
-title: "Round Robin"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 9
-permalink: /system-design/round-robin/
-id: SYD-009
-category: System Design
-difficulty: ★☆☆
-depends_on: Load Balancing, Horizontal Scaling
-used_by: Load Balancing, Stateless Services
-related: Least Connections, Consistent Hashing, Weighted Round Robin
-tags:
-  - algorithm
-  - load-balancing
-  - scaling
-  - distribution
-  - foundational
+permalink: /syd/round-robin/
 ---
 
 # SYD-009 - Round Robin
@@ -41,6 +44,9 @@ Without a predictable algorithm, traffic distribution becomes unpredictable. Som
 
 **THE INVENTION MOMENT:**
 "This is why round robin was created-the simplest fair algorithm: rotate through servers in order."
+
+**EVOLUTION:**
+Round robin emerged as the default scheduling algorithm in time-sharing operating systems before it was applied to network load balancing. Hardware load balancers implemented round robin in silicon for maximum throughput. Software implementations (Nginx, HAProxy) added Weighted Round Robin - adjusting the rotation to account for server capacity differences. Modern service meshes extended round robin with jitter and randomisation to prevent synchronised request waves. Today, pure round robin is the baseline that all other load balancing algorithms are measured against - simple enough to reason about, fast enough for most workloads, and wrong enough in specific cases to motivate the study of better algorithms.
 
 ---
 
@@ -430,21 +436,16 @@ Use 64-bit integers for counters. In C++, use `uint64_t` instead of `int`. In mo
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `Load Balancing` - the context where round robin is used
-- `Horizontal Scaling` - why you need a load balancing algorithm
+- [[SYD-008 - Load Balancing]] - the context where round robin is used as an algorithm
+- [[SYD-007 - Horizontal Scaling]] - why you need a load balancing algorithm in the first place
 
 **Builds On This (learn these next):**
-
-- `Least Connections` - more sophisticated algorithm that adapts to server state
-- `Consistent Hashing` - advanced algorithm for distributed systems
-- `Weighted Round Robin` - variant that accounts for server capacity differences
+- [[SYD-010 - Least Connections]] - more sophisticated algorithm that adapts to server state
+- [[SYD-011 - Consistent Hashing (Load Balancing)]] - advanced algorithm for distributed systems
 
 **Alternatives / Comparisons:**
-
-- `Least Connections` - better for varying request times
-- `IP Hash` - for sticky sessions
-- `Random` - similar simplicity, different distribution
+- [[SYD-010 - Least Connections]] - better for requests with varying processing time
+- [[SYD-011 - Consistent Hashing (Load Balancing)]] - better when requests have affinity to specific servers
 
 ---
 
@@ -483,8 +484,34 @@ Use 64-bit integers for counters. In C++, use `uint64_t` instead of `int`. In mo
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Uniform distribution without feedback is the simplest fair algorithm, and it is only correct when all recipients are identical and all work items are equal. The moment heterogeneity appears - different server capacities, or different request processing times - round robin produces unfair distribution. Assign equal work to equal workers; use feedback when workers or work items differ.
+
+**Where else this pattern appears:**
+- **Database read replicas:** Applications round-robin across read replicas, but if one replica has replication lag it still receives equal query volume - the same blindness problem.
+- **Kubernetes pod scheduling:** kube-scheduler uses a weighted variant of round robin to distribute pods across nodes with different available capacity.
+- **Thread pool task assignment:** Java ForkJoinPool uses work-stealing - an adaptive round robin - to rebalance uneven task queues dynamically.
+
+---
+
+### 💡 The Surprising Truth
+
+Round robin was so effective at time-sharing CPU between processes that it was enshrined in operating system schedulers in the 1960s - decades before the internet. When TCP/IP networking matured and web servers needed to distribute HTTP requests, engineers reached for the algorithm they already knew from OS scheduling. The same 1960s fairness insight that balanced batch jobs on a mainframe became the default for distributing web traffic to server farms - and for many stateless workloads with uniform request profiles, the 60-year-old algorithm is still the correct choice.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Round robin sends equal traffic to 5 servers. Server 3 has a memory leak-every request leaks 10 MB. After 1 hour, Server 3 is out of memory and crashes. Round robin kept sending it 20% of traffic despite the problem. Should you have used a different algorithm? What would it catch?
+**Q1.** Round robin sends equal traffic to 5 servers. Server 3 has a memory leak - every request leaks 10 MB. After 1 hour, Server 3 is out of memory and crashes. Round robin kept sending it 20% of traffic despite the problem. Should you have used a different algorithm? What would it catch that round robin missed?
 
-**Q2.** A client opens 10 persistent TCP connections and uses them for all future requests (connection pooling). With round robin at the TCP level, these 10 connections might all land on one server (sticky). What's the architectural solution-should you change the algorithm or change how clients connect?
+*Hint:* Think about what metric round robin uses to choose the next server (none - it's position-based) versus what metric would detect a degrading server. Explore the difference between detecting a server's health (health checks) and adapting to its current load (least connections).
+
+**Q2.** A client opens 10 persistent TCP connections and uses them for all future requests (connection pooling). With round robin at the TCP level, these 10 connections might all land on one server. What's the architectural solution - should you change the algorithm or change how clients connect?
+
+*Hint:* Think about where round robin runs - at the load balancer level for new connections or at the request level - and whether persistent connections bypass per-request distribution. Explore whether shorter connection lifetimes or HTTP/2 multiplexing changes the calculus.
+
+**Q3 (Comparison):** Round robin and consistent hashing are both load-distribution algorithms. When would you use consistent hashing instead of round robin, and what property of the workload makes the difference?
+
+*Hint:* Think about whether requests have affinity to a specific server (cached result, session, or shard of data) vs being truly stateless. Explore what cache hit rate looks like on a CDN edge using round robin versus consistent hashing for the same request stream.
