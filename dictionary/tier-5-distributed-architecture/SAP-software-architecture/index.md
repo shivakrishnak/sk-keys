@@ -11,7 +11,7 @@ permalink: /software-architecture/
 
 Layered, hexagonal, clean, CQRS, event sourcing, DDD patterns, SOLID, and coupling/cohesion principles.
 
-**Keywords:** SAP-001–SAP-064 (64 terms)
+**Keywords:** SAP-001–SAP-076 (76 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -79,3 +79,15 @@ Layered, hexagonal, clean, CQRS, event sourcing, DDD patterns, SOLID, and coupli
 | SAP-062 | Architecture Trade-off Framing | ★★★ |
 | SAP-063 | Architecture Necessity Assessment | ★★★ |
 | SAP-064 | Technical Debt Mental Model | ★★★ |
+| SAP-065 | Enterprise Architecture - What It Is and Why It Exists | ★☆☆ |
+| SAP-066 | Enterprise Architecture Domains - BDAT | ★☆☆ |
+| SAP-067 | Business Capability Mapping | ★★☆ |
+| SAP-068 | As-Is / To-Be Architecture (Current State vs Target State) | ★★☆ |
+| SAP-069 | TOGAF Framework | ★★☆ |
+| SAP-070 | TOGAF ADM (Architecture Development Method) | ★★☆ |
+| SAP-071 | Zachman Framework | ★★☆ |
+| SAP-072 | ArchiMate (EA Modelling Language) | ★★☆ |
+| SAP-073 | Enterprise Architecture Maturity Models | ★★★ |
+| SAP-074 | Enterprise Architecture Programme Design | ★★★ |
+| SAP-075 | EA Tool Selection and Vendor Landscape | ★★★ |
+| SAP-076 | EA Framework Theory and Academic Foundations | ★★★ |
