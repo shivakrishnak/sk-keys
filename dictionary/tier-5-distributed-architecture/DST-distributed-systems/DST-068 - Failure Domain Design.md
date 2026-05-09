@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-068
 title: Failure Domain Design
 category: Distributed Systems
@@ -13,13 +13,13 @@ tags:
   - advanced
   - architecture
   - bestpractice
-status: draft
+status: complete
 version: 1
 layout: default
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"
 nav_order: 68
-permalink: /dst/failure-domain-design/
+permalink: /distributed-systems/failure-domain-design/
 ---
 
 # DST-068 - Failure Domain Design

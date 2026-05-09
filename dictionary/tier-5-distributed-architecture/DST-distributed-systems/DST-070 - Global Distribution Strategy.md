@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-070
 title: Global Distribution Strategy
 category: Distributed Systems
@@ -13,13 +13,13 @@ tags:
   - advanced
   - architecture
   - bestpractice
-status: draft
+status: complete
 version: 1
 layout: default
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"
 nav_order: 70
-permalink: /dst/global-distribution-strategy/
+permalink: /distributed-systems/global-distribution-strategy/
 ---
 
 # DST-070 - Global Distribution Strategy

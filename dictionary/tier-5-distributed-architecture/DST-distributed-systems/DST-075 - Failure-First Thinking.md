@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-075
 title: Failure-First Thinking
 category: Distributed Systems
@@ -13,13 +13,13 @@ tags:
   - advanced
   - mental-model
   - bestpractice
-status: draft
+status: complete
 version: 1
 layout: default
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"
 nav_order: 75
-permalink: /dst/failure-first-thinking/
+permalink: /distributed-systems/failure-first-thinking/
 ---
 
 # DST-075 - Failure-First Thinking

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-071
 title: Distributed Consensus Algorithm Design (Raft, Paxos)
 category: Distributed Systems
@@ -13,13 +13,13 @@ tags:
   - advanced
   - deep-dive
   - first-principles
-status: draft
+status: complete
 version: 1
 layout: default
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"
 nav_order: 71
-permalink: /dst/distributed-consensus-algorithm-design-raft-paxos/
+permalink: /distributed-systems/distributed-consensus-algorithm-design-raft-paxos/
 ---
 
 # DST-071 - Distributed Consensus Algorithm Design (Raft, Paxos)

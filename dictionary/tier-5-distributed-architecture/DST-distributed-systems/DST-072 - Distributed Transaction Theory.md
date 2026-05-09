@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-072
 title: Distributed Transaction Theory
 category: Distributed Systems
@@ -13,13 +13,13 @@ tags:
   - advanced
   - deep-dive
   - first-principles
-status: draft
+status: complete
 version: 1
 layout: default
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"
 nav_order: 72
-permalink: /dst/distributed-transaction-theory/
+permalink: /distributed-systems/distributed-transaction-theory/
 ---
 
 # DST-072 - Distributed Transaction Theory

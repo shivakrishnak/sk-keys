@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-077
 title: Distribution Necessity Assessment
 category: Distributed Systems
@@ -13,13 +13,13 @@ tags:
   - advanced
   - mental-model
   - bestpractice
-status: draft
+status: complete
 version: 1
 layout: default
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"
 nav_order: 77
-permalink: /dst/distribution-necessity-assessment/
+permalink: /distributed-systems/distribution-necessity-assessment/
 ---
 
 # DST-077 - Distribution Necessity Assessment

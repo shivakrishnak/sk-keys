@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-074
 title: Research Frontiers in Distributed Systems
 category: Distributed Systems
@@ -13,13 +13,13 @@ tags:
   - advanced
   - deep-dive
   - first-principles
-status: draft
+status: complete
 version: 1
 layout: default
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"
 nav_order: 74
-permalink: /dst/research-frontiers-in-distributed-systems/
+permalink: /distributed-systems/research-frontiers-in-distributed-systems/
 ---
 
 # DST-074 - Research Frontiers in Distributed Systems

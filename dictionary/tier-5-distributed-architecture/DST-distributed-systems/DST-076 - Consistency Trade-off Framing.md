@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-076
 title: Consistency Trade-off Framing
 category: Distributed Systems
@@ -13,13 +13,13 @@ tags:
   - advanced
   - mental-model
   - bestpractice
-status: draft
+status: complete
 version: 1
 layout: default
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"
 nav_order: 76
-permalink: /dst/consistency-trade-off-framing/
+permalink: /distributed-systems/consistency-trade-off-framing/
 ---
 
 # DST-076 - Consistency Trade-off Framing
