@@ -28,11 +28,11 @@ permalink: /distributed-systems/consistency-models/
 
 ⚡ TL;DR - Consistency models define the contract between a distributed system and its clients about which writes are visible to reads and in what order; choosing the wrong model causes either correctness bugs or unnecessary performance costs.
 
-| Metadata | | |
-|:---|:---|:---|
-| **Depends on:** | DST-006, DST-014 | |
-| **Used by:** | DST-007, DST-009, DST-010, DST-011, DST-012, DST-013 | |
-| **Related:** | DST-006, DST-007, DST-009, DST-010, DST-011 | |
+| Metadata        |                                                      |     |
+| :-------------- | :--------------------------------------------------- | :-- |
+| **Depends on:** | DST-006, DST-014                                     |     |
+| **Used by:**    | DST-007, DST-009, DST-010, DST-011, DST-012, DST-013 |     |
+| **Related:**    | DST-006, DST-007, DST-009, DST-010, DST-011          |     |
 
 ---
 
@@ -71,6 +71,7 @@ Leslie Lamport introduced sequential consistency in 1979 in the context of multi
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. In a distributed system, multiple physical copies of data exist on different nodes.
 2. Writing to one copy does not instantly update others (replication lag).
 3. A client reading after a write may contact any replica, which may not yet have the latest write.
@@ -79,6 +80,7 @@ Leslie Lamport introduced sequential consistency in 1979 in the context of multi
 
 **DERIVED DESIGN:**
 The spectrum of consistency models arises from two fundamental constraints: (a) how quickly do all replicas converge? and (b) which replicas may serve reads?
+
 - Linearizability: any replica that served the last write (or has been synchronized to it) may serve reads. Real-time ordering enforced.
 - Eventual consistency: any replica may serve reads at any time; convergence is eventual.
 
@@ -116,6 +118,7 @@ Bob may see 0 right after Alice's write. But if no new writes occur, both nodes 
 > Consistency models are like the return policy of a global bookshop chain. Linearizability: any branch will tell you exactly what's in stock right now, live. Sequential: every branch tells you the same story, but the story might be 5 minutes behind reality — and everyone gets the same 5-minute-old story. Causal: if you asked a specific branch to order a book, that branch will know about it. But a branch you've never visited might not. Eventual: every branch will know eventually, but right now different branches might have conflicting info.
 
 **Mapping:**
+
 - **Branches** → replicas/nodes
 - **Book inventory** → data values
 - **Return policy** → consistency contract
@@ -136,6 +139,7 @@ Match your consistency model to your correctness requirement. Financial balance 
 
 **Level 3 - How it works (mid-level engineer):**
 The models differ in what constraints they impose on observable histories:
+
 - **Linearizability:** Any valid execution is equivalent to some serial execution where each operation appears at some point between its invocation and response. Real-time ordering preserved.
 - **Sequential consistency:** Any valid execution is equivalent to some serial execution consistent with each process's program order. No real-time constraint.
 - **Causal:** Operations related by happens-before must be seen in that order by all processes. Concurrent operations may be seen in any order.
@@ -145,6 +149,7 @@ The models differ in what constraints they impose on observable histories:
 The Herlihy-Wing linearizability definition is composable: if each object in a system is linearizable, the system as a whole is linearizable. This is not true for sequential consistency, which makes it harder to reason about modular systems. This composability property is why linearizability became the standard for building distributed systems out of components — each component (lock, counter, queue) can be independently verified. Causal consistency (COPS, Bolt-on Causal) requires tracking dependency metadata per-operation, which adds per-message overhead. Most "strong" consistency in production systems is actually linearizability (Spanner's "external consistency", ZooKeeper's "sequential consistency" is actually closer to linearizability in practice).
 
 **Expert Thinking Cues:**
+
 - "Is your read-after-write a hard requirement?" → If yes, you need at least Read-Your-Writes, which is weaker than linearizability.
 - "Do two clients coordinate?" → If yes, you need linearizability (for mutually exclusive operations like distributed locks).
 - "Do you have concurrent conflicting writes?" → Conflict resolution strategy determines which consistency model is sufficient.
@@ -155,22 +160,26 @@ The Herlihy-Wing linearizability definition is composable: if each object in a s
 ### ⚙️ How It Works (Mechanism)
 
 **Linearizability (ZooKeeper, etcd, Spanner):**
+
 - All reads go through a leader or quorum.
 - Leader has the latest committed value.
 - Read returns the value of the latest committed write as of the time the read was invoked.
 - Mechanism: Paxos/Raft consensus + single-leader reads OR quorum reads with epoch checks.
 
 **Sequential Consistency (some DSP systems):**
+
 - All operations appear in some total order consistent with each process's order.
 - Mechanism: Global sequencer assigns monotonic sequence numbers to all operations.
 - Relaxed: no real-time constraint; a read before a write can appear after it in the global sequence.
 
 **Causal Consistency (COPS, MongoDB causal sessions):**
+
 - Operations carry vector clocks or logical timestamps.
 - A replica will not serve a read until all causally-prior writes are visible.
 - Mechanism: dependency tracking per operation, multi-version storage.
 
 **Eventual Consistency (Cassandra, DynamoDB, S3):**
+
 - Writes are propagated asynchronously.
 - Reads may go to any replica, which may have old data.
 - Convergence: anti-entropy, read repair, gossip protocol synchronise replicas over time.
@@ -200,6 +209,7 @@ Client
 ```
 
 **FAILURE PATH (Eventual consistency read during lag):**
+
 ```
 Write("x", 42) → Node 1 (committed)
 Read("x")      → Node 2 (replication lag: still 41)
@@ -218,6 +228,7 @@ Two concurrent writes to the same key under eventual consistency: Last-Write-Win
 ### 💻 Code Example
 
 **BAD - Ignoring consistency model for inventory deduction:**
+
 ```java
 // Cassandra with default ConsistencyLevel (ONE)
 // Two threads race to decrement inventory
@@ -242,6 +253,7 @@ public boolean reserveItem(String itemId) {
 ```
 
 **GOOD - Using Cassandra's Lightweight Transactions (linearizable):**
+
 ```java
 // Uses Paxos (linearizable) for conditional update
 // Only succeeds if current quantity matches expected
@@ -261,6 +273,7 @@ public boolean reserveItem(String itemId) {
 ```
 
 **Eventual consistency with conflict resolution (CRDT counter):**
+
 ```java
 // G-Counter CRDT: safe for eventual consistency
 // Each node has its own increment slot
@@ -294,6 +307,7 @@ public class GCounter {
 ```
 
 **How to test / verify correctness:**
+
 ```bash
 # Jepsen-style linearizability check:
 # Record all invocations and responses with timestamps
@@ -309,26 +323,26 @@ public class GCounter {
 
 ### ⚖️ Comparison Table
 
-| Model | Guarantee | Real-time Order | Cross-process | Example Systems |
-|:---|:---|:---|:---|:---|
-| Linearizability | Reads see latest write | Yes | Yes | etcd, ZooKeeper, Spanner |
-| Sequential | All ops in consistent order | No | Yes | Some GPU memory models |
-| Causal | Causes before effects | Partial | Per-key | COPS, Mongo causal session |
-| Read-Your-Writes | See your own writes | No | No | Sticky sessions, Dynamo |
-| Monotonic Reads | Reads don't go backward | No | No | DynamoDB session tokens |
-| Eventual | Convergence guaranteed | No | No | Cassandra, DynamoDB, S3 |
+| Model            | Guarantee                   | Real-time Order | Cross-process | Example Systems            |
+| :--------------- | :-------------------------- | :-------------- | :------------ | :------------------------- |
+| Linearizability  | Reads see latest write      | Yes             | Yes           | etcd, ZooKeeper, Spanner   |
+| Sequential       | All ops in consistent order | No              | Yes           | Some GPU memory models     |
+| Causal           | Causes before effects       | Partial         | Per-key       | COPS, Mongo causal session |
+| Read-Your-Writes | See your own writes         | No              | No            | Sticky sessions, Dynamo    |
+| Monotonic Reads  | Reads don't go backward     | No              | No            | DynamoDB session tokens    |
+| Eventual         | Convergence guaranteed      | No              | No            | Cassandra, DynamoDB, S3    |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|:---|:---|
-| "Consistency in ACID and CAP/PACELC mean the same thing" | ACID consistency = business rules (constraints, foreign keys). CAP/PACELC consistency = linearizability (recency guarantees). Completely different concepts. |
-| "Strong consistency means no bugs" | Strong consistency prevents only consistency-class bugs (stale reads, ordering). You can still have ACID violations, logic bugs, network errors. Linearizability is necessary but not sufficient for correctness. |
-| "Eventual consistency is unreliable" | Eventual consistency is a formal model with proven convergence properties. DNS has been eventually consistent for 40 years and is one of the most reliable systems on Earth. "Eventual" means convergence, not chaos. |
-| "You must pick one consistency model for the whole database" | Most modern databases allow per-operation consistency levels (Cassandra CL, DynamoDB per-read, Cosmos DB per-request). You can use linearizability for inventory and eventual for analytics in the same cluster. |
-| "Causal consistency is exotic and impractical" | MongoDB 3.6+ sessions implement causal consistency. Many microservice architectures implement it implicitly via request tracing. It's more common than practitioners realise. |
+| Misconception                                                | Reality                                                                                                                                                                                                               |
+| :----------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Consistency in ACID and CAP/PACELC mean the same thing"     | ACID consistency = business rules (constraints, foreign keys). CAP/PACELC consistency = linearizability (recency guarantees). Completely different concepts.                                                          |
+| "Strong consistency means no bugs"                           | Strong consistency prevents only consistency-class bugs (stale reads, ordering). You can still have ACID violations, logic bugs, network errors. Linearizability is necessary but not sufficient for correctness.     |
+| "Eventual consistency is unreliable"                         | Eventual consistency is a formal model with proven convergence properties. DNS has been eventually consistent for 40 years and is one of the most reliable systems on Earth. "Eventual" means convergence, not chaos. |
+| "You must pick one consistency model for the whole database" | Most modern databases allow per-operation consistency levels (Cassandra CL, DynamoDB per-read, Cosmos DB per-request). You can use linearizability for inventory and eventual for analytics in the same cluster.      |
+| "Causal consistency is exotic and impractical"               | MongoDB 3.6+ sessions implement causal consistency. Many microservice architectures implement it implicitly via request tracing. It's more common than practitioners realise.                                         |
 
 ---
 
@@ -339,6 +353,7 @@ public class GCounter {
 **Symptom:** User updates their profile photo. Refreshes page. Old photo still shown. Works fine if they wait 5 seconds and refresh.
 **Root Cause:** Write went to primary; read was load-balanced to replica with replication lag (~2 seconds). Application using eventual consistency for profile reads.
 **Diagnostic:**
+
 ```bash
 # In MySQL: check replication lag
 SHOW SLAVE STATUS\G | grep Seconds_Behind_Master
@@ -347,6 +362,7 @@ grep "ConsistencyLevel" app.log | head -20
 # In PostgreSQL: check if reads are going to hot standby
 SHOW hot_standby;
 ```
+
 **Fix:**
 BAD: Route all reads to replicas for "performance."
 GOOD: User-session reads use primary or sticky session to same replica. Profile photo read uses Read-Your-Writes consistency (route write and read from same session to same node).
@@ -357,6 +373,7 @@ GOOD: User-session reads use primary or sticky session to same replica. Profile 
 **Symptom:** Two users edit the same document simultaneously. One edit is silently overwritten. User reports "my changes disappeared."
 **Root Cause:** Both users read the same version (v3), both compute their changes on top of v3, both write their new version. Second write overwrites first. Last-Write-Wins under eventual consistency.
 **Diagnostic:**
+
 ```bash
 # Check if document has version/ETag field:
 curl -I https://api.example.com/docs/123
@@ -366,17 +383,22 @@ curl -I https://api.example.com/docs/123
 # In DynamoDB: verify ConditionExpression is used:
 grep "ConditionExpression" app/ -r
 ```
+
 **Fix:**
 BAD:
+
 ```
 PUT /doc/123 body={new content}  # no version check
 ```
+
 GOOD:
+
 ```
 PUT /doc/123
 If-Match: "abc123etag"  # optimistic concurrency
 # Returns 412 Precondition Failed if version changed
 ```
+
 **Prevention:** Every mutable shared resource needs an optimistic lock (ETag, version number, condition expression). This converts eventual consistency into Read-Modify-Write safety.
 
 **Failure Mode 3: Security - Authorization Race Condition**
@@ -384,12 +406,14 @@ If-Match: "abc123etag"  # optimistic concurrency
 **Symptom:** A user is banned at 14:00. At 14:02, they log in successfully. The auth service read a cached/stale permission record that hasn't reflected the ban yet.
 **Root Cause:** Auth service uses eventually consistent reads for permission checks. Ban propagates with ~2 minute replication lag.
 **Diagnostic:**
+
 ```bash
 # Check consistency level for auth service reads:
 grep -r "ConsistencyLevel\|ReadConsistency" auth-service/
 # Measure replication lag for permissions table:
 nodetool cfstats auth.permissions | grep "Max partition size"
 ```
+
 **Fix:**
 BAD: `ConsistencyLevel.ONE` for auth/permission reads.
 GOOD: `ConsistencyLevel.QUORUM` or `ALL` for permission reads. Or: use a strongly-consistent store (Redis with persistence, etcd) exclusively for permission data.
@@ -400,16 +424,19 @@ GOOD: `ConsistencyLevel.QUORUM` or `ALL` for permission reads. Or: use a strongl
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - DST-006 - CAP Theorem (consistency vs. availability under partition)
 - DST-014 - Replication Strategies (how data copies are maintained)
 
 **Builds On This (learn these next):**
+
 - DST-009 - Strong Consistency (linearizability deep dive)
 - DST-010 - Eventual Consistency (convergence deep dive)
 - DST-011 - Causal Consistency (middle-ground model)
 - DST-007 - PACELC (latency-consistency trade-off in normal operation)
 
 **Alternatives / Comparisons:**
+
 - DST-006 - CAP Theorem (the theorem that frames why models exist)
 - DST-012 - Serializability (ACID consistency vs. distributed consistency)
 
@@ -446,6 +473,7 @@ GOOD: `ConsistencyLevel.QUORUM` or `ALL` for permission reads. Or: use a strongl
 ```
 
 **If you remember only 3 things:**
+
 1. Linearizability = every read sees the most recent write; operations appear atomic in real time.
 2. Eventual consistency = all replicas converge if writes stop; reads may be stale in the interim.
 3. "Consistency" in ACID ≠ "Consistency" in CAP/distributed systems — they're completely different concepts.
@@ -461,6 +489,7 @@ GOOD: `ConsistencyLevel.QUORUM` or `ALL` for permission reads. Or: use a strongl
 Every shared mutable state across processes needs an explicit consistency contract. The contract should be chosen based on the worst-case business impact of a stale read, not based on the default behavior of the database you're already using. Defaulting to eventual consistency for all data because "Cassandra is eventual" is as wrong as defaulting to linearizability for all data because "ZooKeeper is consistent."
 
 **Where else this pattern appears:**
+
 - **CPU memory models (x86 vs. ARM):** x86 offers Total Store Order (close to sequential consistency); ARM offers a weaker model requiring explicit memory barriers. Kernel and JVM developers must understand the CPU's consistency model to write correct lock-free code.
 - **Microservice event sourcing:** Events published to Kafka are eventually consistent across consumers. A consumer that reads from the Kafka topic gets eventual consistency semantics. If two services must agree on state NOW, you need synchronous consistency (2PC, Saga with compensation).
 - **DNS propagation:** DNS is the canonical eventually consistent system. A domain change propagates globally over TTL windows (minutes to hours). No synchronous global consistency. World's most successful eventual consistency deployment.
@@ -476,11 +505,10 @@ Linearizability is strictly stronger than serializability — but they address d
 ### 🧠 Think About This Before We Continue
 
 **Q1 (C - Design Trade-off):** A multiplayer game needs a shared leaderboard. Millions of players update their scores concurrently. Two requirements: (1) A player must always see their own score update reflected immediately. (2) The global ranking may lag by up to 30 seconds. Which consistency model satisfies both requirements? Can a single database provide both, or do you need two systems?
-*Hint:* The first requirement is Read-Your-Writes consistency. The second is bounded staleness. Are these independent models? Can you implement Read-Your-Writes on top of eventual consistency without changing the underlying model?
+_Hint:_ The first requirement is Read-Your-Writes consistency. The second is bounded staleness. Are these independent models? Can you implement Read-Your-Writes on top of eventual consistency without changing the underlying model?
 
 **Q2 (D - Root Cause):** A microservice calls the User Service to get a user's permissions, then immediately calls the Payment Service. The Payment Service also calls User Service internally to verify the same permissions. Both calls happen within 50ms. The User Service is eventually consistent. Under what conditions can the first call and the second call see different permission states? What is the correct architecture to prevent this?
-*Hint:* This is a monotonic read violation — a process sees a newer value then an older value for the same key across two calls. Does routing both calls to the same replica solve this? What if User Service is stateless (no sticky sessions)?
+_Hint:_ This is a monotonic read violation — a process sees a newer value then an older value for the same key across two calls. Does routing both calls to the same replica solve this? What if User Service is stateless (no sticky sessions)?
 
 **Q3 (E - First Principles):** Sequential consistency and linearizability both guarantee a consistent serial ordering of all operations. The only difference is linearizability adds real-time constraints. Why does the real-time constraint make linearizability so much harder to implement at scale, and why can't you simply add a timestamp to sequential consistency to make it linearizable?
-*Hint:* In a distributed system, there is no global clock — only logical clocks and physical clocks with bounded skew. Lamport timestamps give causal ordering but not real-time ordering. What would it take to turn a Lamport timestamp into a linearizability proof?
-
+_Hint:_ In a distributed system, there is no global clock — only logical clocks and physical clocks with bounded skew. Lamport timestamps give causal ordering but not real-time ordering. What would it take to turn a Lamport timestamp into a linearizability proof?
