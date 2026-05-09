@@ -17,6 +17,7 @@ tags:
   - networking
   - intermediate
   - pattern
+status: complete
 ---
 
 # MSV-035 - Timeout Strategy
@@ -42,6 +43,9 @@ No thread can help new users while it's waiting indefinitely. Latency in a depen
 **THE INVENTION MOMENT:**
 This is exactly why timeout strategy was created - to give every outgoing call a deadline so that a single slow dependency cannot hold hostage all threads in your service.
 
+
+**EVOLUTION:**
+Timeout strategies evolved from simple socket-level timeouts (TCP send/receive, 1980s) to application-level cascading deadline propagation. Early distributed systems had no timeout concepts - a call to a hung remote service would wait forever. Michael Nygard's 'Release It!' (2007) documented timeout as the most important reliability pattern. Google's internal Deadline Propagation concept (making every inter-service call carry a remaining deadline) became an external standard as gRPC's deadline propagation feature (2016). The discipline evolved from 'set a timeout on every call' to 'propagate decreasing deadlines through the entire call chain.'
 ---
 
 ### 📘 Textbook Definition
@@ -405,10 +409,36 @@ ss -tn | grep ESTAB | awk '{print $5}' | sort | uniq -c
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Every distributed system call needs a timeout, and the downstream timeout must be shorter than the caller's timeout. This is deadline propagation: if Service A has 200ms to respond to the user, it should set no more than 150ms timeout on Service B, which should set no more than 100ms on Service C. At each layer, the timeout is the remaining deadline minus processing overhead - never a fixed value chosen independently of the full call chain.
+
+**Where else this pattern appears:**
+- **HTTP client configuration:** Connection timeout (how long to wait for TCP handshake) and read timeout (how long to wait for response) are deadline propagation at the network call level.
+- **Database query timeouts:** PostgreSQL `statement_timeout` ensures slow queries don't hold locks indefinitely and don't consume query slots beyond the application's latency budget.
+- **Job schedulers:** Maximum execution time per job ensures hung jobs don't prevent other jobs from running - deadline propagation applied to batch processing.
+
+---
+
+### 💡 The Surprising Truth
+
+The most counterintuitive finding about timeout strategies is that shorter timeouts don't always improve reliability. A timeout that is too short creates a 'timeout storm': callers time out before the downstream service can respond, the downstream finishes processing and sends a response to nobody, and callers immediately retry - creating higher downstream load than without any callers retrying. At scale, timeout storms can cause the downstream service to experience more load than it would under normal conditions. The optimal timeout is the minimum value above which the response is too late to be useful - not the minimum the network can achieve.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Service A calls B (timeout 200ms), which calls C (timeout 300ms). A user request arrives at A. C is slow - taking 250ms. Trace the exact sequence: does A's timeout fire? Does B's? What does the user see? Now reconfigure B's timeout to 150ms and re-trace. What changes and why is this the correct approach for deadline propagation?
 
+*Hint:* Think about what B's 300ms timeout and A's 200ms timeout means: if C takes 250ms, C responds within B's budget, B tries to respond to A - but A may have already timed out after 200ms (the time B waited for C alone, without B's processing time). B's 300ms timeout is useless when A only waits 200ms total. Now trace with B's timeout reconfigured to 150ms: C takes 250ms, exceeding B's 150ms timeout; B times out and returns an error to A within A's 200ms budget. A receives an error response instead of a timeout - which is better (faster failure).
+
 **Q2.** You set a 500ms read timeout on all calls to your inventory service. After deploying, you discover 2% of requests are timing out even though inventory looks healthy. Your P50 latency is 40ms. Describe step-by-step how you would diagnose whether this is a genuine inventory issue, a timeout configured too low, or a specific caller pattern - and what you would change.
+
+*Hint:* Think about what P50=40ms but 2% timeouts means statistically: 2% of requests have latency >500ms. Check whether the distribution is bimodal (fast path: 40ms, slow path: 600ms) indicating a specific code path or resource contention. Diagnostic steps: (1) check inventory service P95/P99 from its own metrics (not caller's view); (2) check if the 2% correlates with specific operations or specific inventory items; (3) check GC pause logs on the inventory service; (4) check network packet loss between services (mtr/traceroute).
+
+**Q3 (Design Trade-off):** Your service calls 3 dependencies sequentially: Cache (timeout=50ms), Database (timeout=200ms), and External Payment API (timeout=3000ms). Your SLA to the user is 5 seconds. Design the timeout configuration and communication pattern that maximises successful responses within the SLA even when individual dependencies are slow.
+
+*Hint:* Think about whether the 3 calls must be sequential or can be parallelised: if Cache and Database don't depend on each other's output, calling them in parallel reduces total latency to max(50ms, 200ms)=200ms instead of 250ms. Explore whether the External Payment API call can be made asynchronously (submit payment, receive webhook or poll for result) to avoid holding the user's request for up to 3 seconds, and what timeout budget remains for each operation after parallelisation reduces the sequential component.

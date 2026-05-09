@@ -17,6 +17,7 @@ tags:
   - architecture
   - deep-dive
   - pattern
+status: complete
 ---
 
 # MSV-027 - Backend for Frontend (BFF)
@@ -42,6 +43,9 @@ One API for all clients is a compromise API for all clients. The general-purpose
 **THE INVENTION MOMENT:**
 This is exactly why the Backend for Frontend (BFF) pattern was created - to give each client type an optimised, client-owned backend that serves exactly the data shape each client needs, at the performance characteristics each client requires.
 
+
+**EVOLUTION:**
+The Backend for Frontend pattern was coined by Sam Newman in 2015 to address a single API being forced to serve multiple client types with conflicting needs. The pattern emerged from Netflix's experience with TV, mobile, and web clients all hitting the same API and receiving more data than any individual client needed. The BFF provides a client-specific API layer, owned by the frontend team, that aggregates and transforms backend service calls to match each client's specific needs. The discipline evolved from 'one API for all' to 'one API per client type' - with the BFF as the translation layer.
 ---
 
 ### 📘 Textbook Definition
@@ -415,11 +419,36 @@ grep "calling.*service" bff.log | \
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Build client-specific APIs, not one-size-fits-all APIs. An API optimised for mobile (minimal data, offline sync) is different from an API optimised for web (rich data, server-side state), which is different from a third-party API (stable versioned contract, rate limited). Serving all clients from one API creates an API suboptimal for all of them. The BFF extends the 'right tool for the job' principle to API layer design.
+
+**Where else this pattern appears:**
+- **Database query optimisation:** A reporting query (full historical data) and an OLTP query (current state, single record) require different indexes and query strategies - the BFF pattern applied to data access layer design.
+- **UI component libraries:** A mobile component library (touch-optimised, minimal) and a desktop library (keyboard-optimised, feature-rich) serve different client types with different trade-offs - the BFF pattern applied to frontend component design.
+- **SDK design:** An embedded device SDK (minimal footprint) vs a web application SDK (feature-rich) serves different client types with different constraints - the BFF pattern applied to client library design.
+
+---
+
+### 💡 The Surprising Truth
+
+The Backend for Frontend pattern has a hidden failure mode teams discover 12-18 months after adoption: BFF teams start duplicating backend business logic in their BFFs. The Mobile BFF calculates discounts. The Web BFF calculates discounts with slightly different rules. Six months later, the two BFFs diverge in their discount calculations and customers see different prices on mobile vs web. The BFF pattern requires strict discipline: BFFs should only aggregate and transform - never implement business logic. Business logic must live in backend services, consumed by all BFFs via API.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A fintech platform has a Mobile BFF and a Web BFF. The mobile team discovers that their BFF is making 8 sequential service calls to assemble a transaction history page, taking 1.2 seconds. They want to add a Redis cache in the Mobile BFF to store transaction summaries. The web BFF already has similar caching. Describe the exact cache coherence problem this introduces, what event-driven invalidation strategy would address it, and whether caching in the BFF is the right approach or whether caching should be pushed further down to the transaction service level.
 
+*Hint:* Think about what cache coherence means when two BFFs have separate caches of the same underlying data: when the transaction service updates a record, both Mobile BFF cache and Web BFF cache must be invalidated simultaneously. Explore whether a domain event `TransactionUpdated` published by the transaction service and consumed by both BFFs for cache invalidation solves the coherence problem, and whether pushing caching to the transaction service (shared cache, single invalidation path) eliminates the two-BFF coherence complexity entirely.
+
 **Q2.** Your company decides to allow third-party developers to access the same backend services through a Partner BFF. Unlike Mobile and Web BFFs (which are internal), the Partner BFF is semi-public. Describe the specific security, versioning, and rate limiting requirements that differ between internal BFFs and a Partner BFF, and design the breaking-change management strategy for the Partner BFF that protects partners from unexpected API changes while still allowing the platform to evolve.
 
+*Hint:* Think about what differs between internal and Partner BFF: internal (coordinate changes via Slack, can break and fix same day; no SLA on change notice), Partner (external developers' code breaks when API changes; require 90-day deprecation notice, versioned endpoints maintained in parallel, per-API-key rate limiting). Explore what minimum set of controls the Partner BFF needs that internal BFFs don't require: semantic versioning, breaking-change policy, developer portal, and API key management.
+
+**Q3 (Design Trade-off):** You have 3 BFFs (Mobile, Web, TV/Streaming). All 3 call the same 5 backend services. The operations team reports that a single backend service outage now simultaneously affects all 3 BFFs and all their users. Design a resilience strategy for BFFs that limits the blast radius of a single backend service outage.
+
+*Hint:* Think about what resilience options exist at the BFF layer: circuit breakers (stop calling the failing service, use cached or default data), partial response (return the page without the failing service's data rather than returning a full error), and priority degradation (serve critical data paths first during contention). Explore whether each BFF should implement its own resilience strategy independently based on what its client type can tolerate (mobile might accept cached data; web might show a visible error state for the failing section).
