@@ -4,11 +4,22 @@ This workspace is the **sk-keys Technical Dictionary** - a comprehensive softwar
 
 Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. Apply each category independently — rules within a category work together, but do not apply a rule from one category to resolve a conflict in another.
 
+## Prompt Files
+
+| Prompt                                        | Purpose                                                                 |
+| --------------------------------------------- | ----------------------------------------------------------------------- |
+| `.github/prompts/generate-keywords.prompt.md` | Generate keyword lists for a category/tier, sync index.md, create stubs |
+| `.github/generate-dict-entries.prompt.md`     | Generate full v3.0 dictionary entry content from stubs                  |
+| `.github/prompts/upgrade-batch.prompt.md`     | Upgrade existing entries to v3.0 standard                               |
+
+**Keyword generation spec:** `KEYWORD_GENERATOR_PROMPT.md` (Category Keyword Generator v3.0) is the master specification for all keyword list generation. Apply it by default when generating keyword lists for any category or tier.
+
 ## Default Behaviour
 
 When asked to generate, create, upgrade, or edit any keyword entry `.md` file, apply all rules from the spec below without being asked. Do not ask for confirmation before generating.
 
 **1. Content rules:**
+
 - Include all 22 required sections in the exact sequence (5.1–5.22) without any reordering.
 - Show BAD pattern before GOOD pattern in code examples.
 - Provide min 4 misconception rows and min 3 failure modes.
@@ -17,17 +28,19 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 
 > **Quick decision rule:** Default to omitting a conditional section. Include it only if the primary Include condition is unambiguously met. When in doubt, check the Borderline guidance column against the concrete concept you are writing.
 
-| Section | Include when… | Omit when… | Borderline guidance |
-|:--------|:--------------|:-----------|:--------------------|
-| 5.13 `### 💻 Code Example` | Concept has direct programmatic expression (class, API call, config flag) | Purely theoretical / organizational concept (e.g. CAP Theorem) | If you can write 5 or more lines of code that directly implement or illustrate the concept: include it. Example borderline: CAP Theorem — omit (no direct API). Example borderline: Circuit Breaker — include (state machine in code). |
-| 5.14 `### ⚖️ Comparison Table` | Two or more named alternatives or variants exist | Concept is unique with no comparable alternative | If only one alternative exists but the contrast is instructive: include a 2-row table. Example: Mutex vs Semaphore — include. Example: BOM (no alternative) — omit. |
-| 5.15 `### 🔁 Flow / Lifecycle` | Concept has a distinct ordered multi-phase lifecycle (e.g. request lifecycle, GC phases) | Concept is a data structure, algorithm, or single-mechanism pattern | If the concept has exactly 2 phases: omit — not enough phases to warrant a lifecycle section. Example: HTTP Request lifecycle (5 phases) — include. Example: Hash Map (no phases) — omit. |
+| Section                        | Include when…                                                                            | Omit when…                                                          | Borderline guidance                                                                                                                                                                                                                    |
+| :----------------------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 5.13 `### 💻 Code Example`     | Concept has direct programmatic expression (class, API call, config flag)                | Purely theoretical / organizational concept (e.g. CAP Theorem)      | If you can write 5 or more lines of code that directly implement or illustrate the concept: include it. Example borderline: CAP Theorem — omit (no direct API). Example borderline: Circuit Breaker — include (state machine in code). |
+| 5.14 `### ⚖️ Comparison Table` | Two or more named alternatives or variants exist                                         | Concept is unique with no comparable alternative                    | If only one alternative exists but the contrast is instructive: include a 2-row table. Example: Mutex vs Semaphore — include. Example: BOM (no alternative) — omit.                                                                    |
+| 5.15 `### 🔁 Flow / Lifecycle` | Concept has a distinct ordered multi-phase lifecycle (e.g. request lifecycle, GC phases) | Concept is a data structure, algorithm, or single-mechanism pattern | If the concept has exactly 2 phases: omit — not enough phases to warrant a lifecycle section. Example: HTTP Request lifecycle (5 phases) — include. Example: Hash Map (no phases) — omit.                                              |
 
 **3. Formatting rules:**
+
 - Precede every `###` with a `---` horizontal rule (blank line before and after both).
 - Keep ASCII diagrams ≤59 chars wide. Keep code lines ≤70 chars.
 
 **4. YAML rules:**
+
 - All required frontmatter fields must be present.
 - Double-quote any title value containing `: `.
 - Never use em dashes (`—`) anywhere in the file.
@@ -37,6 +50,7 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 ## Technical Dictionary Generator - Master Prompt v3.0
 
 > **Rules summary:** Four rule categories govern every entry — apply them in order:
+>
 > 1. **Content** — exact section sequence, BAD-before-GOOD code, min rows/modes
 > 2. **Conditional sections** — decision table in Default Behaviour above
 > 3. **Formatting** — `---` before `###`, diagram width, code line length
@@ -537,13 +551,14 @@ is written to disk (e.g. `⚡` → `âš¡`, `★` → `â˜…`).
 
 **Rules that must ALWAYS be followed when writing dictionary entry files via PowerShell:**
 
-| Rule | Correct | Wrong |
-|:-----|:--------|:------|
-| Interpreter | `pwsh` (PowerShell 7+) | `powershell` (Windows PS 5.1) |
-| Output encoding | `[System.Text.UTF8Encoding]::new($false)` | `[System.Text.Encoding]::UTF8` |
+| Rule             | Correct                                                | Wrong                                          |
+| :--------------- | :----------------------------------------------------- | :--------------------------------------------- |
+| Interpreter      | `pwsh` (PowerShell 7+)                                 | `powershell` (Windows PS 5.1)                  |
+| Output encoding  | `[System.Text.UTF8Encoding]::new($false)`              | `[System.Text.Encoding]::UTF8`                 |
 | Script execution | `pwsh -ExecutionPolicy Bypass -File tmp\write_XXX.ps1` | `powershell -ExecutionPolicy Bypass -File ...` |
 
 **Why:**
+
 - `pwsh` (PowerShell 7) defaults to UTF-8 for all file I/O, including script reading.
   A `.ps1` file saved as UTF-8 without BOM is read correctly — emoji in here-strings are preserved.
 - `[System.Text.Encoding]::UTF8` in .NET writes UTF-8 **with BOM** (bytes 0xEF 0xBB 0xBF at start).
@@ -551,6 +566,7 @@ is written to disk (e.g. `⚡` → `âš¡`, `★` → `â˜…`).
   Use `[System.Text.UTF8Encoding]::new($false)` which writes UTF-8 **without BOM**.
 
 **Correct PS1 script template:**
+
 ```powershell
 # ALWAYS use pwsh to execute this script:
 # pwsh -ExecutionPolicy Bypass -File tmp\write_XXX.ps1
@@ -573,6 +589,7 @@ Write-Host "Written: $((Get-Content $f -Encoding UTF8).Count) lines"
 ```
 
 **Verify encoding after writing:**
+
 ```powershell
 # First 3 bytes must NOT be 239,187,191 (UTF-8 BOM)
 $bytes = [IO.File]::ReadAllBytes($f)

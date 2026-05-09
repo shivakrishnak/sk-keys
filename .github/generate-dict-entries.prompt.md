@@ -7,7 +7,7 @@ tools:
   - replace_string_in_file
 ---
 
-# Technical Dictionary — Entry Generator
+# Technical Dictionary - Entry Generator
 
 Generate complete, spec-compliant v3.0 keyword entries for all stub files in a **category** or **tier**.
 
