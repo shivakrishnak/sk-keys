@@ -27,11 +27,11 @@ permalink: /distributed-systems/three-phase-commit/
 
 ⚡ TL;DR - Three-Phase Commit adds a PreCommit phase between 2PC's Prepare and Commit to eliminate blocking on coordinator failure — but the non-blocking guarantee requires a synchronous network assumption that real asynchronous networks violate, making 3PC unsafe under network partitions and almost unused in production.
 
-| Metadata | | |
-|:---|:---|:---|
-| **Depends on:** | DST-033, DST-032 | |
-| **Used by:** | | |
-| **Related:** | DST-033, DST-034, DST-024 | |
+| Metadata        |                           |     |
+| :-------------- | :------------------------ | :-- |
+| **Depends on:** | DST-033, DST-032          |     |
+| **Used by:**    |                           |     |
+| **Related:**    | DST-033, DST-034, DST-024 |     |
 
 ---
 
@@ -70,6 +70,7 @@ Dale Skeen's 1981 dissertation "Nonblocking Commit Protocols" introduced 3PC as 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **Unanimous YES before PreCommit:** coordinator sends PreCommit ONLY after receiving YES from all participants. PreCommit is a guarantee: "I (coordinator) have verified unanimous consent."
 2. **PreCommit propagates knowledge:** when a participant receives PreCommit: it knows all other participants voted YES (the coordinator verified this). This shared knowledge enables autonomous decision.
 3. **Timeout-based recovery:** if a participant times out waiting for Phase 3 (after receiving PreCommit): it contacts other participants. If all others also have PreCommit: safely commit. If any lacks PreCommit: abort.
@@ -93,6 +94,7 @@ The blocking problem in 2PC: after voting YES, a participant cannot distinguish 
 **SETUP:** 3 databases (DB1, DB2, DB3). Coordinator C. All in the same data center. No network issues.
 
 **COORDINATOR CRASH BETWEEN PHASE 2 AND PHASE 3 (3PC shines):**
+
 - C sends PreCommit to DB1, DB2, DB3 (all ACK)
 - C crashes before sending DoCommit
 - DB1 times out → contacts DB2: "did you get PreCommit?" → "yes"
@@ -102,6 +104,7 @@ The blocking problem in 2PC: after voting YES, a participant cannot distinguish 
 - No coordinator needed. Non-blocking.
 
 **NETWORK PARTITION BETWEEN PHASE 1 AND PHASE 2 (3PC fails):**
+
 - C: all YES votes received → sends PreCommit
 - Partition: DB1 gets PreCommit; DB2, DB3 do not (network split)
 - DB1 side: "I got PreCommit" → timeout → contacts DB2: "did you get PreCommit?" → cannot reach (partition)
@@ -118,6 +121,7 @@ The blocking problem in 2PC: after voting YES, a participant cannot distinguish 
 > 3PC is like a group text message vote. The organizer asks "can everyone make Saturday?" (Phase 1). If all say "yes," the organizer sends a follow-up "Confirmed: everyone is free Saturday" (Phase 2, PreCommit — everyone now knows everyone agreed). If the organizer's phone dies before sending the final "OK, event is on Saturday" (Phase 3): each person knows everyone agreed — they can each put Saturday in their calendar independently. BUT: if a phone carrier outage prevents some people from receiving the "Confirmed" message (Phase 2): some people know everyone agreed (they'll commit to Saturday) while others don't (they'll cancel). The calendar is inconsistent.
 
 **Mapping:**
+
 - **Group text organizer** → coordinator
 - **"Can everyone make it?"** → Phase 1 (CanCommit)
 - **"Confirmed: everyone free"** → Phase 2 (PreCommit — shared knowledge)
@@ -144,6 +148,7 @@ Where this analogy breaks down: people can call each other using different chann
 3PC's PreCommit phase introduces a critical state (PREPARED) that enables the recovery invariant: "a participant commits unilaterally if and only if all reachable participants are in PREPARED state." This invariant holds ONLY if the network is synchronous — every message either arrives or is definitively lost within bounded time T. In a synchronous network: a participant that timeouts at time T+epsilon knows the coordinator failed, not just delayed. But real networks are asynchronous: messages can be delayed arbitrarily (GC pause, TCP retransmission, congestion). When a partition occurs during Phase 2: some participants receive PreCommit, some don't. Participants on the PreCommit side timeout and commit. Participants on the non-PreCommit side timeout and abort. The states are mixed — 3PC's recovery invariant is violated. Paxos-commit solves this by replacing the coordinator with a Paxos group — the coordinator's decision is itself replicated via consensus (requiring 2f+1 replicas). Coordinator failure is now "Paxos election" not "single point of failure." This is the correct solution: not a different number of phases, but a fault-tolerant coordinator.
 
 **Expert Thinking Cues:**
+
 - "Someone suggests 3PC instead of 2PC for our database" → Ask: "What is our network's synchrony model? How do we handle network partitions?" If they can't answer: 3PC is inappropriate. Real networks are async.
 - "We need non-blocking distributed transactions" → Use Paxos-commit (CockroachDB, Spanner), not 3PC. Paxos-commit provides non-blocking without the synchrony assumption.
 - "3PC has a third round-trip but is still faster than 2PC in the failure case" → False. 3PC has 3 round-trips ALWAYS (even normal path). 2PC has 2 round-trips (normal path). 3PC is always slower than 2PC for successful transactions.
@@ -154,6 +159,7 @@ Where this analogy breaks down: people can call each other using different chann
 ### ⚙️ How It Works (Mechanism)
 
 **3PC state machine:**
+
 ```
 Coordinator states:
   INIT → WAIT → PREPARED → COMMIT/ABORT
@@ -196,6 +202,7 @@ Recovery (participant times out waiting for DoCommit):
 ```
 
 **The partition problem:**
+
 ```
 Normal (no partition):
   C: PreCommit → DB1 (ACK), DB2 (ACK), DB3 (ACK)
@@ -256,27 +263,27 @@ Every successful transaction pays 3 RTTs instead of 2PC's 2. For geo-distributed
 
 ### ⚖️ Comparison Table
 
-| Property | 2PC | 3PC | Paxos-Commit | Saga |
-|:---|:---|:---|:---|:---|
-| Blocking on coord. failure | Yes (indefinite) | No (sync network) | No | N/A |
-| Safe under partitions | Yes | No | Yes | N/A |
-| Network rounds (normal) | 2 RTTs | 3 RTTs | 2-4 RTTs | Async |
-| Synchrony assumption | No | Yes | No | No |
-| Production adoption | Wide (XA) | Near zero | High (CockroachDB) | High |
-| Global atomicity | Yes | Yes | Yes | No |
-| Practical complexity | Medium | High | High | Medium |
+| Property                   | 2PC              | 3PC               | Paxos-Commit       | Saga   |
+| :------------------------- | :--------------- | :---------------- | :----------------- | :----- |
+| Blocking on coord. failure | Yes (indefinite) | No (sync network) | No                 | N/A    |
+| Safe under partitions      | Yes              | No                | Yes                | N/A    |
+| Network rounds (normal)    | 2 RTTs           | 3 RTTs            | 2-4 RTTs           | Async  |
+| Synchrony assumption       | No               | Yes               | No                 | No     |
+| Production adoption        | Wide (XA)        | Near zero         | High (CockroachDB) | High   |
+| Global atomicity           | Yes              | Yes               | Yes                | No     |
+| Practical complexity       | Medium           | High              | High               | Medium |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|:---|:---|
-| "3PC fixes 2PC's blocking problem" | 3PC fixes blocking ONLY in synchronous networks. In asynchronous networks (all real networks), 3PC can commit on one partition side while aborting on the other — a WORSE outcome than 2PC's blocking (inconsistency vs. temporary unavailability). |
-| "3PC is the algorithm used by distributed databases that claim non-blocking" | CockroachDB, Spanner, and other modern distributed databases use Paxos-based (Raft-based) commit, NOT 3PC. They replicate the coordinator role via consensus — eliminating coordinator SPOF without the synchrony assumption. |
-| "3PC is 2PC with one extra round-trip" | 3PC adds a round-trip to EVERY transaction (including successful ones), not just failure scenarios. 2PC has 2 RTTs for normal flow. 3PC has 3 RTTs ALWAYS. 3PC makes every transaction 50% slower than 2PC. |
-| "3PC is safer than 2PC under partitions" | 3PC is LESS safe than 2PC under partitions. 2PC blocks (temporary unavailability). 3PC can split-commit (permanent inconsistency). Inconsistency is worse than unavailability for correctness-critical systems. CAP theorem: 3PC chooses availability over consistency under partition; 2PC chooses consistency over availability. |
-| "Real databases will implement 3PC as hardware gets more reliable" | Hardware reliability doesn't eliminate network partitions (different failure model). The synchrony assumption required by 3PC is a network model assumption, not a hardware assumption. Even infinitely reliable nodes can be partitioned by a network switch failure. Paxos/Raft solved this correctly; 3PC did not. |
+| Misconception                                                                | Reality                                                                                                                                                                                                                                                                                                                            |
+| :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "3PC fixes 2PC's blocking problem"                                           | 3PC fixes blocking ONLY in synchronous networks. In asynchronous networks (all real networks), 3PC can commit on one partition side while aborting on the other — a WORSE outcome than 2PC's blocking (inconsistency vs. temporary unavailability).                                                                                |
+| "3PC is the algorithm used by distributed databases that claim non-blocking" | CockroachDB, Spanner, and other modern distributed databases use Paxos-based (Raft-based) commit, NOT 3PC. They replicate the coordinator role via consensus — eliminating coordinator SPOF without the synchrony assumption.                                                                                                      |
+| "3PC is 2PC with one extra round-trip"                                       | 3PC adds a round-trip to EVERY transaction (including successful ones), not just failure scenarios. 2PC has 2 RTTs for normal flow. 3PC has 3 RTTs ALWAYS. 3PC makes every transaction 50% slower than 2PC.                                                                                                                        |
+| "3PC is safer than 2PC under partitions"                                     | 3PC is LESS safe than 2PC under partitions. 2PC blocks (temporary unavailability). 3PC can split-commit (permanent inconsistency). Inconsistency is worse than unavailability for correctness-critical systems. CAP theorem: 3PC chooses availability over consistency under partition; 2PC chooses consistency over availability. |
+| "Real databases will implement 3PC as hardware gets more reliable"           | Hardware reliability doesn't eliminate network partitions (different failure model). The synchrony assumption required by 3PC is a network model assumption, not a hardware assumption. Even infinitely reliable nodes can be partitioned by a network switch failure. Paxos/Raft solved this correctly; 3PC did not.              |
 
 ---
 
@@ -287,6 +294,7 @@ Every successful transaction pays 3 RTTs instead of 2PC's 2. For geo-distributed
 **Symptom:** Financial transaction shows balance deducted on Database A but NOT added to Database B. Both databases claim no active transactions. No error in application logs. The inconsistency is discovered during end-of-day reconciliation.
 **Root Cause:** A network partition occurred during Phase 2 (PreCommit) of a 3PC transaction. DB A received PreCommit (state=PREPARED), timed out, found no other reachable participants, and committed unilaterally. DB B never received PreCommit (state=INIT), timed out, and aborted. Result: split-brain commit.
 **Diagnostic:**
+
 ```bash
 # Check for brief network partition during the transaction window:
 # (If 3PC were in use — hypothetical)
@@ -302,12 +310,13 @@ psql -c "
     '2024-01-15 14:30:00' AND '2024-01-15 14:31:00';"
 
 # Audit: did both databases apply the transaction?
-psql -h dbA -c "SELECT * FROM audit_log 
+psql -h dbA -c "SELECT * FROM audit_log
                WHERE xid='abc-123';"
-psql -h dbB -c "SELECT * FROM audit_log 
+psql -h dbB -c "SELECT * FROM audit_log
                WHERE xid='abc-123';"
 # If dbA has COMMITTED and dbB has ABORTED: split-brain
 ```
+
 **Fix:**
 BAD: Implementing 3PC for production distributed transactions.
 GOOD: Use 2PC (blocks, doesn't split) or Paxos-commit (non-blocking AND partition-safe). For the inconsistency: requires manual data reconciliation and application-layer audit to determine which state is correct.
@@ -318,6 +327,7 @@ GOOD: Use 2PC (blocks, doesn't split) or Paxos-commit (non-blocking AND partitio
 **Symptom:** 3PC participant detects coordinator timeout (long GC pause on coordinator). Participant queries others: all PREPARED. Participant commits unilaterally. Coordinator recovers from GC, sends DoCommit — which is correct. But coordinator never receives ACK (participant already committed and cleaned up state). Coordinator marks transaction as pending — attempts recovery — eventually rolls back its side (thinking participant failed).
 **Root Cause:** The participant's timeout fired during coordinator GC pause (not a crash). Participant's autonomous commit was correct, but coordinator state machine diverged. This is the "false timeout" problem — async networks make timeout-based failure detection unreliable.
 **Diagnostic:**
+
 ```bash
 # Check coordinator GC logs for pauses > participant timeout:
 grep "GC\|pause\|Full GC\|stop-the-world" \
@@ -331,6 +341,7 @@ grep "GC\|pause\|Full GC\|stop-the-world" \
 # Coordinator log: still pending at 14:30:45
 # (GC pause 14:30:30 to 14:31:15 = coordinator unavailable 45s)
 ```
+
 **Fix:**
 BAD: Short timeout values in environments with JVM GC pauses.
 GOOD: (1) Don't use 3PC. (2) If using 3PC: set participant timeout > worst-case GC pause. (3) Use GC algorithms that minimize stop-the-world (G1, ZGC). (4) Use Paxos-based commit where coordinator failure = Raft leader election, not timeout-based.
@@ -341,6 +352,7 @@ GOOD: (1) Don't use 3PC. (2) If using 3PC: set participant timeout > worst-case 
 **Symptom:** During recovery (after coordinator timeout), a participant contacts other participants directly to determine PREPARED/INIT state. An attacker intercepts these queries and responds with false state ("all PREPARED") causing a participant to commit a transaction that should have been aborted.
 **Root Cause:** 3PC's recovery requires inter-participant communication — participants must query each other's state. If this channel is not authenticated: an attacker can inject false state responses, manipulating transaction outcomes. In 2PC: participants only communicate with the coordinator (single trusted channel). In 3PC: participants communicate with each other during recovery — expanding the attack surface.
 **Diagnostic:**
+
 ```bash
 # Check if inter-participant recovery communication is authenticated:
 # Wireshark capture on participant-to-participant recovery port:
@@ -352,6 +364,7 @@ openssl s_client -connect participant2-ip:5432 \
   -cert /etc/ssl/client.crt -key /etc/ssl/client.key
 # If connection succeeds without certs: unauthenticated channel
 ```
+
 **Fix:**
 BAD: Recovery protocol running over unencrypted, unauthenticated connections.
 GOOD: (1) mTLS between all participants for recovery protocol. (2) Hardware-backed certificate authentication. (3) Network-level isolation: participants only reachable from each other and the coordinator, not from arbitrary network hosts.
@@ -362,13 +375,16 @@ GOOD: (1) mTLS between all participants for recovery protocol. (2) Hardware-back
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - DST-033 - Two-Phase Commit (2PC) (3PC is a direct extension of 2PC — understanding 2PC is mandatory)
 - DST-032 - Failure Modes (understanding crash vs. partition failures explains why 3PC fails in async networks)
 
 **Builds On This (learn these next):**
+
 - Nothing directly in this category — 3PC is a dead end in practice
 
 **Alternatives / Comparisons:**
+
 - DST-033 - Two-Phase Commit (2PC blocking vs. 3PC non-blocking trade-off)
 - DST-034 - Two-Phase Commit practical (XA implementations that use 2PC, not 3PC)
 - DST-024 - Paxos (Paxos-commit is the practical non-blocking alternative to 3PC)
@@ -408,6 +424,7 @@ GOOD: (1) mTLS between all participants for recovery protocol. (2) Hardware-back
 ```
 
 **If you remember only 3 things:**
+
 1. 3PC adds PreCommit phase: "everyone knows everyone voted YES." This allows participants to commit autonomously if coordinator crashes after PreCommit.
 2. 3PC is only safe in synchronous networks. Real networks are asynchronous — partitions cause split-brain commits (inconsistency), which is worse than 2PC's blocking.
 3. Almost no production system uses 3PC. Modern alternative: Paxos-commit (Raft-replicated coordinator) — non-blocking AND partition-safe. Use Saga for eventual consistency without 2PC/3PC complexity.
@@ -423,6 +440,7 @@ GOOD: (1) mTLS between all participants for recovery protocol. (2) Hardware-back
 Adding protocol phases to eliminate one failure mode often introduces a new, harder failure mode in a different scenario. 2PC blocks on coordinator failure — 3PC eliminated this by adding PreCommit, but introduced split-brain under partition. The correct fix for blocking was not a third phase but a fault-tolerant coordinator (Paxos/Raft replication). When designing protocols: identify the COMPLETE failure space before proposing fixes. A fix that handles failure mode A while introducing failure mode B may be worse, especially if B is less detectable than A (inconsistency is harder to detect than blocking).
 
 **Where else this pattern appears:**
+
 - **TCP three-way handshake (not 3PC, but three-phase coordination):** TCP's SYN → SYN-ACK → ACK establishes bidirectional communication with three messages. Each phase ensures the other party is ready before committing resources (ports, buffers). Like 3PC's PreCommit, the SYN-ACK propagates "I received your readiness signal" before the final ACK completes the handshake. Unlike 3PC: TCP handles half-open connections explicitly (timeout + RST) — TCP's recovery protocol is more robust than 3PC's because TCP does NOT assume a synchronous network.
 - **Distributed lock release protocols (ticket + grant + confirm):** Some distributed lock managers use a 3-phase grant: (1) request lock (CanCommit), (2) coordinator grants tentatively / notifies all waiters "lock will be granted" (PreCommit — prevents new lock requests from racing), (3) coordinator confirms grant to requester (DoCommit). The PreCommit-equivalent prevents lock convoy races. But under partition: same split-brain risk as 3PC — two requesters may both believe they have the lock. Production lock managers (Redlock, ZooKeeper) use quorum-based approaches (Raft-like) rather than 3PC-like protocols.
 - **Atomic broadcast protocols in cluster management:** Cluster managers (Pacemaker, Kubernetes leader election) use a "propose → prepare → commit" sequence when electing a new leader. The "prepare" phase corresponds to PreCommit: once a majority acknowledges "I'm prepared to accept this leader," the cluster can proceed even if the original proposer fails. Unlike 3PC: these systems use quorum (majority of nodes, not all nodes) — eliminating the unanimity requirement that makes 3PC fragile. This is Paxos's key improvement over 3PC's all-or-nothing unanimity assumption.
@@ -438,12 +456,10 @@ Three-Phase Commit has been known since 1981 and provably eliminates 2PC's block
 ### 🧠 Think About This Before We Continue
 
 **Q1 (E - First Principles):** 3PC's safety guarantee requires that all participants can determine their recovery action (commit or abort) by querying other participants' state after coordinator failure. This requires "communication reliability" — participants can eventually reach each other. But the FLP impossibility theorem (1985) states that in an asynchronous network with even one possible crash failure: no deterministic protocol can guarantee both safety AND liveness. How does FLP apply to 3PC? Specifically: does 3PC satisfy safety (consistency) and/or liveness (termination) in an async network? Where does 3PC fail relative to FLP's conditions?
-*Hint:* 3PC in asynchronous network: under partition, some participants can be permanently unreachable. Participant in PREPARED state that cannot reach others is STUCK (liveness violation) — cannot determine commit/abort without knowing others' state. If it commits unilaterally after timeout: safety violation (others may abort). 3PC cannot satisfy BOTH safety AND liveness in async network: safety violation under partition commit scenario, liveness violation in permanent partition without timeout unilateral commit. FLP says this is unavoidable — 3PC chose neither correctly (violates both in different failure scenarios). Paxos: sacrifices liveness under partition (waits for quorum) but preserves safety. Compare: which failure is more tolerable for your system?
+_Hint:_ 3PC in asynchronous network: under partition, some participants can be permanently unreachable. Participant in PREPARED state that cannot reach others is STUCK (liveness violation) — cannot determine commit/abort without knowing others' state. If it commits unilaterally after timeout: safety violation (others may abort). 3PC cannot satisfy BOTH safety AND liveness in async network: safety violation under partition commit scenario, liveness violation in permanent partition without timeout unilateral commit. FLP says this is unavoidable — 3PC chose neither correctly (violates both in different failure scenarios). Paxos: sacrifices liveness under partition (waits for quorum) but preserves safety. Compare: which failure is more tolerable for your system?
 
 **Q2 (F - Comparison):** Compare 3PC and Paxos-commit on three dimensions: (1) protocol complexity (number of messages, phases), (2) safety guarantees under network partitions, (3) failure recovery mechanism. Why did production distributed databases choose Paxos-commit (CockroachDB, Spanner) over 3PC, given both provide non-blocking commitment? What specific property of Paxos makes it better than 3PC for the partition case?
-*Hint:* 3PC recovery: participant queries others, needs response from ALL to determine state — unanimity required even in recovery. Paxos-commit recovery: coordinator role (Paxos leader) is re-elected by QUORUM (majority) — no need for ALL nodes to respond, only majority. Under partition: Paxos can elect a new leader on the majority side and proceed — liveness maintained for the majority partition. Minority partition blocks (cannot make progress without majority) — safety maintained. 3PC requires all participants in recovery — under partition, recovery blocks on unreachable participants, leading to timeout-based autonomous decision — safety violation possible. The key Paxos property: quorum (majority, not unanimity) for progress decisions. How does this single change (unanimity → quorum) eliminate 3PC's partition problem?
+_Hint:_ 3PC recovery: participant queries others, needs response from ALL to determine state — unanimity required even in recovery. Paxos-commit recovery: coordinator role (Paxos leader) is re-elected by QUORUM (majority) — no need for ALL nodes to respond, only majority. Under partition: Paxos can elect a new leader on the majority side and proceed — liveness maintained for the majority partition. Minority partition blocks (cannot make progress without majority) — safety maintained. 3PC requires all participants in recovery — under partition, recovery blocks on unreachable participants, leading to timeout-based autonomous decision — safety violation possible. The key Paxos property: quorum (majority, not unanimity) for progress decisions. How does this single change (unanimity → quorum) eliminate 3PC's partition problem?
 
 **Q3 (B - Scale):** At 100,000 transactions per second (TPS), each transaction involving 3 XA participants geo-distributed across 3 data centers (100ms RTT each): calculate the theoretical minimum latency for (a) 2PC, (b) 3PC. Then calculate the total system throughput impact: how many concurrent transactions must be in-flight at any moment to sustain 100,000 TPS for each protocol? What does this imply about lock contention on hot rows?
-*Hint:* 2PC latency: 2 RTTs × 100ms = 200ms minimum. 3PC latency: 3 RTTs × 100ms = 300ms minimum. Little's Law: N = TPS × latency. For 100,000 TPS: 2PC: 100,000 × 0.2s = 20,000 concurrent transactions. 3PC: 100,000 × 0.3s = 30,000 concurrent transactions. Lock contention: 30,000 concurrent transactions each holding locks on rows. If any rows are "hot" (accessed by multiple transactions): 30,000 contenders vs 20,000. 50% more concurrent lock holders = significantly higher contention probability. How does this latency/concurrency relationship explain why even a non-blocking protocol (3PC) can reduce throughput compared to a blocking one (2PC) in high-throughput scenarios?
-
-
+_Hint:_ 2PC latency: 2 RTTs × 100ms = 200ms minimum. 3PC latency: 3 RTTs × 100ms = 300ms minimum. Little's Law: N = TPS × latency. For 100,000 TPS: 2PC: 100,000 × 0.2s = 20,000 concurrent transactions. 3PC: 100,000 × 0.3s = 30,000 concurrent transactions. Lock contention: 30,000 concurrent transactions each holding locks on rows. If any rows are "hot" (accessed by multiple transactions): 30,000 contenders vs 20,000. 50% more concurrent lock holders = significantly higher contention probability. How does this latency/concurrency relationship explain why even a non-blocking protocol (3PC) can reduce throughput compared to a blocking one (2PC) in high-throughput scenarios?

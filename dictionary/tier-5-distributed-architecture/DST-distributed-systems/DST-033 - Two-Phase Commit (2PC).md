@@ -27,11 +27,11 @@ permalink: /distributed-systems/two-phase-commit/
 
 ⚡ TL;DR - Two-Phase Commit is the foundational protocol for distributed atomic commitment: a coordinator asks all participants "can you commit?" (Phase 1/Prepare), then issues the global decision (Phase 2/Commit or Abort) — but a coordinator crash between phases leaves participants indefinitely blocked, which is 2PC's fundamental and unsolvable flaw.
 
-| Metadata | | |
-|:---|:---|:---|
-| **Depends on:** | DST-032, DST-006 | |
-| **Used by:** | DST-035 | |
-| **Related:** | DST-035, DST-034, DST-032, DST-024 | |
+| Metadata        |                                    |     |
+| :-------------- | :--------------------------------- | :-- |
+| **Depends on:** | DST-032, DST-006                   |     |
+| **Used by:**    | DST-035                            |     |
+| **Related:**    | DST-035, DST-034, DST-032, DST-024 |     |
 
 ---
 
@@ -70,6 +70,7 @@ Gray's "Notes on Data Base Operating Systems" (1978) formalized 2PC as the solut
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **Unanimity:** all participants must vote YES for the transaction to commit. A single NO vote causes abort.
 2. **Durability before decision:** participants persist their vote to disk BEFORE responding. If coordinator crashes: participant can survive crash and still know its vote.
 3. **Decision irreversibility:** once a participant commits (receives and applies the Commit decision), it cannot be rolled back. This is the key ACID durability point.
@@ -93,6 +94,7 @@ The blocking problem arises from invariant 4: participants must wait for the coo
 **SETUP:** Bank transfer: debit Account A (DB1, Paris), credit Account B (DB2, London). Coordinator C in Frankfurt.
 
 **NORMAL PATH:**
+
 - C → DB1: `PREPARE tx-1 (debit A €100)` → DB1: locks A, writes to WAL, replies `YES`
 - C → DB2: `PREPARE tx-1 (credit B €100)` → DB2: locks B, writes to WAL, replies `YES`
 - C: all YES → writes `COMMIT tx-1` to its log → sends `COMMIT` to DB1, DB2
@@ -101,6 +103,7 @@ The blocking problem arises from invariant 4: participants must wait for the coo
 - C: transaction complete
 
 **COORDINATOR CRASH BETWEEN PHASES:**
+
 - C → DB1: `PREPARE tx-1` → DB1: `YES` (A is LOCKED)
 - C → DB2: `PREPARE tx-1` → DB2: `YES` (B is LOCKED)
 - C CRASHES (disk failure) → never sends Phase 2
@@ -118,6 +121,7 @@ The blocking problem arises from invariant 4: participants must wait for the coo
 > 2PC is like a conference call where everyone must agree on a decision, but only the meeting chair knows everyone's vote. Each participant whispers their vote to the chair privately (Phase 1). The chair then announces the final decision to everyone (Phase 2). If the chair loses internet connection between the whispers and the announcement: every participant is frozen — they've privately committed to a position but can't act on it without the chair's announcement.
 
 **Mapping:**
+
 - **Meeting chair** → coordinator
 - **Participants whispering votes** → Phase 1 (Prepare)
 - **Chair announces decision** → Phase 2 (Commit/Abort)
@@ -143,6 +147,7 @@ XA protocol (ISO/IEC 11404 standard for 2PC): `xa_prepare(xid)` → `xa_commit(x
 2PC is the minimal protocol for distributed atomic commitment in a fully asynchronous network — proven by Fischer, Lynch, Paterson (FLP, 1985). Any protocol that provides atomic commitment in an asynchronous network must have at least one blocking state (a state where a participant cannot make progress without hearing from another node). 2PC's designers accepted this limitation by minimizing the blocking window: blocking only occurs if the coordinator fails AFTER phase 1 completes but BEFORE phase 2 starts. In practice: this window is small (milliseconds) if the coordinator is healthy. The real problem is coordinator failure DURING this window — rare in normal operation, catastrophic in failure scenarios. Modern alternatives (Saga, Paxos-commit) either accept weaker guarantees (Saga: no atomicity, only eventual consistency) or add fault-tolerant coordinator redundancy (Paxos-commit: coordinator failure is recovered by Raft consensus).
 
 **Expert Thinking Cues:**
+
 - "Our JTA transaction is stuck in PREPARED state" → Coordinator crashed or lost its transaction log. JTA recovery is trying to resolve it. Check coordinator's transaction log: `atomikos-transactions.log` or `narayana objectstore`. Manually roll back if coordinator can't recover.
 - "Our microservices use 2PC between services — is that a problem?" → Yes. Network calls between microservices are orders of magnitude less reliable than local DB calls. 2PC between services means any service crash during the prepare window blocks the entire chain.
 - "Our XA transactions are much slower than local transactions" → Typical 2PC overhead: 2× network RTTs + coordinator logging. For 3-participant transactions across DCs: 100ms RTT each. 2PC adds 200ms minimum. Alternatives: denormalize data, accept eventual consistency, or use Saga.
@@ -153,6 +158,7 @@ XA protocol (ISO/IEC 11404 standard for 2PC): `xa_prepare(xid)` → `xa_commit(x
 ### ⚙️ How It Works (Mechanism)
 
 **2PC state machine:**
+
 ```
 Coordinator states:
   INIT → PREPARING → COMMITTING/ABORTING → DONE
@@ -191,6 +197,7 @@ Participant Phase 2 handling:
 ```
 
 **Blocking window (the fatal flaw):**
+
 ```
 Timeline showing blocking window:
 
@@ -245,6 +252,7 @@ With 100 participants: coordinator sends 100 Prepare messages, awaits 100 YES vo
 ### 💻 Code Example
 
 **BAD - Manual distributed transaction without 2PC (inconsistent on failure):**
+
 ```java
 // Not using 2PC: debit one DB then credit another
 // If crash between: money disappears
@@ -273,6 +281,7 @@ public class UnsafeTransfer {
 ```
 
 **GOOD - 2PC via JTA with XA datasources:**
+
 ```java
 import javax.transaction.UserTransaction;
 import javax.sql.XADataSource;
@@ -321,6 +330,7 @@ public class SafeTransfer {
 ```
 
 **Configuring JTA recovery (Atomikos):**
+
 ```yaml
 # application.yml - Atomikos JTA transaction manager
 spring:
@@ -339,6 +349,7 @@ spring:
 ```
 
 **How to test / verify correctness:**
+
 ```bash
 # Test 2PC recovery:
 # 1. Start a transaction, prepare both DBs
@@ -364,25 +375,25 @@ psql -c "SELECT * FROM pg_prepared_xacts;"
 
 ### ⚖️ Comparison Table
 
-| Protocol | Blocking on coord. failure | Rounds | Node count | Use case |
-|:---|:---|:---|:---|:---|
-| 2PC | Yes (indefinite) | 2 RTTs | N participants | RDBMS distributed transactions |
-| 3PC | No (with sync network) | 3 RTTs | N participants | Avoided in practice |
-| Paxos-Commit | No (Paxos handles coord.) | 2-4 RTTs | 2f+1 per coord. | CockroachDB, Spanner |
-| Saga | N/A (no global atomicity) | Async | N services | Microservices eventual consistency |
-| XA | Yes (same as 2PC) | 2 RTTs | N XA resources | Java enterprise apps |
+| Protocol     | Blocking on coord. failure | Rounds   | Node count      | Use case                           |
+| :----------- | :------------------------- | :------- | :-------------- | :--------------------------------- |
+| 2PC          | Yes (indefinite)           | 2 RTTs   | N participants  | RDBMS distributed transactions     |
+| 3PC          | No (with sync network)     | 3 RTTs   | N participants  | Avoided in practice                |
+| Paxos-Commit | No (Paxos handles coord.)  | 2-4 RTTs | 2f+1 per coord. | CockroachDB, Spanner               |
+| Saga         | N/A (no global atomicity)  | Async    | N services      | Microservices eventual consistency |
+| XA           | Yes (same as 2PC)          | 2 RTTs   | N XA resources  | Java enterprise apps               |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|:---|:---|
-| "2PC guarantees no data loss on coordinator failure" | 2PC guarantees atomicity: all commit or all abort. But if the coordinator crashes BETWEEN phases: the outcome is UNKNOWN until the coordinator recovers. The data is not lost — but the transaction is in limbo. Indefinite blocking, not data loss. |
-| "Saga is a drop-in replacement for 2PC" | Saga provides eventual consistency, not atomicity. With Saga: partial completion is possible — some services commit, others compensate. Saga is appropriate for business-level compensation (cancel order); not for financial transactions requiring strict atomicity (bank transfer). |
-| "2PC is only used in enterprise Java" | 2PC is used internally in many distributed databases: CockroachDB, Google Spanner, Amazon Aurora. The difference: they wrap 2PC with Raft-based fault-tolerant coordinators, eliminating the blocking problem at the cost of complexity. |
-| "Timeout-based abort solves the blocking problem" | If a participant times out waiting for Phase 2 and aborts: it can release its lock. BUT: if the coordinator actually sent a Commit to other participants (who committed): you now have partial commit (some committed, one aborted). This violates atomicity. Timeout-based abort can break consistency. |
-| "2PC latency is just 2 network round-trips" | Minimum: 2 RTTs (both phases). Realistic: 2 RTTs + coordinator logging (fsync) + participant logging (fsync) + potential retries. For geo-distributed participants (100ms RTT per hop): 2PC adds 200ms minimum, potentially much more with retries and coordinator logging. |
+| Misconception                                        | Reality                                                                                                                                                                                                                                                                                                  |
+| :--------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "2PC guarantees no data loss on coordinator failure" | 2PC guarantees atomicity: all commit or all abort. But if the coordinator crashes BETWEEN phases: the outcome is UNKNOWN until the coordinator recovers. The data is not lost — but the transaction is in limbo. Indefinite blocking, not data loss.                                                     |
+| "Saga is a drop-in replacement for 2PC"              | Saga provides eventual consistency, not atomicity. With Saga: partial completion is possible — some services commit, others compensate. Saga is appropriate for business-level compensation (cancel order); not for financial transactions requiring strict atomicity (bank transfer).                   |
+| "2PC is only used in enterprise Java"                | 2PC is used internally in many distributed databases: CockroachDB, Google Spanner, Amazon Aurora. The difference: they wrap 2PC with Raft-based fault-tolerant coordinators, eliminating the blocking problem at the cost of complexity.                                                                 |
+| "Timeout-based abort solves the blocking problem"    | If a participant times out waiting for Phase 2 and aborts: it can release its lock. BUT: if the coordinator actually sent a Commit to other participants (who committed): you now have partial commit (some committed, one aborted). This violates atomicity. Timeout-based abort can break consistency. |
+| "2PC latency is just 2 network round-trips"          | Minimum: 2 RTTs (both phases). Realistic: 2 RTTs + coordinator logging (fsync) + participant logging (fsync) + potential retries. For geo-distributed participants (100ms RTT per hop): 2PC adds 200ms minimum, potentially much more with retries and coordinator logging.                              |
 
 ---
 
@@ -393,9 +404,10 @@ psql -c "SELECT * FROM pg_prepared_xacts;"
 **Symptom:** A critical table in the database has rows locked indefinitely. All writes to those rows are blocked. The application log shows the JTA coordinator crashed 2 hours ago. The `pg_prepared_xacts` table shows pending XA transactions from 2 hours ago.
 **Root Cause:** JTA coordinator crashed during the blocking window (after Prepare, before Commit). PostgreSQL (XA participant) has rows locked in PREPARED state. No other node can resolve the transaction without coordinator recovery.
 **Diagnostic:**
+
 ```bash
 # PostgreSQL: find in-doubt prepared transactions:
-psql -c "SELECT gid, owner, database, prepared, transaction 
+psql -c "SELECT gid, owner, database, prepared, transaction
          FROM pg_prepared_xacts ORDER BY prepared;"
 # gid = XA transaction ID (e.g., "Atomikos:1234567")
 # prepared = when it was prepared (how long it's been stuck)
@@ -413,6 +425,7 @@ psql -c "ROLLBACK PREPARED 'transaction_id';"
 # DANGER: manual resolution — must know the correct outcome
 # from application-layer audit logs before choosing
 ```
+
 **Fix:**
 BAD: Manually rolling back all stuck transactions without checking application-layer intent.
 GOOD: (1) Restore coordinator (Atomikos/Narayana) from backup and let it replay recovery. (2) Check application audit log to determine intended outcome. (3) Manually commit or abort based on audit log evidence.
@@ -423,9 +436,10 @@ GOOD: (1) Restore coordinator (Atomikos/Narayana) from backup and let it replay 
 **Symptom:** Database administrator manually resolves a stuck 2PC transaction by "heuristic commit" — assuming the transaction should commit based on the current state. Later: the application coordinator recovers and discovers the transaction was actually ABORTED (one participant voted NO before the crash). Now one participant has committed and another has aborted. Data inconsistency.
 **Root Cause:** "Heuristic decision" in XA — databases can be manually forced to commit or abort a stuck prepared transaction (bypassing coordinator authority). If the manual decision contradicts the coordinator's intended outcome: inconsistency.
 **Diagnostic:**
+
 ```bash
 # PostgreSQL: check heuristic decisions:
-psql -c "SELECT * FROM pg_prepared_xacts 
+psql -c "SELECT * FROM pg_prepared_xacts
          WHERE gid LIKE '%heuristic%';"
 # Or check DB logs for "heuristic abort/commit" messages:
 grep -i "heuristic" /var/log/postgresql/postgresql.log | tail -20
@@ -434,6 +448,7 @@ grep -i "heuristic" /var/log/postgresql/postgresql.log | tail -20
 grep "HeuristicMixedException\|HeuristicRollbackException" \
   /var/log/app/application.log | tail -20
 ```
+
 **Fix:**
 BAD: Making heuristic decisions without consulting application-layer audit logs.
 GOOD: Never make heuristic decisions unless coordinator log is confirmed permanently lost. If forced to: use application-layer audit (event log) to determine intended outcome. After heuristic decision: immediately audit all affected records for consistency.
@@ -444,6 +459,7 @@ GOOD: Never make heuristic decisions unless coordinator log is confirmed permane
 **Symptom:** An attacker with access to the 2PC coordinator injects a `COMMIT` for a fraudulent transaction. The coordinator sends `COMMIT tx-999 (transfer €1M from victim to attacker)` to all participants. Both participants commit — they each received valid COMMIT messages with the correct XID. Transaction succeeds. No participant can reject a valid COMMIT from the coordinator.
 **Root Cause:** 2PC participants are designed to follow the coordinator's Phase 2 decision unconditionally. Once a participant has voted YES in Phase 1: it MUST commit if the coordinator says COMMIT. Participants have no authority to reject a valid Phase 2 decision. Compromising the coordinator = compromising all participants.
 **Diagnostic:**
+
 ```bash
 # Audit coordinator's transaction decisions:
 # Atomikos: check transaction log for unexpected XIDs:
@@ -452,11 +468,12 @@ grep "commit\|abort" /var/atomikos/logs/*.log | \
 # Any unexpected XIDs in commit log = potential injection
 
 # PostgreSQL: audit XA commits:
-psql -c "SELECT * FROM pg_stat_activity 
+psql -c "SELECT * FROM pg_stat_activity
          WHERE state = 'idle in transaction'
          AND query_start < now() - interval '1 minute';"
 # Unusual activity patterns may indicate injection
 ```
+
 **Fix:**
 BAD: Coordinator with network-accessible management interface (no auth).
 GOOD: (1) Coordinator access restricted to application servers only (firewall). (2) Transaction log integrity: sign coordinator log entries with HMAC. (3) Database-level row-level security: transactions can only modify rows the application user owns (no coordinator bypass). (4) Anomaly detection: alert on unusually large transactions.
@@ -467,13 +484,16 @@ GOOD: (1) Coordinator access restricted to application servers only (firewall). 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - DST-032 - Failure Modes (2PC handles crash-recovery failures — understanding the failure model is required)
 - DST-006 - CAP Theorem (2PC sacrifices availability during coordinator failure — CAP context is essential)
 
 **Builds On This (learn these next):**
+
 - DST-035 - Three-Phase Commit (3PC directly extends 2PC to reduce blocking)
 
 **Alternatives / Comparisons:**
+
 - DST-034 - Two-Phase Commit (practical implementation focus vs. this entry's algorithmic focus)
 - DST-035 - Three-Phase Commit (3PC's improvement over 2PC's blocking)
 - DST-024 - Paxos (Paxos-commit uses consensus to eliminate coordinator SPOF)
@@ -512,6 +532,7 @@ GOOD: (1) Coordinator access restricted to application servers only (firewall). 
 ```
 
 **If you remember only 3 things:**
+
 1. 2PC = Phase 1 (prepare, collect YES votes) + Phase 2 (broadcast commit/abort). Unanimous YES required for commit.
 2. Coordinator crash between phases → participants blocked indefinitely (locks held). This is the blocking problem — mathematically unavoidable in async networks.
 3. Modern alternatives: Saga (eventual consistency, no coordinator), Paxos-commit (Raft-backed coordinator eliminates SPOF). XA is 2PC for relational databases.
@@ -527,6 +548,7 @@ GOOD: (1) Coordinator access restricted to application servers only (firewall). 
 Consensus always requires a leader phase and a commit phase — you can't do it in one round in an asynchronous network. Any protocol that needs "everyone agrees before we proceed" will have at least two rounds: one to collect intent, one to broadcast decision. The blocking problem emerges because the decision-broadcaster (coordinator) is a single actor. To eliminate blocking: replicate the coordinator (Paxos-commit) or accept weaker guarantees (Saga). The engineering lesson: single-coordinator designs are simpler to implement but fragile to failure; replicated-coordinator designs are complex but fault-tolerant. Choose based on the required availability guarantees.
 
 **Where else this pattern appears:**
+
 - **Git pull request reviews (informal 2PC):** A PR requires all required reviewers to approve (Phase 1: "can you approve?"). When all approve: the merge button is enabled — but the author must still click "Merge" (Phase 2: coordinator issues final commit). If the repo goes offline between all approvals and the merge click: the PR sits in PREPARED state (all approvals, waiting for final merge). This informal 2PC is why some teams configure auto-merge (eliminating the coordinator's Phase 2 delay) and others require manual merge (keeping human coordinator control).
 - **Airline baggage check-in (operational 2PC):** Checking in a passenger with connecting flights: each leg's aircraft must "prepare" capacity (baggage weight allocation). The coordinator (check-in agent) asks each aircraft's manifest "can you take 32kg of luggage on leg 1 and 28kg on leg 2?" (Phase 1). Only if both say yes: the agent issues boarding passes (Phase 2 commit). If the agent's system crashes after capacity is allocated but before boarding passes are issued: passenger is stuck — capacity is reserved on planes but no boarding pass exists. Airlines resolve this with database recovery (coordinator log) — same as 2PC recovery.
 - **Human decision-making in committees (social 2PC):** A board vote on a resolution. The chair asks each member "do you vote YES?" in sequence (Phase 1). If all say YES: chair announces "the resolution passes" (Phase 2). If the chair suffers a medical emergency between collecting votes and announcing: the vote result is in limbo — each member said YES privately, but the result is never officially declared. Organizations solve this with documented voting records (coordinator log) and deputy chairs (coordinator redundancy) — the same solutions as database 2PC.
@@ -542,12 +564,10 @@ Two-Phase Commit was formalized in 1978, but the distributed transaction systems
 ### 🧠 Think About This Before We Continue
 
 **Q1 (D - Root Cause):** A Spring Boot application using JTA (Atomikos) is running normally. Suddenly, a PostgreSQL participant becomes unreachable during Phase 1. The coordinator waits 30 seconds (XA timeout), then aborts the transaction. This correctly maintains atomicity. But the PostgreSQL DBA reports: "we're seeing locks held on table T for 30 seconds during every transaction — even successful ones." What is happening, and is this related to the coordinator timeout? If so, why does a SUCCESSFUL transaction also hold locks for 30 seconds?
-*Hint:* Phase 1 locks resources before sending YES. If any participant is slow to respond to Prepare (not down, just slow): the coordinator waits for ALL participants' responses before sending Phase 2. During this wait: ALL participants have locks held. A slow-to-respond participant causes ALL others to hold locks until the slowest one responds or times out. Check: is there a slow XA participant causing a lock convoy? Which service's Phase 1 response is slowest? Use XA prepare timing metrics.
+_Hint:_ Phase 1 locks resources before sending YES. If any participant is slow to respond to Prepare (not down, just slow): the coordinator waits for ALL participants' responses before sending Phase 2. During this wait: ALL participants have locks held. A slow-to-respond participant causes ALL others to hold locks until the slowest one responds or times out. Check: is there a slow XA participant causing a lock convoy? Which service's Phase 1 response is slowest? Use XA prepare timing metrics.
 
 **Q2 (C - Design Trade-off):** CockroachDB implements 2PC internally but claims to have no coordinator SPOF. It uses "parallel commits" as an optimization: the coordinator can return success to the client as soon as a quorum of participants have committed their writes (via Raft), without waiting for all participants to confirm. This appears to violate 2PC's unanimity requirement. How does CockroachDB reconcile this optimization with 2PC correctness? What guarantees does the Raft replication provide that allow this "early return"?
-*Hint:* Standard 2PC: coordinator must receive ACK from ALL participants before marking complete. CockroachDB parallel commits: the coordinator writes its decision (COMMITTED) to the transaction record (via Raft). Any participant that committed its writes AND sees the COMMITTED transaction record can finalize. Participants that haven't finished yet will check the transaction record on their next access and self-finalize. The "early return" works because: the transaction record (coordinator decision) is itself Raft-replicated — durable and discoverable by participants without coordinator involvement. The coordinator is NOT a SPOF because its decision is replicated.
+_Hint:_ Standard 2PC: coordinator must receive ACK from ALL participants before marking complete. CockroachDB parallel commits: the coordinator writes its decision (COMMITTED) to the transaction record (via Raft). Any participant that committed its writes AND sees the COMMITTED transaction record can finalize. Participants that haven't finished yet will check the transaction record on their next access and self-finalize. The "early return" works because: the transaction record (coordinator decision) is itself Raft-replicated — durable and discoverable by participants without coordinator involvement. The coordinator is NOT a SPOF because its decision is replicated.
 
 **Q3 (E - First Principles):** The FLP impossibility theorem implies that in an asynchronous network, no deterministic protocol can achieve consensus AND be guaranteed to terminate. 2PC is a consensus protocol (all agree: commit or abort). How does 2PC relate to FLP impossibility? Does 2PC "solve" consensus in the FLP sense? And what does this mean for real-world 2PC deployments — do they violate FLP or make a different assumption?
-*Hint:* 2PC achieves SAFETY (if all commit: no one aborts; if coordinator crashes: nobody commits without authorization) but violates LIVENESS (participants can wait indefinitely for a crashed coordinator). FLP says: no protocol can be both SAFE and LIVE in async networks with crash failures. 2PC chooses SAFETY over LIVENESS — it blocks forever rather than making a potentially wrong decision. Three-Phase Commit improves liveness (non-blocking in synchronous networks) but adds a synchrony assumption. Paxos-commit restores liveness by using consensus (Raft) for the coordinator role. Which aspect of FLP impossibility does each approach address: the synchrony assumption or the safety/liveness trade-off?
-
-
+_Hint:_ 2PC achieves SAFETY (if all commit: no one aborts; if coordinator crashes: nobody commits without authorization) but violates LIVENESS (participants can wait indefinitely for a crashed coordinator). FLP says: no protocol can be both SAFE and LIVE in async networks with crash failures. 2PC chooses SAFETY over LIVENESS — it blocks forever rather than making a potentially wrong decision. Three-Phase Commit improves liveness (non-blocking in synchronous networks) but adds a synchrony assumption. Paxos-commit restores liveness by using consensus (Raft) for the coordinator role. Which aspect of FLP impossibility does each approach address: the synchrony assumption or the safety/liveness trade-off?

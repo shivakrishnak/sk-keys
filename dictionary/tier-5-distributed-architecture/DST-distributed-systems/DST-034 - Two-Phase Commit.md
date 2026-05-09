@@ -27,11 +27,11 @@ permalink: /distributed-systems/two-phase-commit-practical/
 
 ⚡ TL;DR - Two-Phase Commit (2PC) in practice means XA transactions, JTA/Atomikos coordinators, and database-specific distributed transaction APIs — and it means accepting the operational reality: coordinator recovery, heuristic decisions, and latency overhead that makes 2PC unsuitable for most microservices architectures.
 
-| Metadata | | |
-|:---|:---|:---|
-| **Depends on:** | DST-033, DST-032 | |
-| **Used by:** | DST-035 | |
-| **Related:** | DST-033, DST-035, DST-032 | |
+| Metadata        |                           |     |
+| :-------------- | :------------------------ | :-- |
+| **Depends on:** | DST-033, DST-032          |     |
+| **Used by:**    | DST-035                   |     |
+| **Related:**    | DST-033, DST-035, DST-032 |     |
 
 ---
 
@@ -70,6 +70,7 @@ The XA specification (X/Open Distributed Transaction Processing standard, 1991) 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **XID uniqueness:** every distributed transaction has a globally unique XID. All participants use this XID to coordinate Phase 1 and Phase 2. No two concurrent transactions may share an XID.
 2. **TM log durability:** the TM must persist its commit/abort decision BEFORE sending Phase 2. If the TM crashes after persisting: recovery replays Phase 2 from the log. If the TM crashes before persisting: the outcome is undetermined — potentially requiring heuristic decision.
 3. **Resource recovery:** each XA resource must support `xa_recover()` — querying which XIDs are currently in PREPARED state. TM uses this on recovery to resolve in-doubt transactions by checking its log.
@@ -93,6 +94,7 @@ In JTA: UserTransaction.begin() → {operations on XA resources} → UserTransac
 **SETUP:** Spring Boot application using Atomikos JTA. Two PostgreSQL databases (DB1, DB2). Transaction: write to DB1 AND DB2 atomically. GCP region outage kills the app server process during commit.
 
 **WITHOUT ATOMIKOS RECOVERY (TM log on ephemeral disk):**
+
 - App writes to DB1 and DB2 (both in PREPARED state)
 - App server crashes — TM log on ephemeral disk lost forever
 - DB1 and DB2 both have rows locked in PREPARED state
@@ -101,6 +103,7 @@ In JTA: UserTransaction.begin() → {operations on XA resources} → UserTransac
 - Risk: wrong manual decision = data inconsistency
 
 **WITH ATOMIKOS RECOVERY (TM log on persistent storage):**
+
 - App server crashes — TM log on persistent disk survives
 - Atomikos restarts, reads log, finds in-doubt transactions
 - Calls `xa_recover()` on DB1 and DB2 — finds their PREPARED XIDs
@@ -117,6 +120,7 @@ In JTA: UserTransaction.begin() → {operations on XA resources} → UserTransac
 > The XA protocol is like a restaurant with one head waiter (TM) and multiple kitchen stations (resources). A complex order (transaction) requires the waiter to confirm ALL stations are ready (Phase 1: xa_prepare — each kitchen sets aside the ingredients). Then the waiter gives the final "fire!" command (Phase 2: xa_commit — all stations cook simultaneously). If the waiter falls ill between the "ready" and "fire": all kitchen stations hold their reserved ingredients indefinitely. The restaurant manager (recovery process) must use the order ticket (TM log) to determine if the dish should be served (commit) or cleared (rollback).
 
 **Mapping:**
+
 - **Head waiter** → Transaction Manager (Atomikos, Narayana)
 - **Kitchen stations** → XA resources (databases, message queues)
 - **"Are you ready?"** → xa_prepare
@@ -143,6 +147,7 @@ Atomikos flow for `@Transactional commit()`: (1) `begin()` creates XID. (2) All 
 XA's design is driven by the need for zero-knowledge coordination: the resource (database) doesn't need to know about other resources in the same transaction. Each resource only knows: "I have XID-X in PREPARED state. I'll wait for xa_commit(XID-X) or xa_rollback(XID-X)." This zero-knowledge design means XA resources are completely generic — the same PostgreSQL xa_prepare implementation works for transactions involving MySQL, Oracle, MQ Series, all simultaneously. The TM holds the "whole picture" of which resources are in which transaction. This separation of concerns (resource = zero-knowledge, TM = full-knowledge) is XA's architectural elegance — and its weakness: the TM's full knowledge makes it the single point of failure.
 
 **Expert Thinking Cues:**
+
 - "Atomikos log is growing unboundedly" → In-doubt transactions not resolved. Check `active-transactions.log` — if XIDs accumulate: participants are not responding to recovery. Check network connectivity to all XA resources.
 - "JTA transaction spans multiple microservices — is that OK?" → No. Each microservice call in a JTA transaction is a 2PC participant. Any service crash during prepare blocks the whole transaction. Use Saga instead for cross-service operations.
 - "Spring @Transactional with JPA and JMS — will they be atomic?" → Only if both JPA datasource and JMS connection factory are XA-capable AND registered with the JTA TM. Standard HikariCP + standard JMS ConnectionFactory = NOT atomic. Must use XA variants.
@@ -153,6 +158,7 @@ XA's design is driven by the need for zero-knowledge coordination: the resource 
 ### ⚙️ How It Works (Mechanism)
 
 **XA protocol state machine:**
+
 ```
 TM (Coordinator):
   begin() → allocates XID
@@ -227,6 +233,7 @@ Kubernetes deployment of JTA: multiple replicas of the same Spring Boot service 
 ### 💻 Code Example
 
 **BAD - JTA with non-XA datasource (no actual 2PC):**
+
 ```java
 // Common mistake: JTA + non-XA datasource
 // Spring's @Transactional works but is NOT 2PC
@@ -247,6 +254,7 @@ public class BadConfig {
 ```
 
 **GOOD - JTA with XA datasources (true 2PC):**
+
 ```xml
 <!-- pom.xml: Atomikos JTA starter -->
 <dependency>
@@ -324,6 +332,7 @@ public class OrderService {
 ```
 
 **How to test / verify correctness:**
+
 ```bash
 # 1. Verify XA configuration is active:
 # Check Atomikos log on application start:
@@ -347,25 +356,25 @@ psql -h paris-db -c "SELECT * FROM pg_prepared_xacts;"
 
 ### ⚖️ Comparison Table
 
-| Approach | Atomicity | Latency | Coordinator SPOF | Best for |
-|:---|:---|:---|:---|:---|
-| JTA + XA (Atomikos) | Full atomic | +10-50ms | Yes (TM) | Legacy multi-DB enterprise apps |
-| CockroachDB 2PC | Full atomic | +5-20ms | No (Raft) | Cloud-native distributed SQL |
-| Saga (choreography) | Eventual | Async | No | Microservices with compensation |
-| Saga (orchestration) | Eventual | Async | Yes (orchestrator) | Complex multi-step workflows |
-| Single-DB transaction | Full atomic | < 1ms | No | Single-DB services (preferred) |
+| Approach              | Atomicity   | Latency  | Coordinator SPOF   | Best for                        |
+| :-------------------- | :---------- | :------- | :----------------- | :------------------------------ |
+| JTA + XA (Atomikos)   | Full atomic | +10-50ms | Yes (TM)           | Legacy multi-DB enterprise apps |
+| CockroachDB 2PC       | Full atomic | +5-20ms  | No (Raft)          | Cloud-native distributed SQL    |
+| Saga (choreography)   | Eventual    | Async    | No                 | Microservices with compensation |
+| Saga (orchestration)  | Eventual    | Async    | Yes (orchestrator) | Complex multi-step workflows    |
+| Single-DB transaction | Full atomic | < 1ms    | No                 | Single-DB services (preferred)  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|:---|:---|
-| "Spring @Transactional with multiple datasources = 2PC" | Only if datasources are XA-capable AND JTA is configured. Standard HikariCP datasources with Spring @Transactional use the "Best Efforts 1PC" heuristic (commit in sequence) — NOT 2PC. This looks correct 99.9% of the time but is not atomic. |
-| "Atomikos/Narayana TM can be deployed in stateless pods" | JTA TMs must have persistent transaction logs accessible across pod restarts. In Kubernetes: TM log must be on a PersistentVolumeClaim (EFS, EBS). Each pod must access the SAME log directory. Multiple pods running separate TMs for the same transactions = broken recovery. |
-| "XA transactions are just slower regular transactions" | XA transactions acquire locks at xa_prepare time (Phase 1) and hold them until xa_commit (Phase 2). This is fundamentally different from local transactions (acquire locks during execution, release at commit). XA locks can be held much longer, causing higher contention than equivalent local transactions. |
-| "PostgreSQL doesn't support distributed transactions" | PostgreSQL fully supports the XA protocol via its `PREPARE TRANSACTION` command. `xa_prepare` → `PREPARE TRANSACTION 'xid'`. `xa_commit` → `COMMIT PREPARED 'xid'`. `xa_rollback` → `ROLLBACK PREPARED 'xid'`. `xa_recover` → `SELECT * FROM pg_prepared_xacts`. |
-| "2PC is only relevant for SQL databases" | XA extends to JMS message queues (ActiveMQ, IBM MQ), file system transactions (certain implementations), CICS transactions, and any other resource implementing the XA interface. Email sending, legacy ERP writes, and custom resources can all participate in 2PC via XA. |
+| Misconception                                            | Reality                                                                                                                                                                                                                                                                                                          |
+| :------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Spring @Transactional with multiple datasources = 2PC"  | Only if datasources are XA-capable AND JTA is configured. Standard HikariCP datasources with Spring @Transactional use the "Best Efforts 1PC" heuristic (commit in sequence) — NOT 2PC. This looks correct 99.9% of the time but is not atomic.                                                                  |
+| "Atomikos/Narayana TM can be deployed in stateless pods" | JTA TMs must have persistent transaction logs accessible across pod restarts. In Kubernetes: TM log must be on a PersistentVolumeClaim (EFS, EBS). Each pod must access the SAME log directory. Multiple pods running separate TMs for the same transactions = broken recovery.                                  |
+| "XA transactions are just slower regular transactions"   | XA transactions acquire locks at xa_prepare time (Phase 1) and hold them until xa_commit (Phase 2). This is fundamentally different from local transactions (acquire locks during execution, release at commit). XA locks can be held much longer, causing higher contention than equivalent local transactions. |
+| "PostgreSQL doesn't support distributed transactions"    | PostgreSQL fully supports the XA protocol via its `PREPARE TRANSACTION` command. `xa_prepare` → `PREPARE TRANSACTION 'xid'`. `xa_commit` → `COMMIT PREPARED 'xid'`. `xa_rollback` → `ROLLBACK PREPARED 'xid'`. `xa_recover` → `SELECT * FROM pg_prepared_xacts`.                                                 |
+| "2PC is only relevant for SQL databases"                 | XA extends to JMS message queues (ActiveMQ, IBM MQ), file system transactions (certain implementations), CICS transactions, and any other resource implementing the XA interface. Email sending, legacy ERP writes, and custom resources can all participate in 2PC via XA.                                      |
 
 ---
 
@@ -376,6 +385,7 @@ psql -h paris-db -c "SELECT * FROM pg_prepared_xacts;"
 **Symptom:** Kubernetes pod for the Spring Boot application (with JTA) crashes. Pod restarts. Atomikos recovery runs but finds no in-doubt transactions to recover — even though both PostgreSQL databases show PREPARED transactions from the crashed pod. The transactions remain stuck in PREPARED state indefinitely.
 **Root Cause:** Atomikos TM log was stored in the pod's local filesystem (ephemeral storage). On pod restart: a NEW pod starts with a CLEAN TM log — Atomikos sees no in-doubt transactions from its perspective. The databases are stuck waiting for a coordinator that has effectively forgotten the transaction.
 **Diagnostic:**
+
 ```bash
 # Check where Atomikos is writing its log:
 grep "log-base-dir" /etc/app/application.properties
@@ -384,8 +394,8 @@ grep "log-base-dir" /etc/app/application.properties
 
 # Check if PostgreSQL has stuck PREPARED transactions:
 psql -h db-host -c "
-  SELECT gid, owner, prepared, database 
-  FROM pg_prepared_xacts 
+  SELECT gid, owner, prepared, database
+  FROM pg_prepared_xacts
   WHERE prepared < now() - interval '5 minutes';"
 # Any rows = stuck transactions from dead coordinator
 
@@ -393,19 +403,23 @@ psql -h db-host -c "
 ls -la /tmp/atomikos/  # (wherever configured)
 # If empty after pod restart: log was ephemeral
 ```
+
 **Fix:**
 BAD: `spring.jta.atomikos.transactions.log-base-dir=/tmp/atomikos`
 GOOD:
+
 ```yaml
 # kubernetes deployment.yaml
 volumes:
   - name: atomikos-log
     persistentVolumeClaim:
-      claimName: atomikos-pvc  # EFS or EBS PVC
+      claimName: atomikos-pvc # EFS or EBS PVC
+
 
 # application.properties:
 # spring.jta.atomikos.transactions.log-base-dir=/mnt/efs/atomikos
 ```
+
 **Prevention:** Persistent volume (PVC) for TM log is MANDATORY for JTA in Kubernetes. Not optional. Test recovery: crash pod, restart, verify pg_prepared_xacts is empty after restart.
 
 **Failure Mode 2: XA Connection Pool Exhaustion from Long-Lived Prepared Transactions**
@@ -413,6 +427,7 @@ volumes:
 **Symptom:** Application connection pool exhausted. All connections in pool are "idle in transaction." No new transactions can start. Application health check fails. Root cause unclear — load seems normal.
 **Root Cause:** Long-running xa_prepare calls + coordinator slowness. XA connections cannot be returned to pool while in PREPARED state — they are "checked out" until Phase 2 completes. If coordinator is slow (GC pause, network slowdown): many connections hold PREPARED state simultaneously, exhausting the pool.
 **Diagnostic:**
+
 ```bash
 # Check PostgreSQL for sessions in prepared state:
 psql -c "
@@ -431,6 +446,7 @@ grep "xa_commit\|xa_prepare" /var/log/app/app.log | \
   awk '/xa_prepare/{start=NR} /xa_commit/{print NR-start}' | \
   sort -n | tail -5
 ```
+
 **Fix:**
 BAD: Large pool (100 connections) masking slow Phase 2 completion.
 GOOD: (1) Reduce xa_prepare → xa_commit latency (coordinator proximity to resources). (2) Set `connectionTimeout` in Atomikos pool to fail fast when pool exhausted. (3) Monitor Phase 2 latency as SLO.
@@ -441,6 +457,7 @@ GOOD: (1) Reduce xa_prepare → xa_commit latency (coordinator proximity to reso
 **Symptom:** An attacker captures a valid XID (transaction ID) from network traffic. The attacker sends `xa_commit('stolen-xid')` directly to a database. The database, still holding resources in PREPARED state for that XID, commits the transaction — potentially committing a fraudulent transaction that the coordinator was about to abort.
 **Root Cause:** XA interface accessible without authentication on the database network port. XID format is guessable (sequential or timestamp-based). Attacker can issue Phase 2 commands (xa_commit/xa_rollback) that the database will honor.
 **Diagnostic:**
+
 ```bash
 # Check if XA commands are logged in PostgreSQL audit:
 psql -c "SHOW log_statements;"
@@ -452,6 +469,7 @@ grep "COMMIT PREPARED\|ROLLBACK PREPARED" \
   grep -v "<TM-IP-ADDRESS>"
 # Any COMMIT PREPARED from unexpected IP = potential attack
 ```
+
 **Fix:**
 BAD: Database accessible from any IP on the network, no row-level TM permissions.
 GOOD: (1) TLS + client certificates for database connections (only TM can connect). (2) Database `pg_hba.conf`: allow only TM IP to issue COMMIT PREPARED. (3) Use UUIDs for XIDs (not sequential or time-based). (4) PostgreSQL: `GRANT EXECUTE ON FUNCTION pg_prepared_xact_ids TO tm_role` — limit who can issue COMMIT PREPARED commands.
@@ -462,13 +480,16 @@ GOOD: (1) TLS + client certificates for database connections (only TM can connec
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - DST-033 - Two-Phase Commit (2PC) (the algorithm underlying XA — understand the protocol before the implementation)
 - DST-032 - Failure Modes (XA handles crash-recovery failures — failure model determines XA's scope)
 
 **Builds On This (learn these next):**
+
 - DST-035 - Three-Phase Commit (3PC improvement over 2PC's blocking)
 
 **Alternatives / Comparisons:**
+
 - DST-033 - Two-Phase Commit (2PC) (algorithmic view of 2PC vs. this entry's practical/operational view)
 - DST-035 - Three-Phase Commit (3PC as 2PC improvement)
 
@@ -506,6 +527,7 @@ GOOD: (1) TLS + client certificates for database connections (only TM can connec
 ```
 
 **If you remember only 3 things:**
+
 1. XA = standard interface for 2PC. xa_prepare → "vote YES". xa_commit/xa_rollback → Phase 2 decision. TM (Atomikos, Narayana) is the coordinator.
 2. TM transaction log MUST be on durable persistent storage. Ephemeral storage = unrecoverable transactions on TM restart.
 3. JTA + XA is not for microservices. Use Saga for cross-service eventual consistency. Use single-DB transactions wherever possible to avoid 2PC overhead.
@@ -521,6 +543,7 @@ GOOD: (1) TLS + client certificates for database connections (only TM can connec
 The coordinator's transaction log is not a performance feature — it's a correctness requirement. Any protocol where a coordinator makes a decision that other participants must follow needs the coordinator to PERSIST that decision before broadcasting it. If the coordinator can be replaced (restart, failover): the persisted decision is how the replacement coordinator knows what to do. This "commit log" pattern appears everywhere: database WAL, Raft leader log, Kafka producer idempotency. The pattern: persist the decision, then broadcast; recovery means re-reading the log and re-broadcasting.
 
 **Where else this pattern appears:**
+
 - **Kafka producer exactly-once (transactional producer):** Kafka's transactional producer uses a 2PC-like protocol internally. The Kafka broker (coordinator) logs the transaction state (BEGIN, COMMIT, ABORT) for each transactional producer. On broker restart: the log is replayed to determine in-flight transaction outcomes. The producer ID (PID) + epoch is the XID. Exactly-once Kafka semantics are implemented via XA-like commit log persistence — the same pattern as JTA TM log durability.
 - **Database point-in-time recovery (PITR):** A database's WAL (Write-Ahead Log) is the coordinator's transaction log applied to the database itself. On crash recovery: the WAL is replayed to determine which transactions committed before the crash (committed entries in WAL = xa_commit logged). Uncommitted entries are rolled back (not yet committed = xa_rollback). PITR = replaying the WAL up to a point in time, identical to TM log replay for in-doubt 2PC transactions.
 - **Distributed saga orchestration log:** A Saga orchestrator maintains a log of which steps have been executed and which compensations have been triggered. This log serves the same role as the 2PC TM log: on orchestrator crash recovery, the log is replayed to determine which compensation actions still need to be triggered. Even Saga, the "alternative to 2PC," uses the same core pattern: persist decisions to a durable log, replay on recovery.
@@ -536,12 +559,10 @@ The XA standard (1991) was designed for mainframe and enterprise systems where t
 ### 🧠 Think About This Before We Continue
 
 **Q1 (C - Design Trade-off):** A microservice team wants to maintain strict atomicity between their PostgreSQL database and their Kafka topic (write to DB AND publish Kafka event atomically). Option A: Use JTA + XA (Atomikos + Kafka XA connector). Option B: Transactional Outbox Pattern (write event to an outbox table in same DB transaction, then async relay from outbox to Kafka). Compare: atomicity guarantees, latency, operational complexity, and failure modes for both options. Which would you recommend for a high-throughput service (10,000 TPS)?
-*Hint:* Option A: True XA atomicity. Kafka XA connector exists but is complex and adds 2PC latency to every message. Kafka's XA support requires EOS (exactly-once semantics) producer. At 10,000 TPS: 2PC overhead of 20-50ms per transaction = major throughput impact. Option B: Outbox writes in same local DB transaction (no 2PC latency). Relay process runs async. At-least-once delivery to Kafka with idempotency deduplication at consumer. Eventual consistency (Kafka event may lag DB commit by milliseconds). For 10,000 TPS: outbox is significantly better throughput. Which failure modes does outbox introduce that XA does not have?
+_Hint:_ Option A: True XA atomicity. Kafka XA connector exists but is complex and adds 2PC latency to every message. Kafka's XA support requires EOS (exactly-once semantics) producer. At 10,000 TPS: 2PC overhead of 20-50ms per transaction = major throughput impact. Option B: Outbox writes in same local DB transaction (no 2PC latency). Relay process runs async. At-least-once delivery to Kafka with idempotency deduplication at consumer. Eventual consistency (Kafka event may lag DB commit by milliseconds). For 10,000 TPS: outbox is significantly better throughput. Which failure modes does outbox introduce that XA does not have?
 
 **Q2 (D - Root Cause):** A production Narayana JTA coordinator is logging slow Phase 2 completion: average xa_commit takes 45ms per resource. With 5 XA resources per transaction: 225ms for Phase 2. Database network latency is < 1ms. Application and databases are in the same datacenter. What are the top 3 root causes of 45ms xa_commit latency when network latency is negligible?
-*Hint:* Cause A: xa_commit on each resource is called SEQUENTIALLY (not parallel). 5 resources × 5ms each = 25ms sequential. But if one resource is slow: it blocks all. Cause B: xa_commit triggers a fsync in the database (commit must be durable). fsync on a slow disk (rotational HDD, over-provisioned cloud IOPS) = 20-50ms. Fix: NVMe SSDs for database storage. Cause C: connection overhead. Each xa_commit uses the XA-enlisted connection — if connection is not reused efficiently: reconnection overhead per xa_commit. Which of these explains 45ms when network < 1ms?
+_Hint:_ Cause A: xa_commit on each resource is called SEQUENTIALLY (not parallel). 5 resources × 5ms each = 25ms sequential. But if one resource is slow: it blocks all. Cause B: xa_commit triggers a fsync in the database (commit must be durable). fsync on a slow disk (rotational HDD, over-provisioned cloud IOPS) = 20-50ms. Fix: NVMe SSDs for database storage. Cause C: connection overhead. Each xa_commit uses the XA-enlisted connection — if connection is not reused efficiently: reconnection overhead per xa_commit. Which of these explains 45ms when network < 1ms?
 
 **Q3 (A - System Interaction):** In Kubernetes, a Java application with JTA + Atomikos is deployed as a Deployment with `replicas: 3`. All three pods share the same PostgreSQL database. The team placed the Atomikos log on a local emptyDir volume. Describe EXACTLY what happens when: (1) Pod 1 starts a JTA transaction, (2) Pod 1 calls xa_prepare on the DB (gets YES), (3) Pod 1 crashes before xa_commit, (4) Pod 2 (already running) continues serving requests. Will Pod 2 recover Pod 1's transaction? What will happen to the stuck PREPARED transaction in PostgreSQL?
-*Hint:* Pod 2 has its OWN Atomikos instance with its OWN log (local emptyDir). Pod 2's Atomikos has NO record of Pod 1's XID. Pod 2's recovery will NOT recover Pod 1's transaction. PostgreSQL will have a PREPARED transaction (XID from Pod 1) that no living Atomikos instance knows about. The PREPARED state holds locks indefinitely. Kubernetes may restart Pod 1 as a new pod (different node) with FRESH emptyDir log — also no recovery. DBA must manually ROLLBACK PREPARED the stuck transaction. How does moving the Atomikos log to a shared PersistentVolumeClaim fix this? What additional problem arises if all 3 pods share the SAME PVC with the SAME Atomikos log directory?
-
-
+_Hint:_ Pod 2 has its OWN Atomikos instance with its OWN log (local emptyDir). Pod 2's Atomikos has NO record of Pod 1's XID. Pod 2's recovery will NOT recover Pod 1's transaction. PostgreSQL will have a PREPARED transaction (XID from Pod 1) that no living Atomikos instance knows about. The PREPARED state holds locks indefinitely. Kubernetes may restart Pod 1 as a new pod (different node) with FRESH emptyDir log — also no recovery. DBA must manually ROLLBACK PREPARED the stuck transaction. How does moving the Atomikos log to a shared PersistentVolumeClaim fix this? What additional problem arises if all 3 pods share the SAME PVC with the SAME Atomikos log directory?
