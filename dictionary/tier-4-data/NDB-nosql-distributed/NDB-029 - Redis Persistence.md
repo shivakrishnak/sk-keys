@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Redis Persistence"
 parent: "NoSQL & Distributed Databases"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Complex SQL Queries (Joins, Subqueries, CTEs)"
 parent: "Database Fundamentals"

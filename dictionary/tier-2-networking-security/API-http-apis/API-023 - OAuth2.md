@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "OAuth2"
 parent: "HTTP & APIs"

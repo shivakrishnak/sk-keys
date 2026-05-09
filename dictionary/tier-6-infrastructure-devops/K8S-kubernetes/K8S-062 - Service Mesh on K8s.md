@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Service Mesh on K8s"
 parent: "Kubernetes"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "API Throttling"
 parent: "HTTP & APIs"

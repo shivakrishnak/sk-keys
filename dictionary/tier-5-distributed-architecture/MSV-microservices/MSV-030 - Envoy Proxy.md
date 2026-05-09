@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Envoy Proxy"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - deep-dive
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-030 - Envoy Proxy

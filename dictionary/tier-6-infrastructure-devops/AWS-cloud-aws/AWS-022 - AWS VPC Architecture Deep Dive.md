@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "AWS VPC Architecture Deep Dive"
 parent: "Cloud - AWS"

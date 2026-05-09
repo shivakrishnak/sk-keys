@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Transactional Outbox"
 parent: "Big Data & Streaming"

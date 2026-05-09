@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "RLHF (Reinforcement Learning from Human Feedback)"
 parent: "AI Foundations"

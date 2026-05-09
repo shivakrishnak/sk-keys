@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "JUnit 5"
 parent: "Testing"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "HTTP-3 / QUIC"
 parent: "HTTP & APIs"

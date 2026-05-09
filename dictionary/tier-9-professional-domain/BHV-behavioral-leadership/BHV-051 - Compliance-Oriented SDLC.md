@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Compliance-Oriented SDLC"
 parent: "Behavioral & Leadership"

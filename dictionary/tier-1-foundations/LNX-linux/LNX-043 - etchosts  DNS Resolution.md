@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "/etc/hosts / DNS Resolution"
 parent: "Linux"

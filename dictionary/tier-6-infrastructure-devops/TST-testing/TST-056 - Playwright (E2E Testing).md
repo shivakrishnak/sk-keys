@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Playwright (E2E Testing)"
 parent: "Testing"

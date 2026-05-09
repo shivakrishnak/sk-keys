@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "API Design Best Practices"
 parent: "HTTP & APIs"

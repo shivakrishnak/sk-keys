@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "K8s Security Hardening"
 parent: "Kubernetes"
@@ -38,6 +38,8 @@ tags:
     k8s,
     cis,
   ]
+version: 1
+version: 1
 ---
 
 # K8s Security Hardening

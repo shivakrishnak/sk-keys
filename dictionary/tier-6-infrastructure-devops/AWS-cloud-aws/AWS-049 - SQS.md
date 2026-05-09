@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "SQS"
 parent: "Cloud - AWS"

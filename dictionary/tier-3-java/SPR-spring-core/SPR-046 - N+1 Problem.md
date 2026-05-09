@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "N+1 Problem"
 parent: "Spring Core"

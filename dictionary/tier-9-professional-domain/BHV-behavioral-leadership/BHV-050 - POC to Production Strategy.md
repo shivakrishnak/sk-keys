@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "POC to Production Strategy"
 parent: "Behavioral & Leadership"

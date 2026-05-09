@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Load Balancer L4 and L7"
 parent: "Networking"

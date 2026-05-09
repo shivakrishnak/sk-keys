@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Linux Security Hardening"
 parent: "Linux"

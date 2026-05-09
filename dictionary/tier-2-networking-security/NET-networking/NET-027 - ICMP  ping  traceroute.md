@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "ICMP / ping / traceroute"
 parent: "Networking"

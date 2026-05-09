@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Side Effects"
 parent: "CS Fundamentals - Paradigms"

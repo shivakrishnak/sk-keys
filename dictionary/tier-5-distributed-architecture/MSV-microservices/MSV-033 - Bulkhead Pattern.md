@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Bulkhead Pattern"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - deep-dive
   - reliability
 status: complete
+version: 1
 ---
 
 # MSV-033 - Bulkhead Pattern

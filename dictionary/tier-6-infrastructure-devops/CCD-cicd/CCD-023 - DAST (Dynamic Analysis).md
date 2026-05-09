@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "DAST (Dynamic Analysis)"
 parent: "CI/CD"

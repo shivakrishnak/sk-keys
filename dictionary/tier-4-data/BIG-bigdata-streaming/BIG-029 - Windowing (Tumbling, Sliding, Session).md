@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Windowing (Tumbling, Sliding, Session)"
 parent: "Big Data & Streaming"

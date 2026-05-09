@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Dynamic Programming"
 parent: "Data Structures & Algorithms"

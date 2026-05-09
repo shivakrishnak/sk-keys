@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "TLB (Translation Lookaside Buffer)"
 parent: "Operating Systems"

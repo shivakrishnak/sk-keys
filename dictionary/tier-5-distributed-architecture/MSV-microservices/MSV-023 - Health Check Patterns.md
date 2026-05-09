@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Health Check Patterns"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - intermediate
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-023 - Health Check Patterns

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "AWS X-Ray (Distributed Tracing)"
 parent: "Observability & SRE"

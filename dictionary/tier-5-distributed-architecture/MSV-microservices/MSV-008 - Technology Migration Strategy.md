@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Technology Migration Strategy"
 parent: "Microservices"
@@ -19,6 +19,7 @@ tags:
   - bestpractice
   - tradeoff
 status: complete
+version: 1
 ---
 
 # MSV-008 - Technology Migration Strategy

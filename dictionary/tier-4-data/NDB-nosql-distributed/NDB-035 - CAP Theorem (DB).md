@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "CAP Theorem (DB)"
 parent: "NoSQL & Distributed Databases"

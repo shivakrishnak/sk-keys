@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Pair Programming"
 parent: "Code Quality"

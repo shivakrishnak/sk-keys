@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "DI (Dependency Injection)"
 parent: "Spring Core"

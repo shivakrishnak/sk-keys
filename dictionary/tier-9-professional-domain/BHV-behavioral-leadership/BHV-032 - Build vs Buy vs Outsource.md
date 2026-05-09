@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Build vs Buy vs Outsource"
 parent: "Behavioral & Leadership"

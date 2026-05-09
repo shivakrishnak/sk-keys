@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Mean Time to Recovery (MTTR)"
 parent: "CI/CD"

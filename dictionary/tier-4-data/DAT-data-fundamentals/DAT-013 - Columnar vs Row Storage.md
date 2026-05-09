@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Columnar vs Row Storage"
 parent: "Data Fundamentals"

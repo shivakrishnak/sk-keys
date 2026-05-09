@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Sliding Window"
 parent: "Data Structures & Algorithms"

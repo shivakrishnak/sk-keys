@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Imperative Programming"
 parent: "CS Fundamentals - Paradigms"

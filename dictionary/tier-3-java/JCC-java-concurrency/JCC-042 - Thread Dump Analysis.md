@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Thread Dump Analysis"
 parent: "Java Concurrency"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Filter vs Interceptor"
 parent: "Spring Core"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Longest Common Subsequence"
 parent: "Data Structures & Algorithms"

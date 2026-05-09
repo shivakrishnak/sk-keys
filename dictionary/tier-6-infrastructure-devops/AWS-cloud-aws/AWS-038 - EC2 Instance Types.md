@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "EC2 Instance Types"
 parent: "Cloud - AWS"

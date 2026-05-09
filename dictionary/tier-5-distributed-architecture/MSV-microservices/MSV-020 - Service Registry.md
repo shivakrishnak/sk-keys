@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Service Registry"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - intermediate
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-020 - Service Registry

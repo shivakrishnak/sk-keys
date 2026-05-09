@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Redo Log  Undo Log"
 parent: "Database Fundamentals"

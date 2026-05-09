@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Java Abstract Classes vs Interfaces"
 parent: "Java Language"

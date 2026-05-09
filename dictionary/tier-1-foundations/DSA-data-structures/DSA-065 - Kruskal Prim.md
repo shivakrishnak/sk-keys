@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Kruskal Prim"
 parent: "Data Structures & Algorithms"

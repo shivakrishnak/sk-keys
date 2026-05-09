@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Micronaut Framework"
 parent: "Spring Core"

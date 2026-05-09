@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Confluence  Documentation Tooling"
 parent: "Behavioral & Leadership"

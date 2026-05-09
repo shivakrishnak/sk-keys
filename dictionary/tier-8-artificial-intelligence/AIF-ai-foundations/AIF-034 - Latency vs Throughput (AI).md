@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Latency vs Throughput (AI)"
 parent: "AI Foundations"

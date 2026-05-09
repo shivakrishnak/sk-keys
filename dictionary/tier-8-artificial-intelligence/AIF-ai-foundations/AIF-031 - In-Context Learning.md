@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "In-Context Learning"
 parent: "AI Foundations"

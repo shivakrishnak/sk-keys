@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Service Decomposition"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - intermediate
   - distributed
 status: complete
+version: 1
 ---
 
 # MSV-013 - Service Decomposition

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "gRPC Streaming"
 parent: "HTTP & APIs"

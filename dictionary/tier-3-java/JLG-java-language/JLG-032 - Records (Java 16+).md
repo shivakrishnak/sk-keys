@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Records (Java 16+)"
 parent: "Java Language"

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Twelve-Factor App"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - design
   - intermediate
 status: complete
+version: 1
 ---
 
 # MSV-062 - Twelve-Factor App

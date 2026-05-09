@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "React Accessibility (a11y)"
 parent: "React"

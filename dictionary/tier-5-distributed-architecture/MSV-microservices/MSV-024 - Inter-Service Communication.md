@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Inter-Service Communication"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - intermediate
   - api
 status: complete
+version: 1
 ---
 
 # MSV-024 - Inter-Service Communication

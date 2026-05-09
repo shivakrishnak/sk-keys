@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Condition Variable"
 parent: "Operating Systems"

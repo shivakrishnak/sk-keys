@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Blue-Green Deployment"
 parent: "Microservices"
@@ -17,6 +17,7 @@ tags:
   - operations
   - intermediate
 status: complete
+version: 1
 ---
 
 # MSV-055 - Blue-Green Deployment

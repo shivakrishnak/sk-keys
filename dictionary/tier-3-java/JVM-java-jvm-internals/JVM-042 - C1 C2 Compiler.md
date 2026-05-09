@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "C1 C2 Compiler"
 parent: "Java & JVM Internals"

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Cross-Cutting Concerns"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - patterns
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-049 - Cross-Cutting Concerns

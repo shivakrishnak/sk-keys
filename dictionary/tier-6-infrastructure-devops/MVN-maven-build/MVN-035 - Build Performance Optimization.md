@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Build Performance Optimization"
 parent: "Maven & Build Tools"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "File Descriptor"
 parent: "Operating Systems"

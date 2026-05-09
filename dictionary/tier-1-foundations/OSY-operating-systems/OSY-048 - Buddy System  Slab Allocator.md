@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Buddy System / Slab Allocator"
 parent: "Operating Systems"

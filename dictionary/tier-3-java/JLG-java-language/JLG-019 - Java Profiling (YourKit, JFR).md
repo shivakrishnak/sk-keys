@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Java Profiling (YourKit, JFR)"
 parent: "Java Language"

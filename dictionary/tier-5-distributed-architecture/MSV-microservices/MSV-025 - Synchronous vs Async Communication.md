@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Synchronous vs Async Communication"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - intermediate
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-025 - Synchronous vs Async Communication

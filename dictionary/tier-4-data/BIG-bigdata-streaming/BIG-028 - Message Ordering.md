@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Message Ordering"
 parent: "Big Data & Streaming"

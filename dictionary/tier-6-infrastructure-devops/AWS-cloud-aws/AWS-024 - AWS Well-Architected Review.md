@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "AWS Well-Architected Review"
 parent: "Cloud - AWS"

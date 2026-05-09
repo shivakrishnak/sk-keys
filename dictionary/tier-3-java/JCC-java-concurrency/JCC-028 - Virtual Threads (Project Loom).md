@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Virtual Threads (Project Loom)"
 parent: "Java Concurrency"

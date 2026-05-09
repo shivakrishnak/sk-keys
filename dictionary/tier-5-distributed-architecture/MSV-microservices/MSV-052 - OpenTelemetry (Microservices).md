@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "OpenTelemetry (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - standards
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-052 - OpenTelemetry (Microservices)

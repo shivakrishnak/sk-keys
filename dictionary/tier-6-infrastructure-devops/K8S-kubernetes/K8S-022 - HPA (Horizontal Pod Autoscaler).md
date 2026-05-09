@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "HPA (Horizontal Pod Autoscaler)"
 parent: "Kubernetes"

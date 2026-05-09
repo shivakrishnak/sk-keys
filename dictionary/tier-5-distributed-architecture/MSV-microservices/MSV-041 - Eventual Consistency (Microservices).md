@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Eventual Consistency (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - architecture
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-041 - Eventual Consistency (Microservices)

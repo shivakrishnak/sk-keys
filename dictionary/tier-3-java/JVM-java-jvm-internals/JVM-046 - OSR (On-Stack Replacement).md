@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "OSR (On-Stack Replacement)"
 parent: "Java & JVM Internals"

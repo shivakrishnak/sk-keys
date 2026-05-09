@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Kafka Topic  Partition  Offset"
 parent: "Big Data & Streaming"

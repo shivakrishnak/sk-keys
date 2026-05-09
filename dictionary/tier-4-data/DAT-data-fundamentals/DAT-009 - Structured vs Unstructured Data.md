@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Structured vs Unstructured Data"
 parent: "Data Fundamentals"

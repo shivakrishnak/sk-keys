@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Gradle Build Script"
 parent: "Maven & Build Tools"

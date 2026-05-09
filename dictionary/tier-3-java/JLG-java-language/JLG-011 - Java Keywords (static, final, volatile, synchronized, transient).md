@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Java Keywords (static, final, volatile, synchronized, transient)"
 parent: "Java Language"

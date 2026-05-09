@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Concurrency vs Parallelism"
 parent: "CS Fundamentals - Paradigms"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Point-to-Point vs Pub-Sub"
 parent: "Big Data & Streaming"

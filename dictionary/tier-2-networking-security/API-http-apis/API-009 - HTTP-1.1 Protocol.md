@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "HTTP-1.1 Protocol"
 parent: "HTTP & APIs"

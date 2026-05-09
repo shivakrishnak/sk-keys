@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Continuous Integration (CI)"
 parent: "CI/CD"

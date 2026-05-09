@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Fenwick Tree (BIT)"
 parent: "Data Structures & Algorithms"

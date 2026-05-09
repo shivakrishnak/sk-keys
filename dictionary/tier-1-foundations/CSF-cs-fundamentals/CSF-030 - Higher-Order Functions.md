@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Higher-Order Functions"
 parent: "CS Fundamentals - Paradigms"

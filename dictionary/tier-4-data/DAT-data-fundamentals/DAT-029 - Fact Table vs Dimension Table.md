@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Fact Table vs Dimension Table"
 parent: "Data Fundamentals"

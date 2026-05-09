@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Java 8 to Java 17 Migration Guide"
 parent: "Java Language"

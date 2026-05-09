@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Timsort"
 parent: "Data Structures & Algorithms"

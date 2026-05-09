@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Backend for Frontend (BFF)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - deep-dive
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-027 - Backend for Frontend (BFF)

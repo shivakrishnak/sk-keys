@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "SQL Injection via API"
 parent: "HTTP & APIs"

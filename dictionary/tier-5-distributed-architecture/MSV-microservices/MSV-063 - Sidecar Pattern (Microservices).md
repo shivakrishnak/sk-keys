@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Sidecar Pattern (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - design
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-063 - Sidecar Pattern (Microservices)

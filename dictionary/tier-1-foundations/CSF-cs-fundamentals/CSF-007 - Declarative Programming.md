@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Declarative Programming"
 parent: "CS Fundamentals - Paradigms"

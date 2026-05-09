@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Pact (Contract Testing)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - tooling
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-048 - Pact (Contract Testing)

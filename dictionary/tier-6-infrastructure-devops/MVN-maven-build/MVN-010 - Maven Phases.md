@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Maven Phases"
 parent: "Maven & Build Tools"

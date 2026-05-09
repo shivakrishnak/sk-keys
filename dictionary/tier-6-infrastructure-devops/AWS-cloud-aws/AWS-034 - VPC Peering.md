@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "VPC Peering"
 parent: "Cloud - AWS"

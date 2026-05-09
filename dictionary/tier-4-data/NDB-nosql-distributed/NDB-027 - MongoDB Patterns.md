@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "MongoDB Patterns"
 parent: "NoSQL & Distributed Databases"

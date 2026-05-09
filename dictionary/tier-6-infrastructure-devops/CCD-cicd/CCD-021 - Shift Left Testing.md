@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Shift Left Testing"
 parent: "CI/CD"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Parallel GC"
 parent: "Java & JVM Internals"

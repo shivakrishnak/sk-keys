@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Tail Recursion"
 parent: "CS Fundamentals - Paradigms"

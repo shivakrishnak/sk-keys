@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Staff Engineer vs Principal Engineer"
 parent: "Behavioral & Leadership"

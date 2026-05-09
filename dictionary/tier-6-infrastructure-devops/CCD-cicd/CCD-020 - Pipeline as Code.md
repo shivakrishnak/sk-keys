@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Pipeline as Code"
 parent: "CI/CD"

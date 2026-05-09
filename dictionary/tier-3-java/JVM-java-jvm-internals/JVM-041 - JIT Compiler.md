@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "JIT Compiler"
 parent: "Java & JVM Internals"

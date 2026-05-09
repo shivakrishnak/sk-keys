@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Gradle vs Maven"
 parent: "Maven & Build Tools"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "K8s Upgrade Strategy"
 parent: "Kubernetes"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Binding (call, apply, bind)"
 parent: "JavaScript"

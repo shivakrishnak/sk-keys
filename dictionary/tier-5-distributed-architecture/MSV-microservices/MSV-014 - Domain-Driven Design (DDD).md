@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Domain-Driven Design (DDD)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - deep-dive
   - distributed
 status: complete
+version: 1
 ---
 
 # MSV-014 - Domain-Driven Design (DDD)

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Scope of Influence"
 parent: "Behavioral & Leadership"

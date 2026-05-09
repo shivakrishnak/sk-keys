@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Serial GC"
 parent: "Java & JVM Internals"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Foreign Key  Referential Integrity"
 parent: "Database Fundamentals"

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Correlation ID (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - operations
   - patterns
 status: complete
+version: 1
 ---
 
 # MSV-051 - Correlation ID (Microservices)

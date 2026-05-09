@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Secret Scanning"
 parent: "CI/CD"

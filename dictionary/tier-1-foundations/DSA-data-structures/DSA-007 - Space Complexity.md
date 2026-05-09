@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Space Complexity"
 parent: "Data Structures & Algorithms"

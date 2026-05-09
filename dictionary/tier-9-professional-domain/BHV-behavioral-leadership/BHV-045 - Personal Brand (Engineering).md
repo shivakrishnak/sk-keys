@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Personal Brand (Engineering)"
 parent: "Behavioral & Leadership"

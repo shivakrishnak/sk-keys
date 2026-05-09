@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Java Memory Management (Stack vs Heap Practical)"
 parent: "Java Language"

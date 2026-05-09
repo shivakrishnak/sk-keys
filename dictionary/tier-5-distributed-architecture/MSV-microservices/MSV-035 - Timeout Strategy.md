@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Timeout Strategy"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - intermediate
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-035 - Timeout Strategy

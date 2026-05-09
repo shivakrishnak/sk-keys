@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Master-Slave Replication"
 parent: "Database Fundamentals"

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Event Sourcing in Microservices"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - distributed
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-044 - Event Sourcing in Microservices

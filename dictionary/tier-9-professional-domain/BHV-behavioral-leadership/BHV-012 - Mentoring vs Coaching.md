@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Mentoring vs Coaching"
 parent: "Behavioral & Leadership"

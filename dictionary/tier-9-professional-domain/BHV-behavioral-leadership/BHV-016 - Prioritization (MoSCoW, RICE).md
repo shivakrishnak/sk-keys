@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Prioritization (MoSCoW, RICE)"
 parent: "Behavioral & Leadership"

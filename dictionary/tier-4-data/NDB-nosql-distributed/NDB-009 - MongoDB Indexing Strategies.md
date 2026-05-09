@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "MongoDB Indexing Strategies"
 parent: "NoSQL & Distributed Databases"

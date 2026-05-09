@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Backlog Management (JIRA, VersionOne)"
 parent: "Behavioral & Leadership"

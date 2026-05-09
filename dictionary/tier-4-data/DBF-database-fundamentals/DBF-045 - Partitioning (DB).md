@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Partitioning (DB)"
 parent: "Database Fundamentals"

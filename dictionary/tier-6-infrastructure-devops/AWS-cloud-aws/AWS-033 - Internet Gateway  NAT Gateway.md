@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Internet Gateway  NAT Gateway"
 parent: "Cloud - AWS"

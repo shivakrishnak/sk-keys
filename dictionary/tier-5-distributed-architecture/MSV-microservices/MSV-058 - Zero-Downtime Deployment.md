@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Zero-Downtime Deployment"
 parent: "Microservices"
@@ -17,6 +17,7 @@ tags:
   - operations
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-058 - Zero-Downtime Deployment

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Style Guide"
 parent: "Code Quality"

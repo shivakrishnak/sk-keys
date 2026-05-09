@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Distributed Transaction"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - reliability
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-039 - Distributed Transaction

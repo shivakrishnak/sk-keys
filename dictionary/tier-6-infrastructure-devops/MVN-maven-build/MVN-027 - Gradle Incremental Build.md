@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Gradle Incremental Build"
 parent: "Maven & Build Tools"

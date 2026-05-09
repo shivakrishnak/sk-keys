@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Pagination - Cursor Offset Keyset"
 parent: "HTTP & APIs"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Local Cache vs Distributed Cache"
 parent: "Caching"

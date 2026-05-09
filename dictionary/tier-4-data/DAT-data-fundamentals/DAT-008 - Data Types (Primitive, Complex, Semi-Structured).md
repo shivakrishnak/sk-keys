@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Data Types (Primitive, Complex, Semi-Structured)"
 parent: "Data Fundamentals"

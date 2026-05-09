@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Object-Oriented Programming (OOP)"
 parent: "CS Fundamentals - Paradigms"

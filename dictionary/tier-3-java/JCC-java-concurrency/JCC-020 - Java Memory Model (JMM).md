@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Java Memory Model (JMM)"
 parent: "Java Concurrency"

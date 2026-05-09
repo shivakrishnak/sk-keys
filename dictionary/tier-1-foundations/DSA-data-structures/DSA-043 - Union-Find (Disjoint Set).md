@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Union-Find (Disjoint Set)"
 parent: "Data Structures & Algorithms"

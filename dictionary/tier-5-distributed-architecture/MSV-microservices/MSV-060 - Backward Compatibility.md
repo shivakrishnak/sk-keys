@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Backward Compatibility"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - design
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-060 - Backward Compatibility

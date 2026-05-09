@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Index Types (B-Tree, Hash, Composite, Covering)"
 parent: "Database Fundamentals"

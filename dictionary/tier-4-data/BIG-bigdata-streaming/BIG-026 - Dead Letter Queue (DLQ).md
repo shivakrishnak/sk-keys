@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Dead Letter Queue (DLQ)"
 parent: "Big Data & Streaming"

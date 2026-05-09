@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "API Security Best Practices"
 parent: "HTTP & APIs"

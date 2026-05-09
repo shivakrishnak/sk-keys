@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Spring Boot Actuator"
 parent: "Spring Core"

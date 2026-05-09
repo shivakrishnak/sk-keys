@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Feature Flags (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - operations
   - intermediate
 status: complete
+version: 1
 ---
 
 # MSV-056 - Feature Flags (Microservices)

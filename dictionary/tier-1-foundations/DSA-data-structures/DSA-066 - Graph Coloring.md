@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Graph Coloring"
 parent: "Data Structures & Algorithms"

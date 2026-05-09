@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Continuous Delivery (CD)"
 parent: "CI/CD"

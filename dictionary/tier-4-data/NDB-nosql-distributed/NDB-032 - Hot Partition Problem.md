@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Hot Partition Problem"
 parent: "NoSQL & Distributed Databases"

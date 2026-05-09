@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Bloom Filter"
 parent: "Data Structures & Algorithms"

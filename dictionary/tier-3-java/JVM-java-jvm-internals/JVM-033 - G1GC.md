@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "G1GC"
 parent: "Java & JVM Internals"

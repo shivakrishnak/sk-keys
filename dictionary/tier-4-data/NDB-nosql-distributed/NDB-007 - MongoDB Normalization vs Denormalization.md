@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "MongoDB Normalization vs Denormalization"
 parent: "NoSQL & Distributed Databases"

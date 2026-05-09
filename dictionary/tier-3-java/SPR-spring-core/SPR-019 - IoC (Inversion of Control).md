@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "IoC (Inversion of Control)"
 parent: "Spring Core"

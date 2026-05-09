@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "AWS CDK (Cloud Development Kit)"
 parent: "Cloud - AWS"

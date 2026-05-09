@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Church-Turing Thesis"
 parent: "CS Fundamentals - Paradigms"

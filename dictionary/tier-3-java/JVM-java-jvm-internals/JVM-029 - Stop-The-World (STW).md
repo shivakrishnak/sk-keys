@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Stop-The-World (STW)"
 parent: "Java & JVM Internals"

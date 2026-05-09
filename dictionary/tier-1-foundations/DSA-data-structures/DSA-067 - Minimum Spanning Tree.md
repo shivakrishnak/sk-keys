@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Minimum Spanning Tree"
 parent: "Data Structures & Algorithms"

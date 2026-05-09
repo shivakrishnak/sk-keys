@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Outbox Pattern"
 parent: "Big Data & Streaming"

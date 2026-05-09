@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Polyglot Persistence"
 parent: "NoSQL & Distributed Databases"

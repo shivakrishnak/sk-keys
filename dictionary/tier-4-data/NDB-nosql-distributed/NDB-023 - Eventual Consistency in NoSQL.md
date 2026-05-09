@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Eventual Consistency in NoSQL"
 parent: "NoSQL & Distributed Databases"

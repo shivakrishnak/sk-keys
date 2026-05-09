@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "JSP (Java Server Pages)"
 parent: "Java Language"

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "On-Premises to Cloud Migration"
 parent: "Microservices"
@@ -19,6 +19,7 @@ tags:
   - devops
   - production
 status: complete
+version: 1
 ---
 
 # MSV-007 - On-Premises to Cloud Migration

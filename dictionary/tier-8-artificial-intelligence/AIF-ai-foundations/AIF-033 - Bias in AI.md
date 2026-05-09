@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Bias in AI"
 parent: "AI Foundations"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Maven Lifecycle (validate, compile, test, package, install, deploy)"
 parent: "Maven & Build Tools"

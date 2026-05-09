@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Database Change Management"
 parent: "Database Fundamentals"

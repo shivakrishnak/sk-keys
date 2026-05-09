@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Type Erasure"
 parent: "Java Language"

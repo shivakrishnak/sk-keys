@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Model Evaluation Metrics"
 parent: "AI Foundations"

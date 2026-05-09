@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Adapter Pattern (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - design
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-065 - Adapter Pattern (Microservices)

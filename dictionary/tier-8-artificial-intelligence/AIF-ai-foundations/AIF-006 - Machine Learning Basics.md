@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Machine Learning Basics"
 parent: "AI Foundations"

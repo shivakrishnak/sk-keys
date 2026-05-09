@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Resilience4j"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - deep-dive
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-031 - Resilience4j

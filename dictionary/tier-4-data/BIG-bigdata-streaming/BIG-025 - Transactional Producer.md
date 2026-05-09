@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Transactional Producer"
 parent: "Big Data & Streaming"

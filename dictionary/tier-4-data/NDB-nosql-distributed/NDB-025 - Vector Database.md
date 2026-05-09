@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Vector Database"
 parent: "NoSQL & Distributed Databases"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "API Management Platform"
 parent: "HTTP & APIs"

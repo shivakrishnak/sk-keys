@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Shenandoah GC"
 parent: "Java & JVM Internals"

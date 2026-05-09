@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Maven Wrapper (mvnw)"
 parent: "Maven & Build Tools"

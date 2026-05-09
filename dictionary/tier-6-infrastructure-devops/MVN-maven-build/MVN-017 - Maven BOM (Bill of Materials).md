@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Maven BOM (Bill of Materials)"
 parent: "Maven & Build Tools"

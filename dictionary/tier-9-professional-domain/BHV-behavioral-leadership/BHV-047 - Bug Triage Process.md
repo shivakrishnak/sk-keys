@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Bug Triage Process"
 parent: "Behavioral & Leadership"

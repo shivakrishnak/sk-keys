@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "API Gateway (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - intermediate
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-026 - API Gateway (Microservices)

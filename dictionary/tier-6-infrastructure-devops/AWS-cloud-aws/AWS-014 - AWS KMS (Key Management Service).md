@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "AWS KMS (Key Management Service)"
 parent: "Cloud - AWS"

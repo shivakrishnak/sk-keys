@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Search Engine (Elasticsearch)"
 parent: "NoSQL & Distributed Databases"

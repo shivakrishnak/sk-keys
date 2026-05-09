@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Sorting Stability"
 parent: "Data Structures & Algorithms"

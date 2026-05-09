@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "PL/SQL"
 parent: "Database Fundamentals"

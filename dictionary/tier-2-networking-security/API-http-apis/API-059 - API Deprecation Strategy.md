@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "API Deprecation Strategy"
 parent: "HTTP & APIs"

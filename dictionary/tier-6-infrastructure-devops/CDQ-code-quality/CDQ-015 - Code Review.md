@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Code Review"
 parent: "Code Quality"

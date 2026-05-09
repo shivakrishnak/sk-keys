@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "LRU Cache"
 parent: "Data Structures & Algorithms"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "swap Management"
 parent: "Linux"

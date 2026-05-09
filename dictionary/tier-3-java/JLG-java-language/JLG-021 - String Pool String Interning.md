@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "String Pool String Interning"
 parent: "Java Language"

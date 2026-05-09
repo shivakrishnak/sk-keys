@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Card Table"
 parent: "Java & JVM Internals"

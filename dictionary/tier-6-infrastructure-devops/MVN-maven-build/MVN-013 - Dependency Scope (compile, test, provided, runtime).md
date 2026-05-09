@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Dependency Scope (compile, test, provided, runtime)"
 parent: "Maven & Build Tools"

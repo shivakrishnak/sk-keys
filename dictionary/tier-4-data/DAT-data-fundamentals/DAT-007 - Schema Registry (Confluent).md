@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Schema Registry (Confluent)"
 parent: "Data Fundamentals"

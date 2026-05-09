@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Spring Cloud Circuit Breaker"
 parent: "Spring Core"

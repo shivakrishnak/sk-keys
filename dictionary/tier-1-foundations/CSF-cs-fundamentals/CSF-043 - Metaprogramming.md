@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Metaprogramming"
 parent: "CS Fundamentals - Paradigms"

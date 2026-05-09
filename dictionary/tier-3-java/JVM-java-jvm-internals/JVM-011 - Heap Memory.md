@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Heap Memory"
 parent: "Java & JVM Internals"

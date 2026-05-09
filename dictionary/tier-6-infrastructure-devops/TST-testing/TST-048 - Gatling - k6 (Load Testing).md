@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Gatling - k6 (Load Testing)"
 parent: "Testing"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Open Source vs Proprietary Models"
 parent: "AI Foundations"

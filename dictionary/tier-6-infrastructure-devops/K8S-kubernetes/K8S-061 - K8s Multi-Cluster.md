@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "K8s Multi-Cluster"
 parent: "Kubernetes"

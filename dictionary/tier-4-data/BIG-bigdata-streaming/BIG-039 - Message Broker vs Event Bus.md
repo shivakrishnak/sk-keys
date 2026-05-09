@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Message Broker vs Event Bus"
 parent: "Big Data & Streaming"

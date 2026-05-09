@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Circuit Breaker (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - deep-dive
   - reliability
 status: complete
+version: 1
 ---
 
 # MSV-032 - Circuit Breaker (Microservices)

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Event Time vs Processing Time"
 parent: "Big Data & Streaming"

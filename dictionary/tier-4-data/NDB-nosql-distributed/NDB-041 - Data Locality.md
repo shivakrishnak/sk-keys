@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Data Locality"
 parent: "NoSQL & Distributed Databases"

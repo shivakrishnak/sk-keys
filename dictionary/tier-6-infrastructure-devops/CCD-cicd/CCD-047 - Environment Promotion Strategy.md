@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Environment Promotion Strategy"
 parent: "CI/CD"

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Client-Side vs Server-Side Discovery"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - deep-dive
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-022 - Client-Side vs Server-Side Discovery

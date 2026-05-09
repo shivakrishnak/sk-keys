@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Batch vs Stream Processing"
 parent: "Big Data & Streaming"

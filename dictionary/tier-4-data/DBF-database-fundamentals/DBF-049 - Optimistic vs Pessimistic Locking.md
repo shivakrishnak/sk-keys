@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Optimistic vs Pessimistic Locking"
 parent: "Database Fundamentals"

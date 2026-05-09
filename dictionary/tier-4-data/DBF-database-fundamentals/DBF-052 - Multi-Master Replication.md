@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Multi-Master Replication"
 parent: "Database Fundamentals"

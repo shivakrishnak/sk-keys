@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Canary Deployment (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - operations
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-054 - Canary Deployment (Microservices)

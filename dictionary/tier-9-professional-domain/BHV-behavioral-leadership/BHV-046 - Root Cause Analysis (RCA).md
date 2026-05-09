@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Root Cause Analysis (RCA)"
 parent: "Behavioral & Leadership"

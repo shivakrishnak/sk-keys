@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Security Test (SAST-DAST)"
 parent: "Testing"

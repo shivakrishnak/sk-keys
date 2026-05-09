@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Type Systems (Static vs Dynamic)"
 parent: "CS Fundamentals - Paradigms"

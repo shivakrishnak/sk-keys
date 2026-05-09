@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "MySQL Specific Features"
 parent: "Database Fundamentals"

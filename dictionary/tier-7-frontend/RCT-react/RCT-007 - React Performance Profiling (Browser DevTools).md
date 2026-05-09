@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "React Performance Profiling (Browser DevTools)"
 parent: "React"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Infrastructure as Code (IaC)"
 parent: "CI/CD"

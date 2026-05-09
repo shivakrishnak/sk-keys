@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Two Pointer"
 parent: "Data Structures & Algorithms"

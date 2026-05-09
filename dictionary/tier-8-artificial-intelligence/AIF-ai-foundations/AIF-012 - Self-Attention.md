@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Self-Attention"
 parent: "AI Foundations"

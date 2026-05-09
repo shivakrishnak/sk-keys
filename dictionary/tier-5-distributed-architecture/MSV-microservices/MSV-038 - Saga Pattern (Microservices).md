@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Saga Pattern (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - reliability
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-038 - Saga Pattern (Microservices)

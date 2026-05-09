@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "955b - Immutable Infrastructure"
 parent: "Cloud - AWS"

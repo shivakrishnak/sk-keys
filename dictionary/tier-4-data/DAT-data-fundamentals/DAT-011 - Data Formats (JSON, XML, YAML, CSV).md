@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Data Formats (JSON, XML, YAML, CSV)"
 parent: "Data Fundamentals"

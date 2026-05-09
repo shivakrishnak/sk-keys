@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Referential Transparency"
 parent: "CS Fundamentals - Paradigms"

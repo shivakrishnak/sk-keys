@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "East-West vs North-South Traffic"
 parent: "Networking"

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Bounded Context"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - deep-dive
   - distributed
 status: complete
+version: 1
 ---
 
 # MSV-015 - Bounded Context

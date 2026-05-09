@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "ReentrantLock"
 parent: "Java Concurrency"

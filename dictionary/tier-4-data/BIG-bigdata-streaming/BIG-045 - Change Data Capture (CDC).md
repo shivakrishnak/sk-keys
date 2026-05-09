@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Change Data Capture (CDC)"
 parent: "Big Data & Streaming"

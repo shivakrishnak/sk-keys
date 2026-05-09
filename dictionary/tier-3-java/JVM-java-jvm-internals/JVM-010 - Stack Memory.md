@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Stack Memory"
 parent: "Java & JVM Internals"

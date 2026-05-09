@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "DynamoDB Single-Table Design"
 parent: "NoSQL & Distributed Databases"

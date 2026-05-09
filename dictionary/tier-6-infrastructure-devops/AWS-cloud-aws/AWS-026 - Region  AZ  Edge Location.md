@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Region  AZ  Edge Location"
 parent: "Cloud - AWS"

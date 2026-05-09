@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "GraphQL Subscriptions"
 parent: "HTTP & APIs"

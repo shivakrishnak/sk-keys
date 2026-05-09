@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Pattern Matching (Java 21+)"
 parent: "Java Language"

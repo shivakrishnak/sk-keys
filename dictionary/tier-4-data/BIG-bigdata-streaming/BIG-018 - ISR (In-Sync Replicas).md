@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "ISR (In-Sync Replicas)"
 parent: "Big Data & Streaming"

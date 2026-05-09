@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "1292b - Web APIs"
 parent: "JavaScript"

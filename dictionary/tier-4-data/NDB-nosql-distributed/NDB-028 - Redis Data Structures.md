@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Redis Data Structures"
 parent: "NoSQL & Distributed Databases"

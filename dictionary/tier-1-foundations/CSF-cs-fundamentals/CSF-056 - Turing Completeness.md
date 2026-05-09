@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Turing Completeness"
 parent: "CS Fundamentals - Paradigms"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Java File IO and Serialization"
 parent: "Java Language"

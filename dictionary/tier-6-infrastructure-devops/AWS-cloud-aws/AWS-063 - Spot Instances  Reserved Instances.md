@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Spot Instances  Reserved Instances"
 parent: "Cloud - AWS"

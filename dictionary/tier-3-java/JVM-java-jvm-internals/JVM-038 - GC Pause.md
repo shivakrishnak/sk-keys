@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "GC Pause"
 parent: "Java & JVM Internals"

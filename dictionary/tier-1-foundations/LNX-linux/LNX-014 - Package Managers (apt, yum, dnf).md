@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Package Managers (apt, yum, dnf)"
 parent: "Linux"

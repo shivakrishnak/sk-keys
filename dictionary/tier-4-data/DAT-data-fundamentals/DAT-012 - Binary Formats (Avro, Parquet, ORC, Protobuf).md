@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Binary Formats (Avro, Parquet, ORC, Protobuf)"
 parent: "Data Fundamentals"

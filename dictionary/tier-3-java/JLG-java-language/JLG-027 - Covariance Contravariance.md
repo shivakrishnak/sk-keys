@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Covariance Contravariance"
 parent: "Java Language"

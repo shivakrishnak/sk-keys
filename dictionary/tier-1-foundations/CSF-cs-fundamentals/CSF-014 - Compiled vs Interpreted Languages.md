@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Compiled vs Interpreted Languages"
 parent: "CS Fundamentals - Paradigms"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Terraform Drift Detection"
 parent: "CI/CD"

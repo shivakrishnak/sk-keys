@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Terraform Data Source"
 parent: "CI/CD"

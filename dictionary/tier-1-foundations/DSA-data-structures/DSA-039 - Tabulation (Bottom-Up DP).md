@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Tabulation (Bottom-Up DP)"
 parent: "Data Structures & Algorithms"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Data Compression (gzip, snappy, zstd, lz4)"
 parent: "Data Fundamentals"

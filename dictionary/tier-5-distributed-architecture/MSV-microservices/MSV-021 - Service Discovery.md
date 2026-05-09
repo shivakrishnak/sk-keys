@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Service Discovery"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - intermediate
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-021 - Service Discovery

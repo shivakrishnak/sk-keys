@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Monolith to Microservices Migration"
 parent: "Microservices"
@@ -19,6 +19,7 @@ tags:
   - distributed
   - bestpractice
 status: complete
+version: 1
 ---
 
 # MSV-006 - Monolith to Microservices Migration

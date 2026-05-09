@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Readiness vs Liveness vs Startup Probe"
 parent: "Kubernetes"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Java Collections Deep Dive (List, Map, Set)"
 parent: "Java Language"

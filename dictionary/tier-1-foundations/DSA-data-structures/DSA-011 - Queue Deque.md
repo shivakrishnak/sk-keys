@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Queue Deque"
 parent: "Data Structures & Algorithms"

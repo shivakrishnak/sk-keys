@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Distributed Transactions"
 parent: "NoSQL & Distributed Databases"

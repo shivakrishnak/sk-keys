@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Signals (SIGTERM, SIGKILL, SIGHUP)"
 parent: "Linux"

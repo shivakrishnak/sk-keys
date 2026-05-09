@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Wide Column vs Document"
 parent: "NoSQL & Distributed Databases"

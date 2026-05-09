@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Coding Conventions"
 parent: "Code Quality"

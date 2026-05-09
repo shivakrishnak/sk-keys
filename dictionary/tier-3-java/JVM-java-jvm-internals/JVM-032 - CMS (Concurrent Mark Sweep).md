@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "CMS (Concurrent Mark Sweep)"
 parent: "Java & JVM Internals"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "VPA (Vertical Pod Autoscaler)"
 parent: "Kubernetes"

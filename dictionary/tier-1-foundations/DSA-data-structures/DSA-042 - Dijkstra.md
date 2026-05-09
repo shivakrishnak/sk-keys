@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Dijkstra"
 parent: "Data Structures & Algorithms"

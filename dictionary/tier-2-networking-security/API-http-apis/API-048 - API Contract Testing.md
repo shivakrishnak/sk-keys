@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "API Contract Testing"
 parent: "HTTP & APIs"

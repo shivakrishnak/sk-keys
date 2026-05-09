@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Integer Cache"
 parent: "Java Language"

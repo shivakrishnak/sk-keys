@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "SCA (Software Composition Analysis)"
 parent: "CI/CD"

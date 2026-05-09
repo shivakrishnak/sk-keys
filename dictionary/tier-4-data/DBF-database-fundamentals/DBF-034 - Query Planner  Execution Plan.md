@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Query Planner  Execution Plan"
 parent: "Database Fundamentals"

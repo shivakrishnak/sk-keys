@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Symbolic Links and Hard Links"
 parent: "Linux"

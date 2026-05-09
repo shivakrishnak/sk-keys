@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Graceful Shutdown (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - operations
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-057 - Graceful Shutdown (Microservices)

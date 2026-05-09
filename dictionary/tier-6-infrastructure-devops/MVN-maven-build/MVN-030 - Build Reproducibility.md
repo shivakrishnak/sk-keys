@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Build Reproducibility"
 parent: "Maven & Build Tools"

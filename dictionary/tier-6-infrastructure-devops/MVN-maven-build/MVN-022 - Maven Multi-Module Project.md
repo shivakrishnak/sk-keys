@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Maven Multi-Module Project"
 parent: "Maven & Build Tools"

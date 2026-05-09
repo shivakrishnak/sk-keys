@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Spark Streaming"
 parent: "Big Data & Streaming"

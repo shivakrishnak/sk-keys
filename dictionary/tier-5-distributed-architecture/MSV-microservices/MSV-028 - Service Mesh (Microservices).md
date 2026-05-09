@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Service Mesh (Microservices)"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - deep-dive
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-028 - Service Mesh (Microservices)

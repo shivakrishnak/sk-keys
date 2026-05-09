@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Deep Learning"
 parent: "AI Foundations"

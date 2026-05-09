@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Ambassador Pattern"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - design
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-064 - Ambassador Pattern

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Terraform Plan  Apply  Destroy"
 parent: "CI/CD"

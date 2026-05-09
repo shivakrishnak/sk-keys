@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Scheduler / Preemption"
 parent: "Operating Systems"

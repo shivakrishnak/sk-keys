@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Proof of Concept (POC) in Architecture"
 parent: "Microservices"
@@ -19,6 +19,7 @@ tags:
   - microservices
   - mental-model
 status: complete
+version: 1
 ---
 
 # MSV-010 - Proof of Concept (POC) in Architecture

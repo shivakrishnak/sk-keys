@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Memory Management Models"
 parent: "CS Fundamentals - Paradigms"

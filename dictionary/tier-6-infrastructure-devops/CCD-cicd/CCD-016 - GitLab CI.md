@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "GitLab CI"
 parent: "CI/CD"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "AWS Global Infrastructure"
 parent: "Cloud - AWS"

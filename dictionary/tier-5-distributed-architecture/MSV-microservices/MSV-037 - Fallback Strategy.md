@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Fallback Strategy"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - intermediate
   - architecture
 status: complete
+version: 1
 ---
 
 # MSV-037 - Fallback Strategy

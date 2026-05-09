@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Retry Strategy"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - intermediate
   - pattern
 status: complete
+version: 1
 ---
 
 # MSV-036 - Retry Strategy

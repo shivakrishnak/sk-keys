@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Space-Time Trade-off"
 parent: "Data Structures & Algorithms"

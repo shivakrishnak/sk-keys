@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "S3 Storage Classes"
 parent: "Cloud - AWS"

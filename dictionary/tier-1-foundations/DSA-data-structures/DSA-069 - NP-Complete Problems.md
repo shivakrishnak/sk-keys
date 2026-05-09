@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "NP-Complete Problems"
 parent: "Data Structures & Algorithms"

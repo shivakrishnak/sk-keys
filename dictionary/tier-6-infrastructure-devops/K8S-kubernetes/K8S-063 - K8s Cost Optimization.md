@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "K8s Cost Optimization"
 parent: "Kubernetes"
@@ -34,6 +34,8 @@ tags:
     rightsizing,
     k8s,
   ]
+version: 1
+version: 1
 ---
 
 # K8s Cost Optimization

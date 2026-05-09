@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Old Generation"
 parent: "Java & JVM Internals"

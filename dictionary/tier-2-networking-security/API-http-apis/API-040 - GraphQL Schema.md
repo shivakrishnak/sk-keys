@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "GraphQL Schema"
 parent: "HTTP & APIs"

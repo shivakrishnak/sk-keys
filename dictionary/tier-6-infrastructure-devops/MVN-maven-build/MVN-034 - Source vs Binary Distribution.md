@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Source vs Binary Distribution"
 parent: "Maven & Build Tools"

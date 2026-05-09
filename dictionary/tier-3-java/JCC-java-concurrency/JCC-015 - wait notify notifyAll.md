@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "wait notify notifyAll"
 parent: "Java Concurrency"

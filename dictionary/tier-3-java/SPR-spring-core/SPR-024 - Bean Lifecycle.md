@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Bean Lifecycle"
 parent: "Spring Core"

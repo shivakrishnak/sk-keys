@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "AOT (Ahead-of-Time Compilation)"
 parent: "Java & JVM Internals"

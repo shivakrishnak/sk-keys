@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Contract Test"
 parent: "Testing"

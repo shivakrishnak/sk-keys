@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Graph DB"
 parent: "NoSQL & Distributed Databases"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "SCD (Slowly Changing Dimension)"
 parent: "Data Fundamentals"

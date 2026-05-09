@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "IAM (Identity and Access Management)"
 parent: "Cloud - AWS"

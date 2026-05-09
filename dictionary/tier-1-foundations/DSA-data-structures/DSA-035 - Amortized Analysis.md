@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Amortized Analysis"
 parent: "Data Structures & Algorithms"

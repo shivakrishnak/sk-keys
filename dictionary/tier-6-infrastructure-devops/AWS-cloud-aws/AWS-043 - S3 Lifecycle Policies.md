@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "S3 Lifecycle Policies"
 parent: "Cloud - AWS"

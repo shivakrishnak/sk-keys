@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Exactly-Once Semantics"
 parent: "Big Data & Streaming"

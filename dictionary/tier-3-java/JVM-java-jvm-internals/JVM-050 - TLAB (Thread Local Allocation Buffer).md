@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "TLAB (Thread Local Allocation Buffer)"
 parent: "Java & JVM Internals"

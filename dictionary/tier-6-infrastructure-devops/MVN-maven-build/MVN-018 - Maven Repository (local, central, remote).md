@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Maven Repository (local, central, remote)"
 parent: "Maven & Build Tools"

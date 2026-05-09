@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "1291b - Heap (JS)"
 parent: "JavaScript"

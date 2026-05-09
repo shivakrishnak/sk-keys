@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Synchronous vs Asynchronous"
 parent: "CS Fundamentals - Paradigms"

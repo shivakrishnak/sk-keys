@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Lazy vs Eager Loading"
 parent: "Spring Core"

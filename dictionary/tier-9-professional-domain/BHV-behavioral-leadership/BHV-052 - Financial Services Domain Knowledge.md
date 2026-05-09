@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Financial Services Domain Knowledge"
 parent: "Behavioral & Leadership"

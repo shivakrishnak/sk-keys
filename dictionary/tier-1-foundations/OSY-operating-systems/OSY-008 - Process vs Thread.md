@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Process vs Thread"
 parent: "Operating Systems"

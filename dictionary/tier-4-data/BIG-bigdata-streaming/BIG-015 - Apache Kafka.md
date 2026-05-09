@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Apache Kafka"
 parent: "Big Data & Streaming"

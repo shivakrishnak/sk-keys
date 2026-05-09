@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Data Isolation per Service"
 parent: "Microservices"
@@ -18,6 +18,7 @@ tags:
   - distributed
   - deep-dive
 status: complete
+version: 1
 ---
 
 # MSV-042 - Data Isolation per Service

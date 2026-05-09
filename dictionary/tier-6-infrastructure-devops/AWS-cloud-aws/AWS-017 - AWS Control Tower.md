@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "AWS Control Tower"
 parent: "Cloud - AWS"

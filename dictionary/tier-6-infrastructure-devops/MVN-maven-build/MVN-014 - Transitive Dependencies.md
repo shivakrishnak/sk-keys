@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Transitive Dependencies"
 parent: "Maven & Build Tools"

@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Supervised vs Unsupervised Learning"
 parent: "AI Foundations"

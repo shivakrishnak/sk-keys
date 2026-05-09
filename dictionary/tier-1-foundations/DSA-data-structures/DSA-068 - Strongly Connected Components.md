@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "Strongly Connected Components"
 parent: "Data Structures & Algorithms"

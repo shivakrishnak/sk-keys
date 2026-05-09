@@ -1,4 +1,5 @@
-﻿---
+---
+version: 1
 layout: default
 title: "API Gateway"
 parent: "HTTP & APIs"
