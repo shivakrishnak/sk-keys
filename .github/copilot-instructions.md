@@ -502,6 +502,64 @@ Follow Master Prompt v3.0 exactly.
 
 ---
 
+### Encoding Safety — PowerShell File Writing
+
+> ⚠️ **Critical rule — violations corrupt every emoji and star character in generated files.**
+
+All dictionary entries use emoji (⚡ 🔥 📘 ★★★) in section headers, TL;DR lines, and difficulty fields.
+These are multi-byte UTF-8 sequences. Windows PowerShell 5.1 (`powershell.exe`) reads script files as
+ANSI/Windows-1252 by default when no BOM is present, corrupting every non-ASCII character before it
+is written to disk (e.g. `⚡` → `âš¡`, `★` → `â˜…`).
+
+**Rules that must ALWAYS be followed when writing dictionary entry files via PowerShell:**
+
+| Rule | Correct | Wrong |
+|:-----|:--------|:------|
+| Interpreter | `pwsh` (PowerShell 7+) | `powershell` (Windows PS 5.1) |
+| Output encoding | `[System.Text.UTF8Encoding]::new($false)` | `[System.Text.Encoding]::UTF8` |
+| Script execution | `pwsh -ExecutionPolicy Bypass -File tmp\write_XXX.ps1` | `powershell -ExecutionPolicy Bypass -File ...` |
+
+**Why:**
+- `pwsh` (PowerShell 7) defaults to UTF-8 for all file I/O, including script reading.
+  A `.ps1` file saved as UTF-8 without BOM is read correctly — emoji in here-strings are preserved.
+- `[System.Text.Encoding]::UTF8` in .NET writes UTF-8 **with BOM** (bytes 0xEF 0xBB 0xBF at start).
+  A BOM in a markdown file breaks YAML frontmatter detection on GitHub Pages.
+  Use `[System.Text.UTF8Encoding]::new($false)` which writes UTF-8 **without BOM**.
+
+**Correct PS1 script template:**
+```powershell
+# ALWAYS use pwsh to execute this script:
+# pwsh -ExecutionPolicy Bypass -File tmp\write_XXX.ps1
+
+Set-Location "c:\ASK\MyWorkspace\sk-keys"
+$base = "dictionary\tier-N\FOLDER"
+
+$newContent = @'
+---
+id: CODE-NNN
+...full entry content with emoji preserved...
+'@
+
+$f = Join-Path $base "CODE-NNN - Keyword Name.md"
+# UTF-8 without BOM (false = no BOM mark):
+[System.IO.File]::WriteAllText(
+    $f, $newContent,
+    [System.Text.UTF8Encoding]::new($false))
+Write-Host "Written: $((Get-Content $f -Encoding UTF8).Count) lines"
+```
+
+**Verify encoding after writing:**
+```powershell
+# First 3 bytes must NOT be 239,187,191 (UTF-8 BOM)
+$bytes = [IO.File]::ReadAllBytes($f)
+Write-Host "BOM check: $($bytes[0]),$($bytes[1]),$($bytes[2])  (must NOT be 239,187,191)"
+# First content line must show ⚡ not âš¡
+$preview = [Text.Encoding]::UTF8.GetString($bytes[0..200])
+Write-Host $preview
+```
+
+---
+
 ### Git Workflow
 
 ```bash
