@@ -44,13 +44,13 @@ Work through **one batch at a time**. For each entry in the batch:
 
 ### 2a. Read the existing stub
 
-Read the stub file to capture its exact frontmatter (id, title, permalink, nav_order, tags, depends_on, used_by, related, difficulty, permalink).
+Read the stub file to capture its exact frontmatter (id, title, nav_order, permalink, tags, depends_on, used_by, related, difficulty).
 
 ### 2b. Generate full v3.0 content
 
 Apply every rule from the workspace `copilot-instructions.md` (already loaded). Key constraints:
 
-**Structure** — all 22 sections in order:
+**Structure** — YAML frontmatter plus all 22 content sections in order:
 
 1. YAML frontmatter (update `status: draft` → `status: complete`)
 2. `# CODE-NNN - KEYWORD NAME`
@@ -74,7 +74,7 @@ Apply every rule from the workspace `copilot-instructions.md` (already loaded). 
 20. `### 📌 Quick Reference Card`
 21. `### 💎 Transferable Wisdom`
 22. `### 💡 The Surprising Truth`
-23. `### 🧠 Think About This Before We Continue` *(3 Qs with `*Hint:_`)_
+23. `### 🧠 Think About This Before We Continue` (3 Qs with _Hint:_ per question)
 
 **Formatting rules:**
 
