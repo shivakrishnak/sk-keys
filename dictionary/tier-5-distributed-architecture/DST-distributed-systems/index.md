@@ -11,7 +11,7 @@ permalink: /distributed-systems/
 
 CAP theorem, consistency models, consensus algorithms, distributed locking, failure modes, and resilience patterns.
 
-**Keywords:** DST-001–DST-077 (72 terms)
+**Keywords:** DST-001–DST-077 (77 terms)
 
 | ID      | Keyword                                              | Difficulty |
 | ------- | ---------------------------------------------------- | ---------- |
@@ -32,7 +32,9 @@ CAP theorem, consistency models, consensus algorithms, distributed locking, fail
 | DST-015 | Lamport Clock                                        | ★★★        |
 | DST-016 | Vector Clock                                         | ★★★        |
 | DST-017 | Clock Skew - Clock Drift                             | ★★☆        |
+| DST-018 | Hybrid Logical Clocks (HLC)                          | ★★★        |
 | DST-019 | Total Order - Partial Order                          | ★★★        |
+| DST-020 | Total Order Broadcast                                | ★★★        |
 | DST-021 | Happened-Before                                      | ★★★        |
 | DST-022 | Leader Election                                      | ★★★        |
 | DST-023 | Raft                                                 | ★★★        |
@@ -43,9 +45,12 @@ CAP theorem, consistency models, consensus algorithms, distributed locking, fail
 | DST-028 | Quorum                                               | ★★★        |
 | DST-029 | Split Brain                                          | ★★★        |
 | DST-030 | Fencing - Epoch                                      | ★★★        |
+| DST-031 | Network Partition                                    | ★★☆        |
 | DST-032 | Failure Modes                                        | ★★★        |
 | DST-033 | Two-Phase Commit (2PC)                               | ★★★        |
+| DST-034 | XA Transactions                                      | ★★★        |
 | DST-035 | Three-Phase Commit (3PC)                             | ★★★        |
+| DST-036 | Optimistic Concurrency Control (Distributed)         | ★★★        |
 | DST-037 | Distributed Locking                                  | ★★★        |
 | DST-038 | Consistent Hashing                                   | ★★★        |
 | DST-039 | Virtual Nodes                                        | ★★★        |

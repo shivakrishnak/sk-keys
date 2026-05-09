@@ -474,5 +474,3 @@ _Hint:_ Calculate: pool can process 50/0.2 = 250 tasks/second. With 2,000/s inco
 
 **Q3 (A - System Interaction):** A service uses Producer-Consumer with a bounded `ArrayBlockingQueue`. The producer is a Spring `@KafkaListener`. When the queue is full, the Kafka consumer blocks on `queue.put()`. What is the downstream effect on Kafka partition assignment and consumer group lag? Is blocking the Kafka consumer thread safe?
 _Hint:_ Consider what happens to Kafka's heartbeat mechanism when the consumer thread is blocked. Look at `max.poll.interval.ms` and consumer group rebalancing.
-
-> Entry stub. Generate full content using Master Prompt v3.0.
