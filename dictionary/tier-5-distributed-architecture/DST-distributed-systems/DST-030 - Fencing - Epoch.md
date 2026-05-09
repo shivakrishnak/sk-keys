@@ -27,11 +27,11 @@ permalink: /distributed-systems/fencing-epoch/
 
 ⚡ TL;DR - Fencing tokens are monotonically increasing numbers issued on each leadership change (epoch); storage rejects any write from a node whose fencing token is lower than the maximum token seen, making stale leaders physically incapable of corrupting data even after a GC pause or network delay.
 
-| Metadata | | |
-|:---|:---|:---|
-| **Depends on:** | DST-022, DST-029 | |
-| **Used by:** | DST-022 | |
-| **Related:** | DST-029, DST-022, DST-028 | |
+| Metadata        |                           |     |
+| :-------------- | :------------------------ | :-- |
+| **Depends on:** | DST-022, DST-029          |     |
+| **Used by:**    | DST-022                   |     |
+| **Related:**    | DST-029, DST-022, DST-028 |     |
 
 ---
 
@@ -70,6 +70,7 @@ A **fencing token** (also called an **epoch number**, **term**, **generation**, 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **Monotone token generation:** Epoch numbers strictly increase. If the current epoch is 5, the next leader gets epoch 6. The consensus service (etcd, ZooKeeper) guarantees this via atomic compare-and-swap.
 2. **Storage-side enforcement:** The storage system — not the leader — is responsible for rejecting stale writes. A leader cannot be trusted to check its own recency (it may be paused, partitioned, or have a stale view of the world).
 3. **Token transmission:** Every write request includes the sender's current epoch token. The storage system checks `token >= max_token_seen` before applying the write.
@@ -93,6 +94,7 @@ Fencing tokens are composable with any lease/lock system. The lease/lock grants 
 **SETUP:** ZooKeeper-based distributed lock. Leader L1 holds lock with token 5. JVM GC pause hits L1 for 40 seconds. ZooKeeper session timeout = 30 seconds. New leader L2 is elected with token 6.
 
 **WITHOUT FENCING:**
+
 - L2 acquires lock, begins writing to shared storage: `PUT account=1000`
 - L1's GC pause ends. L1 resumes. L1's code: "I hold the lock, writing..." `PUT account=500`
 - Storage receives both. Last write wins. `account=500` (wrong!).
@@ -100,6 +102,7 @@ Fencing tokens are composable with any lease/lock system. The lease/lock grants 
 - Data corruption: the correct final value should have been 1000 (L2's write).
 
 **WITH FENCING TOKENS:**
+
 - L2 acquires lock with token=6. L2 writes: `PUT account=1000 (token=6)`
 - Storage: `max_token_seen = 6`. Applies write. `account=1000`.
 - L1 resumes. L1's code: "writing..." `PUT account=500 (token=5)`
@@ -115,6 +118,7 @@ Fencing tokens are composable with any lease/lock system. The lease/lock grants 
 > A fencing token is like the revision number on a legal document. When a lawyer (leader) sends document revision #5 for signature, but the office has already processed revision #7 (from the new authorized lawyer): they reject revision #5 without even reading it. The rejection is automatic — based solely on the revision number — not on the content of the document.
 
 **Mapping:**
+
 - **Document revision number** → fencing token (epoch)
 - **Lawyer** → distributed leader/lock holder
 - **Office** → storage system
@@ -140,6 +144,7 @@ In Raft: each term is an epoch. When a follower receives a request from a leader
 The fundamental insight is that in an asynchronous system, a node cannot determine its own current authority from local state alone. Local state can be arbitrarily stale (GC pause, OS scheduling, network delay). The ONLY source of truth about current authority is external to the node — specifically, the consensus service that issued the fencing token AND the storage system that tracks `max_token_seen`. Fencing tokens create a chain of authority verification: consensus service issues tokens monotonically → leader presents token with each write → storage verifies token recency. This chain means that even if the consensus service's decision is slow to propagate to the leader's local state (e.g., during a GC pause), the storage system's token check catches it. The storage check is the "last line of defense" that requires no cooperation from the leader. Google Spanner extends this concept with TrueTime: instead of a discrete epoch token, Spanner uses a time-bounded commit-wait (`TrueTime + uncertainty bound`) as a continuous fencing mechanism — no write is committed until the commit timestamp is provably in the past for all nodes.
 
 **Expert Thinking Cues:**
+
 - "My ZooKeeper-based leader is writing stale data after a GC pause" → Pass the ZooKeeper `sessionId + epoch` as a fencing token with every storage write. Storage must reject writes with lower epoch. ZooKeeper's `zxid` provides the epoch.
 - "How does Kubernetes prevent two pods from claiming leadership?" → Kubernetes leader election uses `lease.coordination.k8s.io` objects. The leader acquires a Lease with `resourceVersion`. Before updating: it checks that the current Lease `resourceVersion` matches (compare-and-swap). If another pod updated the Lease: the old leader's write fails — this IS fencing via resourceVersion.
 - "HDFS NN HA uses fencing scripts — what is that?" → HDFS NameNode HA (without Raft) uses external fencing scripts (SSH to kill old NN process, revoke Kerberos credentials). This is STONITH-style fencing, not token-based. Token-based fencing for HDFS would require the DataNodes to check NN epoch tokens before accepting block writes.
@@ -150,6 +155,7 @@ The fundamental insight is that in an asynchronous system, a node cannot determi
 ### ⚙️ How It Works (Mechanism)
 
 **Fencing token lifecycle:**
+
 ```
 Consensus Service (etcd/ZooKeeper)
   ├── Leader L1 elected: issues token=5
@@ -176,6 +182,7 @@ Token monotonicity guarantee (etcd):
 ```
 
 **ZooKeeper sequencer (fencing built-in):**
+
 ```
 ZooKeeper lock with sequencer:
   L1 creates: /lock/lock-0000000005 (sequence node)
@@ -243,6 +250,7 @@ Multi-region: a node in US-East holds token=10. Failover to EU-West: token=11. I
 ### 💻 Code Example
 
 **BAD - Distributed lock without fencing (GC pause vulnerable):**
+
 ```java
 // No fencing token passed to storage
 // Vulnerable to process pause between lock check and write
@@ -274,6 +282,7 @@ public class UnsafeLockClient {
 ```
 
 **GOOD - Distributed lock with fencing token (GC-pause safe):**
+
 ```java
 // Fencing token passed with every storage write
 // Storage rejects writes with stale tokens
@@ -373,6 +382,7 @@ public class FencedStorage {
 ```
 
 **How to test / verify correctness:**
+
 ```bash
 # Simulate GC pause scenario with etcd + fencing:
 
@@ -408,26 +418,26 @@ EOF
 
 ### ⚖️ Comparison Table
 
-| Fencing mechanism | Token source | Enforcement point | Handles GC pause | Complexity |
-|:---|:---|:---|:---|:---|
-| ZooKeeper sequencer / zxid | ZK transaction ID | Storage checks zxid | Yes | Medium |
-| etcd revision | Raft log index | etcd txn version check | Yes | Low |
-| Raft term | Leader term number | Built-in to Raft protocol | Yes | None (built-in) |
-| STONITH | N/A (physical kill) | Hardware power control | Yes | High |
-| Kubernetes lease resourceVersion | etcd revision | kube-apiserver CAS | Yes | Low |
-| TrueTime (Spanner) | GPS/atomic clock | Commit-wait timestamp | Yes | Very high |
+| Fencing mechanism                | Token source        | Enforcement point         | Handles GC pause | Complexity      |
+| :------------------------------- | :------------------ | :------------------------ | :--------------- | :-------------- |
+| ZooKeeper sequencer / zxid       | ZK transaction ID   | Storage checks zxid       | Yes              | Medium          |
+| etcd revision                    | Raft log index      | etcd txn version check    | Yes              | Low             |
+| Raft term                        | Leader term number  | Built-in to Raft protocol | Yes              | None (built-in) |
+| STONITH                          | N/A (physical kill) | Hardware power control    | Yes              | High            |
+| Kubernetes lease resourceVersion | etcd revision       | kube-apiserver CAS        | Yes              | Low             |
+| TrueTime (Spanner)               | GPS/atomic clock    | Commit-wait timestamp     | Yes              | Very high       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|:---|:---|
-| "Quorum makes fencing unnecessary" | Quorum prevents two majorities from proceeding DURING a partition. But a process paused by GC, then resumed, doesn't need a partition to cause damage — it just needs the storage system to not check its token. Quorum and fencing solve different threat scenarios and are complementary. |
+| Misconception                                               | Reality                                                                                                                                                                                                                                                                                                                     |
+| :---------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Quorum makes fencing unnecessary"                          | Quorum prevents two majorities from proceeding DURING a partition. But a process paused by GC, then resumed, doesn't need a partition to cause damage — it just needs the storage system to not check its token. Quorum and fencing solve different threat scenarios and are complementary.                                 |
 | "The leader can check if it's still current before writing" | This check is inherently racy. Between "check current leadership" and "execute write": arbitrary time can pass (GC pause, OS scheduling). The check can return "yes, still leader" and then the write lands after a new leader has been elected. Only storage-side token verification (synchronous with the write) is safe. |
-| "HDFS NN fencing is fencing tokens" | HDFS NameNode HA fencing is STONITH-style fencing (SSH to kill old NN, revoke Kerberos credentials, network port fencing). It is NOT token-based fencing. HDFS DataNodes don't check epoch tokens from the NameNode — they rely on STONITH having killed the old NN before the new one accepts writes. |
-| "A fencing token is the same as a session ID" | Session IDs identify WHO is communicating but don't encode WHEN authority was granted. Two session IDs can be active simultaneously. A fencing token encodes a monotone sequence number — only the HIGHEST token is valid. The comparison is the key: `token < max_seen → reject`. Session IDs have no such ordering. |
-| "Fencing only applies to distributed locks" | Fencing tokens apply to any resource with a single-authority requirement: Kafka consumer group generation (fencing stale consumers), Kubernetes leader election (fencing stale controllers), database cluster primary epoch (fencing stale primaries). The pattern is universal, not limited to lock managers. |
+| "HDFS NN fencing is fencing tokens"                         | HDFS NameNode HA fencing is STONITH-style fencing (SSH to kill old NN, revoke Kerberos credentials, network port fencing). It is NOT token-based fencing. HDFS DataNodes don't check epoch tokens from the NameNode — they rely on STONITH having killed the old NN before the new one accepts writes.                      |
+| "A fencing token is the same as a session ID"               | Session IDs identify WHO is communicating but don't encode WHEN authority was granted. Two session IDs can be active simultaneously. A fencing token encodes a monotone sequence number — only the HIGHEST token is valid. The comparison is the key: `token < max_seen → reject`. Session IDs have no such ordering.       |
+| "Fencing only applies to distributed locks"                 | Fencing tokens apply to any resource with a single-authority requirement: Kafka consumer group generation (fencing stale consumers), Kubernetes leader election (fencing stale controllers), database cluster primary epoch (fencing stale primaries). The pattern is universal, not limited to lock managers.              |
 
 ---
 
@@ -438,6 +448,7 @@ EOF
 **Symptom:** A distributed lock is held by a process that experiences a long JVM GC pause. After recovery: monitoring shows two "successful" writes to the same key at nearly the same time. The stored value alternates between two values on successive reads. Data corruption confirmed.
 **Root Cause:** Storage system does not validate fencing tokens. When the GC-paused process resumed: it wrote with its (now stale) lock. The new leader had already written with the current lock. Both writes landed on storage (no epoch check). Last-write-wins by wall-clock timestamp — non-deterministic result.
 **Diagnostic:**
+
 ```bash
 # Check if your storage layer validates fencing tokens:
 # In etcd: use txn with version check — built-in fencing
@@ -452,6 +463,7 @@ grep "Pause Full" gc.log | awk '{print $NF}' | sort -n | tail -5
 # Fix: tune GC (G1GC, ZGC for < 10ms pauses), increase lease TTL,
 # or implement fencing tokens in the storage layer.
 ```
+
 **Fix:**
 BAD: Storage write with no fencing check: `storage.put(key, value)`.
 GOOD: Storage write with fencing: `storage.putIfTokenCurrent(key, value, fencingToken)` — throws `StaleLeaderException` if `fencingToken < max_seen_token`.
@@ -462,6 +474,7 @@ GOOD: Storage write with fencing: `storage.putIfTokenCurrent(key, value, fencing
 **Symptom:** etcd-based leader election with fencing tokens. A failover correctly issues a new token to the new leader. But the protected resource still receives writes from the old leader — the fencing check passes when it shouldn't.
 **Root Cause:** The fencing token was not propagated through the full call chain. The leader service received the token from etcd and validated it on the first hop. But it called a downstream microservice that wrote to the protected resource WITHOUT passing the token. The downstream service has no token to check and accepts all writes.
 **Diagnostic:**
+
 ```bash
 # Trace fencing token propagation through request headers:
 # In distributed tracing: check if "X-Fencing-Token" header
@@ -476,6 +489,7 @@ grep "fencing_token" /var/log/storage/writes.log | \
 # If zero rejections even during failovers: storage is
 # likely not checking tokens at all
 ```
+
 **Fix:**
 BAD: Token validated only at the entry point, not forwarded.
 GOOD: Pass fencing token as a propagated header (HTTP: `X-Fencing-Token`, gRPC: metadata field) through every service hop. Final storage write includes the token; storage validates it.
@@ -486,6 +500,7 @@ GOOD: Pass fencing token as a propagated header (HTTP: `X-Fencing-Token`, gRPC: 
 **Symptom:** An attacker with access to the internal network connects directly to the etcd API and issues `put leader-lock "<malicious-payload>"`, receiving a high revision number (fencing token). The attacker then uses this token to issue writes to the protected resource — writes that are accepted as "current" by the storage fencing check.
 **Root Cause:** etcd API (port 2379) is exposed without authentication on the internal network. The attacker can issue arbitrary etcd operations, including acquiring fencing tokens. The fencing mechanism is only as secure as the token issuer.
 **Diagnostic:**
+
 ```bash
 # Check if etcd requires client certificate authentication:
 curl -s http://etcd-endpoint:2379/v3/kv/put \
@@ -500,6 +515,7 @@ ETCDCTL_API=3 etcdctl auth status \
 # Expected: "Authentication Status: true"
 # If false: authentication is disabled → security issue
 ```
+
 **Fix:**
 BAD: `etcd --listen-client-urls=http://0.0.0.0:2379` (no TLS, no auth).
 GOOD: (1) Enable client mTLS: `--client-cert-auth=true --trusted-ca-file=ca.crt`. (2) Enable RBAC: `etcdctl auth enable`. (3) Restrict etcd API access to Kubernetes control plane nodes only (NetworkPolicy, security group). (4) Audit all etcd write operations via audit logging.
@@ -510,13 +526,16 @@ GOOD: (1) Enable client mTLS: `--client-cert-auth=true --trusted-ca-file=ca.crt`
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - DST-022 - Leader Election (fencing tokens are issued per leadership term — you must understand leader election to understand what an epoch represents)
 - DST-029 - Split Brain (fencing tokens are the storage-level defense mechanism after split brain begins — understand the threat before the solution)
 
 **Builds On This (learn these next):**
+
 - DST-022 - Leader Election (Raft terms are built-in fencing tokens — the connection between leader election and fencing is fundamental)
 
 **Alternatives / Comparisons:**
+
 - DST-029 - Split Brain (STONITH is an alternative fencing mechanism at the hardware level)
 - DST-022 - Leader Election (Raft terms as built-in fencing vs. external token-based fencing)
 - DST-028 - Quorum (quorum prevents split brain before it starts; fencing tokens prevent damage after a stale leader resumes)
@@ -557,6 +576,7 @@ GOOD: (1) Enable client mTLS: `--client-cert-auth=true --trusted-ca-file=ca.crt`
 ```
 
 **If you remember only 3 things:**
+
 1. Fencing token = monotonically increasing number issued per leadership epoch. The storage system rejects writes from any node whose token is lower than the highest token it has seen. A stale leader CANNOT write — regardless of whether it knows it's stale.
 2. The storage system must validate the token on every write. The leader cannot be trusted to self-report its own staleness (it may be paused, slow, or simply wrong). Storage-side enforcement is the invariant.
 3. Quorum prevents two leaders from being elected. Fencing prevents a stale leader from writing AFTER it's been replaced. Both are needed: quorum for election safety, fencing for write safety.
@@ -572,6 +592,7 @@ GOOD: (1) Enable client mTLS: `--client-cert-auth=true --trusted-ca-file=ca.crt`
 Never let an actor be the sole judge of its own current authority. In any system where authority can change hands, build verification of current authority into the resource being protected — not into the actor claiming authority. The actor's self-assessment may be arbitrarily stale (pauses, delays, bugs). The resource's check is synchronous with the operation and cannot be bypassed. This is the "external enforcement" principle: put the invariant check at the boundary where it is physically impossible to bypass, not in the code of the potentially-compromised actor.
 
 **Where else this pattern appears:**
+
 - **OAuth2 token revocation and JWT expiry:** When a user's session is revoked (logout, password change), their JWT token may still be "valid" by its own embedded claims (not yet expired). The resource server (API) must check a token revocation list or short expiry — the JWT itself cannot be trusted to report its own invalidity. The JWT `iat` (issued-at) claim is a fencing token: if the server's revocation timestamp for this user is higher than `iat`, the token is rejected. Same pattern: monotone timestamp, resource-side enforcement, actor-side claims can't be trusted.
 - **Optimistic concurrency control (database `version` column):** An entity update includes the entity's current `version`. The database applies: `UPDATE entity SET ..., version=version+1 WHERE id=X AND version=<expected>`. If another writer incremented `version`: this update fails. The `version` column is a fencing token for database row updates — prevents stale writes from overwriting concurrent modifications. Same monotone-counter + resource-side-check pattern applied to rows instead of leaders.
 - **Kubernetes controller reconciliation (ResourceVersion):** A Kubernetes controller reads a resource (`Pod`, `Deployment`) and writes an update. The update includes the resource's current `resourceVersion`. The kube-apiserver applies the update only if `resourceVersion` matches the current stored version. If another controller or user updated the resource concurrently: the `resourceVersion` has changed → the update is rejected. The Kubernetes `resourceVersion` is a fencing token for controller updates — the API server enforces it, not the controller.
@@ -587,12 +608,10 @@ The GC pause problem that fencing tokens solve — a process pausing for longer 
 ### 🧠 Think About This Before We Continue
 
 **Q1 (E - First Principles):** Raft terms are described as "built-in fencing tokens" in this entry. But Raft followers also reject AppendEntries from leaders with stale terms (`if term < currentTerm: reject`). How does this Raft behavior differ from storage-level fencing? Specifically: what happens if a Raft leader with term=5 sends a write to a follower that has already seen term=6? And what does the follower do next — just reject or also inform the leader?
-*Hint:* Raft follower rejects and responds with its current term (6). The stale leader (term=5) receives a response with `term=6 > 5`. Per Raft protocol: the leader immediately sets `currentTerm=6` and steps down to follower. This is "self-fencing" — the leader uses the rejection response to learn it's stale and removes itself from authority. Storage-level fencing (in external storage systems outside Raft) does NOT have this self-notification mechanism — the stale leader must detect failure through the rejected write alone. What implications does this have for retry logic in systems that don't implement Raft's self-step-down?
+_Hint:_ Raft follower rejects and responds with its current term (6). The stale leader (term=5) receives a response with `term=6 > 5`. Per Raft protocol: the leader immediately sets `currentTerm=6` and steps down to follower. This is "self-fencing" — the leader uses the rejection response to learn it's stale and removes itself from authority. Storage-level fencing (in external storage systems outside Raft) does NOT have this self-notification mechanism — the stale leader must detect failure through the rejected write alone. What implications does this have for retry logic in systems that don't implement Raft's self-step-down?
 
 **Q2 (C - Design Trade-off):** Google Spanner uses TrueTime commit-wait as its fencing mechanism: before a transaction is committed, Spanner waits until the commit timestamp is provably in the past for all nodes (i.e., `now().latest < commit_timestamp`). This eliminates discrete epoch tokens in favor of continuous time-based fencing. What is the advantage of TrueTime fencing over discrete epoch fencing for global distributed transactions? And what is the fundamental requirement (hardware) that makes TrueTime possible but unachievable in most datacenters?
-*Hint:* Discrete epoch fencing requires a coordinator (etcd, ZooKeeper) to assign tokens — the coordinator is a bottleneck and a potential SPOF. TrueTime fencing is peer-to-peer: each node knows its own committed writes are "earlier" than any future commit from any other node (within error bounds). The hardware requirement: GPS receivers and atomic clocks in every datacenter to bound clock uncertainty to ±7ms. Standard NTP has ±100ms uncertainty — too large for commit-wait (you'd wait 100ms per transaction). What does this mean for emulating Spanner-style TrueTime in a standard cloud datacenter without GPS hardware?
+_Hint:_ Discrete epoch fencing requires a coordinator (etcd, ZooKeeper) to assign tokens — the coordinator is a bottleneck and a potential SPOF. TrueTime fencing is peer-to-peer: each node knows its own committed writes are "earlier" than any future commit from any other node (within error bounds). The hardware requirement: GPS receivers and atomic clocks in every datacenter to bound clock uncertainty to ±7ms. Standard NTP has ±100ms uncertainty — too large for commit-wait (you'd wait 100ms per transaction). What does this mean for emulating Spanner-style TrueTime in a standard cloud datacenter without GPS hardware?
 
 **Q3 (D - Root Cause):** A Kubernetes controller (controller-manager) is running leader election via the `lease.coordination.k8s.io` API. During a Kubernetes API server upgrade: there is a 30-second window where the API server is restarting. The controller-manager cannot renew its lease. After the API server restarts: the controller-manager reconnects and successfully renews the lease. A second controller-manager pod (running in another AZ) noticed the lease renewal failure and tried to acquire the lease — but the API server came back before the second controller could complete acquisition. Is there a risk of dual-leadership during the 30-second outage window? What prevents the second controller from acting as leader during the window, even though it successfully detected the first controller's lease renewal failure?
-*Hint:* The second controller can only act as leader AFTER it has SUCCESSFULLY acquired the lease — i.e., AFTER it has written its identity to the Lease object in etcd AND received a successful response from the API server. If the API server is down: neither controller can confirm leadership. Both should be in "waiting" state. The first controller continues executing its reconciliation loop using its LOCAL state (it thinks it's leader). The second controller also may continue executing (it also thinks it's leader, based on local state). The Lease object hasn't been updated — but both controllers' LOCAL lease-check timers may have expired. This is the "client-side lease check is not fencing" problem.
-
-
+_Hint:_ The second controller can only act as leader AFTER it has SUCCESSFULLY acquired the lease — i.e., AFTER it has written its identity to the Lease object in etcd AND received a successful response from the API server. If the API server is down: neither controller can confirm leadership. Both should be in "waiting" state. The first controller continues executing its reconciliation loop using its LOCAL state (it thinks it's leader). The second controller also may continue executing (it also thinks it's leader, based on local state). The Lease object hasn't been updated — but both controllers' LOCAL lease-check timers may have expired. This is the "client-side lease check is not fencing" problem.

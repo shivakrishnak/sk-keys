@@ -27,11 +27,11 @@ permalink: /distributed-systems/paxos/
 
 ⚡ TL;DR - Paxos is the foundational distributed consensus algorithm that solves agreement on a single value (single-decree) via a two-phase Prepare/Promise/Accept/Accepted protocol, which Multi-Paxos extends to a replicated log — the basis of all modern consensus systems.
 
-| Metadata | | |
-|:---|:---|:---|
-| **Depends on:** | DST-022, DST-028 | |
-| **Used by:** | DST-023, DST-027 | |
-| **Related:** | DST-023, DST-027, DST-028 | |
+| Metadata        |                           |     |
+| :-------------- | :------------------------ | :-- |
+| **Depends on:** | DST-022, DST-028          |     |
+| **Used by:**    | DST-023, DST-027          |     |
+| **Related:**    | DST-023, DST-027, DST-028 |     |
 
 ---
 
@@ -53,7 +53,7 @@ Lamport circulated "The Part-Time Parliament" in 1989 — introducing Paxos as a
 
 ### 📘 Textbook Definition
 
-**Paxos** is a family of consensus algorithms for deciding on a single value among a distributed set of processes. In **single-decree Paxos**: a set of *proposers*, *acceptors*, and *learners* cooperate to choose exactly one value from a set of proposed values. A value is **chosen** (decided) when it has been accepted by a majority (quorum) of acceptors. The protocol runs in two phases: **Phase 1 (Prepare/Promise)** — a proposer sends Prepare(n) for a proposal number n; acceptors promise not to accept lower-numbered proposals and return any value they've previously accepted. **Phase 2 (Accept/Accepted)** — the proposer sends Accept(n, v) where v is the highest-numbered value from Phase 1 responses (or the proposer's own value if none received); acceptors accept if they haven't promised a higher proposal number; a quorum of acceptors accepting constitutes a decision. **Multi-Paxos** optimizes by electing a stable leader (proposer) to skip Phase 1 for subsequent instances, enabling efficient log replication.
+**Paxos** is a family of consensus algorithms for deciding on a single value among a distributed set of processes. In **single-decree Paxos**: a set of _proposers_, _acceptors_, and _learners_ cooperate to choose exactly one value from a set of proposed values. A value is **chosen** (decided) when it has been accepted by a majority (quorum) of acceptors. The protocol runs in two phases: **Phase 1 (Prepare/Promise)** — a proposer sends Prepare(n) for a proposal number n; acceptors promise not to accept lower-numbered proposals and return any value they've previously accepted. **Phase 2 (Accept/Accepted)** — the proposer sends Accept(n, v) where v is the highest-numbered value from Phase 1 responses (or the proposer's own value if none received); acceptors accept if they haven't promised a higher proposal number; a quorum of acceptors accepting constitutes a decision. **Multi-Paxos** optimizes by electing a stable leader (proposer) to skip Phase 1 for subsequent instances, enabling efficient log replication.
 
 ---
 
@@ -70,6 +70,7 @@ Lamport circulated "The Part-Time Parliament" in 1989 — introducing Paxos as a
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **Majority intersection:** Any two majorities of acceptors share at least one member. This member enforces consistency between concurrent proposals.
 2. **Proposal number uniqueness:** Each proposer uses a globally-unique, monotonically-increasing proposal number. Higher-numbered proposals override lower ones.
 3. **Promise durability:** Once an acceptor promises not to accept proposals < n, it must honor this even after crashes (by writing the promise to durable storage).
@@ -110,6 +111,7 @@ Suppose Accept(1, "X") reached A1 BEFORE Prepare(2). A1 accepted "X" at proposal
 > Paxos is like passing a constitutional amendment. Phase 1: the sponsor announces "I'm opening Amendment Session 42 — all senators must promise not to vote on sessions older than 42." Senators who voted in a prior session tell the sponsor what they voted for. Phase 2: the sponsor proposes the amendment — if any senator reported a prior vote, the sponsor must use the most recently voted-on text. If no prior votes: the sponsor's original text. A majority vote (acceptance) ratifies the amendment.
 
 **Mapping:**
+
 - **Amendment session number** → proposal number n
 - **Senator's promise not to vote in older sessions** → acceptor's promise not to accept proposals < n
 - **Senator reporting prior vote** → acceptor returning previously-accepted value in Phase 1
@@ -135,6 +137,7 @@ Single-decree Paxos details: Proposer chooses unique n, sends Prepare(n) to all 
 The two-phase structure is a consequence of a fundamental impossibility: you can't determine if a previous proposal was "chosen" without asking a majority (since any majority could contain all the nodes that accepted it). Phase 1 solves this: by querying a majority, you're guaranteed to find out about any previously-chosen value (the quorum intersection ensures you'll hit at least one node that accepted it). Phase 2 then drives the chosen (or new) value to another majority. The invariant that proposers must use the highest-accepted-value from Phase 1 is what prevents conflicting decisions: if value v was chosen (accepted by majority M1) and a new proposer queries majority M2 (which overlaps M1), the overlap node reports v, and the new proposer is obligated to propose v — ensuring only v can ever be chosen.
 
 **Expert Thinking Cues:**
+
 - "Why can't Paxos decide in one round?" → FLP impossibility: one round can't distinguish between "majority accepted" and "minority accepted" without a quorum query.
 - "Why does Multi-Paxos skip Phase 1?" → With a stable leader, Phase 1 is amortized over all log slots. Phase 2 alone is sufficient per slot since no competing proposers can interfere (leader has established its authority).
 - "What breaks Multi-Paxos when the leader fails?" → Phase 1 must be re-run (the new leader needs to discover any in-flight proposals from the old leader). This is the election + catchup phase in every Paxos-based system.
@@ -145,6 +148,7 @@ The two-phase structure is a consequence of a fundamental impossibility: you can
 ### ⚙️ How It Works (Mechanism)
 
 **Single-decree Paxos — full message flow:**
+
 ```
 PHASE 1: PREPARE / PROMISE
 Proposer (P):
@@ -180,6 +184,7 @@ Value CHOSEN when: majority of acceptors
 ```
 
 **Multi-Paxos optimization (Phase 1 amortized):**
+
 ```
 Leader established (Phase 1 done for term T):
   For each log slot i:
@@ -231,6 +236,7 @@ Multiple proposers cause "Paxos dueling" (livelock): P1 gets Phase 1 majority, P
 ### 💻 Code Example
 
 **BAD - Single-round "consensus" that can't handle concurrent proposers:**
+
 ```java
 // Attempting consensus with a single round-trip:
 // If two proposers send simultaneously → both may
@@ -253,6 +259,7 @@ public class UnsafeConsensus {
 ```
 
 **GOOD - Single-decree Paxos acceptor state machine:**
+
 ```java
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -303,6 +310,7 @@ public class PaxosAcceptor {
 ```
 
 **Paxos proposer (phase 1 + phase 2):**
+
 ```java
 public class PaxosProposer {
     private final List<PaxosAcceptor> acceptors;
@@ -347,6 +355,7 @@ public class PaxosProposer {
 ```
 
 **How to test / verify correctness:**
+
 ```bash
 # Test with Jepsen (distributed systems correctness testing):
 # Jepsen has Paxos/etcd/ZooKeeper test suites
@@ -365,26 +374,26 @@ lein run test --test zookeeper \
 
 ### ⚖️ Comparison Table
 
-| Property | Single-decree Paxos | Multi-Paxos | Raft |
-|:---|:---|:---|:---|
-| What it decides | One value | A log (sequence) | A log (sequence) |
-| Phase 1 frequency | Every proposal | Once per leader term | Once per election |
-| Leader role | Optional (any proposer) | Stable leader preferred | Mandatory |
-| Specification completeness | Partial (theory) | Partial (many variants) | Complete (paper) |
-| Livelock risk | Yes (dueling) | Low (stable leader) | Low (randomized timeout) |
-| Production use | Foundation only | Chubby, Spanner | etcd, CockroachDB, TiKV |
+| Property                   | Single-decree Paxos     | Multi-Paxos             | Raft                     |
+| :------------------------- | :---------------------- | :---------------------- | :----------------------- |
+| What it decides            | One value               | A log (sequence)        | A log (sequence)         |
+| Phase 1 frequency          | Every proposal          | Once per leader term    | Once per election        |
+| Leader role                | Optional (any proposer) | Stable leader preferred | Mandatory                |
+| Specification completeness | Partial (theory)        | Partial (many variants) | Complete (paper)         |
+| Livelock risk              | Yes (dueling)           | Low (stable leader)     | Low (randomized timeout) |
+| Production use             | Foundation only         | Chubby, Spanner         | etcd, CockroachDB, TiKV  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|:---|:---|
-| "Paxos can decide any value a proposer wants" | If a value was previously accepted by any acceptor in the Phase 1 quorum: the proposer MUST use the highest-numbered one. Proposers lose control of the value whenever a prior proposal partially succeeded. |
-| "Paxos guarantees liveness" | Paxos guarantees SAFETY (never two conflicting values chosen) always. Liveness (eventually decides) only under partial synchrony and with at most one active proposer. With two competing proposers: livelock (dueling) is possible. |
-| "Multi-Paxos is fully specified" | Multi-Paxos is not fully specified by Lamport. Different implementations make different choices for log slot assignment, leader election, and catchup after leader failure. This ambiguity is why Raft was created. |
-| "Acceptors must communicate with each other" | In standard Paxos: acceptors are passive — they only respond to proposers. No acceptor-to-acceptor communication is required. This is both a strength (simple acceptors) and a weakness (proposers are a bottleneck). |
-| "Paxos requires 3 nodes minimum" | Single-decree Paxos requires 2f+1 nodes to tolerate f failures. With 1 node: trivially works. With 2 nodes: one failure loses quorum (can't decide). Minimum for 1 fault tolerance: 3 nodes. |
+| Misconception                                 | Reality                                                                                                                                                                                                                              |
+| :-------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Paxos can decide any value a proposer wants" | If a value was previously accepted by any acceptor in the Phase 1 quorum: the proposer MUST use the highest-numbered one. Proposers lose control of the value whenever a prior proposal partially succeeded.                         |
+| "Paxos guarantees liveness"                   | Paxos guarantees SAFETY (never two conflicting values chosen) always. Liveness (eventually decides) only under partial synchrony and with at most one active proposer. With two competing proposers: livelock (dueling) is possible. |
+| "Multi-Paxos is fully specified"              | Multi-Paxos is not fully specified by Lamport. Different implementations make different choices for log slot assignment, leader election, and catchup after leader failure. This ambiguity is why Raft was created.                  |
+| "Acceptors must communicate with each other"  | In standard Paxos: acceptors are passive — they only respond to proposers. No acceptor-to-acceptor communication is required. This is both a strength (simple acceptors) and a weakness (proposers are a bottleneck).                |
+| "Paxos requires 3 nodes minimum"              | Single-decree Paxos requires 2f+1 nodes to tolerate f failures. With 1 node: trivially works. With 2 nodes: one failure loses quorum (can't decide). Minimum for 1 fault tolerance: 3 nodes.                                         |
 
 ---
 
@@ -395,6 +404,7 @@ lein run test --test zookeeper \
 **Symptom:** No progress in the consensus layer. Proposal numbers keep incrementing (P1 uses n=1, P2 uses n=2, P1 uses n=3, P2 uses n=4...). System makes no decisions for seconds or minutes. "Progress stuck" alert fires.
 **Root Cause:** Two competing proposers keep preempting each other's Phase 1 with higher proposal numbers. Each proposer invalidates the other's Phase 2 before it completes. Theoretically, this can run forever (livelock).
 **Diagnostic:**
+
 ```bash
 # Check ZooKeeper for proposal number escalation:
 grep "LOOKING\|FOLLOWING\|LEADING" /var/log/zookeeper/zookeeper.log \
@@ -405,6 +415,7 @@ ETCDCTL_API=3 etcdctl endpoint status \
   --write-out=json | jq '.[].Status.raftTerm'
 # Rapidly incrementing term = election livelock
 ```
+
 **Fix:**
 BAD: Multiple active proposers without a leader election mechanism.
 GOOD: Elect a single stable proposer (leader). Use randomized backoff before retrying a failed proposal. Use Multi-Paxos where Phase 1 is run once per leader tenure.
@@ -415,6 +426,7 @@ GOOD: Elect a single stable proposer (leader). Use randomized backoff before ret
 **Symptom:** After a crash + restart, an acceptor's state is reset (promisedN = 0, acceptedValue = null). The acceptor then accepts a lower-numbered proposal that it had previously promised not to accept. Two different values are chosen for the same consensus slot.
 **Root Cause:** Acceptor state not persisted to durable storage before responding. In-memory state only. Crash wipes state. Restarted acceptor violates its own promise.
 **Diagnostic:**
+
 ```bash
 # If running a custom Paxos implementation:
 # Check if acceptor writes to disk before responding:
@@ -425,6 +437,7 @@ grep -r "persist\|fsync\|write.*promise\|write.*accept" \
 strace -e trace=write,fsync -p $(pidof paxos_acceptor) 2>&1 \
   | grep -c fsync
 ```
+
 **Fix:**
 BAD: Responding to Prepare/Accept before persisting state changes.
 GOOD: Write promisedN (and acceptedN/acceptedValue) to durable storage (WAL, disk) with fsync BEFORE sending the response. On crash+restart: recover state from disk before rejoining.
@@ -435,6 +448,7 @@ GOOD: Write promisedN (and acceptedN/acceptedValue) to durable storage (WAL, dis
 **Symptom:** A compromised node sends Prepare messages with very high proposal numbers (n = MAX_INT), forcing all acceptors to promise not to accept the legitimate proposer's proposals. The legitimate proposer can't make progress — effective denial of service on the consensus layer.
 **Root Cause:** Proposal numbers accepted without authentication. Any node can claim any proposal number. A malicious node can monopolize proposal number space.
 **Diagnostic:**
+
 ```bash
 # Check if Paxos messages are authenticated:
 # For etcd (Raft): check peer TLS:
@@ -444,6 +458,7 @@ ETCDCTL_API=3 etcdctl --endpoints=$ETCD_ENDPOINTS \
 grep -r "signature\|hmac\|auth\|verify" \
   src/paxos/proposer/ -l
 ```
+
 **Fix:**
 BAD: Accepting Prepare messages from any node with any proposal number.
 GOOD: Authenticate all inter-node messages with mTLS or HMAC. Validate proposer identity against an allowlist. Rate-limit Prepare messages per proposer to prevent proposal number exhaustion.
@@ -454,14 +469,17 @@ GOOD: Authenticate all inter-node messages with mTLS or HMAC. Validate proposer 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - DST-022 - Leader Election (Multi-Paxos requires a stable leader for Phase 1 amortization)
 - DST-028 - Quorum (Paxos safety depends on majority quorum intersection)
 
 **Builds On This (learn these next):**
+
 - DST-023 - Raft (practical, understandable reimplementation of Multi-Paxos concepts)
 - DST-027 - State Machine Replication (Paxos/Multi-Paxos as the consensus layer for SMR)
 
 **Alternatives / Comparisons:**
+
 - DST-023 - Raft (equivalent safety properties, better specified and more widely deployed)
 - DST-028 - Quorum (the mathematical foundation shared by all consensus algorithms)
 
@@ -498,6 +516,7 @@ GOOD: Authenticate all inter-node messages with mTLS or HMAC. Validate proposer 
 ```
 
 **If you remember only 3 things:**
+
 1. Paxos has two phases: Prepare/Promise (lock out old proposals, discover prior accepted values) and Accept/Accepted (drive a specific value to majority acceptance). A value is chosen when a majority of acceptors accept it.
 2. The key safety invariant: if any Phase 1 response contains a previously-accepted value, the proposer MUST use the one with the highest proposal number. This prevents conflicting decisions.
 3. Single-decree Paxos decides ONE value. Multi-Paxos extends it to a log by electing a stable leader and skipping Phase 1 for each log slot. Raft is Multi-Paxos made explicit and implementable.
@@ -513,6 +532,7 @@ GOOD: Authenticate all inter-node messages with mTLS or HMAC. Validate proposer 
 When you need consensus in a distributed system, Phase 1 (asking "what has been decided before?") and Phase 2 (driving "commit this decision to a majority") is the minimum structure. This two-phase pattern appears wherever distributed systems need to make a binding decision: 2PC (prepare + commit), distributed locks (lock request + lock grant), distributed snapshots (barrier + collect). Each is a specific application of the Prepare/Accept pattern. The underlying reason: in an asynchronous network, you can't decide without first learning the current state from a majority (Phase 1) and then writing new state to a majority (Phase 2).
 
 **Where else this pattern appears:**
+
 - **Two-Phase Commit (2PC) in distributed transactions:** 2PC's prepare phase (coordinator asks all participants "can you commit?") maps directly to Paxos's Phase 1 (proposer asks acceptors "promise me you'll honor proposal n"). 2PC's commit phase maps to Paxos's Phase 2. The coordinator failure problem in 2PC (blocking if coordinator crashes between prepare and commit) is absent in Paxos because Paxos allows any node to re-run Phase 1 and take over — 2PC has no such recovery mechanism, which is why it's "blocking" and Paxos is not.
 - **Distributed snapshot algorithms (Chandy-Lamport):** The Chandy-Lamport snapshot algorithm uses a two-phase approach: Phase 1 — initiate snapshot (equivalent to Prepare: announce snapshot is starting), Phase 2 — collect channel states (equivalent to Accept: gather state from all processes). The "happened-before" ordering invariant in Chandy-Lamport serves the same role as Paxos's proposal number ordering: ensuring no state is captured from the wrong phase of the execution.
 - **Google Spanner's TrueTime Commit Wait:** Spanner uses Paxos (Multi-Paxos) for log replication within each tablet group. But for external consistency (linearizability across tablet groups), it adds TrueTime commit wait — a third "phase" that waits until the commit timestamp is in the past before acknowledging. This extends the two-phase Paxos structure with a time-based waiting phase to achieve global linearizability. The same "lock-then-commit" structure, extended with a real-time safety margin.
@@ -528,11 +548,10 @@ Lamport's original Paxos paper ("The Part-Time Parliament") was submitted to ACM
 ### 🧠 Think About This Before We Continue
 
 **Q1 (E - First Principles):** Paxos requires acceptors to persist their promise (promisedN) to durable storage before responding to Prepare messages. If an acceptor crashes AFTER sending the promise response but BEFORE the promise is persisted to disk (a crash in the network stack after write, before fsync): the acceptor restarts with no record of its promise. Is this a safety violation? Under what conditions?
-*Hint:* If the acceptor responds "promised n" to a proposer, but then crashes and restarts with promisedN=0, it could accept a proposal with a lower number that it already promised to reject. Whether this is a safety violation depends on whether the proposer used that promise to make a Phase 2 decision. What is the window between "promise sent" and "promise durable" and how does it interact with the proposer's Phase 2 decision?
+_Hint:_ If the acceptor responds "promised n" to a proposer, but then crashes and restarts with promisedN=0, it could accept a proposal with a lower number that it already promised to reject. Whether this is a safety violation depends on whether the proposer used that promise to make a Phase 2 decision. What is the window between "promise sent" and "promise durable" and how does it interact with the proposer's Phase 2 decision?
 
 **Q2 (C - Design Trade-off):** Multi-Paxos skips Phase 1 for log slots after a stable leader is established. But "stable leader" is not formally defined — it's an optimization that works in practice but not always. What happens if the network partitions the leader from a minority of acceptors for 30 seconds, then reconnects? The leader never knew it was partitioned. Which log slots might have incorrect decisions? How does the leader's catchup phase discover and repair them?
-*Hint:* During the partition: the leader could not replicate to the minority acceptors. The minority acceptors may have participated in a new leader's Phase 1 for some log slots (if the minority elected a new leader — but they can't, they're a minority). So no new decisions were made on those slots by the minority. The old leader's Phase 2 decisions (to the majority) are valid. When reconnecting: the minority acceptors receive the committed log from the majority, adopt it. What if the network partition allowed one minority acceptor to have accepted a value from an OLD Phase 2 — before the partition — that was committed?
+_Hint:_ During the partition: the leader could not replicate to the minority acceptors. The minority acceptors may have participated in a new leader's Phase 1 for some log slots (if the minority elected a new leader — but they can't, they're a minority). So no new decisions were made on those slots by the minority. The old leader's Phase 2 decisions (to the majority) are valid. When reconnecting: the minority acceptors receive the committed log from the majority, adopt it. What if the network partition allowed one minority acceptor to have accepted a value from an OLD Phase 2 — before the partition — that was committed?
 
 **Q3 (B - Scale):** Paxos's quorum size is n/2+1. For a cluster of 100 nodes, each write requires 51 ACKs — 51 network round-trips from the proposer's perspective. Flexible Paxos allows different quorum sizes per phase: Phase 1 quorum = 1, Phase 2 quorum = n. What is the safety guarantee of this configuration, and when would you actually use it?
-*Hint:* Flexible Paxos's safety invariant: Q1 + Q2 > n (where Q1 = Phase 1 quorum, Q2 = Phase 2 quorum). With Q1=1 and Q2=100 (n=100): 1+100=101 > 100. Valid! Phase 1 needs only 1 node's response (very fast leader election). Phase 2 needs ALL 100 nodes (extremely durable). When would Q1=1, Q2=n be useful? What happens if any node in Q2 is unavailable during Phase 2?
-
+_Hint:_ Flexible Paxos's safety invariant: Q1 + Q2 > n (where Q1 = Phase 1 quorum, Q2 = Phase 2 quorum). With Q1=1 and Q2=100 (n=100): 1+100=101 > 100. Valid! Phase 1 needs only 1 node's response (very fast leader election). Phase 2 needs ALL 100 nodes (extremely durable). When would Q1=1, Q2=n be useful? What happens if any node in Q2 is unavailable during Phase 2?

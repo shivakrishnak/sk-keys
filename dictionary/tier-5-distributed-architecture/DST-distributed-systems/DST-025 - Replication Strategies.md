@@ -27,11 +27,11 @@ permalink: /distributed-systems/replication-strategies/
 
 ⚡ TL;DR - Replication strategies define how writes propagate to multiple nodes: single-leader (one sequencer, strong consistency), multi-leader (conflict resolution required), or leaderless (quorum writes, eventual consistency) — each trading off consistency, availability, and complexity.
 
-| Metadata | | |
-|:---|:---|:---|
-| **Depends on:** | DST-006, DST-008 | |
-| **Used by:** | DST-026, DST-027 | |
-| **Related:** | DST-026, DST-028, DST-009, DST-010 | |
+| Metadata        |                                    |     |
+| :-------------- | :--------------------------------- | :-- |
+| **Depends on:** | DST-006, DST-008                   |     |
+| **Used by:**    | DST-026, DST-027                   |     |
+| **Related:**    | DST-026, DST-028, DST-009, DST-010 |     |
 
 ---
 
@@ -70,6 +70,7 @@ RDBMS replication began in the 1980s with simple log shipping (Oracle redo logs,
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **Durability requires replication:** A write acknowledged only to one node is lost if that node fails before replication. Minimum durability: write acknowledged only after persisted to at least f+1 nodes (for f failure tolerance).
 2. **Consistency requires ordering:** Multiple replicas accepting writes independently will diverge unless they use a total order protocol (consensus) or conflict resolution. No replication strategy achieves strong consistency without a sequencer (leader) or consensus.
 3. **W+R>N guarantees overlap:** In leaderless with N replicas, writing to W and reading from R ensures at least one node is in both sets (W+R>N). If W nodes had the latest write: at least one read node has it.
@@ -110,6 +111,7 @@ W=2, R=2, N=3. Write to 2/3 replicas: durability with 1 failure tolerance. Read 
 > Replication strategy is like a news agency's editorial workflow. Single-leader: one central editor-in-chief (leader) approves and publishes all articles; correspondents (followers) republish. Multi-leader: regional editors approve articles independently; a central desk reconciles conflicting regional reports. Leaderless: correspondents publish directly to multiple wire services; a report is "confirmed" when enough services carry it.
 
 **Mapping:**
+
 - **Editor-in-chief** → single leader (primary)
 - **Correspondents re-publishing** → async follower replication
 - **Regional editors** → multi-leader nodes
@@ -135,6 +137,7 @@ Single-leader (MySQL binlog): On primary, every committed transaction is written
 Dynamo's leaderless design (Amazon, 2007) was a deliberate response to the limitations of single-leader replication for a shopping cart service. Amazon's internal SLA required that adding to a shopping cart ALWAYS succeed — even if 2 of 5 replicas are down. Single-leader can't satisfy this during leader election. Leaderless with W=1 can: any single replica accepts the write. The cost: reads might return stale carts. Amazon's solution: let conflicting carts merge (CRDT-style: union of all items). The principle: choose the replication strategy based on the application's specific availability and consistency requirements, not a single global choice. This is why Cassandra exposes consistency level per operation: `QUORUM`, `ONE`, `ALL`, `LOCAL_QUORUM` — allowing per-operation trade-offs.
 
 **Expert Thinking Cues:**
+
 - "How much data can I lose on leader failure?" → `Seconds_Behind_Master` × write rate = potential data loss window for async replication.
 - "Why is Cassandra's QUORUM not always consistent?" → With N=3, W=QUORUM(2), R=QUORUM(2): W+R=4>3 → at least 1 overlap. But if a node is slow (hinted handoff): its data may not be in the quorum until delivered. Use `ALL` for strict consistency.
 - "Can I use leaderless for financial transactions?" → Only if you can implement conflict resolution (CRDTs, OCC). Most financial systems use single-leader sync for simplicity and correctness.
@@ -145,6 +148,7 @@ Dynamo's leaderless design (Amazon, 2007) was a deliberate response to the limit
 ### ⚙️ How It Works (Mechanism)
 
 **Single-leader replication (PostgreSQL WAL streaming):**
+
 ```
 Primary (P):          Standby (S):
 WAL Writer            WAL Receiver
@@ -161,6 +165,7 @@ WAL Writer            WAL Receiver
 ```
 
 **Leaderless replication (Dynamo/Cassandra quorum):**
+
 ```
 Client → Coordinator:
   Write(key=K, value=V, W=2, N=3)
@@ -217,6 +222,7 @@ Multi-leader replication conflicts: two leaders accept writes to the same key co
 ### 💻 Code Example
 
 **BAD - Reading from async replica without handling replication lag:**
+
 ```java
 // Writes to primary, reads from replica
 // WITHOUT checking replication lag
@@ -247,6 +253,7 @@ public class UserProfileService {
 ```
 
 **GOOD - Read-your-writes consistency with replication lag awareness:**
+
 ```java
 public class UserProfileService {
     private final DataSource primary;
@@ -306,6 +313,7 @@ public class UserProfileService {
 ```
 
 **Cassandra quorum write (leaderless, tunable consistency):**
+
 ```java
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.*;
@@ -344,6 +352,7 @@ public class CassandraProfileStore {
 ```
 
 **How to test / verify correctness:**
+
 ```bash
 # Test MySQL replication lag:
 # On replica:
@@ -371,13 +380,13 @@ nodetool disablehandoff  # disable hinted handoff
 
 ### ⚖️ Comparison Table
 
-| Strategy | Consistency | Write scalability | Conflict handling | Best for |
-|:---|:---|:---|:---|:---|
-| Single-leader sync | Linearizable | Low (leader bottleneck) | No conflicts | Financial, OLTP |
-| Single-leader async | Read-your-writes | Medium | No conflicts | Web apps, profiles |
-| Multi-leader | Eventual (with conflicts) | High | LWW / CRDT / app | Multi-datacenter, offline |
-| Leaderless (W+R>N) | Eventual / tunable | High | LWW / read repair | High availability, low latency |
-| Chain replication | Strong | High throughput | No conflicts | Object storage, HDFS |
+| Strategy            | Consistency               | Write scalability       | Conflict handling | Best for                       |
+| :------------------ | :------------------------ | :---------------------- | :---------------- | :----------------------------- |
+| Single-leader sync  | Linearizable              | Low (leader bottleneck) | No conflicts      | Financial, OLTP                |
+| Single-leader async | Read-your-writes          | Medium                  | No conflicts      | Web apps, profiles             |
+| Multi-leader        | Eventual (with conflicts) | High                    | LWW / CRDT / app  | Multi-datacenter, offline      |
+| Leaderless (W+R>N)  | Eventual / tunable        | High                    | LWW / read repair | High availability, low latency |
+| Chain replication   | Strong                    | High throughput         | No conflicts      | Object storage, HDFS           |
 
 ---
 
@@ -419,13 +428,13 @@ nodetool disablehandoff  # disable hinted handoff
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|:---|:---|
-| "Async replication is safe for financial data" | Async replication means the primary can acknowledge a committed transaction BEFORE it reaches any replica. Leader failure = potential data loss. Financial systems must use synchronous replication or Raft-based consensus with majority quorum. |
-| "W+R>N always gives linearizable reads" | W+R>N guarantees you'll read from at least one node that has the latest write. But if that node uses system timestamps for "latest" (LWW) and clocks are skewed: you may still get stale data. True linearizability requires vector clocks or Paxos/Raft coordination. |
-| "Multi-leader replication avoids split-brain" | Multi-leader makes split-brain WORSE — multiple leaders by design. Conflict resolution must be implemented. LWW is dangerous (clock skew). CRDT-based merge is correct for limited data types only. |
-| "More replicas always improves read latency" | More replicas improve READ AVAILABILITY (fewer requests to each). But if consistency level = ALL (read from all replicas), latency = slowest replica. Adding slow replicas with ALL consistency makes reads slower. |
-| "Replication lag is always small" | Replication lag depends on write rate, network bandwidth, and follower CPU/disk speed. Under heavy load: lag can grow to minutes or hours. High-frequency writes + slow network link = unbounded lag without back-pressure mechanisms. |
+| Misconception                                  | Reality                                                                                                                                                                                                                                                                |
+| :--------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Async replication is safe for financial data" | Async replication means the primary can acknowledge a committed transaction BEFORE it reaches any replica. Leader failure = potential data loss. Financial systems must use synchronous replication or Raft-based consensus with majority quorum.                      |
+| "W+R>N always gives linearizable reads"        | W+R>N guarantees you'll read from at least one node that has the latest write. But if that node uses system timestamps for "latest" (LWW) and clocks are skewed: you may still get stale data. True linearizability requires vector clocks or Paxos/Raft coordination. |
+| "Multi-leader replication avoids split-brain"  | Multi-leader makes split-brain WORSE — multiple leaders by design. Conflict resolution must be implemented. LWW is dangerous (clock skew). CRDT-based merge is correct for limited data types only.                                                                    |
+| "More replicas always improves read latency"   | More replicas improve READ AVAILABILITY (fewer requests to each). But if consistency level = ALL (read from all replicas), latency = slowest replica. Adding slow replicas with ALL consistency makes reads slower.                                                    |
+| "Replication lag is always small"              | Replication lag depends on write rate, network bandwidth, and follower CPU/disk speed. Under heavy load: lag can grow to minutes or hours. High-frequency writes + slow network link = unbounded lag without back-pressure mechanisms.                                 |
 
 ---
 
@@ -436,6 +445,7 @@ nodetool disablehandoff  # disable hinted handoff
 **Symptom:** After writing a record, users immediately reading it see the old version. Customer complaints: "I just updated my address but the confirmation page still shows the old one." Application team says "we route writes to primary and reads to replica."
 **Root Cause:** Async replication lag between primary and replica. User writes to primary (immediately consistent), reads routed to replica (5-30 second lag). User's own write isn't visible on the replica yet.
 **Diagnostic:**
+
 ```bash
 # Check MySQL replication lag (run on replica):
 mysql -u root -p -e "SHOW REPLICA STATUS\G" | \
@@ -446,6 +456,7 @@ mysql -u root -p -e \
 # "Waiting for dependent transaction to commit"
 # = parallel replication bottleneck
 ```
+
 **Fix:**
 BAD: Routing all reads to replica without session-based read-your-writes tracking.
 GOOD: After write, route subsequent reads for the same session to primary (for 1-5 seconds), OR use MySQL GTID-based read-your-writes (send GTID with read request to replica; replica waits until it applies that GTID).
@@ -456,6 +467,7 @@ GOOD: After write, route subsequent reads for the same session to primary (for 1
 **Symptom:** Cassandra cluster with N=3, W=QUORUM(2), R=QUORUM(2). After a node failure and recovery, reads return stale data — the OLD value even after a QUORUM write.
 **Root Cause:** Hinted handoff. During node failure: coordinator stored the write as a "hint" on a proxy node (not the target replica). After target replica recovered: hint NOT yet delivered. Read goes to 2 nodes: the recovered (stale) replica and one other node (has new write). Newer write wins — BUT: if the delivered hint was lost (hint store corruption): recovered replica permanently stale.
 **Diagnostic:**
+
 ```bash
 # Check Cassandra hint delivery:
 nodetool tpstats | grep -i hint
@@ -465,6 +477,7 @@ nodetool describecluster
 # If a node shows "status: Normal" but hints pending:
 # Run: nodetool compact -- system hints
 ```
+
 **Fix:**
 BAD: Relying on hinted handoff for durability during extended node outages (> `max_hint_window_in_ms`, default 3 hours).
 GOOD: After node recovery: run `nodetool repair` to reconcile all data between replicas using Merkle tree anti-entropy. Ensure repair runs regularly (weekly at minimum) to prevent long-term stale reads.
@@ -475,6 +488,7 @@ GOOD: After node recovery: run `nodetool repair` to reconcile all data between r
 **Symptom:** Security audit finds MySQL replica configuration with replication user password stored in plaintext in `my.cnf` or in `SHOW REPLICA STATUS` output (visible to all users with SUPER privilege).
 **Root Cause:** Traditional MySQL replication uses `CHANGE MASTER TO MASTER_PASSWORD='plaintext'` — this password is stored in `mysql.slave_master_info` (visible) and written to `relay-log.info` files on disk.
 **Diagnostic:**
+
 ```bash
 # Check if replication password is visible:
 mysql -u root -p -e \
@@ -486,9 +500,11 @@ mysql -u root -p -e "SHOW REPLICA STATUS\G" | \
   grep "Master_SSL_Allowed"
 # If "Master_SSL_Allowed: No": unencrypted replication
 ```
+
 **Fix:**
 BAD: `CHANGE MASTER TO MASTER_USER='repl', MASTER_PASSWORD='plaintext'`
 GOOD: Use MySQL replication with SSL and credential rotation:
+
 ```sql
 CHANGE REPLICATION SOURCE TO
   SOURCE_HOST='primary',
@@ -500,6 +516,7 @@ CHANGE REPLICATION SOURCE TO
   SOURCE_SSL_KEY='/etc/mysql/client-key.pem',
   GET_SOURCE_PUBLIC_KEY=1;
 ```
+
 **Prevention:** Use MySQL's `MASTER_PUBLIC_KEY_PATH` with RSA key pairs instead of passwords for replication authentication. Enable `require_secure_transport=ON` on primary to enforce SSL for all replication connections.
 
 ---
@@ -507,14 +524,17 @@ CHANGE REPLICATION SOURCE TO
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - DST-006 - CAP Theorem (replication strategy is a specific CAP trade-off)
 - DST-008 - Consistency Models (each replication strategy produces a specific consistency model)
 
 **Builds On This (learn these next):**
+
 - DST-026 - Log Replication (the mechanism used in single-leader replication)
 - DST-027 - State Machine Replication (consensus-based replication for strong consistency)
 
 **Alternatives / Comparisons:**
+
 - DST-028 - Quorum (mathematical basis for leaderless replication guarantees)
 - DST-009 - Eventual Consistency (the consistency model produced by async replication)
 - DST-010 - Strong Consistency (the consistency model produced by sync replication)
@@ -552,6 +572,7 @@ CHANGE REPLICATION SOURCE TO
 ```
 
 **If you remember only 3 things:**
+
 1. Single-leader: simple, no conflicts, leader is bottleneck. Multi-leader: write anywhere, requires conflict resolution. Leaderless: quorum writes (W+R>N), tunable consistency, no single failure point.
 2. Async replication = potential data loss on leader failure (commits acknowledged before replication). Sync replication = no data loss, but write latency = slowest replica.
 3. W+R>N guarantees quorum read overlap — but only if W and R are measured consistently across the same N replicas and timestamps are trustworthy.
@@ -567,6 +588,7 @@ CHANGE REPLICATION SOURCE TO
 Every system that maintains state across multiple nodes must answer: who is the source of truth, how does truth propagate, and what happens when propagation fails? The answer defines your consistency, availability, and durability guarantees. These three questions — ownership, propagation, failure behavior — appear in every distributed state management problem: database replication, cache invalidation, CDN content distribution, microservice saga state, event sourcing. Before choosing a database, understand its replication strategy and verify it matches your application's consistency requirements.
 
 **Where else this pattern appears:**
+
 - **CDN content distribution (push vs. pull):** Push replication (origin actively pushes content to edge caches) maps to single-leader eager replication. Pull replication (edge caches fetch from origin on cache miss) maps to lazy/async replication with hinted handoff equivalent (edge serves stale until origin responds). CDN cache invalidation is the leaderless read-repair equivalent: invalidate all edges (W=N) for strong consistency, or let stale content expire (W=1, async) for availability.
 - **Event sourcing and CQRS:** An event store is a single-leader append-only log (the "write model"). Projections (the "read models") are async followers. Projection lag = replication lag. Replay from event log = follower catch-up after failure. The CQRS pattern is single-leader async replication applied to domain objects — the write model is the leader, read models are asynchronous followers with eventual consistency.
 - **DNS replication:** DNS root servers use a single-leader-like authoritative model (authoritative NS record is the "leader"). Secondary nameservers pull zone transfers periodically (async replication with configurable TTL = acceptable replication lag). DNS TTL is the explicit acknowledgment of stale reads — clients cache DNS answers for TTL seconds, accepting eventual consistency for the read benefit of cached resolution.
@@ -582,11 +604,10 @@ The Amazon Dynamo paper (2007) — which introduced the leaderless, quorum-based
 ### 🧠 Think About This Before We Continue
 
 **Q1 (C - Design Trade-off):** Single-leader async replication is common for MySQL web applications. A company switches from async to semi-synchronous replication (at least 1 replica ACKs before primary ACKs client). Write latency increases from 2ms to 15ms. The team argues this is unacceptable. What specific application scenarios actually REQUIRE the 13ms of additional latency, and for what scenarios is async replication genuinely safe?
-*Hint:* Semi-synchronous is required when: the PRIMARY crashing after client ACK would cause user-visible data loss (financial transaction, user account creation, order placement). Async is acceptable when: the data can be reconstructed from a different authoritative source (cache data, denormalized counts), or the user-visible impact of losing 1 second of writes is acceptable (activity feeds, analytics events, non-critical profile updates). Can you identify which tables in your application need semi-sync and which are safe with async?
+_Hint:_ Semi-synchronous is required when: the PRIMARY crashing after client ACK would cause user-visible data loss (financial transaction, user account creation, order placement). Async is acceptable when: the data can be reconstructed from a different authoritative source (cache data, denormalized counts), or the user-visible impact of losing 1 second of writes is acceptable (activity feeds, analytics events, non-critical profile updates). Can you identify which tables in your application need semi-sync and which are safe with async?
 
 **Q2 (D - Root Cause):** A Cassandra cluster is experiencing "ghost reads" — read requests return data that was deleted minutes ago. The cluster uses W=QUORUM, R=QUORUM, N=3. Compaction is running. No recent node failures. What is the most likely cause, and how does Cassandra's tombstone mechanism interact with quorum reads to produce ghost reads?
-*Hint:* Cassandra marks deletes with tombstones (not immediate removal). A quorum read returns the newest version by timestamp. If tombstones are not yet propagated to all replicas — and a read quorum happens to query two replicas without the tombstone — the read may return the "old" (not-yet-deleted) data. What happens when `gc_grace_seconds` expires and compaction removes tombstones from some replicas but not others? Is this a quorum violation or expected Cassandra behavior?
+_Hint:_ Cassandra marks deletes with tombstones (not immediate removal). A quorum read returns the newest version by timestamp. If tombstones are not yet propagated to all replicas — and a read quorum happens to query two replicas without the tombstone — the read may return the "old" (not-yet-deleted) data. What happens when `gc_grace_seconds` expires and compaction removes tombstones from some replicas but not others? Is this a quorum violation or expected Cassandra behavior?
 
 **Q3 (A - System Interaction):** A multi-leader (multi-master) setup has two MySQL nodes (M1, M2) in a master-master configuration. A developer runs: `INSERT INTO orders(id) VALUES(1)` on M1 and simultaneously `INSERT INTO orders(id) VALUES(1)` on M2. Both succeed locally. What happens when replication catches up, and how does MySQL handle the duplicate key conflict in a multi-master setup?
-*Hint:* MySQL multi-master replication does NOT automatically resolve duplicate key conflicts. When M1's INSERT replicates to M2 (or vice versa), the replica encounters a duplicate key error and by default STOPS replication (SQL thread crashes). The conflict must be manually resolved: `SET GLOBAL SQL_SLAVE_SKIP_COUNTER=1; START SLAVE;` skips the conflicting event. What does this mean for multi-master MySQL setups without application-level conflict prevention? What specific design patterns prevent duplicate key conflicts in MySQL multi-master?
-
+_Hint:_ MySQL multi-master replication does NOT automatically resolve duplicate key conflicts. When M1's INSERT replicates to M2 (or vice versa), the replica encounters a duplicate key error and by default STOPS replication (SQL thread crashes). The conflict must be manually resolved: `SET GLOBAL SQL_SLAVE_SKIP_COUNTER=1; START SLAVE;` skips the conflicting event. What does this mean for multi-master MySQL setups without application-level conflict prevention? What specific design patterns prevent duplicate key conflicts in MySQL multi-master?
