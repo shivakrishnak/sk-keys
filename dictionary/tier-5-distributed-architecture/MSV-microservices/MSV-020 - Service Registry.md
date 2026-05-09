@@ -17,6 +17,7 @@ tags:
   - distributed
   - intermediate
   - pattern
+status: complete
 ---
 
 # MSV-020 - Service Registry
@@ -42,6 +43,9 @@ In a containerised microservices environment, IP addresses are ephemeral. A pod 
 **THE INVENTION MOMENT:**
 This is exactly why Service Registries were created - to provide a live, authoritative directory of which service instances are healthy and reachable right now, so clients always have current network locations.
 
+
+**EVOLUTION:**
+Service registries emerged as dynamic IP assignment made static service configuration unworkable. In the 1990s, service endpoints were hard-coded in configuration files - manageable with tens of services on fixed infrastructure. Netflix's cloud migration (2008-2012) created thousands of auto-scaling instances with dynamic IPs, motivating Eureka (AP registry, client-side discovery). HashiCorp Consul (2014) generalised the registry to multiple protocols and prioritised CP consistency. Kubernetes' built-in service discovery (2015) abstracted the registry into the platform, making it transparent to applications.
 ---
 
 ### 📘 Textbook Definition
@@ -444,11 +448,36 @@ management:
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Service discovery is an infrastructure concern that should be invisible to services. A service should not know whether it is using DNS, a registry, or a service mesh - it should call a name and have the infrastructure resolve it to a healthy instance. When discovery logic leaks into application code (Eureka client JAR embedded in every service), every service is coupled to a specific discovery implementation that is hard to migrate.
+
+**Where else this pattern appears:**
+- **DNS:** DNS is service discovery for the internet - a name-to-IP mapping that is cached, replicated, and eventually consistent. The principle (resolve name to address) is identical to a service registry.
+- **Kubernetes Services:** A Kubernetes Service maps a logical service name to a set of pod IPs, updated dynamically as pods come and go - service discovery built into the platform, transparent to applications.
+- **Load balancers:** A load balancer that forwards to registered backends is a server-side service registry - the client only knows the load balancer's address, not the individual backends.
+
+---
+
+### 💡 The Surprising Truth
+
+Eureka's 'self-preservation mode' - where it refuses to deregister instances during suspected network partitions - has caused more production incidents at Netflix than it has prevented. The mode was designed to avoid falsely deregistering healthy instances during brief network glitches. In practice, it causes stale routing: a service that has genuinely gone down continues receiving traffic for minutes or hours. Netflix's own documentation now recommends that most production systems disable self-preservation mode and implement proper client-side circuit breakers to handle instances that the registry fails to deregister promptly.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your service registry (Eureka) enters "self-preservation mode" during a network partition - it stops deregistering instances that haven't sent heartbeats, to avoid falsely removing healthy instances that are merely temporarily unreachable. During this mode, your order service continues receiving the deregistered (but still-alive-network-wise) instances in its call rotation. Some of those instances have a memory leak and should have been replaced. Explain the exact trade-off Eureka is making in self-preservation mode, and design a client-side circuit breaker strategy that protects the calling service even when the registry is providing stale data.
 
+*Hint:* Think about what self-preservation mode is optimising for: it chooses 'retain stale data' over 'remove possibly valid data' - a deliberate AP trade-off. The circuit breaker should compensate for stale registry data by detecting that specific instances are unhealthy via failure rate measurement (not registry state) and opening the circuit to those instances independently of what the registry reports. Explore how Resilience4j per-instance circuit breakers (keyed by instance IP, not service name) provide local failure knowledge that the registry cannot.
+
 **Q2.** You are migrating from Eureka (client-side discovery, AP) to Consul (server-side discovery, CP) across 80 services. During the migration, some services use Eureka and some use Consul. A service using Eureka needs to call a service that has already migrated to Consul. Design the coexistence strategy - including any bridge components or dual-registration approach - that allows both discovery systems to work simultaneously without requiring an all-or-nothing cutover.
 
+*Hint:* Think about what a bridge component must do: receive requests from Eureka-discovered services, forward to Consul-registered services, and register in both systems so both discovery modes can find it. Explore whether an Envoy sidecar registered in both Eureka and Consul can act as the bridge without application code changes, and what the failure mode is if the bridge instance itself becomes unavailable during the migration.
+
+**Q3 (Design Trade-off):** Your team must choose between a centralised service registry (Consul) and Kubernetes-native service discovery (kube-proxy ClusterIP + CoreDNS) for a 150-service system running entirely on Kubernetes. What criteria determine which is the better choice?
+
+*Hint:* Think about what Kubernetes-native discovery already provides (DNS-based name resolution, ClusterIP, automatic pod health registration) vs what Consul adds (cross-cluster discovery, non-Kubernetes workloads, service mesh features, richer health check options). Explore whether the 150-service system has any workloads outside Kubernetes that require Consul's cross-environment capabilities - if not, Kubernetes-native discovery covers 95% of needs with zero additional infrastructure to operate.

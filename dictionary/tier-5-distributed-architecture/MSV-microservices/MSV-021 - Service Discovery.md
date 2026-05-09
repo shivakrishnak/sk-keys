@@ -17,6 +17,7 @@ tags:
   - distributed
   - intermediate
   - pattern
+status: complete
 ---
 
 # MSV-021 - Service Discovery
@@ -42,6 +43,9 @@ In a containerised microservices system, IP addresses change constantly - on eve
 **THE INVENTION MOMENT:**
 This is exactly why Service Discovery was introduced - to make service-to-service communication self-healing by having clients dynamically look up the current location of any service at runtime.
 
+
+**EVOLUTION:**
+Service discovery evolved from DNS (1983) to purpose-built registries as microservices introduced dynamic scaling and health checking requirements DNS could not meet. DNS TTL (typically 30-300 seconds) was too slow to propagate pod failures in high-traffic systems. Netflix's Eureka (2012), HashiCorp Consul (2014), and Kubernetes' built-in discovery (2015) each addressed different trade-offs between consistency, availability, and operational simplicity. The discipline evolved from 'hard-code service endpoints' to 'name services, discover instances dynamically, health-check continuously.'
 ---
 
 ### 📘 Textbook Definition
@@ -367,11 +371,36 @@ kubectl describe pod payments-service-xxx | grep -A5 "Readiness"
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Service discovery is the runtime equivalent of a phone book: names are stable, addresses change. The valuable invariant is that callers use names (stable) rather than addresses (ephemeral). When services are called by name, the infrastructure can change what the name resolves to without callers needing to be updated or redeployed.
+
+**Where else this pattern appears:**
+- **Database failover:** Connection pool libraries discover the database leader by hostname (db.primary.internal) and reconnect when the name resolves to a new IP after a failover - service discovery for databases.
+- **CDN geo-routing:** CDN DNS routes client requests to the nearest edge node by resolving the same hostname to different IPs based on client geography - service discovery applied to content delivery.
+- **Email delivery:** MX records in DNS are service discovery for mail servers - a domain name resolves to the mail server responsible for receiving email, changeable without affecting senders.
+
+---
+
+### 💡 The Surprising Truth
+
+The most common service discovery failure mode is not the discovery mechanism itself failing - it is the absence of health checking. A registry that faithfully reports all registered instances (including those that are running but serving incorrectly - deadlocked, out of memory, returning 500s for every request) is worse than no registry: it routes traffic to instances that will fail, consuming request budgets and masking the real problem. Modern service discovery combines registration with continuous health monitoring - a service's registration and its health status are inseparable in correctly designed systems.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your payments service has 10 instances. During a rolling deployment, 5 instances are running the old version and 5 are running the new version simultaneously. The new version has a different response structure for payment failures. Service discovery routes calls to both old and new instances. What specific problems does this create for the calling service, and what contract versioning strategy prevents these problems during rolling deployments?
 
+*Hint:* Think about what happens when a caller receives a mix of v1 and v2 responses and parses them with a v1 parser: optional new fields are ignored (backward compatible), required new fields cause parse errors (breaking), removed fields cause null pointer exceptions (breaking). Explore whether the API contract should be versioned at the endpoint URL level (/v2/payments) or at the service instance level (discovery tags indicating API version), and what rolling deployment guarantees that callers never receive a mix of versions simultaneously.
+
 **Q2.** At 3am, your on-call alert fires: "Order service has 40% error rate." You check the service registry and it shows all 3 payments service instances as healthy. But calls to payments are failing. What are the 5 most likely root causes (beyond the registry's knowledge), in order of likelihood, and what specific diagnostic commands would you run to identify which is the actual cause?
 
+*Hint:* Think about what the registry cannot know: instances may be registered as healthy (heartbeats succeeding) but not actually serving requests (thread pool exhausted, deadlocked, dependency down). The 5 most likely causes (in order): (1) payment service thread pools exhausted by slow downstream; (2) network path between order and payment is degraded, not severed; (3) order service timeout shorter than payment response time; (4) payment's database or external API unavailable; (5) TLS certificate expiry on inter-service mTLS. Diagnostic: `kubectl exec -it <pod> -- curl localhost:8080/actuator/health`, check thread pool metrics, test connectivity with nc.
+
+**Q3 (Design Trade-off):** Two microservices in different Kubernetes clusters (different cloud regions) must discover and call each other. Kubernetes DNS-based service discovery does not work across clusters. Design the cross-cluster service discovery strategy.
+
+*Hint:* Think about the three main options: (1) expose via LoadBalancer (external IP, reachable cross-cluster but publicly visible - security risk); (2) service mesh with cross-cluster support (Istio multicluster, Linkerd multicluster - mutual TLS, service-level routing, but operational complexity); (3) centralised registry (Consul) registered in both clusters. Explore what the latency, security, and operational complexity trade-offs are for each, and whether the cross-cluster calls are synchronous (latency-sensitive) or asynchronous (can tolerate retry-level network handling).

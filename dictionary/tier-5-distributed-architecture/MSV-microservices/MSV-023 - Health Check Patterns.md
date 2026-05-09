@@ -17,6 +17,7 @@ tags:
   - distributed
   - intermediate
   - pattern
+status: complete
 ---
 
 # MSV-023 - Health Check Patterns
@@ -42,6 +43,9 @@ A process that is alive is not the same as a process that is ready to serve. Wit
 **THE INVENTION MOMENT:**
 This is exactly why structured health check patterns were developed - to provide infrastructure with accurate, actionable signals about each service instance's true ability to handle requests.
 
+
+**EVOLUTION:**
+Health check patterns evolved from simple process monitoring (is the process running?) to semantic health checking (is the process serving requests correctly?) as distributed systems proved that running processes could still be unhealthy. The Liveness vs Readiness distinction was formalised in Kubernetes 1.0 (2015) and became an industry standard. The three-tier health check (Liveness, Readiness, Startup) was standardised in Kubernetes 1.16 (2019). Spring Boot Actuator's `/health` endpoint (2014) standardised the HTTP health interface. The discipline evolved from 'is it running?' to 'is it ready?', 'is it live?', and 'are its dependencies healthy?'
 ---
 
 ### 📘 Textbook Definition
@@ -464,11 +468,36 @@ kubectl logs payments-xxx | grep "ERROR\|Exception" | \
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+A health check that depends on external systems is a liability, not an asset. When a database goes down, all services that include database connectivity in their readiness check simultaneously become unhealthy and are removed from routing - even if they could serve cached data or degraded responses. Health checks should answer: 'Can this specific instance serve requests right now?' - not 'Are all my dependencies healthy?'
+
+**Where else this pattern appears:**
+- **Cache warm-up:** A readiness probe that waits for a cache to be populated before marking a pod ready prevents requests from hitting a pod with an empty cache - the same principle of 'ready to serve good responses' applied to data loading state.
+- **Circuit breaker state:** A service with an open circuit breaker could mark itself as 'degraded' (live but not ready for full traffic) - health checking that reflects current capability, not just process state.
+- **Dependency monitoring:** A monitoring dashboard that shows the health of each dependency independently (not just 'the service is healthy') applies the same disaggregated health principle to observability.
+
+---
+
+### 💡 The Surprising Truth
+
+Kubernetes health checks have a subtle failure mode most teams discover in production: if a readiness probe depends on a database and the database has a brief outage, all pods fail their readiness probe simultaneously. Kubernetes removes all of them from the service endpoints, and the load balancer returns 503 for all requests. When the database recovers, all pods pass their readiness probe simultaneously - the thundering herd of reconnecting clients often overwhelms the database again. The solution is to make readiness probes independent of database connectivity and use circuit breakers to handle database unavailability at the request level, keeping pods in rotation to serve non-database-dependent requests.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your payments service has 10 pods. The readiness probe checks DB connectivity. During a scheduled DB maintenance window, DB becomes unavailable for 2 minutes. All 10 pods fail their readiness check simultaneously - all are removed from routing. New requests pile up at the load balancer with no healthy backend. Design a resilient health check strategy that maintains partial service availability during planned and unplanned dependency outages, including how to handle the case where the DB is slow (high latency) but not completely unreachable.
 
+*Hint:* Think about what the readiness probe semantics should be: it answers 'should this pod receive traffic right now?' During a database outage, is 0 pods in rotation (all fail readiness) better or worse than all pods returning 503 for DB-dependent requests? Explore whether a 'degraded' readiness mode (pod accepts non-DB-dependent requests when DB is down) preserves partial service availability, and whether Kubernetes supports routing different request types to different service endpoints based on pod health state.
+
 **Q2.** A team discovers their service has a subtle memory leak - after 6 hours of production traffic, heap usage reaches 90% and GC pauses cause P99 to spike from 50ms to 2 seconds. The service does not crash, so liveness probes never fail. Design a liveness probe strategy that detects this degraded state and triggers a pod restart before it affects users, while avoiding false positives that would cause unnecessary restarts under normal high-traffic conditions.
 
+*Hint:* Think about what the liveness probe semantics should be: it answers 'is this process in a healthy state to make progress?' For a slow memory leak, the failure condition is continuous (GC pauses growing) not binary (not crashed). Explore whether a custom liveness endpoint that measures heap usage and GC pause P99 and returns 503 above thresholds (heap > 85%, GC pause P99 > 500ms) would trigger restart at the right time, and what consecutive-failure count prevents false positives during brief but normal GC events.
+
+**Q3 (Design Trade-off):** A microservice depends on 3 external services: a primary database (critical), a cache (optional, degrades gracefully without it), and an analytics service (fire-and-forget). Design the health check strategy that correctly represents this service's ability to serve requests under each dependency failure scenario, specifying liveness, readiness, and startup probe configurations.
+
+*Hint:* Think about which dependency belongs in which probe: startup (is the app initialised - includes DB schema validation, initial cache warm-up); readiness (should it receive traffic - primary DB reachable and connection pool healthy; cache: log degraded but remain ready); liveness (is it still making progress - check for deadlocks and OOM, not dependencies). Explore whether the analytics service should appear in any health check at all (it is fire-and-forget) or just in application metrics (queue depth, failure rate).

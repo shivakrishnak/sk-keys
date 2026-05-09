@@ -17,6 +17,7 @@ tags:
   - pattern
   - deep-dive
   - distributed
+status: complete
 ---
 
 # MSV-019 - Strangler Fig Pattern
@@ -42,6 +43,9 @@ A large e-commerce company runs a 15-year-old PHP monolith handling $50M/month i
 **THE INVENTION MOMENT:**
 This is exactly why the Strangler Fig Pattern was created - to incrementally route production traffic from the old system to the new system, one feature at a time, so the migration is continuously tested in production and can be reversed at any step.
 
+
+**EVOLUTION:**
+The Strangler Fig pattern was named and popularised by Martin Fowler in 2004, drawing the analogy from the strangler fig tree (Ficus aurea) that grows around a host tree and eventually replaces it. While the concept of incremental system replacement existed before, Fowler gave it a memorable name and a clear implementation approach: add new functionality in the new system, route via a facade, gradually migrate old functionality, retire the old system when fully replaced. The pattern became the dominant migration strategy as big-bang rewrites continued to fail at high rates.
 ---
 
 ### 📘 Textbook Definition
@@ -428,11 +432,36 @@ git log --oneline --since="1 year ago" -- services/ | wc -l
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Incremental migration is safer than complete migration because each step is independently validatable and reversible. The Strangler Fig's core innovation is not the routing facade - it is the discipline of never removing the old system until the new system has proven equivalence in production traffic. The same principle applies to any system replacement: run both systems in parallel, compare outputs, migrate traffic gradually.
+
+**Where else this pattern appears:**
+- **Database schema migration (Expand-Contract):** Add new columns alongside old (expand), migrate reads and writes to new columns, then remove old columns (contract). Never drop a column at the same time as adding a replacement - the same wrap-and-redirect as Strangler Fig.
+- **API versioning:** Maintain v1 and v2 of an API simultaneously, migrate clients to v2 gradually, retire v1 only when all clients have migrated.
+- **UI framework migration:** Render React components inside a jQuery page, gradually replace jQuery sections with React, remove jQuery when the last section is replaced - incremental, parallel operation, retire-last.
+
+---
+
+### 💡 The Surprising Truth
+
+The Strangler Fig pattern fails in a specific way teams rarely anticipate: the old system never fully dies. The "remaining 20%" that was always going to be "migrated next quarter" gradually becomes the permanent state of a migration that never completes. The legacy branches accumulate new features (product teams don't wait for the migration to complete), making them progressively harder to migrate. Successful Strangler Fig migrations require a hard business commitment to feature freezes on the legacy system during the migration window - otherwise the migration is chasing a moving target and will never catch up.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You are extracting the "Orders" service from a monolith using the Strangler Fig pattern. The Orders feature reads customer data from the monolith's `customers` table. Your new Orders service has its own database, but needs customer information. You have three options: (A) call the monolith's `/customers` API, (B) dual-write customer data to the new Orders DB, (C) use Change Data Capture from the monolith's DB. Walk through the failure scenarios for each approach under high load, and identify which is safest for zero-downtime migration.
 
+*Hint:* Think about the failure modes of each approach under high load: (A) calling the monolith's /customers API adds network latency and creates synchronous coupling (monolith unavailability = Orders failure); (B) dual-write requires atomicity across two databases (distributed transaction risk, or 2-phase-commit complexity); (C) CDC introduces replication lag (Orders may have stale customer data). Explore which failure modes are tolerable for your specific customer data usage patterns and whether CDC's eventual consistency is acceptable during the migration window.
+
 **Q2.** Six months into a Strangler Fig migration, your team discovers that the newly extracted Inventory service has a subtle difference in low-stock calculation logic compared to the monolith. Both are in production handling real traffic. Shadow mode tests reveal the difference affects 0.3% of requests. Describe the exact steps to diagnose which implementation matches the actual business requirement, safely align both systems, and prevent similar divergence in the remaining migration steps.
 
+*Hint:* Think about what '0.3% divergence' means in absolute terms at your traffic volume and whether the divergence is always the same request patterns or random. Explore the 'golden record' approach: run both implementations in shadow mode, capture all diverging cases, and present each to domain experts to determine the correct business rule. The correct implementation is the one that matches the business intent, not necessarily the monolith (which may have bugs) or the new service (which may have missed edge cases).
+
+**Q3 (Design Trade-off):** Your Strangler Fig facade routes 10% of traffic to a new service and 90% to the monolith. After 2 weeks, the new service has P99 latency 40ms higher than the monolith. Users on the 10% path have a slightly worse experience. Should you pause migration and fix latency before proceeding, or accept the regression?
+
+*Hint:* Think about what 40ms P99 means in user experience terms (below the 100ms human perception threshold?) and whether the latency comes from the facade's routing overhead (will disappear when migration completes) or the new service's design (requires architectural fixes). Explore whether running shadow mode (both old and new receive traffic, new results are discarded) while profiling the latency difference lets you diagnose the root cause before deciding whether to pause or proceed.
