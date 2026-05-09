@@ -17,6 +17,7 @@ tags:
   - networking
   - intermediate
   - pattern
+status: complete
 ---
 
 # MSV-036 - Retry Strategy
@@ -42,6 +43,9 @@ The inconsistency is the problem. Ad-hoc retry logic lacks backoff, lacks limits
 **THE INVENTION MOMENT:**
 This is exactly why retry strategy was created - a principled, configurable, bounded approach to retrying failed calls that handles transient faults without making real failures worse.
 
+
+**EVOLUTION:**
+Retry strategies evolved from simple 'try again on failure' (1990s) to configurable policies with exponential backoff and jitter. The initial approach was synchronous retry: catch exception, wait, retry immediately. This caused retry storms: all callers retrying simultaneously overwhelmed the downstream service. 'Full Jitter' (Marc Brooker, AWS, 2015) added randomness to the backoff period, solving synchronized retry storms. gRPC's built-in retry policy (2019) standardised retry configuration at the protocol level. The discipline evolved from 'retry on any exception' to 'retry only idempotent operations, with jitter, within a deadline budget.'
 ---
 
 ### 📘 Textbook Definition
@@ -423,10 +427,36 @@ grep "Retry attempt" service.log | grep "HTTP 4" | wc -l
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Retries are not free. Each retry attempt adds latency, creates additional load on the downstream service, and can amplify a partial outage into a full one. The decision to retry must be based on three criteria: the idempotency of the operation (only retry idempotent operations), the retriability of the failure (network errors: retriable; business validation errors: not retriable), and the deadline budget (only retry if there is enough time for the retry to succeed within the caller's remaining deadline).
+
+**Where else this pattern appears:**
+- **Kafka producer retries:** A Kafka producer with `retries=5` and `retry.backoff.ms=100` applies retry strategy at the messaging layer - the same pattern as HTTP client retry, at a different protocol.
+- **Database connection retry:** A connection pool that retries connecting to a database when the connection is refused is applying retry strategy at the infrastructure level.
+- **DNS resolution retry:** A DNS client that retries resolution on SERVFAIL is applying retry strategy to infrastructure service discovery.
+
+---
+
+### 💡 The Surprising Truth
+
+The 'idempotency key' pattern for retry safety has a subtle failure mode: idempotency keys are only effective if the server stores them in the same transaction as the operation. If the server processes the payment and commits it, then tries to store the idempotency key and fails (network timeout before the key write is acknowledged), the next retry arrives with the same key, finds no record of it, and processes the payment again. The idempotency key must be committed atomically with the business operation in a single database transaction - not written after the operation completes.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You have Service A calling B with max 3 retries, exponential backoff (100ms base, 2× multiplier). B calls C with max 3 retries, same config. A user request triggers A→B→C. C fails with a transient error. Trace the exact worst-case call count from A to B, and from B to C. Calculate the maximum latency this request could take. Why is this called the "retry multiplication problem" and how does deadline propagation solve it?
 
+*Hint:* Think about the multiplication: A tries B up to 4 times (1 original + 3 retries). Each B→C call can try C up to 4 times. Maximum B→C calls: 4 * 4 = 16. Worst-case latency: A's backoff ladder (100 + 200 + 400ms) plus B's backoff ladder for C (100 + 200 + 400ms). Deadline propagation solves this by passing the remaining deadline to B: if A's remaining deadline is 300ms, B can only attempt one C call (because 100ms backoff would exceed the 300ms budget), preventing the multiplication.
+
 **Q2.** Your payment service processes `POST /charge`. The network between your gateway and payment service drops 0.5% of responses _after_ the payment was committed. You add a retry with 3 attempts and exponential backoff with an idempotency key. Six months later, your operations team reports that 0.3% of charges are duplicated. Diagnose what went wrong with the idempotency key implementation and describe the correct fix.
+
+*Hint:* Think about what '0.3% duplicate charges' means in the idempotency key flow: the server committed the charge AND wrote the idempotency key. But the network dropped the response. Correct idempotency key implementation: store the idempotency key in the SAME transaction as the charge record. The bug is storing the key after the transaction commits (two separate writes). Fix: write both the charge record and the idempotency key in a single atomic transaction so that either both are committed or neither is.
+
+**Q3 (Design Trade-off):** Your payment service accepts `POST /charge` with an idempotency key. It calls an external payment processor that does not support idempotency keys. Design the complete system so that `POST /charge` is safe to retry end-to-end, even though the external processor is not idempotent.
+
+*Hint:* Think about where idempotency can be enforced before calling the external processor: check if this idempotency key already has a committed result in your local database before calling the external API. If a result exists, return it directly. If not, call the external API and store the result atomically with the idempotency key. Explore whether the Outbox pattern (write payment command to outbox table in same transaction as idempotency key check, a background relay calls the external API exactly once) provides stronger exactly-once guarantees than an inline synchronous approach.
