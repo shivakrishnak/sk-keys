@@ -1,22 +1,24 @@
 ﻿---
+id: SYD-017
+title: MTTR MTBF
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★☆
+depends_on: SYD-015
+used_by:
+related: SYD-015, SYD-016, SYD-022
+tags:
+  - reliability
+  - intermediate
+  - observability
+status: complete
+version: 1
 layout: default
-title: "MTTR MTBF"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 17
-permalink: /system-design/mttr-mtbf/
-id: SYD-017
-category: System Design
-difficulty: ★★☆
-depends_on: Monitoring, Incident Management, Operations
-used_by: SRE, Incident Response, Reliability Engineering
-related: Error Budget, Disaster Recovery, Service Reliability
-tags:
-  - reliability
-  - metrics
-  - operations
-  - intermediate
-  - incident-management
+permalink: /syd/mttr-mtbf/
 ---
 
 # SYD-017 - MTTR MTBF
@@ -41,6 +43,9 @@ Without quantifying failures and recovery times, reliability improvements are gu
 
 **THE INVENTION MOMENT:**
 "What if we measured: How often do systems break (MTBF)? How fast do we fix them (MTTR)? Then reliability = less frequent breaks + faster fixes."
+
+**EVOLUTION:**
+MTBF originated in military aviation in the 1940s - the US Army Air Forces tracked aircraft failure rates to predict maintenance intervals. MTTR emerged as its complement: once MTBF was known, reducing MTTR became the other lever for improving availability. Both metrics were adopted by telecommunications in the 1960s-70s, then by IT infrastructure in the 1990s. Modern SRE practice extends the concepts to mean time to detect (MTTD), mean time to acknowledge (MTTA), and mean time to resolve (MTTR) - breaking incident response into measurable phases. The discipline evolved from hardware reliability engineering to software service reliability management.
 
 ---
 
@@ -483,21 +488,14 @@ Never ignore MTBF/MTTR trends. If both degrading, escalate immediately. Establis
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `Monitoring` - how failures are detected (detection time is part of MTTR)
-- `Incident Management` - how incidents are responded to (affects MTTR)
-- `High Availability` - systems designed for high MTBF
+- [[SYD-015 - SLA SLO SLI]] - MTBF/MTTR determine achievable SLA
 
 **Builds On This (learn these next):**
-
-- `SLA/SLO/SLI` - MTBF/MTTR determine achievable SLA
-- `Error Budget` - burn rate related to MTBF frequency
-- `Disaster Recovery` - plan for MTTR when major failures occur
+- [[SYD-022 - Disaster Recovery]] - DR planning requires knowing MTTR for major failures
 
 **Alternatives / Comparisons:**
-
-- `RTO/RPO` - similar metrics for disaster recovery scenarios
-- `Uptime` - simpler version (binary up/down, doesn't distinguish MTBF/MTTR)
+- [[SYD-018 - RTO RPO]] - similar metrics for disaster recovery scenarios
+- [[SYD-016 - Error Budget]] - error budget burn rate is related to MTBF frequency
 
 ---
 
@@ -536,8 +534,34 @@ Never ignore MTBF/MTTR trends. If both degrading, escalate immediately. Establis
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Decompose a complex outcome into its contributing factors to identify where to invest. Availability = MTBF / (MTBF + MTTR). You can improve availability by reducing either factor. This decomposition principle applies everywhere: delivery time = queue time + processing time (Little's Law), customer satisfaction = product quality * support quality x price, code review cycle time = time-to-review + time-to-address-feedback. Decompose first, then invest in the factor with highest leverage.
+
+**Where else this pattern appears:**
+- **Incident response phases:** Breaking MTTR into MTTD + MTTA + TTR reveals which phase is the bottleneck - often detection takes longer than the actual fix.
+- **Deployment pipeline:** Total deploy time = build time + test time + deploy time + validation time - each phase can be optimised independently.
+- **Customer support:** Resolution time = queue time + diagnosis time + fix time + verification - decomposing reveals where to invest in automation.
+
+---
+
+### 💡 The Surprising Truth
+
+Reducing MTTR below a certain threshold is more effective than eliminating failures entirely. A system with MTBF = 100 hours and MTTR = 1 minute achieves 99.998% availability. The marginal cost of eliminating the last 0.01% of failures grows exponentially (chaos engineering, full Byzantine fault tolerance), while reducing MTTR from 30 minutes to 3 minutes is often a process and tooling problem - achievable at low cost with better alerting, runbooks, and deployment automation. This is why Google's SRE teams invest more in detection and response tooling than in preventing every failure.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your API has SLA = 99% (7.2 hours downtime/month allowed). Current MTBF = 200 hours, MTTR = 30 minutes. Calculate availability. Are you meeting SLA? What needs to improve: MTBF or MTTR?
 
-**Q2.** You have a choice: invest $10K to reduce MTBF to 300 hours (prevent failures better) OR invest $10K to reduce MTTR to 10 minutes (recover faster). Which investment yields higher availability gain, and why?
+*Hint:* Think about the formula: Availability = MTBF / (MTBF + MTTR). Calculate current availability and identify whether MTBF improvement or MTTR improvement yields a larger gain per dollar invested.
+
+**Q2.** You have a choice: invest  to reduce MTBF to 300 hours (prevent failures better) OR invest  to reduce MTTR to 10 minutes (recover faster). Which investment yields higher availability gain, and why?
+
+*Hint:* Think about the math: which investment makes a bigger change to the MTBF/(MTBF+MTTR) formula? Explore the diminishing returns of MTBF improvement when MTBF is already high compared to MTTR reduction when MTTR is the dominant term.
+
+**Q3 (Scale):** Your service handles 10,000 req/sec. An incident takes 45 minutes to resolve and occurs once per month. Post-mortem: detection took 15 min, triage took 15 min, fix took 15 min. Which phase should you invest in reducing, and how does it affect your SLA?
+
+*Hint:* Think about which phase is most amenable to technical improvement (monitoring alert speed vs debugging tooling vs deployment speed) versus process improvement (runbooks, escalation paths). Explore which 15-minute phase would have the largest availability impact if halved.

@@ -1,22 +1,24 @@
 ﻿---
+id: SYD-019
+title: Redundancy Failover
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★☆
+depends_on: SYD-008
+used_by: SYD-020, SYD-021
+related: SYD-020, SYD-021, SYD-022
+tags:
+  - reliability
+  - intermediate
+  - architecture
+status: complete
+version: 1
 layout: default
-title: "Redundancy Failover"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 19
-permalink: /system-design/redundancy-failover/
-id: SYD-019
-category: System Design
-difficulty: ★★☆
-depends_on: High Availability, Load Balancing, Monitoring
-used_by: Infrastructure Design, Reliability Engineering
-related: Active-Active, Active-Passive, Disaster Recovery
-tags:
-  - high-availability
-  - infrastructure
-  - reliability
-  - intermediate
-  - fault-tolerance
+permalink: /syd/redundancy-failover/
 ---
 
 # SYD-019 - Redundancy Failover
@@ -41,6 +43,9 @@ Any single point of failure will eventually fail (hardware breaks, software bugs
 
 **THE INVENTION MOMENT:**
 "Have a backup ready. If primary fails, automatically switch to backup. Instant recovery, no manual intervention."
+
+**EVOLUTION:**
+Redundancy as an engineering principle predates computing - aerospace engineers duplicated flight-critical systems in the 1940s (dual engines, dual hydraulic systems). Computing adopted redundancy first for hardware (RAID for disk, dual power supplies for servers), then for software services (multiple application instances, database replicas). Cloud computing made redundancy cheap: deploying to two availability zones costs marginally more than one. Modern systems add application-level redundancy (circuit breakers, bulkheads) on top of infrastructure redundancy. The discipline evolved from hardware fault tolerance into a layered software architecture pattern.
 
 ---
 
@@ -533,21 +538,16 @@ Test failover under load. Simulate cascade scenarios. Implement rate limiting on
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `High Availability` - overall discipline; redundancy/failover are tactics
-- `Monitoring` - detects failures, triggers failover
-- `Load Balancing` - distributes traffic across redundant servers
+- [[SYD-008 - Load Balancing]] - distributes traffic away from failed nodes
 
 **Builds On This (learn these next):**
-
-- `Active-Active` - both systems serving simultaneously (vs. active-passive failover)
-- `Disaster Recovery` - failover for data center-level disasters
-- `Chaos Engineering` - testing failover scenarios
+- [[SYD-020 - Active-Active]] - both nodes serve traffic simultaneously
+- [[SYD-021 - Active-Passive]] - one node waits as standby
+- [[SYD-022 - Disaster Recovery]] - larger-scale failover across regions
 
 **Alternatives / Comparisons:**
-
-- `Replication` - mechanism enabling failover
-- `Circuit Breakers` - prevent cascade failures during failover
+- [[SYD-020 - Active-Active]] - both nodes active vs one passive
+- [[SYD-021 - Active-Passive]] - simpler; one node waits as standby
 
 ---
 
@@ -584,8 +584,34 @@ Test failover under load. Simulate cascade scenarios. Implement rate limiting on
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Single points of failure are the enemy of availability. Any component in the critical path that has no redundant alternative becomes the limiting factor for system availability. This applies to supply chains (single-supplier risk), software architecture (single database primary, single message broker), and team structure (single person who knows a critical system). Identify the critical path, find the single points, and eliminate them systematically.
+
+**Where else this pattern appears:**
+- **Network paths:** Enterprise networks use redundant switches, routers, and ISP uplinks - the same principle at the network layer.
+- **Power supply:** Servers in data centres have dual power supplies connecting to separate PDUs on separate circuits - physical redundancy.
+- **Code paths:** Feature flags with fallback logic are code-level redundancy - if the primary code path fails, fall back to the simpler version.
+
+---
+
+### 💡 The Surprising Truth
+
+Redundancy can create false confidence. A system with two servers and automatic failover is not 2x more available than a single server - it is only more available if the failure modes of the two servers are truly independent. A software bug that crashes Server 1 will crash Server 2 identically (correlated failure). A misconfigured network switch that isolates both servers simultaneously eliminates both (common-mode failure). Real redundancy requires fault isolation: different hardware, different availability zones, different software versions. Engineers who count replicas and assume independence often discover correlated failures the hard way.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your system has 3 redundant web servers with automatic failover. If one fails, the remaining 2 can't handle 100% of traffic (latency increases 50%). Is this acceptable design? Why or why not?
 
+*Hint:* Think about what happens to latency when 2 servers absorb 100% of traffic intended for 3 - is a 50% latency increase acceptable, and does that depend on your current baseline latency and SLA? Explore whether over-provisioning (sizing for N+1) is the correct design choice.
+
 **Q2.** During a failover event, your database replica is promoted to primary, but the old primary (now down) is still listed in DNS. Apps start connecting to both. How would you prevent split-brain scenarios?
+
+*Hint:* Think about what split-brain means: both servers think they are the primary and accept writes. Explore STONITH (Shoot The Other Node In The Head), distributed consensus (Raft/Paxos), and database-level mechanisms that prevent dual-primary scenarios.
+
+**Q3 (First Principles):** You have primary and standby databases with automatic failover. During testing, failover takes 30 seconds. Your application has connection retry logic with 5-second timeout - during those 30 seconds, 6 retry attempts fail. Design an application-level strategy that survives a 30-second failover transparently.
+
+*Hint:* Think about what retry logic looks like at the application level - exponential backoff with jitter spreads the retry load. Explore whether the database driver's connection failover (JDBC failover URL) operates independently of application-level retry, and whether circuit breakers can hold requests rather than failing them during the failover window.

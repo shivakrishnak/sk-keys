@@ -1,22 +1,25 @@
 ﻿---
-layout: default
+id: SYD-028
 title: "Rate Limiting (System)"
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★☆
+depends_on: SYD-008
+used_by: SYD-029, SYD-030, SYD-044
+related: SYD-029, SYD-030
+tags:
+  - performance
+  - intermediate
+  - architecture
+  - reliability
+status: complete
+version: 1
+layout: default
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 28
-permalink: /system-design/rate-limiting-system/
-id: SYD-028
-category: System Design
-difficulty: ★★☆
-depends_on: Load Balancing, Throttling, Infrastructure
-used_by: API Management, DDoS Protection, Resource Protection
-related: Token Bucket, Leaky Bucket, Throttling
-tags:
-  - infrastructure
-  - performance
-  - advanced
-  - protection
-  - scalability
+permalink: /syd/rate-limiting-system/
 ---
 
 # SYD-028 - Rate Limiting (System)
@@ -41,6 +44,9 @@ Need to prevent single client from monopolizing resources.
 
 **THE INVENTION MOMENT:**
 "Limit requests per user per time window. User exceeds limit? Reject or queue."
+
+**EVOLUTION:**
+Rate limiting began as a network-level concept in the 1970s - telephone switches rate-limited incoming calls to prevent network congestion. Web applications adopted rate limiting in the early 2000s as DDoS attacks became common. AWS API Gateway (2015) made managed rate limiting a service rather than a custom implementation. OAuth 2.0 and API management platforms standardised rate limit headers (X-RateLimit-Remaining, Retry-After). The discipline evolved from low-level network protection to a business policy tool: rate limits are now used for tiered pricing (free tier vs paid tier API limits) as much as for technical protection.
 
 ---
 
@@ -432,13 +438,17 @@ Enforce per-user ID (not IP). Or combine multiple signals.
 
 ### 🔗 Related Keywords
 
-**Prerequisites:**
+**Prerequisites (understand these first):**
+- [[SYD-008 - Load Balancing]] - the layer where rate limiting is typically enforced
 
-- `Load Balancing`, `API Gateway`
+**Builds On This (learn these next):**
+- [[SYD-029 - Token Bucket]] - one algorithm for implementing rate limits
+- [[SYD-030 - Leaky Bucket]] - alternative algorithm with different burst characteristics
+- [[SYD-044 - Rate Limiter Design]] - end-to-end system design using rate limiting
 
-**Builds On This:**
-
-- `Token Bucket`, `Leaky Bucket`, `DDoS Protection`
+**Alternatives / Comparisons:**
+- [[SYD-029 - Token Bucket]] - implementation algorithm that allows bursts
+- [[SYD-030 - Leaky Bucket]] - implementation algorithm that smooths output
 
 ---
 
@@ -462,8 +472,34 @@ Enforce per-user ID (not IP). Or combine multiple signals.
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Control the rate of work entering a system to protect its capacity. This principle appears everywhere: circuit breakers limit the rate of failure propagation, TCP congestion control limits the rate of packet sending, database connection pools limit the rate of concurrent queries. Every shared resource needs a rate controller, or the fastest client takes all resources.
+
+**Where else this pattern appears:**
+- **TCP congestion control:** TCP's AIMD algorithm rate-limits packet sending based on network feedback - a rate limiter for network bandwidth.
+- **Database connection pools:** Maximum pool size limits concurrent query rate - preventing one application from exhausting all database connections.
+- **Kubernetes resource requests:** CPU requests limit the rate at which pods consume cluster CPU - pod-level rate limiting enforced by the kernel cgroups.
+
+---
+
+### 💡 The Surprising Truth
+
+Rate limiting has a business model dimension that is rarely discussed technically. Stripe, Twilio, and GitHub all use rate limits not primarily as protection mechanisms but as product packaging: the free tier gets 100 requests per minute, the paid tier gets 10,000 requests per minute. The rate limiter is the technical enforcement of the pricing policy. This means rate limiting code is revenue-critical infrastructure - a bug that grants free-tier users paid-tier access directly costs money. Rate limiting systems are tested more carefully than most engineers realise, because a single misconfiguration is a potential revenue loss of significant magnitude.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Attacker has 100 IPs, each sends 100 req/min. Per-IP limit: 100 req/min (seems safe). How does attacker bypass?
 
+*Hint:* Think about the attacker's perspective: 100 IPs x 100 req/min = 10,000 req/min globally. Does per-IP rate limiting prevent this? Explore what a global rate limit (total requests per minute regardless of source) or account-level rate limit (tied to authenticated identity) would catch that per-IP limits miss.
+
 **Q2.** Legitimate user has traffic spike (3x normal). Rate limit rejects it. How do you handle?
+
+*Hint:* Think about what 3x normal looks like vs the configured limit - is the spike anticipated (a scheduled job, an email campaign going live) or random? Explore whether burst allowance (token bucket capacity), separate limit tiers for trusted clients, or proactive notification (rate limit approaching alert) handles legitimate spikes better than hard rejection.
+
+**Q3 (Design Trade-off):** You implement per-user rate limiting in a distributed API gateway with 5 nodes. Each node independently tracks a user's request count. A user sends 120 req/min across 5 nodes (24 per node). Per-node limit is 100 req/min. The user is never rate limited. Design a fix.
+
+*Hint:* Think about where the per-user state lives: each node has its own counter with no coordination. Explore whether centralising the counter in Redis solves the problem and what the latency and availability implications of that Redis dependency are.

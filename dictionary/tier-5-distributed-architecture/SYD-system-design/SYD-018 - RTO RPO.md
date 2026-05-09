@@ -1,22 +1,24 @@
 ﻿---
+id: SYD-018
+title: RTO RPO
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★★
+depends_on: SYD-022
+used_by:
+related: SYD-022, SYD-023, SYD-017
+tags:
+  - reliability
+  - advanced
+  - distributed
+status: complete
+version: 1
 layout: default
-title: "RTO RPO"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 18
-permalink: /system-design/rto-rpo/
-id: SYD-018
-category: System Design
-difficulty: ★★★
-depends_on: Disaster Recovery, Replication, High Availability
-used_by: SRE, DR Planning, Business Continuity
-related: Disaster Recovery, Redundancy, Geo-Replication
-tags:
-  - disaster-recovery
-  - advanced
-  - operations
-  - reliability
-  - business-continuity
+permalink: /syd/rto-rpo/
 ---
 
 # SYD-018 - RTO RPO
@@ -41,6 +43,9 @@ Disaster happens eventually (earthquake, fire, cyber-attack). Without a clear re
 
 **THE INVENTION MOMENT:**
 "We need commitments: if disaster strikes, how fast must we recover? How much data loss is acceptable? Then we design systems to meet those targets."
+
+**EVOLUTION:**
+RTO and RPO as formal concepts emerged from business continuity planning in the 1980s, formalised by British Standards Institute (BS 25999) and later ISO 22301. Initially applied to physical disaster recovery (offsite tape backups, alternate data centres), the concepts were adapted to software systems as cloud computing made multi-region deployment accessible. Modern cloud services expose RTO/RPO as configuration parameters: managed databases offer RPO in seconds (synchronous replication) or minutes (asynchronous replication), and cloud providers publish their own RTO/RPO commitments in SLAs. The discipline evolved from physical disaster planning to architectural design constraints.
 
 ---
 
@@ -546,21 +551,14 @@ Mandatory quarterly DR drills. If real disaster occurs without recent drill, ack
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `Disaster Recovery` - overall strategy; RTO/RPO are metrics
-- `Replication` - mechanism for achieving RPO
-- `High Availability` - related (though HA is active-active, DR is standby-based)
+- [[SYD-022 - Disaster Recovery]] - overall strategy; RTO/RPO are the metrics that define DR targets
 
 **Builds On This (learn these next):**
-
-- `Geo-Replication` - geographic distribution to achieve RTO/RPO
-- `Backup Strategies` - one path to achieving RTO/RPO
-- `Chaos Engineering` - testing to verify actual RTO/RPO
+- [[SYD-023 - Geo-Replication]] - geographic distribution to achieve low RTO/RPO
 
 **Alternatives / Comparisons:**
-
-- `MTTR/MTBF` - different but complementary (MTTR is reactive, RTO is proactive)
-- `Business Continuity` - broader discipline that includes RTO/RPO
+- [[SYD-017 - MTTR MTBF]] - different but complementary (MTTR is reactive, RTO is proactive)
+- [[SYD-016 - Error Budget]] - error budget includes planned DR test downtime
 
 ---
 
@@ -597,8 +595,34 @@ Mandatory quarterly DR drills. If real disaster occurs without recent drill, ack
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Define the acceptable loss before the disaster, not during it. Under pressure, without predefined constraints, teams make suboptimal decisions. This principle appears everywhere: circuit breaker thresholds (define trip conditions in advance), feature flags (define rollback criteria before shipping), incident severity levels (define P1/P2 criteria before incidents happen). Predefined targets create calm, rational decision-making during crises.
+
+**Where else this pattern appears:**
+- **Circuit breakers:** Trip thresholds (error rate > 50%, latency > 2s) are RTO/RPO analogues - predefined bounds for acceptable failure before switching to fallback.
+- **Kubernetes pod disruption budgets:** A PDB defines the minimum number of available pods during node maintenance - an RPO for pod availability.
+- **Database backup policies:** Backup frequency determines RPO; recovery time testing determines RTO. Most teams discover their true RTO only when testing.
+
+---
+
+### 💡 The Surprising Truth
+
+RTO and RPO are inverse to cost: a 5-minute RTO with zero RPO (no data loss) requires real-time synchronous replication to a hot standby - this can cost 3-5x a single-region deployment. A 24-hour RTO with 24-hour RPO requires only daily backups to cold storage - this can cost 1/100th as much. Most businesses underestimate this cost curve and discover only when building DR systems that their 'we need to recover in under an hour' requirement implies architectural changes costing millions of dollars per year in replication infrastructure.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your payment system has: primary in us-east-1, backup in us-west-2. Network latency 50ms. RTO target: 10 minutes. Can you achieve it with warm standby + restore-from-backup strategy, or do you need hot standby (continuous replication)?
 
-**Q2.** You can invest in either: (A) reducing MTTR (faster incident response to normal outages) or (B) improving RTO/RPO (faster disaster recovery). Which investment is higher priority for a financial services company, and why?
+*Hint:* Think about what warm standby means for startup time when the primary fails - how long does it take to initialise, load data, and start accepting traffic? Explore the difference between warm standby (pre-initialised but not running) and hot standby (continuously running, near-instant failover).
+
+**Q2.** You can invest in either: (A) reducing MTTR (faster incident response to normal outages) or (B) improving RTO/RPO (faster disaster recovery). Which is higher priority for a financial services company, and why?
+
+*Hint:* Think about the regulatory requirements of financial services - what does 24-hour data loss mean for a payment processor? Explore whether MTTR (faster recovery from normal outages) or RTO/RPO (data loss prevention in disasters) is the higher-severity risk for a regulated financial institution.
+
+**Q3 (Design Trade-off):** You're designing DR for a global e-commerce platform. The product catalog (read-heavy, slowly changing) has RTO = 5 min, RPO = 24 hours. The order database (write-heavy, every order must be recorded) has RTO = 5 min, RPO = 0. Design an architecture that meets both without over-engineering the catalog.
+
+*Hint:* Think about whether different data types warrant different DR strategies - a CDN-cached catalog can tolerate data loss because it can be rebuilt from source, while orders cannot be recreated. Explore how you implement RPO = 0 for orders (synchronous replication) while accepting RPO = 24h for the catalog (daily backups or async replication).

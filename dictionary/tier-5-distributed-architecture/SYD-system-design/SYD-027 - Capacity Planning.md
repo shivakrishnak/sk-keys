@@ -1,22 +1,25 @@
 ﻿---
+id: SYD-027
+title: Capacity Planning
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★★
+depends_on: SYD-026
+used_by: SYD-014
+related: SYD-014, SYD-008, SYD-026
+tags:
+  - architecture
+  - advanced
+  - performance
+  - observability
+status: complete
+version: 1
 layout: default
-title: "Capacity Planning"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 27
-permalink: /system-design/capacity-planning/
-id: SYD-027
-category: System Design
-difficulty: ★★★
-depends_on: Back-of-Envelope Estimation, Monitoring, Scalability
-used_by: Infrastructure Planning, SRE, DevOps
-related: Auto Scaling, Load Balancing, Provisioning
-tags:
-  - infrastructure
-  - planning
-  - advanced
-  - scaling
-  - operations
+permalink: /syd/capacity-planning/
 ---
 
 # SYD-027 - Capacity Planning
@@ -41,6 +44,9 @@ Need: Proactive resource planning. Forecast growth, provision ahead of demand, a
 
 **THE INVENTION MOMENT:**
 "Forecast growth rate. Track resource usage trends. Provision 6 months ahead. Smooth scaling."
+
+**EVOLUTION:**
+Capacity planning began as a hardware procurement exercise - mainframe operators modelled workloads months in advance to order CPU and memory upgrades with long lead times. The cloud era transformed capacity planning from hardware ordering to auto-scaling configuration: instead of provisioning months ahead, teams configure scaling policies and let the cloud provision on-demand. The discipline evolved from a one-time procurement exercise to a continuous monitoring and forecasting practice. Modern capacity planning tools (Netflix's Scryer, Facebook's Capacity Planning Tool) use ML-based time-series forecasting to predict resource needs weeks in advance and auto-generate scaling recommendations.
 
 ---
 
@@ -444,13 +450,15 @@ Know lead times. Provision when headroom allows for lead time. Formula: action_p
 
 ### 🔗 Related Keywords
 
-**Prerequisites:**
+**Prerequisites (understand these first):**
+- [[SYD-026 - Back-of-Envelope Estimation]] - estimation technique used to start a capacity plan
 
-- `Back-of-Envelope Estimation`, `Monitoring`
+**Builds On This (learn these next):**
+- [[SYD-014 - Auto Scaling]] - reactive alternative; auto-scaling responds to load rather than forecasting it
 
-**Builds On This:**
-
-- `Auto Scaling`, `Provisioning`, `SRE`
+**Alternatives / Comparisons:**
+- [[SYD-014 - Auto Scaling]] - reactive complement; auto-scaling handles unpredictable spikes that forecasting misses
+- [[SYD-026 - Back-of-Envelope Estimation]] - estimation technique used within capacity planning
 
 ---
 
@@ -474,8 +482,34 @@ Know lead times. Provision when headroom allows for lead time. Formula: action_p
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Plan for growth curves, not absolute numbers. Systems face seasonal spikes (Black Friday, back-to-school), sudden viral growth (product launch), and secular growth trends. Capacity planning that only handles the current trend misses spike scenarios. This principle appears in infrastructure provisioning (plan for 3x peak, not 1x average), team hiring (hire before the growth hits, not after), and product roadmaps (plan features for the user base 6 months from now, not today's users).
+
+**Where else this pattern appears:**
+- **Database index planning:** Plan index capacity for 2x current data volume - indexes that fit in memory today may not fit in 6 months after growth.
+- **API quota planning:** SaaS companies provision API rate limits at 10x average to absorb spikes - capacity planning for shared infrastructure.
+- **Kubernetes resource requests/limits:** Setting resource requests above current usage but below maximum anticipated load is capacity planning at the pod level.
+
+---
+
+### 💡 The Surprising Truth
+
+Most capacity planning failures are not under-provisioning (the obvious failure) but over-provisioning (the invisible failure). AWS's own capacity studies estimate that enterprise customers use on average 30-40% of their provisioned cloud compute. Over-provisioned capacity is waste - it costs money and masks performance problems (a system running at 20% utilisation hides latency regressions until utilisation spikes). Teams that right-size aggressively discover performance issues faster because headroom is not available to absorb them. The correct capacity target is utilisation at 60-70% during peak, not 20-30%.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your system has 3-month provisioning lead time. CPU at 50%, growing 20%/month. When should you order new capacity?
 
+*Hint:* Think about the lead time for provisioning (3 months) and the growth rate (20%/month). When does CPU hit 70% (provisioning trigger)? Work backwards from the capacity limit, accounting for lead time, to find when you should order.
+
 **Q2.** Over-provisioning wastes money. Under-provisioning causes outages. How do you balance?
+
+*Hint:* Think about the cost of over-provisioning (paying for unused capacity) versus under-provisioning (SLA breach cost, revenue loss). Explore whether predictive auto-scaling (scale before you need to) or reserved capacity (pre-commit to a base level, scale above with on-demand) balances these costs.
+
+**Q3 (Scale):** You're building a capacity plan for a SaaS product that is 70% enterprise customers (predictable, contract-based load) and 30% self-serve customers (unpredictable, viral growth potential). Design a capacity strategy that handles both without over-provisioning for the self-serve spike.
+
+*Hint:* Think about whether enterprise capacity (predictable) can be provisioned with reserved instances (cheap, committed) while self-serve capacity (unpredictable) uses on-demand instances (flexible, costlier per hour). Explore how to monitor leading indicators of self-serve viral growth (signups/day, trial-to-paid conversion) to trigger proactive provisioning.

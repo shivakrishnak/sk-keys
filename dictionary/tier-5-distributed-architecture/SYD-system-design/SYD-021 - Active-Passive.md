@@ -1,22 +1,24 @@
 ﻿---
+id: SYD-021
+title: Active-Passive
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★☆
+depends_on: SYD-019, SYD-008
+used_by:
+related: SYD-020, SYD-019, SYD-022
+tags:
+  - reliability
+  - intermediate
+  - architecture
+status: complete
+version: 1
 layout: default
-title: "Active-Passive"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 21
-permalink: /system-design/active-passive/
-id: SYD-021
-category: System Design
-difficulty: ★★☆
-depends_on: Redundancy, High Availability, Monitoring
-used_by: HA Architecture, Failover Systems
-related: Active-Active, Redundancy, Failover
-tags:
-  - high-availability
-  - reliability
-  - intermediate
-  - failover
-  - architecture
+permalink: /syd/active-passive/
 ---
 
 # SYD-021 - Active-Passive
@@ -41,6 +43,9 @@ Business needs redundancy but complexity of active-active too high. Need simple 
 
 **THE INVENTION MOMENT:**
 "One system actively serving. One system passively waiting. If active fails, promote passive. Simple, safe, proven."
+
+**EVOLUTION:**
+Active-Passive (primary/replica) was the dominant HA pattern from the 1990s through the 2010s because it is simpler than active-active: no conflict resolution, clear write authority, familiar master-replica model. PostgreSQL streaming replication, MySQL primary-replica, and Oracle Data Guard all implement active-passive. Cloud databases (RDS, Cloud SQL) exposed active-passive as a managed failover feature. The shift to active-active began in the 2010s as latency requirements made regional proximity necessary. Active-passive remains the dominant pattern for write-heavy systems where conflict resolution complexity exceeds the benefits of dual-active writes.
 
 ---
 
@@ -439,13 +444,16 @@ Implement fencing: if old primary comes back and detects it's not the current pr
 
 ### 🔗 Related Keywords
 
-**Prerequisites:**
+**Prerequisites (understand these first):**
+- [[SYD-019 - Redundancy Failover]] - the broader pattern that active-passive implements
+- [[SYD-008 - Load Balancing]] - routes traffic away from the failed primary
 
-- `Redundancy`, `High Availability`, `Replication`
+**Builds On This (learn these next):**
+- [[SYD-022 - Disaster Recovery]] - active-passive across regions is the basis for DR
 
-**Builds On This:**
-
-- `Active-Active`, `Disaster Recovery`, `Monitoring`
+**Alternatives / Comparisons:**
+- [[SYD-020 - Active-Active]] - more complex but better resource utilisation and no failover time
+- [[SYD-022 - Disaster Recovery]] - larger-scale version of active-passive across regions
 
 ---
 
@@ -474,8 +482,34 @@ Implement fencing: if old primary comes back and detects it's not the current pr
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Simplicity enables correctness. Active-passive is correct (no conflict resolution needed) at the cost of resource utilisation (passive server is idle) and failover time (promotion takes seconds). This trade-off appears everywhere: a single database writer is simpler and more correct than multi-master; a single leader in a distributed system (Paxos, Raft) is simpler than leaderless consensus; a single on-call engineer per rotation is simpler than shared responsibility. Simplicity has a cost but often the cost is worth it.
+
+**Where else this pattern appears:**
+- **Paxos/Raft leader election:** Distributed consensus elects one leader (active) and all other nodes are followers (passive) - conflict-free writes to the leader only.
+- **Primary DNS:** A primary authoritative DNS server and secondary replicas - writes only to primary, replicas serve read traffic.
+- **Git branching:** Main branch is active (production), feature branches are passive (development) - only main gets deployed.
+
+---
+
+### 💡 The Surprising Truth
+
+Active-passive creates a hidden performance assumption: the passive node must be able to accept 100% of the primary's write throughput at the moment of failover. If replication lag has caused the passive to fall behind, it must also catch up while simultaneously serving newly promoted traffic. Systems with high write throughput often discover that failover itself degrades performance for 60-90 seconds post-promotion as the new primary processes accumulated replication backlog while serving live writes. This post-failover degradation is rarely included in RTO calculations but is consistently observed in production failover events.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
-**Q1.** Primary fails. Replication lag was 50MB. How much data is lost? How do you recover it?
+**Q1.** Primary fails. Replication lag was 50 MB. How much data is lost? How do you recover it?
 
-**Q2.** After failover, passive is now primary. Old primary comes back online. How do you prevent it from accepting writes and corrupting data?
+*Hint:* Think about what 50 MB of replication lag means at the byte level - what was the write rate that produced 50 MB of lag? Explore whether the lag is in uncommitted transactions (recoverable with WAL replay) or committed writes that were not replicated (permanent loss).
+
+**Q2.** After failover, the passive is now primary. The old primary comes back online. How do you prevent it from accepting writes and corrupting data?
+
+*Hint:* Think about what happens when the old primary comes back online - does it know it is no longer primary? Explore STONITH (fencing), and how PostgreSQL's recovery.conf (or standby.signal) prevents an old primary from accepting writes after being fenced.
+
+**Q3 (Comparison):** Your service currently has active-passive PostgreSQL (1 primary, 1 replica). You want to add a third server. Should it be another replica (read scaling) or an active-active second primary (write scaling)? What workload characteristics determine the right choice?
+
+*Hint:* Think about what the current bottleneck is: read throughput (solved by read replicas) vs write throughput (requires multi-master complexity). Explore whether your workload is read-heavy or write-heavy, and what the ratio of reads to writes is at peak traffic.

@@ -1,22 +1,24 @@
 ﻿---
+id: SYD-016
+title: Error Budget
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★★
+depends_on: SYD-015
+used_by:
+related: SYD-015, SYD-017
+tags:
+  - reliability
+  - advanced
+  - observability
+status: complete
+version: 1
 layout: default
-title: "Error Budget"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 16
-permalink: /system-design/error-budget/
-id: SYD-016
-category: System Design
-difficulty: ★★★
-depends_on: SLA/SLO/SLI, Service Level, Monitoring
-used_by: Production Operations, SRE, Deployment Strategy
-related: SLA/SLO/SLI, MTTR/MTBF, Release Cadence
-tags:
-  - reliability
-  - sre
-  - operations
-  - advanced
-  - risk-management
+permalink: /syd/error-budget/
 ---
 
 # SYD-016 - Error Budget
@@ -41,6 +43,9 @@ Reliability vs. velocity always in tension. Without a shared metric, politics an
 
 **THE INVENTION MOMENT:**
 "What if we calculated how much failure we're allowed, and used that to decide when to deploy? More budget = deploy more. Low budget = hold off."
+
+**EVOLUTION:**
+Error budgets were formalised in Google's SRE book (2016), though the concept existed implicitly in how Google's SRE teams balanced reliability work against feature development. The framework spread rapidly: organisations adopted error budget policies as the mechanism for making deployment decisions data-driven rather than politics-driven. Modern implementations extend error budgets to burn rate alerts (Prometheus + SLO alerting), automated deployment freezes when budget drops below threshold, and multi-window consumption tracking (fast burn + slow burn). The discipline evolved from a Google-specific practice into an industry-standard reliability engineering tool.
 
 ---
 
@@ -482,21 +487,14 @@ Monitor both SLI and error budget. If error budget is high but SLI dropped, susp
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-
-- `SLA/SLO/SLI` - error budget is derived from these
-- `Monitoring` - how SLI (and thus error budget) is measured
-- `Service Level` - defining what "acceptable" means
+- [[SYD-015 - SLA SLO SLI]] - error budget is derived from SLO
 
 **Builds On This (learn these next):**
-
-- `MTTR/MTBF` - incident recovery time affects error budget burn
-- `Deployment Strategy` - error budget informs when to deploy
-- `Incident Management` - incident frequency affects budget consumption
+- [[SYD-017 - MTTR MTBF]] - incident recovery time affects error budget burn rate
 
 **Alternatives / Comparisons:**
-
-- `Release Cadence` - error budget determines sustainable deployment frequency
-- `Blast Radius` - limiting blast radius reduces error budget consumption per incident
+- [[SYD-017 - MTTR MTBF]] - MTTR/MTBF determine the burn rate from incidents
+- [[SYD-015 - SLA SLO SLI]] - error budget is derived from these and feeds back into them
 
 ---
 
@@ -537,8 +535,34 @@ Monitor both SLI and error budget. If error budget is high but SLI dropped, susp
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Permission to fail, budgeted in advance, enables risk-taking within safe boundaries. This principle appears everywhere: companies allocate R&D budgets for risky innovation (if all projects succeed, you're not taking enough risk), test suites have flakiness budgets (some flakiness is acceptable; zero is too expensive), and teams have on-call burden budgets (some on-call is unavoidable; too much causes burnout). Budget the acceptable failure; measure against it; make decisions within the budget.
+
+**Where else this pattern appears:**
+- **R&D investment:** A product team's 20% innovation budget is an error budget for risky ideas - permission to fail on one in five experiments without consequence.
+- **Test flakiness limits:** A CI pipeline that allows up to 2% test flakiness has an error budget for non-deterministic tests - beyond 2%, the suite is deemed unreliable.
+- **On-call burden caps:** SRE teams cap on-call work at 50% of time - an error budget for operational toil that protects engineering capacity.
+
+---
+
+### 💡 The Surprising Truth
+
+Error budgets make the counterintuitive argument that you should spend your error budget as completely as possible. A team that ends the month with 90% of their error budget unused has been too conservative - they delayed features, avoided risks, and over-invested in reliability beyond what customers required. The SRE model explicitly frames full error budget consumption as the correct outcome: you have maximised feature delivery within your customer-committed reliability target. Leftover error budget is waste - an opportunity cost paid in slower delivery.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your service SLA = 99.9% (monthly). You have 10 features ready to ship, but error budget is nearly exhausted (< 5% remaining). One feature is high-risk (5% chance of 1-hour outage). Another is low-risk (0.1% chance of 10-minute outage). Which do you deploy, and why?
 
+*Hint:* Think about what deploying each feature means for error budget in the worst case - calculate the expected burn for each (probability x outage duration as % of monthly budget). Explore whether deploying both sequentially rather than simultaneously changes the risk calculation.
+
 **Q2.** You notice your burn rate is 1.5x the safe rate. Actual incidents (infrastructure failures) caused 60% of the burn, and deployments caused 40%. Should you freeze all deployments, or focus on preventing incidents? What's the tradeoff?
+
+*Hint:* Think about the source of burns - infrastructure failures vs deployments - and whether freezing deployments addresses the 60% that is not deployment-caused. Explore whether the burn rate difference (1.5x) tells you which intervention has higher leverage.
+
+**Q3 (Root Cause):** Your error budget burns 3x faster in the first week of each month. You identify that batch jobs on the 1st cause database contention, which causes latency SLI violations. How would you address this without eliminating the batch jobs?
+
+*Hint:* Think about whether the SLI measures availability (binary) or latency (percentile-based). Explore whether scheduling batch jobs during low-traffic periods, or using read replicas to isolate batch query impact, reduces SLI violations without eliminating the batch work.

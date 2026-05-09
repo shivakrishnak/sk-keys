@@ -1,22 +1,24 @@
 ﻿---
+id: SYD-022
+title: Disaster Recovery
+category: System Design
+tier: tier-5-distributed-architecture
+folder: SYD-system-design
+difficulty: ★★★
+depends_on: SYD-018, SYD-019
+used_by: SYD-023, SYD-024
+related: SYD-018, SYD-023
+tags:
+  - reliability
+  - advanced
+  - distributed
+status: complete
+version: 1
 layout: default
-title: "Disaster Recovery"
 parent: "System Design"
 grand_parent: "Technical Dictionary"
 nav_order: 22
-permalink: /system-design/disaster-recovery/
-id: SYD-022
-category: System Design
-difficulty: ★★★
-depends_on: Redundancy, RTO/RPO, Backup Strategy
-used_by: Business Continuity Planning, Infrastructure Design
-related: RTO/RPO, Geo-Replication, Failover
-tags:
-  - disaster-recovery
-  - business-continuity
-  - advanced
-  - reliability
-  - infrastructure
+permalink: /syd/disaster-recovery/
 ---
 
 # SYD-022 - Disaster Recovery
@@ -41,6 +43,9 @@ Disasters eventually happen. Without a plan, business impact is catastrophic.
 
 **THE INVENTION MOMENT:**
 "Plan for disaster before it happens. Define recovery targets (RTO/RPO). Build infrastructure to meet them. Test regularly."
+
+**EVOLUTION:**
+Disaster recovery as a discipline originated in the 1970s when mainframe operators created hot site arrangements - alternative data centres that could assume operations if the primary site was destroyed. The process was manual, slow (hours to days), and expensive. Cloud computing transformed DR: Amazon's multi-AZ deployment (2006) made automated failover within a region practical. Infrastructure as Code (Terraform, CloudFormation) made DR infrastructure reproducible and testable. Modern DR is infrastructure as test - you do not have a DR plan, you have DR infrastructure that is continuously exercised via chaos engineering.
 
 ---
 
@@ -456,13 +461,17 @@ Monitor replication lag continuously. Alert if approaching RPO threshold. Test r
 
 ### 🔗 Related Keywords
 
-**Prerequisites:**
+**Prerequisites (understand these first):**
+- [[SYD-018 - RTO RPO]] - the metrics that define what disaster recovery must achieve
+- [[SYD-019 - Redundancy Failover]] - smaller-scale failover that DR extends to cross-region
 
-- `RTO/RPO`, `Redundancy`, `Backup Strategies`
+**Builds On This (learn these next):**
+- [[SYD-023 - Geo-Replication]] - data replication strategy for cross-region DR
+- [[SYD-024 - Multi-Region Architecture]] - full multi-region design that includes DR capability
 
-**Builds On This:**
-
-- `Geo-Replication`, `Multi-Region Architecture`, `Chaos Engineering`
+**Alternatives / Comparisons:**
+- [[SYD-018 - RTO RPO]] - the metrics that define DR targets
+- [[SYD-019 - Redundancy Failover]] - single-region version of the same pattern
 
 ---
 
@@ -486,8 +495,34 @@ Monitor replication lag continuously. Alert if approaching RPO threshold. Test r
 
 ---
 
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+A plan that has never been tested is a hypothesis. DR procedures that have never been executed will fail when needed - not because of technical problems but because of untested assumptions, stale credentials, outdated runbooks, and operational muscle memory that only develops through practice. This principle applies to on-call runbooks (run in simulation before production), incident response plans (tabletop exercises), and deployment procedures (blue-green deploys must be rehearsed).
+
+**Where else this pattern appears:**
+- **Chaos engineering:** Netflix's Chaos Monkey deliberately kills production instances to test that redundancy works as designed - continuous DR testing.
+- **Fire drills:** AWS GameDay exercises and Google DiRT (Disaster and Recovery Testing) are structured DR tests with intentional failure injection.
+- **Deployment runbooks:** Runbooks that are only read during incidents will have errors; runbooks that are practiced in staging will be correct during production crises.
+
+---
+
+### 💡 The Surprising Truth
+
+Most disaster recovery plans fail not because the technology doesn't work but because the runbook was last updated 18 months ago and no one noticed that the database password was rotated, the S3 bucket was renamed, and the secondary DNS entry expired. In post-mortems, DR test failures are rarely technical failures - they are process failures: missing monitoring, stale credentials, manual steps with implicit knowledge held by one engineer who has since left. The technical components of DR are often the easy part; the operational components are the hard part.
+
+---
+
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your RTO = 1 hour, RPO = 5 minutes. Primary DC fails. Secondary DC takes 45 min to become operational. You're within RTO. But failover testing shows actual time is 1.5 hours. Why the gap?
 
+*Hint:* Think about the gap between planned RTO (60 min) and actual failover time (90 min) - what is the source of the extra 30 minutes? Explore whether the gap is in infrastructure startup time, operational coordination time (waiting for monitoring to confirm, manual approval steps), or communication time.
+
 **Q2.** Post-disaster investigation: backups exist, but 2 days worth are corrupted (ransomware). How far back can you reliably restore?
+
+*Hint:* Think about how far back your backup chain extends beyond the corrupted 2-day window. Explore the trade-off between RPO (how old is the clean backup?) and the cost of the backup retention period required to guarantee clean restore options.
+
+**Q3 (Design Trade-off):** You need to design DR for a system with 10 TB of data in an RDS database. RTO = 2 hours, RPO = 1 hour. Budget = /month. Outline the minimum DR architecture that meets RTO and RPO, and what you would add if budget allowed.
+
+*Hint:* Think about the spectrum from cold standby (daily backup, long restore time, cheap) to warm standby (replica in another region, faster restore, medium cost) to hot standby (synchronous replication, instant failover, expensive). Map each tier's restore time to your 2-hour RTO and 1-hour RPO requirement.
