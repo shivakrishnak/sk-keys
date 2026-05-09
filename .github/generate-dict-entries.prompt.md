@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: "Generate Technical Dictionary keyword entries (Master Prompt v3.0) for a category or tier"
+description: "Generate Technical Dictionary keyword entries (Master Prompt v3.1) for a category or tier"
 tools:
   - run_in_terminal
   - read_file
@@ -9,10 +9,11 @@ tools:
 
 # Technical Dictionary - Entry Generator
 
-Generate complete, spec-compliant v3.0 keyword entries for all stub files in a **category** or **tier**.
+Generate complete, spec-compliant v3.1 keyword entries for all stub files in a **category** or **tier**.
 
 **Target:** `${input:target:Category code (e.g. MSV, JVM) or tier number (e.g. 3, 5)}`
 **Batch size:** `${input:batchSize:Entries per batch (default: 10)}`
+**Mode:** `${input:mode:generate (default) | upgrade-v31}`
 
 ---
 
@@ -38,7 +39,7 @@ If the output says **"Nothing to generate"**, stop here — all entries are comp
 
 ---
 
-## Phase 2 — Generate content for each batch
+## Phase 2 — Generate content for each batch _(skip when mode = upgrade-v31)_
 
 Work through **one batch at a time**. For each entry in the batch:
 
@@ -46,7 +47,7 @@ Work through **one batch at a time**. For each entry in the batch:
 
 Read the stub file to capture its exact frontmatter (id, title, nav_order, permalink, tags, depends_on, used_by, related, difficulty).
 
-### 2b. Generate full v3.0 content
+### 2b. Generate full v3.1 content
 
 Apply every rule from the workspace `copilot-instructions.md` (already loaded). Key constraints:
 
@@ -91,13 +92,93 @@ Apply every rule from the workspace `copilot-instructions.md` (already loaded). 
 - Use full IDs for `depends_on`, `used_by`, `related` (e.g. `MSV-006, DST-001`)
 - No em dashes (`—`) anywhere — use hyphens (`-`)
 
+**Size rules (P13 — Cognitive Load Budgeting):**
+
+- Tiny concepts (single-purpose, atomic): 800–1200 words
+- Medium concepts (one mechanism, clear boundaries): 1500–3000 words
+- Foundational concepts (multi-faceted, widely depended on): 4000–7000 words
+- Deep-dive architecture concepts (system-spanning): 7000–12000 words
+- Every paragraph must justify its presence. If removing it loses nothing, remove it.
+
 ### 2c. Write the file
 
-Replace the entire stub content with the generated v3.0 entry.
+Replace the entire stub content with the generated v3.1 entry.
 
 ### 2d. Confirm
 
 After writing each batch, confirm the files were saved successfully before continuing to the next batch.
+
+---
+
+## Upgrade Phase — v3.0 → v3.1 _(only when mode = upgrade-v31; replaces Phase 2)_
+
+Work through one batch at a time. For each entry in the batch:
+
+### U-i. Identify upgrade candidates
+
+Read each file. A valid v3.0 upgrade candidate has:
+
+- `id:` field in YAML frontmatter (format `CODE-NNN`)
+- `status:` and `version:` fields present
+- All 7 v3.0 structural section markers present:
+  `### 🔥 The Problem This Solves` · `### ⏱️ Understand It in 30 Seconds` ·
+  `### 🧪 Thought Experiment` · `### 💶 Gradual Depth - Four Levels` ·
+  `### 🔄 The Complete Picture - End-to-End Flow` ·
+  `### ⚖️ Comparison Table` · `### 🚨 Failure Modes & Diagnosis`
+
+Skip any file where `version:` is already `2` or higher (already v3.1).
+
+### U-ii. Apply v3.1 quality improvements
+
+Read the full file content, then apply each check in order:
+
+**1. Cognitive load audit (P13):**
+
+- Estimate word count. Is length proportional to concept complexity?
+  - Tiny concept (single-purpose, atomic) → target ≤1500 words. Trim redundant prose.
+  - Deep-dive architecture → ensure ≥4000 words; add depth only where genuinely missing.
+- Remove any paragraph that repeats a point already made in the same section.
+- Do NOT pad entries — only trim or fill genuine content gaps.
+
+**2. Truthfulness review:**
+
+- Find any specific latency numbers, throughput figures, or scalability claims stated as fact without hedging.
+- Add qualifiers where certainty is unavailable: `implementation-dependent`, `typically`, `commonly observed`, `varies by runtime/version`.
+- Reframe any production stories that read as fabricated (generic company names, suspiciously perfect incident arcs).
+- Do not remove accurate, well-established, verifiable facts.
+
+**3. Deduplication review:**
+
+- Identify explanations that re-cover ground already in prerequisite entries listed in `depends_on`.
+- Replace re-explanations with: _"As covered in `[[CODE-NNN - Keyword]]`, [one bridging sentence]."_
+- Keep only what is unique to this concept’s perspective.
+
+**4. Version Evolution table (conditional):**
+
+- Is this concept an evolving technology (language feature, framework capability, runtime behaviour)?
+  - YES → Add a `**Version Evolution:**` table inside the `**EVOLUTION:**` sub-section of `### 🔥 The Problem This Solves`.
+  - NO (algorithm, data structure, architectural pattern, timeless principle) → skip entirely.
+- Table format: `| Version | What Changed | Why It Matters |`
+
+**5. Decision Tree (conditional):**
+
+- Does `### ⚖️ Comparison Table` have 3+ rows AND the choice involves 3+ distinct engineering conditions?
+  - YES → Add a `**Decision Tree:**` block immediately below the “How to choose” note.
+  - NO (2-option comparison, or simple trade-off table) → skip entirely.
+- Format: `Need [condition]? → Choose X`
+
+### U-iii. Update frontmatter
+
+- Increment `version:` by 1 (e.g. `version: 1` → `version: 2`)
+- Do NOT change `id`, `nav_order`, `permalink`, `status`, `tags`, or any other field.
+
+### U-iv. Write the file
+
+Overwrite the existing file with the v3.1-upgraded content. Preserve the same filename and path.
+
+### U-v. Confirm
+
+After each file, confirm the write succeeded and note which v3.1 improvements were applied (cognitive trim / truthfulness hedges / dedup refs / version table / decision tree).
 
 ---
 
@@ -108,7 +189,10 @@ After all batches are written:
 ```powershell
 cd C:\ASK\MyWorkspace\sk-keys
 git add dictionary/
-git commit -m "feat: generate ${input:target} entries - full v3.0 content"
+# For generate mode:
+git commit -m "feat: generate ${input:target} entries - full v3.1 content"
+# For upgrade-v31 mode:
+# git commit -m "upgrade: →v3.1 ${input:target} entries - batch N"
 ```
 
 ---
@@ -122,4 +206,4 @@ git commit -m "feat: generate ${input:target} entries - full v3.0 content"
   --v3-only
 ```
 
-All generated entries should show `v3.0` and `complete`. If any show otherwise, fix before committing.
+All generated entries should show `complete`. For upgrade-v31 mode, confirm `version: 2` is set on upgraded files. If any show otherwise, fix before committing.
