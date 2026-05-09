@@ -1,360 +1,446 @@
-﻿---
+---
+id: DST-007
+title: PACELC
+category: Distributed Systems
+tier: tier-5-distributed-architecture
+folder: DST-distributed-systems
+difficulty: ★★★
+depends_on: DST-006, DST-008
+used_by: DST-067
+related: DST-006, DST-008, DST-009, DST-010
+tags:
+  - distributed
+  - consistency
+  - performance
+  - deep-dive
+  - tradeoff
+  - advanced
+status: complete
+version: 1
 layout: default
-title: "PACELC"
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"
 nav_order: 7
 permalink: /distributed-systems/pacelc/
-id: DST-007
-category: Distributed Systems
-difficulty: ★★★
-depends_on: CAP Theorem, Consistency Models, Latency
-used_by: Database Design, Distributed Storage, Cloud Databases
-related: CAP Theorem, Consistency Models, Eventual Consistency
-tags:
-  - pacelc
-  - cap-theorem
-  - latency-consistency
-  - distributed-systems
-  - advanced
 ---
 
 # DST-007 - PACELC
 
-⚡ TL;DR - PACELC extends the CAP Theorem by acknowledging that even when there is no network partition (normal operations), distributed systems must choose between **Latency (L)** and **Consistency (C)** - specifically: if there's a Partition (P), choose between Availability (A) or Consistency (C); Else (E, normal operation), choose between Latency (L) or Consistency (C).
+⚡ TL;DR - PACELC extends CAP by exposing a second trade-off: even with no partition, every distributed system must choose between Latency and Consistency on every replication hop.
 
-| #572 | Category: Distributed Systems | Difficulty: ★★★ |
+| Metadata | | |
 |:---|:---|:---|
-| **Depends on:** | CAP Theorem, Consistency Models, Latency | |
-| **Used by:** | Database Design, Distributed Storage, Cloud Databases | |
-| **Related:** | CAP Theorem, Consistency Models, Eventual Consistency | |
+| **Depends on:** | DST-006, DST-008 | |
+| **Used by:** | DST-067 | |
+| **Related:** | DST-006, DST-008, DST-009, DST-010 | |
 
 ---
 
 ### 🔥 The Problem This Solves
 
-**WORLD WITHOUT CAP EXTENSION:**
-The CAP theorem only describes behavior during partitions - but partitions are rare events.
-What about the other 99.99% of the time when the network is working fine? Even without
-a partition, a distributed database must wait for replication to complete before
-acknowledging a write. This waiting = latency. CAP says nothing about this trade-off.
-PACELC (Daniel Abadi, 2012) fills the gap: in normal operation, every distributed system
-chooses between lower latency (acknowledge early, replicate asynchronously) and stronger
-consistency (wait for all replicas, higher latency).
+**WORLD WITHOUT IT:**
+CAP Theorem changed the conversation in 2002: you can't have consistency, availability, AND partition tolerance. Engineers chose "CP" or "AP" and moved on. But in production, the question surfaced immediately: Cassandra is "AP" - fine. But should a write to Cassandra return AFTER it's replicated to one node (fast, risky) or after two nodes confirmed (slower, safer)? CAP has no answer. Both choices are still "AP".
+
+**THE BREAKING POINT:**
+A team building a recommendation engine and a banking ledger both chose Cassandra (AP). The recommendation engine needs sub-10ms writes; the ledger needs every write confirmed before returning. CAP says both are fine — but they need opposite replication behavior. Engineers realise CAP only models partition behavior. The non-partition case (which is 99.99% of operating time) is completely absent from the model.
+
+**THE INVENTION MOMENT:**
+Daniel Abadi published PACELC in 2012, extending CAP with the `E` (Else) branch: when there is NO partition, the system still faces a trade-off between Latency and Consistency. A replication operation is fundamentally: you can return fast (before replication completes) or return after confirmation (slow but consistent). There is no third option.
+
+**EVOLUTION:**
+2002: CAP (Brewer/Gilbert-Lynch). 2012: PACELC (Abadi) - adds EL/EC axis. 2013: Abadi refines with concrete database classifications. 2015+: Cloud database vendors begin using PACELC vocabulary in docs (DynamoDB, Cosmos DB, CockroachDB). 2020: PACELC influences Cosmos DB's five consistency levels — a direct mapping of the EL↔EC spectrum.
 
 ---
 
 ### 📘 Textbook Definition
 
-**PACELC** (pronounced "pass-elk") is an extension to the CAP theorem proposed by
-Daniel Abadi in 2012. It specifies behavior in TWO scenarios:
-- **If Partition (P)**: must choose between Availability (A) or Consistency (C) - like CAP
-- **Else (E)** (normal operation, no partition): must choose between Latency (L) or Consistency (C)
-
-Classification: a system is **PA/EL** (partition → available; normal → low latency),
-**PC/EC** (partition → consistent; normal → consistent), or hybrid combinations like
-**PA/EC** (partition → available; normal → EC consistent with some latency cost).
-
-Examples: DynamoDB = PA/EL (partition: available, normal: low latency with eventual consistency);
-Spanner = PC/EC (partition: consistent, normal: consistent via TrueTime but higher latency);
-Cassandra = PA/EL by default; with QUORUM = PC/EC-like.
+**PACELC** is a theoretical framework by Daniel Abadi (2012) that extends the CAP Theorem. It states: in the presence of a network **P**artition, a distributed system must choose between **A**vailability and **C**onsistency (the CAP trade-off); **E**lse (no partition), the system must choose between **L**atency and **C**onsistency. Systems are classified as PA/EL, PA/EC, PC/EL, or PC/EC based on their choices in both scenarios. PC/EL (partition consistent AND low latency) is theoretically possible but extremely rare in practice.
 
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-PACELC adds the latency-consistency dimension to CAP: even when everything works fine,
-fast distributed writes trade consistency for latency (async replication vs. sync wait).
+**One line:** CAP covers partition behavior; PACELC also covers the normal (non-partition) case where replication latency is the real daily trade-off.
 
-**One analogy:**
-> PACELC is like a bank's wire transfer policy.
-> **During outage (partition):** CP = refuse transfers OR AP = allow but might double-process.
-> **During normal operation (no partition):** EC = wait 24 hours for full international clearing (consistent, slow) OR EL = process instantly (fast, but funds aren't globally reconciled for 24 hours).
-> Even with no outage, speed vs. accuracy is a real trade-off.
+> Think of a relay race with two batons (data copies). During a storm (partition), you decide: wait for both runners to finish (CP) or declare a winner immediately (AP). But even on sunny days (no partition), you still decide: do you wait for the second runner to confirm receipt before signaling success? PACELC adds the sunny-day question.
+
+**One insight:** The EL/EC trade-off exists on EVERY WRITE in a replicated system, every millisecond of every day — regardless of partitions. CAP's partition scenario is rare. PACELC's EL/EC trade-off is constant.
 
 ---
 
 ### 🔩 First Principles Explanation
 
-**THE LATENCY-CONSISTENCY TRADE-OFF (ELSE BRANCH):**
+**CORE INVARIANTS:**
+1. Replication requires communication between nodes over a network.
+2. Networks have non-zero latency; replication is never instantaneous.
+3. Any write must either: (a) return before replication completes (low latency, possible stale reads) or (b) return after replication confirms (higher latency, consistent reads).
+4. These two behaviors are mutually exclusive for a given operation.
+5. Partitions are rare; the EL/EC choice applies to 100% of operations.
 
-```
-SYNCHRONOUS REPLICATION (EC - Else Consistent):
-  Client → Leader → Write to local log
-  Leader → Replica1 → ACK
-  Leader → Replica2 → ACK
-  Leader → ACK to Client (ALL replicas confirmed)
-  
-  Result: Every read from any replica sees the latest write.
-  Latency: round-trip to replicas added to every write.
-  Example: Google Spanner waits ~7ms for cross-zone commit.
+**DERIVED DESIGN:**
+A system classified as PA/EL: during partition, prefer availability; during normal operation, prefer low latency (async replication). Example: Cassandra with `ONE` consistency level.
+A system classified as PC/EC: during partition, prefer consistency; during normal operation, wait for quorum before returning. Example: Spanner.
 
-ASYNCHRONOUS REPLICATION (EL - Else Low Latency):
-  Client → Leader → Write to local log
-  Leader → ACK to Client immediately (before replication)
-  Leader → Replica1 → Replicate (background, 10-50ms later)
-  Leader → Replica2 → Replicate (background, 10-50ms later)
-  
-  Result: Fast ACK to client; replicas briefly lag.
-  Read from replica immediately after write: may get stale data.
-  Example: MySQL async replication, Cassandra ONE consistency level.
+**THE TRADE-OFFS:**
+**Gain (EL):** Writes return in microseconds; no waiting for cross-datacenter replication. Throughput is maximized.
+**Cost (EL):** A read immediately after a write may see the old value. Conflict resolution required for concurrent writes.
+**Gain (EC):** Read-your-writes guaranteed. No stale data visible to any client.
+**Cost (EC):** Every write waits for replication acknowledgment. Latency is bounded by slowest replica or network RTT.
 
-PACELC CLASSIFICATION:
-  System       | P→A/C  | E→L/C  | PACELC
-  ─────────────┼────────┼────────┼────────────────────────
-  DynamoDB     | PA     | EL     | PA/EL  (default)
-  Spanner      | PC     | EC     | PC/EC
-  Cassandra    | PA     | EL     | PA/EL  (default ONE)
-  Cassandra QUORUM | PC | EC    | PC/EC  (with quorum)
-  VoltDB       | PC     | EC     | PC/EC
-  RIAK         | PA     | EL     | PA/EL
-  MongoDB (w:majority) | PC | EC | PC/EC
-```
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** The physical delay of replication is irreducible. You must choose when to declare a write "done."
+**Accidental:** Many systems add their own consistency protocols on top (vector clocks, Paxos, CRDT merge) that increase complexity beyond the fundamental EL/EC choice.
 
 ---
 
 ### 🧪 Thought Experiment
 
-**SCENARIO:** Multi-region database for a social media feed.
+**SETUP:** You're building a global key-value store with nodes in US-East and EU-West. Round-trip latency between them is 120ms. Every write goes to both regions.
 
-```
-User posts a tweet. It's stored in US-East and replicated to EU-West and AP-Southeast.
+**WHAT HAPPENS WITHOUT PACELC (CAP-only thinking):**
+You pick "AP" (available during partition). Done. But then your product manager asks: "Should writes to the US node immediately return, or wait 120ms for the EU node to confirm?" CAP doesn't answer this. You flip a coin, choose async replication. Six months later, a user in the EU reads a value 200ms after the US write and gets the old value. Incident ticket created. "We're AP, expected!" is an unsatisfying answer.
 
-EL CHOICE (Async replication):
-  User tweets → US-East leader ACKs in 5ms → fast response
-  EU-West user reads feed 100ms later: tweet not yet visible (lag)
-  EU-West user reads 2 seconds later: tweet visible
-  → Low latency for writer, brief staleness for readers
-  → Acceptable for social feeds: 2-second staleness is imperceptible to users
+**WHAT HAPPENS WITH PACELC:**
+You explicitly model both choices. PA/EL: US write returns immediately, EU gets the update asynchronously — EU users may see stale data for up to 500ms. PA/EC: US write waits for EU confirmation before returning — 120ms added to every write, but global consistency guaranteed. You make a deliberate choice, document it, and tune your SLAs accordingly.
 
-EC CHOICE (Sync replication):
-  User tweets → US-East must wait for EU-West (110ms RTT) + AP-Southeast (200ms RTT)
-  User sees "Posted!" after 210ms (round-trip to farthest replica)
-  EU-West user reads immediately: tweet visible ✓
-  → Consistent, but 210ms vs 5ms write latency - 42× slower
-  → Unacceptable for high-volume social applications
-
-TWITTER/META's actual choice: EL for timeline (social feeds)
-                               EC for financial transactions within the platform
-Each workload gets the right PACELC classification.
-```
+**THE INSIGHT:** PACELC forces the conversation that CAP deferred. The EL/EC choice is the most frequent architectural decision in distributed system operations — it happens on every write.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> PACELC is like a two-question filter for distributed database decisions.
-> Q1 (P branch): "When the network breaks, do you want an error or stale data?"
-> Q2 (E branch): "During normal operation, do you want speed or guaranteed freshness?"
-> Every distributed database answers both questions. PACELC labels those answers:
-> PA/EL = "available during failures, fast normally (may be stale)"
-> PC/EC = "consistent during failures, correct normally (will be slower)"
+> PACELC is a two-clause contract: the partition clause (CAP) and the normal-operations clause (EL/EC). Most employment contracts have a termination clause AND day-to-day terms. The CAP theorem was only the termination clause. PACELC adds the operational terms.
+
+**Mapping:**
+- **Termination clause (partition clause)** → P: A vs C (what happens during crisis)
+- **Day-to-day terms (normal operations)** → E: L vs C (what happens every working day)
+- **PA/EL employee** → "During a crisis I'll keep working at any cost. Day-to-day I move fast and skip confirmation emails."
+- **PC/EC employee** → "During a crisis I'll wait for management sign-off. Day-to-day I CC everyone and wait for approval."
+
+Where this analogy breaks down: a real employee can switch behavior dynamically; most databases have a fixed configuration that determines their PACELC class.
 
 ---
 
 ### 📶 Gradual Depth - Four Levels
 
-**Level 1:** PACELC says: even without failures, fast databases trade accuracy for speed. Waiting for all copies to confirm = slow but correct. Not waiting = fast but briefly inconsistent.
+**Level 1 - What it is (anyone can understand):**
+When you save data to a cloud app, the app secretly copies that data to backup servers. PACELC asks: does the app tell you "saved!" immediately (fast but the backup might not have it yet) or only after the backup confirms (slower but guaranteed)? You're always making this choice, even when nothing is broken.
 
-**Level 2:** Use PACELC to evaluate databases beyond partitions. For read-your-own-writes semantics after an insert: need EC (sync replication) or session consistency. For maximum write throughput with staleness tolerance: EL (async replication).
+**Level 2 - How to use it (junior developer):**
+Use the PACELC class of your database to choose the right consistency level. Cassandra (PA/EL) → use `QUORUM` or `ALL` when you need EC-like behavior; use `ONE` for EL-like behavior. DynamoDB → enable strongly consistent reads for EC; use eventually consistent reads for EL. PACELC is why your database has these knobs.
 
-**Level 3:** Latency components in distributed writes: network RTT between data centers (typically 10–200ms for cross-region), disk write latency (1–10ms local SSD), consensus protocol overhead (Paxos/Raft adds ~1–3 rounds of RTT). Even "async" systems have consistency window: duration between leader write ACK and replica sync. The larger this window, the higher the staleness risk during failure.
+**Level 3 - How it works (mid-level engineer):**
+PACELC classifies systems on two axes independently. A system can be PA/EC: AP during partition but synchronous replication during normal ops. MongoDB with `writeConcern: majority` is PC/EC; with `writeConcern: 1` it's PC/EL. The E branch is determined by replication acknowledgment policy: synchronous (EC) vs. asynchronous (EL). Key metric: replication lag. Zero lag = EC; non-zero lag = EL (bounded or unbounded).
 
-**Level 4:** PACELC resolves the "CA vs CP vs AP" confusion from CAP by separating normal-operation trade-offs from failure-mode trade-offs. The critical insight: most of the time, systems aren't in a partition. The EL vs EC trade-off matters more often than the PA vs PC trade-off. Database families: NewSQL (Spanner, CockroachDB) aim for PC/EC using distributed consensus → strong consistency at medium latency cost; traditional NoSQL (Cassandra, DynamoDB) defaults to PA/EL → high availability at cost of temporary inconsistency. The hybrid: tunable consistency (DynamoDB strong consistent reads, Cassandra QUORUM) allows per-operation PA/EL vs PC/EC choice.
+**Level 4 - Why it was designed this way (senior/staff):**
+CAP's partition scenario is provably rare but theoretically important. Abadi's insight was that EL vs EC is the practical daily trade-off that actually determines user-observable behavior. Spanner's TrueTime eliminates the EL/EC dilemma through external clock synchronization and commit-wait — it's PC/EC without the typical 2x RTT penalty of two-phase commit. Azure Cosmos DB's five consistency levels (Strong, Bounded Staleness, Session, Consistent Prefix, Eventual) are a direct interpolation along the EC→EL spectrum. PACELC provides the theoretical foundation for offering a continuum rather than a binary.
+
+**Expert Thinking Cues:**
+- "What's your replication acknowledgment policy?" is the PACELC EL/EC question.
+- "What consistency level are you using?" in Cassandra/DynamoDB maps directly to EL/EC.
+- "What's your replication lag P99?" quantifies how far from EC the system is.
+- "Can you tolerate read-your-writes latency?" determines if EL is acceptable.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-```
-LATENCY vs CONSISTENCY IN PRACTICE - MYSQL:
+**PA/EL (Cassandra, DynamoDB default, CouchDB):**
+1. Client sends write to coordinator node.
+2. Coordinator writes to local node, returns `200 OK` immediately.
+3. Asynchronously replicates to other nodes in the background.
+4. Other nodes may have old value for up to `hinted_handoff_window_time`.
+5. Reads from any node may return stale data within that window.
 
-  SYNC REPLICATION (EC):
-    primary: COMMIT → wait for binlog ACK from replica → return OK
-    After commit: replica has the data immediately
-    Write latency: primary commit time + network RTT to replica
-    
-    MySQL: rpl_semi_sync_master_enabled = ON
-    → Every write waits for at least 1 replica ACK (EL→EC shift)
+**PC/EC (Spanner, etcd, ZooKeeper):**
+1. Client sends write to leader node.
+2. Leader initiates Paxos/Raft round, replicates to quorum.
+3. Only after quorum acknowledges does leader commit and return to client.
+4. All subsequent reads see this committed value.
+5. Latency = network RTT to quorum (can be 10ms–200ms for cross-region).
 
-  ASYNC REPLICATION (EL - default):
-    primary: COMMIT → return OK immediately
-    Replica: receives binlog asynchronously, catches up eventually
-    
-    MySQL async: default configuration
-    If primary crashes before replica receives log: data loss (EL risk)
-    
-  MEASURING THE WINDOW:
-    SELECT * FROM performance_schema.replication_applier_status_by_worker;
-    → Shows lag between primary and replica
-    → EL window = this lag duration
-    → If lag = 500ms: reads from replica may be 500ms stale
-```
+**Tunable systems (Cassandra with QUORUM, MongoDB with writeConcern):**
+The system is PA/EL by default but can be configured per-operation toward EC:
+`consistency_level = QUORUM` → W + R > N → strong consistency guaranteed.
+`consistency_level = ONE` → EL: returns after single node write.
 
 ---
 
 ### 🔄 The Complete Picture - End-to-End Flow
 
-```
-CHOOSING DATABASE BASED ON PACELC:
+**NORMAL FLOW (PA/EL - Cassandra QUORUM write):**
 
-  Multi-region write-heavy workload (social feed posts):
-  → PA/EL: DynamoDB (globally distributed, async replication)
-  → Write in ms; brief staleness acceptable
-  
-  Financial ledger (bank transfers):
-  → PC/EC: Spanner or CockroachDB
-  → Write takes ~50ms (cross-region consensus); every read is current
-  
-  Configuration management (rarely written, must be consistent):
-  → PC/EC: ZooKeeper or etcd
-  → Writes are slow (consensus); reads always correct
-  
-  User sessions (write frequently, read frequently, slight staleness OK):
-  → PA/EL: Cassandra ONE or DynamoDB
-  → High performance; session staleness of a few seconds acceptable
 ```
+Client
+  │
+  ▼
+Coordinator Node
+  │── Write local commit log ──────────▶ SUCCESS
+  │
+  ├──▶ Node A (replica) ──▶ ACK
+  │                             │
+  ├──▶ Node B (replica) ──▶ ACK◄── QUORUM
+  │                                  met
+  ▼
+Return 200 to client (EL: wait
+for quorum, not ALL)
+  │
+  └──▶ Node C (async, eventual)
+       ← YOU ARE HERE (EL boundary)
+```
+
+**FAILURE PATH:**
+If Node A and Node B are both slow (GC pause), the write blocks waiting for quorum. Client timeout. Coordinator: hinted handoff queues the write. When nodes recover, handoff delivers. During outage window: EL read may return stale.
+
+**WHAT CHANGES AT SCALE:**
+At 10k writes/sec, the difference between EL (1ms local commit) and EC (120ms cross-region) is 120x write throughput. At continental scale, EC = accepting 120ms minimum write latency. Teams at this scale typically partition data: EL for user activity streams, EC for financial balances. Same database, different consistency levels per operation type.
+
+**CONCURRENCY & DISTRIBUTED IMPLICATIONS:**
+Concurrent writes to the same key in PA/EL: Last-Write-Wins (LWW) by default. Two clients writing concurrently from US-East and EU-West both "succeed" — the lower timestamp write is silently discarded. In PC/EC: one write blocks the other at the Raft/Paxos layer. No silent data loss.
 
 ---
 
 ### 💻 Code Example
 
+**BAD - Ignoring PACELC class mismatch:**
 ```java
-// DynamoDB - choosing EL vs EC-like per-operation
-@Service
-public class ProductInventoryService {
+// Using Cassandra for financial account balance
+// Default: PA/EL (async replication)
+PreparedStatement stmt = session.prepare(
+    "UPDATE accounts SET balance = ? WHERE id = ?"
+);
+// No consistency level set → ONE (EL behavior)
+session.execute(stmt.bind(newBalance, accountId));
+// Immediately read back:
+Row row = session.execute(
+    "SELECT balance FROM accounts WHERE id = ?",
+    accountId
+).one();
+// DANGER: May read pre-update balance from replica!
+// This is EA/EL mismatch for financial data
+```
 
-    private final DynamoDbClient dynamoDb;
+**GOOD - Explicit PACELC classification per operation:**
+```java
+// PA/EL for non-critical operations (analytics events)
+private static final ConsistencyLevel ANALYTICS_CL =
+    ConsistencyLevel.ONE;          // EL: fast, can lose
 
-    // EL: Eventually consistent read - fast, may be slightly stale
-    public Optional<Product> getProductFast(String productId) {
-        GetItemRequest req = GetItemRequest.builder()
-            .tableName("products")
-            .key(Map.of("id", AttributeValue.fromS(productId)))
-            .consistentRead(false)  // ← Eventually consistent (EL - lower latency)
-            .build();
-        return Optional.ofNullable(dynamoDb.getItem(req).item()).map(this::toProduct);
-    }
+// PC/EC for financial operations
+private static final ConsistencyLevel FINANCIAL_CL =
+    ConsistencyLevel.QUORUM;       // EC: W+R > N
 
-    // EC-like: Strong consistent read - more latency, guaranteed current data
-    public Optional<Product> getProductAccurate(String productId) {
-        GetItemRequest req = GetItemRequest.builder()
-            .tableName("products")
-            .key(Map.of("id", AttributeValue.fromS(productId)))
-            .consistentRead(true)   // ← Strongly consistent (EC-like - higher latency)
-            .build();
-        return Optional.ofNullable(dynamoDb.getItem(req).item()).map(this::toProduct);
-    }
-
-    // Inventory check before purchase: use strong consistency
-    public boolean checkInventoryForPurchase(String productId, int quantity) {
-        Product product = getProductAccurate(productId)  // ← EC - must be current
-            .orElseThrow(() -> new ProductNotFoundException(productId));
-        return product.getStockCount() >= quantity;
-    }
-
-    // Browse product listing: eventual consistency is fine
-    public List<Product> getProducts(List<String> ids) {
-        // Eventually consistent batch read
-        return ids.stream()
-            .map(this::getProductFast)  // ← EL - fast browsing
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(toList());
-    }
+public void recordPageView(String userId, String page) {
+    // EL is fine: losing a pageview is acceptable
+    session.execute(
+        SimpleStatement.builder(INSERT_PAGEVIEW)
+            .setConsistencyLevel(ANALYTICS_CL)
+            .build(),
+        userId, page
+    );
 }
+
+public void debitAccount(String accountId, long amount)
+    throws InsufficientFundsException {
+    // EC required: read-your-writes for balance
+    Row current = session.execute(
+        SimpleStatement.builder(SELECT_BALANCE)
+            .setConsistencyLevel(FINANCIAL_CL)
+            .build(),
+        accountId
+    ).one();
+    long balance = current.getLong("balance");
+    if (balance < amount) throw new InsufficientFundsException();
+    session.execute(
+        SimpleStatement.builder(UPDATE_BALANCE)
+            .setConsistencyLevel(FINANCIAL_CL)
+            .build(),
+        balance - amount, accountId
+    );
+}
+```
+
+**How to test / verify correctness:**
+```bash
+# Measure replication lag (EL evidence):
+nodetool tpstats | grep -A5 "ReadRepair"
+nodetool cfstats keyspace.table | grep "Bloom filter"
+
+# Verify quorum is achieving EC semantics:
+# Write with QUORUM, immediately read with QUORUM
+# from a different node — both must return same value
+cqlsh -e "CONSISTENCY QUORUM; UPDATE ...; SELECT ...;"
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| System | P → A/C | E → L/C | Notes |
-|---|---|---|---|
-| **DynamoDB (default)** | PA | EL | Eventually consistent reads/writes |
-| **DynamoDB (strong reads)** | PA | EC | EC reads, 2× cost |
-| **Cassandra (ONE)** | PA | EL | Fast, possibly stale |
-| **Cassandra (QUORUM)** | PC | EC | Consistent, higher latency |
-| **Spanner** | PC | EC | TrueTime-backed global consistency |
-| **MySQL async replication** | PA | EL | Replica lag = EL window |
-| **MySQL semi-sync** | PC | EC | Waits for replica ACK |
+| System | CAP Class | PACELC Class | EL/EC Default | Tunable? |
+|--------|-----------|--------------|---------------|----------|
+| Cassandra | AP | PA/EL | EL (ONE) | Yes (per-op CL) |
+| DynamoDB | AP | PA/EL | EL (eventual) | Yes (per-read) |
+| CouchDB | AP | PA/EL | EL | Limited |
+| MongoDB | CP | PC/EC | EC (primary) | Yes (writeConcern) |
+| ZooKeeper | CP | PC/EC | EC | No |
+| etcd | CP | PC/EC | EC | No |
+| Spanner | CP | PC/EC | EC (TrueTime) | No |
+| Cosmos DB | AP | PA/EL→PC/EC | Configurable | 5 levels |
+| HBase | CP | PC/EC | EC | No |
+| Redis Cluster | AP | PA/EL | EL (async) | Limited |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
-|---|---|
-| PACELC replaces CAP | PACELC extends CAP - it adds the E (else) branch. CAP remains valid for partition behavior |
-| Low latency means low consistency | Only under async replication. Systems like Spanner achieve EC at medium latency via TrueTime - consistency doesn't require extreme latency everywhere |
-| The EL choice means unreliable data | EL means TEMPORARILY stale, not wrong. The inconsistency window is bounded by replication lag, typically milliseconds to seconds |
+|:---|:---|
+| "PACELC replaces CAP" | PACELC extends CAP; CAP's partition clause is unchanged. PACELC adds the non-partition trade-off. Both models are useful. |
+| "PA/EL means the system is unreliable" | EL means low latency, not unreliable. DNS is PA/EL and is one of the most reliable systems on the internet. |
+| "PC/EC systems are always strongly consistent" | "EC" in PACELC means the system prioritizes consistency during normal ops — but the strength of that consistency (linearizable vs. sequential) is a separate dimension. |
+| "You must pick one PACELC class forever" | Tunable systems (Cassandra, DynamoDB, Cosmos DB) let you choose EL or EC per operation. Your PACELC class is per-request, not per-cluster. |
+| "Low latency requires eventual consistency" | Google Spanner achieves PC/EC with median write latency of ~5ms within a region. Bounded staleness in Cosmos DB offers EL-like latency with EC-like guarantees. The trade-off is real but not as binary as it seems. |
 
 ---
 
 ### 🚨 Failure Modes & Diagnosis
 
-**Read-Your-Own-Writes Violation (EL System)**
+**Failure Mode 1: Silent Data Loss from PA/EL Misconfiguration**
 
-**Symptom:**
-User updates profile picture. Refreshes page. Old picture still showing on first refresh.
-
-**Root Cause:**
-Write went to leader, read routed to stale replica (EL system, within the consistency window).
-
-Diagnosis + Fix:
-```java
-// Fix: route reads for the same session to the leader or use session consistency
-// Option 1: DynamoDB - use strong consistent read for "own profile" reads
-dynamoDb.getItem(req.consistentRead(true));  // EC for own-data reads
-
-// Option 2: Route to primary after write (session consistency):
-// Cassandra: read from same coordinator node + CL.LOCAL_QUORUM
-
-// Option 3: Cache invalidation on write, read from cache (avoid replica lag problem)
-cacheService.invalidate("user:" + userId);
+**Symptom:** Users report "I saved my changes but they disappeared after page refresh." Intermittent, affects ~0.1% of operations.
+**Root Cause:** Application uses Cassandra with `ConsistencyLevel.ONE` (EL). Write confirmed on one node, that node crashes before replication. Hinted handoff stores the write on coordinator, but coordinator also fails within the hint window.
+**Diagnostic:**
+```bash
+nodetool tpstats | grep HintedHandoff
+# Check if hints are being dropped:
+grep "HintedHandoffMetrics" system.log | tail -50
+nodetool getendpointsnitial  # verify replica count
 ```
+**Fix:**
+BAD: `ConsistencyLevel.ONE` for user-visible data.
+GOOD: `ConsistencyLevel.QUORUM` for data requiring durability.
+**Prevention:** Classify data by durability requirement at design time. Apply minimum consistency level policy in code review.
+
+**Failure Mode 2: Thundering-Herd Latency from EC Under Load**
+
+**Symptom:** Write latency spikes from 5ms to 800ms under peak traffic. P99 breaches SLA. System-wide slowdown.
+**Root Cause:** PC/EC system requires quorum acknowledgment. Under load, one replica GC-pauses for 200ms. All writes waiting for that replica's quorum ACK stall. Cascading: slow writes queue up, coordinator timeouts trigger retries, amplifying load.
+**Diagnostic:**
+```bash
+nodetool tpstats | grep -A3 "Mutation"
+# Look for large "Pending" counts:
+nodetool tpstats | awk '/Mutation/{found=1} found && /Pending/{print; found=0}'
+# Check GC logs on replicas:
+grep "GC pause" /var/log/cassandra/system.log | tail -20
+```
+**Fix:**
+BAD: Using QUORUM uniformly across all operations during peak load.
+GOOD: Implement circuit breaker — degrade to EL under load for non-critical paths, keep EC only for financial operations.
+**Prevention:** Load test with EC consistency requirements. Size replicas to absorb GC pauses without quorum impact.
+
+**Failure Mode 3: Security - Stale Data in Authorization Checks**
+
+**Symptom:** A user's access is revoked at 14:00. At 14:01, they still access a protected resource.
+**Root Cause:** Authorization service uses PA/EL for permission reads. Revocation written to primary, not yet replicated to the replica serving the auth check. Within the replication window (~500ms), revoked permissions are still served.
+**Diagnostic:**
+```bash
+# Measure replication lag for the permissions table:
+# Read from primary and replica, compare timestamps
+cqlsh -e "SELECT writetime(permissions) FROM acl.permissions \
+  WHERE user_id='<id>' USING CONSISTENCY LOCAL_ONE;"
+# Run same query on two hosts and compare
+```
+**Fix:**
+BAD: `ConsistencyLevel.ONE` for security-sensitive reads.
+GOOD: `ConsistencyLevel.ALL` or `QUORUM` for permission reads. Or route all auth reads to primary (PC/EC semantics).
+**Prevention:** Security-sensitive data paths must use EC consistency. Document this as a security requirement, not a performance option.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `CAP Theorem` - the foundation PACELC extends
-- `Consistency Models` - the spectrum of consistency guarantees
-- `Latency` - the performance dimension PACELC adds to CAP
-- `Eventual Consistency` - the consistency model of PA/EL systems
+**Prerequisites (understand these first):**
+- DST-006 - CAP Theorem (the partition trade-off PACELC extends)
+- DST-008 - Consistency Models (what EC vs EL consistency actually means)
+- DST-014 - Replication Strategies (how data is copied between nodes)
+
+**Builds On This (learn these next):**
+- DST-009 - Strong Consistency (deep dive into PC/EC behavior)
+- DST-010 - Eventual Consistency (deep dive into PA/EL behavior)
+- DST-067 - Consistency Level Selection (practical guide using PACELC)
+
+**Alternatives / Comparisons:**
+- DST-006 - CAP Theorem (complementary model, partition-focused)
+- DST-008 - Consistency Models (broader consistency taxonomy beyond PACELC)
 
 ---
 
 ### 📌 Quick Reference Card
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ FORMULA      │ if Partition → A or C                     │
-│              │ Else → L (latency) or C (consistency)     │
-├──────────────┼───────────────────────────────────────────┤
-│ PA/EL        │ Available during partition, fast normally │
-│              │ DynamoDB default, Cassandra ONE           │
-├──────────────┼───────────────────────────────────────────┤
-│ PC/EC        │ Consistent during partition, correct norm │
-│              │ Spanner, ZooKeeper, Cassandra QUORUM      │
-├──────────────┼───────────────────────────────────────────┤
-│ KEY INSIGHT  │ Normal operations have latency-consistency│
-│              │ trade-off too (EL vs EC)                  │
-├──────────────┼───────────────────────────────────────────┤
-│ ONE-LINER    │ "CAP covers failures; PACELC covers all" │
-└──────────────────────────────────────────────────────────┘
++------------------+--------------------------------+
+| WHAT IT IS       | Extension of CAP: adds EL/EC   |
+|                  | trade-off for normal operation |
++------------------+--------------------------------+
+| PROBLEM SOLVED   | CAP only models partition case;|
+|                  | PACELC covers 99.99% of ops    |
++------------------+--------------------------------+
+| KEY INSIGHT      | Every replication must choose: |
+|                  | return fast (EL) or wait (EC)  |
++------------------+--------------------------------+
+| USE WHEN         | Classifying DB behavior, tuning|
+|                  | per-operation consistency level|
++------------------+--------------------------------+
+| AVOID WHEN       | Simple single-node systems or  |
+|                  | in-memory caches (no repl)     |
++------------------+--------------------------------+
+| TRADE-OFF        | EL: ms latency, stale reads    |
+|                  | EC: consistent, +100ms writes  |
++------------------+--------------------------------+
+| ONE-LINER        | PA/EL = fast+eventually-consis |
+|                  | PC/EC = slow+always-consistent |
++------------------+--------------------------------+
+| NEXT EXPLORE     | DST-008 Consistency Models,    |
+|                  | DST-009 Strong Consistency     |
++------------------+--------------------------------+
 ```
+
+**If you remember only 3 things:**
+1. PACELC = CAP + the normal-operations (Else) trade-off: Latency vs Consistency.
+2. PA/EL and PC/EC are the dominant classes; PA/EC and PC/EL exist but are rare.
+3. Many databases are tunable — you can choose EL or EC per operation, not just per cluster.
+
+**Interview one-liner:**
+"PACELC extends CAP by adding the latency-consistency trade-off that exists even when there's no partition — during normal operation, every replication must choose between returning fast (EL) or waiting for consistency confirmation (EC), and most real-world performance problems are EL/EC mismatches, not CAP partition events."
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Every system with asynchronous communication has a PACELC-class decision embedded in it, whether acknowledged or not. Making this decision explicit — per operation, per data type, per SLA tier — is the difference between a system that degrades gracefully and one that fails mysteriously. Explicit trade-off decisions are always better than implicit defaults.
+
+**Where else this pattern appears:**
+- **Async messaging (Kafka producer acks):** `acks=0` is EL (fire-and-forget); `acks=all` is EC (wait for all ISR replicas). The PACELC trade-off is right there in the Kafka producer config.
+- **HTTP caching (Cache-Control headers):** `must-revalidate` is EC (always check origin before serving); `stale-while-revalidate` is EL (serve stale, update in background). Web caching is a PACELC system.
+- **Git fetch vs pull:** `git fetch` is EL (get data, don't apply); `git pull` with rebase is closer to EC (consistent local state). Distributed version control has the same latency/consistency trade-off.
+
+---
+
+### 💡 The Surprising Truth
+
+PACELC predicts that PC/EL (partition-consistent AND low-latency during normal ops) should be nearly impossible — yet Google Spanner achieves it. The trick: TrueTime. Spanner uses GPS receivers and atomic clocks to bound clock uncertainty to ±7ms globally. By waiting `2ε` (twice the uncertainty bound) after a write before returning, Spanner guarantees linearizability WITHOUT requiring synchronous cross-datacenter replication ACKs. It's not that Spanner violates PACELC; it's that Spanner engineers bought a GPS infrastructure to shrink the EL/EC trade-off to near-zero. The insight: PACELC trade-offs can be engineered around — at sufficiently high infrastructure cost.
 
 ---
 
 ### 🧠 Think About This Before We Continue
 
-**Q.** A system uses DynamoDB (PA/EL) for user account data. An e-commerce company discovers
-that when users update their shipping address and then immediately place an order (within
-500ms), 0.3% of orders are shipped to the old address (eventual consistency read lag).
-The fix seems simple: "use strongly consistent reads for the order placement read."
-But the order service makes 8 DynamoDB reads during checkout. Analyze the cost 
-(latency, monetary, architectural) of making all 8 reads strongly consistent vs.
-making only the shipping address read consistent, and propose a PACELC-aware checkout
-architecture that minimizes both the 0.3% staleness error AND the checkout latency impact.
+**Q1 (C - Design Trade-off):** A ride-sharing app needs to track driver locations globally across 3 regions (US, EU, APAC). Location updates arrive 60 times per second per driver. Riders need to see driver locations within 2 seconds. Which PACELC class is most appropriate for the location data store, and why? What happens if you mistakenly choose PC/EC?
+*Hint:* Think about write amplification: 60 writes/sec × number of drivers × cross-region RTT. At what point does the EC latency requirement become physically impossible to satisfy?
+
+**Q2 (A - System Interaction):** Cassandra uses PA/EL by default. When you set `ConsistencyLevel.QUORUM` for both reads and writes (N=3, W=2, R=2), you're forcing EC behavior on a PA/EL system. Is this the same as running a PC/EC system? What edge cases exist where QUORUM on a PA/EL system differs from a native PC/EC system like ZooKeeper?
+*Hint:* Consider what happens during a network partition when using QUORUM on Cassandra vs. ZooKeeper. Which one will accept a QUORUM write from the smaller partition side?
+
+**Q3 (B - Scale):** Azure Cosmos DB offers 5 consistency levels: Strong, Bounded Staleness, Session, Consistent Prefix, and Eventual. Map each level to its approximate PACELC position on the EL↔EC spectrum. Which level best represents the "PC/EC" class? Is "Session" consistency closer to EL or EC, and what makes it useful despite not being EC?
+*Hint:* Session consistency guarantees read-your-writes for a single client session. Is that the same as EC? What happens when two different sessions write to the same key concurrently?
+

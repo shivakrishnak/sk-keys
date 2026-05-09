@@ -1,336 +1,449 @@
-﻿---
+---
+id: DST-009
+title: Strong Consistency
+category: Distributed Systems
+tier: tier-5-distributed-architecture
+folder: DST-distributed-systems
+difficulty: ★★★
+depends_on: DST-006, DST-008, DST-015
+used_by: DST-012, DST-017, DST-020
+related: DST-006, DST-007, DST-008, DST-010, DST-015
+tags:
+  - distributed
+  - consistency
+  - deep-dive
+  - advanced
+  - foundational
+  - production
+status: complete
+version: 1
 layout: default
-title: "Strong Consistency"
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"
 nav_order: 9
 permalink: /distributed-systems/strong-consistency/
-id: DST-009
-category: Distributed Systems
-difficulty: ★★★
-depends_on: Consistency Models, Replication Strategies, Consensus
-used_by: Financial Systems, Distributed Locking, Leader Election
-related: Linearizability, Serializability, CAP Theorem, PACELC
-tags:
-  - strong-consistency
-  - linearizability
-  - consensus
-  - distributed-systems
-  - advanced
 ---
 
 # DST-009 - Strong Consistency
 
-⚡ TL;DR - Strong Consistency guarantees that all nodes in a distributed system see the same data at the same time: every read reflects the most recent write, regardless of which replica serves the request. Achieving this requires coordination (consensus, quorums, or synchronous replication) before acknowledging writes, creating a latency-availability cost in exchange for correctness guarantees.
+⚡ TL;DR - Strong consistency (linearizability) guarantees every read reflects the most recent write across all replicas, making a distributed system appear as a single correct copy at the cost of coordination overhead on every operation.
 
-| #574 | Category: Distributed Systems | Difficulty: ★★★ |
+| Metadata | | |
 |:---|:---|:---|
-| **Depends on:** | Consistency Models, Replication Strategies, Consensus | |
-| **Used by:** | Financial Systems, Distributed Locking, Leader Election | |
-| **Related:** | Linearizability, Serializability, CAP Theorem, PACELC | |
+| **Depends on:** | DST-006, DST-008, DST-015 | |
+| **Used by:** | DST-012, DST-017, DST-020 | |
+| **Related:** | DST-006, DST-007, DST-008, DST-010, DST-015 | |
 
 ---
 
 ### 🔥 The Problem This Solves
 
-**WORLD WITHOUT STRONG CONSISTENCY:**
-Account balance: $100. Two ATMs simultaneously process a $60 withdrawal each, hitting different replicas. Without strong consistency: both replicas read $100 (before the other write is visible), both approve $60, customer receives $120, account drops to -$20. With strong consistency: the first ATM's write is globally visible before the second ATM can read the balance - the second read returns $40, and the second $60 withdrawal is declined. Strong consistency is the guarantee that prevents this split-read anomaly: critical for financial systems, distributed locks, inventory management, and anything where stale reads cause real-world harm.
+**WORLD WITHOUT IT:**
+A distributed ledger system processes $10M per day. The team chose "high availability" and used an eventually consistent database. One morning, a trade settlement reads Account A balance as $500,000 (stale replica). The actual balance (on primary) is $200,000 — a $300,000 withdrawal happened 200ms ago and hasn't propagated yet. The trade is booked. The account is now $100,000 overdrawn. The replication lag that was a "minor technical detail" became a nine-figure risk event.
+
+**THE BREAKING POINT:**
+Two microservices coordinate: `InventoryService` decrements stock to 0; `OrderService` reads stock level to validate the order. Both services use the same eventually consistent database. The read happens 100ms after the write, during a replication lag spike. `OrderService` sees stock = 1. Order accepted. Stock is actually 0. 10,000 orders placed for 9,000 units. The team discovers that "we're API-consistent" and "we're data-consistent" are not the same claim.
+
+**THE INVENTION MOMENT:**
+Maurice Herlihy and Jeannette Wing formalized linearizability in their 1990 paper "Linearizability: A Correctness Condition for Concurrent Objects." They defined it as: each operation appears to take effect instantaneously at some point between its invocation and its response. This gave engineers a precise, testable definition of "strong consistency" that could be reasoned about and verified.
+
+**EVOLUTION:**
+1990: Linearizability defined (Herlihy-Wing). 1998-2005: Paxos becomes the consensus algorithm for strong consistency in distributed systems (Chubby, ZooKeeper). 2012: Spanner achieves global linearizability using TrueTime. 2013: CockroachDB, FoundationDB ship linearizability as a primary feature. 2017-2020: Cloud providers add strongly consistent options (DynamoDB strongly consistent reads, Cosmos DB Strong consistency level, Cloud Bigtable strong consistency mode).
 
 ---
 
 ### 📘 Textbook Definition
 
-**Strong Consistency** is a consistency model in which every read operation returns the most recently written value, and all nodes observe writes in the same global order. A distributed system is strongly consistent if and only if it behaves as if there is a single, unified copy of the data, even though data is physically distributed across multiple replicas.
-
-In formal terms, strong consistency is often equated with **linearizability**: every operation appearing to take effect atomically at a single instant between its invocation and completion, respecting the real-time ordering of operations. Strong consistency implies that the system is CP in the CAP theorem (sacrifices availability during partitions), and PC/EC in PACELC (sacrifices latency during normal operation).
-
-Implementations: synchronous replication (all replicas confirm before ACK), quorum reads/writes (majority agreement), Raft/Paxos consensus, or atomic broadcast (total order broadcast).
+**Strong consistency** (linearizability or external consistency) is the strictest consistency guarantee for a distributed data store. It ensures: (1) every read returns the value of the most recent write that completed before the read began; (2) operations appear to take effect atomically at a single point in time between their invocation and response; (3) the observable behavior of the system is identical to a single-copy, single-threaded execution. Strong consistency requires coordination among replicas — typically through consensus protocols (Paxos, Raft) or leader-based read protocols — at the cost of increased latency and reduced availability under partition (per CAP theorem).
 
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-Strong consistency means "every read returns the most recent write, no exceptions, no matter which node you ask."
+**One line:** Strong consistency makes a distributed system behave like a single server — any read, from any node, at any time, returns the most recent write.
 
-**One analogy:**
-> Strong consistency is like a bank account where all branch tellers share a real-time synchronized ledger.
-> When you deposit $100 at Branch A, Branch B's teller can tell you the new balance immediately.
-> No inconsistency is possible because every "read" checks the global ledger, locked during updates.
-> The cost: reading the balance requires a lock → slower than reading a local copy.
+> Imagine a bank with 100 branches. Strong consistency is the policy: before any teller can tell you your balance, they call HQ and get the live, real-time number — regardless of which branch you walk into. No teller uses yesterday's printout. Every query goes to the single source of truth.
+
+**One insight:** Strong consistency is not about being slow — it's about coordination. The cost is the network round-trip to a leader or quorum. Within a single datacenter, that's 1-5ms. The question is not "can we afford strong consistency?" but "where does correctness matter enough to pay the coordination cost?"
 
 ---
 
 ### 🔩 First Principles Explanation
 
-```
-HOW STRONG CONSISTENCY IS ACHIEVED:
+**CORE INVARIANTS:**
+1. In any valid execution, operations appear in a total order.
+2. That total order is consistent with real-time ordering: if op A completes before op B begins, A precedes B in the order.
+3. Each read returns the value of the most recent write in that total order.
+4. These invariants require that at least one node has authoritative state before any read can proceed.
 
-METHOD 1: SYNCHRONOUS REPLICATION
-  Write arrives at leader:
-  1. Leader writes to its own log
-  2. Leader forwards to all replicas
-  3. Leader WAITS for ALL replicas to ACK
-  4. Leader returns success to client
-  
-  Every subsequent read from any replica returns the new value.
-  Cost: Write latency = worst replica network latency
-  
-  N=3 replicas; RTT to slowest = 150ms
-  Write latency = at least 150ms
-  
-METHOD 2: QUORUM WRITES + READS
-  N replicas, W = write quorum, R = read quorum
-  Strong consistency condition: W + R > N
-  
-  N=5, W=3, R=3 (W+R=6>5):
-  Write: must reach 3 of 5 replicas before ACK
-  Read: must consult 3 of 5 replicas, take latest (by timestamp/version)
-  → At least 1 replica in any read quorum has the latest write ✓
-  
-  N=3, W=2, R=2: W+R=4>3 → strongly consistent
-  N=3, W=1, R=1: W+R=2≤3 → NOT strongly consistent (eventual)
+**DERIVED DESIGN:**
+Strong consistency requires either:
+(a) **Single-leader reads**: All reads served by the leader node, which has the latest committed state. (ZooKeeper, etcd, Raft leader reads)
+(b) **Quorum reads**: Read from a quorum (majority) of replicas; with quorum writes, read quorum always overlaps write quorum, so at least one node has latest value. (Cassandra QUORUM, Dynamo QUORUM)
+(c) **Commit-wait (Spanner)**: After commit, wait for clock uncertainty bound `2ε` before returning. Ensures no future read on any node can return a lower timestamp.
 
-METHOD 3: CONSENSUS (RAFT/PAXOS)
-  Raft leader receives write:
-  1. Appends to leader log
-  2. Broadcasts AppendEntries to followers
-  3. Waits for majority (n/2+1) to ACK
-  4. Commits entry (marks as applied)
-  5. Returns success to client
-  
-  All subsequent reads from leader (or any node via leader forwarding) see committed entry.
-  → Strongly consistent by Raft safety guarantee.
-```
+**THE TRADE-OFFS:**
+**Gain:** Correctness guarantees that enable sequential reasoning. Application code can treat the distributed system as a single variable — no stale-read handling required.
+**Cost:** Every operation requires network coordination. Under partition (CAP), the system must refuse operations (become unavailable) or violate consistency. Leader is a throughput bottleneck for writes.
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Coordinating distributed nodes takes network round-trips. This latency is irreducible — the speed of light constrains cross-region synchronization.
+**Accidental:** Many strong consistency implementations add unnecessary overhead (2PC for all operations, global locks) when per-key linearizability via single-leader would suffice.
 
 ---
 
 ### 🧪 Thought Experiment
 
-**SCENARIO:** Distributed ticket booking for a concert. Only 1 ticket left.
+**SETUP:** A distributed lock service. Two servers (S1, S2) compete for a lock protecting a critical section. The lock is stored in a distributed database.
 
-```
-WITHOUT STRONG CONSISTENCY:
-  User A (NY): reads tickets_remaining = 1 → books → writes 0
-  User B (LA): reads tickets_remaining = 1 (stale replica) → books → writes 0
-  Result: Two users booked the same last ticket. Overbooking.
+**WITHOUT STRONG CONSISTENCY:**
+S1 reads the lock: `lock = null`. S2 reads the lock: `lock = null` (from a replica with replication lag). S1 writes: `lock = S1`. S2 writes: `lock = S2` (doesn't see S1's write yet). Both S1 and S2 believe they hold the lock. Both enter the critical section simultaneously. The critical section is violated. Data corruption.
 
-WITH STRONG CONSISTENCY (atomic Compare-And-Set):
-  User A (NY): reads 1, attempts CAS(expected=1, new=0) → succeeds
-  Ticket write is globally visible immediately.
-  User B (LA): reads 0 → "sold out" message shown
-  Result: Exactly one booking for the last ticket.
+**WITH STRONG CONSISTENCY:**
+S1 reads: `lock = null` (from leader). S1 writes: `lock = S1` (via Compare-And-Set, goes through Raft). Raft replicates to majority; write committed. S2 reads: `lock = S1` (leader serves latest committed value). S2 waits. S1 finishes; writes `lock = null`. S2 retries, acquires lock. No simultaneous access. Critical section safe.
 
-THE IMPLEMENTATION:
-  Database: etcd or Postgres with SELECT FOR UPDATE or Spanner with transactions
-  → The CAS operation is linearizable: appears to execute at a single point in time
-  → Any concurrent CAS with expected=1 after A's success automatically fails (sees 0)
-```
+**THE INSIGHT:** Distributed locks are only correct with strong consistency. Any distributed coordination primitive (leader election, distributed counters, distributed mutexes) requires linearizability. This is why etcd and ZooKeeper exist: they provide the linearizable foundation everything else can build on.
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> Strong consistency is like editing a Google Doc where only one person can type at a time (optimistic locking aside). Every change is immediately visible to everyone - no one can read a version from 2 seconds ago. The single-copy illusion is maintained, regardless of whether the servers are in New York, London, or Tokyo.
-> The cost: the "single copy" illusion requires synchronization → edit latency depends on the farthest data center involved.
+> Strong consistency is the policy of a Supreme Court: every ruling is authoritative, applies everywhere simultaneously, and no lower court can contradict it. The "most recent ruling" is always the law, everywhere, immediately after it's issued.
+
+**Mapping:**
+- **Supreme Court ruling** → committed write
+- **Lower courts** → replicas
+- **"The law"** → consistent data state
+- **Asking any court what the law is** → read from any node
+- **All courts give the same answer** → linearizability guarantee
+- **Deliberation delay** → consensus/quorum coordination latency
+
+Where this analogy breaks down: courts have geographic jurisdiction separation; in a distributed system, the consistency requirement applies globally, regardless of which datacenter the client contacts.
 
 ---
 
 ### 📶 Gradual Depth - Four Levels
 
-**Level 1:** Strong consistency = every read gets the freshest write. Achieved by waiting for all replicas to agree before confirming a write. Costs: higher write latency, reduced availability during failures.
+**Level 1 - What it is (anyone can understand):**
+Strong consistency means: if you just updated your bank balance and immediately check it, you always see the updated value — even if millions of people are checking their balances simultaneously from around the world. No stale numbers. No "it'll be updated in a few seconds." The update is immediately visible everywhere.
 
-**Level 2:** Strong consistency has two components - (1) write safety: the write is durable on a quorum before acknowledge, and (2) read safety: reads must query a quorum (not just any replica) to guarantee freshness. A system with strong writes but weak reads (reading from a single potentially-stale replica) is NOT strongly consistent.
+**Level 2 - How to use it (junior developer):**
+Choose a strongly consistent database for data where reading stale values is incorrect: account balances, inventory counts, distributed locks, leader election, session state. In practice: etcd, CockroachDB, Spanner, DynamoDB with `ConsistentRead: true`, ZooKeeper. For these systems, no special coding is needed — the database guarantees it. The cost is paid in latency and reduced throughput.
 
-**Level 3:** Practical performance: Google Spanner achieves global strong consistency using TrueTime atomic clocks, with ~10ms cross-zone write latency within a region, ~50–200ms cross-continent. etcd (Raft, single-region) achieves ~1–5ms write. PostgreSQL primary: ~0.1–1ms (single node, no replica coordination). Strong consistency is expensive cross-region but affordable within-region (milliseconds, not hundreds of milliseconds). Most systems compromise: strong consistency within a region, looser guarantees cross-region.
+**Level 3 - How it works (mid-level engineer):**
+Strong consistency requires consensus before any read or write is acknowledged. Common implementation (Raft leader reads): all writes go through the leader; leader handles all reads directly (no stale replica reads). The leader has the latest committed log entry; any read from the leader returns the committed value. An alternative (Spanner commit-wait): a write completes only after the commit timestamp is guaranteed to be in the past (using TrueTime) — ensures no clock skew can produce a causality violation in future reads.
 
-**Level 4:** The formal definition of strong consistency (linearizability) requires: (a) every operation has an interval [invocation_time, response_time]; (b) there exists a permitted linearization point within that interval such that if all operations are ordered by their linearization points, the resulting history is consistent with the sequential specification of the data type. This is stronger than sequential consistency (which only requires an ordering consistent with process order, not necessarily real-time order). Verifying linearizability experimentally: tooling like Jepsen uses a linearizability checker (Knossos) to verify that recorded histories of operations are linearizable.
+**Level 4 - Why it was designed this way (senior/staff):**
+Herlihy-Wing's key insight: linearizability is *compositional*. If object A is linearizable and object B is linearizable, any system built from A and B is also linearizable. This composability is why linearizability is the standard for distributed systems building blocks. Sequential consistency is NOT compositional — you can't reason about a system of sequential-consistent components the same way. This is why etcd, ZooKeeper, and Chubby commit to linearizability: they're foundations that other systems build on, and composability is essential. The cost is that linearizability is also the most expensive model — it requires O(n) messages per operation for Paxos/Raft, where n is the cluster size.
+
+**Expert Thinking Cues:**
+- "Does this operation require a compare-and-swap?" → If yes, you need linearizability.
+- "Is this a distributed lock, leader election, or barrier?" → Linearizable store required.
+- "What's the P99 write latency from your leader to quorum?" → This is your minimum strong consistency write latency.
+- "Are you reading from a follower?" → Then you don't have strong consistency, regardless of what the docs say.
 
 ---
 
 ### ⚙️ How It Works (Mechanism)
 
-```
-QUORUM-BASED STRONG CONSISTENCY - WRITE PATH:
+**Leader-based strong consistency (Raft, etcd):**
+1. All writes go to the leader via Raft log replication.
+2. Leader proposes log entry, replicates to majority of followers.
+3. Once majority ACK, leader commits and returns to client.
+4. All reads go to the leader (bypassing followers entirely).
+5. Leader always has the latest committed state → reads are always fresh.
 
-  N = 5 replicas
-  Write quorum W = 3, Read quorum R = 3 (W+R > N = 5+1=6)
+**Quorum-based (Dynamo-style with QUORUM R+W>N):**
+- Write to W=2 nodes (out of N=3), Read from R=2 nodes.
+- R+W=4 > N=3 → read and write quorums always share at least 1 node.
+- That shared node has the latest write → read is strongly consistent.
+- CAVEAT: Cassandra QUORUM is NOT linearizable in the Herlihy-Wing sense — concurrent writes can still create ordering violations without LWTs.
 
-  Client → Coordinator
-  Coordinator → Replica 1 (WRITE x=5) → ACK ✓
-  Coordinator → Replica 2 (WRITE x=5) → ACK ✓
-  Coordinator → Replica 3 (WRITE x=5) → ACK ✓  ← quorum reached (3)
-  Coordinator → Replica 4 (WRITE x=5) → (async, not waited for)
-  Coordinator → Replica 5 (WRITE x=5) → (async, not waited for)
-  Coordinator → Client: WRITE CONFIRMED ✓
-
-  READ PATH: (3 replicas consulted, take latest by timestamp)
-  Client → Coordinator
-  Coordinator → Replica 2 (READ x) → x=5, ts=1000 ✓
-  Coordinator → Replica 4 (READ x) → x=3, ts=990  (stale - replica slow)
-  Coordinator → Replica 5 (READ x) → x=5, ts=1000 ✓
-  Coordinator: take max(ts) = ts=1000, x=5
-  Coordinator → Client: x=5 ✓
-  
-  WHY THIS GUARANTEES STRONG CONSISTENCY:
-  Write quorum (3) + Read quorum (3) > N (5) → at least 1 replica is in both quorums.
-  At least 1 read-quorum replica has the write. By taking max(ts), we see the latest.
-```
+**TrueTime / Commit-wait (Spanner):**
+1. Write committed with timestamp T.
+2. Spanner waits `2ε` (where ε = max clock uncertainty, ~7ms globally).
+3. After wait, timestamp T is guaranteed to be in the past everywhere.
+4. Any future read anywhere will have a clock ≥ T → sees this write.
+5. Achieves linearizability without synchronous cross-datacenter replication ACKs.
 
 ---
 
 ### 🔄 The Complete Picture - End-to-End Flow
 
-```
-STRONG CONSISTENCY IN DISTRIBUTED LOCK (etcd):
+**NORMAL FLOW (etcd linear read):**
 
-  Service A requests lock: PUT /locks/payment_lock, lease=10s, prevExist=false
-  etcd Raft consensus: AppendEntries to 2/3 followers → committed
-  etcd: returns success to Service A (lock acquired)
-  
-  Service B requests same lock: PUT /locks/payment_lock, prevExist=false
-  etcd: key already exists → returns 412 Precondition Failed (lock NOT acquired)
-  
-  Service A completes work: DELETE /locks/payment_lock (release)
-  etcd Raft consensus: committed
-  
-  Service B polls/watches: etcd notifies Service B → lock available → acquires
-  
-  Key guarantee: at NO point do both A and B hold the lock simultaneously.
-  This is possible ONLY because etcd is linearizable.
-  A eventually consistent store here would cause both to "see" lock absent → both acquire it.
 ```
+Client
+  │
+  ├── Write("balance", 500) ──▶ etcd Leader
+  │                                   │
+  │                          Raft log append
+  │                           ├──▶ Follower 1 ACK
+  │                           └──▶ Follower 2 ACK
+  │                          commit → return OK
+  │
+  ├── Read("balance") ──────▶ etcd Leader
+  │                                   │
+  │                          Return 500 (latest commit)
+  │                                   │
+  ▼                           ← YOU ARE HERE
+  Client sees 500 (linearizable)
+```
+
+**FAILURE PATH (leader partition):**
+```
+Network partition separates leader from majority.
+Leader can no longer commit new log entries.
+New leader elected from majority partition.
+Writes to old leader: timeout / rejected.
+Reads from old leader: may be stale (leader detects via
+  heartbeat timeout, stops serving linearizable reads).
+Result: writes fail (unavailable) → CAP: CP behavior.
+```
+
+**WHAT CHANGES AT SCALE:**
+Leader becomes a write throughput bottleneck at ~50k writes/sec for etcd. Sharding by key space distributes leadership: each shard has its own leader. Cross-shard strong consistency requires distributed transactions (2PC over Raft, as in Spanner or CockroachDB). At global scale, cross-region linearizability requires commit-wait (10-30ms added per transaction).
+
+**CONCURRENCY & DISTRIBUTED IMPLICATIONS:**
+Two concurrent writes to the same key under linearizability: the system serializes them via the Raft leader. The second write sees the result of the first (regardless of network delivery order). No silent data loss. No last-write-wins. The ordering is deterministic and observable. This is why distributed mutual exclusion (distributed locks) is only safe on linearizable stores.
 
 ---
 
 ### 💻 Code Example
 
+**BAD - Using eventually consistent read for distributed lock:**
 ```java
-// Spring Boot: using Postgres row-level locking for strong consistency
-// (SELECT FOR UPDATE - prevents phantom reads in concurrent updates)
-@Service
-@Transactional
-public class TicketService {
-
-    private final TicketRepository ticketRepository;
-
-    // SELECT FOR UPDATE: acquires exclusive row lock, preventing concurrent reads
-    // of the same row until transaction commits - provides strong consistency
-    public BookingResult bookLastTicket(Long eventId, String userId) {
-        // Locks the row - concurrent requests block until this transaction completes
-        TicketCount ticketCount = ticketRepository
-            .findByEventIdWithLock(eventId)  // @Lock(PESSIMISTIC_WRITE) in JPA
-            .orElseThrow(() -> new EventNotFoundException(eventId));
-
-        if (ticketCount.getRemaining() <= 0) {
-            return BookingResult.soldOut();
-        }
-
-        ticketCount.decrement(); // remaining - 1
-        ticketRepository.save(ticketCount);
-        bookingRepository.save(new Booking(eventId, userId));
-
-        return BookingResult.success();
+// Using Redis with default (eventually consistent) behavior
+// Two instances race for a lock
+public boolean acquireLock(String lockKey, String holder) {
+    // Non-atomic: read then write
+    String current = redis.get(lockKey); // may be stale
+    if (current == null) {
+        redis.set(lockKey, holder);       // race condition!
+        return true;
     }
-    // When this @Transactional method returns:
-    // 1. Row lock is released
-    // 2. Changes are committed
-    // 3. Any concurrent request unblocks and reads the updated value
-    // → Linearizable: only one bookLastTicket can execute per row at a time
+    return false;
+}
+// Two instances can both see null and both acquire lock
+// → critical section violated
+```
+
+**GOOD - Using atomic Compare-And-Set for linearizable lock:**
+```java
+// Redis SET NX EX: atomic, linearizable on single-node Redis
+// Or use etcd for distributed linearizable CAS
+
+// Redis single-node linearizable (not distributed):
+public boolean acquireLock(
+    String lockKey,
+    String holder,
+    long ttlMs
+) {
+    // SET key value NX PX ms — atomic on Redis
+    Boolean acquired = redis.set(
+        lockKey, holder,
+        SetArgs.Builder.nx().px(ttlMs)
+    );
+    return Boolean.TRUE.equals(acquired);
 }
 
-// Repository
-public interface TicketRepository extends JpaRepository<TicketCount, Long> {
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)   // SELECT FOR UPDATE
-    @Query("SELECT t FROM TicketCount t WHERE t.eventId = :eventId")
-    Optional<TicketCount> findByEventIdWithLock(@Param("eventId") Long eventId);
+// etcd linearizable distributed lock (truly distributed):
+public boolean acquireDistributedLock(
+    Client etcdClient,
+    String lockPath,
+    String holder
+) throws ExecutionException, InterruptedException {
+    Lock lockClient = etcdClient.getLockClient();
+    // etcd lock: linearizable, fencing-token-aware
+    LockResponse response = lockClient
+        .lock(ByteSequence.from(lockPath, UTF_8))
+        .get();
+    // response.getKey() is the fencing token
+    return response != null;
 }
+```
+
+**How to test / verify correctness:**
+```bash
+# Jepsen: run linearizability test against your cluster
+# https://github.com/jepsen-io/jepsen
+# Specific tests for etcd, ZooKeeper, Cassandra available
+
+# Quick sanity: write then immediately read from a follower
+# If strongly consistent: follower must redirect to leader or
+# serve committed value. If it serves a stale value: not linearizable.
+
+# etcd: force linearizable read:
+etcdctl get mykey --consistency=l  # l=linearizable, s=serializable
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Property | Strong Consistency | Eventual Consistency |
-|---|---|---|
-| **Read freshness** | Latest write always | May return stale data |
-| **Write latency** | Higher (quorum/sync ACK) | Lower (async, no waiting) |
-| **Availability** | Reduced (CAP - CP system) | High (CAP - AP system) |
-| **Throughput** | Lower (coordination overhead) | Higher (no coordination) |
-| **Use cases** | Bank accounts, locks, inventory | Social feeds, analytics, DNS |
-| **Example DBs** | Spanner, etcd, Postgres (primary) | DynamoDB, Cassandra ONE |
+| Property | Strong (Linearizable) | Sequential | Causal | Eventual |
+|:---|:---|:---|:---|:---|
+| Reads see latest write | Always | Maybe (no real-time) | Causally related only | Eventually |
+| Coordination cost | High (consensus) | Medium (sequencer) | Low (vector clocks) | None |
+| Availability under partition | Low (refuse ops) | Low-Medium | High | Highest |
+| Write latency | +consensus RTT | +sequencer RTT | Low | Lowest |
+| Application complexity | Low (simple reads) | Medium | High (track causality) | High (conflict resolution) |
+| Use case | Locks, balances, leader election | Shared memory models | Social feeds, comments | Counters, analytics, DNS |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
 | Misconception | Reality |
-|---|---|
-| Strong consistency = single database node | Can be achieved with multiple nodes via quorum or consensus. Spanner is globally distributed and strongly consistent |
-| Strong consistency is always required for critical data | Many "critical" systems (e.g., Amazon shopping cart) intentionally use eventual consistency with conflict resolution. Use strong consistency only where incorrect reads cause real harm |
-| Strong consistency prevents all data anomalies | Linearizability is per-object. Multi-object transactions still require Serializability (or Strict Serializability = linearizable + serializable) even with strong single-object consistency |
+|:---|:---|
+| "QUORUM reads/writes in Cassandra give strong consistency" | Cassandra QUORUM guarantees that read and write quorums overlap, but WITHOUT Lightweight Transactions (Paxos), concurrent writes can still produce non-linearizable histories. Jepsen confirmed this empirically. |
+| "Strong consistency means slow databases" | etcd handles 10k+ linearizable writes/sec. CockroachDB handles hundreds of thousands of linearizable ops/sec across clusters. "Strong" describes correctness, not performance. |
+| "We don't need strong consistency because we use transactions" | ACID transactions provide isolation and atomicity, but not linearizability across distributed nodes by default. Two services in separate databases are NOT strongly consistent even if each service uses transactions internally. |
+| "Strong consistency is only for financial applications" | Distributed leader election, configuration management, service discovery, distributed locks — all require strong consistency. Most modern infrastructure (etcd, ZooKeeper, Consul) provides strong consistency for exactly this reason. |
+| "Reading from primary gives strong consistency in MySQL" | MySQL replication is asynchronous by default. Reading from primary avoids stale replica reads, but if primary failover occurs during a transaction, you can still see non-linearizable behavior. Synchronous replication (AFTER_SYNC binlog) is required for strong consistency. |
 
 ---
 
 ### 🚨 Failure Modes & Diagnosis
 
-**Read Returning Stale Data Despite "Strong Consistency" Config**
+**Failure Mode 1: Leader Bottleneck Causing Write Saturation**
 
+**Symptom:** Write throughput plateaus at ~5k/sec despite adding more nodes. Adding nodes makes it worse (more Raft replication overhead). P99 write latency climbs from 5ms to 500ms under load.
+**Root Cause:** Single leader serializes all writes. Raft replication adds per-write network round-trip to quorum. As cluster grows, quorum size grows, increasing per-write latency.
+**Diagnostic:**
+```bash
+# etcd metrics:
+curl http://etcd-leader:2381/metrics | grep etcd_disk_wal_fsync
+# Look for high fsync latency:
+curl http://etcd-leader:2381/metrics | grep -E "etcd_network|etcd_server_proposals"
+# CockroachDB:
+SHOW RANGES FROM TABLE mytable;
+# Check if hot ranges are all on one node
 ```
-Symptom:
-DynamoDB with consistentRead=true still returns stale data.
-OR: Cassandra with QUORUM still returns stale data intermittently.
+**Fix:**
+BAD: Adding more Raft replicas to improve write throughput.
+GOOD: Shard data across multiple Raft groups (CockroachDB ranges, etcd namespaces). Apply strong consistency only where needed; use eventual for bulk data.
+**Prevention:** Design data model to minimize hot key contention. Use sharding from day one for high-write workloads needing strong consistency.
 
-Root Cause Analysis:
-1. DynamoDB: consistentRead=false accidentally left in code
-2. Cassandra QUORUM: W+R ≤ N (misconfigured replication factor)
-   → N=3, W=1, R=2: W+R=3 ≤ 3 → NOT strongly consistent
-   → Fix: W=2, R=2 with N=3 → W+R=4 > 3 ✓
-3. Read from follower (not leader) without forwarding in Raft system:
-   → Fix: read only from leader or use linearizable read (wait for leader confirmation)
-4. Clock skew causing incorrect "latest" determination in multi-master:
-   → Fix: use logical clocks (vector clocks) not wall clocks for last-writer-wins
+**Failure Mode 2: Stale Leader Serving Reads After Partition**
 
-Detection:
-  Write x=5 → immediately read x → if NOT 5: consistency violation
-  Jepsen testing: randomly inject latency + failures, verify all reads linearizable
+**Symptom:** After a network partition, clients connected to the old leader read stale data. New leader elected; old leader doesn't know it's deposed. Old leader continues serving reads for ~5 seconds (election timeout).
+**Root Cause:** Old leader hasn't received heartbeats, but hasn't yet timed out and stepped down. During this window, it serves reads that are no longer authoritative.
+**Diagnostic:**
+```bash
+# etcd: check leader identity from all nodes:
+for host in etcd1 etcd2 etcd3; do
+  echo "$host: $(etcdctl --endpoints=$host:2379 endpoint status)"
+done
+# Look for two nodes claiming leadership simultaneously
 ```
+**Fix:**
+BAD: Using etcd's default serializable reads (allows stale reads from non-leader).
+GOOD: Use `--consistency=l` (linearizable reads in etcd), which verifies leadership before serving the read.
+**Prevention:** Always use linearizable reads (`--consistency=l` in etcd, `linearizable=true` in CockroachDB) for correctness-critical paths. Accept the extra RTT.
+
+**Failure Mode 3: Security - Confused Deputy via Stale Auth Token**
+
+**Symptom:** A service account's permissions are elevated at time T. Between T and T+5s (replication lag), a second service reads the permission cache. The second service sees the pre-elevation permissions and refuses the operation. Alternatively: permissions are REVOKED at T, but for 5s the service sees the elevated permissions and allows unauthorized operations.
+**Root Cause:** Permission store uses eventually consistent reads. Auth service caches permissions with TTL matching the replication lag window. An adversary who can time their request within the revocation window can exploit the gap.
+**Diagnostic:**
+```bash
+# Check if auth service uses consistent reads:
+grep -r "ConsistentRead\|QUORUM\|linearizable" auth-service/
+# Check permission cache TTL:
+grep -r "permissionCacheTTL\|cache.ttl" auth-service/
+```
+**Fix:**
+BAD: Permission reads with eventual consistency and 30s TTL.
+GOOD: Permission reads with strong consistency (no caching, or zero-TTL cache with linearizable read-through). For revocation specifically: use a separate "deny list" stored in a linearizable system (etcd), checked on every auth.
+**Prevention:** Classify auth and permission data as requiring strong consistency. Non-negotiable security requirement.
 
 ---
 
 ### 🔗 Related Keywords
 
-- `Linearizability` - the formal name for the strongest practical consistency model (strong consistency is usually equated with this)
-- `Consistency Models` - the spectrum of weaker alternatives
-- `CAP Theorem` - strong consistency is the "C" in CAP (CP systems)
-- `Raft` - one of the primary consensus protocols enabling strong consistency
-- `Quorum` - the mechanism for achieving strong consistency in distributed reads/writes
+**Prerequisites (understand these first):**
+- DST-006 - CAP Theorem (why strong consistency has availability cost)
+- DST-008 - Consistency Models (strong consistency in the broader spectrum)
+- DST-015 - Consensus Algorithms (the mechanism behind strong consistency)
+
+**Builds On This (learn these next):**
+- DST-012 - Distributed Transactions (strong consistency across multiple resources)
+- DST-017 - Leader Election (requires strong consistency to be safe)
+- DST-020 - Distributed Locking (linearizability is required for correctness)
+
+**Alternatives / Comparisons:**
+- DST-010 - Eventual Consistency (the trade-off: lower coordination, weaker guarantees)
+- DST-011 - Causal Consistency (middle ground: causal ordering without full coordination)
 
 ---
 
 ### 📌 Quick Reference Card
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│ WHAT IT MEANS │ Every read returns the latest write value    │
-├───────────────┼─────────────────────────────────────────────┤
-│ HOW ACHIEVED  │ Quorum W+R>N, synchronous replication,      │
-│               │ Raft/Paxos consensus, SELECT FOR UPDATE     │
-├───────────────┼─────────────────────────────────────────────┤
-│ COST          │ Higher write latency, lower availability     │
-│               │ during network partition (CP, not AP)       │
-├───────────────┼─────────────────────────────────────────────┤
-│ USE CASES     │ Bank ledger, distributed locks, inventory,  │
-│               │ leader election, config management          │
-├───────────────┼─────────────────────────────────────────────┤
-│ DATABASES     │ Spanner, etcd, ZooKeeper, Postgres primary, │
-│               │ CockroachDB, VoltDB                         │
-└───────────────┴─────────────────────────────────────────────┘
++------------------+--------------------------------+
+| WHAT IT IS       | Linearizability: reads always  |
+|                  | see the most recent write      |
++------------------+--------------------------------+
+| PROBLEM SOLVED   | Stale reads causing correctness|
+|                  | failures in critical systems   |
++------------------+--------------------------------+
+| KEY INSIGHT      | Requires coordination; trades  |
+|                  | latency for correctness        |
++------------------+--------------------------------+
+| USE WHEN         | Locks, balances, leader elec., |
+|                  | config, distributed counters   |
++------------------+--------------------------------+
+| AVOID WHEN       | High-throughput analytics,     |
+|                  | social feeds, counters, DNS    |
++------------------+--------------------------------+
+| TRADE-OFF        | Correctness vs. latency and    |
+|                  | availability under partition   |
++------------------+--------------------------------+
+| ONE-LINER        | Behaves like single-server:    |
+|                  | any read = most recent write   |
++------------------+--------------------------------+
+| NEXT EXPLORE     | DST-015 Consensus Algorithms,  |
+|                  | DST-020 Distributed Locking    |
++------------------+--------------------------------+
 ```
+
+**If you remember only 3 things:**
+1. Linearizability = every read returns the most recent committed write; operations appear atomic in real time.
+2. Requires consensus (Raft/Paxos) or leader-based reads — not just quorum (Cassandra QUORUM is NOT linearizable without LWTs).
+3. Under partition (CAP), strongly consistent systems choose correctness over availability — they refuse operations rather than risk stale responses.
+
+**Interview one-liner:**
+"Strong consistency (linearizability) makes a distributed system behave like a single node — any read from any node always returns the most recent write, achieved through consensus protocols or leader reads, at the cost of coordination latency and availability under network partition."
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+The cost of strong consistency is coordination; the cost of weak consistency is correctness bugs. The engineering decision is not "which is cheaper" but "what is the worst-case impact of a stale read in this specific context?" Apply strong consistency precisely where stale reads cause system failures or security violations — not as a blanket policy, and not by accident through default database configuration.
+
+**Where else this pattern appears:**
+- **Distributed version control (Git):** A `git push --force` after `git pull` is an attempt at strong consistency (you must have the latest state before overwriting). Without it, lost updates (force push over someone else's work) occur — exactly the lost-update failure of eventually consistent stores.
+- **Hardware cache coherence (MESI protocol):** CPUs implement strong consistency within a machine through cache coherence protocols. Every core sees a coherent view of memory. This is the hardware analog of linearizability — and it's why single-machine programs don't need to think about stale reads.
+- **2-Phase Commit (2PC):** Distributed transactions achieve strong consistency across multiple resources by making all participants agree before any commits. The coordinator is the "Raft leader" analog. The cost is blocking on coordinator failure — same CAP trade-off at the transaction layer.
+
+---
+
+### 💡 The Surprising Truth
+
+Most databases that claim "strong consistency" or "CP" do not provide linearizability. Jepsen tests (2013-present) have found consistency violations in MongoDB, Cassandra, Redis Sentinel, and others — systems widely marketed as "strongly consistent" or "CP." The distinction is subtle: a system can be "CP in CAP" (refuses writes during partition) while still allowing stale reads from followers during normal operation. True linearizability requires that EVERY read go through a consensus round or a verified leader. The databases that actually provide linearizability as a hard guarantee (with proof, not just marketing): etcd, ZooKeeper (with `sync()`), Spanner, CockroachDB, and FoundationDB. For every other database, check the Jepsen analysis before assuming strong consistency.
 
 ---
 
 ### 🧠 Think About This Before We Continue
 
-**Q.** A payment service uses Cassandra with QUORUM reads and writes (N=3, W=2, R=2). The team claims they have strong consistency. One day, during a node failure, two concurrent charge operations for the same account ($80 + $80 against a $100 balance) both succeed. Analyze: (1) why QUORUM failed to provide strong consistency in this scenario, (2) what additional mechanism was missing (hint: think about read-modify-write atomicity vs. value visibility), and (3) how to redesign using Cassandra's Lightweight Transactions (LWT) or an alternative system to make the charge operation correctly atomic.
+**Q1 (C - Design Trade-off):** A distributed rate limiter must ensure no more than 1,000 requests/second per user across 50 API server instances. Two options: (A) strongly consistent counter in etcd, (B) eventually consistent sharded counter where each API server tracks its own shard and lazily synchronises. Under what traffic pattern does option B catastrophically fail, and under what traffic pattern does option A become a bottleneck? Is there a hybrid that avoids both failure modes?
+*Hint:* Option B fails when all traffic for one user concentrates on one API server for a burst. Option A fails when 1,000 concurrent rate-limit checks hit etcd simultaneously. What does "token bucket with eventual consistency" look like?
+
+**Q2 (D - Root Cause):** A team uses Cassandra with `ConsistencyLevel.QUORUM` for both reads and writes (N=3, W=2, R=2). They believe this gives strong consistency. A Jepsen test reveals linearizability violations. What is the mechanism by which QUORUM on Cassandra violates linearizability even though R+W > N guarantees quorum overlap?
+*Hint:* QUORUM overlap guarantees that at least one node in the read quorum has the latest write. But what happens if two concurrent writes are committed at the same wall-clock time on different nodes? Does Cassandra use a consensus protocol to serialize concurrent writes, or does it use Last-Write-Wins?
+
+**Q3 (B - Scale):** Google Spanner achieves global strong consistency across datacenters using TrueTime. TrueTime provides a clock uncertainty bound of ±ε (approximately 7ms). Spanner's commit-wait adds 2ε to every transaction. If ε grows from 7ms to 100ms (e.g., GPS signal lost, atomic clock drift), what happens to Spanner's correctness and performance? Does it fail safe or fail open?
+*Hint:* Spanner's correctness guarantee depends on the uncertainty bound being accurate. If the actual uncertainty exceeds ε, the commit-wait is insufficient. Consider: does Spanner fail by returning incorrect data, or by refusing transactions? What instrumentation exists to detect GPS/clock anomalies?
+
