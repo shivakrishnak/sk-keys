@@ -1,6 +1,6 @@
 ---
-mode: agent
-description: "Generate keyword list for a category/tier using Keyword Generator v3.0 - syncs index.md non-destructively"
+agent: agent
+description: "Generate keyword entries for a category or tier using Keyword Generator v3.0"
 tools:
   - run_in_terminal
   - read_file
@@ -13,10 +13,13 @@ tools:
 
 # Keyword Generator - Category/Tier Processor
 
-Generate a complete, exhaustive keyword list for a technology category,
+Generate keyword entries for a technology category or tier,
 then sync the category `index.md` and create stub entry files.
 
 **Target:** `${input:target:Category code (e.g. RCT, JVM, SEC) or tier folder (e.g. tier-3-java)}`
+
+If the target is not a 3-letter category code or a `tier-N-name` folder,
+stop and return an error that shows the valid formats.
 
 ---
 
@@ -24,6 +27,10 @@ then sync the category `index.md` and create stub entry files.
 
 The full keyword generation specification is in `KEYWORD_GENERATOR_PROMPT.md`
 (Category Keyword Generator - Master Prompt v3.0). Apply it exactly.
+
+Keep the workflow linear and scoped: validate the target, scan the current
+category state, generate only missing keywords, sync `index.md`, and create
+stub files only when needed.
 
 ---
 

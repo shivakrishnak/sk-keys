@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: "Generate Technical Dictionary keyword entries (Master Prompt v4.0) for a category or tier"
 tools:
   - run_in_terminal
@@ -111,7 +111,7 @@ After writing each batch, confirm the files were saved successfully before conti
 
 ---
 
-## Upgrade Phase — v3.0 → v3.1 _(only when mode = upgrade-v31; replaces Phase 2)_
+## Upgrade Phase — v3.0 → v4.0 _(only when mode = upgrade-v40; replaces Phase 2)_
 
 Work through one batch at a time. For each entry in the batch:
 
@@ -123,11 +123,11 @@ Read each file. A valid v3.0 upgrade candidate has:
 - `status:` and `version:` fields present
 - All 7 v3.0 structural section markers present:
   `### 🔥 The Problem This Solves` · `### ⏱️ Understand It in 30 Seconds` ·
-  `### 🧪 Thought Experiment` · `### 💶 Gradual Depth - Four Levels` ·
+  `### 🧪 Thought Experiment` · `### 📶 Gradual Depth - Four Levels` ·
   `### 🔄 The Complete Picture - End-to-End Flow` ·
   `### ⚖️ Comparison Table` · `### 🚨 Failure Modes & Diagnosis`
 
-Skip any file where `version:` is already `2` or higher (already v3.1).
+Skip any file where `version:` is already `2` or higher (already v4.0).
 
 ### U-ii. Apply v3.1 quality improvements
 

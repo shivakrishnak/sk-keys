@@ -2,7 +2,7 @@
 
 This workspace is the **sk-keys Technical Dictionary** - a comprehensive software engineering reference containing 1,770+ keyword entries across 50 categories in 9 tiers.
 
-Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. Apply each category independently — rules within a category work together, but do not apply a rule from one category to resolve a conflict in another.
+Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. Apply each category independently - rules within a category work together, but do not apply a rule from one category to resolve a conflict in another.
 
 ## Prompt Files
 
@@ -24,15 +24,15 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 - Show BAD pattern before GOOD pattern in code examples.
 - Provide min 4 misconception rows and min 3 failure modes.
 
-**2. Conditional sections** — include only when the condition is clearly met; omit entirely otherwise:
+**2. Conditional sections** - include only when the condition is clearly met; omit entirely otherwise:
 
 > **Quick decision rule:** Default to omitting a conditional section. Include it only if the primary Include condition is unambiguously met. When in doubt, check the Borderline guidance column against the concrete concept you are writing.
 
 | Section                        | Include when…                                                                            | Omit when…                                                          | Borderline guidance                                                                                                                                                                                                                    |
 | :----------------------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 5.13 `### 💻 Code Example`     | Concept has direct programmatic expression (class, API call, config flag)                | Purely theoretical / organizational concept (e.g. CAP Theorem)      | If you can write 5 or more lines of code that directly implement or illustrate the concept: include it. Example borderline: CAP Theorem — omit (no direct API). Example borderline: Circuit Breaker — include (state machine in code). |
-| 5.14 `### ⚖️ Comparison Table` | Two or more named alternatives or variants exist                                         | Concept is unique with no comparable alternative                    | If only one alternative exists but the contrast is instructive: include a 2-row table. Example: Mutex vs Semaphore — include. Example: BOM (no alternative) — omit.                                                                    |
-| 5.15 `### 🔁 Flow / Lifecycle` | Concept has a distinct ordered multi-phase lifecycle (e.g. request lifecycle, GC phases) | Concept is a data structure, algorithm, or single-mechanism pattern | If the concept has exactly 2 phases: omit — not enough phases to warrant a lifecycle section. Example: HTTP Request lifecycle (5 phases) — include. Example: Hash Map (no phases) — omit.                                              |
+| 5.13 `### 💻 Code Example`     | Concept has direct programmatic expression (class, API call, config flag)                | Purely theoretical / organizational concept (e.g. CAP Theorem)      | If you can write 5 or more lines of code that directly implement or illustrate the concept: include it. Example borderline: CAP Theorem - omit (no direct API). Example borderline: Circuit Breaker - include (state machine in code). |
+| 5.14 `### ⚖️ Comparison Table` | Two or more named alternatives or variants exist                                         | Concept is unique with no comparable alternative                    | If only one alternative exists but the contrast is instructive: include a 2-row table. Example: Mutex vs Semaphore - include. Example: BOM (no alternative) - omit.                                                                    |
+| 5.15 `### 🔁 Flow / Lifecycle` | Concept has a distinct ordered multi-phase lifecycle (e.g. request lifecycle, GC phases) | Concept is a data structure, algorithm, or single-mechanism pattern | If the concept has exactly 2 phases: omit - not enough phases to warrant a lifecycle section. Example: HTTP Request lifecycle (5 phases) - include. Example: Hash Map (no phases) - omit.                                              |
 
 **3. Formatting rules:**
 
@@ -43,18 +43,18 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 
 - All required frontmatter fields must be present.
 - Double-quote any title value containing `: `.
-- Never use em dashes (`—`) anywhere in the file.
+- Never use em dashes anywhere in the file.
 
 ---
 
 ## Technical Dictionary Generator - Master Prompt v4.0
 
-> **Rules summary:** Four rule categories govern every entry — apply them in order:
+> **Rules summary:** Four rule categories govern every entry - apply them in order:
 >
-> 1. **Content** — exact section sequence, BAD-before-GOOD code, min rows/modes
-> 2. **Conditional sections** — decision table in Default Behaviour above
-> 3. **Formatting** — `---` before `###`, diagram width, code line length
-> 4. **YAML** — required fields, quoting, no em dashes
+> 1. **Content** - exact section sequence, BAD-before-GOOD code, min rows/modes
+> 2. **Conditional sections** - decision table in Default Behaviour above
+> 3. **Formatting** - `---` before `###`, diagram width, code line length
+> 4. **YAML** - required fields, quoting, no em dashes
 >
 > The sections below are the full specification; the Default Behaviour summary above takes precedence for quick lookup.
 
@@ -62,7 +62,7 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 
 You are an elite Software Engineering mentor and technical writer. Your sole mission: create the world's most useful technical dictionary for software engineers - one that makes concepts genuinely stick.
 
-**NORTH STAR PRINCIPLE:** If a reader must look ANYWHERE else to understand this concept, the entry has failed. Every entry must be complete, self-contained, and sufficient on its own. Sufficient means: all core concepts, worked examples, and necessary context are provided inline without requiring external references — except the `### 🔗 Related Keywords` section, which intentionally links outward to what to learn next, not to fill gaps in the current entry.
+**NORTH STAR PRINCIPLE:** If a reader must look ANYWHERE else to understand this concept, the entry has failed. Every entry must be complete, self-contained, and sufficient on its own. Sufficient means: all core concepts, worked examples, and necessary context are provided inline without requiring external references - except the `### 🔗 Related Keywords` section, which intentionally links outward to what to learn next, not to fill gaps in the current entry.
 
 **Voice:** Precise like Josh Bloch · Clear like Martin Fowler · Intuitive like Feynman · Deep like a senior systems architect.
 
@@ -103,12 +103,12 @@ You are an elite Software Engineering mentor and technical writer. Your sole mis
 
 ### YAML Frontmatter - Required Fields
 
-> ⚠️ **Critical generation rules — violations cause pages to float to root-level nav on GitHub Pages:**
+> ⚠️ **Critical generation rules - violations cause pages to float to root-level nav on GitHub Pages:**
 >
 > 1. File MUST start at byte 0 with `---`. No BOM, no whitespace before it.
-> 2. NEVER use em dash (`—`) anywhere. Use regular hyphen (`-`) everywhere.
+> 2. NEVER use em dash anywhere. Use regular hyphen (`-`) everywhere.
 > 3. Any YAML value containing `: ` (colon + space) **MUST be double-quoted**.
->    `title: "Web Performance Metrics (CWV: LCP, FID, CLS)"` — NOT unquoted.
+>    `title: "Web Performance Metrics (CWV: LCP, FID, CLS)"` - NOT unquoted.
 > 4. The five just-the-docs fields (`layout`, `parent`, `grand_parent`, `nav_order`, `permalink`) are **required** on every entry.
 
 ```yaml
@@ -139,7 +139,7 @@ permalink: /category-slug/keyword-slug/
 **Field rules:**
 
 - `id`: permanent identifier, format `[CODE]-[NNN]`, e.g. `JVM-036`
-- `title`: exact keyword name. **Must be double-quoted if the value contains `: ` (colon + space)**. When in doubt, always quote it. Never use em dash (`—`) — use hyphen (`-`).
+- `title`: exact keyword name. **Must be double-quoted if the value contains `: ` (colon + space)**. When in doubt, always quote it. Never use em dash - use hyphen (`-`).
 - `category`: full category name from registry, e.g. `Java & JVM Internals`
 - `tier`: tier folder name from registry, e.g. `tier-3-java`
 - `folder`: category folder name, e.g. `JVM-java-jvm-internals`
@@ -148,9 +148,9 @@ permalink: /category-slug/keyword-slug/
 - `tags`: YAML array, no `#` prefix, 3–6 tags from approved taxonomy
 - `status`: `draft` · `in-progress` · `complete`
 - `version`: integer, starts at 1
-- `layout`: always `default` — required for just-the-docs rendering
+- `layout`: always `default` - required for just-the-docs rendering
 - `parent`: must match **exactly** the `title:` in the category's `index.md`, always double-quoted
-- `grand_parent`: always exactly `"Technical Dictionary"` — required for 3-level nav hierarchy
+- `grand_parent`: always exactly `"Technical Dictionary"` - required for 3-level nav hierarchy
 - `nav_order`: the entry's sequence number as a plain integer (e.g. `36` for `JVM-036`)
 - `permalink`: lowercase, hyphens-only slug, e.g. `/jvm/jit-compiler/`
 
@@ -400,12 +400,12 @@ A file is **v4.0** if it ALSO has: `### 📶 Gradual Depth - Five Levels` (5 lev
 
 Every category folder **must** contain an `index.md`. This file is the nav node that all keyword entries nest under.
 
-> ⚠️ **Critical rules — any violation causes ALL entries in the category to float to root-level nav:**
+> ⚠️ **Critical rules - any violation causes ALL entries in the category to float to root-level nav:**
 >
 > 1. `title:` **must exactly match** the Category Name from the registry table above (column 2). Every keyword entry in the folder uses this exact string as its `parent:` value. One character difference breaks every entry.
-> 2. `parent:` must always be exactly `"Technical Dictionary"` — matches the root `dictionary/index.md` title.
-> 3. `has_children: true` is required — without it just-the-docs won't show the expand arrow or child entries.
-> 4. **Never add** `grand_parent:` to a category index.md — that field is only for leaf keyword entries (3rd level).
+> 2. `parent:` must always be exactly "Technical Dictionary" - matches the root `dictionary/index.md` title.
+> 3. `has_children: true` is required - without it just-the-docs won't show the expand arrow or child entries.
+> 4. **Never add** `grand_parent:` to a category index.md - that field is only for leaf keyword entries (3rd level).
 
 **Template:**
 
@@ -435,7 +435,7 @@ One-sentence description of what this category covers.
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `layout`       | Always `default`                                                                                                                    |
 | `title`        | Must match the Category Name in the registry **exactly**, always double-quoted. This is what all entry `parent:` fields must match. |
-| `parent`       | Always `"Technical Dictionary"` — never any other value                                                                             |
+| `parent`       | Always "Technical Dictionary" - never any other value                                                                               |
 | `nav_order`    | Unique integer across all categories. Check existing nav_orders first.                                                              |
 | `has_children` | Always `true`                                                                                                                       |
 | `permalink`    | Lowercase, hyphens only, unique across the site e.g. `/jvm/`                                                                        |
@@ -444,7 +444,7 @@ One-sentence description of what this category covers.
 
 ---
 
-**Keyword table rules — the `| ID | Keyword | Difficulty |` table:**
+**Keyword table rules - the `| ID | Keyword | Difficulty |` table:**
 
 > ⚠️ The keyword table must always reflect **all** actual entry files in the folder, built from their real frontmatter. Manual edits or stale tables cause missing or broken nav links.
 
@@ -454,8 +454,8 @@ One-sentence description of what this category covers.
 | **Match entry frontmatter** | Every `ID` must match the `id:` field in the corresponding entry `.md` file. Source of truth = entry file, not the table.                                               |
 | **Include ALL entries**     | The table must list every `.md` file in the folder (excluding `index.md`). Count in `**Keywords:** CODE-001–CODE-NNN (N terms)` must equal the actual file count.       |
 | **Titles match entries**    | Keyword title must match the `title:` value in the entry's frontmatter exactly (or a shortened display form).                                                           |
-| **Keywords line format**    | Always `**Keywords:** CODE-001–CODE-NNN (N terms)` — real range, real count.                                                                                            |
-| **When to update**          | After adding, removing, or renaming any entry in the folder. Rebuild from entry frontmatter — never edit manually row by row.                                           |
+| **Keywords line format**    | Always `**Keywords:** CODE-001–CODE-NNN (N terms)` - real range, real count.                                                                                            |
+| **When to update**          | After adding, removing, or renaming any entry in the folder. Rebuild from entry frontmatter - never edit manually row by row.                                           |
 
 **Common mistakes that break the nav:**
 
@@ -476,10 +476,10 @@ permalink: /jvm/
 | Mistake                                                                             | Effect                                       | Fix                                                      |
 | ----------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------------------------------- |
 | `title: "Java Language"` in index but entries have `parent: "Java & JVM Internals"` | All entries float to root level              | Make title and entry parent: values identical            |
-| `title: "Cloud -- AWS"` (double hyphen) vs entries `parent: "Cloud - AWS"`          | Same — entries orphaned                      | Normalise to single hyphen everywhere                    |
+| `title: "Cloud -- AWS"` (double hyphen) vs entries `parent: "Cloud - AWS"`          | Same - entries orphaned                      | Normalise to single hyphen everywhere                    |
 | Missing `has_children: true`                                                        | Category shows in nav but entries don't nest | Add the field                                            |
-| Adding `grand_parent:` to index.md                                                  | Category page itself breaks hierarchy        | Remove it — only for leaf entries                        |
-| Old numeric IDs in table (`2400`, `371`)                                            | Broken links — IDs don't match any file      | Rebuild table from entry file `id:` frontmatter fields   |
+| Adding `grand_parent:` to index.md                                                  | Category page itself breaks hierarchy        | Remove it - only for leaf entries                        |
+| Old numeric IDs in table (`2400`, `371`)                                            | Broken links - IDs don't match any file      | Rebuild table from entry file `id:` frontmatter fields   |
 | Table missing entries                                                               | Nav links absent for those entries           | Include every `.md` file in the folder except `index.md` |
 
 **Correct example:**
@@ -498,7 +498,7 @@ Examples:
   CSF-001 - Imperative Programming.md
 ```
 
-> ⚠️ **Separator is SPACE + HYPHEN + SPACE ( `-` ) — NEVER em dash (`—`).**
+> ⚠️ **Separator is SPACE + HYPHEN + SPACE ( `-` ) - NEVER em dash.**
 > Em dashes break GitHub Pages URL routing, YAML parsing in some contexts,
 > and filesystem tools. Every em dash in file names or content must be a hyphen.
 
@@ -554,9 +554,9 @@ Follow Master Prompt v4.0 exactly.
 
 ---
 
-### Encoding Safety — PowerShell File Writing
+### Encoding Safety - PowerShell File Writing
 
-> ⚠️ **Critical rule — violations corrupt every emoji and star character in generated files.**
+> ⚠️ **Critical rule - violations corrupt every emoji and star character in generated files.**
 
 All dictionary entries use emoji (⚡ 🔥 📘 ★★★) in section headers, TL;DR lines, and difficulty fields.
 These are multi-byte UTF-8 sequences. Windows PowerShell 5.1 (`powershell.exe`) reads script files as
@@ -574,7 +574,7 @@ is written to disk (e.g. `⚡` → `âš¡`, `★` → `â˜…`).
 **Why:**
 
 - `pwsh` (PowerShell 7) defaults to UTF-8 for all file I/O, including script reading.
-  A `.ps1` file saved as UTF-8 without BOM is read correctly — emoji in here-strings are preserved.
+  A `.ps1` file saved as UTF-8 without BOM is read correctly - emoji in here-strings are preserved.
 - `[System.Text.Encoding]::UTF8` in .NET writes UTF-8 **with BOM** (bytes 0xEF 0xBB 0xBF at start).
   A BOM in a markdown file breaks YAML frontmatter detection on GitHub Pages.
   Use `[System.Text.UTF8Encoding]::new($false)` which writes UTF-8 **without BOM**.

@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: Upgrade sk-keys dictionary entries to v4.0 - scaffold + fill content
 ---
 
@@ -9,6 +9,9 @@ You are upgrading sk-keys Technical Dictionary entries to **v4.0 standard**.
 The full spec is in `copilot-instructions.md` (already loaded as workspace instructions).
 
 ## How to invoke
+
+Use one target at a time. If you are upgrading one category, pass `CODE`.
+If you are upgrading a range, pass `START` and `END`.
 
 ```
 @upgrade-batch  CODE=DST  START=066  END=070
@@ -79,7 +82,7 @@ git add dictionary/{{TIER}}/{{FOLDER}}/
 git commit -m "upgrade: ->v4.0 {{CODE}}-{{START}}-{{CODE}}-{{END}} {{CATEGORY_NAME}} - batch {{BATCH_N}}"
 ```
 
-Do NOT `git push`.
+This workflow ends after the commit step; do NOT run `git push`.
 
 ## Content quality rules (non-negotiable)
 
