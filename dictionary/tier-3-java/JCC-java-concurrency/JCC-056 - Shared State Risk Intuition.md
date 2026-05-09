@@ -28,11 +28,11 @@ permalink: /jcc/shared-state-risk-intuition/
 
 ⚡ TL;DR - Shared state risk intuition is the ability to quickly identify which variables in a program are shared across threads, which accesses are potentially concurrent, and which require synchronization.
 
-| Metadata | | |
-|:---|:---|:---|
-| **Depends on:** | JCC-001, JCC-002, JCC-020, JCC-055 | |
-| **Used by:** | JCC-055, JCC-057 | |
-| **Related:** | JCC-055, JCC-057, JCC-001 | |
+| Metadata        |                                    |     |
+| :-------------- | :--------------------------------- | :-- |
+| **Depends on:** | JCC-001, JCC-002, JCC-020, JCC-055 |     |
+| **Used by:**    | JCC-055, JCC-057                   |     |
+| **Related:**    | JCC-055, JCC-057, JCC-001          |     |
 
 ---
 
@@ -64,6 +64,7 @@ The "happens-before" mental model (Lamport 1978, JMM 2004) gives a formal founda
 When reading code, instantly flag: "this is a mutable instance field, accessed from multiple threads, without a visible guard - this is a shared state risk."
 
 **One analogy:**
+
 > Shared state risk intuition is like a seasoned chef's food safety intuition. A junior chef reads "leave chicken at room temperature for 4 hours" and does not react. A senior chef immediately flags: "temperature danger zone, bacterial growth risk." The senior chef has internalized the risk categories (proteins, temperatures, time) and pattern-matches against them automatically. Similarly, an experienced concurrent developer reads `private HashMap<K,V> cache` and immediately thinks: "mutable, heap-allocated, likely accessible from multiple threads, no synchronization visible - risk."
 
 **One insight:**
@@ -74,6 +75,7 @@ Shared state risk is not about which class the variable lives in. It is about wh
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **Heap is shared; stack is thread-local.** Objects on the heap (all `new X()` allocations) are potentially shared. Method-local variables are always thread-safe (stack-allocated per thread invocation).
 2. **Mutability is required for risk.** Immutable objects (`final` fields, deeply immutable) can be shared freely. Risk arises only from mutable state.
 3. **Publication creates risk.** An object becomes shared when it is "published" to another thread (stored in a static field, passed to a constructor of a shared object, passed to an executor task, or returned from a method accessible to multiple threads).
@@ -81,6 +83,7 @@ Shared state risk is not about which class the variable lives in. It is about wh
 
 **DERIVED DESIGN:**
 The risk taxonomy:
+
 - **Safe by default:** local variables, method parameters.
 - **Safe if immutable:** final fields, immutable objects, effectively immutable (published once, never written after).
 - **Risky:** instance fields of shared objects, static fields, objects passed to executor tasks.
@@ -100,6 +103,7 @@ The risk taxonomy:
 
 **SETUP:**
 A class has three fields:
+
 ```java
 class OrderService {
     private final OrderRepository repo;       // (1)
@@ -125,6 +129,7 @@ Risk increases from: final > instance-mutable > static-mutable. Static mutable f
 > Shared state risk analysis is like plumbing inspection. A plumber inspects a building for pipes that carry water (mutable state) vs. pipes that are dry/decorative (immutable/unused). For water-carrying pipes: are they properly sealed (synchronized)? Are there valves controlling flow (lock guards)? Are there pipes with no shutoff valve accessible to multiple outlets simultaneously (unguarded shared fields)? The plumber does not need to trace every drop of water. They pattern-match: "unlabeled pipe entering a shared junction with no valve = risk."
 
 Element mapping:
+
 - **Water pipe** = mutable field
 - **Sealed pipe** = synchronized access
 - **No shutoff valve** = no guard on shared field
@@ -150,6 +155,7 @@ Map each field to its risk category: heap vs. stack, mutable vs. immutable, publ
 The JVM memory model makes sharing the default (all objects are heap-allocated, all heap is potentially shared). Languages like Rust take the opposite approach: sharing requires explicit opt-in (`Arc<T>`, `Mutex<T>`), and the type system enforces the synchronization invariants at compile time. Shared state risk intuition is the human substitute for what Rust's borrow checker does statically. Understanding this tradeoff motivates the argument for `@GuardedBy` annotations: they are compiler hints toward a direction Rust took fully.
 
 **Expert Thinking Cues:**
+
 - "This is a mutable instance field in a shared object. What is its guardian?"
 - "This method does a compound operation (check, then act). Is it atomic?"
 - "This lambda captures a mutable local variable. If this lambda is submitted to an executor, that variable becomes shared."
@@ -159,6 +165,7 @@ The JVM memory model makes sharing the default (all objects are heap-allocated, 
 ### ⚙️ How It Works (Mechanism)
 
 **RISK IDENTIFICATION PATTERN:**
+
 ```java
 // Risk analysis: annotate mentally as you read
 
@@ -190,6 +197,7 @@ class PriceCache {
 ```
 
 **LAMBDA CAPTURE TRAP:**
+
 ```java
 // BAD: lambda captures mutable variable -> shared state!
 int count = 0;
@@ -211,6 +219,7 @@ Future<Integer> f = executor.submit(() -> computeValue());
 ### 🔄 The Complete Picture - End-to-End Flow
 
 **SHARED STATE RISK TRIAGE:**
+
 ```
 Read a field declaration
         |
@@ -229,6 +238,7 @@ Read a field declaration
 ```
 
 **MOST COMMON RISK PATTERNS:**
+
 - Static mutable fields (global shared state)
 - Mutable fields in Spring singletons
 - Lambda captures of mutable variables
@@ -242,26 +252,26 @@ At scale, escape analysis is harder. Objects pass through many layers (DTO -> se
 
 ### ⚖️ Comparison Table
 
-| State Category | Risk Level | Detection | Mitigation |
-|---|---|---|---|
-| Local variable | None | Obvious | None needed |
-| Method parameter | None | Obvious | None needed |
-| Final + immutable field | None | Check immutability | None needed |
-| Final + mutable reference | Medium | Check referenced object | Synchronize or use concurrent type |
-| Mutable instance field (shared object) | High | Check object sharing | Synchronize, volatile, or AtomicXxx |
-| Mutable static field | Very High | Grep for `static` non-final | Remove or synchronize |
-| Lambda-captured mutable var | High | Code review | AtomicXxx or pass as parameter |
+| State Category                         | Risk Level | Detection                   | Mitigation                          |
+| -------------------------------------- | ---------- | --------------------------- | ----------------------------------- |
+| Local variable                         | None       | Obvious                     | None needed                         |
+| Method parameter                       | None       | Obvious                     | None needed                         |
+| Final + immutable field                | None       | Check immutability          | None needed                         |
+| Final + mutable reference              | Medium     | Check referenced object     | Synchronize or use concurrent type  |
+| Mutable instance field (shared object) | High       | Check object sharing        | Synchronize, volatile, or AtomicXxx |
+| Mutable static field                   | Very High  | Grep for `static` non-final | Remove or synchronize               |
+| Lambda-captured mutable var            | High       | Code review                 | AtomicXxx or pass as parameter      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`private` fields are thread-safe" | `private` means encapsulated within the class, not thread-safe. If the class instance is shared across threads, all its private fields are shared. |
-| "Reading a field is always safe" | Reading a field without synchronization may return a stale value (visibility bug). The JMM only guarantees visibility when a happens-before chain exists. |
-| "If I never expose the field, it's safe" | An unexposed field can still be accessed by methods called from multiple threads. Encapsulation protects from external access, not from internal concurrent access. |
-| "Synchronized methods cover all shared state" | A synchronized method protects code executing within it. State modified outside any synchronized block (e.g., in a constructor, or in a non-synchronized method) is not protected. |
+| Misconception                                      | Reality                                                                                                                                                                                                                                             |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`private` fields are thread-safe"                 | `private` means encapsulated within the class, not thread-safe. If the class instance is shared across threads, all its private fields are shared.                                                                                                  |
+| "Reading a field is always safe"                   | Reading a field without synchronization may return a stale value (visibility bug). The JMM only guarantees visibility when a happens-before chain exists.                                                                                           |
+| "If I never expose the field, it's safe"           | An unexposed field can still be accessed by methods called from multiple threads. Encapsulation protects from external access, not from internal concurrent access.                                                                                 |
+| "Synchronized methods cover all shared state"      | A synchronized method protects code executing within it. State modified outside any synchronized block (e.g., in a constructor, or in a non-synchronized method) is not protected.                                                                  |
 | "Immutable objects never cause concurrency issues" | Immutable objects themselves are safe. But the container holding a reference to an immutable object may not be. If `final Map<K,V> m` has values that are immutable but the map itself is `HashMap`, concurrent writes to the map are still a race. |
 
 ---
@@ -272,13 +282,16 @@ At scale, escape analysis is harder. Objects pass through many layers (DTO -> se
 **Symptom:** Counter values are incorrect in high-concurrency scenarios. Results vary between runs. Heap analysis shows counter field lower than expected.
 **Root Cause:** `private static int counter = 0` incremented with `counter++` (non-atomic: read, add, write) from multiple threads.
 **Diagnostic:**
+
 ```bash
 # Find all non-final static fields (candidates for shared state)
 grep -rn "private static [^f]" src/ | grep -v "final\|Logger"
 # ThreadSanitizer equivalent for JVM: jcstress
 mvn verify -pl jcstress-tests -Dtest=StaticCounterTest
 ```
+
 **Fix:**
+
 ```java
 // BAD: non-atomic static counter
 private static int counter = 0;
@@ -289,6 +302,7 @@ private static final AtomicInteger counter =
     new AtomicInteger(0);
 public void record() { counter.incrementAndGet(); }
 ```
+
 **Prevention:** All mutable static fields should use atomic types or be synchronized. Treat static fields as global shared state.
 
 ---
@@ -297,12 +311,15 @@ public void record() { counter.incrementAndGet(); }
 **Symptom:** `ConcurrentModificationException` during iteration. Or: infinite loop in `HashMap.get()` (Java 6 specific). Or: keys returned that were never inserted.
 **Root Cause:** `HashMap` is not thread-safe. Concurrent `put()` operations can corrupt the internal hash chain.
 **Diagnostic:**
+
 ```bash
 # Find all HashMap fields that may be shared
 grep -rn "HashMap\|new HashMap" src/ | \
   grep -v "local\|method\|final.*Map.*=.*new" | head -20
 ```
+
 **Fix:**
+
 ```java
 // BAD: HashMap in shared context
 private Map<String, Session> sessions = new HashMap<>();
@@ -311,6 +328,7 @@ private Map<String, Session> sessions = new HashMap<>();
 private final Map<String, Session> sessions =
     new ConcurrentHashMap<>();
 ```
+
 **Prevention:** Any `Map` field in a class that might be shared across threads must be `ConcurrentHashMap`, not `HashMap`. Use static analysis (SpotBugs) to flag this pattern.
 
 ---
@@ -319,13 +337,16 @@ private final Map<String, Session> sessions =
 **Symptom:** An object is partially initialized when accessed by another thread. Fields appear as `null` or `0` despite being set in constructor.
 **Root Cause:** The object's reference escapes during construction (e.g., `this` is published to another thread inside the constructor, or the object is stored in a shared field before the constructor completes).
 **Diagnostic:**
+
 ```bash
 # Find this-escape patterns: 'this' passed inside constructor
 grep -rn "new Thread\|executor.submit\|EventBus" src/ | \
   grep -v "//" | head -20
 # Check: is any of these called from within a constructor?
 ```
+
 **Fix:**
+
 ```java
 // BAD: 'this' escapes during construction
 class EventListener {
@@ -341,6 +362,7 @@ class EventListener {
     void start() { bus.register(this); } // after full init
 }
 ```
+
 **Prevention:** Never publish `this` or start threads inside a constructor.
 
 ---
@@ -348,15 +370,18 @@ class EventListener {
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JCC-001 - Thread Safety]] - the foundational concept
 - [[JCC-002 - Race Conditions]] - the failure mode of missing synchronization
 - [[JCC-020 - Java Memory Model (JMM)]] - visibility rules for shared state
 
 **Builds On This (learn these next):**
+
 - [[JCC-055 - Concurrency-First Thinking]] - applying intuition at design time
 - [[JCC-057 - Thread Safety Trade-off Framing]] - choosing the right mechanism
 
 **Alternatives / Comparisons:**
+
 - [[JCC-014 - volatile]] - the minimal synchronization for visibility-only shared state
 
 ---
@@ -380,6 +405,7 @@ class EventListener {
 ```
 
 **If you remember only 3 things:**
+
 1. Heap = potentially shared. Stack (local variables) = always safe.
 2. Risk categories: final field (low), mutable instance field in shared object (high), mutable static field (very high).
 3. Compound operations (check-then-act, read-modify-write) on shared state are always race conditions without atomicity.
@@ -395,6 +421,7 @@ class EventListener {
 Risk identification requires a taxonomy of what is risky. Security engineers use STRIDE (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege) to categorize threats. Concurrency risk has its own taxonomy: heap vs. stack, mutable vs. immutable, published vs. confined, guarded vs. unguarded, simple vs. compound operation. Having a named taxonomy turns an intimidating open-ended analysis into a bounded checklist.
 
 **Where else this pattern appears:**
+
 - **Rust borrow checker:** Rust's type system encodes the shared state risk taxonomy at compile time. `&T` (shared reference) = read-only. `&mut T` (mutable reference) = exclusive, no sharing. `Arc<Mutex<T>>` = shared + mutable + guarded. The borrow checker is a formalization of the same intuition, enforced automatically.
 - **SQL NULL handling:** SQL developers learn to scan for `NULL`-able columns as a risk category - any comparison, aggregation, or join involving `NULL` has non-obvious behavior. The skill of "spotting NULLs" is the same pattern-matching behavior as "spotting shared mutable state."
 - **React state management:** React developers learn to identify which component state is "shared upward" (lifted state, Redux store) vs. "local" (useState). Shared state requires disciplined update patterns (actions, reducers). Same taxonomy: local vs. shared, immutable vs. mutable.
@@ -410,10 +437,10 @@ The most dangerous shared state in Java is not in the code you write - it is in 
 ### 🧠 Think About This Before We Continue
 
 **Q1 (E - First Principles):** A `final` field in Java ensures that the field's value is visible to all threads after construction (JMM guarantee for `final` fields). But what if the `final` field holds a reference to a mutable object, like `final List<String> items`? Is `items` thread-safe? What exactly does `final` guarantee and what does it NOT guarantee?
-*Hint:* `final` guarantees that the REFERENCE stored in the field is visible after construction. It says nothing about the state of the object that the reference points to. What happens if another thread calls `items.add()` after construction?
+_Hint:_ `final` guarantees that the REFERENCE stored in the field is visible after construction. It says nothing about the state of the object that the reference points to. What happens if another thread calls `items.add()` after construction?
 
 **Q2 (B - Scale):** At scale (10,000 concurrent users), a shared `HashMap` cache in a Spring singleton service will exhibit what failure modes? Describe two different observable symptoms and explain which race condition produces each.
-*Hint:* `HashMap` under concurrent modification: (1) `ConcurrentModificationException` during iteration, (2) infinite loop in `get()` in Java 6 (resize creates circular list), (3) lost updates (two threads put simultaneously; one write is lost). Which of these appears at high concurrency vs. low concurrency?
+_Hint:_ `HashMap` under concurrent modification: (1) `ConcurrentModificationException` during iteration, (2) infinite loop in `get()` in Java 6 (resize creates circular list), (3) lost updates (two threads put simultaneously; one write is lost). Which of these appears at high concurrency vs. low concurrency?
 
 **Q3 (C - Design Trade-off):** Immutability eliminates shared state risk entirely. Why, then, is not all Java code written with immutable objects? What are the costs of immutability that make mutable shared state (with synchronization) a reasonable trade-off in some scenarios?
-*Hint:* Object allocation rate, garbage collection pressure, copying cost for large objects (e.g., copying a 10MB buffer to make it immutable). When does the cost of immutability exceed the synchronization overhead?
+_Hint:_ Object allocation rate, garbage collection pressure, copying cost for large objects (e.g., copying a 10MB buffer to make it immutable). When does the cost of immutability exceed the synchronization overhead?

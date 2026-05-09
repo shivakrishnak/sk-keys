@@ -28,10 +28,10 @@ permalink: /jcc/thread-safety-trade-off-framing/
 
 ⚡ TL;DR - Thread safety trade-off framing is the discipline of evaluating four competing mechanisms (immutability, confinement, synchronization, lock-free) against correctness, performance, and maintainability for a given access pattern.
 
-| Metadata | | |
-|:---|:---|:---|
-| **Depends on:** | JCC-001, JCC-002, JCC-056, JCC-055 | |
-| **Related:** | JCC-055, JCC-056, JCC-046 | |
+| Metadata        |                                    |     |
+| :-------------- | :--------------------------------- | :-- |
+| **Depends on:** | JCC-001, JCC-002, JCC-056, JCC-055 |     |
+| **Related:**    | JCC-055, JCC-056, JCC-046          |     |
 
 ---
 
@@ -63,6 +63,7 @@ Goetz's JCIP (2006) provides the first systematic framework: four thread-safety 
 To choose the right thread-safety mechanism, ask: can this state be immutable? If not, can it be confined? If not, can it use lock-free atomics? If not, use synchronization.
 
 **One analogy:**
+
 > Thread safety mechanisms are like access control in a library. Immutability = publish-only reference books: everyone reads the same book, nobody can change it. Confinement = private study room: only you access your own copy. Lock-free = reservation kiosk: atomic self-service without a human mediator. Synchronization = librarian checkout: one person at a time, but everyone can eventually access any book. Choose from top to bottom: simpler mechanisms are better when they fit.
 
 **One insight:**
@@ -73,6 +74,7 @@ The correct framing question is not "which mechanism is fastest?" but "which mec
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. **Immutability eliminates the problem:** No concurrent write = no race condition. Zero synchronization overhead. The gold standard.
 2. **Confinement prevents sharing:** Thread-local state has no race conditions because only one thread can see it. Near-zero overhead when feasible.
 3. **Synchronization serializes access:** Mutual exclusion guarantees safety at the cost of serialization. Throughput bounded by lock hold time.
@@ -80,6 +82,7 @@ The correct framing question is not "which mechanism is fastest?" but "which mec
 
 **DERIVED DESIGN:**
 Decision tree (in order of preference):
+
 ```
 Can this state be final/immutable?
   YES -> use immutability (@Immutable, record, final)
@@ -106,6 +109,7 @@ Can this state be final/immutable?
 
 **SETUP:**
 An application has three shared state scenarios:
+
 1. A `Currency` value object shared across threads.
 2. A per-request `RequestContext` holding user ID and trace ID.
 3. A `RateLimiter` counting requests per second.
@@ -131,6 +135,7 @@ All three scenarios are "thread-safe" in their chosen approach. But the mechanis
 > Thread safety trade-off framing is like choosing a data structure based on access pattern. An engineer doesn't use `LinkedList` for random access or `HashMap` for ordered iteration. They map the access pattern (random access, ordered traversal, key lookup) to the right data structure. Thread safety mechanisms are a similar choice: map the concurrency access pattern (read-only, per-thread, simple RMW, compound operations) to the right mechanism (immutable, confined, atomic, synchronized).
 
 Element mapping:
+
 - **Random access** = concurrent increment/decrement (simple RMW) -> `AtomicLong`
 - **Ordered iteration** = compound operations needing invariants -> `synchronized`
 - **Key lookup** = concurrent map with independent key access -> `ConcurrentHashMap`
@@ -155,6 +160,7 @@ Each mechanism has a performance profile. Immutability: zero overhead. Confineme
 The four-mechanism framework maps directly to the cost model of the underlying hardware. Immutability and confinement have zero hardware cost because no memory barrier or atomic instruction is needed. CAS (lock-free) uses a single hardware atomic instruction (`LOCK CMPXCHG` on x86). Synchronized uses OS mutex (via `futex` on Linux): involves kernel syscall when contended. The mechanism choice is ultimately a hardware cost choice. `LongAdder` over `AtomicLong` under high contention is the recognition that N threads CAS-ing one variable is O(N) contention - shard the counter and aggregate on read (striped counter, N padded cells).
 
 **Expert Thinking Cues:**
+
 - "What is the read-to-write ratio? Read-heavy: optimize reads. Write-heavy: minimize lock hold time."
 - "Is this a single operation or a compound operation spanning multiple state variables?"
 - "Is this counter incremented by many threads simultaneously? `LongAdder` over `AtomicLong`."
@@ -164,6 +170,7 @@ The four-mechanism framework maps directly to the cost model of the underlying h
 ### ⚙️ How It Works (Mechanism)
 
 **MECHANISM COMPARISON IN CODE:**
+
 ```java
 // IMMUTABILITY: final class, all final fields
 public final class Currency {
@@ -206,6 +213,7 @@ public void transfer(int amount, Account to) {
 ```
 
 **DECISION TREE IN CODE REVIEW:**
+
 ```java
 // STEP 1: Can it be immutable?
 // record: all fields final, cannot be modified
@@ -236,6 +244,7 @@ synchronized (this) {
 ### 🔄 The Complete Picture - End-to-End Flow
 
 **TRADE-OFF EVALUATION PROCESS:**
+
 ```
 Identify shared state variable X
         |
@@ -269,27 +278,27 @@ At 1 thread: all mechanisms are equivalent (no contention). At 16 threads: synch
 
 ### ⚖️ Comparison Table
 
-| Mechanism | Correctness | Throughput | Complexity | Java Types |
-|---|---|---|---|---|
-| Immutability | Perfect | Maximum (zero overhead) | Low | `final`, `record`, `@Immutable` |
-| Confinement | Perfect | Near-maximum | Low | `ThreadLocal`, `ScopedValue` |
-| Lock-Free (Atomic) | Correct | High (CAS cost) | Medium | `AtomicLong`, `LongAdder`, `VarHandle` |
-| synchronized | Correct | Degrades w/ contention | Low | `synchronized`, intrinsic lock |
-| ReentrantLock | Correct | Similar to synchronized | Medium | `ReentrantLock`, fair/timeout options |
-| CopyOnWriteArrayList | Correct | Read-optimal | Low | `CopyOnWriteArrayList` |
-| ConcurrentHashMap | Correct | High (segment locks) | Low | `ConcurrentHashMap` |
+| Mechanism            | Correctness | Throughput              | Complexity | Java Types                             |
+| -------------------- | ----------- | ----------------------- | ---------- | -------------------------------------- |
+| Immutability         | Perfect     | Maximum (zero overhead) | Low        | `final`, `record`, `@Immutable`        |
+| Confinement          | Perfect     | Near-maximum            | Low        | `ThreadLocal`, `ScopedValue`           |
+| Lock-Free (Atomic)   | Correct     | High (CAS cost)         | Medium     | `AtomicLong`, `LongAdder`, `VarHandle` |
+| synchronized         | Correct     | Degrades w/ contention  | Low        | `synchronized`, intrinsic lock         |
+| ReentrantLock        | Correct     | Similar to synchronized | Medium     | `ReentrantLock`, fair/timeout options  |
+| CopyOnWriteArrayList | Correct     | Read-optimal            | Low        | `CopyOnWriteArrayList`                 |
+| ConcurrentHashMap    | Correct     | High (segment locks)    | Low        | `ConcurrentHashMap`                    |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Lock-free is always faster than synchronized" | `AtomicLong.incrementAndGet()` is ~10ns. Uncontended `synchronized` is ~20ns. Under high contention: lock-free wins. Under low contention: synchronized may be simpler with negligible overhead. |
-| "CopyOnWriteArrayList is better than synchronized ArrayList" | `CopyOnWriteArrayList` copies the ENTIRE array on every write (O(N)). For write-heavy workloads, it is dramatically slower. It excels only when reads dominate writes by a large margin (e.g., event listener lists). |
-| "volatile is a replacement for synchronized" | `volatile` provides visibility only. It does NOT provide atomicity for compound operations. `volatile int counter; counter++` is three operations (read, add, write) and is NOT atomic. |
-| "Synchronized methods are always thread-safe" | Synchronized methods serialize access within the object. If the object delegates to an unsynchronized helper or calls external code, those external calls are not protected. Thread-safety is a whole-object property. |
-| "ThreadLocal is always thread-safe" | `ThreadLocal` is thread-safe for access (each thread sees its own value). But if the value stored in `ThreadLocal` is a mutable object that is later shared (e.g., passed to another thread), the shared object is not protected. |
+| Misconception                                                | Reality                                                                                                                                                                                                                           |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Lock-free is always faster than synchronized"               | `AtomicLong.incrementAndGet()` is ~10ns. Uncontended `synchronized` is ~20ns. Under high contention: lock-free wins. Under low contention: synchronized may be simpler with negligible overhead.                                  |
+| "CopyOnWriteArrayList is better than synchronized ArrayList" | `CopyOnWriteArrayList` copies the ENTIRE array on every write (O(N)). For write-heavy workloads, it is dramatically slower. It excels only when reads dominate writes by a large margin (e.g., event listener lists).             |
+| "volatile is a replacement for synchronized"                 | `volatile` provides visibility only. It does NOT provide atomicity for compound operations. `volatile int counter; counter++` is three operations (read, add, write) and is NOT atomic.                                           |
+| "Synchronized methods are always thread-safe"                | Synchronized methods serialize access within the object. If the object delegates to an unsynchronized helper or calls external code, those external calls are not protected. Thread-safety is a whole-object property.            |
+| "ThreadLocal is always thread-safe"                          | `ThreadLocal` is thread-safe for access (each thread sees its own value). But if the value stored in `ThreadLocal` is a mutable object that is later shared (e.g., passed to another thread), the shared object is not protected. |
 
 ---
 
@@ -299,13 +308,16 @@ At 1 thread: all mechanisms are equivalent (no contention). At 16 threads: synch
 **Symptom:** High garbage collection activity. Heap grows quickly. Write latency degrades with list size.
 **Root Cause:** `CopyOnWriteArrayList` copies the entire backing array on every `add()` or `remove()`. Under frequent writes on a large list, this creates O(N) allocation per write.
 **Diagnostic:**
+
 ```bash
 # GC log analysis: frequent full GC due to large arrays
 -Xlog:gc*:gc.log
 # Heap allocation profiler: find CopyOnWriteArrayList copies
 asprof -e alloc -d 30 <pid> | grep CopyOnWrite
 ```
+
 **Fix:**
+
 ```java
 // BAD: CopyOnWriteArrayList for write-heavy list
 private final List<LogEntry> log =
@@ -316,6 +328,7 @@ private final List<LogEntry> log = new ArrayList<>();
 // synchronized on writes and reads; or use
 // ConcurrentLinkedDeque for FIFO access
 ```
+
 **Prevention:** Use `CopyOnWriteArrayList` only for read-heavy, write-rare patterns (e.g., event listener lists with <5 writes/hour, thousands of reads/second).
 
 ---
@@ -324,12 +337,15 @@ private final List<LogEntry> log = new ArrayList<>();
 **Symptom:** Counter increments are lost. Final count is less than expected. Happens under high concurrency.
 **Root Cause:** `volatile` ensures visibility but not atomicity. `counter++` is three JVM bytecodes (read, add, write). Two threads can both read the same value, both add, and both write - one write is lost.
 **Diagnostic:**
+
 ```bash
 # jcstress to detect lost update
 mvn verify -pl jcstress-tests -Dtest=VolatileCounterTest
 # Expected: 2*N; Observed: < 2*N due to lost updates
 ```
+
 **Fix:**
+
 ```java
 // BAD: volatile does not make ++ atomic
 private volatile int counter = 0;
@@ -339,6 +355,7 @@ public void increment() { counter++; } // RACE!
 private final AtomicInteger counter = new AtomicInteger();
 public void increment() { counter.incrementAndGet(); }
 ```
+
 **Prevention:** Use `AtomicXxx` for any read-modify-write pattern. Reserve `volatile` for pure write-then-read patterns (flags, published references).
 
 ---
@@ -347,6 +364,7 @@ public void increment() { counter.incrementAndGet(); }
 **Symptom:** Contention on a coarse-grained lock bottlenecks unrelated operations. Threads waiting for lock to access state they don't actually compete for.
 **Root Cause:** A single lock guards multiple independent state variables. Threads that need only one variable must wait for threads accessing an unrelated variable.
 **Diagnostic:**
+
 ```bash
 # async-profiler lock mode: show which locks are contended
 asprof -e lock -d 30 <pid>
@@ -354,7 +372,9 @@ asprof -e lock -d 30 <pid>
 jfr print --events jdk.JavaMonitorEnter recording.jfr \
   | grep "duration > 1ms"
 ```
+
 **Fix:**
+
 ```java
 // BAD: coarse lock guards unrelated state
 synchronized (this) {
@@ -369,6 +389,7 @@ private final AtomicLong orderCount = new AtomicLong();
 private final ConcurrentHashMap<K,V> priceCache = ...;
 // Each variable uses its own synchronization mechanism
 ```
+
 **Prevention:** Identify independent state variables and assign separate guards. Reduce lock granularity by splitting coarse-grained locks.
 
 ---
@@ -376,15 +397,18 @@ private final ConcurrentHashMap<K,V> priceCache = ...;
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JCC-001 - Thread Safety]] - the fundamental concept
 - [[JCC-056 - Shared State Risk Intuition]] - identifying which state needs protection
 - [[JCC-055 - Concurrency-First Thinking]] - the design-time discipline
 
 **Builds On This (learn these next):**
+
 - [[JCC-046 - Concurrency Architecture Patterns in Java]] - applying trade-offs at system level
 - [[JCC-049 - Lock-Free Algorithm Strategy]] - deep dive into lock-free trade-offs
 
 **Alternatives / Comparisons:**
+
 - [[JCC-013 - synchronized]] - the synchronized mechanism in detail
 - [[JCC-022 - CAS (Compare-And-Swap)]] - the lock-free mechanism in detail
 
@@ -411,6 +435,7 @@ private final ConcurrentHashMap<K,V> priceCache = ...;
 ```
 
 **If you remember only 3 things:**
+
 1. Decision order: Immutability > Confinement > Lock-Free > Synchronized.
 2. `volatile` = visibility only. `AtomicXxx` = atomic simple operations. `synchronized` = compound operations.
 3. `CopyOnWriteArrayList` = read-heavy only. `LongAdder` > `AtomicLong` under high contention.
@@ -426,6 +451,7 @@ private final ConcurrentHashMap<K,V> priceCache = ...;
 Every concurrency mechanism is a trade-off between safety, performance, and complexity. The discipline of explicitly evaluating these trade-offs before choosing a mechanism - rather than defaulting to "just add synchronized" - is what separates principled concurrent system design from ad hoc debugging. The same discipline applies to any resource management problem: lock granularity, transaction isolation level, cache invalidation strategy. When you see a performance problem, the first question is always "what is the trade-off I made that created this bottleneck?"
 
 **Where else this pattern appears:**
+
 - **Database isolation levels:** READ UNCOMMITTED (no protection) < READ COMMITTED < REPEATABLE READ < SERIALIZABLE (maximum protection). The choice maps directly to the thread safety mechanism choice: more protection = more overhead. Database architects explicitly choose isolation levels based on consistency requirements vs. throughput. Same trade-off framing.
 - **Cache eviction policies:** LRU, LFU, FIFO, TTL. Each is "correct" for some access pattern, "wrong" for others. The trade-off framing: what is the access pattern? What is the cost of a cache miss? Map access pattern to the right policy.
 - **Network consistency models (CAP theorem):** Eventual consistency (AP system) vs. strong consistency (CP system) is the distributed systems analog. More protection (strong consistency) costs more (slower writes, reduced availability). Same trade-off axis.
@@ -441,10 +467,10 @@ Every concurrency mechanism is a trade-off between safety, performance, and comp
 ### 🧠 Think About This Before We Continue
 
 **Q1 (C - Design Trade-off):** A high-frequency trading system has a shared `OrderBook` that is read by 100 threads every millisecond and written by 1 thread. Which thread-safety mechanism is optimal, and why? What is the maximum acceptable write latency before the mechanism choice changes?
-*Hint:* Read-heavy, single writer. `CopyOnWriteArrayList` semantics (copy on write, lock-free reads) might fit. But what is the allocation cost per write for a large order book? What if write latency must be < 1ms?
+_Hint:_ Read-heavy, single writer. `CopyOnWriteArrayList` semantics (copy on write, lock-free reads) might fit. But what is the allocation cost per write for a large order book? What if write latency must be < 1ms?
 
 **Q2 (E - First Principles):** `synchronized` uses an intrinsic lock (object monitor). `ReentrantLock` uses an explicit lock with `lock()/unlock()`. Both provide mutual exclusion. What can `ReentrantLock` do that `synchronized` cannot? Name at least two capabilities, and describe the access pattern that requires them.
-*Hint:* Try-lock with timeout, interruptible lock acquisition, fair ordering, multiple condition variables. When would you NEED interruptible locking that synchronized cannot provide?
+_Hint:_ Try-lock with timeout, interruptible lock acquisition, fair ordering, multiple condition variables. When would you NEED interruptible locking that synchronized cannot provide?
 
 **Q3 (A - System Interaction):** A `ConcurrentHashMap` is used as a shared cache. Thread A calls `map.get("key")` and gets `null`, so it computes the value and calls `map.put("key", value)`. Thread B also calls `map.get("key")` at the same time, gets `null`, and also computes and puts. What race condition exists, and what is the correct API to use?
-*Hint:* The sequence `get -> null -> compute -> put` is three separate operations. Between `get` returning null and `put`, another thread can put. `computeIfAbsent` is atomic for this pattern. What does `computeIfAbsent` guarantee that `get + put` does not?
+_Hint:_ The sequence `get -> null -> compute -> put` is three separate operations. Between `get` returning null and `put`, another thread can put. `computeIfAbsent` is atomic for this pattern. What does `computeIfAbsent` guarantee that `get + put` does not?

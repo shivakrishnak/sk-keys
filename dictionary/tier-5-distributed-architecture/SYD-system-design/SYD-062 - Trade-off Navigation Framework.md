@@ -29,11 +29,11 @@ permalink: /syd/trade-off-navigation-framework/
 communicating design trade-offs so decisions are defensible, explicit,
 and context-aware.
 
-| Field | Value |
-|---|---|
+| Field          | Value                     |
+| -------------- | ------------------------- |
 | **Depends on** | SYD-003, SYD-033, SYD-053 |
-| **Used by** | - |
-| **Related** | SYD-057, SYD-060, SYD-061 |
+| **Used by**    | -                         |
+| **Related**    | SYD-057, SYD-060, SYD-061 |
 
 ---
 
@@ -102,6 +102,7 @@ from a codebase.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Resources are finite: time, money, compute, memory, and
    engineering hours cannot all be maximised simultaneously.
 2. Physical laws constrain systems: the speed of light sets latency
@@ -176,6 +177,7 @@ it.
 > the current setting.
 
 Element mapping:
+
 - **Dials** = trade-off axes (latency, throughput, consistency,
   cost, simplicity, durability)
 - **Checklist** = the trade-off evaluation template
@@ -228,6 +230,7 @@ primary constraint given business context - a question with a
 knowable answer.
 
 **Expert Thinking Cues:**
+
 - Ask "what breaks first?" to identify the primary axis.
 - Ask "what is the cost of being wrong?" to evaluate reversibility
   (Type 1 vs Type 2 decisions).
@@ -256,6 +259,7 @@ this decision, where on each axis does the design sit, and is
 that position intentional?
 
 **THE 7-STEP EVALUATION PROCESS:**
+
 - Step 1 - **Name the decision** (one sentence)
 - Step 2 - **Identify active axes** (2-4 axes in tension)
 - Step 3 - **State the context** (traffic, SLOs, failure budget)
@@ -268,6 +272,7 @@ that position intentional?
 
 **DECISION REVERSIBILITY:**
 Before selecting a position, classify the decision:
+
 - **Type 1** (one-way door): cannot be undone without major cost -
   database engine choice, wire protocol, data model. Apply the
   full 7-step process and involve more reviewers.
@@ -275,6 +280,7 @@ Before selecting a position, classify the decision:
   batch size, replication factor. Decide faster, document lightly.
 
 **CONTEXT FACTORS THAT SHIFT THE OPTIMAL POSITION:**
+
 - Read:write ratio shifts Axis 5 (durability vs. write speed)
 - P99 SLO tightness shifts Axes 1 and 2
 - Data loss tolerance shifts Axis 5 (durability end)
@@ -347,6 +353,7 @@ design.
 **How to document a trade-off decision (ADR pattern):**
 
 **BAD - No explicit trade-off:**
+
 ```markdown
 ## Decision: Use Redis for session storage
 
@@ -354,36 +361,43 @@ We chose Redis because it is fast.
 ```
 
 **GOOD - Trade-off-navigated ADR:**
+
 ```markdown
 ## ADR-007: Session Storage Engine
 
 **Decision:** Redis (single-leader, in-memory, AP mode)
 
 **Active axes:**
+
 - Consistency vs Availability (PRIMARY)
 - Durability vs Write Speed
 
 **Context:**
+
 - SLO: 99.9% availability, <5ms p99 session read
 - Failure priority: stale session > failed login
 - Write:read ratio = 1:50 (read-heavy)
 
 **Position:**
+
 - Consistency: LOW (eventual; stale reads acceptable)
 - Availability: HIGH (Redis Sentinel, auto-failover)
 - Durability: MEDIUM (AOF on, snapshot hourly)
 - Speed: HIGH (in-memory, sub-ms reads)
 
 **What we gave up:**
+
 - Strong consistency after partition
 - Durability of last ~1 second of writes on crash
 
 **Revisit trigger:**
+
 - If sessions become authoritative for payments
 - If data loss SLO tightens to 0 seconds
 ```
 
 **Trade-off scoring matrix (Python template):**
+
 ```python
 # trade_off_score.py
 # Score each option: 1=low, 2=medium, 3=high
@@ -418,6 +432,7 @@ for name, scores in rank(options, primary):
 ```
 
 **How to test / verify correctness:**
+
 - Simulate the partition scenario: does the system behave as
   documented (stale reads, not errors)?
 - Run a chaos test: kill one node and confirm availability or
@@ -429,27 +444,27 @@ for name, scores in rank(options, primary):
 
 ### ⚖️ Comparison Table
 
-| Approach | Trade-off Explicit? | Speed | Revisitable? | Alignment |
-|---|---|---|---|---|
-| **No framework (gut feel)** | No | Fast | No | Low |
-| **CAP-only framing** | Partial | Medium | Partial | Medium |
-| **RFC / design doc** | Partial | Slow | Yes | High |
-| **ADR (lightweight)** | Yes | Medium | Yes | High |
-| **Trade-off framework** | Yes | Medium | Yes + trigger | High |
-| **Formal decision matrix** | Yes | Slow | Yes | Very High |
+| Approach                    | Trade-off Explicit? | Speed  | Revisitable?  | Alignment |
+| --------------------------- | ------------------- | ------ | ------------- | --------- |
+| **No framework (gut feel)** | No                  | Fast   | No            | Low       |
+| **CAP-only framing**        | Partial             | Medium | Partial       | Medium    |
+| **RFC / design doc**        | Partial             | Slow   | Yes           | High      |
+| **ADR (lightweight)**       | Yes                 | Medium | Yes           | High      |
+| **Trade-off framework**     | Yes                 | Medium | Yes + trigger | High      |
+| **Formal decision matrix**  | Yes                 | Slow   | Yes           | Very High |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "There is a right answer in system design" | There are only context-appropriate positions. What is right for Google scale is wrong for a 5-person startup. |
-| "CAP theorem covers all trade-offs" | CAP covers one axis only. Real systems have 5+ active axes simultaneously. |
-| "Documenting trade-offs slows you down" | Undocumented trade-offs slow you down 6 months later when nobody remembers what was sacrificed. |
-| "Once the decision is made, we are done" | Trade-offs have revisit triggers. A choice valid at 1K users may be wrong at 1M users. |
-| "Trade-off navigation is only for seniors" | Junior engineers make trade-offs too - they just do not name them. Naming them is the skill that makes decisions visible for review. |
-| "Eventual consistency is always worse" | For social feeds, recommendations, and analytics, eventual consistency is the correct choice - it enables the availability and throughput the business needs. |
+| Misconception                              | Reality                                                                                                                                                       |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "There is a right answer in system design" | There are only context-appropriate positions. What is right for Google scale is wrong for a 5-person startup.                                                 |
+| "CAP theorem covers all trade-offs"        | CAP covers one axis only. Real systems have 5+ active axes simultaneously.                                                                                    |
+| "Documenting trade-offs slows you down"    | Undocumented trade-offs slow you down 6 months later when nobody remembers what was sacrificed.                                                               |
+| "Once the decision is made, we are done"   | Trade-offs have revisit triggers. A choice valid at 1K users may be wrong at 1M users.                                                                        |
+| "Trade-off navigation is only for seniors" | Junior engineers make trade-offs too - they just do not name them. Naming them is the skill that makes decisions visible for review.                          |
+| "Eventual consistency is always worse"     | For social feeds, recommendations, and analytics, eventual consistency is the correct choice - it enables the availability and throughput the business needs. |
 
 ---
 
@@ -465,6 +480,7 @@ throughput ceiling.
 axes. One axis was implicitly assumed to be non-critical.
 
 **Diagnostic:**
+
 ```bash
 # Look for undocumented decisions in git history
 git log --all --oneline --grep="chose\|picked\|switch to"
@@ -476,16 +492,20 @@ ls docs/adr/ 2>/dev/null | wc -l
 **Fix:**
 
 BAD:
+
 ```markdown
 # Tech decision: PostgreSQL
+
 We picked Postgres.
 ```
 
 GOOD:
+
 ```markdown
 # ADR-003: PostgreSQL for primary datastore
+
 Active axes: consistency (high), durability (high),
-             write throughput (medium)
+write throughput (medium)
 Sacrifice: write throughput above 50K TPS
 Revisit: if sustained write TPS exceeds 30K
 ```
@@ -505,6 +525,7 @@ as a bug instead of a known trade-off consequence.
 originally documented.
 
 **Diagnostic:**
+
 ```bash
 # When was the original decision made?
 git log --follow -p docs/adr/ADR-007-session-store.md \
@@ -540,11 +561,13 @@ reveals the active axis that was ignored.
 **Fix:**
 
 BAD:
+
 ```
 "Redis and Memcached are both fine for this use case."
 ```
 
 GOOD:
+
 ```
 "Redis is preferred because we need pub/sub for cache
  invalidation. If we remove the pub/sub dependency,
@@ -568,6 +591,7 @@ authentication skipped for an "internal" API.
 authentication, audit trail) are not included in the evaluation.
 
 **Diagnostic:**
+
 ```bash
 # Check for unauthenticated internal endpoints
 grep -r "permitAll\|no-auth\|skip_auth" src/
@@ -590,6 +614,7 @@ default. Require security sign-off for any axis at "low."
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[SYD-003 - How to Approach Any System Design Problem]] - the
   base framework this builds on
 - [[SYD-033 - Read-Heavy vs Write-Heavy Design]] - a concrete
@@ -598,6 +623,7 @@ default. Require security sign-off for any axis at "low."
   axis explored in depth
 
 **Builds On This (learn these next):**
+
 - [[SYD-057 - Theoretical Foundations of Scalable Systems]] -
   formal theory behind the trade-off axes
 - [[SYD-060 - Constraint-First System Design Thinking]] -
@@ -606,6 +632,7 @@ default. Require security sign-off for any axis at "low."
   which axis becomes critical
 
 **Alternatives / Comparisons:**
+
 - Architectural Decision Records (ADRs) - the documentation output
   of this framework
 - RFC (Request for Comment) process - heavier-weight alternative
@@ -651,6 +678,7 @@ default. Require security sign-off for any axis at "low."
 ```
 
 **If you remember only 3 things:**
+
 1. Name all active axes before choosing - not just the one you
    measured first.
 2. Every choice is a sacrifice - document what you gave up, not
@@ -674,6 +702,7 @@ committing to a position - not just advocating for the property
 you prefer.
 
 **Where else this pattern appears:**
+
 - **Product management:** choosing between time-to-market and
   feature completeness is the same trade-off axis problem with
   different labels. The same 7-step evaluation applies directly.
@@ -695,7 +724,7 @@ better technology. In practice, the failure mode is almost never
 "we did not know the trade-off existed" - it is "we knew, but we
 never wrote it down, so six months later nobody remembered which
 property we had sacrificed." The trade-off navigation framework is
-fundamentally a *communication and memory* tool, not an analytical
+fundamentally a _communication and memory_ tool, not an analytical
 one. The analysis is usually obvious once you name the axes. The
 hard part is creating an organisational habit of writing it down so
 future engineers - including your future self - do not have to
@@ -713,7 +742,7 @@ this within the documented trade-off, or a failure mode? What
 would you need to add to the ADR to make this question answerable
 in 30 seconds?
 
-*Hint:* Look at the difference between "eventually consistent" and
+_Hint:_ Look at the difference between "eventually consistent" and
 "bounded staleness" - the trade-off framework needs to include the
 staleness bound, not just the direction of the trade-off.
 
@@ -722,7 +751,7 @@ handles the load. At 100K RPS, you add read replicas, making the
 system AP on reads. Has the trade-off changed? How should the
 original ADR have anticipated this scale transition?
 
-*Hint:* Explore how the "revisit trigger" concept interacts with
+_Hint:_ Explore how the "revisit trigger" concept interacts with
 scale thresholds - a well-written ADR should have included a
 specific traffic condition as the trigger.
 
@@ -730,9 +759,10 @@ specific traffic condition as the trigger.
 says "use a message queue for resilience"; the other says "call
 downstream synchronously for simplicity." Both are valid positions.
 How does the trade-off navigation framework resolve the disagreement
+
 - and what specific question should the team answer before choosing?
 
-*Hint:* The framework converts "which option is better?" into "what
+_Hint:_ The framework converts "which option is better?" into "what
 is our primary constraint?" - research how identifying the primary
 constraint eliminates preference-based arguments and produces an
 answer the whole team can accept.
