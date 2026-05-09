@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-020
 title: TypeScript Strict Mode
 category: TypeScript

@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-012
 title: LlamaIndex Fundamentals
 category: RAG & Agents & LLMOps

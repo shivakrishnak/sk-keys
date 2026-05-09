@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-070
 title: Test Coverage Mental Model
 category: Testing

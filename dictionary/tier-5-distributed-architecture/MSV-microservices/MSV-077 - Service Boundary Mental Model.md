@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-077
 title: Service Boundary Mental Model
 category: Microservices

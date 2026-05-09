@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-006
 title: Angular CLI (ng new, ng generate, ng serve)
 category: Angular

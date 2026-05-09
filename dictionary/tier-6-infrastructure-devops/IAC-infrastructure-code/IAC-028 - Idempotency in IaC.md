@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-028
 title: Idempotency in IaC
 category: Infrastructure as Code

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-004
 title: The Package Management Ecosystem Map
 category: npm & Package Management

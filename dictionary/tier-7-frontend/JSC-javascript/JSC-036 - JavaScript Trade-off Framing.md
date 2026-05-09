@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-036
 title: JavaScript Trade-off Framing
 category: JavaScript

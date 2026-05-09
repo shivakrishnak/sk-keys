@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Service Locator"
 parent: "Design Patterns"

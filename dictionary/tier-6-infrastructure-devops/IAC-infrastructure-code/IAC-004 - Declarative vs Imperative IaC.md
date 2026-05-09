@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-004
 title: Declarative vs Imperative IaC
 category: Infrastructure as Code

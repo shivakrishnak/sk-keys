@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-037
 title: Formal Verification Approaches
 category: Code Quality

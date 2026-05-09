@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-001
 title: What Is npm and Package Management
 category: npm & Package Management

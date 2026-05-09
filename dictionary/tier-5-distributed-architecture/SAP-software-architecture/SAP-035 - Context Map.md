@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-035
 title: Context Map
 category: Software Architecture Patterns

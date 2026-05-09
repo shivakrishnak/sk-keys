@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-052
 title: Lock-Free Data Structures
 category: Operating Systems

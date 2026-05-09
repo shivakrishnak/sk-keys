@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-047
 title: Data Contract Strategy
 category: Data Fundamentals

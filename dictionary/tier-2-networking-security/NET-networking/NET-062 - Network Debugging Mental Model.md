@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-062
 title: Network Debugging Mental Model
 category: Networking

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-042
 title: Node.js Trade-off Framing (Single Thread Strengths/Weaknesses)
 category: Node.js

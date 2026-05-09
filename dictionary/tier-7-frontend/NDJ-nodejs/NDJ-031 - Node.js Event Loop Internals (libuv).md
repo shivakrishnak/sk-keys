@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-031
 title: Node.js Event Loop Internals (libuv)
 category: Node.js

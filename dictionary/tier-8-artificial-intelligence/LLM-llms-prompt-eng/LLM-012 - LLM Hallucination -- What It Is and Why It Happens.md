@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-012
 title: LLM Hallucination -- What It Is and Why It Happens
 category: LLMs & Prompt Engineering

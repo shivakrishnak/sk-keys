@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-022
 title: Tool Calling and Function Calling in Agents
 category: RAG & Agents & LLMOps

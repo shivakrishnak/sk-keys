@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-004
 title: The Angular Ecosystem Map (CLI, NgRx, RxJS)
 category: Angular

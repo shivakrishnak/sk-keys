@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-024
 title: LLM Quantization (GGUF, AWQ, GPTQ)
 category: LLMs & Prompt Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-024
 title: Angular Lazy Loading and Code Splitting
 category: Angular

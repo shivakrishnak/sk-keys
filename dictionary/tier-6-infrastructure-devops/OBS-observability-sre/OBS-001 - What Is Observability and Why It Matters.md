@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-001
 title: What Is Observability and Why It Matters
 category: Observability & SRE

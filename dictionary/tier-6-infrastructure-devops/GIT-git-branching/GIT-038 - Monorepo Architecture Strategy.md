@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-038
 title: Monorepo Architecture Strategy
 category: Git & Branching Strategy

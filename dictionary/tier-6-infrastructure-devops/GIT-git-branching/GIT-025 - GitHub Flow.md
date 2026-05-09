@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-025
 title: GitHub Flow
 category: Git & Branching Strategy

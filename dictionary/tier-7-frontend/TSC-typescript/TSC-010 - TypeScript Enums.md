@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-010
 title: TypeScript Enums
 category: TypeScript

@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-024
 title: Graph RAG (Knowledge Graphs + LLM)
 category: RAG & Agents & LLMOps

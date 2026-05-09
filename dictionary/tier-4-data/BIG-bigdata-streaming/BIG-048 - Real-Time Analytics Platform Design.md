@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-048
 title: Real-Time Analytics Platform Design
 category: Big Data & Streaming

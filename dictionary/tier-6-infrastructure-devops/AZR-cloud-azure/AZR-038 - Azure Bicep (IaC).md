@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-038
 title: Azure Bicep (IaC)
 category: Cloud -- Azure

@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-016
 title: Git Cherry-Pick
 category: Git & Branching Strategy

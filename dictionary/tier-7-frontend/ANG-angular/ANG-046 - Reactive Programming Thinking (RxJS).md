@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-046
 title: Reactive Programming Thinking (RxJS)
 category: Angular

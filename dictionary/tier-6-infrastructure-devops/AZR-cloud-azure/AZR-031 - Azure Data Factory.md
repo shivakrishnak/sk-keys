@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-031
 title: Azure Data Factory
 category: Cloud -- Azure

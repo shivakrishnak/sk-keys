@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-038
 title: Broken Access Control and IDOR
 category: Security

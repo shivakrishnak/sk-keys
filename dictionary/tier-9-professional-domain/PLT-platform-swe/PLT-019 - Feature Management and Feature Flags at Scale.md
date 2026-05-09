@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-019
 title: Feature Management and Feature Flags at Scale
 category: Platform & Modern SWE

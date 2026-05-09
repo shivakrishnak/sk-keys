@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-021
 title: Bundle Analysis and Size Budgets
 category: Webpack & Build Tools

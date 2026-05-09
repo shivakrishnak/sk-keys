@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-046
 title: Service Security Hardening Basics
 category: Linux

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-014
 title: Auto Scaling
 category: System Design

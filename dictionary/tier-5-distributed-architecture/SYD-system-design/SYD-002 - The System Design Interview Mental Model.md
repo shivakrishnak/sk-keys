@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-002
 title: The System Design Interview Mental Model
 category: System Design

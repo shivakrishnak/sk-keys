@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-037
 title: Modules and Packages
 category: CS Fundamentals - Paradigms

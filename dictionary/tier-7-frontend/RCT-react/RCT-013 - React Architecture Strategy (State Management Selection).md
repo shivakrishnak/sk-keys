@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-013
 title: React Architecture Strategy (State Management Selection)
 category: React

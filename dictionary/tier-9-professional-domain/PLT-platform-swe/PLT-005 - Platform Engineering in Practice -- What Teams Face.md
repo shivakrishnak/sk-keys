@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-005
 title: Platform Engineering in Practice -- What Teams Face
 category: Platform & Modern SWE

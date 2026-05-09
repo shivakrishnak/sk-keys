@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-001
 title: What Is Kubernetes and Why It Exists
 category: Kubernetes

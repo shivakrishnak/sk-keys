@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-079
 title: Deployment Pipeline Research
 category: CI/CD

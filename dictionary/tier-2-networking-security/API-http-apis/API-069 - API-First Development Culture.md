@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-069
 title: API-First Development Culture
 category: HTTP & APIs

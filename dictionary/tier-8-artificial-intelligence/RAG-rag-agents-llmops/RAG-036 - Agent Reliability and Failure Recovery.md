@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-036
 title: Agent Reliability and Failure Recovery
 category: RAG & Agents & LLMOps

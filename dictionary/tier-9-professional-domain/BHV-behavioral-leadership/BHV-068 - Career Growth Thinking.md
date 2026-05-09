@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-068
 title: Career Growth Thinking
 category: Behavioral & Leadership

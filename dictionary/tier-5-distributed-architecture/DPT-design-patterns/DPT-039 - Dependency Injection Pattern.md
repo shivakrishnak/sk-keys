@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Dependency Injection Pattern"
 parent: "Design Patterns"

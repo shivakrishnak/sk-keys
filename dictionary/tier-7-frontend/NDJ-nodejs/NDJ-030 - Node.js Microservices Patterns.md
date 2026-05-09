@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-030
 title: Node.js Microservices Patterns
 category: Node.js

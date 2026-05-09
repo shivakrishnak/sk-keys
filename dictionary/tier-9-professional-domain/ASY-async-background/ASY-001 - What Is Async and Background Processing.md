@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-001
 title: What Is Async and Background Processing
 category: Async & Background Processing

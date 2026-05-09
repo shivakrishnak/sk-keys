@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-033
 title: TypeScript ESM vs CJS Modules
 category: TypeScript

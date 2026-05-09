@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-054
 title: Neural Architecture Research
 category: AI Foundations

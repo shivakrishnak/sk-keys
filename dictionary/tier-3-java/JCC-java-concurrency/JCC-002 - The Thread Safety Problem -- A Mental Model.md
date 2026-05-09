@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-002
 title: "The Thread Safety Problem: A Mental Model"
 category: Java Concurrency

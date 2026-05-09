@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-049
 title: Prompt Engineering Mental Model
 category: LLMs & Prompt Engineering

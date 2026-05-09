@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-002
 title: The Azure Service Landscape -- A Map
 category: Cloud -- Azure

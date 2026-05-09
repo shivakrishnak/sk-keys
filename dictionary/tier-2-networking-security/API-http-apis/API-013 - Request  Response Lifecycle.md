@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-013
 title: Request / Response Lifecycle
 category: HTTP & APIs

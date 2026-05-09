@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-016
 title: AI Latency Management (Streaming, Background, Prefetch)
 category: AI Product Engineering

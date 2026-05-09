@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Thread Pool Pattern"
 parent: "Design Patterns"

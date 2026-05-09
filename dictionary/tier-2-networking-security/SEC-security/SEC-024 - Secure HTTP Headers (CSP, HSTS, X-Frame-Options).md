@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-024
 title: Secure HTTP Headers (CSP, HSTS, X-Frame-Options)
 category: Security

@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-027
 title: Message Deduplication
 category: Async & Background Processing

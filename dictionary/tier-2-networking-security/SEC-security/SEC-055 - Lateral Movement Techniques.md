@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-055
 title: Lateral Movement Techniques
 category: Security

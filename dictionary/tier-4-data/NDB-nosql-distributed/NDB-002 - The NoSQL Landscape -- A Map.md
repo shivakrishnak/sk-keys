@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-002
 title: The NoSQL Landscape -- A Map
 category: NoSQL & Distributed Databases

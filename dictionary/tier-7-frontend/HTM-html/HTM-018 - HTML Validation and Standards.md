@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-018
 title: HTML Validation and Standards
 category: HTML

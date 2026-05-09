@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-044
 title: Async Observability Mental Model
 category: Async & Background Processing

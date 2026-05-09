@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-021
 title: AI Data Privacy and Compliance (GDPR, CCPA, AI Act)
 category: AI Product Engineering

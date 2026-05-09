@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-004
 title: Structured vs Unstructured vs Semi-Structured Data
 category: Data Fundamentals

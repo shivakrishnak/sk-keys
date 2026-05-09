@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-027
 title: Node.js Testing (Jest, Mocha, Supertest)
 category: Node.js

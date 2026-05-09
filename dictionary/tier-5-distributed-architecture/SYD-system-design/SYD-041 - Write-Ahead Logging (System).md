@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-041
 title: "Write-Ahead Logging (System)"
 category: System Design

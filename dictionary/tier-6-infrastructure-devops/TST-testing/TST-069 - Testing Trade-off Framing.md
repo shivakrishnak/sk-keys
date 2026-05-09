@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-069
 title: Testing Trade-off Framing
 category: Testing

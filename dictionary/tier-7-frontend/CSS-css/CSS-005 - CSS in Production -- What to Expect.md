@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-005
 title: CSS in Production -- What to Expect
 category: CSS

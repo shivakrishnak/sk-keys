@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-039
 title: Algorithmic Trading System Research
 category: Financial Services Domain

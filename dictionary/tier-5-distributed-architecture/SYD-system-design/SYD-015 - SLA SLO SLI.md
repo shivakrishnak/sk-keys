@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-015
 title: SLA SLO SLI
 category: System Design

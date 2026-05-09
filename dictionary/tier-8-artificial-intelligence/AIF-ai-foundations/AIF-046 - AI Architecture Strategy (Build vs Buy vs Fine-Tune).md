@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-046
 title: AI Architecture Strategy (Build vs Buy vs Fine-Tune)
 category: AI Foundations

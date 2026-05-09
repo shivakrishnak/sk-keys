@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-001
 title: What Is CI/CD and Why It Matters
 category: CI/CD

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Anti-Patterns Overview"
 parent: "Design Patterns"

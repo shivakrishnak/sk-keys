@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-002
 title: The RAG Mental Model (Retrieve, Augment, Generate)
 category: RAG & Agents & LLMOps

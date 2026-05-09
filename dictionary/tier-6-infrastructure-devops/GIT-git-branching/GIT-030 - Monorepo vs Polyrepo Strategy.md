@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-030
 title: Monorepo vs Polyrepo Strategy
 category: Git & Branching Strategy

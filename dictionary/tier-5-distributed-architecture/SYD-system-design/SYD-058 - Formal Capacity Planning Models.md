@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-058
 title: Formal Capacity Planning Models
 category: System Design

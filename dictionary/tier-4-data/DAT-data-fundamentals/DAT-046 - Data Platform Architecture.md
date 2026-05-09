@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-046
 title: Data Platform Architecture
 category: Data Fundamentals

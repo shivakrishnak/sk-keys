@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-006
 title: Security Principles (OWASP, CWE, CVE)
 category: Security

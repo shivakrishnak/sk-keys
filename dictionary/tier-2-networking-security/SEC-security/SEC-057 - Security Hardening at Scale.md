@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-057
 title: Security Hardening at Scale
 category: Security

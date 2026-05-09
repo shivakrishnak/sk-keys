@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-047
 title: Privilege Escalation Patterns
 category: Security

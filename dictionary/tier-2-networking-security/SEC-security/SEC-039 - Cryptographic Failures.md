@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-039
 title: Cryptographic Failures
 category: Security

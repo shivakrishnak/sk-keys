@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-010
 title: Vite Fundamentals
 category: Webpack & Build Tools

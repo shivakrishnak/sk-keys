@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-025
 title: CSS Container Queries
 category: CSS

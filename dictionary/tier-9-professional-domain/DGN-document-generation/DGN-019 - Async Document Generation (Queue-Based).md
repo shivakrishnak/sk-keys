@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-019
 title: Async Document Generation (Queue-Based)
 category: Document Generation

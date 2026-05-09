@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-014
 title: pnpm Workspaces
 category: npm & Package Management

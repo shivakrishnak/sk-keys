@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Producer-Consumer"
 parent: "Design Patterns"

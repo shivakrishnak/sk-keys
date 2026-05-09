@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-016
 title: Micro-Frontend Architecture with React
 category: React

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-016
 title: Azure Kubernetes Service (AKS)
 category: Cloud -- Azure

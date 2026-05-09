@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-054
 title: Data Platform Selection Framework
 category: Data Fundamentals

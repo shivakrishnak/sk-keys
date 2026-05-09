@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-022
 title: Real-Time Payments (RTP, FedNow, Faster Payments)
 category: Financial Services Domain

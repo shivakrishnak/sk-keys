@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-037
 title: LLM Training Infrastructure (FSDP, DeepSpeed)
 category: LLMs & Prompt Engineering

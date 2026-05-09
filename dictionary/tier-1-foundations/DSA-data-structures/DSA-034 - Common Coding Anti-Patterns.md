@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-034
 title: Common Coding Anti-Patterns
 category: Data Structures & Algorithms

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-045
 title: Node.js Performance Intuition
 category: Node.js

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-049
 title: DNSSEC
 category: Networking

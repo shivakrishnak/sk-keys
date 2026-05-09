@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-017
 title: Node.js Database Access (Prisma, Sequelize, Knex)
 category: Node.js

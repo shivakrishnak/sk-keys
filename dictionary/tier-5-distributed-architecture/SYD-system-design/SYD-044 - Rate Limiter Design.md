@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-044
 title: Rate Limiter Design
 category: System Design

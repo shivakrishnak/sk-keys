@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-015
 title: OWASP Top 10 - Overview
 category: Security

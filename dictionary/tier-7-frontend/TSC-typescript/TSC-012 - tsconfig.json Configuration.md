@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-012
 title: tsconfig.json Configuration
 category: TypeScript

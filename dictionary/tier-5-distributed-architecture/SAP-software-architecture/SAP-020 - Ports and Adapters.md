@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-020
 title: Ports and Adapters
 category: Software Architecture Patterns

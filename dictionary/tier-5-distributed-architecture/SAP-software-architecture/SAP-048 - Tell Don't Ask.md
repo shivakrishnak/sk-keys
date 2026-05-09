@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-048
 layout: default
 title: "Tell Don't Ask"

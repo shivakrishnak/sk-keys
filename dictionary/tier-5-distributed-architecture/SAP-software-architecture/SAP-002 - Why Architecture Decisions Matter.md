@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-002
 title: Why Architecture Decisions Matter
 category: Software Architecture Patterns

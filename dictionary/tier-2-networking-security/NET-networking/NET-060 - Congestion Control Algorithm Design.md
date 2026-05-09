@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-060
 title: Congestion Control Algorithm Design
 category: Networking

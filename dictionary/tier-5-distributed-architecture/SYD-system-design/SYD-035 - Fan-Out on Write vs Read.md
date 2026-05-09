@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-035
 title: "Fan-Out on Write vs Read"
 category: System Design

@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-006
 title: Git Basics (init, clone, add, commit, push, pull)
 category: Git & Branching Strategy

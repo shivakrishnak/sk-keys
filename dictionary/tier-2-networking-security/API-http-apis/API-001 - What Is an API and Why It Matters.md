@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-001
 title: What Is an API and Why It Matters
 category: HTTP & APIs

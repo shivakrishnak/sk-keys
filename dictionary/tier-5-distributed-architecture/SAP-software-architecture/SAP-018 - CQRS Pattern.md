@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-018
 title: CQRS Pattern
 category: Software Architecture Patterns

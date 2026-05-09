@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-008
 title: Azure Subscriptions and Resource Groups
 category: Cloud -- Azure

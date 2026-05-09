@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-043
 title: Desired State Convergence Theory
 category: Infrastructure as Code

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-059
 title: Spring Architecture at Scale
 category: Spring Core

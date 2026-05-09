@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-032
 title: Node.js V8 Integration
 category: Node.js

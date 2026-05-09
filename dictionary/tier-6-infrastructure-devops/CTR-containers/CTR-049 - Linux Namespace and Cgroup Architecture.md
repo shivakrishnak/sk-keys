@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-049
 title: Linux Namespace and Cgroup Architecture
 category: Containers

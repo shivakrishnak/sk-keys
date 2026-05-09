@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-046
 title: LLM Scaling Laws (Chinchilla, Kaplan)
 category: LLMs & Prompt Engineering

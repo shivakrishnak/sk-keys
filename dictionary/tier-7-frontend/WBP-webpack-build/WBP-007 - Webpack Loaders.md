@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-007
 title: Webpack Loaders
 category: Webpack & Build Tools

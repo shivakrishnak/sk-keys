@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-008
 title: Angular Templates and Data Binding
 category: Angular

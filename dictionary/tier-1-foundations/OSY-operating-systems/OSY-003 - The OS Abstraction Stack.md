@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-003
 title: The OS Abstraction Stack
 category: Operating Systems

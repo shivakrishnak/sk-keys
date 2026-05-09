@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-066
 title: Database Selection Mental Model
 category: Database Fundamentals

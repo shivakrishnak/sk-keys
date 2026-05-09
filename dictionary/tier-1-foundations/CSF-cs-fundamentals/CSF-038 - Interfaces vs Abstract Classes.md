@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-038
 title: Interfaces vs Abstract Classes
 category: CS Fundamentals - Paradigms

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-078
 title: Paradigm-Agnostic Thinking
 category: CS Fundamentals - Paradigms

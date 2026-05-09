@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-018
 title: Embedding Models and Semantic Search
 category: LLMs & Prompt Engineering

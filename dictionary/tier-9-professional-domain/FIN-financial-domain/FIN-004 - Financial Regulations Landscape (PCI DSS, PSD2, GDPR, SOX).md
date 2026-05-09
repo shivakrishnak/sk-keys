@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-004
 title: Financial Regulations Landscape (PCI DSS, PSD2, GDPR, SOX)
 category: Financial Services Domain

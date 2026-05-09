@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-003
 title: React vs Angular vs Vue -- Key Differences
 category: React

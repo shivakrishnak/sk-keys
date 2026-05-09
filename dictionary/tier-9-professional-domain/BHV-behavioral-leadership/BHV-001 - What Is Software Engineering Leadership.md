@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-001
 title: What Is Software Engineering Leadership
 category: Behavioral & Leadership

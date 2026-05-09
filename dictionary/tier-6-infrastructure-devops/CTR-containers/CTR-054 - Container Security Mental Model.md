@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-054
 title: Container Security Mental Model
 category: Containers

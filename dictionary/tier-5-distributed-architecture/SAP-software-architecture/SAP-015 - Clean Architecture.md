@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-015
 title: Clean Architecture
 category: Software Architecture Patterns

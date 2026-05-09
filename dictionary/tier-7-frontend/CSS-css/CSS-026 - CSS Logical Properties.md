@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-026
 title: CSS Logical Properties
 category: CSS

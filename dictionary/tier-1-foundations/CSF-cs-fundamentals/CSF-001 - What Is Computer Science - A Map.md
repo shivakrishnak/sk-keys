@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-001
 title: What Is Computer Science - A Map
 category: CS Fundamentals - Paradigms

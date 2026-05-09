@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-029
 title: Micro-Frontend Build Architecture
 category: Webpack & Build Tools

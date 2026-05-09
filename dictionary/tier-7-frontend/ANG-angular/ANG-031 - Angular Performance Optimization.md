@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-031
 title: Angular Performance Optimization
 category: Angular

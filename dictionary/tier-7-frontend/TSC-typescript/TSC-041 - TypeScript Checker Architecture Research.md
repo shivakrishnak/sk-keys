@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-041
 title: TypeScript Checker Architecture Research
 category: TypeScript

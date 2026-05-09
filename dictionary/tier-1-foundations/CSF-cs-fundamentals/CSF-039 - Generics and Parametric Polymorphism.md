@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-039
 title: Generics and Parametric Polymorphism
 category: CS Fundamentals - Paradigms

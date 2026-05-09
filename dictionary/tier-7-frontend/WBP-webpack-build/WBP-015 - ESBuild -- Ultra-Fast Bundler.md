@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-015
 title: ESBuild -- Ultra-Fast Bundler
 category: Webpack & Build Tools

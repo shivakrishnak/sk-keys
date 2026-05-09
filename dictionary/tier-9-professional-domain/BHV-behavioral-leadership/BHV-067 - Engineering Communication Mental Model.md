@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-067
 title: Engineering Communication Mental Model
 category: Behavioral & Leadership

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-069
 title: Meta-Pattern Design
 category: Design Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-037
 title: Monorepo Build Strategy
 category: Maven & Build Tools

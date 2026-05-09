@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Mediator"
 parent: "Design Patterns"

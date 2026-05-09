@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-033
 title: Entities
 category: Software Architecture Patterns

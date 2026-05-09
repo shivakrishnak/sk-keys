@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-028
 title: npm Package Manager Selection Strategy
 category: npm & Package Management

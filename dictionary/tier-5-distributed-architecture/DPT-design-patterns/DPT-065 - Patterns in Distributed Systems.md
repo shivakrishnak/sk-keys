@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-065
 title: Patterns in Distributed Systems
 category: Design Patterns

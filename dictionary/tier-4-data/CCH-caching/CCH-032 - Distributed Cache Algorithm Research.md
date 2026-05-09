@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-032
 title: Distributed Cache Algorithm Research
 category: Caching

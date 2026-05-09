@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-043
 title: Event-Driven vs Request-Response Thinking
 category: Async & Background Processing

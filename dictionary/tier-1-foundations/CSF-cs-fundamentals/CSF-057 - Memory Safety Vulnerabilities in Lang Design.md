@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-057
 title: Memory Safety Vulnerabilities in Lang Design
 category: CS Fundamentals - Paradigms

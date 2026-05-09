@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-084
 title: Algorithm Design Paradigm Research
 category: Data Structures & Algorithms

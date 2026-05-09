@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-038
 title: Continuous Profiling (Pyroscope, Parca)
 category: Observability & SRE

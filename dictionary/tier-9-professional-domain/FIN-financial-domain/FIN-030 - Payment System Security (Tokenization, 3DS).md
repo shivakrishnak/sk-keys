@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-030
 title: Payment System Security (Tokenization, 3DS)
 category: Financial Services Domain

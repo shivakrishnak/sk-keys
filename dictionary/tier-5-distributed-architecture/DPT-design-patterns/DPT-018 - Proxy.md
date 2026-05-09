@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Proxy"
 parent: "Design Patterns"

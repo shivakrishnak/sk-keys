@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-017
 title: Web Accessibility (ARIA, WCAG)
 category: HTML

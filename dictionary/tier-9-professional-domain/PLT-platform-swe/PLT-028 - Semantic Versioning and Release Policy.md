@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-028
 title: Semantic Versioning and Release Policy
 category: Platform & Modern SWE

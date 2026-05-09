@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-066
 title: Kubernetes Cluster Architecture Strategy
 category: Kubernetes

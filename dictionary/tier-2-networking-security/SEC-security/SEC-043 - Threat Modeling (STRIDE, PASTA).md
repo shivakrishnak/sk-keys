@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-043
 title: Threat Modeling (STRIDE, PASTA)
 category: Security

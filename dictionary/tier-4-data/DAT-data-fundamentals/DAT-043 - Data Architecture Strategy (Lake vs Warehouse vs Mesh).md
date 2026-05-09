@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-043
 title: Data Architecture Strategy (Lake vs Warehouse vs Mesh)
 category: Data Fundamentals

@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-057
 title: Data Pipeline Design Thinking
 category: Big Data & Streaming

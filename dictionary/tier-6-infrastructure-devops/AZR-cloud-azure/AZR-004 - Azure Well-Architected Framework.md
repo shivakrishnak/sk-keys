@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-004
 title: Azure Well-Architected Framework
 category: Cloud -- Azure

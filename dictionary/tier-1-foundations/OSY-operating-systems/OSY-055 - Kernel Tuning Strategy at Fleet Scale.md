@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-055
 title: Kernel Tuning Strategy at Fleet Scale
 category: Operating Systems

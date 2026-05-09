@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-010
 title: Template Engines (Thymeleaf, Jinja2, Handlebars, FreeMarker)
 category: Document Generation

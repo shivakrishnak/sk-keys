@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-001
 title: What Is a Build Tool and Why It Matters
 category: Maven & Build Tools

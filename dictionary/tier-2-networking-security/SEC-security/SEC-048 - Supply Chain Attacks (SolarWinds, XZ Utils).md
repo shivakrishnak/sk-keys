@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-048
 title: Supply Chain Attacks (SolarWinds, XZ Utils)
 category: Security

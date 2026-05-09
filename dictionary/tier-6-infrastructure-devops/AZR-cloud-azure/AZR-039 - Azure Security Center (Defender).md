@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-039
 title: Azure Security Center (Defender)
 category: Cloud -- Azure

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-055
 title: Platform Architecture Design
 category: System Design

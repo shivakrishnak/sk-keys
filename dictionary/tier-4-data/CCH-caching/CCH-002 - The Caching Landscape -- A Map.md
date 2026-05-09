@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-002
 title: The Caching Landscape -- A Map
 category: Caching

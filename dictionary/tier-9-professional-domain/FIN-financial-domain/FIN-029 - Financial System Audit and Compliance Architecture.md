@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-029
 title: Financial System Audit and Compliance Architecture
 category: Financial Services Domain

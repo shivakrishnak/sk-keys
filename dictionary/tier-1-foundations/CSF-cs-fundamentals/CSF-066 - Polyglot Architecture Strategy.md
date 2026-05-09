@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-066
 title: Polyglot Architecture Strategy
 category: CS Fundamentals - Paradigms

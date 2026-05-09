@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-032
 title: Transformer Architecture Deep Dive
 category: LLMs & Prompt Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-002
 title: The React Mental Model (Declarative UI, Virtual DOM)
 category: React

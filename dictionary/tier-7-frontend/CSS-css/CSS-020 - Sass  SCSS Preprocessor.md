@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-020
 title: Sass / SCSS Preprocessor
 category: CSS

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-003
 title: Technical Debt -- A Mental Model
 category: Code Quality

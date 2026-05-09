@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-044
 title: Git History Mental Model
 category: Git & Branching Strategy

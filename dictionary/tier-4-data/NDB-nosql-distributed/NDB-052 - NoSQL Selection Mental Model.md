@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-052
 title: NoSQL Selection Mental Model
 category: NoSQL & Distributed Databases

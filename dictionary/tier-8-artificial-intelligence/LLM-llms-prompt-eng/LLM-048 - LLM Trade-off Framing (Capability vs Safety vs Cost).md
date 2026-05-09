@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-048
 title: LLM Trade-off Framing (Capability vs Safety vs Cost)
 category: LLMs & Prompt Engineering

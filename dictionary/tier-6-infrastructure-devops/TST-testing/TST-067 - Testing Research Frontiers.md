@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-067
 title: Testing Research Frontiers
 category: Testing

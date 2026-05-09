@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-051
 title: eBPF for Networking
 category: Networking

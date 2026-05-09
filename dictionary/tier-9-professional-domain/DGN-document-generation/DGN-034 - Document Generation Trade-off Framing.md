@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-034
 title: Document Generation Trade-off Framing
 category: Document Generation

@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-019
 title: Pulumi -- IaC with Real Languages
 category: Infrastructure as Code

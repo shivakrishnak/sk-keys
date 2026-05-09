@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-053
 title: Information Theory for ML (Cross-Entropy, KL Divergence)
 category: AI Foundations

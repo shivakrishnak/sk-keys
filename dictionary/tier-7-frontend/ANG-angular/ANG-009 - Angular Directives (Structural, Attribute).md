@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-009
 title: Angular Directives (Structural, Attribute)
 category: Angular

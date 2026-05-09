@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-067
 title: Kubernetes Multi-Cluster Strategy
 category: Kubernetes

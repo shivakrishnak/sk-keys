@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-051
 title: Theoretical ML -- VC Dimension, PAC Learning
 category: AI Foundations

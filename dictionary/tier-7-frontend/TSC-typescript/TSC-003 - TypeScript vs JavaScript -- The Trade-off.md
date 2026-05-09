@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-003
 title: TypeScript vs JavaScript -- The Trade-off
 category: TypeScript

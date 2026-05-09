@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-002
 title: The Linux Kernel - A Simple Mental Model
 category: Linux

@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-041
 title: Platform Engineering Research Frontiers
 category: Platform & Modern SWE

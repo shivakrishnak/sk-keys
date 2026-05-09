@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-029
 title: Monorepo vs Polyrepo Package Strategy
 category: npm & Package Management

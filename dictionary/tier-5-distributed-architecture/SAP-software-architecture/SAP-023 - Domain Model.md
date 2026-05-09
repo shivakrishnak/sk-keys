@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-023
 title: Domain Model
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-002
 title: The Node.js Mental Model (Event Loop, Non-Blocking I/O)
 category: Node.js

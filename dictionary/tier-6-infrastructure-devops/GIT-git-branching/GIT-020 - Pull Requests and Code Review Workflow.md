@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-020
 title: Pull Requests and Code Review Workflow
 category: Git & Branching Strategy

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-073
 title: Curry-Howard Correspondence
 category: CS Fundamentals - Paradigms

@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-067
 title: Unix Philosophy as Engineering Principle
 category: Linux

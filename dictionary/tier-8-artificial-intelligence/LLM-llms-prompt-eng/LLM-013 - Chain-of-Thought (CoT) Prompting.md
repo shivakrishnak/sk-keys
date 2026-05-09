@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-013
 title: Chain-of-Thought (CoT) Prompting
 category: LLMs & Prompt Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-047
 title: Mutable vs Immutable Infrastructure Thinking
 category: Infrastructure as Code

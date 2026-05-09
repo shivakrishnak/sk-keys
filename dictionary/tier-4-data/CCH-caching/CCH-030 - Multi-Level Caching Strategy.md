@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-030
 title: Multi-Level Caching Strategy
 category: Caching

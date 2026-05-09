@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-001
 title: What Is Spring - History and Philosophy
 category: Spring Core

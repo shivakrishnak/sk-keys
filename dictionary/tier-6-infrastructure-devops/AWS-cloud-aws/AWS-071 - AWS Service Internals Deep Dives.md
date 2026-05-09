@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-071
 title: AWS Service Internals Deep Dives
 category: Cloud -- AWS

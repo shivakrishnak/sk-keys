@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-054
 title: System Evolution Strategy
 category: System Design

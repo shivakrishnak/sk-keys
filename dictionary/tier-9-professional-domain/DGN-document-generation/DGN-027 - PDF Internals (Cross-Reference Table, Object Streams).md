@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-027
 title: PDF Internals (Cross-Reference Table, Object Streams)
 category: Document Generation

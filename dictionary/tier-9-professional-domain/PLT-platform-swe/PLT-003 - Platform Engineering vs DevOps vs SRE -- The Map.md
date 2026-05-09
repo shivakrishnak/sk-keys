@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-003
 title: Platform Engineering vs DevOps vs SRE -- The Map
 category: Platform & Modern SWE

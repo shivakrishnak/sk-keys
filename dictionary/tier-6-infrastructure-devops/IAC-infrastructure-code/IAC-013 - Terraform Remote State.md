@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-013
 title: Terraform Remote State
 category: Infrastructure as Code

@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-006
 title: Message Queues Fundamentals (Producer, Consumer, Queue)
 category: Async & Background Processing

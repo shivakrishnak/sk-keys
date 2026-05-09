@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-001
 title: What Is JavaScript and Why It Rules the Web
 category: JavaScript

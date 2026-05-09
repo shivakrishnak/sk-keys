@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-069
 title: AWS Migration Strategy (6 Rs)
 category: Cloud -- AWS

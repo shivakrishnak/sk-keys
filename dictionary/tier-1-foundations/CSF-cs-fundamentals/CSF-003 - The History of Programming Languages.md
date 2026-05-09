@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-003
 title: The History of Programming Languages
 category: CS Fundamentals - Paradigms

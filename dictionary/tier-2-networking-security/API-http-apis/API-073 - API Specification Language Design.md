@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-073
 title: API Specification Language Design
 category: HTTP & APIs

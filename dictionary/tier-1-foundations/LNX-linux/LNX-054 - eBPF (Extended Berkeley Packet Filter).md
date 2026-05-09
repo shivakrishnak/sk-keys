@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-054
 title: eBPF (Extended Berkeley Packet Filter)
 category: Linux

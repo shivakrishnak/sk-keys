@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-043
 title: Non-Blocking I/O Mental Model
 category: Node.js

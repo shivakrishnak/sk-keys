@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-040
 title: Financial Risk Model Research
 category: Financial Services Domain

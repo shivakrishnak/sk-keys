@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-010
 title: Developer Portal (Backstage, Port)
 category: Platform & Modern SWE

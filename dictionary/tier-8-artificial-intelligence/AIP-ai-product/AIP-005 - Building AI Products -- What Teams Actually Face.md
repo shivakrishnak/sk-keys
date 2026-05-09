@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-005
 title: Building AI Products -- What Teams Actually Face
 category: AI Product Engineering

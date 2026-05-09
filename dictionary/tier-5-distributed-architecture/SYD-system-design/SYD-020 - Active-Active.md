@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-020
 title: Active-Active
 category: System Design

@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-038
 title: IaC Architecture Strategy
 category: Infrastructure as Code

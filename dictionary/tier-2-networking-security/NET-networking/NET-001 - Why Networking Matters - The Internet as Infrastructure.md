@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-001
 title: Why Networking Matters - The Internet as Infrastructure
 category: Networking

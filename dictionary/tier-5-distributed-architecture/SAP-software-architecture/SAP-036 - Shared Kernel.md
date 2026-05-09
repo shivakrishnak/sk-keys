@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-036
 title: Shared Kernel
 category: Software Architecture Patterns

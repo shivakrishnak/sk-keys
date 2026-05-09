@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Circuit Breaker Pattern"
 parent: "Design Patterns"

@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-001
 title: What Is RAG and Why It Matters
 category: RAG & Agents & LLMOps

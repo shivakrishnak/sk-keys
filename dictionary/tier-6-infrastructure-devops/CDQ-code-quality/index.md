@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Code Quality"
 parent: "Technical Dictionary"

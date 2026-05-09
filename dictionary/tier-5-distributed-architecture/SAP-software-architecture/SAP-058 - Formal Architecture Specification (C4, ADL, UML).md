@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-058
 title: "Formal Architecture Specification (C4, ADL, UML)"
 category: Software Architecture Patterns

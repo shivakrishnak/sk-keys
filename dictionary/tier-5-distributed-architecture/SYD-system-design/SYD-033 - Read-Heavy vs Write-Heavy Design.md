@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-033
 title: "Read-Heavy vs Write-Heavy Design"
 category: System Design

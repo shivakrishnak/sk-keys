@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-060
 title: Memory Manager Design (SLUB, SLOB)
 category: Operating Systems

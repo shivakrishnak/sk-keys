@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-006
 title: HTML Document Structure (doctype, head, body)
 category: HTML

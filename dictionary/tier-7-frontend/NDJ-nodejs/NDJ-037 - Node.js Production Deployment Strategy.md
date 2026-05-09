@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-037
 title: Node.js Production Deployment Strategy
 category: Node.js

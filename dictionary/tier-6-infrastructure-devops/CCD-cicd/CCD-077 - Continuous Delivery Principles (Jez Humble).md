@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-077
 title: Continuous Delivery Principles (Jez Humble)
 category: CI/CD

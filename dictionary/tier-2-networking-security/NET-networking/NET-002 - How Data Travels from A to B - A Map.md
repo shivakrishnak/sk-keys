@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-002
 title: How Data Travels from A to B - A Map
 category: Networking

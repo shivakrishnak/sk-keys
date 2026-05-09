@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-018
 title: Cron Jobs and Scheduled Tasks
 category: Async & Background Processing

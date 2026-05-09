@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-067
 title: AWS Cost Optimization Framework
 category: Cloud -- AWS

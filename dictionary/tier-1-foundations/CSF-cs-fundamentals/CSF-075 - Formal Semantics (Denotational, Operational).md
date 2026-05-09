@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-075
 title: Formal Semantics (Denotational, Operational)
 category: CS Fundamentals - Paradigms

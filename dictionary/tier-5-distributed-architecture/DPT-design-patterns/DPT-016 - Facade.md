@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Facade"
 parent: "Design Patterns"

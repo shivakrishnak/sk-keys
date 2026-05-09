@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-016
 title: Celery (Python Task Queue)
 category: Async & Background Processing

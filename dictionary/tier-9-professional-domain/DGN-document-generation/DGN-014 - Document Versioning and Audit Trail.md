@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-014
 title: Document Versioning and Audit Trail
 category: Document Generation

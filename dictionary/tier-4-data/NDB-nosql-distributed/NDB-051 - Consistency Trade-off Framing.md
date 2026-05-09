@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-051
 title: Consistency Trade-off Framing
 category: NoSQL & Distributed Databases

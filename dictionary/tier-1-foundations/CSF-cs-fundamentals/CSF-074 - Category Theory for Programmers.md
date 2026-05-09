@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-074
 title: Category Theory for Programmers
 category: CS Fundamentals - Paradigms

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-028
 title: "Rate Limiting (System)"
 category: System Design

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-026
 title: AI Accessibility in Products
 category: AI Product Engineering

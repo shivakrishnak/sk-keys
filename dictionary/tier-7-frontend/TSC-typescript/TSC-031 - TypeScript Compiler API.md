@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-031
 title: TypeScript Compiler API
 category: TypeScript

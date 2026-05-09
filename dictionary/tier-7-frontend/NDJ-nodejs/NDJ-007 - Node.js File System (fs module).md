@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-007
 title: Node.js File System (fs module)
 category: Node.js

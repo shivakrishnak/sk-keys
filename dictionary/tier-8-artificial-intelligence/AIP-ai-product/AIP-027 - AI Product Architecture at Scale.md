@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-027
 title: AI Product Architecture at Scale
 category: AI Product Engineering

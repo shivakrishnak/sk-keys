@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-028
 title: Build Performance Strategy (Caching, Parallelism)
 category: Webpack & Build Tools

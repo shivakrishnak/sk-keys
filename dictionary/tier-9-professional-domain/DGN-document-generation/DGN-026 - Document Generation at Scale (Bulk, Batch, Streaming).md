@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-026
 title: Document Generation at Scale (Bulk, Batch, Streaming)
 category: Document Generation

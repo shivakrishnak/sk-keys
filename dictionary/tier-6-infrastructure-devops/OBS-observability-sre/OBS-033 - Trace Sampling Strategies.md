@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-033
 title: Trace Sampling Strategies
 category: Observability & SRE

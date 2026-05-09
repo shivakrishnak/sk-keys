@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-005
 title: The API Ecosystem Map
 category: HTTP & APIs

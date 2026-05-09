@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-045
 title: Container Image Strategy at Scale
 category: Containers

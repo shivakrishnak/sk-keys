@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Software Architecture Patterns"
 parent: "Technical Dictionary"

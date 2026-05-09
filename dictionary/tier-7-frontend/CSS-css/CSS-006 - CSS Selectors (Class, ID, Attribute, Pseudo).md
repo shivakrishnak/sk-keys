@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-006
 title: CSS Selectors (Class, ID, Attribute, Pseudo)
 category: CSS

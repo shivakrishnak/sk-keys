@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-040
 title: TypeScript Specification Design Philosophy
 category: TypeScript

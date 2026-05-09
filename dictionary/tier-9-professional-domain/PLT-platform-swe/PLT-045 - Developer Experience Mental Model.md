@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-045
 title: Developer Experience Mental Model
 category: Platform & Modern SWE

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-068
 title: Pattern Mining and Discovery Research
 category: Design Patterns

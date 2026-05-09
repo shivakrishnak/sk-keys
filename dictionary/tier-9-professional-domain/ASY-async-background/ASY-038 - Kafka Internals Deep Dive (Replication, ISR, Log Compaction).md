@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-038
 title: Kafka Internals Deep Dive (Replication, ISR, Log Compaction)
 category: Async & Background Processing

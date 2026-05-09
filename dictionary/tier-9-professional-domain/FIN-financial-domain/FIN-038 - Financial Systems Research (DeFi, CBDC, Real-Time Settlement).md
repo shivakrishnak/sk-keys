@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-038
 title: Financial Systems Research (DeFi, CBDC, Real-Time Settlement)
 category: Financial Services Domain

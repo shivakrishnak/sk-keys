@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-017
 title: Turbopack (Rust-based Webpack)
 category: Webpack & Build Tools

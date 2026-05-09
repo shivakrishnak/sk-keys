@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-056
 title: Heartbleed Impact on Linux Systems (2014)
 category: Linux

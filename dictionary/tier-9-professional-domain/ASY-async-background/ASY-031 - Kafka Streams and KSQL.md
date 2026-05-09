@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-031
 title: Kafka Streams and KSQL
 category: Async & Background Processing

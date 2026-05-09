@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-025
 title: TypeScript Infer Keyword
 category: TypeScript

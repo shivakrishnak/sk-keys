@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-038
 title: Build Performance Optimization
 category: Maven & Build Tools

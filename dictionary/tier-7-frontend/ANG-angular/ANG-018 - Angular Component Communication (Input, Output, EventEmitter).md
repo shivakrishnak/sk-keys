@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-018
 title: Angular Component Communication (Input, Output, EventEmitter)
 category: Angular

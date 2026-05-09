@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Database Fundamentals"
 parent: "Technical Dictionary"

@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-009
 title: Self-Service Infrastructure Patterns
 category: Platform & Modern SWE

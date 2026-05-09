@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-002
 title: VMs vs Containers - A Mental Model
 category: Containers

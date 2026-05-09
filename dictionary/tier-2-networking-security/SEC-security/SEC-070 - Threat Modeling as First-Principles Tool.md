@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-070
 title: Threat Modeling as First-Principles Tool
 category: Security

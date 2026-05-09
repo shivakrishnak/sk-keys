@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-022
 title: Babel and JavaScript Transpilation
 category: Webpack & Build Tools

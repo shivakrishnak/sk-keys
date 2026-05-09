@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-068
 title: IoC-First Thinking
 category: Spring Core

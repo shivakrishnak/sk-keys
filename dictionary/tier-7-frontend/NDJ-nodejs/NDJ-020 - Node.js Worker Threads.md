@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-020
 title: Node.js Worker Threads
 category: Node.js

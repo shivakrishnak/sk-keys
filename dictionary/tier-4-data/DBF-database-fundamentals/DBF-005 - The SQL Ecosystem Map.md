@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-005
 title: The SQL Ecosystem Map
 category: Database Fundamentals

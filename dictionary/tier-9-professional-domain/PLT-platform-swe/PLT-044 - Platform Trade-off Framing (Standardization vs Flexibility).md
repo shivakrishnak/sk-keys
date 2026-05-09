@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-044
 title: Platform Trade-off Framing (Standardization vs Flexibility)
 category: Platform & Modern SWE

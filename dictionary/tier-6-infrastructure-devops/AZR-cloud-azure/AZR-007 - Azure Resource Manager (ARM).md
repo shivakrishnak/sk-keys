@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-007
 title: Azure Resource Manager (ARM)
 category: Cloud -- Azure

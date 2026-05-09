@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-015
 title: TypeScript Generics
 category: TypeScript

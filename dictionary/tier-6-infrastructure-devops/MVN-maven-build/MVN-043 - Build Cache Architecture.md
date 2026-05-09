@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-043
 title: Build Cache Architecture
 category: Maven & Build Tools

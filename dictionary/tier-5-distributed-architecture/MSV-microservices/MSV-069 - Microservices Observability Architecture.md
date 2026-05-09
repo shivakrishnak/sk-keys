@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-069
 title: Microservices Observability Architecture
 category: Microservices

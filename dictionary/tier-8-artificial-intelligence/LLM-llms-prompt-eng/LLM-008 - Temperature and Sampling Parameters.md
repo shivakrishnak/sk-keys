@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-008
 title: Temperature and Sampling Parameters
 category: LLMs & Prompt Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-034
 title: Denormalization for Scale
 category: System Design

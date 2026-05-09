@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-009
 title: Terraform Plan and Apply
 category: Infrastructure as Code

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-046
 title: Search Autocomplete Design
 category: System Design

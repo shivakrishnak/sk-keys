@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-001
 title: What Is a Distributed System
 category: Distributed Systems

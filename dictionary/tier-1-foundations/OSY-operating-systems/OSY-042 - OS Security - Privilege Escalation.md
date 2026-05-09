@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-042
 title: OS Security - Privilege Escalation
 category: Operating Systems

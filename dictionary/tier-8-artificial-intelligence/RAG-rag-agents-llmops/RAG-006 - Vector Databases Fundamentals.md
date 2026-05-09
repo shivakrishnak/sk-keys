@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-006
 title: Vector Databases Fundamentals
 category: RAG & Agents & LLMOps

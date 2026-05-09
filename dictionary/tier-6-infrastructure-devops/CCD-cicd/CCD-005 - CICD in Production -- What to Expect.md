@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-005
 title: CI/CD in Production -- What to Expect
 category: CI/CD

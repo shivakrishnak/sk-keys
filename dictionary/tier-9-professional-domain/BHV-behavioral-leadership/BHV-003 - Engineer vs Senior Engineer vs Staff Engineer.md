@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-003
 title: Engineer vs Senior Engineer vs Staff Engineer
 category: Behavioral & Leadership

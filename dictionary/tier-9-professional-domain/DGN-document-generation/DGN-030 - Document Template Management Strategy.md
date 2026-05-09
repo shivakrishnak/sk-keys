@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-030
 title: Document Template Management Strategy
 category: Document Generation

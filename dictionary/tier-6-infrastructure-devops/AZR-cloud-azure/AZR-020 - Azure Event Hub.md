@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-020
 title: Azure Event Hub
 category: Cloud -- Azure

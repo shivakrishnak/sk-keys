@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-043
 title: Container Platform Strategy
 category: Containers

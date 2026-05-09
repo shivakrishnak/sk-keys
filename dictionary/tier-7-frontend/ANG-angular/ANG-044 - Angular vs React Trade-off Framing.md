@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-044
 title: Angular vs React Trade-off Framing
 category: Angular

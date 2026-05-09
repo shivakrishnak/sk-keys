@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-005
 title: The Testing Ecosystem Map
 category: Testing

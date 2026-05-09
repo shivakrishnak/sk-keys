@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-056
 title: Model Selection Mental Model
 category: AI Foundations

@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-004
 title: The Git Ecosystem Map (GitHub, GitLab, Bitbucket)
 category: Git & Branching Strategy

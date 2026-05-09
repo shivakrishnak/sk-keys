@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-003
 title: DSA in Real Systems - Where They Appear
 category: Data Structures & Algorithms

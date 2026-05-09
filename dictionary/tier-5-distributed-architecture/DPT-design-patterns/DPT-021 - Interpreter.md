@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Interpreter"
 parent: "Design Patterns"

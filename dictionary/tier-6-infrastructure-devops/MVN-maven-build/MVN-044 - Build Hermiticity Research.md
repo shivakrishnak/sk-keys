@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-044
 title: Build Hermiticity Research
 category: Maven & Build Tools

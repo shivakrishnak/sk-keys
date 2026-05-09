@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-023
 title: HTML Security (XSS Prevention, CSP)
 category: HTML

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-015
 title: AI Cost Engineering (Token Budget, Caching Strategy)
 category: AI Product Engineering

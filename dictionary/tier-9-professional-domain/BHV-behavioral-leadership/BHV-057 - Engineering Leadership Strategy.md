@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-057
 title: Engineering Leadership Strategy
 category: Behavioral & Leadership

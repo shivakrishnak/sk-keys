@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-039
 title: Distributed Locks
 category: System Design

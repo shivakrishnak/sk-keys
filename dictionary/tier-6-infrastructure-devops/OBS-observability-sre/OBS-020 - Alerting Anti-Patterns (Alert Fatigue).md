@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-020
 title: Alerting Anti-Patterns (Alert Fatigue)
 category: Observability & SRE

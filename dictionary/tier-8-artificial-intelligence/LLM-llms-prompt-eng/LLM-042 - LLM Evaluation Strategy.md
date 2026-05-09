@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-042
 title: LLM Evaluation Strategy
 category: LLMs & Prompt Engineering

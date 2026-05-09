@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-043
 title: Branch Strategy Trade-off Framing
 category: Git & Branching Strategy

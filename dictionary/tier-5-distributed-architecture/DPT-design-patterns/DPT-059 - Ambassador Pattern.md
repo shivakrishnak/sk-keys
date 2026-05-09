@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Ambassador Pattern"
 parent: "Design Patterns"

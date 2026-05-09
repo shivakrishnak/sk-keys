@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-046
 title: Streaming Architecture Design
 category: Big Data & Streaming

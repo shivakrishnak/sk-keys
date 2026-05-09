@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-024
 title: Azure Monitor and Log Analytics
 category: Cloud -- Azure

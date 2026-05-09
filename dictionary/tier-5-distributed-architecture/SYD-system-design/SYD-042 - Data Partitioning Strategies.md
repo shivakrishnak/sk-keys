@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-042
 title: Data Partitioning Strategies
 category: System Design

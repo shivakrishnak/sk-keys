@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-071
 title: Hypermedia APIs - Deep Theory
 category: HTTP & APIs

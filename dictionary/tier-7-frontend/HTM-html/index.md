@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "HTML"
 parent: "Technical Dictionary"

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-002
 title: The Document Generation Mental Model (Template + Data + Renderer)
 category: Document Generation

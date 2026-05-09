@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-066
 title: Leadership Trade-off Framing
 category: Behavioral & Leadership

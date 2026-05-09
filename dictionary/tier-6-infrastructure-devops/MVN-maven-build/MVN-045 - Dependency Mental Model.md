@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-045
 title: Dependency Mental Model
 category: Maven & Build Tools

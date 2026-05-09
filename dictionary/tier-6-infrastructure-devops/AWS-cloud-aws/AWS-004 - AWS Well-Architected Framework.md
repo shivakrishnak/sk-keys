@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-004
 title: AWS Well-Architected Framework
 category: Cloud -- AWS

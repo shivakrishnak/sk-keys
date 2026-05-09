@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Decorator vs Proxy vs Adapter"
 parent: "Design Patterns"

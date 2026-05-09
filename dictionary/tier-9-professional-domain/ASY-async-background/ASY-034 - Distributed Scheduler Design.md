@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-034
 title: Distributed Scheduler Design
 category: Async & Background Processing

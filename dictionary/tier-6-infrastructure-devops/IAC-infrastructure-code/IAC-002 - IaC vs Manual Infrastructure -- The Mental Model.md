@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-002
 title: IaC vs Manual Infrastructure -- The Mental Model
 category: Infrastructure as Code

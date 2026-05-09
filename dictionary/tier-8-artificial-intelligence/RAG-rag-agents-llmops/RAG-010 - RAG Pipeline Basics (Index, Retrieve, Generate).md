@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-010
 title: RAG Pipeline Basics (Index, Retrieve, Generate)
 category: RAG & Agents & LLMOps

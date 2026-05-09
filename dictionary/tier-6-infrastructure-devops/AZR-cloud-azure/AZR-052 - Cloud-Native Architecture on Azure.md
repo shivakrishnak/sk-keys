@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-052
 title: Cloud-Native Architecture on Azure
 category: Cloud -- Azure

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-069
 title: Security Trade-off Framing
 category: Security

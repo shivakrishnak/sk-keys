@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-075
 title: API Design Trade-off Framing
 category: HTTP & APIs

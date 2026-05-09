@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-029
 title: Git Reflog -- Recovery from Mistakes
 category: Git & Branching Strategy

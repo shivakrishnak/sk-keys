@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-002
 title: The AI/ML Mental Model (Data + Algorithm + Compute)
 category: AI Foundations

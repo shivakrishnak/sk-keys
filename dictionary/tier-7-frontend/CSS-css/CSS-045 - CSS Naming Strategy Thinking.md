@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-045
 title: CSS Naming Strategy Thinking
 category: CSS

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-002
 title: Why Operating Systems Exist
 category: Operating Systems

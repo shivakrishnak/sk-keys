@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-051
 title: Distributed Stream Processing Internals
 category: Big Data & Streaming

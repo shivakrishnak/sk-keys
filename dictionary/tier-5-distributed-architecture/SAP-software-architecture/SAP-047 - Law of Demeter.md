@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-047
 layout: default
 title: "Law of Demeter"

@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-037
 title: Branching Strategy Selection Framework
 category: Git & Branching Strategy

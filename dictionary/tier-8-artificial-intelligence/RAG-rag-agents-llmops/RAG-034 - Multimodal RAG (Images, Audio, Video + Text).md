@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-034
 title: Multimodal RAG (Images, Audio, Video + Text)
 category: RAG & Agents & LLMOps

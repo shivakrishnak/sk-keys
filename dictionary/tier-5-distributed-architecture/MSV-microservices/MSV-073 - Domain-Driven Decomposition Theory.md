@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-073
 title: Domain-Driven Decomposition Theory
 category: Microservices

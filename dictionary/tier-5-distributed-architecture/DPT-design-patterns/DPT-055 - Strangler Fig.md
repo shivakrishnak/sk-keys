@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Strangler Fig"
 parent: "Design Patterns"

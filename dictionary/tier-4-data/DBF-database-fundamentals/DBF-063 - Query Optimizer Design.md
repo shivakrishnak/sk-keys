@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-063
 title: Query Optimizer Design
 category: Database Fundamentals

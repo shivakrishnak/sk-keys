@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-031
 title: Git Large File Storage (LFS)
 category: Git & Branching Strategy

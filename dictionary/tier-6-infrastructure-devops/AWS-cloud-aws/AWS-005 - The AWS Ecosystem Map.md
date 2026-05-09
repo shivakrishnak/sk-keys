@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-005
 title: The AWS Ecosystem Map
 category: Cloud -- AWS

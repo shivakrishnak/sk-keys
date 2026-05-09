@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-070
 title: HTTP Protocol Design Internals
 category: HTTP & APIs

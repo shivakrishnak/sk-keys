@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-056
 title: Reliability Mental Model
 category: Observability & SRE

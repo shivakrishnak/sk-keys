@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-064
 title: Quality Engineering Strategy
 category: Testing

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-002
 title: The AI Product Mental Model (UX + LLM + Data Pipeline)
 category: AI Product Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-040
 title: Chaos Engineering for Observability
 category: Observability & SRE

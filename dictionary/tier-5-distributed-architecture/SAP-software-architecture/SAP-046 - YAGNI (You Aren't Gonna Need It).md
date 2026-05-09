@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-046
 layout: default
 title: "YAGNI (You Aren't Gonna Need It)"

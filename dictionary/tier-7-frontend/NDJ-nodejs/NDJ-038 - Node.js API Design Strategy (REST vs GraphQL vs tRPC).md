@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-038
 title: Node.js API Design Strategy (REST vs GraphQL vs tRPC)
 category: Node.js

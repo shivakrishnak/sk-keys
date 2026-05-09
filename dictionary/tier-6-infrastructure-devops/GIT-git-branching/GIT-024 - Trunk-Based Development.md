@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-024
 title: Trunk-Based Development
 category: Git & Branching Strategy

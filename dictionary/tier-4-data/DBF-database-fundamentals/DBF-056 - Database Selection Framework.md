@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-056
 title: Database Selection Framework
 category: Database Fundamentals

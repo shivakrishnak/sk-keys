@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-005
 title: SRE -- What It Is and Why It Exists
 category: Observability & SRE

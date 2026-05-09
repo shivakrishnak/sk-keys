@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-028
 title: JavaScript Performance Optimization Strategy
 category: JavaScript

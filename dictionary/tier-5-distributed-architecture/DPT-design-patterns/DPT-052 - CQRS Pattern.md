@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "CQRS Pattern"
 parent: "Design Patterns"

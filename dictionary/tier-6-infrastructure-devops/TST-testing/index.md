@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Testing"
 parent: "Technical Dictionary"

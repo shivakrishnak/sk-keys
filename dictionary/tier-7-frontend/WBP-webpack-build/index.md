@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Webpack & Build Tools"
 parent: "Technical Dictionary"

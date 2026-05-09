@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Memento"
 parent: "Design Patterns"

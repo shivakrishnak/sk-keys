@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-047
 title: BGP Route Leaks and Hijacking
 category: Networking

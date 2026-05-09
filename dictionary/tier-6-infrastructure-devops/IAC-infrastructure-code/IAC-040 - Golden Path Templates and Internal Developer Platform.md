@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-040
 title: Golden Path Templates and Internal Developer Platform
 category: Infrastructure as Code

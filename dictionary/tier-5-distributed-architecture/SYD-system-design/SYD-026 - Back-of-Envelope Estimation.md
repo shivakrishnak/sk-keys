@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-026
 title: Back-of-Envelope Estimation
 category: System Design

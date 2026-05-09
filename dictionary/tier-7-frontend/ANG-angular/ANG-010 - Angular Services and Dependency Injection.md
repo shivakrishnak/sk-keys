@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-010
 title: Angular Services and Dependency Injection
 category: Angular

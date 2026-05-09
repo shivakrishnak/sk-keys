@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-040
 title: Distributed Consensus in Message Systems
 category: Async & Background Processing

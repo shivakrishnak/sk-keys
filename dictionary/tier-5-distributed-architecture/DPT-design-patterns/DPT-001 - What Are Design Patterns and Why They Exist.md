@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-001
 title: What Are Design Patterns and Why They Exist
 category: Design Patterns

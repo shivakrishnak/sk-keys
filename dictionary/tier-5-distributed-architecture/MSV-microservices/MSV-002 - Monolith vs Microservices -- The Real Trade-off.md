@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-002
 title: "Monolith vs Microservices - The Real Trade-off"
 category: Microservices

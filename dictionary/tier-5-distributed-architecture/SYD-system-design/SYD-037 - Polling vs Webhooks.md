@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-037
 title: Polling vs Webhooks
 category: System Design

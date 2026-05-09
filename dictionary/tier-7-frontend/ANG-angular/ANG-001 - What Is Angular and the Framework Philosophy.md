@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-001
 title: What Is Angular and the Framework Philosophy
 category: Angular

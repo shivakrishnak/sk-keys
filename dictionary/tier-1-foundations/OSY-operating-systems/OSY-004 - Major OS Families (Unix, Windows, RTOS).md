@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-004
 title: Major OS Families (Unix, Windows, RTOS)
 category: Operating Systems

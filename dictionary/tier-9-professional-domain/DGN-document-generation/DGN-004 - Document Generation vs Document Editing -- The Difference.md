@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-004
 title: Document Generation vs Document Editing -- The Difference
 category: Document Generation

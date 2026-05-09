@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-004
 title: The Observability Ecosystem Map
 category: Observability & SRE

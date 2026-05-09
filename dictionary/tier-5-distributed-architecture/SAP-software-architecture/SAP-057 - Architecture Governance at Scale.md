@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-057
 title: Architecture Governance at Scale
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-009
 title: npm Scripts
 category: npm & Package Management

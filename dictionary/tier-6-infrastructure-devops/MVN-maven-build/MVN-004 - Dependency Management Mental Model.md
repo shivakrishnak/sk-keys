@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-004
 title: Dependency Management Mental Model
 category: Maven & Build Tools

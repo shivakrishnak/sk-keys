@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-005
 title: The Azure Ecosystem Map
 category: Cloud -- Azure

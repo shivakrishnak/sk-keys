@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-010
 title: Git Rebase
 category: Git & Branching Strategy

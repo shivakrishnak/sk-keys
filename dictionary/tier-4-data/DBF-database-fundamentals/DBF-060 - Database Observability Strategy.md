@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-060
 title: Database Observability Strategy
 category: Database Fundamentals

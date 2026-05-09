@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-006
 title: "Red Hat OpenShift"
 category: Containers

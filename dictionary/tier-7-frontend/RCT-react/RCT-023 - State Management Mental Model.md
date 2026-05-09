@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-023
 title: State Management Mental Model
 category: React

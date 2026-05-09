@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-073
 title: Release Strategy Design (Blue-Green, Canary)
 category: CI/CD

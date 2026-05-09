@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-032
 title: PDF Format Research (PDF 2.0, PDF/UA)
 category: Document Generation

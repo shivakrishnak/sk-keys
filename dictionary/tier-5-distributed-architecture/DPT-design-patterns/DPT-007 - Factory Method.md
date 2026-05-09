@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Factory Method"
 parent: "Design Patterns"

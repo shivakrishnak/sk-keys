@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-047
 title: Agent Framework Design Research
 category: RAG & Agents & LLMOps

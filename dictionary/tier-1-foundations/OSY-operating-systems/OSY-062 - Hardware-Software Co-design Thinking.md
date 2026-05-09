@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-062
 title: Hardware-Software Co-design Thinking
 category: Operating Systems

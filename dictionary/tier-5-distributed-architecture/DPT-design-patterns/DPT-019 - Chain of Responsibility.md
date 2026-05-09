@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Chain of Responsibility"
 parent: "Design Patterns"

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-003
 title: CSS vs HTML vs JavaScript -- Roles
 category: CSS

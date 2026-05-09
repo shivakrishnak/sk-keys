@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-062
 title: Transaction Protocol Design (2PC, MVCC)
 category: Database Fundamentals

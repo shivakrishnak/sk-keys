@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-022
 title: Unit of Work Pattern
 category: Software Architecture Patterns

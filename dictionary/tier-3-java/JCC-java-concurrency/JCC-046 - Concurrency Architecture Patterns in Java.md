@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-046
 title: Concurrency Architecture Patterns in Java
 category: Java Concurrency

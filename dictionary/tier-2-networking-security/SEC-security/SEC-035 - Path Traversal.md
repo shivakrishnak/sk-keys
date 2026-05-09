@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-035
 title: Path Traversal
 category: Security

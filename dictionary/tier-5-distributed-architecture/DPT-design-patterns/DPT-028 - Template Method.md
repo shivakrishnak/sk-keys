@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Template Method"
 parent: "Design Patterns"

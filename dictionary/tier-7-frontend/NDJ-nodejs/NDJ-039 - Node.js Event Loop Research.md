@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-039
 title: Node.js Event Loop Research
 category: Node.js

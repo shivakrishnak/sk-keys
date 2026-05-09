@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-072
 title: Cloud-Native Architecture Design
 category: Cloud -- AWS

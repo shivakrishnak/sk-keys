@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-025
 title: HTML Performance (Critical Path, Lazy Loading, Preload)
 category: HTML

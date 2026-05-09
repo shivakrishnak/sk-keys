@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-023
 title: Geo-Replication
 category: System Design

@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-024
 title: On-Call Engineering Best Practices
 category: Platform & Modern SWE

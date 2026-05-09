@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-029
 title: Log Management (journalctl, syslog)
 category: Linux

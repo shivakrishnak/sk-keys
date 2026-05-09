@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "God Object Anti-Pattern"
 parent: "Design Patterns"

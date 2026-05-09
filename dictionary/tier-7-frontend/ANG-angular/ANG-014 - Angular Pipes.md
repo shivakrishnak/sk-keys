@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-014
 title: Angular Pipes
 category: Angular

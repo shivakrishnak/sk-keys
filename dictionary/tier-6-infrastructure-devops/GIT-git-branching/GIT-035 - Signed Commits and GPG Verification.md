@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-035
 title: Signed Commits and GPG Verification
 category: Git & Branching Strategy

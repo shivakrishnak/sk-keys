@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-032
 title: Async System Observability (Lag, Throughput, Error Rate)
 category: Async & Background Processing

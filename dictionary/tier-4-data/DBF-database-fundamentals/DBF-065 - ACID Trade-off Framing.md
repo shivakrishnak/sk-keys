@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-065
 title: ACID Trade-off Framing
 category: Database Fundamentals

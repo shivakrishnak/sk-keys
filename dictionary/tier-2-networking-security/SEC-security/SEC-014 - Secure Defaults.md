@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-014
 title: Secure Defaults
 category: Security

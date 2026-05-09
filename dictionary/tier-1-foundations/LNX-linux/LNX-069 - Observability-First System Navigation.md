@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-069
 title: Observability-First System Navigation
 category: Linux

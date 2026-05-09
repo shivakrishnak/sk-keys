@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-016
 title: HTML5 APIs (Canvas, Video, Audio)
 category: HTML

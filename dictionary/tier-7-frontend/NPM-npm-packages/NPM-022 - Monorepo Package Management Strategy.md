@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-022
 title: Monorepo Package Management Strategy
 category: npm & Package Management

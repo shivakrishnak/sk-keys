@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-061
 title: Formal Verification of OS Components
 category: Operating Systems

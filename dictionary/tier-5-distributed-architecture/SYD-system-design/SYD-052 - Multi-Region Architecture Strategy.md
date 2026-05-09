@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-052
 title: Multi-Region Architecture Strategy
 category: System Design

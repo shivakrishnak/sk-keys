@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-008
 title: Load Balancing
 category: System Design

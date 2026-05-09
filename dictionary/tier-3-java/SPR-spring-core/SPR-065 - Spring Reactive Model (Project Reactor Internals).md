@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-065
 title: "Spring Reactive Model (Project Reactor Internals)"
 category: Spring Core

@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-021
 title: React Compiler (React Forget) Research
 category: React

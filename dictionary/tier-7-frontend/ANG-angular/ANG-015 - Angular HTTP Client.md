@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-015
 title: Angular HTTP Client
 category: Angular

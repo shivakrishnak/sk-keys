@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-050
 title: Spectre and Meltdown (2018)
 category: Operating Systems

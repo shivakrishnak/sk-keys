@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-047
 title: Notification System Design
 category: System Design

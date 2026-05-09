@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-004
 title: The AI Product Ecosystem Map
 category: AI Product Engineering

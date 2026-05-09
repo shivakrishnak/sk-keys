@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-001
 title: What Is Big Data -- The 3Vs Problem
 category: Big Data & Streaming

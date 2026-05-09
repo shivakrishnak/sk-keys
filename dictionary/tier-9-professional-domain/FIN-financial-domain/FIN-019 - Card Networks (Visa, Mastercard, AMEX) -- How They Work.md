@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-019
 title: Card Networks (Visa, Mastercard, AMEX) -- How They Work
 category: Financial Services Domain

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Angular"
 parent: "Technical Dictionary"

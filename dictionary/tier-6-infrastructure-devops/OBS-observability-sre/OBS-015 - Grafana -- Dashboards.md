@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-015
 title: Grafana -- Dashboards
 category: Observability & SRE

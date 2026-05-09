@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-013
 title: Vector Database Options (Pinecone, Weaviate, Qdrant, Chroma)
 category: RAG & Agents & LLMOps

@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-059
 title: Engineering Culture Design
 category: Behavioral & Leadership

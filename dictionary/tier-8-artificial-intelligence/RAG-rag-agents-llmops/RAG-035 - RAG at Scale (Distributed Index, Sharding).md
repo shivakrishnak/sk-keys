@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-035
 title: RAG at Scale (Distributed Index, Sharding)
 category: RAG & Agents & LLMOps

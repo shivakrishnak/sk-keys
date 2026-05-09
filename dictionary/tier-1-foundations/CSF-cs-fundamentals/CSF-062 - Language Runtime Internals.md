@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-062
 title: Language Runtime Internals
 category: CS Fundamentals - Paradigms

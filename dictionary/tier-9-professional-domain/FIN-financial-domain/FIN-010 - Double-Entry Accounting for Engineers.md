@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-010
 title: Double-Entry Accounting for Engineers
 category: Financial Services Domain

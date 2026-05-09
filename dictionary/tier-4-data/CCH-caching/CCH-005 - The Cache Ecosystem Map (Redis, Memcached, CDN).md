@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-005
 title: The Cache Ecosystem Map (Redis, Memcached, CDN)
 category: Caching

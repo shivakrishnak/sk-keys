@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-010
 title: Public Key Cryptography (PKI)
 category: Security

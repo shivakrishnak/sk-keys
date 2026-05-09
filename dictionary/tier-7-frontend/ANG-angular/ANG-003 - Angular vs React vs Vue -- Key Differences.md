@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-003
 title: Angular vs React vs Vue -- Key Differences
 category: Angular

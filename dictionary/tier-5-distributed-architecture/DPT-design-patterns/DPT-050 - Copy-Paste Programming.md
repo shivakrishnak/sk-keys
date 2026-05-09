@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Copy-Paste Programming"
 parent: "Design Patterns"

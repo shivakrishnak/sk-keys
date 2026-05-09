@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-061
 title: Evolutionary Architecture Design
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-036
 title: Angular Micro-Frontend Architecture
 category: Angular

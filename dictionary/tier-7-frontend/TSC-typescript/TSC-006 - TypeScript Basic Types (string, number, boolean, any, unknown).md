@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-006
 title: TypeScript Basic Types (string, number, boolean, any, unknown)
 category: TypeScript

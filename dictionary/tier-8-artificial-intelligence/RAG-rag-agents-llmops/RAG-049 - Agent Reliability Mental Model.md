@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-049
 title: Agent Reliability Mental Model
 category: RAG & Agents & LLMOps

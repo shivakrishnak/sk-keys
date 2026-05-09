@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-025
 title: AI A/B Testing and Experiment Design
 category: AI Product Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-006
 title: Internal Developer Platform (IDP) Design
 category: Platform & Modern SWE

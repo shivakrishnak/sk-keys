@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-033
 title: JavaScript Specification (ECMAScript) Design
 category: JavaScript

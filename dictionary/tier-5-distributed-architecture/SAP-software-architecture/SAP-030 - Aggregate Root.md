@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-030
 title: Aggregate Root
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-001
 title: What Is Infrastructure as Code
 category: Infrastructure as Code

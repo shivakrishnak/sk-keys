@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-005
 title: The Java Concurrency Ecosystem Map
 category: Java Concurrency

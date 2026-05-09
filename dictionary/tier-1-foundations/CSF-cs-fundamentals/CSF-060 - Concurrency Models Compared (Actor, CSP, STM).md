@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-060
 title: Concurrency Models Compared (Actor, CSP, STM)
 category: CS Fundamentals - Paradigms

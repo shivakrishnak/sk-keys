@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Command"
 parent: "Design Patterns"

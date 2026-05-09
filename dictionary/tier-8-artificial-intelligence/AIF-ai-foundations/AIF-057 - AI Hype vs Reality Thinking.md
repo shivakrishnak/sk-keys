@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-057
 title: AI Hype vs Reality Thinking
 category: AI Foundations

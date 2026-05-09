@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-039
 title: Browser Internals -- Rendering Engine Deep Dive
 category: HTML

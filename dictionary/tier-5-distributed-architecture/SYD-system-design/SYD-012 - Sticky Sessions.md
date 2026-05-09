@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-012
 title: Sticky Sessions
 category: System Design

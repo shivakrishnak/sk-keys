@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-004
 title: The Fallacies of Distributed Computing
 category: Distributed Systems

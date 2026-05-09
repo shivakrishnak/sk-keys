@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-017
 title: Git Bisect
 category: Git & Branching Strategy

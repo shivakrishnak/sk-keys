@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-024
 title: Web Components (Custom Elements, Shadow DOM, Templates)
 category: HTML

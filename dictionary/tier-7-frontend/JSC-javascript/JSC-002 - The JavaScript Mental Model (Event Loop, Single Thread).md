@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-002
 title: The JavaScript Mental Model (Event Loop, Single Thread)
 category: JavaScript

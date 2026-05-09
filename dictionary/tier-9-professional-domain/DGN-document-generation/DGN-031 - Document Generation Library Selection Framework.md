@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-031
 title: Document Generation Library Selection Framework
 category: Document Generation

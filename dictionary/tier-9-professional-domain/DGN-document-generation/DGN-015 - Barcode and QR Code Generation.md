@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-015
 title: Barcode and QR Code Generation
 category: Document Generation

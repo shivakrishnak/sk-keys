@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-064
 title: Ariane 5 Overflow Bug (1996)
 category: CS Fundamentals - Paradigms

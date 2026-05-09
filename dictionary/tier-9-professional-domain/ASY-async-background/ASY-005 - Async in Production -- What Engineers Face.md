@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-005
 title: Async in Production -- What Engineers Face
 category: Async & Background Processing

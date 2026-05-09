@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-003
 title: Webpack vs Vite vs Rollup vs Parcel -- Trade-offs
 category: Webpack & Build Tools

@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-039
 title: GitOps Architecture Design
 category: Git & Branching Strategy

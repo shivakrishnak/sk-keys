@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-029
 title: TypeScript Path Aliases
 category: TypeScript

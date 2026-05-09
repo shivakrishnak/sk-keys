@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-045
 title: RAG System Design Internals
 category: RAG & Agents & LLMOps

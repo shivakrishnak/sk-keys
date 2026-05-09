@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-011
 title: Apache Kafka Fundamentals
 category: Async & Background Processing

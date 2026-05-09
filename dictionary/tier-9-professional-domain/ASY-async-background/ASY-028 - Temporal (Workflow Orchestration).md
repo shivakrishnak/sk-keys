@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-028
 title: Temporal (Workflow Orchestration)
 category: Async & Background Processing

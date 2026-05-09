@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-023
 title: Stack vs Heap Memory
 category: CS Fundamentals - Paradigms

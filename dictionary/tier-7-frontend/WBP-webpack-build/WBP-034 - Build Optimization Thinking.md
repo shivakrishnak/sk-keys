@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-034
 title: Build Optimization Thinking
 category: Webpack & Build Tools

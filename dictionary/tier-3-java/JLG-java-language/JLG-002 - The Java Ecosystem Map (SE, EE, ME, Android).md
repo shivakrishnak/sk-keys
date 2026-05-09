@@ -1,4 +1,4 @@
-﻿---
+---
 id: JLG-002
 title: "The Java Ecosystem Map (SE, EE, ME, Android)"
 category: Java Language

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-003
 title: Monitoring vs Observability -- The Difference
 category: Observability & SRE

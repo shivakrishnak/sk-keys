@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-014
 title: AI Content Moderation and Safety Filters
 category: AI Product Engineering

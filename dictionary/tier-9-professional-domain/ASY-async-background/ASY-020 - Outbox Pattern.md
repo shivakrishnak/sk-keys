@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-020
 title: Outbox Pattern
 category: Async & Background Processing

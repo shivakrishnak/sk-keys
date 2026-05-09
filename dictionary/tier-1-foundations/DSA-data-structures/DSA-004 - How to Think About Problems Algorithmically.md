@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-004
 title: How to Think About Problems Algorithmically
 category: Data Structures & Algorithms

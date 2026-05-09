@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-055
 title: Legacy Modernization Strategy
 category: Software Architecture Patterns

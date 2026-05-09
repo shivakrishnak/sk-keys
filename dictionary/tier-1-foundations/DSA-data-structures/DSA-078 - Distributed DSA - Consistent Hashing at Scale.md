@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-078
 title: Distributed DSA - Consistent Hashing at Scale
 category: Data Structures & Algorithms

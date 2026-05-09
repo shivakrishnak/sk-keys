@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-074
 title: Algorithm Correctness and Loop Invariants
 category: Data Structures & Algorithms

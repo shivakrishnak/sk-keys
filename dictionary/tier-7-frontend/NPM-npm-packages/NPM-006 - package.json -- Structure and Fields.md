@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-006
 title: package.json -- Structure and Fields
 category: npm & Package Management

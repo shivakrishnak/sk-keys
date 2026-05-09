@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-011
 title: Hashing and Password Storage
 category: Security

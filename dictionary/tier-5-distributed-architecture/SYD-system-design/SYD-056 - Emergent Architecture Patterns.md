@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-056
 title: Emergent Architecture Patterns
 category: System Design

@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-019
 title: Document Parsing and Extraction for RAG
 category: RAG & Agents & LLMOps

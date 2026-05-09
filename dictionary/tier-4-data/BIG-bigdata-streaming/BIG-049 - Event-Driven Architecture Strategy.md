@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-049
 title: Event-Driven Architecture Strategy
 category: Big Data & Streaming

@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-011
 title: TypeScript Arrays and Tuples
 category: TypeScript

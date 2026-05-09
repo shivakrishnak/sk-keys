@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-024
 title: Multi-Region Architecture
 category: System Design

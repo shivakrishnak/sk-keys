@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-002
 title: The Angular Mental Model (Modules, Components, Services)
 category: Angular

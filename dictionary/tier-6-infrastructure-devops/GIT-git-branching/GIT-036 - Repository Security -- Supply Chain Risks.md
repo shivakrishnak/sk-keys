@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-036
 title: Repository Security -- Supply Chain Risks
 category: Git & Branching Strategy

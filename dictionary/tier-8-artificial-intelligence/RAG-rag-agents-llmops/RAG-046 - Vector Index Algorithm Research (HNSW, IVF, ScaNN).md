@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-046
 title: Vector Index Algorithm Research (HNSW, IVF, ScaNN)
 category: RAG & Agents & LLMOps

@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-021
 title: TypeScript with React (JSX, Component Typing)
 category: TypeScript

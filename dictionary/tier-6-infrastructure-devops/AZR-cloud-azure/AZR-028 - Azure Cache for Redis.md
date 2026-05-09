@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-028
 title: Azure Cache for Redis
 category: Cloud -- Azure

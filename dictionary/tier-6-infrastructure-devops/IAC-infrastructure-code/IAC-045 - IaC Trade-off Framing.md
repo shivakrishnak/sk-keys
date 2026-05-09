@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-045
 title: IaC Trade-off Framing
 category: Infrastructure as Code

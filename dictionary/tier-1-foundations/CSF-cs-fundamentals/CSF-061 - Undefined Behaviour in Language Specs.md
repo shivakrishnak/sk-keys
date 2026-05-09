@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-061
 title: Undefined Behaviour in Language Specs
 category: CS Fundamentals - Paradigms

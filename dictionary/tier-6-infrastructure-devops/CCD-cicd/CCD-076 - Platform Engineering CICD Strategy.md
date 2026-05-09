@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-076
 title: Platform Engineering CI/CD Strategy
 category: CI/CD

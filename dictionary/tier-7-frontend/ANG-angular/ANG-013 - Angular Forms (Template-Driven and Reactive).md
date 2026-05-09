@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-013
 title: Angular Forms (Template-Driven and Reactive)
 category: Angular

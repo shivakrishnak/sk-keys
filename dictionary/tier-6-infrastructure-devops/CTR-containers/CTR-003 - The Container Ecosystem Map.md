@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-003
 title: The Container Ecosystem Map
 category: Containers

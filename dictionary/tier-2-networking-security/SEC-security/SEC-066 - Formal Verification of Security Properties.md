@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-066
 title: Formal Verification of Security Properties
 category: Security

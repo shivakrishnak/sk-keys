@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "HTTP & APIs"
 parent: "Technical Dictionary"

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-028
 title: OOXML (Office Open XML) Internals
 category: Document Generation

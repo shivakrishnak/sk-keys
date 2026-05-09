@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Operating Systems"
 parent: "Technical Dictionary"

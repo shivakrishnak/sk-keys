@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-068
 title: Adversarial Thinking as Engineering Mindset
 category: Security

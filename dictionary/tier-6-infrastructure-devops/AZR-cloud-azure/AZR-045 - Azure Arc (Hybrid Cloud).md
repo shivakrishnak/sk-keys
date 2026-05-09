@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-045
 title: Azure Arc (Hybrid Cloud)
 category: Cloud -- Azure

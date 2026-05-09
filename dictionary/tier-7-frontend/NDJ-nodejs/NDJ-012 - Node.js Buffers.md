@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-012
 title: Node.js Buffers
 category: Node.js

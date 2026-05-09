@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-048
 title: Observability-Driven Development Strategy
 category: Observability & SRE

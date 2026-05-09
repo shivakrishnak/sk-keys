@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-004
 title: The LLM Ecosystem Map (GPT, Claude, Gemini, Llama)
 category: LLMs & Prompt Engineering

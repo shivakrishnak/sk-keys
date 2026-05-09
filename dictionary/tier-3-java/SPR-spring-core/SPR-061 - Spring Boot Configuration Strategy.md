@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-061
 title: Spring Boot Configuration Strategy
 category: Spring Core

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-035
 title: AI Product Engineering Research Frontiers
 category: AI Product Engineering

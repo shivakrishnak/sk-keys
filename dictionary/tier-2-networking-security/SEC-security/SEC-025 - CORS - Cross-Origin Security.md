@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-025
 title: CORS - Cross-Origin Security
 category: Security

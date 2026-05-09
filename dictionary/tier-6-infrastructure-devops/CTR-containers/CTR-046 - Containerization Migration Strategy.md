@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-046
 title: Containerization Migration Strategy
 category: Containers

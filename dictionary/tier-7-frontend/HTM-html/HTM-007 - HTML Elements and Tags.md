@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-007
 title: HTML Elements and Tags
 category: HTML

@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-031
 title: User Permission Anti-Pattern (run as root)
 category: Linux

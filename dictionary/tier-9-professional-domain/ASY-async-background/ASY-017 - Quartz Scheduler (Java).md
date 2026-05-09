@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-017
 title: Quartz Scheduler (Java)
 category: Async & Background Processing

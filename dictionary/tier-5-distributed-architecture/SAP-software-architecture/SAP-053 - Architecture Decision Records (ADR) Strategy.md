@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-053
 title: Architecture Decision Records (ADR) Strategy
 category: Software Architecture Patterns

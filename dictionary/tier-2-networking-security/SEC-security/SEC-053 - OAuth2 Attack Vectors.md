@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-053
 title: OAuth2 Attack Vectors
 category: Security

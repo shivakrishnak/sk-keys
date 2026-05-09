@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-044
 title: LLM Safety Architecture Design
 category: LLMs & Prompt Engineering

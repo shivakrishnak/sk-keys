@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-047
 title: Monads and Functors
 category: CS Fundamentals - Paradigms

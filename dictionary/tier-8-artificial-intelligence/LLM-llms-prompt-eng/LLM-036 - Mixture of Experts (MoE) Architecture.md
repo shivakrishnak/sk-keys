@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-036
 title: Mixture of Experts (MoE) Architecture
 category: LLMs & Prompt Engineering

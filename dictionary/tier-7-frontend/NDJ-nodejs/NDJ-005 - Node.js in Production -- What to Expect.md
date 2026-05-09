@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-005
 title: Node.js in Production -- What to Expect
 category: Node.js

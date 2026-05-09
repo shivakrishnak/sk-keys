@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-013
 title: SPACE Framework for Developer Productivity
 category: Platform & Modern SWE

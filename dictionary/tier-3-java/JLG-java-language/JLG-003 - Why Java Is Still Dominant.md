@@ -1,4 +1,4 @@
-﻿---
+---
 id: JLG-003
 title: Why Java Is Still Dominant
 category: Java Language

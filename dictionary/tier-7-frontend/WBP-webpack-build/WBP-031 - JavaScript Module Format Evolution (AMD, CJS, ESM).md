@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-031
 title: JavaScript Module Format Evolution (AMD, CJS, ESM)
 category: Webpack & Build Tools

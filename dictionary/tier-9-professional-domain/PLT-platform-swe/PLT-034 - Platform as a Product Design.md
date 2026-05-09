@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-034
 title: Platform as a Product Design
 category: Platform & Modern SWE

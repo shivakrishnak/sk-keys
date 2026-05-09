@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-018
 title: File Operations (cp, mv, rm, mkdir)
 category: Linux

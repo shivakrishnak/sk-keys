@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-008
 title: Word Document Generation (docx4j, python-docx, OpenXML)
 category: Document Generation

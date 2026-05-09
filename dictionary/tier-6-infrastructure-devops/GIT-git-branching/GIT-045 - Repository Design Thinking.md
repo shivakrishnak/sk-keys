@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-045
 title: Repository Design Thinking
 category: Git & Branching Strategy

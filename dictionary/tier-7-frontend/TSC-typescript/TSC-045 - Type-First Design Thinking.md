@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-045
 title: Type-First Design Thinking
 category: TypeScript

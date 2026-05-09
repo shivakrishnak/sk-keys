@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-039
 title: Build vs Buy vs Fine-Tune Decision Mental Model
 category: AI Product Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-032
 title: Git Internals -- Objects, Trees, Blobs
 category: Git & Branching Strategy

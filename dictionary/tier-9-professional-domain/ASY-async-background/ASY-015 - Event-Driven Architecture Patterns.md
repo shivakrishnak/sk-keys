@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-015
 title: Event-Driven Architecture Patterns
 category: Async & Background Processing

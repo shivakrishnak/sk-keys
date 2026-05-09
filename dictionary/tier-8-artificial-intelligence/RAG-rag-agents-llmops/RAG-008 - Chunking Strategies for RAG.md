@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-008
 title: Chunking Strategies for RAG
 category: RAG & Agents & LLMOps

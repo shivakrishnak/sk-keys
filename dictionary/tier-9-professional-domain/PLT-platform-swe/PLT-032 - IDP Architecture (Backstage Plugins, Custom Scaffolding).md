@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-032
 title: IDP Architecture (Backstage Plugins, Custom Scaffolding)
 category: Platform & Modern SWE

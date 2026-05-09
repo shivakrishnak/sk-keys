@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-030
 title: JavaScript Runtime Selection (Node vs Deno vs Bun)
 category: JavaScript

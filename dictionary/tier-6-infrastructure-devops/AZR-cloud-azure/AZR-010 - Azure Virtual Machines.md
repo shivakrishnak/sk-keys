@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-010
 title: Azure Virtual Machines
 category: Cloud -- Azure

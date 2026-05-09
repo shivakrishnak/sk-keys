@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-017
 title: SWIFT and Banking Networks
 category: Financial Services Domain

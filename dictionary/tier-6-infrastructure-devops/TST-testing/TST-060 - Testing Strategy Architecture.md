@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-060
 title: Testing Strategy Architecture
 category: Testing

@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-002
 title: The Bundler Mental Model (Module Graph, Entry Points, Chunks)
 category: Webpack & Build Tools

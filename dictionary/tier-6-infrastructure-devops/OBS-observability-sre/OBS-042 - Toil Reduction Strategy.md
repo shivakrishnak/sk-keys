@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-042
 title: Toil Reduction Strategy
 category: Observability & SRE

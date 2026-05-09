@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-002
 title: The Async Mental Model (Sync vs Async vs Parallel)
 category: Async & Background Processing

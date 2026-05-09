@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-005
 title: The Design Patterns Ecosystem Map
 category: Design Patterns

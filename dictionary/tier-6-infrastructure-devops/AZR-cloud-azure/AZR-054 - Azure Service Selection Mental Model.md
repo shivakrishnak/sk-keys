@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-054
 title: Azure Service Selection Mental Model
 category: Cloud -- Azure

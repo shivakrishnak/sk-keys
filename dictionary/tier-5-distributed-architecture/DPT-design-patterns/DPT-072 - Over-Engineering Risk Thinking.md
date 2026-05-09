@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-072
 title: Over-Engineering Risk Thinking
 category: Design Patterns

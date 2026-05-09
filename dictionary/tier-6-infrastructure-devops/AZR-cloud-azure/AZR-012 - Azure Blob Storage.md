@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-012
 title: Azure Blob Storage
 category: Cloud -- Azure

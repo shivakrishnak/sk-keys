@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-048
 title: Data System Internals (Parquet, Arrow, Iceberg)
 category: Data Fundamentals

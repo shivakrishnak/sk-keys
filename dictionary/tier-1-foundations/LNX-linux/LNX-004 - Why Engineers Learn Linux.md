@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-004
 title: Why Engineers Learn Linux
 category: Linux

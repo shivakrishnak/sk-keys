@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-028
 title: Active Record
 category: Software Architecture Patterns

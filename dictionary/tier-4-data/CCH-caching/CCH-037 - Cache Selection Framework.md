@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-037
 title: Cache Selection Framework
 category: Caching

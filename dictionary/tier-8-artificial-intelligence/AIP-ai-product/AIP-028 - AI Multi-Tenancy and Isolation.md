@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-028
 title: AI Multi-Tenancy and Isolation
 category: AI Product Engineering

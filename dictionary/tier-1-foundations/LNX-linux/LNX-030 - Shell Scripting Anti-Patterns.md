@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-030
 title: Shell Scripting Anti-Patterns
 category: Linux

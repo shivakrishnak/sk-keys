@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-076
 title: Type Theory (System F, HM Inference)
 category: CS Fundamentals - Paradigms

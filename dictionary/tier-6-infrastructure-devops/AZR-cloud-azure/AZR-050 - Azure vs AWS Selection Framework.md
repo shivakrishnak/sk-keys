@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-050
 title: Azure vs AWS Selection Framework
 category: Cloud -- Azure

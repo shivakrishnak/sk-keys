@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-011
 title: Loose Coupling of Frontend Modules
 category: Software Architecture Patterns

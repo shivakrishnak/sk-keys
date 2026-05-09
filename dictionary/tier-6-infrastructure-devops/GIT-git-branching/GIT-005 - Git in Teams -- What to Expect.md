@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-005
 title: Git in Teams -- What to Expect
 category: Git & Branching Strategy

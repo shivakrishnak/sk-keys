@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-026
 title: Caching Architecture Strategy
 category: Caching

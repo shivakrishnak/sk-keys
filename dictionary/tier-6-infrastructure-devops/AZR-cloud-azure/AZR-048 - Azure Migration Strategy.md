@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-048
 title: Azure Migration Strategy
 category: Cloud -- Azure

@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-001
 title: What Is HTML and How the Web Works
 category: HTML

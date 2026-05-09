@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-033
 title: Engineering Effectiveness Research (McKinsey, DX Core)
 category: Platform & Modern SWE

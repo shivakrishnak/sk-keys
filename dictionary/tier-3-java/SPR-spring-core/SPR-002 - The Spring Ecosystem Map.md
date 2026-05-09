@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-002
 title: The Spring Ecosystem Map
 category: Spring Core

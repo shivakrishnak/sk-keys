@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Magic Numbers Anti-Pattern"
 parent: "Design Patterns"

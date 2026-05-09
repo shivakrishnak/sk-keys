@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-021
 title: Functions and Procedures
 category: CS Fundamentals - Paradigms

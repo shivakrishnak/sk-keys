@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-035
 title: Angular Monorepo with Nx
 category: Angular

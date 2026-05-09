@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-016
 title: Error Budget
 category: System Design

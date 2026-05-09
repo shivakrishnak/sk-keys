@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-066
 title: Spring Native and GraalVM Integration
 category: Spring Core

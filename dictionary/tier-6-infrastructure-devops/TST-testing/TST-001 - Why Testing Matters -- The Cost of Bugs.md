@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-001
 title: Why Testing Matters -- The Cost of Bugs
 category: Testing

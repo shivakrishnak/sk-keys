@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-050
 title: IPv6 and Migration Strategy
 category: Networking

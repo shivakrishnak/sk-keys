@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-047
 title: Engineering Metrics Mental Model (Leading vs Lagging)
 category: Platform & Modern SWE

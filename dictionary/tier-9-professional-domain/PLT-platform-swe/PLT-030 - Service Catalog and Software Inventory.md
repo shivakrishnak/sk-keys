@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-030
 title: Service Catalog and Software Inventory
 category: Platform & Modern SWE

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-007
 title: HTML-to-PDF Conversion (Puppeteer, WeasyPrint, Prince)
 category: Document Generation

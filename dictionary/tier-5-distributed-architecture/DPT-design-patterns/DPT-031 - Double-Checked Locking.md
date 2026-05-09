@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Double-Checked Locking"
 parent: "Design Patterns"

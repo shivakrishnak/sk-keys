@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-043
 title: Conway's Law and Org Design Research
 category: Platform & Modern SWE

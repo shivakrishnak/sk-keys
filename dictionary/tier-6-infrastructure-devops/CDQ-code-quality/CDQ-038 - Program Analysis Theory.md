@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-038
 title: Program Analysis Theory
 category: Code Quality

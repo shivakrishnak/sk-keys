@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-040
 title: Azure Landing Zone Architecture
 category: Cloud -- Azure

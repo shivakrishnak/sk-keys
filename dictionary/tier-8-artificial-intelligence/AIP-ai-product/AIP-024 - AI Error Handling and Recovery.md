@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-024
 title: AI Error Handling and Recovery
 category: AI Product Engineering

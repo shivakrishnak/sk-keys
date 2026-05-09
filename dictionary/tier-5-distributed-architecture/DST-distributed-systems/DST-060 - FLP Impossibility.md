@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-060
 title: "FLP Impossibility"
 category: Distributed Systems

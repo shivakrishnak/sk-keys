@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-029
 title: Cache-Aside vs Write-Through at Scale
 category: Caching

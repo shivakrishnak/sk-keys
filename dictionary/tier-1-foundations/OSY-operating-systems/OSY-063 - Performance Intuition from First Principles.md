@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-063
 title: Performance Intuition from First Principles
 category: Operating Systems

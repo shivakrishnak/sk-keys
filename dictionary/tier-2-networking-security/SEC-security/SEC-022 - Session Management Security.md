@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-022
 title: Session Management Security
 category: Security

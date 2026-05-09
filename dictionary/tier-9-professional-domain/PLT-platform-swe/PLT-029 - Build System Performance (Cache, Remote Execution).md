@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-029
 title: Build System Performance (Cache, Remote Execution)
 category: Platform & Modern SWE

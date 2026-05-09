@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-046
 title: Platform vs Enablement Thinking
 category: Platform & Modern SWE

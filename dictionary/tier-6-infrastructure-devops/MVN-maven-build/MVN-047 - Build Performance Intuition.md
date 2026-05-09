@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-047
 title: Build Performance Intuition
 category: Maven & Build Tools

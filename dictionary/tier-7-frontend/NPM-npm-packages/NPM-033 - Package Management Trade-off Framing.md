@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-033
 title: Package Management Trade-off Framing
 category: npm & Package Management

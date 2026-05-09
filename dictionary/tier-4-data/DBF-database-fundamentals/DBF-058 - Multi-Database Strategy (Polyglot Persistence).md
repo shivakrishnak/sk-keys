@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-058
 title: Multi-Database Strategy (Polyglot Persistence)
 category: Database Fundamentals

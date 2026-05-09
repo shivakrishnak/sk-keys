@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-061
 title: Pattern Selection Framework
 category: Design Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-047
 title: SLO-Based Alerting Strategy
 category: Observability & SRE

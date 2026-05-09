@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-037
 title: Async Mental Model (Promises vs Callbacks vs async/await)
 category: JavaScript

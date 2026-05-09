@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-036
 title: CSS Architecture at Scale (Tokens, Design Systems)
 category: CSS

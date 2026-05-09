@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-054
 title: Observability-First Thinking
 category: Observability & SRE

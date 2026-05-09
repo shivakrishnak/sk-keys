@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-034
 title: Multi-Cloud IaC Strategy
 category: Infrastructure as Code

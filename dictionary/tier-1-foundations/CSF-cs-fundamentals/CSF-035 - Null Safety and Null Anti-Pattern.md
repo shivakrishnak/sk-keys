@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-035
 title: Null Safety and Null Anti-Pattern
 category: CS Fundamentals - Paradigms

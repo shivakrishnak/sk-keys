@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Hudi"
 parent: "Data Fundamentals"

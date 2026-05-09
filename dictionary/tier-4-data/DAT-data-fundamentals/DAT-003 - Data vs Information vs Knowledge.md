@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-003
 title: Data vs Information vs Knowledge
 category: Data Fundamentals

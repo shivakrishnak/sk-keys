@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-041
 title: Zero Trust Security Model
 category: Security

@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-054
 title: Structured Concurrency Design Principles
 category: Java Concurrency

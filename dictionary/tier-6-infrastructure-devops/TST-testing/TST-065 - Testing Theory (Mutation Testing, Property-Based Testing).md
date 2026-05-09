@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-065
 title: Testing Theory (Mutation Testing, Property-Based Testing)
 category: Testing

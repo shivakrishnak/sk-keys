@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-038
 title: Angular State Management Selection (NgRx vs Akita vs Elf)
 category: Angular

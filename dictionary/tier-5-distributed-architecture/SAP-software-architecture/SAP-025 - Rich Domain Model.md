@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-025
 title: Rich Domain Model
 category: Software Architecture Patterns

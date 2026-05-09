@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-004
 title: The CAP Theorem in Plain English
 category: NoSQL & Distributed Databases

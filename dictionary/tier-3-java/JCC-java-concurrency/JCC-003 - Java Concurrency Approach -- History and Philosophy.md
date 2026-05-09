@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-003
 title: "Java Concurrency Approach: History and Philosophy"
 category: Java Concurrency

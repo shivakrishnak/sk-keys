@@ -1,4 +1,4 @@
-﻿---
+---
 id: JLG-004
 title: "Java vs Other JVM Languages (Kotlin, Scala, Groovy)"
 category: Java Language

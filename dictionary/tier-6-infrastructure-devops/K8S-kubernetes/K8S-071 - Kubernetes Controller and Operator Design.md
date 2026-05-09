@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-071
 title: Kubernetes Controller and Operator Design
 category: Kubernetes

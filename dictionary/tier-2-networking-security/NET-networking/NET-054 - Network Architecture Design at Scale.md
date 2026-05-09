@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-054
 title: Network Architecture Design at Scale
 category: Networking

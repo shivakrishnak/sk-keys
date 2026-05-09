@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-063
 title: Linux Kernel Architecture Deep Dive
 category: Linux

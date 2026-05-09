@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-001
 title: What Is Code Quality and Why It Matters
 category: Code Quality

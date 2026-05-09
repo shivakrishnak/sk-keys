@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-033
 title: Closures
 category: CS Fundamentals - Paradigms

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-052
 title: JWT Algorithm Confusion Attacks
 category: Security

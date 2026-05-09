@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-004
 title: How Code Becomes Execution - Big Picture
 category: CS Fundamentals - Paradigms

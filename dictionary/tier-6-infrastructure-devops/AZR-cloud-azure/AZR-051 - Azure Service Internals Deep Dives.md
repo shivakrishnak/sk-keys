@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-051
 title: Azure Service Internals Deep Dives
 category: Cloud -- Azure

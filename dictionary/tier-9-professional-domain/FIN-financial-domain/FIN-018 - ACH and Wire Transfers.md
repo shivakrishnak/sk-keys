@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-018
 title: ACH and Wire Transfers
 category: Financial Services Domain

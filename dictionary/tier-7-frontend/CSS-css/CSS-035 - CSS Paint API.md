@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-035
 title: CSS Paint API
 category: CSS

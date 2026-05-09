@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-076
 title: Consumer-First API Thinking
 category: HTTP & APIs

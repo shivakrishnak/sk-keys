@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-035
 title: Regulatory Compliance Architecture Design
 category: Financial Services Domain

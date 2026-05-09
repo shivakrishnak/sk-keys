@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-059
 title: "Byzantine Fault Tolerance"
 category: Distributed Systems

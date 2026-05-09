@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-003
 title: Kubernetes vs Docker Swarm vs Mesos
 category: Kubernetes

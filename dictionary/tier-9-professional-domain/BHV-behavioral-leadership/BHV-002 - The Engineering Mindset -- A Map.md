@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-002
 title: The Engineering Mindset -- A Map
 category: Behavioral & Leadership

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-037
 title: Insecure Deserialization
 category: Security

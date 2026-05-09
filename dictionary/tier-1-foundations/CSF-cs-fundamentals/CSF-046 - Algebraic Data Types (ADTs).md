@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-046
 title: Algebraic Data Types (ADTs)
 category: CS Fundamentals - Paradigms

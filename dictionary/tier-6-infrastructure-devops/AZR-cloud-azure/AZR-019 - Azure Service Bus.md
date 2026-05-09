@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-019
 title: Azure Service Bus
 category: Cloud -- Azure

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-003
 title: Cache Anatomy (Hit, Miss, Eviction)
 category: Caching

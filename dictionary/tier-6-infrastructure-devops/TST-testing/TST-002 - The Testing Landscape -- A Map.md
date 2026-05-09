@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-002
 title: The Testing Landscape -- A Map
 category: Testing

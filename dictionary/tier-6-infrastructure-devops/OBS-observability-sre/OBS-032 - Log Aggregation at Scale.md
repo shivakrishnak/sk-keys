@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-032
 title: Log Aggregation at Scale
 category: Observability & SRE

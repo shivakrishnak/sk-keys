@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-040
 title: LLM Architecture Strategy (Provider Selection, Self-Hosted vs API)
 category: LLMs & Prompt Engineering

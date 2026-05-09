@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-071
 title: Service Mesh Internals (Envoy, Istio)
 category: Microservices

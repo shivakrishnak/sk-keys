@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-032
 title: DOM Manipulation Performance
 category: HTML

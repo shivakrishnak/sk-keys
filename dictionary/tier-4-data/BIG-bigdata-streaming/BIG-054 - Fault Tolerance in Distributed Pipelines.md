@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-054
 title: Fault Tolerance in Distributed Pipelines
 category: Big Data & Streaming

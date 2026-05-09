@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-052
 title: Optimization Theory (SGD, Adam, Loss Landscapes)
 category: AI Foundations

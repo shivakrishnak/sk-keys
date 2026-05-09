@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Bridge"
 parent: "Design Patterns"

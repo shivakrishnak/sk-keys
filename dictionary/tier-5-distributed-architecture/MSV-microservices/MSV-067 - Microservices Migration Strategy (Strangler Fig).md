@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-067
 title: Microservices Migration Strategy (Strangler Fig)
 category: Microservices

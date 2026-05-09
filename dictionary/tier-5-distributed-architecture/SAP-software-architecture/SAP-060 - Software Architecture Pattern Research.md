@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-060
 title: Software Architecture Pattern Research
 category: Software Architecture Patterns

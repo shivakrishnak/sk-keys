@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-016
 title: RxJS Fundamentals for Angular
 category: Angular

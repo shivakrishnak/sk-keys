@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-050
 title: RAG vs Fine-Tuning Decision Framework
 category: RAG & Agents & LLMOps

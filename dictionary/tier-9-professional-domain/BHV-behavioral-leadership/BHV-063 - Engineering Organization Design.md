@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-063
 title: Engineering Organization Design
 category: Behavioral & Leadership

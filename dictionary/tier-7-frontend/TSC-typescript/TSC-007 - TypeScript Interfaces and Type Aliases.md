@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-007
 title: TypeScript Interfaces and Type Aliases
 category: TypeScript

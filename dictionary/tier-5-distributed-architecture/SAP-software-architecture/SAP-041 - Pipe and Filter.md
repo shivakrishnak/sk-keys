@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-041
 title: Pipe and Filter
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-065
 title: Organizational Psychology for Engineers
 category: Behavioral & Leadership

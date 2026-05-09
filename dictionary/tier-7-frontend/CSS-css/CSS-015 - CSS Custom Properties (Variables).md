@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-015
 title: CSS Custom Properties (Variables)
 category: CSS

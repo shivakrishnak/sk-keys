@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-004
 title: The Kubernetes Ecosystem Map
 category: Kubernetes

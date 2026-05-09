@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-052
 title: Data Trade-off Framing
 category: Data Fundamentals

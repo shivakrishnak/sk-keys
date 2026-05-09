@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-016
 title: Security Misconfiguration
 category: Security

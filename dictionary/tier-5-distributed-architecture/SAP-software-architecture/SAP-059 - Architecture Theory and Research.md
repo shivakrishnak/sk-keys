@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-059
 title: Architecture Theory and Research
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-028
 title: API Key Security Patterns
 category: Security

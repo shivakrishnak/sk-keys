@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-064
 title: Kernel Development and Patch Contribution
 category: Linux

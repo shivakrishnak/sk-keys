@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-074
 title: Pipeline Security Architecture (DevSecOps)
 category: CI/CD

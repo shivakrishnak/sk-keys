@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-036
 title: Financial Data Platform Strategy
 category: Financial Services Domain

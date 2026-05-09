@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-017
 title: RAG Evaluation (RAGAs, Faithfulness, Relevance)
 category: RAG & Agents & LLMOps

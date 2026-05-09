@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-029
 title: Static Site Generation (SSG) Pattern
 category: HTML

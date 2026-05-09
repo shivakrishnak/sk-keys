@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-036
 title: TypeScript Architecture Strategy (Strict Typing, Shared Types)
 category: TypeScript

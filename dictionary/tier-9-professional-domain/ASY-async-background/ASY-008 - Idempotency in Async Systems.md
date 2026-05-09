@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-008
 title: Idempotency in Async Systems
 category: Async & Background Processing

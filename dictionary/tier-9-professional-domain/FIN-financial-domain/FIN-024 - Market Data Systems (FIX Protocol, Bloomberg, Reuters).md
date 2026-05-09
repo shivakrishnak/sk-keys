@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-024
 title: Market Data Systems (FIX Protocol, Bloomberg, Reuters)
 category: Financial Services Domain

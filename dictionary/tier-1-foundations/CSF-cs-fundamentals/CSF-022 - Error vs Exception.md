@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-022
 title: Error vs Exception
 category: CS Fundamentals - Paradigms

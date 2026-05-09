@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-004
 title: Why Docker Changed Everything
 category: Containers

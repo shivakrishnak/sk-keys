@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-018
 title: Git Hooks
 category: Git & Branching Strategy

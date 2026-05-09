@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-017
 title: LLM Cost Optimization (Caching, Batching)
 category: LLMs & Prompt Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-007
 title: Runnable
 category: Java Concurrency

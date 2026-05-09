@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-049
 title: Data Model Theory
 category: Data Fundamentals

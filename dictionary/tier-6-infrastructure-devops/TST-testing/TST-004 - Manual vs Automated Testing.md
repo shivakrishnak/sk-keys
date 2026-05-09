@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-004
 title: Manual vs Automated Testing
 category: Testing

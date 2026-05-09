@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-014
 title: Fastify -- High-Performance HTTP
 category: Node.js

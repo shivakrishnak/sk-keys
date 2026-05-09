@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-071
 title: Pattern Trade-off Framing
 category: Design Patterns

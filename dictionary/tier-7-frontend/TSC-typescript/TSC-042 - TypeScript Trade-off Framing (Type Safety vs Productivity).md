@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-042
 title: TypeScript Trade-off Framing (Type Safety vs Productivity)
 category: TypeScript

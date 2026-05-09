@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-031
 title: Cache Coherence Protocol Design
 category: Caching

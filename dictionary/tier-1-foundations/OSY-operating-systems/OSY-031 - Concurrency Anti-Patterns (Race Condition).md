@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-031
 title: Concurrency Anti-Patterns (Race Condition)
 category: Operating Systems

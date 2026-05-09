@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-006
 title: Terraform Basics (providers, resources, state)
 category: Infrastructure as Code

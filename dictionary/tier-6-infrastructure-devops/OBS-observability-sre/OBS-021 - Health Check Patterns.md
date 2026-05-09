@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-021
 title: Health Check Patterns
 category: Observability & SRE

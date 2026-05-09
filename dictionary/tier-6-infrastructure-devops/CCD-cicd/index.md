@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "CI/CD"
 parent: "Technical Dictionary"

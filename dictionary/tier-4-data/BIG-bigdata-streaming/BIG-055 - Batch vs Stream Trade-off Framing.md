@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-055
 title: Batch vs Stream Trade-off Framing
 category: Big Data & Streaming

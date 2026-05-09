@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-034
 title: Azure Managed Identity
 category: Cloud -- Azure

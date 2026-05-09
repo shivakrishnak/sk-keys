@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-001
 title: What Is TypeScript and Why It Matters
 category: TypeScript

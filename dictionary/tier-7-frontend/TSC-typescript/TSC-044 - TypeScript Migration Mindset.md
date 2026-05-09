@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-044
 title: TypeScript Migration Mindset
 category: TypeScript

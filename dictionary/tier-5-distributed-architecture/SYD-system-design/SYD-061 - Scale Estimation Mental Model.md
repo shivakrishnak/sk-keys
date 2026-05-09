@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-061
 title: Scale Estimation Mental Model
 category: System Design

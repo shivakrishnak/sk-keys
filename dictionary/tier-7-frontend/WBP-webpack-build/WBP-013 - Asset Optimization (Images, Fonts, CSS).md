@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-013
 title: Asset Optimization (Images, Fonts, CSS)
 category: Webpack & Build Tools

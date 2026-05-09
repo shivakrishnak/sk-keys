@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-065
 title: Security Protocol Formal Analysis
 category: Security

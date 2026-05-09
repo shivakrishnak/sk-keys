@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-052
 layout: default
 title: "Connascence"

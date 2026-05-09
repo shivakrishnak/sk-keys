@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-005
 title: Open Source and the GNU Philosophy
 category: Linux

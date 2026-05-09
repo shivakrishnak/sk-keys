@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-025
 title: Angular Server-Side Rendering (SSR with Angular Universal)
 category: Angular

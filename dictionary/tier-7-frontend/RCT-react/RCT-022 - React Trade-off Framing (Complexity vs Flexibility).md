@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-022
 title: React Trade-off Framing (Complexity vs Flexibility)
 category: React

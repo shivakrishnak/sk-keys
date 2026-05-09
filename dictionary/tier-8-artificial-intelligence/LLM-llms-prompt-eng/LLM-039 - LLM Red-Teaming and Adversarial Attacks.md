@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-039
 title: LLM Red-Teaming and Adversarial Attacks
 category: LLMs & Prompt Engineering

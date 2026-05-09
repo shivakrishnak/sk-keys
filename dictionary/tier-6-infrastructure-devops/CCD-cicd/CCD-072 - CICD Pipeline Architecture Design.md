@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-072
 title: CI/CD Pipeline Architecture Design
 category: CI/CD

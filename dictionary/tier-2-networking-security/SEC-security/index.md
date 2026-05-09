@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Security"
 parent: "Technical Dictionary"

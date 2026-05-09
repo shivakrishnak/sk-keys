@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-073
 title: Kubernetes Scheduler Algorithm Design
 category: Kubernetes

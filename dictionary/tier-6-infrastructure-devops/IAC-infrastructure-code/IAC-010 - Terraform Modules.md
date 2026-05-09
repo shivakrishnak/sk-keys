@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-010
 title: Terraform Modules
 category: Infrastructure as Code

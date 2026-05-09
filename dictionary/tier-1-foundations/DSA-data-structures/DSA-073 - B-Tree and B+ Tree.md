@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-073
 title: B-Tree and B+ Tree
 category: Data Structures & Algorithms

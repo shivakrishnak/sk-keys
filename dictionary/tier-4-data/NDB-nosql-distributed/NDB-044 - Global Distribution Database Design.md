@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-044
 title: Global Distribution Database Design
 category: NoSQL & Distributed Databases

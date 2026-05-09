@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-001
 title: What Is Document Generation and Why It Matters
 category: Document Generation

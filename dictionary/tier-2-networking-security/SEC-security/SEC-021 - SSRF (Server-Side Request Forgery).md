@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-021
 title: SSRF (Server-Side Request Forgery)
 category: Security

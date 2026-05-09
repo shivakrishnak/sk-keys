@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-040
 title: AI-Augmented Developer Tooling Strategy
 category: Platform & Modern SWE

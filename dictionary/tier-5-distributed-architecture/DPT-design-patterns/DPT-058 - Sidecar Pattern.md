@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Sidecar Pattern"
 parent: "Design Patterns"

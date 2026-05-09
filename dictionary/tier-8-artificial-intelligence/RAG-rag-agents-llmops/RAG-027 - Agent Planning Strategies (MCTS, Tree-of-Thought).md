@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-027
 title: Agent Planning Strategies (MCTS, Tree-of-Thought)
 category: RAG & Agents & LLMOps

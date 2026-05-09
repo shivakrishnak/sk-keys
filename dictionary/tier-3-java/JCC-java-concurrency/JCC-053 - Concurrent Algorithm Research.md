@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-053
 title: Concurrent Algorithm Research
 category: Java Concurrency

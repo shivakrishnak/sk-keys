@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-025
 title: Node.js Security (OWASP Node Security)
 category: Node.js

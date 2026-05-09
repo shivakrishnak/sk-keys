@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-025
 title: Open Source LLMs (Llama, Mistral, Gemma)
 category: LLMs & Prompt Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-001
 title: Why Caching Exists -- The Performance Problem
 category: Caching

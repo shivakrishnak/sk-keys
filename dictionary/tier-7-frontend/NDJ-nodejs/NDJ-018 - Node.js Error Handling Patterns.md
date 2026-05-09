@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-018
 title: Node.js Error Handling Patterns
 category: Node.js

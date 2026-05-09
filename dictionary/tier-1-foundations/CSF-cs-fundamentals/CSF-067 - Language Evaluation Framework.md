@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-067
 title: Language Evaluation Framework
 category: CS Fundamentals - Paradigms

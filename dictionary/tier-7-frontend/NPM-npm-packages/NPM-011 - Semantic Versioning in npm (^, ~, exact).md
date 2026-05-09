@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-011
 title: Semantic Versioning in npm (^, ~, exact)
 category: npm & Package Management

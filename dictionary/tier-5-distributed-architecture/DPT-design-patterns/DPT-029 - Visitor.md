@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Visitor"
 parent: "Design Patterns"

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-001
 title: What Is Azure and the Microsoft Cloud
 category: Cloud -- Azure

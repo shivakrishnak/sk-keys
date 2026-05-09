@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-022
 title: Terraform State Locking and Drift Detection
 category: Infrastructure as Code

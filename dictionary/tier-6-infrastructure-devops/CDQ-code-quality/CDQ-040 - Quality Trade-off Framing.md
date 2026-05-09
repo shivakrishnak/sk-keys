@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-040
 title: Quality Trade-off Framing
 category: Code Quality

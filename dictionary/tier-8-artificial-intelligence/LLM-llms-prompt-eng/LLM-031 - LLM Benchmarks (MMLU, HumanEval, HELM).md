@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-031
 title: LLM Benchmarks (MMLU, HumanEval, HELM)
 category: LLMs & Prompt Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-045
 title: "KISS (Keep It Simple, Stupid)"
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-050
 title: Garbage Collection Algorithms Overview
 category: CS Fundamentals - Paradigms

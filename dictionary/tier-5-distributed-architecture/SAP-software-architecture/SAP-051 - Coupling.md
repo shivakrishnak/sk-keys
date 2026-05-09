@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-051
 layout: default
 title: "Coupling"

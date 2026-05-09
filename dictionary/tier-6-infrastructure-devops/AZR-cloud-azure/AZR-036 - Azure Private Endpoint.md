@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-036
 title: Azure Private Endpoint
 category: Cloud -- Azure

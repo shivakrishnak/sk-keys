@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-003
 title: HTTP - The Language of the Web
 category: HTTP & APIs

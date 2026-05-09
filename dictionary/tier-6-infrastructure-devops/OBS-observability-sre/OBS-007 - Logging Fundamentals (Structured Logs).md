@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-007
 title: Logging Fundamentals (Structured Logs)
 category: Observability & SRE

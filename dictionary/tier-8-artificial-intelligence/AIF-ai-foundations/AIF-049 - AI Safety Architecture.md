@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-049
 title: AI Safety Architecture
 category: AI Foundations

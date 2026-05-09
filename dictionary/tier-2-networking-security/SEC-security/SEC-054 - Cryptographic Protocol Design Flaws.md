@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-054
 title: Cryptographic Protocol Design Flaws
 category: Security

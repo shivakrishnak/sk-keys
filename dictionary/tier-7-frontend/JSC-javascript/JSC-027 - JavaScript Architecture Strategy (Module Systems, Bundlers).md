@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-027
 title: JavaScript Architecture Strategy (Module Systems, Bundlers)
 category: JavaScript

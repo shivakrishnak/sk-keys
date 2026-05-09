@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-026
 title: Service Layer
 category: Software Architecture Patterns

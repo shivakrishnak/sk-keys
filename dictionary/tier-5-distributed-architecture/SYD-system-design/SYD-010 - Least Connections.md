@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-010
 title: Least Connections
 category: System Design

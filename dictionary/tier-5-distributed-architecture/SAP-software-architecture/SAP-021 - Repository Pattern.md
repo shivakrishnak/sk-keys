@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-021
 title: Repository Pattern
 category: Software Architecture Patterns

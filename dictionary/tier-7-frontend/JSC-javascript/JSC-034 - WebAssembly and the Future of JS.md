@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-034
 title: WebAssembly and the Future of JS
 category: JavaScript

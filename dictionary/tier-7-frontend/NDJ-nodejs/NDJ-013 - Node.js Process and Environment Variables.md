@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-013
 title: Node.js Process and Environment Variables
 category: Node.js

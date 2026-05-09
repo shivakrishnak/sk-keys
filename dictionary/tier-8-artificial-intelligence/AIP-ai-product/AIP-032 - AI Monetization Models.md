@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-032
 title: AI Monetization Models
 category: AI Product Engineering

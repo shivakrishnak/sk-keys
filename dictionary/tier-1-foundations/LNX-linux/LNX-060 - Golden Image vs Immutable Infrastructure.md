@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-060
 title: Golden Image vs Immutable Infrastructure
 category: Linux

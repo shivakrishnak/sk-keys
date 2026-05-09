@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-003
 title: The Internet History and Architecture
 category: Networking

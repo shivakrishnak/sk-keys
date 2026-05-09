@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 parent: "Data Structures & Algorithms"
 grand_parent: "Technical Dictionary"

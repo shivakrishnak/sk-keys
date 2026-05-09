@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-036
 title: Platform Engineering Strategy (Build vs Buy)
 category: Platform & Modern SWE

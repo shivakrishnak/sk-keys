@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-081
 title: Deployment Trade-off Framing
 category: CI/CD

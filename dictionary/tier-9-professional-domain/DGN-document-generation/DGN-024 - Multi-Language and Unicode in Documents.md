@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-024
 title: Multi-Language and Unicode in Documents
 category: Document Generation

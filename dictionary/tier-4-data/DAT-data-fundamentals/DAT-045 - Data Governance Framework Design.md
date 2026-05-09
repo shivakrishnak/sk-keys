@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-045
 title: Data Governance Framework Design
 category: Data Fundamentals

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-017
 title: Jaeger / Zipkin -- Distributed Tracing
 category: Observability & SRE

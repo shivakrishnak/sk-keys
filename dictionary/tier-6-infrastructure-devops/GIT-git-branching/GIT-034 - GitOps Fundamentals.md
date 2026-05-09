@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-034
 title: GitOps Fundamentals
 category: Git & Branching Strategy

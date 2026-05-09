@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-057
 title: Thread Safety Trade-off Framing
 category: Java Concurrency

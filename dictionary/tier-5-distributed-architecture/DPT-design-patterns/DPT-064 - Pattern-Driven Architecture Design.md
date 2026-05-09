@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-064
 title: Pattern-Driven Architecture Design
 category: Design Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-017
 title: Basic Text Editors (vim, nano)
 category: Linux

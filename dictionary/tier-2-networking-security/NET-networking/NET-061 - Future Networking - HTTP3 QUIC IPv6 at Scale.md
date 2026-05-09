@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-061
 title: Future Networking - HTTP3 QUIC IPv6 at Scale
 category: Networking

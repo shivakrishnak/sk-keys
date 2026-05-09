@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-012
 title: Micro-Frontend Architecture
 category: Software Architecture Patterns

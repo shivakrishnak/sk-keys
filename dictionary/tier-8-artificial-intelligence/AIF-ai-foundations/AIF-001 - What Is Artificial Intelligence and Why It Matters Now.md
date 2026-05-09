@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-001
 title: What Is Artificial Intelligence and Why It Matters Now
 category: AI Foundations

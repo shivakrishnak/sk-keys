@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-043
 title: Structural vs Nominal Typing Mental Model
 category: TypeScript

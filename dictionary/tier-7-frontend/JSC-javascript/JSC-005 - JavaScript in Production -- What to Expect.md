@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-005
 title: JavaScript in Production -- What to Expect
 category: JavaScript

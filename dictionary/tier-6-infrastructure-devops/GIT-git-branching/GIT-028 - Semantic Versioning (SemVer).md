@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-028
 title: Semantic Versioning (SemVer)
 category: Git & Branching Strategy

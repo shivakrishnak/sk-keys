@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-025
 title: pnpm Content-Addressable Store Internals
 category: npm & Package Management

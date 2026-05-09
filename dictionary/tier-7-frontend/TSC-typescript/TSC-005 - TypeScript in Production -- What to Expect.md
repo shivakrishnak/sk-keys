@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-005
 title: TypeScript in Production -- What to Expect
 category: TypeScript

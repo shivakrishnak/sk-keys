@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-070
 title: Pattern-Recognition Mental Model
 category: Design Patterns

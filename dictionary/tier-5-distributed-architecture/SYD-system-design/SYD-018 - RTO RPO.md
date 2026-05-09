@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-018
 title: RTO RPO
 category: System Design

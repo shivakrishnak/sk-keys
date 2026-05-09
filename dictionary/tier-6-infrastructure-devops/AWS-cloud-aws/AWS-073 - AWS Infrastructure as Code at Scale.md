@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-073
 title: AWS Infrastructure as Code at Scale
 category: Cloud -- AWS

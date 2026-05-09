@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-035
 title: JavaScript Research Frontiers
 category: JavaScript

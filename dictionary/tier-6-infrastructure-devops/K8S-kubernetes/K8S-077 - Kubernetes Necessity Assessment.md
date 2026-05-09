@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-077
 title: Kubernetes Necessity Assessment
 category: Kubernetes

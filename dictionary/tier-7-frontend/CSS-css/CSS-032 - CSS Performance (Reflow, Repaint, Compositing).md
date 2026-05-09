@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-032
 title: CSS Performance (Reflow, Repaint, Compositing)
 category: CSS

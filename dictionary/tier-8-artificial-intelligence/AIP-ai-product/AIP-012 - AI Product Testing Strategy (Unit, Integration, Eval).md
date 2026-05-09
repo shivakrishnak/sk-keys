@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-012
 title: AI Product Testing Strategy (Unit, Integration, Eval)
 category: AI Product Engineering

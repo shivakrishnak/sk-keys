@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-027
 title: JWT Security
 category: Security

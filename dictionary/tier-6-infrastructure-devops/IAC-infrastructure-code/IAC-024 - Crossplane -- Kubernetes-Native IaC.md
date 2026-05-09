@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-024
 title: Crossplane -- Kubernetes-Native IaC
 category: Infrastructure as Code

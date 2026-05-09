@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-037
 title: TypeScript Monorepo Strategy (Type Sharing)
 category: TypeScript

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-048
 title: Multi-Version Concurrency Control at Scale
 category: NoSQL & Distributed Databases

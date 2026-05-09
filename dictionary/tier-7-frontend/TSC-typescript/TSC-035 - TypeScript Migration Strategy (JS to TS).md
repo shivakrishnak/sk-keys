@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-035
 title: TypeScript Migration Strategy (JS to TS)
 category: TypeScript

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-027
 title: CSS Scroll Snap
 category: CSS

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-074
 title: AWS Novel Service Patterns Research
 category: Cloud -- AWS

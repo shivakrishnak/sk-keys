@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-035
 title: Multi-Cloud Platform Strategy
 category: Platform & Modern SWE

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-005
 title: The DSA Ecosystem Map (LeetCode, Competitions)
 category: Data Structures & Algorithms

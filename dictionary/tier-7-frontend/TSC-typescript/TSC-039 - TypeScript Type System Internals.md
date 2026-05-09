@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-039
 title: TypeScript Type System Internals
 category: TypeScript

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-030
 title: Azure Synapse Analytics
 category: Cloud -- Azure

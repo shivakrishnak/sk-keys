@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-002
 title: The Code Quality Landscape -- A Map
 category: Code Quality

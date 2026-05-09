@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-004
 title: "Spring vs Jakarta EE vs Micronaut vs Quarkus"
 category: Spring Core

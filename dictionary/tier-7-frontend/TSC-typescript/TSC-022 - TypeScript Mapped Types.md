@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-022
 title: TypeScript Mapped Types
 category: TypeScript

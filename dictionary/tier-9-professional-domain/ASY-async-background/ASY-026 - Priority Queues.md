@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-026
 title: Priority Queues
 category: Async & Background Processing

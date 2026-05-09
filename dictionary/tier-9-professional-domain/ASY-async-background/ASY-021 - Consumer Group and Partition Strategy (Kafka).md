@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-021
 title: Consumer Group and Partition Strategy (Kafka)
 category: Async & Background Processing

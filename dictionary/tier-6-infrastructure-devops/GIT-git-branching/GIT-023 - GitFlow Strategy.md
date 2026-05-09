@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-023
 title: GitFlow Strategy
 category: Git & Branching Strategy

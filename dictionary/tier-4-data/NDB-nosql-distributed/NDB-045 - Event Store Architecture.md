@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-045
 title: Event Store Architecture
 category: NoSQL & Distributed Databases

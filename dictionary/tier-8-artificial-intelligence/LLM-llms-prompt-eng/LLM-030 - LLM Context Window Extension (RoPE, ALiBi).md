@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-030
 title: LLM Context Window Extension (RoPE, ALiBi)
 category: LLMs & Prompt Engineering

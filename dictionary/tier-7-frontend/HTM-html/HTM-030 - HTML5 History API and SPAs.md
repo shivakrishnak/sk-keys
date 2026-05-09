@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-030
 title: HTML5 History API and SPAs
 category: HTML

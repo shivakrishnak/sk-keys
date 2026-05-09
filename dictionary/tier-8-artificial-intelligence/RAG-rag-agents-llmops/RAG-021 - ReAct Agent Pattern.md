@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-021
 title: ReAct Agent Pattern
 category: RAG & Agents & LLMOps

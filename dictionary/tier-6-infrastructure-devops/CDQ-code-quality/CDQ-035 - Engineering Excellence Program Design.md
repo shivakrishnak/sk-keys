@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-035
 title: Engineering Excellence Program Design
 category: Code Quality

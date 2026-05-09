@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-038
 title: Idempotency Key
 category: System Design

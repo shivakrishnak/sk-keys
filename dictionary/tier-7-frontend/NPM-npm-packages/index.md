@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "npm & Package Management"
 parent: "Technical Dictionary"

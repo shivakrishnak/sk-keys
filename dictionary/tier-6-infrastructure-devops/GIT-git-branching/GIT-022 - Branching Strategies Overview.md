@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-022
 title: Branching Strategies Overview
 category: Git & Branching Strategy

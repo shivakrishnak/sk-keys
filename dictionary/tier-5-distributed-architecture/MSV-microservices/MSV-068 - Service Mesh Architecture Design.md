@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-068
 title: Service Mesh Architecture Design
 category: Microservices

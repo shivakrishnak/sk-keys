@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-024
 title: TypeScript Template Literal Types
 category: TypeScript

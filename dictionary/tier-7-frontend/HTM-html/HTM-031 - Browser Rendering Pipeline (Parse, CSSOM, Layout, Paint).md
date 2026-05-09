@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-031
 title: Browser Rendering Pipeline (Parse, CSSOM, Layout, Paint)
 category: HTML

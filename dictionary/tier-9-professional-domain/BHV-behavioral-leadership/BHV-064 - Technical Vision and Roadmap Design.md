@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-064
 title: Technical Vision and Roadmap Design
 category: Behavioral & Leadership

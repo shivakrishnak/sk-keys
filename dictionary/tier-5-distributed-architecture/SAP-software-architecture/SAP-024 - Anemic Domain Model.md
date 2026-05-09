@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-024
 title: Anemic Domain Model
 category: Software Architecture Patterns

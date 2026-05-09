@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-040
 title: Secrets Management at Scale (Vault, AWS Secrets)
 category: Security

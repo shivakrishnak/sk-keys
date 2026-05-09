@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-023
 title: Azure DevOps (Pipelines, Boards)
 category: Cloud -- Azure

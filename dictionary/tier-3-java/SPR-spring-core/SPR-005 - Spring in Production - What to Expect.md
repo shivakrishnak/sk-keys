@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-005
 title: Spring in Production - What to Expect
 category: Spring Core

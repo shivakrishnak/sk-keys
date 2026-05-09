@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-034
 title: Financial System Architecture Strategy
 category: Financial Services Domain

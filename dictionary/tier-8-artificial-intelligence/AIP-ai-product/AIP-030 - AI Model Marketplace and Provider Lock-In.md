@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-030
 title: AI Model Marketplace and Provider Lock-In
 category: AI Product Engineering

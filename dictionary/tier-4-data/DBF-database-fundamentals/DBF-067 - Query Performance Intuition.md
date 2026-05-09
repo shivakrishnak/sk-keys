@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-067
 title: Query Performance Intuition
 category: Database Fundamentals

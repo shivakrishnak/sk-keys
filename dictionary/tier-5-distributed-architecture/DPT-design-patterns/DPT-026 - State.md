@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "State"
 parent: "Design Patterns"

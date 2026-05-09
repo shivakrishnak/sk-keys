@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-056
 title: Cache-Friendly Data Structures
 category: Data Structures & Algorithms

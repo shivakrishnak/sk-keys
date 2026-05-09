@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Cargo Cult Programming"
 parent: "Design Patterns"

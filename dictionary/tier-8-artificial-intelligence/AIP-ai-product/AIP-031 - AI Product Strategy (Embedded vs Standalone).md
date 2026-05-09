@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-031
 title: AI Product Strategy (Embedded vs Standalone)
 category: AI Product Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-043
 title: Azure Cost Management and Optimization
 category: Cloud -- Azure

@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-046
 title: Build Trade-off Framing
 category: Maven & Build Tools

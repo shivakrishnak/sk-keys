@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-034
 title: Static Analysis at Scale
 category: Code Quality

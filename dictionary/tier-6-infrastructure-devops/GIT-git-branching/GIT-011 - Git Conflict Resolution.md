@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-011
 title: Git Conflict Resolution
 category: Git & Branching Strategy

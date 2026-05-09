@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-019
 title: Variables, Types, and Scope
 category: CS Fundamentals - Paradigms

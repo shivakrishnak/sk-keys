@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-021
 title: GitOps Workflow for IaC
 category: Infrastructure as Code

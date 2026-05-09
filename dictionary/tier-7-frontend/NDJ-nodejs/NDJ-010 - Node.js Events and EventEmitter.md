@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-010
 title: Node.js Events and EventEmitter
 category: Node.js

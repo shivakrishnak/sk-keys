@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-052
 title: Network Performance Tuning at Scale
 category: Networking

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-044
 title: Penetration Testing Fundamentals
 category: Security

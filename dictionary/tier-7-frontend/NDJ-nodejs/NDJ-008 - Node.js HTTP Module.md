@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-008
 title: Node.js HTTP Module
 category: Node.js

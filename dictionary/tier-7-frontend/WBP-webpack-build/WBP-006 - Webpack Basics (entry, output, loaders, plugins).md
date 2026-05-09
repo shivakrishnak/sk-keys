@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-006
 title: Webpack Basics (entry, output, loaders, plugins)
 category: Webpack & Build Tools

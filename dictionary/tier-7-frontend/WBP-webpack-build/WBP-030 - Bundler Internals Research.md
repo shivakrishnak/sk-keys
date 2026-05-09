@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-030
 title: Bundler Internals Research
 category: Webpack & Build Tools

@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-019
 title: Webpack Performance Optimization
 category: Webpack & Build Tools

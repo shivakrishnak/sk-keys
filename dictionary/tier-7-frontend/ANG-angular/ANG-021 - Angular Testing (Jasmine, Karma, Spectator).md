@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-021
 title: Angular Testing (Jasmine, Karma, Spectator)
 category: Angular

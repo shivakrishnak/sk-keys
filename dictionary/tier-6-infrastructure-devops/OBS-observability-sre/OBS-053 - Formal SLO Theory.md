@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-053
 title: Formal SLO Theory
 category: Observability & SRE

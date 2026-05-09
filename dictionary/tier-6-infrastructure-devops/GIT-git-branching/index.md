@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Git & Branching Strategy"
 parent: "Technical Dictionary"

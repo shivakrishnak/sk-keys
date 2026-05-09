@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-025
 title: Thundering Herd
 category: System Design

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-013
 title: Digital Signatures in Documents (PKCS#7, PAdES)
 category: Document Generation

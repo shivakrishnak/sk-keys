@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-002
 title: The Git Mental Model (DAG of Commits)
 category: Git & Branching Strategy

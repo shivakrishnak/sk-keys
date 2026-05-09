@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-035
 title: Supply Chain Security Thinking
 category: npm & Package Management

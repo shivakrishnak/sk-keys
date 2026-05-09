@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-034
 title: Dependency Hell Mental Model
 category: npm & Package Management

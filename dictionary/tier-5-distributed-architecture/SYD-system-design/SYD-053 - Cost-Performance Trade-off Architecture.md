@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-053
 title: Cost-Performance Trade-off Architecture
 category: System Design

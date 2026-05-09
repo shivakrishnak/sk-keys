@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-042
 title: Software Engineering Science (Empirical SE Research)
 category: Platform & Modern SWE

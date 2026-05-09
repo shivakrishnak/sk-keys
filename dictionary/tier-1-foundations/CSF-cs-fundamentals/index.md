@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "CS Fundamentals - Paradigms"
 parent: "Technical Dictionary"

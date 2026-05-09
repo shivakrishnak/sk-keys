@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-086
 title: Trade-off Reasoning for Any DS Choice
 category: Data Structures & Algorithms

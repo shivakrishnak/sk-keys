@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-002
 title: The Box Model -- Everything in CSS Is a Box
 category: CSS

@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-016
 title: Terraform Import
 category: Infrastructure as Code

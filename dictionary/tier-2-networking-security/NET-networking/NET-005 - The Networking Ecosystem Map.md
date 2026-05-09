@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-005
 title: The Networking Ecosystem Map
 category: Networking

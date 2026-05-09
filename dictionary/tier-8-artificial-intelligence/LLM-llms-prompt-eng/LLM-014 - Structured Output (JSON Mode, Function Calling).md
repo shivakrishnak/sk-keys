@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-014
 title: Structured Output (JSON Mode, Function Calling)
 category: LLMs & Prompt Engineering

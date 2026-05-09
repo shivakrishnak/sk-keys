@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-005
 title: NoSQL in Production -- What to Expect
 category: NoSQL & Distributed Databases

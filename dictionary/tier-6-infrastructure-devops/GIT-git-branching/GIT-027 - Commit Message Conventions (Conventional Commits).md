@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-027
 title: Commit Message Conventions (Conventional Commits)
 category: Git & Branching Strategy

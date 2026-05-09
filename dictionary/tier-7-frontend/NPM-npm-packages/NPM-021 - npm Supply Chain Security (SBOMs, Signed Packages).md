@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-021
 title: npm Supply Chain Security (SBOMs, Signed Packages)
 category: npm & Package Management

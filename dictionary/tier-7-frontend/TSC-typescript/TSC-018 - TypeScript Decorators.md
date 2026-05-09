@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-018
 title: TypeScript Decorators
 category: TypeScript

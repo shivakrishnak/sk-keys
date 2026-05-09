@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-030
 title: Incident Management Process
 category: Observability & SRE

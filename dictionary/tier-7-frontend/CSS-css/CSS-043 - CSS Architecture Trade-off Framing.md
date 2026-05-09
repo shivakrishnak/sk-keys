@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-043
 title: CSS Architecture Trade-off Framing
 category: CSS

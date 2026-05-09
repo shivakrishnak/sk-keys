@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-017
 title: React Security Strategy
 category: React

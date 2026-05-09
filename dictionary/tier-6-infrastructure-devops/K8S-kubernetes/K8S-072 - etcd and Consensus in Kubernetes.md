@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-072
 title: etcd and Consensus in Kubernetes
 category: Kubernetes

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-050
 title: AI Research Frontier (Self-Supervised, World Models)
 category: AI Foundations

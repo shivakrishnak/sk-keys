@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-085
 title: Recognising Problem Class on Sight
 category: Data Structures & Algorithms

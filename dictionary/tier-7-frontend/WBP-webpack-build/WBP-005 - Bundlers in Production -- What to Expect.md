@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-005
 title: Bundlers in Production -- What to Expect
 category: Webpack & Build Tools

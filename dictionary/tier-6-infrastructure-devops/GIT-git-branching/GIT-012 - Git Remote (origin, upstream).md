@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-012
 title: Git Remote (origin, upstream)
 category: Git & Branching Strategy

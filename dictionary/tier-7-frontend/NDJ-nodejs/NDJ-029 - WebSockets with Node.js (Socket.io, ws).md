@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-029
 title: WebSockets with Node.js (Socket.io, ws)
 category: Node.js

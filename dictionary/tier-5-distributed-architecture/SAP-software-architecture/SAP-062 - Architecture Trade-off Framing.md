@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-062
 title: Architecture Trade-off Framing
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-036
 title: Software Quality Measurement Research
 category: Code Quality

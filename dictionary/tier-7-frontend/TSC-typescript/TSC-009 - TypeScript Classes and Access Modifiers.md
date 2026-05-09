@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-009
 title: TypeScript Classes and Access Modifiers
 category: TypeScript

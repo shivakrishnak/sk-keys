@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-009
 title: Excel Generation (Apache POI, OpenPyXL, ExcelJS)
 category: Document Generation

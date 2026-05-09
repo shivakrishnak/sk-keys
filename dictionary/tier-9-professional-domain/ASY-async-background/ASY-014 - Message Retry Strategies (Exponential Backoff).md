@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-014
 title: Message Retry Strategies (Exponential Backoff)
 category: Async & Background Processing

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-034
 title: Consistent Hashing in Cache Systems
 category: Caching

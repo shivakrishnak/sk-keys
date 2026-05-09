@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-021
 title: CSS BEM Naming Convention
 category: CSS

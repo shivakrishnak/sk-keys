@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-024
 title: Component Design Thinking
 category: React

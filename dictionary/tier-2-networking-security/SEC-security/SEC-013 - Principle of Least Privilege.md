@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-013
 title: Principle of Least Privilege
 category: Security

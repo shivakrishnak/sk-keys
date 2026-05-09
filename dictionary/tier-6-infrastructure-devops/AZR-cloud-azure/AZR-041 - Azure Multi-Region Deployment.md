@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-041
 title: Azure Multi-Region Deployment
 category: Cloud -- Azure

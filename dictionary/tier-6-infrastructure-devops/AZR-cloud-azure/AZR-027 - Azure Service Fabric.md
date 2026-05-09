@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-027
 title: Azure Service Fabric
 category: Cloud -- Azure

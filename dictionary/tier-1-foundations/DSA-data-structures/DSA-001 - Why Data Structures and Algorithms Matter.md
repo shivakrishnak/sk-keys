@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-001
 title: Why Data Structures and Algorithms Matter
 category: Data Structures & Algorithms

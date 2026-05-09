@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-067
 title: Spring Specification and Extension Points
 category: Spring Core

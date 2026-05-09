@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-048
 title: Container Runtime Internals (runc, containerd)
 category: Containers

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-058
 title: OS Kernel Architecture and Design
 category: Operating Systems

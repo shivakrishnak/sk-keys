@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-047
 title: ML Platform Engineering Design
 category: AI Foundations

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-035
 title: Cache Trade-off Framing
 category: Caching

@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-016
 title: Stateless Design Principle
 category: HTTP & APIs

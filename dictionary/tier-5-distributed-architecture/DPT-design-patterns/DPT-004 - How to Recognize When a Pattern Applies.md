@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-004
 title: How to Recognize When a Pattern Applies
 category: Design Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-043
 title: URL Shortener Design
 category: System Design

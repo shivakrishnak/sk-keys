@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-042
 title: Custom Plugin Design
 category: Maven & Build Tools

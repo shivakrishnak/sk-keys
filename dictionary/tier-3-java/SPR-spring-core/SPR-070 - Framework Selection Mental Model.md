@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-070
 title: Framework Selection Mental Model
 category: Spring Core

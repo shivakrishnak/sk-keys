@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-042
 title: Angular Signals Deep Dive -- Reactivity Internals
 category: Angular

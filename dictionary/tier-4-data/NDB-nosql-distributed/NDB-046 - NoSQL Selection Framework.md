@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-046
 title: NoSQL Selection Framework
 category: NoSQL & Distributed Databases

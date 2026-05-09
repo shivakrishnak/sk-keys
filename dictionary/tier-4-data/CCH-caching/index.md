@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Caching"
 parent: "Technical Dictionary"

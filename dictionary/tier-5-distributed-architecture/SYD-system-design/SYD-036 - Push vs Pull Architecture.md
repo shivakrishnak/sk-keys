@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-036
 title: Push vs Pull Architecture
 category: System Design

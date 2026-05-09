@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-022
 title: NgRx State Management
 category: Angular

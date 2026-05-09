@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-018
 title: API Platform Design (API Gateway, Developer Portal)
 category: Platform & Modern SWE

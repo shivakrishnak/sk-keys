@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-003
 title: "The Architecture Landscape - Styles and Patterns"
 category: Software Architecture Patterns

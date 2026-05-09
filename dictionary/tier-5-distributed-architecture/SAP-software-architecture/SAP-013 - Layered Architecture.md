@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-013
 title: Layered Architecture
 category: Software Architecture Patterns

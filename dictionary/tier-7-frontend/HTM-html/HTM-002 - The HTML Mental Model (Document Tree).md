@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-002
 title: The HTML Mental Model (Document Tree)
 category: HTML

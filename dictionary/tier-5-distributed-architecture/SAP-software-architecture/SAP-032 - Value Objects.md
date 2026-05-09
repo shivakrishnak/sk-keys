@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-032
 title: Value Objects
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-040
 title: Leader-Follower Pattern
 category: System Design

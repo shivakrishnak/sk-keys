@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "NoSQL & Distributed Databases"
 parent: "Technical Dictionary"

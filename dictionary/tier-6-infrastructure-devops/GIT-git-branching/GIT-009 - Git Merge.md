@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-009
 title: Git Merge
 category: Git & Branching Strategy

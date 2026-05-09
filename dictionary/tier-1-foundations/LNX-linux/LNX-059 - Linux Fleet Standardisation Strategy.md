@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-059
 title: Linux Fleet Standardisation Strategy
 category: Linux

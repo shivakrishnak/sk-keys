@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-063
 title: Contract Testing Architecture
 category: Testing

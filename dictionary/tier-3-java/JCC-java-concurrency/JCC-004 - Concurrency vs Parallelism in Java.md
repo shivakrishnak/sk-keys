@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-004
 title: Concurrency vs Parallelism in Java
 category: Java Concurrency

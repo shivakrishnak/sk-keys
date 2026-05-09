@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "AI Foundations"
 parent: "Technical Dictionary"

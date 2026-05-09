@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-014
 title: Payment Reconciliation
 category: Financial Services Domain

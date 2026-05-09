@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-001
 title: Why Security Matters - The Adversarial Mindset
 category: Security

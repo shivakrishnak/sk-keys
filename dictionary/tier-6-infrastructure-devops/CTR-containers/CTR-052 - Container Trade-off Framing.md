@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-052
 title: Container Trade-off Framing
 category: Containers

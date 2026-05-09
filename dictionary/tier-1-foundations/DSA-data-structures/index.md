@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Data Structures & Algorithms"
 parent: "Technical Dictionary"

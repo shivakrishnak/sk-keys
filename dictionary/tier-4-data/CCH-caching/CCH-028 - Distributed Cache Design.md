@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-028
 title: Distributed Cache Design
 category: Caching

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-033
 title: Azure Logic Apps
 category: Cloud -- Azure

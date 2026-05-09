@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-042
 title: CSS Performance Research
 category: CSS

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-021
 title: Active-Passive
 category: System Design

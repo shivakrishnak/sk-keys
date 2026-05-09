@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-082
 title: Information-Theoretic Complexity Bounds
 category: Data Structures & Algorithms

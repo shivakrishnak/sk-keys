@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-008
 title: HTML Attributes
 category: HTML

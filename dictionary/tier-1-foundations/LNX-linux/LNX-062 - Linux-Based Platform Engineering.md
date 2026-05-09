@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-062
 title: Linux-Based Platform Engineering
 category: Linux

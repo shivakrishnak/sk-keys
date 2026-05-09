@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-059
 title: Database Migration Strategy
 category: Database Fundamentals

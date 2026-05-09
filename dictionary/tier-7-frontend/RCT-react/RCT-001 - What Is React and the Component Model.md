@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-001
 title: What Is React and the Component Model
 category: React

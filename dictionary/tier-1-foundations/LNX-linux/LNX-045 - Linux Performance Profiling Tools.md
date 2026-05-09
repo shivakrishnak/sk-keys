@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-045
 title: Linux Performance Profiling Tools
 category: Linux

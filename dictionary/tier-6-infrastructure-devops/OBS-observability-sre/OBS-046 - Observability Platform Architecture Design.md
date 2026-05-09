@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-046
 title: Observability Platform Architecture Design
 category: Observability & SRE

@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-025
 title: Vite Plugin Architecture
 category: Webpack & Build Tools

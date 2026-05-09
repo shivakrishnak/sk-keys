@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-019
 title: Angular Standalone Components (v15+)
 category: Angular

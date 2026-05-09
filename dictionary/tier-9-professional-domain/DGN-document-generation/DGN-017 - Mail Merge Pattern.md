@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-017
 title: Mail Merge Pattern
 category: Document Generation

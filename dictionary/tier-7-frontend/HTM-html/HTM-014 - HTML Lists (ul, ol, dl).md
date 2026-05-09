@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-014
 title: HTML Lists (ul, ol, dl)
 category: HTML

@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-055
 title: Concurrency-First Thinking
 category: Java Concurrency

@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-071
 title: Testing ROI Thinking
 category: Testing

@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-008
 title: Terraform State
 category: Infrastructure as Code

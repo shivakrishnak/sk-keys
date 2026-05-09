@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-017
 title: Azure Container Instances
 category: Cloud -- Azure

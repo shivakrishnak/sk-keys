@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-059
 title: GC Pause Analysis and Production Impact
 category: CS Fundamentals - Paradigms

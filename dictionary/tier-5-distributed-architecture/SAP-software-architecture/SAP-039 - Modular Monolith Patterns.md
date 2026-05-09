@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-039
 title: Modular Monolith Patterns
 category: Software Architecture Patterns

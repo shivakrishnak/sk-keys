@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-029
 title: Data Mapper
 category: Software Architecture Patterns

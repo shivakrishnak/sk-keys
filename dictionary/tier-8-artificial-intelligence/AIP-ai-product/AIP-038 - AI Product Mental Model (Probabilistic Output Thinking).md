@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-038
 title: AI Product Mental Model (Probabilistic Output Thinking)
 category: AI Product Engineering

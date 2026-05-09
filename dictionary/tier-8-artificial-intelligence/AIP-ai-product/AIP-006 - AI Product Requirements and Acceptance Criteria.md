@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-006
 title: AI Product Requirements and Acceptance Criteria
 category: AI Product Engineering

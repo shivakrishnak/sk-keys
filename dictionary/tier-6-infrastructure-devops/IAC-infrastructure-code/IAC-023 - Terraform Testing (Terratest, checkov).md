@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-023
 title: Terraform Testing (Terratest, checkov)
 category: Infrastructure as Code

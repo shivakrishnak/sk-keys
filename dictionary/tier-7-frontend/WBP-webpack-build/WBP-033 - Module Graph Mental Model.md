@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-033
 title: Module Graph Mental Model
 category: Webpack & Build Tools

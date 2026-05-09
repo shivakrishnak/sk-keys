@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-062
 title: Shift-Left Testing Design
 category: Testing

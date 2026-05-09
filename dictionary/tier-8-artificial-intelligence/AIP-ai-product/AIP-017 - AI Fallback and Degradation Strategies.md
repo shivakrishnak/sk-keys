@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-017
 title: AI Fallback and Degradation Strategies
 category: AI Product Engineering

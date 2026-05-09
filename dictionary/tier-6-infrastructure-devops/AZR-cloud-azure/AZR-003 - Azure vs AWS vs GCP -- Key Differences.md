@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-003
 title: Azure vs AWS vs GCP -- Key Differences
 category: Cloud -- Azure

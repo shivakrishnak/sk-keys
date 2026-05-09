@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-043
 title: RxJS Scheduler and Virtual Time Research
 category: Angular

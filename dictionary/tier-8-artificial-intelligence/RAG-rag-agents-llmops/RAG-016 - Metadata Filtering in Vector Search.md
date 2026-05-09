@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-016
 title: Metadata Filtering in Vector Search
 category: RAG & Agents & LLMOps

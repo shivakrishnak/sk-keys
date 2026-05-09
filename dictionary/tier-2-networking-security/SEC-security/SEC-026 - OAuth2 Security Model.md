@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-026
 title: OAuth2 Security Model
 category: Security

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-039
 title: CSS Theming Strategy (Dark Mode, Multi-Brand)
 category: CSS

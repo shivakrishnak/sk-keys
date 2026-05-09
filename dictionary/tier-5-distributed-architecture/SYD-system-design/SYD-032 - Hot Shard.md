@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-032
 title: Hot Shard
 category: System Design

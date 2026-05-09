@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-004
 title: When NOT to Cache
 category: Caching

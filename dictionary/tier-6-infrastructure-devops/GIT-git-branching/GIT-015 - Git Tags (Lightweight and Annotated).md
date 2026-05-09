@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-015
 title: Git Tags (Lightweight and Annotated)
 category: Git & Branching Strategy

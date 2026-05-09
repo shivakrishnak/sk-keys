@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-044
 title: System Call Tracing and Analysis
 category: Linux

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-036
 title: XXE Injection
 category: Security

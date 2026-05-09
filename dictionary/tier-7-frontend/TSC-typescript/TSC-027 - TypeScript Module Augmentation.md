@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-027
 title: TypeScript Module Augmentation
 category: TypeScript

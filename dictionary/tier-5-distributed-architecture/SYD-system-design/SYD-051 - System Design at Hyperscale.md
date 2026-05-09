@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-051
 title: System Design at Hyperscale
 category: System Design

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-034
 title: RED Method (Rate, Errors, Duration)
 category: Observability & SRE

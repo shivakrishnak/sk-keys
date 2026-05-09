@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-017
 title: Private npm Registry (Nexus, Verdaccio, GitHub Packages)
 category: npm & Package Management

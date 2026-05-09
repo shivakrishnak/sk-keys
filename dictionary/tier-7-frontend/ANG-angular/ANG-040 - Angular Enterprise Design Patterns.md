@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-040
 title: Angular Enterprise Design Patterns
 category: Angular

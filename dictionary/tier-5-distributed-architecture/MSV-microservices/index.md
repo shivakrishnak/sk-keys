@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Microservices"
 parent: "Technical Dictionary"

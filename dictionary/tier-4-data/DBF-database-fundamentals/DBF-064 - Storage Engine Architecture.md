@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-064
 title: Storage Engine Architecture
 category: Database Fundamentals

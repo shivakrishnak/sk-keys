@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-044
 title: Azure Site Recovery (DR)
 category: Cloud -- Azure

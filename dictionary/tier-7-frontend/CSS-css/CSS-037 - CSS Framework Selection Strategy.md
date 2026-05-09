@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-037
 title: CSS Framework Selection Strategy
 category: CSS

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-033
 title: Cache Replacement Policy Design
 category: Caching

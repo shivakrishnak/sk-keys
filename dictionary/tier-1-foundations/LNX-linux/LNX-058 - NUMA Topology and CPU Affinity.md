@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-058
 title: NUMA Topology and CPU Affinity
 category: Linux

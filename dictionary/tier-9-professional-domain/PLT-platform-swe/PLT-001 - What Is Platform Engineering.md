@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-001
 title: What Is Platform Engineering
 category: Platform & Modern SWE

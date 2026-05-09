@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-029
 title: Dynatrace -- Full-Stack Monitoring
 category: Observability & SRE

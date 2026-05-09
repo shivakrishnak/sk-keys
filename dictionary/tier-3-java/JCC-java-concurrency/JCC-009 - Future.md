@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-009
 title: Future
 category: Java Concurrency

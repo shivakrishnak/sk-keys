@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-052
 title: Consensus in Distributed Streaming Systems
 category: Big Data & Streaming

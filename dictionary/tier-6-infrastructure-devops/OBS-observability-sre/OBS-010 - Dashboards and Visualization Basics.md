@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-010
 title: Dashboards and Visualization Basics
 category: Observability & SRE

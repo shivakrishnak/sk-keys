@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Containers"
 parent: "Technical Dictionary"

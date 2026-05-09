@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-033
 title: Code Review Process Design
 category: Code Quality

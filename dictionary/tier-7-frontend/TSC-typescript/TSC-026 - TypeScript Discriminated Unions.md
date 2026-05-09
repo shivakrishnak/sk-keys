@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-026
 title: TypeScript Discriminated Unions
 category: TypeScript

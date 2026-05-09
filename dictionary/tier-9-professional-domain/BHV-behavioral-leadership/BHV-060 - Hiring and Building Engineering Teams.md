@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-060
 title: Hiring and Building Engineering Teams
 category: Behavioral & Leadership

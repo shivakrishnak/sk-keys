@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-068
 title: Paradigm Migration Strategy (OOP → FP)
 category: CS Fundamentals - Paradigms

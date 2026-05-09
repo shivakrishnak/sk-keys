@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-001
 title: What Is Linux and Why It Powers the World
 category: Linux

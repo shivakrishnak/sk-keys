@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-007
 title: Zero-Shot, One-Shot, Few-Shot Prompting
 category: LLMs & Prompt Engineering

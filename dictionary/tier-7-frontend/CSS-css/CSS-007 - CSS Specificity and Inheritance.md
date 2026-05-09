@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-007
 title: CSS Specificity and Inheritance
 category: CSS

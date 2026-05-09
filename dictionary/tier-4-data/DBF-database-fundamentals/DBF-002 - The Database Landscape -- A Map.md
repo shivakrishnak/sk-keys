@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-002
 title: The Database Landscape -- A Map
 category: Database Fundamentals

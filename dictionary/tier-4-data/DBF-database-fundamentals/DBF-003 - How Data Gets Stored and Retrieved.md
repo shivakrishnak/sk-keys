@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-003
 title: How Data Gets Stored and Retrieved
 category: Database Fundamentals

@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-007
 title: Git Staging Area (Index)
 category: Git & Branching Strategy

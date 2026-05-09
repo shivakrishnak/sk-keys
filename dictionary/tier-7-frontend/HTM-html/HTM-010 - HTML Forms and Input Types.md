@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-010
 title: HTML Forms and Input Types
 category: HTML

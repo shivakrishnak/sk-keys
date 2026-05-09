@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-055
 title: perf / flamegraph
 category: Linux

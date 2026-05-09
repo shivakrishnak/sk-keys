@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-004
 title: Estimation and Back-of-Envelope Thinking
 category: System Design

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-003
 title: AI Product vs Traditional Software -- Key Differences
 category: AI Product Engineering

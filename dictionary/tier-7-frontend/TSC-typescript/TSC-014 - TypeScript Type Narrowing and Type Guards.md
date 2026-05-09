@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-014
 title: TypeScript Type Narrowing and Type Guards
 category: TypeScript

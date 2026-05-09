@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-005
 title: Document Generation in Production -- What to Expect
 category: Document Generation

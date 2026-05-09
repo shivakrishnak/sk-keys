@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Design Patterns"
 parent: "Technical Dictionary"

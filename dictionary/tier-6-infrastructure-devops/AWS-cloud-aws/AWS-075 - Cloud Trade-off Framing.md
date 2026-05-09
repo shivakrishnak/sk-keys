@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-075
 title: Cloud Trade-off Framing
 category: Cloud -- AWS

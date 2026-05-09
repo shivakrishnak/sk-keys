@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-020
 title: React Concurrent Mode and Scheduler
 category: React

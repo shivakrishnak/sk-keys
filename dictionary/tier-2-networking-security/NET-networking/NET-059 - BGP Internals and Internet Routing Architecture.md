@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-059
 title: BGP Internals and Internet Routing Architecture
 category: Networking

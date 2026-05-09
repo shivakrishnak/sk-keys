@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-037
 title: Developer Productivity Architecture
 category: Platform & Modern SWE

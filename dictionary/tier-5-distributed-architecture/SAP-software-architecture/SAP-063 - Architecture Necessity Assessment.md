@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-063
 title: Architecture Necessity Assessment
 category: Software Architecture Patterns

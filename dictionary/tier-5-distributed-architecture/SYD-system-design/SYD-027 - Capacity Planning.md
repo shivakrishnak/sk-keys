@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-027
 title: Capacity Planning
 category: System Design

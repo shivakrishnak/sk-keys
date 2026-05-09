@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-012
 title: Tree Shaking (Dead Code Elimination)
 category: Webpack & Build Tools

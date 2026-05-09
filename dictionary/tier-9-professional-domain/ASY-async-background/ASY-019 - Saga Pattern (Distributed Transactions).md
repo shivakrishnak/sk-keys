@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-019
 title: Saga Pattern (Distributed Transactions)
 category: Async & Background Processing

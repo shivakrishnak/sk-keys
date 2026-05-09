@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-017
 title: Software Supply Chain Security (SLSA, SBOM)
 category: Platform & Modern SWE

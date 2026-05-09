@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-068
 title: Kubernetes Cost Optimization Strategy
 category: Kubernetes

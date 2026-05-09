@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-067
 title: Formal Pattern Specification
 category: Design Patterns

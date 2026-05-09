@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-008
 title: Golden Path Templates
 category: Platform & Modern SWE

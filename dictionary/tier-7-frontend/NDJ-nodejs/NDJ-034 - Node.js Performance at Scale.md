@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-034
 title: Node.js Performance at Scale
 category: Node.js

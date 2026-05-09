@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-002
 title: The Data Ecosystem -- A Map
 category: Data Fundamentals

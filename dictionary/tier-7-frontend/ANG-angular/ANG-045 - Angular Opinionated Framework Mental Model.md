@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-045
 title: Angular Opinionated Framework Mental Model
 category: Angular

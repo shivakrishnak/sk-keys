@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-026
 title: Bundler Architecture Design (Rust vs JS)
 category: Webpack & Build Tools

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-050
 layout: default
 title: "Cohesion"

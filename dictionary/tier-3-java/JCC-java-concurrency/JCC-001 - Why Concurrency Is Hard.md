@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-001
 title: Why Concurrency Is Hard
 category: Java Concurrency

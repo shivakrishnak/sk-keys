@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-033
 title: Git Packfiles and Delta Compression
 category: Git & Branching Strategy

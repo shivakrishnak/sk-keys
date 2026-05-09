@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-006
 title: Vertical Scaling
 category: System Design

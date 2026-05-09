@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-018
 title: CSS Pseudo-Classes and Pseudo-Elements
 category: CSS

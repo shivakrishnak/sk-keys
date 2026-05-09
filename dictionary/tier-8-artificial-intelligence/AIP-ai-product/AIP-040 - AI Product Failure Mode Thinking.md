@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-040
 title: AI Product Failure Mode Thinking
 category: AI Product Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-040
 title: HTML Specification Design Philosophy
 category: HTML

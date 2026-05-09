@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-080
 title: First-Principles Language Selection
 category: CS Fundamentals - Paradigms

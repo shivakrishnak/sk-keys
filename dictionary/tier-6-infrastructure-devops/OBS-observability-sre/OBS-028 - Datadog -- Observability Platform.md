@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-028
 title: Datadog -- Observability Platform
 category: Observability & SRE

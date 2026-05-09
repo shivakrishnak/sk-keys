@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-046
 title: Infrastructure Automation Mental Model
 category: Infrastructure as Code

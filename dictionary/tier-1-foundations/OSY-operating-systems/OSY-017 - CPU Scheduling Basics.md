@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-017
 title: CPU Scheduling Basics
 category: Operating Systems

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-009
 title: "Proof of Concept (POC)"
 category: Software Architecture Patterns

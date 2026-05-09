@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-042
 title: Code Review Mindset
 category: Code Quality

@@ -1,4 +1,4 @@
-﻿---
+---
 id: JLG-042
 title: Java API Design at Scale
 category: Java Language

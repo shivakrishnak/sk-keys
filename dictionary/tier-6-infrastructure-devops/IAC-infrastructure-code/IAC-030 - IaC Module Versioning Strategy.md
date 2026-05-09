@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-030
 title: IaC Module Versioning Strategy
 category: Infrastructure as Code

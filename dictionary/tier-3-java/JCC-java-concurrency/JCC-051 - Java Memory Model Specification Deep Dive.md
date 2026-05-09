@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-051
 title: Java Memory Model Specification Deep Dive
 category: Java Concurrency

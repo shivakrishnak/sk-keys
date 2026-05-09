@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-067
 title: API Platform Design
 category: HTTP & APIs

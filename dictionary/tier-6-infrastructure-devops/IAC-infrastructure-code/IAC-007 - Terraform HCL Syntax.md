@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-007
 title: Terraform HCL Syntax
 category: Infrastructure as Code

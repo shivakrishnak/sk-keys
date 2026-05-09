@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-002
 title: The Problem of Efficiency
 category: Data Structures & Algorithms

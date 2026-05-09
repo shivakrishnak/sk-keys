@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-005
 title: Maven in the Java Ecosystem
 category: Maven & Build Tools

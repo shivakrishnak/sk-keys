@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-066
 title: Service Decomposition Strategy
 category: Microservices

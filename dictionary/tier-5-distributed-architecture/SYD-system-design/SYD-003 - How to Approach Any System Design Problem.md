@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-003
 title: How to Approach Any System Design Problem
 category: System Design

@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-014
 title: Git Stash
 category: Git & Branching Strategy

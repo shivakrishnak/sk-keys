@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-038
 title: Published Language
 category: Software Architecture Patterns

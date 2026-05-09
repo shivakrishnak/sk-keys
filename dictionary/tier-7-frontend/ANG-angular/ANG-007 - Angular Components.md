@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-007
 title: Angular Components
 category: Angular

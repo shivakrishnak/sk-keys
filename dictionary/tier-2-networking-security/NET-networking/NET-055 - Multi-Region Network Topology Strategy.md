@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-055
 title: Multi-Region Network Topology Strategy
 category: Networking

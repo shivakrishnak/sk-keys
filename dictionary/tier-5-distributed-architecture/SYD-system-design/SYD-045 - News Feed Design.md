@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-045
 title: News Feed Design
 category: System Design

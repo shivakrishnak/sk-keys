@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-057
 title: Platform Thread Model Design
 category: Operating Systems

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-049
 title: Global Distributed Transactions Research
 category: NoSQL & Distributed Databases

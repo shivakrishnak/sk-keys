@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-033
 title: Settlement and Clearing System Design
 category: Financial Services Domain

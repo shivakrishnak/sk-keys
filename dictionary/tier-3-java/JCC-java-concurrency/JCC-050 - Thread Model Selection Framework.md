@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-050
 title: Thread Model Selection Framework
 category: Java Concurrency

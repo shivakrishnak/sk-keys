@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Iterator"
 parent: "Design Patterns"

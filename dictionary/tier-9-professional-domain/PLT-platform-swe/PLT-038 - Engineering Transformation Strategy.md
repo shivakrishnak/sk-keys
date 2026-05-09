@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-038
 title: Engineering Transformation Strategy
 category: Platform & Modern SWE

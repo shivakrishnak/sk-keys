@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-036
 title: Build Tool Selection Strategy (Maven vs Gradle)
 category: Maven & Build Tools

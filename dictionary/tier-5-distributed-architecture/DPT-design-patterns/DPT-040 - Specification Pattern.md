@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Specification Pattern"
 parent: "Design Patterns"

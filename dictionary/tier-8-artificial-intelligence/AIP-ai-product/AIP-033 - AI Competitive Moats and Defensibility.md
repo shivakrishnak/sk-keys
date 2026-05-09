@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-033
 title: AI Competitive Moats and Defensibility
 category: AI Product Engineering

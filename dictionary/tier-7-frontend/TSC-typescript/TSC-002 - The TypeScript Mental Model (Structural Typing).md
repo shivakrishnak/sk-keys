@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-002
 title: The TypeScript Mental Model (Structural Typing)
 category: TypeScript

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-005
 title: AI in Production -- What Engineers Actually Face
 category: AI Foundations

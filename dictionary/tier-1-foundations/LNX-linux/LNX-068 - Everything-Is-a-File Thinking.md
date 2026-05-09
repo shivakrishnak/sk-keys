@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-068
 title: Everything-Is-a-File Thinking
 category: Linux

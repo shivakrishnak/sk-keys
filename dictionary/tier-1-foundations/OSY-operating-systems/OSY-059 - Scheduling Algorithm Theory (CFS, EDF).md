@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-059
 title: Scheduling Algorithm Theory (CFS, EDF)
 category: Operating Systems

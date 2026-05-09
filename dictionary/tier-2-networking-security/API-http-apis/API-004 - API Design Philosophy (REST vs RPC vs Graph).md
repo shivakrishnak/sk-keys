@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-004
 title: API Design Philosophy (REST vs RPC vs Graph)
 category: HTTP & APIs

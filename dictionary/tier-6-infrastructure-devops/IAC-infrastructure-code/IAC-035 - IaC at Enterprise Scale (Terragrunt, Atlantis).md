@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-035
 title: IaC at Enterprise Scale (Terragrunt, Atlantis)
 category: Infrastructure as Code

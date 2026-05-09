@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-011
 title: LLM APIs (OpenAI, Anthropic, Gemini API)
 category: LLMs & Prompt Engineering

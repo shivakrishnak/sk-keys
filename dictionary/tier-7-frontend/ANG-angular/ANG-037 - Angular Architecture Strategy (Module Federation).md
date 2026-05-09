@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-037
 title: Angular Architecture Strategy (Module Federation)
 category: Angular

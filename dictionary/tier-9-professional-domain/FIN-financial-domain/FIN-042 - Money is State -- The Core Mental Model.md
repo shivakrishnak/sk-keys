@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-042
 title: Money is State -- The Core Mental Model
 category: Financial Services Domain

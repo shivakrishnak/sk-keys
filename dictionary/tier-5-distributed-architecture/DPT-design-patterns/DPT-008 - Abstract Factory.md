@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Abstract Factory"
 parent: "Design Patterns"

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-031
 title: CSS Houdini (Paint, Layout Worklets)
 category: CSS

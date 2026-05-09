@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-054
 title: Testing Paradigms for CS Concepts
 category: CS Fundamentals - Paradigms

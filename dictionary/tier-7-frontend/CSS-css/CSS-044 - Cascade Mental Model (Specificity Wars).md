@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-044
 title: Cascade Mental Model (Specificity Wars)
 category: CSS

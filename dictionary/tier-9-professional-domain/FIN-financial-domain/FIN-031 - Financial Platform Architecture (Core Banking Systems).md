@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-031
 title: Financial Platform Architecture (Core Banking Systems)
 category: Financial Services Domain

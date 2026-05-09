@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-029
 title: Azure Cognitive Services and OpenAI
 category: Cloud -- Azure

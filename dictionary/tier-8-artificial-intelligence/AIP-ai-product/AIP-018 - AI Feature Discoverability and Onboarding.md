@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-018
 title: AI Feature Discoverability and Onboarding
 category: AI Product Engineering

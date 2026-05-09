@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Maven & Build Tools"
 parent: "Technical Dictionary"

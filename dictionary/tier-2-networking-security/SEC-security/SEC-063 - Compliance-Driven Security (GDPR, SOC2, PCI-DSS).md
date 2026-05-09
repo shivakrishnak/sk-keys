@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-063
 title: Compliance-Driven Security (GDPR, SOC2, PCI-DSS)
 category: Security

@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-048
 title: Concurrent System Design at Scale
 category: Java Concurrency

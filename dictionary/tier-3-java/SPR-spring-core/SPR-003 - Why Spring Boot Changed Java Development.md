@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-003
 title: Why Spring Boot Changed Java Development
 category: Spring Core

@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-012
 title: Terraform Providers
 category: Infrastructure as Code

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-040
 title: Pattern Matching
 category: CS Fundamentals - Paradigms

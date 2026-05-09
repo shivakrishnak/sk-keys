@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-006
 title: Azure Regions and Availability Zones
 category: Cloud -- Azure

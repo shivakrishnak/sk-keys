@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-002
 title: The Kubernetes Mental Model (Desired State)
 category: Kubernetes

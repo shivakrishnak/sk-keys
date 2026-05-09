@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-025
 title: Open Policy Agent (OPA) for IaC
 category: Infrastructure as Code

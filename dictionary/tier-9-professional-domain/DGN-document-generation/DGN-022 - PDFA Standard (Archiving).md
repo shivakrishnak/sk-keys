@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-022
 title: PDF/A Standard (Archiving)
 category: Document Generation

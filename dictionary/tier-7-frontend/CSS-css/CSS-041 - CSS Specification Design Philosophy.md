@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-041
 title: CSS Specification Design Philosophy
 category: CSS

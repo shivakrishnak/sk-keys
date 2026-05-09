@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-044
 title: Observability at Scale (Sampling, Aggregation)
 category: Observability & SRE

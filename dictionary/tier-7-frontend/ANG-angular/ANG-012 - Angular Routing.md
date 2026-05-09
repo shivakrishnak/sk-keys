@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-012
 title: Angular Routing
 category: Angular

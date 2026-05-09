@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-064
 title: Latency Sources Mental Model
 category: Operating Systems

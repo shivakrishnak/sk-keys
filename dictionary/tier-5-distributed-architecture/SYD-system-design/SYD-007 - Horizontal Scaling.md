@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-007
 title: Horizontal Scaling
 category: System Design

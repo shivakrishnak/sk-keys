@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-044
 title: Data Quality at Scale
 category: Data Fundamentals

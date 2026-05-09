@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-018
 title: Document Storage and Retrieval (S3, CDN, Signed URLs)
 category: Document Generation

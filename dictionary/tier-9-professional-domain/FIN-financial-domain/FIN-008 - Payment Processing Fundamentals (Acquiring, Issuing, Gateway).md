@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-008
 title: Payment Processing Fundamentals (Acquiring, Issuing, Gateway)
 category: Financial Services Domain

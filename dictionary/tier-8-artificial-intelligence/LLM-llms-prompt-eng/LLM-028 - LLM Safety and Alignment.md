@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-028
 title: LLM Safety and Alignment
 category: LLMs & Prompt Engineering

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-004
 title: Code Quality vs Velocity Trade-off
 category: Code Quality

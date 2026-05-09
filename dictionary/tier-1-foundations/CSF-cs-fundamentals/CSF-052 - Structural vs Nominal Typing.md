@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-052
 title: Structural vs Nominal Typing
 category: CS Fundamentals - Paradigms

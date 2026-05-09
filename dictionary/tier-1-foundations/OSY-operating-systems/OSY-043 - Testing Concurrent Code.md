@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-043
 title: Testing Concurrent Code
 category: Operating Systems

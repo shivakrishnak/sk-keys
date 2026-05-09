@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-006
 title: Metrics -- Types (Counter, Gauge, Histogram)
 category: Observability & SRE

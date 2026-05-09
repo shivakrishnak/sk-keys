@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-035
 title: Browser HTML Parsing Algorithm
 category: HTML

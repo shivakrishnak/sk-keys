@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-041
 title: Async Trade-off Framing (Decoupling vs Complexity)
 category: Async & Background Processing

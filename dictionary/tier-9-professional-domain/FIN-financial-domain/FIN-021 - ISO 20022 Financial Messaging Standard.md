@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-021
 title: ISO 20022 Financial Messaging Standard
 category: Financial Services Domain

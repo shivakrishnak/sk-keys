@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-083
 title: Automation Necessity Assessment
 category: CI/CD

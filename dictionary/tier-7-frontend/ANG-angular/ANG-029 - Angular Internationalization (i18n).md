@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-029
 title: Angular Internationalization (i18n)
 category: Angular

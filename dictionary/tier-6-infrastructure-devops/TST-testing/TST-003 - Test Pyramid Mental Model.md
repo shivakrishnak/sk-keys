@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-003
 title: Test Pyramid Mental Model
 category: Testing

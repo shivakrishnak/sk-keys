@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-006
 title: Thread (Java)
 category: Java Concurrency

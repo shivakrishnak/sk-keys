@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-003
 title: SQL vs NoSQL -- When to Choose What
 category: NoSQL & Distributed Databases

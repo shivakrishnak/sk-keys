@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-036
 title: HTML Architecture Strategy (Component Libraries, Design Systems)
 category: HTML

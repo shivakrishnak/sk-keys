@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-013
 title: AI Data Pipeline Design
 category: AI Product Engineering

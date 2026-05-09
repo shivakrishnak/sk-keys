@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-016
 title: Rollup for Library Bundling
 category: Webpack & Build Tools

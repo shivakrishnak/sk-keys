@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-004
 title: Architecture vs Design vs Implementation
 category: Software Architecture Patterns

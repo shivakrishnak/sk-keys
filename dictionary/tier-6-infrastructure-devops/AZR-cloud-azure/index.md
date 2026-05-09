@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Cloud - Azure"
 parent: "Technical Dictionary"

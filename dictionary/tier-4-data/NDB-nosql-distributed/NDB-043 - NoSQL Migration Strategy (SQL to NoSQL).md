@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-043
 title: NoSQL Migration Strategy (SQL to NoSQL)
 category: NoSQL & Distributed Databases

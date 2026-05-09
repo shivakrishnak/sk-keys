@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-042
 title: Container Security
 category: Security

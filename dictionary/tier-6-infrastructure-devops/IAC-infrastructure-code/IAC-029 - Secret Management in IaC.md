@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-029
 title: Secret Management in IaC
 category: Infrastructure as Code

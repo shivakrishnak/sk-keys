@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-010
 title: AI Product Metrics (Beyond Accuracy)
 category: AI Product Engineering

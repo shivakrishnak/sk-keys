@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Cloud - AWS"
 parent: "Technical Dictionary"

@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-004
 title: The Web Ecosystem Map (Browsers, Standards)
 category: HTML

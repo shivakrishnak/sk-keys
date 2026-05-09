@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-001
 title: What Is Containerization and Why It Matters
 category: Containers

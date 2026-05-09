@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-003
 title: The Distributed Systems Landscape -- A Map
 category: Distributed Systems

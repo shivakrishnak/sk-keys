@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-031
 title: Code Quality Architecture (Quality Gates)
 category: Code Quality

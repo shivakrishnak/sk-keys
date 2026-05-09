@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-038
 title: JavaScript Ecosystem Fatigue Thinking
 category: JavaScript

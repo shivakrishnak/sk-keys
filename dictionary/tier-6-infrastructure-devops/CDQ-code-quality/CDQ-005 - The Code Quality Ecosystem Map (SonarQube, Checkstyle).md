@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-005
 title: The Code Quality Ecosystem Map (SonarQube, Checkstyle)
 category: Code Quality

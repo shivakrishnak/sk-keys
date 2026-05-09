@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-031
 title: Guardrails and Output Validation (NeMo, Guardrails AI)
 category: RAG & Agents & LLMOps

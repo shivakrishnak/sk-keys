@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-053
 title: Distributed State Design Thinking
 category: NoSQL & Distributed Databases

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-005
 title: The Software Architecture Ecosystem Map
 category: Software Architecture Patterns

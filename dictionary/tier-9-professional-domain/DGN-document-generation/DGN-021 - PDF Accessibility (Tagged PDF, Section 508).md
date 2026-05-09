@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-021
 title: PDF Accessibility (Tagged PDF, Section 508)
 category: Document Generation

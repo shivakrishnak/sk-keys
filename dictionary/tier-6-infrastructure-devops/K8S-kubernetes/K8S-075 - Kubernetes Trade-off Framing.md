@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-075
 title: Kubernetes Trade-off Framing
 category: Kubernetes

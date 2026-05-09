@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-004
 title: Technical Career Progression Mental Model
 category: Behavioral & Leadership

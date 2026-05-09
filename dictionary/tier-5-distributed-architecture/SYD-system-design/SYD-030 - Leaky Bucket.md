@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-030
 title: Leaky Bucket
 category: System Design

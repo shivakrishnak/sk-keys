@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-031
 title: Dependency and Supply Chain Security Basics
 category: Security

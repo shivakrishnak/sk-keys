@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-042
 title: Git Performance at Scale
 category: Git & Branching Strategy

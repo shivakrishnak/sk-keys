@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-011
 title: Angular Modules (NgModule)
 category: Angular

@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-061
 title: Executive Engineering Presence
 category: Behavioral & Leadership

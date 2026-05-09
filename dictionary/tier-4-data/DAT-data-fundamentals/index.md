@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Data Fundamentals"
 parent: "Technical Dictionary"

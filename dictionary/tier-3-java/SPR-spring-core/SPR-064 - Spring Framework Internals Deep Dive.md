@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-064
 title: Spring Framework Internals Deep Dive
 category: Spring Core

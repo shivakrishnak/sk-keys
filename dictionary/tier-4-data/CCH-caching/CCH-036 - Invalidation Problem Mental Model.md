@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-036
 title: Invalidation Problem Mental Model
 category: Caching

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-053
 title: Memory Barriers and CPU Ordering
 category: Operating Systems

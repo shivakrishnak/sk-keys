@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-079
 title: Trade-off Framing (Any Language Choice)
 category: CS Fundamentals - Paradigms

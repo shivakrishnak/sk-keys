@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-003
 title: Linux Distributions - The Ecosystem Map
 category: Linux

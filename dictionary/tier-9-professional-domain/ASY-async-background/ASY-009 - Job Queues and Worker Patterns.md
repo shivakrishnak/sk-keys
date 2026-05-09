@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-009
 title: Job Queues and Worker Patterns
 category: Async & Background Processing

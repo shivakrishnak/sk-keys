@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-055
 title: Cloud Cost Mental Model (Azure)
 category: Cloud -- Azure

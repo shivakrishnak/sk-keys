@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-028
 title: TypeScript Project References
 category: TypeScript

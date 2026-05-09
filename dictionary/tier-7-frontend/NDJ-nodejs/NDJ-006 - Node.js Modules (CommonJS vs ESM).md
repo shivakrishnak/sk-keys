@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-006
 title: Node.js Modules (CommonJS vs ESM)
 category: Node.js

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-016
 title: Onion Architecture
 category: Software Architecture Patterns

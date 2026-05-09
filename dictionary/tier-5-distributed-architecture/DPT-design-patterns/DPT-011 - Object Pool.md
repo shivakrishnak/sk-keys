@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Object Pool"
 parent: "Design Patterns"

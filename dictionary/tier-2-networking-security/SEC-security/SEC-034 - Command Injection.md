@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-034
 title: Command Injection
 category: Security

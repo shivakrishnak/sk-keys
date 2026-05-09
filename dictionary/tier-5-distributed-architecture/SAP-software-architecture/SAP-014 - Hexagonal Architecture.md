@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-014
 title: Hexagonal Architecture
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-004
 title: The TypeScript Ecosystem Map (tsc, ts-node, vite)
 category: TypeScript

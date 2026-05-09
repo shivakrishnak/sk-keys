@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-022
 title: Kafka Consumer Lag and Monitoring
 category: Async & Background Processing

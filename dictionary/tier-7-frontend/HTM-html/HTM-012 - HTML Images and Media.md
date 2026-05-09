@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-012
 title: HTML Images and Media
 category: HTML

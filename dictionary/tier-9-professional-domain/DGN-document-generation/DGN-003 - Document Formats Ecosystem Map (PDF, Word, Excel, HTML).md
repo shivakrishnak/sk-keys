@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-003
 title: Document Formats Ecosystem Map (PDF, Word, Excel, HTML)
 category: Document Generation

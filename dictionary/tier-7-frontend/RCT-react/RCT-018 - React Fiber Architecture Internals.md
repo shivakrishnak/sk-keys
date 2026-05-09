@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-018
 title: React Fiber Architecture Internals
 category: React

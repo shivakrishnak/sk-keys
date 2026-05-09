@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-032
 title: Azure Event Grid
 category: Cloud -- Azure

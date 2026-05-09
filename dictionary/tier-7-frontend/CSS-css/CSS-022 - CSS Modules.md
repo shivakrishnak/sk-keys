@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-022
 title: CSS Modules
 category: CSS

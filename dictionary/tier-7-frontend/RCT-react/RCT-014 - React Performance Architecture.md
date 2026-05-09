@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-014
 title: React Performance Architecture
 category: React

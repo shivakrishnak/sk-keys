@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-042
 title: Blackboard Pattern
 category: Software Architecture Patterns

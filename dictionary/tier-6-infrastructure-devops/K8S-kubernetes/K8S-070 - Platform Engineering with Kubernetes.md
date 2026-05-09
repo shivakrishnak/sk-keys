@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-070
 title: Platform Engineering with Kubernetes
 category: Kubernetes

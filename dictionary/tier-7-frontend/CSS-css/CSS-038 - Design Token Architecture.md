@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-038
 title: Design Token Architecture
 category: CSS

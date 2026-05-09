@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-034
 title: Shadow DOM Internals
 category: HTML

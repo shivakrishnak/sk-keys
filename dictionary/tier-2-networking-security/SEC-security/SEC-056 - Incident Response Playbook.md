@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-056
 title: Incident Response Playbook
 category: Security

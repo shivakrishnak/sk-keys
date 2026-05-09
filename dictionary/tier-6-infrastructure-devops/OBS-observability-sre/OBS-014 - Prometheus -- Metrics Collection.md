@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-014
 title: Prometheus -- Metrics Collection
 category: Observability & SRE

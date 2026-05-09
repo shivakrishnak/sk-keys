@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-051
 title: Type Inference
 category: CS Fundamentals - Paradigms

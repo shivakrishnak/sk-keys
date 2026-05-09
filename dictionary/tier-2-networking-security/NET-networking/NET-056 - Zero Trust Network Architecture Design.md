@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-056
 title: Zero Trust Network Architecture Design
 category: Networking

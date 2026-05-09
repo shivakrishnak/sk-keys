@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-014
 title: Azure Virtual Network (VNet)
 category: Cloud -- Azure

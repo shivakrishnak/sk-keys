@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-002
 title: The Three Pillars of Observability (Logs, Metrics, Traces)
 category: Observability & SRE

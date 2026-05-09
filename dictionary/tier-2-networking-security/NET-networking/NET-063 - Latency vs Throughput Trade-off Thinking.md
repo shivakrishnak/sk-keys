@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-063
 title: Latency vs Throughput Trade-off Thinking
 category: Networking

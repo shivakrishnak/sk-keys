@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-076
 title: Choosing Data Structures at System Scale
 category: Data Structures & Algorithms

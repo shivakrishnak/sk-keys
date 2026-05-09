@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-049
 layout: default
 title: "Command-Query Separation (CQS)"

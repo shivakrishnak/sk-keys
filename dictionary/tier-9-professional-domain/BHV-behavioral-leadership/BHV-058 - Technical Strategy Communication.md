@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-058
 title: Technical Strategy Communication
 category: Behavioral & Leadership

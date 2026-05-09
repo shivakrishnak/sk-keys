@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-034
 title: Anti-Corruption Layer
 category: Software Architecture Patterns

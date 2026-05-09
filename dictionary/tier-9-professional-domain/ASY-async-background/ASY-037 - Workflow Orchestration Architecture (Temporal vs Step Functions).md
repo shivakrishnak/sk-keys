@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-037
 title: Workflow Orchestration Architecture (Temporal vs Step Functions)
 category: Async & Background Processing

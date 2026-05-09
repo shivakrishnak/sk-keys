@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-041
 title: Distributed Version Control Theory
 category: Git & Branching Strategy

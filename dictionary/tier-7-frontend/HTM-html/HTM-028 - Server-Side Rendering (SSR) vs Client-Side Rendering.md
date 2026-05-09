@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-028
 title: Server-Side Rendering (SSR) vs Client-Side Rendering
 category: HTML

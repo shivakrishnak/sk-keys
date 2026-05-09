@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-036
 title: Node.js Architecture Strategy (Monolith vs Microservices)
 category: Node.js

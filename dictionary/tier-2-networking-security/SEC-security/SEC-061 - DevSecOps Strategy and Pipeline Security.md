@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-061
 title: DevSecOps Strategy and Pipeline Security
 category: Security

@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-002
 title: The Platform Engineering Mental Model (Golden Paths, IDP)
 category: Platform & Modern SWE

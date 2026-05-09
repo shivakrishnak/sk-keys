@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-036
 title: Golden Signals
 category: Observability & SRE

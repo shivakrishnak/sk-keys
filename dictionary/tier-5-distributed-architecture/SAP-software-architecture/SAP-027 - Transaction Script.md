@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-027
 title: Transaction Script
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Null Object"
 parent: "Design Patterns"

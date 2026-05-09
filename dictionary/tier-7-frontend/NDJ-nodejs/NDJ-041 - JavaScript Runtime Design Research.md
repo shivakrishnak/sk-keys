@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-041
 title: JavaScript Runtime Design Research
 category: Node.js

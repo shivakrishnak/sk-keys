@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-018
 title: Searching - Linear vs Binary
 category: Data Structures & Algorithms

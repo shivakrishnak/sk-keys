@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-043
 title: Compliance vs Innovation Trade-off Thinking
 category: Financial Services Domain

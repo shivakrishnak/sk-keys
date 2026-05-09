@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-011
 title: CSS Display (block, inline, inline-block, none)
 category: CSS

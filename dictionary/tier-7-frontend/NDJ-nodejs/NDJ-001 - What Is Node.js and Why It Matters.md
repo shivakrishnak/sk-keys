@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-001
 title: What Is Node.js and Why It Matters
 category: Node.js

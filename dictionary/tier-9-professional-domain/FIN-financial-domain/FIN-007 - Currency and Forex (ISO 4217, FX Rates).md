@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-007
 title: Currency and Forex (ISO 4217, FX Rates)
 category: Financial Services Domain

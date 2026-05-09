@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-001
 title: What Is a Database and Why It Exists
 category: Database Fundamentals

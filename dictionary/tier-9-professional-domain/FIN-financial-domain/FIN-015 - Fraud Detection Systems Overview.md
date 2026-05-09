@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-015
 title: Fraud Detection Systems Overview
 category: Financial Services Domain

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-058
 title: TCP/IP Protocol Design Principles
 category: Networking

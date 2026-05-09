@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-041
 title: Financial Systems Trade-off Framing (Consistency vs Availability)
 category: Financial Services Domain

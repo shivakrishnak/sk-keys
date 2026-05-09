@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-064
 title: Protocol Selection Framework
 category: Networking

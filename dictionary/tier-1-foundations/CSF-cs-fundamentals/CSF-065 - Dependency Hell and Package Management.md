@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-065
 title: Dependency Hell and Package Management
 category: CS Fundamentals - Paradigms

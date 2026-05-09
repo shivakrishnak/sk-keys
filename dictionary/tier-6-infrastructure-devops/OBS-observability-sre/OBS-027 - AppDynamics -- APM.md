@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-027
 title: AppDynamics -- APM
 category: Observability & SRE

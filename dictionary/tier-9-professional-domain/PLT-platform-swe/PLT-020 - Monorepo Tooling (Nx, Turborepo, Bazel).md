@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-020
 title: Monorepo Tooling (Nx, Turborepo, Bazel)
 category: Platform & Modern SWE

@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-048
 title: RAG Trade-off Framing (Precision vs Recall vs Latency)
 category: RAG & Agents & LLMOps

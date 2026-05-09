@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-057
 title: Theoretical Foundations of Scalable Systems
 category: System Design

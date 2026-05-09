@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-039
 title: eBPF for Observability
 category: Observability & SRE

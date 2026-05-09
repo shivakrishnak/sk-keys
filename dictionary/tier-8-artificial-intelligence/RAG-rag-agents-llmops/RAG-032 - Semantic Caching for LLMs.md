@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-032
 title: Semantic Caching for LLMs
 category: RAG & Agents & LLMOps

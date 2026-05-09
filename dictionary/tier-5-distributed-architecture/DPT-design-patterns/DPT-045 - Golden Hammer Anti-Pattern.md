@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Golden Hammer Anti-Pattern"
 parent: "Design Patterns"

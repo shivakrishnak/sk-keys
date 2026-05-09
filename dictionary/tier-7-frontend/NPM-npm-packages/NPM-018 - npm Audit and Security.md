@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-018
 title: npm Audit and Security
 category: npm & Package Management

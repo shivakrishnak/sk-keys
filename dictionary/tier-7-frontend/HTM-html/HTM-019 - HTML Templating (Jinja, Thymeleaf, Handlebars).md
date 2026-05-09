@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-019
 title: HTML Templating (Jinja, Thymeleaf, Handlebars)
 category: HTML

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-063
 title: Anti-Pattern Recognition and Refactoring
 category: Design Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-034
 title: "Data Mesh"
 category: Data Fundamentals

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-029
 title: Certificate Management Lifecycle
 category: Security

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-005
 title: The System Design Ecosystem Map
 category: System Design

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Spring Core"
 parent: "Technical Dictionary"

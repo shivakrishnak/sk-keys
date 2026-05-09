@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-059
 title: System Design Research and Case Studies
 category: System Design

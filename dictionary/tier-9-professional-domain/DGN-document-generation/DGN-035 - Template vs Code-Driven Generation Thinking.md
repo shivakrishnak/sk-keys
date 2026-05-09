@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-035
 title: Template vs Code-Driven Generation Thinking
 category: Document Generation

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-011
 title: AI UX Patterns (Suggestions, Auto-Complete, Explanation)
 category: AI Product Engineering

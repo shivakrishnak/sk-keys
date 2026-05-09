@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-034
 title: TypeScript Performance (Compilation Speed)
 category: TypeScript

@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-026
 title: Feature Flags and Branch by Abstraction
 category: Git & Branching Strategy

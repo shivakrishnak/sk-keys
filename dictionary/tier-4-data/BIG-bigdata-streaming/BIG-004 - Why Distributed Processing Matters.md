@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-004
 title: Why Distributed Processing Matters
 category: Big Data & Streaming

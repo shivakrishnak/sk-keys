@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-006
 title: Money Representation (Decimal vs Float -- Why Float is Dangerous)
 category: Financial Services Domain

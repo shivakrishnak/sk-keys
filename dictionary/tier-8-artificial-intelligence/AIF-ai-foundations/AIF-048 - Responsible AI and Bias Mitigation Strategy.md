@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-048
 title: Responsible AI and Bias Mitigation Strategy
 category: AI Foundations

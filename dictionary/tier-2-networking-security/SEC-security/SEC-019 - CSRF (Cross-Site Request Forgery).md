@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-019
 title: CSRF (Cross-Site Request Forgery)
 category: Security

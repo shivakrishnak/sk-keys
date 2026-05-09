@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-035
 title: Message Broker Selection Strategy
 category: Async & Background Processing

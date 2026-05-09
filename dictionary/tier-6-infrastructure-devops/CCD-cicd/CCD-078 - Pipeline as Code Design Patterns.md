@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-078
 title: Pipeline as Code Design Patterns
 category: CI/CD

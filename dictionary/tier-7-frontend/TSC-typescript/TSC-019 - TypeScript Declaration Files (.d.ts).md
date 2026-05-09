@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-019
 title: TypeScript Declaration Files (.d.ts)
 category: TypeScript

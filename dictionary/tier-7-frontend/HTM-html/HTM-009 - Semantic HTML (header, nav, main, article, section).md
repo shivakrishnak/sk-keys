@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-009
 title: Semantic HTML (header, nav, main, article, section)
 category: HTML

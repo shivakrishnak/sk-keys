@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-054
 title: OS Selection Framework (Linux, RTOS, BSD)
 category: Operating Systems

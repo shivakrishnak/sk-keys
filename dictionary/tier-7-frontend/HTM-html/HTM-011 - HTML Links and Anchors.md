@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-011
 title: HTML Links and Anchors
 category: HTML

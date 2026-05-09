@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-012
 title: CSS Position (static, relative, absolute, fixed, sticky)
 category: CSS

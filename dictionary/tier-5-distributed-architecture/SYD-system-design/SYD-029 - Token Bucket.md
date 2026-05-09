@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-029
 title: Token Bucket
 category: System Design

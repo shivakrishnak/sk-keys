@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-027
 title: HTML Internationalization (lang, dir, charset)
 category: HTML

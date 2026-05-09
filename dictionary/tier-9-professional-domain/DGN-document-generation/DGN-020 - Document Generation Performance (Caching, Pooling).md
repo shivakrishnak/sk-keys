@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-020
 title: Document Generation Performance (Caching, Pooling)
 category: Document Generation

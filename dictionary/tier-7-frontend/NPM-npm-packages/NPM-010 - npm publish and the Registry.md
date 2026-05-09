@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-010
 title: npm publish and the Registry
 category: npm & Package Management

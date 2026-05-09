@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-003
 title: How Attackers Think - Attack Surfaces and Vectors
 category: Security

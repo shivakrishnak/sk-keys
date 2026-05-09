@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-043
 title: SOLID Principles
 category: Software Architecture Patterns

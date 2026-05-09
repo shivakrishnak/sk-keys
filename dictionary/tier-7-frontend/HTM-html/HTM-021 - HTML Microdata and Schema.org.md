@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-021
 title: HTML Microdata and Schema.org
 category: HTML

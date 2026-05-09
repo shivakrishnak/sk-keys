@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-019
 title: Dependency Resolution Algorithm
 category: npm & Package Management

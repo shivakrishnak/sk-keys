@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-031
 title: Platform Engineering Roadmap Design
 category: Platform & Modern SWE

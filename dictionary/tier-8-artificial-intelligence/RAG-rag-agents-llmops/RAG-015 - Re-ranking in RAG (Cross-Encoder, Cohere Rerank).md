@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-015
 title: Re-ranking in RAG (Cross-Encoder, Cohere Rerank)
 category: RAG & Agents & LLMOps

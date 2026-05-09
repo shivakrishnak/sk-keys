@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-040
 title: RAG Architecture Strategy (Naive vs Modular vs Agentic)
 category: RAG & Agents & LLMOps

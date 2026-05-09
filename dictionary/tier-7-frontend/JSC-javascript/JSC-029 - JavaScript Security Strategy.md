@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-029
 title: JavaScript Security Strategy
 category: JavaScript

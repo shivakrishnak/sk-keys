@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-048
 title: DDoS Attack Patterns and Mitigation
 category: Networking

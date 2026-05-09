@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-062
 title: Pattern Evolution in Modern Languages
 category: Design Patterns

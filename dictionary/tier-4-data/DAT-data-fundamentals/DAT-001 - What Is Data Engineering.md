@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-001
 title: What Is Data Engineering
 category: Data Fundamentals

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-023
 title: Publishing a Library to npm (Best Practices)
 category: npm & Package Management

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-051
 title: Time-Series Database Design
 category: Observability & SRE

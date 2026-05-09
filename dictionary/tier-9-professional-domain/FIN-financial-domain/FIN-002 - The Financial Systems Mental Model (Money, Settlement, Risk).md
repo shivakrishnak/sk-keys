@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-002
 title: The Financial Systems Mental Model (Money, Settlement, Risk)
 category: Financial Services Domain

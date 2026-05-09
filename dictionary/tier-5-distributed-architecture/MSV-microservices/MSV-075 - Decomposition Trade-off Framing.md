@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-075
 title: Decomposition Trade-off Framing
 category: Microservices

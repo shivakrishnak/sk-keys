@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-028
 title: GraphQL with Node.js
 category: Node.js

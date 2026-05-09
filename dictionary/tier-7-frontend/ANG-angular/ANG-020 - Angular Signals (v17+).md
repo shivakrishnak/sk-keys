@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-020
 title: Angular Signals (v17+)
 category: Angular

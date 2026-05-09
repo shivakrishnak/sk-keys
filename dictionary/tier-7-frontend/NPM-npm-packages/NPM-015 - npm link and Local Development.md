@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-015
 title: npm link and Local Development
 category: npm & Package Management

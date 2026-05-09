@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-045
 title: SRE Book -- Core Principles Deep Dive
 category: Observability & SRE

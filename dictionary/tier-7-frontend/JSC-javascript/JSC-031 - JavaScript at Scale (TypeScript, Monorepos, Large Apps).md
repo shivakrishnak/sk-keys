@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-031
 title: JavaScript at Scale (TypeScript, Monorepos, Large Apps)
 category: JavaScript

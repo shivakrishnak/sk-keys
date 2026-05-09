@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-033
 title: Angular Dependency Injection System Internals
 category: Angular

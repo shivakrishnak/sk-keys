@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-040
 title: Build Pipeline Architecture
 category: Maven & Build Tools

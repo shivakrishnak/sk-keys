@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-005
 title: The Modern Data Stack Map
 category: Data Fundamentals

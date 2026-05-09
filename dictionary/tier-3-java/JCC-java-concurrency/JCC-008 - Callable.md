@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-008
 title: Callable
 category: Java Concurrency

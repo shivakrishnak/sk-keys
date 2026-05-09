@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-009
 title: Alerting Fundamentals
 category: Observability & SRE

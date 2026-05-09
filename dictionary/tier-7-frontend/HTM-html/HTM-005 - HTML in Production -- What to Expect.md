@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-005
 title: HTML in Production -- What to Expect
 category: HTML

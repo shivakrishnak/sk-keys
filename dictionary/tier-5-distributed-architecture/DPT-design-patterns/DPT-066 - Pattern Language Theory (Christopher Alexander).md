@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-066
 title: "Pattern Language Theory (Christopher Alexander)"
 category: Design Patterns

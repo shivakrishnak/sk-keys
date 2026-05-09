@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-005
 title: Behavioral Skills in Engineering -- Why They Matter
 category: Behavioral & Leadership

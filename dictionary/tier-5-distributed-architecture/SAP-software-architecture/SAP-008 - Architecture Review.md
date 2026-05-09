@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-008
 title: Architecture Review
 category: Software Architecture Patterns

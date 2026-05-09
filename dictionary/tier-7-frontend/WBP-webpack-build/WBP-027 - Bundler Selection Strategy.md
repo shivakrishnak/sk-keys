@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-027
 title: Bundler Selection Strategy
 category: Webpack & Build Tools

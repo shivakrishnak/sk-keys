@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-050
 title: LLM Production Reality Thinking
 category: LLMs & Prompt Engineering

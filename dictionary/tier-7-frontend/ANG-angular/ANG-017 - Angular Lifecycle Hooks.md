@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-017
 title: Angular Lifecycle Hooks
 category: Angular

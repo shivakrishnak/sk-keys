@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-049
 title: Azure Platform Engineering Strategy
 category: Cloud -- Azure

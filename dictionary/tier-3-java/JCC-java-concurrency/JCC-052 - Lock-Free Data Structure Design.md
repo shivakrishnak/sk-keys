@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-052
 title: Lock-Free Data Structure Design
 category: Java Concurrency

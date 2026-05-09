@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-013
 title: Session Affinity
 category: System Design

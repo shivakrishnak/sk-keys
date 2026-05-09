@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-033
 title: Backpressure in Async Systems
 category: Async & Background Processing

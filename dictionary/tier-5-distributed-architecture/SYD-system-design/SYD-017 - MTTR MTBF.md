@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-017
 title: MTTR MTBF
 category: System Design

@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-026
 title: Angular Interceptors
 category: Angular

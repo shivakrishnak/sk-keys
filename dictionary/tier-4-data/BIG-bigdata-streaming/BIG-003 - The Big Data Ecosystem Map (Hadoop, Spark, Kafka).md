@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-003
 title: The Big Data Ecosystem Map (Hadoop, Spark, Kafka)
 category: Big Data & Streaming

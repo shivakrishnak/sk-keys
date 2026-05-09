@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-008
 title: Git Branches -- Create, Switch, Delete
 category: Git & Branching Strategy

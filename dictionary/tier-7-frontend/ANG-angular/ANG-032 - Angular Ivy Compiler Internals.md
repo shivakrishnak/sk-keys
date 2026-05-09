@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-032
 title: Angular Ivy Compiler Internals
 category: Angular

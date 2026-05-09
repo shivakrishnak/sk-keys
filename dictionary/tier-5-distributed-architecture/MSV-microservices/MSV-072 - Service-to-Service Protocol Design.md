@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-072
 title: Service-to-Service Protocol Design
 category: Microservices

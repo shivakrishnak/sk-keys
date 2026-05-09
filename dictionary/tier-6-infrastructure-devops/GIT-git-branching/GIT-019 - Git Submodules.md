@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-019
 title: Git Submodules
 category: Git & Branching Strategy

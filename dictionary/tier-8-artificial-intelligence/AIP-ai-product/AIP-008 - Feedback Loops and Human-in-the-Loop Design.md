@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-008
 title: Feedback Loops and Human-in-the-Loop Design
 category: AI Product Engineering

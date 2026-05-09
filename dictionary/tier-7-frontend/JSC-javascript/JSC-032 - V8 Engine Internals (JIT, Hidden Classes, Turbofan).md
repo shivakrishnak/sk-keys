@@ -1,4 +1,4 @@
-﻿---
+---
 id: JSC-032
 title: V8 Engine Internals (JIT, Hidden Classes, Turbofan)
 category: JavaScript

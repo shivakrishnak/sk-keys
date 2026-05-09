@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-026
 title: IaC Security Scanning (tfsec, Bridgecrew)
 category: Infrastructure as Code

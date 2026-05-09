@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-049
 title: io_uring Deep Dive
 category: Operating Systems

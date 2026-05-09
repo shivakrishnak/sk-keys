@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-047
 title: "Virtual Thread Migration Strategy (Loom)"
 category: Java Concurrency

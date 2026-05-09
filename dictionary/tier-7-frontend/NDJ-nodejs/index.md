@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Node.js"
 parent: "Technical Dictionary"

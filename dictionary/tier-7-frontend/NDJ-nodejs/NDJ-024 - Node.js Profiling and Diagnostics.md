@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-024
 title: Node.js Profiling and Diagnostics
 category: Node.js

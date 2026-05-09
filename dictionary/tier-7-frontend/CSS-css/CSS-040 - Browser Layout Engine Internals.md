@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-040
 title: Browser Layout Engine Internals
 category: CSS

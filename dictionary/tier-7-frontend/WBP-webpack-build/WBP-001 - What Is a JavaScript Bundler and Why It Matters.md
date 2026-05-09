@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-001
 title: What Is a JavaScript Bundler and Why It Matters
 category: Webpack & Build Tools

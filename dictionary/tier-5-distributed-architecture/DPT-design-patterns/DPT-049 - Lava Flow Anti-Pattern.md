@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Lava Flow Anti-Pattern"
 parent: "Design Patterns"

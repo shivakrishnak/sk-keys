@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-053
 title: Azure Research and Novel Patterns
 category: Cloud -- Azure

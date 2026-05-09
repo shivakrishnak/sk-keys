@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-039
 title: Software Reliability Engineering Metrics
 category: Code Quality

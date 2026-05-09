@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-004
 title: RDBMS vs NoSQL -- When to Choose
 category: Database Fundamentals

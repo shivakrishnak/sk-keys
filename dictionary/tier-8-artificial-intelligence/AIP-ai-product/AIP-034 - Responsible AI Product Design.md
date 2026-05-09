@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-034
 title: Responsible AI Product Design
 category: AI Product Engineering

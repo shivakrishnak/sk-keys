@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-069
 title: Type System Design for Large Codebases
 category: CS Fundamentals - Paradigms

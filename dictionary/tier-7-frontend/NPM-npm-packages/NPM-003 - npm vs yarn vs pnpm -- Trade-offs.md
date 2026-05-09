@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-003
 title: npm vs yarn vs pnpm -- Trade-offs
 category: npm & Package Management

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-077
 title: Cloud Cost Mental Model
 category: Cloud -- AWS

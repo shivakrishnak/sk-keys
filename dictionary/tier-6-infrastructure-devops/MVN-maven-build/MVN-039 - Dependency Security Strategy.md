@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-039
 title: Dependency Security Strategy
 category: Maven & Build Tools

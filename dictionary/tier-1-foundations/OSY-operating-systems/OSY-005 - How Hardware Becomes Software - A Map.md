@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-005
 title: How Hardware Becomes Software - A Map
 category: Operating Systems

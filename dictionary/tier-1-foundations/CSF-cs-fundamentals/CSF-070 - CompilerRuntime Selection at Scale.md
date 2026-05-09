@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-070
 title: Compiler/Runtime Selection at Scale
 category: CS Fundamentals - Paradigms

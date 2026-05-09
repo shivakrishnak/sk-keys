@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "React"
 parent: "Technical Dictionary"

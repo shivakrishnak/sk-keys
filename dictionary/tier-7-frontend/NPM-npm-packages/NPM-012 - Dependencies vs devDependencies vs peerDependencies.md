@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-012
 title: Dependencies vs devDependencies vs peerDependencies
 category: npm & Package Management

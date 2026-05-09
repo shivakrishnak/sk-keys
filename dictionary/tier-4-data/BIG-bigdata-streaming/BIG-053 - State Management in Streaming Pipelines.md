@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-053
 title: State Management in Streaming Pipelines
 category: Big Data & Streaming

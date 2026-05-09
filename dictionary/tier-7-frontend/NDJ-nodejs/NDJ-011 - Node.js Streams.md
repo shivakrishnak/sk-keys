@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-011
 title: Node.js Streams
 category: Node.js

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-066
 title: AWS Architecture Strategy (Multi-AZ, Multi-Region)
 category: Cloud -- AWS

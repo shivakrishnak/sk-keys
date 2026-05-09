@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-022
 title: Release Engineering (Release Trains, Freeze, Hotfix)
 category: Platform & Modern SWE

@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-034
 title: Pre-Training at Scale (GPT, BERT, T5)
 category: LLMs & Prompt Engineering

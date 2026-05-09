@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-068
 title: API Migration Strategy (REST to gRPC)
 category: HTTP & APIs

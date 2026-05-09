@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-057
 title: Database Architecture at Scale
 category: Database Fundamentals

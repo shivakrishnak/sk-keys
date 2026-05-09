@@ -1,4 +1,4 @@
-﻿---
+---
 id: JLG-005
 title: Java Versioning and LTS Release Strategy
 category: Java Language

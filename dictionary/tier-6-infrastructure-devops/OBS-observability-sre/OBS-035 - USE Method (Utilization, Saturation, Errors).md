@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-035
 title: USE Method (Utilization, Saturation, Errors)
 category: Observability & SRE

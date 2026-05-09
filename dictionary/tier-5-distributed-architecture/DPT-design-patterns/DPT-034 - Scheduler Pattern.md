@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Scheduler Pattern"
 parent: "Design Patterns"

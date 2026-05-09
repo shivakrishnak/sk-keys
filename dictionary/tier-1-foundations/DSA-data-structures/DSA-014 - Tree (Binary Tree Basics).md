@@ -1,4 +1,4 @@
-﻿---
+---
 id: DSA-014
 title: Tree (Binary Tree Basics)
 category: Data Structures & Algorithms

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-069
 title: Spring Configuration Trade-off Framing
 category: Spring Core

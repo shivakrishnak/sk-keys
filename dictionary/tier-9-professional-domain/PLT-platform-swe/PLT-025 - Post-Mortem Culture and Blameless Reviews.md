@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-025
 title: Post-Mortem Culture and Blameless Reviews
 category: Platform & Modern SWE

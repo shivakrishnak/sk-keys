@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-028
 title: Angular Custom Decorators and Metadata
 category: Angular

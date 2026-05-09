@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-040
 title: Git Protocol and Data Format Internals
 category: Git & Branching Strategy

@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-013
 title: TypeScript Union and Intersection Types
 category: TypeScript

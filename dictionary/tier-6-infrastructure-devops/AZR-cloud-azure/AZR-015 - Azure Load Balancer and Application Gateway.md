@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-015
 title: Azure Load Balancer and Application Gateway
 category: Cloud -- Azure

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-023
 title: Document Security (Encryption, Password Protection)
 category: Document Generation

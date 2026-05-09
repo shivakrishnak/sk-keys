@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-023
 title: Node.js Memory Management
 category: Node.js

@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-015
 title: HTML Head Elements (meta, title, link, script)
 category: HTML

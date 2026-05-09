@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-016
 title: OpenTelemetry -- The Standard
 category: Observability & SRE

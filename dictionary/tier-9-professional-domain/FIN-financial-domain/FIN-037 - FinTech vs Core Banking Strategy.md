@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-037
 title: FinTech vs Core Banking Strategy
 category: Financial Services Domain

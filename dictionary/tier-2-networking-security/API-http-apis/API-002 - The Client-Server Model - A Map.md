@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-002
 title: The Client-Server Model - A Map
 category: HTTP & APIs

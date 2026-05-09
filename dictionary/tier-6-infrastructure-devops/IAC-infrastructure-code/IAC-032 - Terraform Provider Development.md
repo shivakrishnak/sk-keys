@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-032
 title: Terraform Provider Development
 category: Infrastructure as Code

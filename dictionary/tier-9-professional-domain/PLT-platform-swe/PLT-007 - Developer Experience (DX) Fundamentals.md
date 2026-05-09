@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-007
 title: Developer Experience (DX) Fundamentals
 category: Platform & Modern SWE

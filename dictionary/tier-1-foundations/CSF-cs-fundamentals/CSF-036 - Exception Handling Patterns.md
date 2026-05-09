@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-036
 title: Exception Handling Patterns
 category: CS Fundamentals - Paradigms

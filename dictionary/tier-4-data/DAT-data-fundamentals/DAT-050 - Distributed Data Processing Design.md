@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-050
 title: Distributed Data Processing Design
 category: Data Fundamentals

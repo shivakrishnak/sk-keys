@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-040
 title: Memory Profiling Tools (valgrind, heaptrack)
 category: Operating Systems

@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-012
 title: Ledger Systems Design
 category: Financial Services Domain

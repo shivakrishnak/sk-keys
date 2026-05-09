@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-022
 title: AI Model Versioning in Products
 category: AI Product Engineering

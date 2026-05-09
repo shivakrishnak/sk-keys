@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-059
 title: DDoS Attack Patterns and Defense
 category: Security

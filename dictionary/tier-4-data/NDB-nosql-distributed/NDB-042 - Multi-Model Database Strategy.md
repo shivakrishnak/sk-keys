@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-042
 title: Multi-Model Database Strategy
 category: NoSQL & Distributed Databases

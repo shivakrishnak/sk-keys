@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-002
 title: Why Programming Paradigms Exist
 category: CS Fundamentals - Paradigms

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Read-Write Lock Pattern"
 parent: "Design Patterns"

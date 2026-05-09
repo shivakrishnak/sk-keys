@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-061
 title: Kernel Version Policy at Scale
 category: Linux

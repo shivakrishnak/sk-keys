@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-018
 title: AWS CDK (Cloud Development Kit)
 category: Infrastructure as Code

@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-016
 title: KYC and AML Systems (Know Your Customer, Anti-Money Laundering)
 category: Financial Services Domain

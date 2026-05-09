@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-067
 title: SAST and DAST Pipeline Design and Automation
 category: Security

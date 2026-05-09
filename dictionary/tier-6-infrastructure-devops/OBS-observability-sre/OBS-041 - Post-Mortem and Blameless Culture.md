@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-041
 title: Post-Mortem and Blameless Culture
 category: Observability & SRE

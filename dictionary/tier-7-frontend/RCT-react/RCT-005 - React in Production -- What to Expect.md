@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-005
 title: React in Production -- What to Expect
 category: React

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-060
 title: Constraint-First System Design Thinking
 category: System Design

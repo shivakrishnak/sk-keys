@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-023
 title: Incident Management Platform Design
 category: Platform & Modern SWE

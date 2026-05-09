@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-016
 title: Engineering Metrics and OKRs
 category: Platform & Modern SWE

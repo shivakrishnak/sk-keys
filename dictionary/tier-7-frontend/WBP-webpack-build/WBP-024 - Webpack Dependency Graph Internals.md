@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-024
 title: Webpack Dependency Graph Internals
 category: Webpack & Build Tools

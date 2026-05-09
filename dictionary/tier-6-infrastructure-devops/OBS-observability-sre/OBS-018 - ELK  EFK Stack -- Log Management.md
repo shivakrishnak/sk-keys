@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-018
 title: ELK / EFK Stack -- Log Management
 category: Observability & SRE

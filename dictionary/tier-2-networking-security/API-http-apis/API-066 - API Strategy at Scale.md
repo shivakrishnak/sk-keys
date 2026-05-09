@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-066
 title: API Strategy at Scale
 category: HTTP & APIs

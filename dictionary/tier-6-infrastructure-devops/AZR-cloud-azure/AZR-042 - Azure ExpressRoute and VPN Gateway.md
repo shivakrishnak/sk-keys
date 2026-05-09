@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-042
 title: Azure ExpressRoute and VPN Gateway
 category: Cloud -- Azure

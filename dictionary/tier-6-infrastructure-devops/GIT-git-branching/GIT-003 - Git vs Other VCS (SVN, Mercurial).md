@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-003
 title: Git vs Other VCS (SVN, Mercurial)
 category: Git & Branching Strategy

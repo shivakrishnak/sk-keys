@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-010
 title: CSS Colors and Typography
 category: CSS

@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-011
 title: Code Splitting and Lazy Loading
 category: Webpack & Build Tools

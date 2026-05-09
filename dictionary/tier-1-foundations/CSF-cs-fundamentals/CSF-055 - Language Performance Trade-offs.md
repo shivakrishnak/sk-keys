@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-055
 title: Language Performance Trade-offs
 category: CS Fundamentals - Paradigms

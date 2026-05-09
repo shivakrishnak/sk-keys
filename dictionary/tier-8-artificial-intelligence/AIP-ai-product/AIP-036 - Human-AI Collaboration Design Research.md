@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-036
 title: Human-AI Collaboration Design Research
 category: AI Product Engineering

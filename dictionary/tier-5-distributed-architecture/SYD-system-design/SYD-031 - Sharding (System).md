@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-031
 title: "Sharding (System)"
 category: System Design

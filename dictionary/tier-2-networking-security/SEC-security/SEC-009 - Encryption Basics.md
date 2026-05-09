@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-009
 title: Encryption Basics
 category: Security

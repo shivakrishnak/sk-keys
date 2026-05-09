@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-023
 title: Financial Data Models (Accounts, Positions, Trades)
 category: Financial Services Domain

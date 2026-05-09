@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-055
 title: AI Trade-off Framing (Performance vs Interpretability)
 category: AI Foundations

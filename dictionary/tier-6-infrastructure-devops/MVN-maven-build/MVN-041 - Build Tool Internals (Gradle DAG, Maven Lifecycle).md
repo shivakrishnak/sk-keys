@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-041
 title: Build Tool Internals (Gradle DAG, Maven Lifecycle)
 category: Maven & Build Tools

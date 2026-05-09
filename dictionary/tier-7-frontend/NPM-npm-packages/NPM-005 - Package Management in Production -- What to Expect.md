@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-005
 title: Package Management in Production -- What to Expect
 category: npm & Package Management

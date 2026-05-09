@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-031
 title: Package Registry Design Research
 category: npm & Package Management

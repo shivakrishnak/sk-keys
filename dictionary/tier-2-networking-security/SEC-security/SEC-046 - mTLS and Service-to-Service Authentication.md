@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-046
 title: mTLS and Service-to-Service Authentication
 category: Security

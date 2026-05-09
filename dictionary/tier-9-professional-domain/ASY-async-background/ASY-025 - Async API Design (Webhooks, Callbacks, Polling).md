@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-025
 title: Async API Design (Webhooks, Callbacks, Polling)
 category: Async & Background Processing

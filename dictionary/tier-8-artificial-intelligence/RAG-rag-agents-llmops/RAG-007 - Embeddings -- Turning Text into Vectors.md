@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-007
 title: Embeddings -- Turning Text into Vectors
 category: RAG & Agents & LLMOps

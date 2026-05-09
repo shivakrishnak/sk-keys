@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-053
 title: Data Modeling Mental Model
 category: Data Fundamentals

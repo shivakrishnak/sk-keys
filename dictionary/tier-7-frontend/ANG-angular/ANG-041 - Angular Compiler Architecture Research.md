@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-041
 title: Angular Compiler Architecture Research
 category: Angular

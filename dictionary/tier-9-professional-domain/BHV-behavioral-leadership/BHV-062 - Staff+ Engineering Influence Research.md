@@ -1,4 +1,4 @@
-﻿---
+---
 id: BHV-062
 title: Staff+ Engineering Influence Research
 category: Behavioral & Leadership

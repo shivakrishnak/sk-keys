@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-029
 title: AI Regulatory Compliance (EU AI Act, FDA AI/ML)
 category: AI Product Engineering

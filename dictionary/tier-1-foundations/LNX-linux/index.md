@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Linux"
 parent: "Technical Dictionary"

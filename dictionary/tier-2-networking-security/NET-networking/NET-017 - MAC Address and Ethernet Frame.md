@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-017
 title: MAC Address and Ethernet Frame
 category: Networking

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-050
 title: Container Image Format Design (OCI)
 category: Containers

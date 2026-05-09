@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-045
 title: Transformer Architecture Research (xFormers, State Space Models)
 category: LLMs & Prompt Engineering

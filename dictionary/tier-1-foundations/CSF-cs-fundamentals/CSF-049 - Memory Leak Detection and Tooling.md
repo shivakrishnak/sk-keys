@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-049
 title: Memory Leak Detection and Tooling
 category: CS Fundamentals - Paradigms

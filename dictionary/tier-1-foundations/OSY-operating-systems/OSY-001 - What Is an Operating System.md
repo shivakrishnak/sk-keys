@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-001
 title: What Is an Operating System
 category: Operating Systems

@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-001
 title: What Is Financial Services Software Engineering
 category: Financial Services Domain

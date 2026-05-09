@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-004
 title: The Async Ecosystem Map (RabbitMQ, Kafka, Celery, SQS)
 category: Async & Background Processing

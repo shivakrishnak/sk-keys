@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-019
 title: React Reconciliation Algorithm Deep Dive
 category: React

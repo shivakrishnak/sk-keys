@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-005
 title: Angular in Production -- What to Expect
 category: Angular

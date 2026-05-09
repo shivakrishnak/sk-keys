@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-032
 title: JavaScript Module System Internals
 category: npm & Package Management

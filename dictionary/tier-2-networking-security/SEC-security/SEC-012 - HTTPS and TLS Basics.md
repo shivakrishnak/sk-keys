@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-012
 title: HTTPS and TLS Basics
 category: Security

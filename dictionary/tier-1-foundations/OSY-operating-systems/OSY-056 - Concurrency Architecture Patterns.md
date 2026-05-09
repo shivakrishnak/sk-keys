@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-056
 title: Concurrency Architecture Patterns
 category: Operating Systems

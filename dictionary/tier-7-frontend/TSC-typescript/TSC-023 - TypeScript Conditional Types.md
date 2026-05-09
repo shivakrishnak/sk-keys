@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-023
 title: TypeScript Conditional Types
 category: TypeScript

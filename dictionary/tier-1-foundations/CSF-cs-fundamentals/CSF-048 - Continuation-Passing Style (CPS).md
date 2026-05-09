@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-048
 title: Continuation-Passing Style (CPS)
 category: CS Fundamentals - Paradigms

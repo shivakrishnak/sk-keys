@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-026
 title: Azure API Management
 category: Cloud -- Azure

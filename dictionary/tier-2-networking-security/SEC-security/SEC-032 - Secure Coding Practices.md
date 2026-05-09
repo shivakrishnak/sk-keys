@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-032
 title: Secure Coding Practices
 category: Security

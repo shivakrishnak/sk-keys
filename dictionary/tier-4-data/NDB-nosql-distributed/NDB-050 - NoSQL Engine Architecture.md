@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-050
 title: NoSQL Engine Architecture
 category: NoSQL & Distributed Databases

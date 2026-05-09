@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-037
 title: Open Host Service
 category: Software Architecture Patterns

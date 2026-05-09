@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-005
 title: Containers in Production - What to Expect
 category: Containers

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-030
 title: Thread Pool Pattern
 category: Operating Systems

@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-070
 title: Event-Driven Microservices Design
 category: Microservices

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-034
 title: Immutability
 category: CS Fundamentals - Paradigms

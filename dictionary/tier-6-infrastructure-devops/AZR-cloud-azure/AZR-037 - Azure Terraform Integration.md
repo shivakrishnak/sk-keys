@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-037
 title: Azure Terraform Integration
 category: Cloud -- Azure

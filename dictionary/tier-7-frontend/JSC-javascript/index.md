@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "JavaScript"
 parent: "Technical Dictionary"

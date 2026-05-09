@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-020
 title: HTML Custom Data Attributes (data-*)
 category: HTML

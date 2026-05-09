@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-023
 title: Input Validation and Output Encoding
 category: Security

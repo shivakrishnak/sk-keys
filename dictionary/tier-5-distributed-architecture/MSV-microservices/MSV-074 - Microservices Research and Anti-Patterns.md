@@ -1,4 +1,4 @@
-﻿---
+---
 id: MSV-074
 title: Microservices Research and Anti-Patterns
 category: Microservices

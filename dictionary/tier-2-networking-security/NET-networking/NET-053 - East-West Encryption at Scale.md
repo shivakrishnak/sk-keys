@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-053
 title: East-West Encryption at Scale
 category: Networking

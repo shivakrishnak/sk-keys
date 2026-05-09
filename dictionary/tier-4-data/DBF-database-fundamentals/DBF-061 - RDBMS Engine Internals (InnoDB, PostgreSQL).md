@@ -1,4 +1,4 @@
-﻿---
+---
 id: DBF-061
 title: RDBMS Engine Internals (InnoDB, PostgreSQL)
 category: Database Fundamentals

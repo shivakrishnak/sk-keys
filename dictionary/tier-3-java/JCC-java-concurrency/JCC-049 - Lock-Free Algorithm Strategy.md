@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-049
 title: Lock-Free Algorithm Strategy
 category: Java Concurrency

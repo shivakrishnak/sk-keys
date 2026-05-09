@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-063
 title: Microservice Decomposition with Spring Cloud
 category: Spring Core

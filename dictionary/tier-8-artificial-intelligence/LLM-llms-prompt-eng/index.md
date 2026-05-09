@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "LLMs & Prompt Engineering"
 parent: "Technical Dictionary"

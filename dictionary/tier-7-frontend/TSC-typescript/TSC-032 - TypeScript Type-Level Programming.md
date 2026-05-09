@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-032
 title: TypeScript Type-Level Programming
 category: TypeScript

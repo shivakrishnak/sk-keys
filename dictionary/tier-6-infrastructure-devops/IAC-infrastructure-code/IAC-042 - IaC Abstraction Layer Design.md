@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-042
 title: IaC Abstraction Layer Design
 category: Infrastructure as Code

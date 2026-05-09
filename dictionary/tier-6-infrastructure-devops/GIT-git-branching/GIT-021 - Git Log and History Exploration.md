@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-021
 title: Git Log and History Exploration
 category: Git & Branching Strategy

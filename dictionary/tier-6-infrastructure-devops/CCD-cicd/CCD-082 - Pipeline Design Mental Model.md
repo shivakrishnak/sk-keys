@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-082
 title: Pipeline Design Mental Model
 category: CI/CD

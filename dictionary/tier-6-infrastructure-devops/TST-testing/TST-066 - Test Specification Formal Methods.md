@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-066
 title: Test Specification Formal Methods
 category: Testing

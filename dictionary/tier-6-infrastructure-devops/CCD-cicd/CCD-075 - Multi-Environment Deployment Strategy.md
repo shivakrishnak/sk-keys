@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-075
 title: Multi-Environment Deployment Strategy
 category: CI/CD

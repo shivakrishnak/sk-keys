@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-043
 title: Vector DB Selection Framework
 category: RAG & Agents & LLMOps

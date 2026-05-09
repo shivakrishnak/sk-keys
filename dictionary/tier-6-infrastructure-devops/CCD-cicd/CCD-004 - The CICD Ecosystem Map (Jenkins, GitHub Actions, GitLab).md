@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-004
 title: The CI/CD Ecosystem Map (Jenkins, GitHub Actions, GitLab)
 category: CI/CD

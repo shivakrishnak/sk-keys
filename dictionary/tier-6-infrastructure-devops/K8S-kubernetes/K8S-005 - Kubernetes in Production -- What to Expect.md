@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-005
 title: Kubernetes in Production -- What to Expect
 category: Kubernetes

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-001
 title: What Is AWS and the Cloud Model
 category: Cloud -- AWS

@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-076
 title: Cluster Design Mental Model
 category: Kubernetes

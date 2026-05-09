@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-035
 title: Node.js vs Deno vs Bun -- Runtime Comparison
 category: Node.js

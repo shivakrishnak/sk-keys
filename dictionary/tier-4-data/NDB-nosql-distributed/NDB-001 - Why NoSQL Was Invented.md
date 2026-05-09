@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-001
 title: Why NoSQL Was Invented
 category: NoSQL & Distributed Databases

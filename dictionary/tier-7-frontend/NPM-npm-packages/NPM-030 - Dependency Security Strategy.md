@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-030
 title: Dependency Security Strategy
 category: npm & Package Management

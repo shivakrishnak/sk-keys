@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-019
 title: Redundancy Failover
 category: System Design

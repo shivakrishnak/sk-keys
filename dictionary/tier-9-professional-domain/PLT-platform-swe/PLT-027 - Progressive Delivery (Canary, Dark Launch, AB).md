@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-027
 title: Progressive Delivery (Canary, Dark Launch, A/B)
 category: Platform & Modern SWE

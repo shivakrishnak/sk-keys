@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-011
 title: Platform Team Topology and Team Interactions
 category: Platform & Modern SWE

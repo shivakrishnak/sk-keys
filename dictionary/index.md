@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Technical Dictionary"
 nav_order: 1

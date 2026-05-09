@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-050
 title: Big Data Platform Selection Framework
 category: Big Data & Streaming

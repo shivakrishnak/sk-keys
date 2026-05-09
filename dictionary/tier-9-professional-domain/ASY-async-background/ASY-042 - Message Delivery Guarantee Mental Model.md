@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-042
 title: Message Delivery Guarantee Mental Model
 category: Async & Background Processing

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-017
 title: Credentials and Secrets Management Basics
 category: Security

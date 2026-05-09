@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-026
 title: Progressive Web Apps (PWA, Service Worker, Manifest)
 category: HTML

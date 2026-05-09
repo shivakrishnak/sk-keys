@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-043
 title: LLM Cost and Latency Architecture Design
 category: LLMs & Prompt Engineering

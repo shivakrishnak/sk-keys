@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-038
 title: Web Accessibility Strategy
 category: HTML

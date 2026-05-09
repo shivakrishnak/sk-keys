@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-002
 title: The AWS Service Landscape -- A Map
 category: Cloud -- AWS

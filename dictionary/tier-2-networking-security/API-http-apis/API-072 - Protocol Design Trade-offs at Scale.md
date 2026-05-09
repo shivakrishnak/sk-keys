@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-072
 title: Protocol Design Trade-offs at Scale
 category: HTTP & APIs

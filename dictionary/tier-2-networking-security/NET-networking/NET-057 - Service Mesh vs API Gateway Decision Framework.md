@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-057
 title: Service Mesh vs API Gateway Decision Framework
 category: Networking

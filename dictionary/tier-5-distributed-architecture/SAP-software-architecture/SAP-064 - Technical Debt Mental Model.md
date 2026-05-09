@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-064
 title: Technical Debt Mental Model
 category: Software Architecture Patterns

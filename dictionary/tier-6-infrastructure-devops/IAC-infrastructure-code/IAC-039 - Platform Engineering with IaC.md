@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-039
 title: Platform Engineering with IaC
 category: Infrastructure as Code

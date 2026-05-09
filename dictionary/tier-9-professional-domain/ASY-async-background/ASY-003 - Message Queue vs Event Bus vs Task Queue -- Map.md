@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-003
 title: Message Queue vs Event Bus vs Task Queue -- Map
 category: Async & Background Processing

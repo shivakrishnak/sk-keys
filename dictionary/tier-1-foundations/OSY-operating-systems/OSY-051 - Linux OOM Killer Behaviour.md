@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-051
 title: Linux OOM Killer Behaviour
 category: Operating Systems

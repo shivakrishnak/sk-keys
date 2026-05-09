@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-005
 title: IaC in Production -- What to Expect
 category: Infrastructure as Code

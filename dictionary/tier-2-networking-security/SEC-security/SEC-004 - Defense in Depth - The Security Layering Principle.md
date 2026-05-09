@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-004
 title: Defense in Depth - The Security Layering Principle
 category: Security

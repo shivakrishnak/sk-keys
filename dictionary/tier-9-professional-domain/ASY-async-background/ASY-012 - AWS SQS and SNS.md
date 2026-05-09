@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-012
 title: AWS SQS and SNS
 category: Async & Background Processing

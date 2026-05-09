@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Boat Anchor Anti-Pattern"
 parent: "Design Patterns"

@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-026
 title: Cryptocurrency and Blockchain in Finance
 category: Financial Services Domain

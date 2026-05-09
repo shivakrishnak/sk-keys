@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-019
 title: Node.js Async Patterns (Callbacks, Promises, async/await)
 category: Node.js

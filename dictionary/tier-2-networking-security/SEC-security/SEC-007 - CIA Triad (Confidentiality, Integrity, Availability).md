@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 parent: "Security"
 grand_parent: "Technical Dictionary"

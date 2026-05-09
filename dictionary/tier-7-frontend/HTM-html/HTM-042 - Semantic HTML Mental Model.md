@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-042
 title: Semantic HTML Mental Model
 category: HTML

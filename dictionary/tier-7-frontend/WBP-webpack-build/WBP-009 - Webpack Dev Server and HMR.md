@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-009
 title: Webpack Dev Server and HMR
 category: Webpack & Build Tools

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-005
 title: The CS Ecosystem Map (Languages, Runtimes, OS)
 category: CS Fundamentals - Paradigms

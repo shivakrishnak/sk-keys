@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-004
 title: The React Ecosystem Map (Next.js, Redux, React Query)
 category: React

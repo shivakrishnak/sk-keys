@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-011
 title: LangChain Fundamentals
 category: RAG & Agents & LLMOps

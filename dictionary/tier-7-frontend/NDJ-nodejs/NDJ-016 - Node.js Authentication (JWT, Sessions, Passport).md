@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-016
 title: Node.js Authentication (JWT, Sessions, Passport)
 category: Node.js

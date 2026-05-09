@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-020
 title: Helm -- Kubernetes Package Manager
 category: Infrastructure as Code

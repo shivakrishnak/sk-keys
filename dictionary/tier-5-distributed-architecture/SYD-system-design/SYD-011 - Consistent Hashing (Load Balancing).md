@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-011
 title: "Consistent Hashing (Load Balancing)"
 category: System Design

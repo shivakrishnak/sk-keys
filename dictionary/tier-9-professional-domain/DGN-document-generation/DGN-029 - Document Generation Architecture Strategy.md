@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-029
 title: Document Generation Architecture Strategy
 category: Document Generation

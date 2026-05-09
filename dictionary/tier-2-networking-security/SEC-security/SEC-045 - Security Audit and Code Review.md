@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-045
 title: Security Audit and Code Review
 category: Security

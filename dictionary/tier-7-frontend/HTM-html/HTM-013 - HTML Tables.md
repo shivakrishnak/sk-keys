@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-013
 title: HTML Tables
 category: HTML

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NET-004
 title: Networks Engineers Encounter (LAN, WAN, Cloud)
 category: Networking

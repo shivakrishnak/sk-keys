@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-053
 title: Concurrency Anti-Patterns (Shared State)
 category: CS Fundamentals - Paradigms

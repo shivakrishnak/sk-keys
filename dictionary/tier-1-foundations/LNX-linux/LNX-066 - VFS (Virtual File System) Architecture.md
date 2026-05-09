@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-066
 title: VFS (Virtual File System) Architecture
 category: Linux

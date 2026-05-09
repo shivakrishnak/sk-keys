@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-030
 title: Kafka Exactly-Once Semantics (EOS)
 category: Async & Background Processing

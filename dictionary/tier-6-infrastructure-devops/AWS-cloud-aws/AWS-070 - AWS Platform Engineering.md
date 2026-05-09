@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-070
 title: AWS Platform Engineering
 category: Cloud -- AWS

@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-036
 title: IaC Drift and Reconciliation Strategy
 category: Infrastructure as Code

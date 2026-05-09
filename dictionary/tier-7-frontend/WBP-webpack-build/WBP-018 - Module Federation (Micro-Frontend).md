@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-018
 title: Module Federation (Micro-Frontend)
 category: Webpack & Build Tools

@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-069
 title: Kubernetes Security Architecture
 category: Kubernetes

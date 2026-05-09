@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-030
 title: Angular PWA (Service Worker, App Shell)
 category: Angular

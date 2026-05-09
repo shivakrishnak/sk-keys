@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-017
 title: TypeScript Modules and Namespaces
 category: TypeScript

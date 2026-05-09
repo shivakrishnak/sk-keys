@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-003
 title: Manual vs Automated Deployment
 category: CI/CD

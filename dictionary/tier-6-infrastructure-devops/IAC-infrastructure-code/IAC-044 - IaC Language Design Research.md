@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-044
 title: IaC Language Design Research
 category: Infrastructure as Code

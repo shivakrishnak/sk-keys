@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-058
 title: JIT vs AOT Compilation Deep Dive
 category: CS Fundamentals - Paradigms

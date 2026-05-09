@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-016
 title: Chart and Graph Generation in Documents
 category: Document Generation

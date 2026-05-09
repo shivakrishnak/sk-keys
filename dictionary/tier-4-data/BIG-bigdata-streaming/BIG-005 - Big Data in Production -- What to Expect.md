@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-005
 title: Big Data in Production -- What to Expect
 category: Big Data & Streaming

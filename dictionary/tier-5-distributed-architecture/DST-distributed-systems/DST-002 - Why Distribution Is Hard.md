@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-002
 title: Why Distribution Is Hard
 category: Distributed Systems

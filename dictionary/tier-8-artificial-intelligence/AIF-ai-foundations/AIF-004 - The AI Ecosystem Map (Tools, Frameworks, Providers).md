@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIF-004
 title: The AI Ecosystem Map (Tools, Frameworks, Providers)
 category: AI Foundations

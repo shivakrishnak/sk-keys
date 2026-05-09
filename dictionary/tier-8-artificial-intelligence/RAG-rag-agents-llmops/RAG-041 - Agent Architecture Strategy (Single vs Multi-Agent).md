@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-041
 title: Agent Architecture Strategy (Single vs Multi-Agent)
 category: RAG & Agents & LLMOps

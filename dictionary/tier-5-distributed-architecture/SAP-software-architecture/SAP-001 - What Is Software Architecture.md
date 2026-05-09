@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-001
 title: What Is Software Architecture
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "RAG & Agents & LLMOps"
 parent: "Technical Dictionary"

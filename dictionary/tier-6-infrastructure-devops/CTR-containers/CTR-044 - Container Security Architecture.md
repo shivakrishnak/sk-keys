@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-044
 title: Container Security Architecture
 category: Containers

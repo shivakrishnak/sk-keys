@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-034
 title: Angular Security (XSS, CSRF, Sanitization)
 category: Angular

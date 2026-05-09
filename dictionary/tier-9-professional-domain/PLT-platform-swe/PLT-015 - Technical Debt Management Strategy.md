@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-015
 title: Technical Debt Management Strategy
 category: Platform & Modern SWE

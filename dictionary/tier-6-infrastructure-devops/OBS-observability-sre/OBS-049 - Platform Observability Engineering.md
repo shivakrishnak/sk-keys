@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-049
 title: Platform Observability Engineering
 category: Observability & SRE

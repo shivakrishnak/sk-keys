@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-023
 title: Message Schema Evolution (Avro, Protobuf)
 category: Async & Background Processing

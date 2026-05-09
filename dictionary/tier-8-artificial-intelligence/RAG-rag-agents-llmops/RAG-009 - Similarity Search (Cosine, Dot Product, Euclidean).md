@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-009
 title: Similarity Search (Cosine, Dot Product, Euclidean)
 category: RAG & Agents & LLMOps

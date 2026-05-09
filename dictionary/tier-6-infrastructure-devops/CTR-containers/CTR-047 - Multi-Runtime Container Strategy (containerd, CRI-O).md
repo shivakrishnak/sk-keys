@@ -1,4 +1,4 @@
-﻿---
+---
 id: CTR-047
 title: Multi-Runtime Container Strategy (containerd, CRI-O)
 category: Containers

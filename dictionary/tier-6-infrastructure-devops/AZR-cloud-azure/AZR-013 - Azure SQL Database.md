@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-013
 title: Azure SQL Database
 category: Cloud -- Azure

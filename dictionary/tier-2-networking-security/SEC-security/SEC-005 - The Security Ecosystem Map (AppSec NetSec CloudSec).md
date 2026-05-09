@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-005
 title: The Security Ecosystem Map (AppSec NetSec CloudSec)
 category: Security

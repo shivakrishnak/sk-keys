@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-027
 title: Immutable Infrastructure Pattern
 category: Infrastructure as Code

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-044
 title: "DRY (Don't Repeat Yourself)"
 category: Software Architecture Patterns

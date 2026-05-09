@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-026
 title: npm Registry Protocol
 category: npm & Package Management

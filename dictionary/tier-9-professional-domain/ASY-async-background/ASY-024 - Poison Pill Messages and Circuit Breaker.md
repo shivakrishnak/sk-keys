@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-024
 title: Poison Pill Messages and Circuit Breaker
 category: Async & Background Processing

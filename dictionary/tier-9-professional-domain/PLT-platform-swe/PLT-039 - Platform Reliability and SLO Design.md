@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-039
 title: Platform Reliability and SLO Design
 category: Platform & Modern SWE

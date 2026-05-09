@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-015
 title: Prompt Injection and Security
 category: LLMs & Prompt Engineering

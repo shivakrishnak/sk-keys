@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-064
 title: Cryptographic Primitive Design
 category: Security

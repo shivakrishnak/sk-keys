@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-056
 title: Big Data System Selection Mental Model
 category: Big Data & Streaming

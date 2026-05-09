@@ -1,4 +1,4 @@
-﻿---
+---
 id: DAT-051
 title: Data Lineage System Architecture
 category: Data Fundamentals

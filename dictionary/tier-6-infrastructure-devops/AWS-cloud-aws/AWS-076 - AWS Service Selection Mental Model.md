@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-076
 title: AWS Service Selection Mental Model
 category: Cloud -- AWS

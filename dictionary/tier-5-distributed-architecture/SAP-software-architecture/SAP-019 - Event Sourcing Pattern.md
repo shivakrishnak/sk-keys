@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-019
 title: Event Sourcing Pattern
 category: Software Architecture Patterns

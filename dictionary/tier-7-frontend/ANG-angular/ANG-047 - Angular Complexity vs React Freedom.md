@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-047
 title: Angular Complexity vs React Freedom
 category: Angular

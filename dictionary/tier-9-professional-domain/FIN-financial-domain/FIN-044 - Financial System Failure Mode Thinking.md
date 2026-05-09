@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-044
 title: Financial System Failure Mode Thinking
 category: Financial Services Domain

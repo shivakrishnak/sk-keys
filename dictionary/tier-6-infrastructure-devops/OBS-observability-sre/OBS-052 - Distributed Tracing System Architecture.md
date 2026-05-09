@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-052
 title: Distributed Tracing System Architecture
 category: Observability & SRE

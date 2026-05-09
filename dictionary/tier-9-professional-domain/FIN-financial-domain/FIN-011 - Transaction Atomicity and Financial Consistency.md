@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-011
 title: Transaction Atomicity and Financial Consistency
 category: Financial Services Domain

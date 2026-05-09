@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-002
 title: The Software Delivery Lifecycle -- A Map
 category: CI/CD

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DST-005
 title: The Distributed Systems Ecosystem Map
 category: Distributed Systems

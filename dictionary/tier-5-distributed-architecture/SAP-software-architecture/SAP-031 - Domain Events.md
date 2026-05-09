@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-031
 title: Domain Events
 category: Software Architecture Patterns

@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-002
 title: The Build Tool Ecosystem Map (Maven, Gradle, Ant)
 category: Maven & Build Tools

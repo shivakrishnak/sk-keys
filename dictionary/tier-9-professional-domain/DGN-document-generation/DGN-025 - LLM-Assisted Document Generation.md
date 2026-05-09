@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-025
 title: LLM-Assisted Document Generation
 category: Document Generation

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-020
 title: SQL Injection
 category: Security

@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-008
 title: TypeScript Functions (Parameter Types, Return Types, Overloads)
 category: TypeScript

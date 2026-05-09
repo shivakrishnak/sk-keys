@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-033
 title: Node.js Native Addons (N-API)
 category: Node.js

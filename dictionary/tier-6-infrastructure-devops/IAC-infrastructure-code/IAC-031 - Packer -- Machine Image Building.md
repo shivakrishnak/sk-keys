@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-031
 title: Packer -- Machine Image Building
 category: Infrastructure as Code

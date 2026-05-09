@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCD-080
 title: GitOps Architecture Design
 category: CI/CD

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-040
 title: Plugin Architecture
 category: Software Architecture Patterns

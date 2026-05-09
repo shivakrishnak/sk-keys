@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-026
 title: Continuous Deployment Safety Practices
 category: Platform & Modern SWE

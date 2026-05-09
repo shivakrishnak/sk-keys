@@ -1,4 +1,4 @@
-﻿---
+---
 id: MVN-003
 title: Build vs Compile vs Package vs Deploy
 category: Maven & Build Tools

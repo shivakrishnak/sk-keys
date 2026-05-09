@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-017
 title: Vertical Slice Architecture
 category: Software Architecture Patterns

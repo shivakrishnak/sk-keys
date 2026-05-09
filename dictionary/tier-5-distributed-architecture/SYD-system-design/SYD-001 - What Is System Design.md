@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-001
 title: What Is System Design
 category: System Design

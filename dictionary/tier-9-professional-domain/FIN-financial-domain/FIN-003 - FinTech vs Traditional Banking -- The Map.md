@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-003
 title: FinTech vs Traditional Banking -- The Map
 category: Financial Services Domain

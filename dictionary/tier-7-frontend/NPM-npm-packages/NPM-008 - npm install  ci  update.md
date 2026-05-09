@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-008
 title: npm install / ci / update
 category: npm & Package Management

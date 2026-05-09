@@ -1,4 +1,4 @@
-﻿---
+---
 id: LNX-065
 title: Scheduler Algorithm Design (CFS, FIFO)
 category: Linux

@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-012
 title: PDF Form Filling (AcroForms, iText)
 category: Document Generation

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-050
 title: Observability System Design Internals
 category: Observability & SRE

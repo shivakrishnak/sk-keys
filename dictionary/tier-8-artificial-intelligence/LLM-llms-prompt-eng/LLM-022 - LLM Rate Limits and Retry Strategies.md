@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-022
 title: LLM Rate Limits and Retry Strategies
 category: LLMs & Prompt Engineering

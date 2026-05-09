@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-038
 title: TypeScript Security Strategy (Zod, Runtime Validation)
 category: TypeScript

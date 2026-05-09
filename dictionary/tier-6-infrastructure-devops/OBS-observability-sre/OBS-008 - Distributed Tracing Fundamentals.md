@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-008
 title: Distributed Tracing Fundamentals
 category: Observability & SRE

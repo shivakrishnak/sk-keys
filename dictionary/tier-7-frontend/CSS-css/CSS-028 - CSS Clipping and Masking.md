@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-028
 title: CSS Clipping and Masking
 category: CSS

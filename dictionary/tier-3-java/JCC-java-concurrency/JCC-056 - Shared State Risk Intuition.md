@@ -1,4 +1,4 @@
-﻿---
+---
 id: JCC-056
 title: Shared State Risk Intuition
 category: Java Concurrency

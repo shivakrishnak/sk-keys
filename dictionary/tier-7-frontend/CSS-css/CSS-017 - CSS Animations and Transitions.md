@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-017
 title: CSS Animations and Transitions
 category: CSS

@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-004
 title: The Build Tool Ecosystem Map (Frontend)
 category: Webpack & Build Tools

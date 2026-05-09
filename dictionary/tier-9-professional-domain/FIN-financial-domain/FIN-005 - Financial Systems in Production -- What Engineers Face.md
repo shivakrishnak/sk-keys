@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-005
 title: Financial Systems in Production -- What Engineers Face
 category: Financial Services Domain

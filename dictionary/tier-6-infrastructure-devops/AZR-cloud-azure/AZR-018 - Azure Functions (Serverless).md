@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-018
 title: Azure Functions (Serverless)
 category: Cloud -- Azure

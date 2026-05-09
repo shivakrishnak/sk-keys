@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-027
 title: Angular Guards (Route Guards)
 category: Angular

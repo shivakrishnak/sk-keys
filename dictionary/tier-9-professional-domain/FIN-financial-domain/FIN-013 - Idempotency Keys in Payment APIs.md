@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-013
 title: Idempotency Keys in Payment APIs
 category: Financial Services Domain

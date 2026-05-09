@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-010
 title: Enterprise Application Architecture
 category: Software Architecture Patterns

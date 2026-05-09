@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-002
 title: The Gang of Four -- Origin and Philosophy
 category: Design Patterns

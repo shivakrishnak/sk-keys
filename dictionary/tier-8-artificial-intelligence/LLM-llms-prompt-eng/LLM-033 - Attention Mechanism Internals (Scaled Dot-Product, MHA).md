@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-033
 title: Attention Mechanism Internals (Scaled Dot-Product, MHA)
 category: LLMs & Prompt Engineering

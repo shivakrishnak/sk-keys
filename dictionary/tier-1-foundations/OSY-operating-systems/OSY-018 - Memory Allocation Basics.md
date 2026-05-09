@@ -1,4 +1,4 @@
-﻿---
+---
 id: OSY-018
 title: Memory Allocation Basics
 category: Operating Systems

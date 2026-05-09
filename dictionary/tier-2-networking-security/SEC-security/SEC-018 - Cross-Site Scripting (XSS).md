@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-018
 title: Cross-Site Scripting (XSS)
 category: Security

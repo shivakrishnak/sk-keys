@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-037
 title: IaC Compliance Enforcement
 category: Infrastructure as Code

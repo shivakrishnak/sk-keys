@@ -1,4 +1,4 @@
-﻿---
+---
 id: TSC-030
 title: TypeScript with Node.js (Backend Typing)
 category: TypeScript

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-022
 title: Azure Key Vault
 category: Cloud -- Azure

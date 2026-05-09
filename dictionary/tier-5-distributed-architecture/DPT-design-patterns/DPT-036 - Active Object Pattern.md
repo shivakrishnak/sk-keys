@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Active Object Pattern"
 parent: "Design Patterns"

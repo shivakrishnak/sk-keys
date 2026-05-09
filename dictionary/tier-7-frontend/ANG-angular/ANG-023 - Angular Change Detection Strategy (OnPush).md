@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-023
 title: Angular Change Detection Strategy (OnPush)
 category: Angular

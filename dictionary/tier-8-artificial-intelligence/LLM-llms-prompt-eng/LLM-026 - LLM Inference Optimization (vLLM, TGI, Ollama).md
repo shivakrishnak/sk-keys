@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-026
 title: LLM Inference Optimization (vLLM, TGI, Ollama)
 category: LLMs & Prompt Engineering

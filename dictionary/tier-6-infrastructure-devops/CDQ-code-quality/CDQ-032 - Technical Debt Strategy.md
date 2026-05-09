@@ -1,4 +1,4 @@
-﻿---
+---
 id: CDQ-032
 title: Technical Debt Strategy
 category: Code Quality

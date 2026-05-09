@@ -1,4 +1,4 @@
-﻿---
+---
 id: ANG-039
 title: Angular Migration Strategy (AngularJS to Angular)
 category: Angular

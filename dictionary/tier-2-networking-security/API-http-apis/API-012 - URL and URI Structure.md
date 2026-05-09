@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-012
 title: URL and URI Structure
 category: HTTP & APIs

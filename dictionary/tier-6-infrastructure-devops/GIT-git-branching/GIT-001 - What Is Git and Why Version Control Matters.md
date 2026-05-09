@@ -1,4 +1,4 @@
-﻿---
+---
 id: GIT-001
 title: What Is Git and Why Version Control Matters
 category: Git & Branching Strategy

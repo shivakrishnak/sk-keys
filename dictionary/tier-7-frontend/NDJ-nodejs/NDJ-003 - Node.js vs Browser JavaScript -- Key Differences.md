@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-003
 title: Node.js vs Browser JavaScript -- Key Differences
 category: Node.js

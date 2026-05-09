@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-038
 title: Emergent Capabilities in LLMs
 category: LLMs & Prompt Engineering

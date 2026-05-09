@@ -1,4 +1,4 @@
-﻿---
+---
 id: JLG-001
 title: What Is Java - History and Philosophy
 category: Java Language

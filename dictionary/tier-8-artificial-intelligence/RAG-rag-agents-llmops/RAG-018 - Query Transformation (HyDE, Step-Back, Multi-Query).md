@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-018
 title: Query Transformation (HyDE, Step-Back, Multi-Query)
 category: RAG & Agents & LLMOps

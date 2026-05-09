@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Adapter"
 parent: "Design Patterns"

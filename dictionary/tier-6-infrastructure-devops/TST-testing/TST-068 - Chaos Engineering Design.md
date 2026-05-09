@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-068
 title: Chaos Engineering Design
 category: Testing

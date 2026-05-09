@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-025
 title: Azure CDN and Front Door
 category: Cloud -- Azure

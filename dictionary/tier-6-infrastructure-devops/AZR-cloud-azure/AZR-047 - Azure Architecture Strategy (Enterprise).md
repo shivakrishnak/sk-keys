@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-047
 title: Azure Architecture Strategy (Enterprise)
 category: Cloud -- Azure

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CCH-027
 title: Cache Invalidation Architecture
 category: Caching

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AIP-023
 title: AI Output Caching and Consistency
 category: AI Product Engineering

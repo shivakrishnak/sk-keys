@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Event Bus Pattern"
 parent: "Design Patterns"

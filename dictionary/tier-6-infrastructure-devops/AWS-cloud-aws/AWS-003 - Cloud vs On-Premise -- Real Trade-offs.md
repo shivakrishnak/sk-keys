@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-003
 title: Cloud vs On-Premise -- Real Trade-offs
 category: Cloud -- AWS

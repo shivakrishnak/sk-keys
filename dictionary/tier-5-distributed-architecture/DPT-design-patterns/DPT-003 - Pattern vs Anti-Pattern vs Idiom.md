@@ -1,4 +1,4 @@
-﻿---
+---
 id: DPT-003
 title: Pattern vs Anti-Pattern vs Idiom
 category: Design Patterns

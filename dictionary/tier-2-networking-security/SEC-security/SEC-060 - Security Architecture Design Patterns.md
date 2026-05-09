@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-060
 title: Security Architecture Design Patterns
 category: Security

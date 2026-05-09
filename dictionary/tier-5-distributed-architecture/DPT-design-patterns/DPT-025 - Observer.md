@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Observer"
 parent: "Design Patterns"

@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-021
 title: Node.js Child Processes
 category: Node.js

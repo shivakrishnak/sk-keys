@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Observability & SRE"
 parent: "Technical Dictionary"

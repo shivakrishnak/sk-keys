@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDB-047
 title: Distributed Database Internals (Consensus, Paxos)
 category: NoSQL & Distributed Databases

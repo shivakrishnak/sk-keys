@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-047
 title: Lambda Architecture vs Kappa Architecture Trade-offs
 category: Big Data & Streaming

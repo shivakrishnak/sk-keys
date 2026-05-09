@@ -1,4 +1,4 @@
-﻿---
+---
 id: SYD-022
 title: Disaster Recovery
 category: System Design

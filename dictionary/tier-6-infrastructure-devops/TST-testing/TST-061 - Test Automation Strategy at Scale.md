@@ -1,4 +1,4 @@
-﻿---
+---
 id: TST-061
 title: Test Automation Strategy at Scale
 category: Testing

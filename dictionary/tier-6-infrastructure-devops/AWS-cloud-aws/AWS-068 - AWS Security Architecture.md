@@ -1,4 +1,4 @@
-﻿---
+---
 id: AWS-068
 title: AWS Security Architecture
 category: Cloud -- AWS

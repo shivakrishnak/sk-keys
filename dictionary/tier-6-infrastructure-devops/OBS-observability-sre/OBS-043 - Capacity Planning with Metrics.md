@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-043
 title: Capacity Planning with Metrics
 category: Observability & SRE

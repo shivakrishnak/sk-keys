@@ -1,4 +1,4 @@
-﻿---
+---
 id: WBP-008
 title: Webpack Plugins
 category: Webpack & Build Tools

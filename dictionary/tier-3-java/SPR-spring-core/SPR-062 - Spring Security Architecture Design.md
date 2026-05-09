@@ -1,4 +1,4 @@
-﻿---
+---
 id: SPR-062
 title: Spring Security Architecture Design
 category: Spring Core

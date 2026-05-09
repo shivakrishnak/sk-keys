@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-025
 title: Regulatory Reporting Systems (MiFID II, FINRA)
 category: Financial Services Domain

@@ -1,4 +1,4 @@
-﻿---
+---
 id: IAC-011
 title: Terraform Variables and Outputs
 category: Infrastructure as Code

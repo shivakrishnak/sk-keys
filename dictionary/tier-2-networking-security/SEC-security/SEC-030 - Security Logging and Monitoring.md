@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-030
 title: Security Logging and Monitoring
 category: Security

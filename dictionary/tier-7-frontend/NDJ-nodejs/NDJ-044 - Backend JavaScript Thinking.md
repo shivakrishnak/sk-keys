@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-044
 title: Backend JavaScript Thinking
 category: Node.js

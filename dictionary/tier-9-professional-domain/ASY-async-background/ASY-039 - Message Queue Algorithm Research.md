@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-039
 title: Message Queue Algorithm Research
 category: Async & Background Processing

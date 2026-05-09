@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-023
 title: Advanced RAG Patterns (Corrective RAG, Self-RAG)
 category: RAG & Agents & LLMOps

@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-019
 title: Error Budget
 category: Observability & SRE

@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSS-001
 title: What Is CSS and the Cascade Mental Model
 category: CSS

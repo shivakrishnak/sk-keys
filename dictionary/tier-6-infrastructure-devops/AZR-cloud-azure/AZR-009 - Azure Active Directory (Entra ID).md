@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-009
 title: Azure Active Directory (Entra ID)
 category: Cloud -- Azure

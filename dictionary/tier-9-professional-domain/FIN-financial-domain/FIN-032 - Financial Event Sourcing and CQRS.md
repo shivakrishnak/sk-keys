@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-032
 title: Financial Event Sourcing and CQRS
 category: Financial Services Domain

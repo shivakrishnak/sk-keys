@@ -1,4 +1,4 @@
-﻿---
+---
 id: NPM-027
 title: Dependency Graph Cycles and Resolution
 category: npm & Package Management

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Outbox Pattern"
 parent: "Design Patterns"

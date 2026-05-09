@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-040
 title: Node.js Core Contribution and Architecture
 category: Node.js

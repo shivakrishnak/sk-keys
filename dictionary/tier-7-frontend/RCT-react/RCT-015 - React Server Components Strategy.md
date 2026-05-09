@@ -1,4 +1,4 @@
-﻿---
+---
 id: RCT-015
 title: React Server Components Strategy
 category: React

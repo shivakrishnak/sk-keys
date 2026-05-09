@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-007
 title: At-Least-Once vs Exactly-Once vs At-Most-Once Delivery
 category: Async & Background Processing

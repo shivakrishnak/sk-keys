@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-011
 title: Azure App Service
 category: Cloud -- Azure

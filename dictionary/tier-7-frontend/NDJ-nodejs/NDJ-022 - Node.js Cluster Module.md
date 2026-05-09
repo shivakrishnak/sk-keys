@@ -1,4 +1,4 @@
-﻿---
+---
 id: NDJ-022
 title: Node.js Cluster Module
 category: Node.js

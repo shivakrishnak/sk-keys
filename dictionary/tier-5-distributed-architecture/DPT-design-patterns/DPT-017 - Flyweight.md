@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Flyweight"
 parent: "Design Patterns"

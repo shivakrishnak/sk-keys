@@ -1,4 +1,4 @@
-﻿---
+---
 id: OBS-037
 title: Cardinality in Metrics Systems
 category: Observability & SRE

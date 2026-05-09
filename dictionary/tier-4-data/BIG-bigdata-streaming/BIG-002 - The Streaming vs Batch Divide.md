@@ -1,4 +1,4 @@
-﻿---
+---
 id: BIG-002
 title: The Streaming vs Batch Divide
 category: Big Data & Streaming

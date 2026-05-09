@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-062
 title: Zero Trust Architecture Design
 category: Security

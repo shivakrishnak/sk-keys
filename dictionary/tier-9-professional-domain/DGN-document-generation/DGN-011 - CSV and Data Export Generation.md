@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-011
 title: CSV and Data Export Generation
 category: Document Generation

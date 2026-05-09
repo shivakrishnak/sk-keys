@@ -1,4 +1,4 @@
-﻿---
+---
 id: DGN-033
 title: Document Rendering Algorithm Research
 category: Document Generation

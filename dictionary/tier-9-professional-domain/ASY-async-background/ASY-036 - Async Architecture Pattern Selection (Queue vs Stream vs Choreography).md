@@ -1,4 +1,4 @@
-﻿---
+---
 id: ASY-036
 title: Async Architecture Pattern Selection (Queue vs Stream vs Choreography)
 category: Async & Background Processing

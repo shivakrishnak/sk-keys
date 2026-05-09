@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-014
 title: Cognitive Load in Software Engineering
 category: Platform & Modern SWE

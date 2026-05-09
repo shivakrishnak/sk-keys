@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-074
 title: Protocol Selection Mental Model
 category: HTTP & APIs

@@ -1,4 +1,4 @@
-﻿---
+---
 id: JLG-041
 title: Java Version Migration Strategy (8 to 17 to 21)
 category: Java Language

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SEC-002
 title: The Security Threat Landscape - A Map
 category: Security

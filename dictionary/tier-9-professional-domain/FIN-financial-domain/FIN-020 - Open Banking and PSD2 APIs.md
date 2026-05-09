@@ -1,4 +1,4 @@
-﻿---
+---
 id: FIN-020
 title: Open Banking and PSD2 APIs
 category: Financial Services Domain

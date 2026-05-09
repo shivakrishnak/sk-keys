@@ -1,4 +1,4 @@
-﻿---
+---
 id: K8S-074
 title: Kubernetes API Extension Points
 category: Kubernetes

@@ -1,4 +1,4 @@
-﻿---
+---
 id: AZR-021
 title: Azure Cosmos DB
 category: Cloud -- Azure

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: default
 title: "Async & Background Processing"
 parent: "Technical Dictionary"

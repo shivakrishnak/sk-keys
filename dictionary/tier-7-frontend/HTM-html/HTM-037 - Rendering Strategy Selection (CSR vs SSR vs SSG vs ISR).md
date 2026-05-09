@@ -1,4 +1,4 @@
-﻿---
+---
 id: HTM-037
 title: Rendering Strategy Selection (CSR vs SSR vs SSG vs ISR)
 category: HTML

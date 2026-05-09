@@ -1,4 +1,4 @@
-﻿---
+---
 id: CSF-077
 title: Language Design Rationale (Rust, Go, Kotlin)
 category: CS Fundamentals - Paradigms

@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-054
 title: Architecture Review Process Design
 category: Software Architecture Patterns

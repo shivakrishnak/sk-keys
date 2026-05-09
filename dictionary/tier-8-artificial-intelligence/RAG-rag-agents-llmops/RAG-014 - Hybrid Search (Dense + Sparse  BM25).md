@@ -1,4 +1,4 @@
-﻿---
+---
 id: RAG-014
 title: Hybrid Search (Dense + Sparse / BM25)
 category: RAG & Agents & LLMOps

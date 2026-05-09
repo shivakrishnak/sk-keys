@@ -1,4 +1,4 @@
-﻿---
+---
 id: LLM-002
 title: The LLM Mental Model (Next Token Prediction)
 category: LLMs & Prompt Engineering

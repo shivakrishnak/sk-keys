@@ -1,4 +1,4 @@
-﻿---
+---
 id: SAP-056
 title: Architecture Fitness Functions
 category: Software Architecture Patterns

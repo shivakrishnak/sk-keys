@@ -1,4 +1,4 @@
-﻿---
+---
 id: PLT-021
 title: Trunk-Based Development at Scale
 category: Platform & Modern SWE

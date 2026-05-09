@@ -1,4 +1,4 @@
-﻿---
+---
 id: API-014
 title: JSON vs XML Data Format
 category: HTTP & APIs
