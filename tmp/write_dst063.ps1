@@ -507,5 +507,5 @@ Anti-Entropy is considered a routine operational concern in distributed database
 '@
 
 $f = Join-Path $base "DST-063 - Anti-Entropy.md"
-[System.IO.File]::WriteAllText($f, $newContent, [System.Text.Encoding]::UTF8)
+[System.IO.File]::WriteAllText($f, $newContent, [System.Text.UTF8Encoding]::new($false))
 Write-Host "DST-063 written: $((Get-Content $f -Encoding UTF8).Count) lines"

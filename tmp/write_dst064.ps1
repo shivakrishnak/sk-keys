@@ -528,5 +528,5 @@ Cassandra's Read Repair feature, while powerful, has a subtle and often-overlook
 '@
 
 $f = Join-Path $base "DST-064 - Read Repair.md"
-[System.IO.File]::WriteAllText($f, $newContent, [System.Text.Encoding]::UTF8)
+[System.IO.File]::WriteAllText($f, $newContent, [System.Text.UTF8Encoding]::new($false))
 Write-Host "DST-064 written: $((Get-Content $f -Encoding UTF8).Count) lines"

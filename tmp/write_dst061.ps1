@@ -556,5 +556,5 @@ CRDTs were invented as a theoretical data structure in 2011. Their first major p
 '@
 
 $f = Join-Path $base "DST-061 - CRDT.md"
-[System.IO.File]::WriteAllText($f, $newContent, [System.Text.Encoding]::UTF8)
+[System.IO.File]::WriteAllText($f, $newContent, [System.Text.UTF8Encoding]::new($false))
 Write-Host "DST-061 written: $((Get-Content $f -Encoding UTF8).Count) lines"

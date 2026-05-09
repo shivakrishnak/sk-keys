@@ -519,5 +519,5 @@ The Amazon Dynamo paper (2007) that popularized vector clocks and application-le
 '@
 
 $f = Join-Path $base "DST-062 - Conflict Resolution Strategies.md"
-[System.IO.File]::WriteAllText($f, $newContent, [System.Text.Encoding]::UTF8)
+[System.IO.File]::WriteAllText($f, $newContent, [System.Text.UTF8Encoding]::new($false))
 Write-Host "DST-062 written: $((Get-Content $f -Encoding UTF8).Count) lines"
