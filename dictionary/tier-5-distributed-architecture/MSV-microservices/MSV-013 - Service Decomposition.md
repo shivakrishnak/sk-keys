@@ -17,6 +17,7 @@ tags:
   - pattern
   - intermediate
   - distributed
+status: complete
 ---
 
 # MSV-013 - Service Decomposition
@@ -42,6 +43,12 @@ Services are split along the wrong lines. Instead of reducing coupling, the spli
 **THE INVENTION MOMENT:**
 This is exactly why Service Decomposition strategies were codified - to give teams principled, repeatable methods for finding service boundaries that minimise coupling, maximise cohesion, and mirror organisational structure.
 
+
+**EVOLUTION:**
+Service decomposition became the critical skill in the microservices era after teams learned that poorly-chosen boundaries created "distributed monoliths" - systems with all the operational complexity of microservices and none of the independence benefits. Sam Newman's "Building Microservices" (2015) and "Monolith to Microservices" (2019) systematised decomposition patterns. Domain-Driven Design's Bounded Context concept became the primary theoretical foundation. The discipline evolved from "decompose by technical layer" (UI/business/data services) to "decompose by business capability" - the only strategy that naturally aligns service boundaries with team ownership and enables genuine independent deployment.
+
+**EVOLUTION:**
+Service decomposition became the critical skill in the microservices era after teams learned that poorly-chosen boundaries created "distributed monoliths" - systems with all the operational complexity of microservices and none of the independence benefits. Sam Newman's "Building Microservices" (2015) and "Monolith to Microservices" (2019) systematised decomposition patterns. Domain-Driven Design's Bounded Context concept became the primary theoretical foundation. The discipline evolved from "decompose by technical layer" (UI/business/data services) to "decompose by business capability" - the only strategy that naturally aligns service boundaries with team ownership and enables genuine independent deployment.
 ---
 
 ### 📘 Textbook Definition
@@ -419,11 +426,62 @@ npx @stoplight/spectral-cli lint orders-service/openapi.yaml
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Decompose by change rate, not by size or functional similarity. The correct service boundary is where one part changes independently of another. A service that changes only with its own domain's business requirements - and never because a different domain changed - is correctly bounded. Two modules that change together 90% of the time belong in the same service, regardless of how different their functions appear.
+
+**Where else this pattern appears:**
+- **Database schema design:** Tables that change together (always updated in the same migration) belong in the same schema. Tables updated by different teams at different frequencies should have separate ownership boundaries.
+- **API design:** API endpoints that version together belong in the same API definition. Endpoints where one can evolve without breaking the other should be separate contracts.
+- **UI component design:** Components with different change rates (product details updated daily, navigation updated quarterly) should be independently deployable - the same decomposition principle applied to frontend components.
+
+---
+
+### 💡 The Surprising Truth
+
+The most expensive mistake in microservices decomposition is creating services that map to organisational chart lines rather than business capability lines. An org chart changes regularly (teams merge, split, re-assign); business capabilities are stable. A company that creates a "Payments Team Service," "Risk Team Service," and "Compliance Team Service" will find that when the org restructures, service ownership no longer matches teams and cross-service changes become the norm. Services that age best are those decomposed around stable business capabilities (payment processing, fraud detection, regulatory reporting) that survive organisational changes intact.
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Decompose by change rate, not by size or functional similarity. The correct service boundary is where one part changes independently of another. A service that changes only with its own domain's business requirements - and never because a different domain changed - is correctly bounded. Two modules that change together 90% of the time belong in the same service, regardless of how different their functions appear.
+
+**Where else this pattern appears:**
+- **Database schema design:** Tables that change together (always updated in the same migration) belong in the same schema. Tables updated by different teams at different frequencies should have separate ownership boundaries.
+- **API design:** API endpoints that version together belong in the same API definition. Endpoints where one can evolve without breaking the other should be separate contracts.
+- **UI component design:** Components with different change rates (product details updated daily, navigation updated quarterly) should be independently deployable - the same decomposition principle applied to frontend components.
+
+---
+
+### 💡 The Surprising Truth
+
+The most expensive mistake in microservices decomposition is creating services that map to organisational chart lines rather than business capability lines. An org chart changes regularly (teams merge, split, re-assign); business capabilities are stable. A company that creates a "Payments Team Service," "Risk Team Service," and "Compliance Team Service" will find that when the org restructures, service ownership no longer matches teams and cross-service changes become the norm. Services that age best are those decomposed around stable business capabilities (payment processing, fraud detection, regulatory reporting) that survive organisational changes intact.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You are decomposing a banking app. One team argues that "Account Management" and "Transaction Processing" should be separate services because different teams work on them. Another argues they should be the same service because every transaction touches an account. Describe the exact data access patterns that would determine which decomposition is correct, and what the cost of getting it wrong would be.
 
+*Hint:* Think about what the data access pattern reveals about the correct boundary: if every transaction requires reading account balance before writing the transaction record, and updating the balance is the transaction's core side effect, then the two concepts are not independently deployable - they are the same aggregate. Explore whether the domain rule "every transaction touches an account" means co-located data (same service) or a lookup relationship (different services with an API call to retrieve balance at transaction time).
+
+*Hint:* Think about what the data access pattern reveals about the correct boundary: if every transaction requires reading account balance before writing the transaction record, and updating the balance is the transaction's core side effect, then the two concepts are not independently deployable - they are the same aggregate. Explore whether the domain rule "every transaction touches an account" means co-located data (same service) or a lookup relationship (different services with an API call to retrieve balance at transaction time).
+
 **Q2.** Your decomposition is complete and services are running in production. Six months later, business priorities shift and two previously separate domains merge into one product area. The two corresponding services now change together 90% of the time. At what point is the operational cost of merging two microservices back into one worth paying, and how would you execute that merge without downtime?
 
+*Hint:* Think about what observable signals confirm services should be merged: co-deployment rate above 70-80%, co-failure rate (one almost always fails when the other fails), and the network round-trip between them being the dominant latency contributor. Explore what "execute the merge without downtime" requires: routing at the load balancer level (combine service endpoints before combining deployment units), database schema consolidation (which can be done independently), and gradual traffic shifting to the merged deployment.
+
+**Q3 (Design Trade-off):** After decomposing an e-commerce system into 8 services, a performance analysis finds the browse-to-checkout flow makes 14 synchronous API calls across 6 services. P99 checkout latency is 3.2 seconds vs 0.4 seconds in the monolith. How do you recover the latency without merging services back together?
+
+*Hint:* Think about whether the 14 API calls are sequential (blocking) or can be parallelised (fan-out). Explore whether an API composition layer (BFF or GraphQL gateway) that makes all 14 calls in parallel and assembles the response eliminates sequential latency, and whether some of the 6 services are fetching data they could cache locally (at the cost of eventual consistency) rather than calling across service boundaries on every request.
+
+*Hint:* Think about what observable signals confirm services should be merged: co-deployment rate above 70-80%, co-failure rate (one almost always fails when the other fails), and the network round-trip between them being the dominant latency contributor. Explore what "execute the merge without downtime" requires: routing at the load balancer level (combine service endpoints before combining deployment units), database schema consolidation (which can be done independently), and gradual traffic shifting to the merged deployment.
+
+**Q3 (Design Trade-off):** After decomposing an e-commerce system into 8 services, a performance analysis finds the browse-to-checkout flow makes 14 synchronous API calls across 6 services. P99 checkout latency is 3.2 seconds vs 0.4 seconds in the monolith. How do you recover the latency without merging services back together?
+
+*Hint:* Think about whether the 14 API calls are sequential (blocking) or can be parallelised (fan-out). Explore whether an API composition layer (BFF or GraphQL gateway) that makes all 14 calls in parallel and assembles the response eliminates sequential latency, and whether some of the 6 services are fetching data they could cache locally (at the cost of eventual consistency) rather than calling across service boundaries on every request.

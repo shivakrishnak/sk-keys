@@ -18,6 +18,7 @@ tags:
   - pattern
   - distributed
   - bestpractice
+status: complete
 ---
 
 # MSV-006 - Monolith to Microservices Migration
@@ -43,6 +44,12 @@ Big-bang rewrites of monolithic systems fail at a near-100% rate for large codeb
 **THE INVENTION MOMENT:**
 Monolith-to-microservices migration patterns emerged to provide incremental, risk-managed strategies: extract services one domain at a time, run old and new systems in parallel, route traffic progressively to the new service. The monolith shrinks gradually; the risk of any single extraction is bounded; value is delivered continuously.
 
+
+**EVOLUTION:**
+Monolith-to-microservices migration patterns emerged from the near-100% failure rate of big-bang rewrites documented by practitioners in the 2000s. The Strangler Fig pattern (Martin Fowler, 2004) provided the incremental alternative. Netflix's 7-year migration (2008-2015) from a centralised DVD-rental datacenter to cloud-native microservices became the canonical case study. Sam Newman's "Building Microservices" (2015) and "Monolith to Microservices" (2019) systematized migration patterns. The discipline evolved from "extract everything" to "extract by business capability, one domain at a time, driven by independent deployability requirements."
+
+**EVOLUTION:**
+Monolith-to-microservices migration patterns emerged from the near-100% failure rate of big-bang rewrites documented by practitioners in the 2000s. The Strangler Fig pattern (Martin Fowler, 2004) provided the incremental alternative. Netflix's 7-year migration (2008-2015) from a centralised DVD-rental datacenter to cloud-native microservices became the canonical case study. Sam Newman's "Building Microservices" (2015) and "Monolith to Microservices" (2019) systematized migration patterns. The discipline evolved from "extract everything" to "extract by business capability, one domain at a time, driven by independent deployability requirements."
 ---
 
 ### 📘 Textbook Definition
@@ -400,13 +407,60 @@ git log --oneline --since="6 months ago" \
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Migrations succeed incrementally or not at all. Any big-bang replacement of a running system risks the "new system never catches up" failure mode - the original continues accumulating features while the rewrite struggles to match functionality that took years to build. The invariant across all successful large-scale migrations: extract stable, well-bounded domains first; never freeze the old system's feature development during migration; measure success by reduced coupling, not by number of services extracted.
+
+**Where else this pattern appears:**
+- **Database schema migration:** The anti-pattern is renaming a column and updating all code simultaneously. The Expand-Contract pattern (add new column, dual-write, migrate reads, drop old column) is the incremental equivalent of the Strangler Fig for data.
+- **Legacy API replacement:** Add new API endpoints alongside old ones, migrate clients gradually, retire old endpoints last - exactly the Strangler Fig applied to API surface area.
+- **UI framework migration:** Replace components incrementally (React alongside jQuery in the same page) rather than rewriting the entire frontend at once - the same wrap-and-redirect pattern.
+
+---
+
+### 💡 The Surprising Truth
+
+The Strangler Fig pattern gets its name from the strangler fig tree (Ficus aurea), which grows around a host tree over decades, eventually replacing it entirely while the host continues to live. Martin Fowler named it after witnessing these trees in Australian rainforests while thinking about legacy system replacement. The biological metaphor captures what makes gradual migration succeed: the new system wraps the old one and receives progressively more traffic until the old system can be safely removed - without ever shutting it down during the transition. It is one of the few architecture patterns where the metaphor is more memorable than the technique itself.
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Migrations succeed incrementally or not at all. Any big-bang replacement of a running system risks the "new system never catches up" failure mode - the original continues accumulating features while the rewrite struggles to match functionality that took years to build. The invariant across all successful large-scale migrations: extract stable, well-bounded domains first; never freeze the old system's feature development during migration; measure success by reduced coupling, not by number of services extracted.
+
+**Where else this pattern appears:**
+- **Database schema migration:** The anti-pattern is renaming a column and updating all code simultaneously. The Expand-Contract pattern (add new column, dual-write, migrate reads, drop old column) is the incremental equivalent of the Strangler Fig for data.
+- **Legacy API replacement:** Add new API endpoints alongside old ones, migrate clients gradually, retire old endpoints last - exactly the Strangler Fig applied to API surface area.
+- **UI framework migration:** Replace components incrementally (React alongside jQuery in the same page) rather than rewriting the entire frontend at once - the same wrap-and-redirect pattern.
+
+---
+
+### 💡 The Surprising Truth
+
+The Strangler Fig pattern gets its name from the strangler fig tree (Ficus aurea), which grows around a host tree over decades, eventually replacing it entirely while the host continues to live. Martin Fowler named it after witnessing these trees in Australian rainforests while thinking about legacy system replacement. The biological metaphor captures what makes gradual migration succeed: the new system wraps the old one and receives progressively more traffic until the old system can be safely removed - without ever shutting it down during the transition. It is one of the few architecture patterns where the metaphor is more memorable than the technique itself.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A company has a 15-year-old monolith where the Payment, Inventory, and Notification domains are tightly coupled with shared transactional boundaries - a payment commit also updates inventory and triggers notifications in one database transaction. Design an extraction strategy that preserves transactional correctness across these three domains as they are separated into microservices, specifying the consistency model and the data synchronisation approach.
 
+*Hint:* Think about what "transactional correctness" means without a distributed transaction: the three operations become a Saga - each step is committed independently, with compensating transactions for rollback on failure. Explore whether the business actually requires ACID across all three domains or whether a payment-first sequence (pay, then reserve inventory, then notify) with compensation on failure is acceptable, and what data integrity gaps exist during the compensation window.
+
+*Hint:* Think about what "transactional correctness" means without a distributed transaction: the three operations become a Saga - each step is committed independently, with compensating transactions for rollback on failure. Explore whether the business actually requires ACID across all three domains or whether a payment-first sequence (pay, then reserve inventory, then notify) with compensation on failure is acceptable, and what data integrity gaps exist during the compensation window.
+
 **Q2.** Your team is 12 months into a monolith-to-microservices migration. 6 services have been extracted. The monolith still owns 70% of the business logic. A new CTO arrives and asks: "Should we continue, pause and stabilise, or consider a Modular Monolith as the end state instead?" What decision framework would you apply, what metrics would you present, and what recommendation would you make?
+
+*Hint:* Think about what objective metrics would answer the CTO's question: mean time to deploy a single change, number of incidents attributable to cross-service coupling, velocity trend (accelerating or flat?). Explore whether the Modular Monolith end state would have delivered the same deployment independence as the 6 extracted services, without the operational overhead - and whether the already-extracted services can be kept as-is while the remaining monolith is refactored to modules rather than services.
+
+*Hint:* Think about what objective metrics would answer the CTO's question: mean time to deploy a single change, number of incidents attributable to cross-service coupling, velocity trend (accelerating or flat?). Explore whether the Modular Monolith end state would have delivered the same deployment independence as the 6 extracted services, without the operational overhead - and whether the already-extracted services can be kept as-is while the remaining monolith is refactored to modules rather than services.
 
 **Q3.** During Monolith-to-Microservices migration, the team discovers that the shared monolith database is the integration backbone for 30 internal modules - direct SQL JOINs across tables that will belong to different services. Evaluate three strategies for managing this transition (Anti-Corruption Layer with API calls, CDC-based data replication, and shared-read database with write isolation) against the dimensions of operational complexity, consistency guarantees, and migration reversibility.
 
+*Hint:* Think about who owns the source of truth for each table in the shared schema - that determines which strategy preserves correctness. Explore whether Anti-Corruption Layer (API calls) introduces unacceptable latency for the JOIN patterns identified, and whether CDC replication (e.g., Debezium) preserves the query capability while enabling gradual ownership migration table-by-table.
+
+*Hint:* Think about who owns the source of truth for each table in the shared schema - that determines which strategy preserves correctness. Explore whether Anti-Corruption Layer (API calls) introduces unacceptable latency for the JOIN patterns identified, and whether CDC replication (e.g., Debezium) preserves the query capability while enabling gradual ownership migration table-by-table.

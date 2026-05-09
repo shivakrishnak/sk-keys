@@ -18,6 +18,7 @@ tags:
   - pattern
   - bestpractice
   - tradeoff
+status: complete
 ---
 
 # MSV-008 - Technology Migration Strategy
@@ -43,6 +44,12 @@ Technology migrations without a coherent strategy become irreversible mid-state 
 **THE INVENTION MOMENT:**
 The discipline of Technology Migration Strategy emerged to prevent uncoordinated migrations. It provides a structured framework: define the current state, define the target state, identify migration paths, phase the work, manage dependencies, define rollback triggers, and measure progress with explicit success criteria.
 
+
+**EVOLUTION:**
+Technology migration became a strategic discipline as software accumulated technical debt at scale. Martin Fowler's "Technical Debt" concept (1992) gave language to the cost of deferred migration. Gartner's 6R framework (2011) provided a portfolio decision structure. Enterprise architects began using wave-based migration (discrete cohorts with shared infrastructure dependencies resolved first) to manage sequencing risk. The discipline evolved from "replace old technology with new" to portfolio analysis: assess dependency graphs, sequence migrations to minimise coupled changes, and measure success by reduced operational burden rather than technology version numbers.
+
+**EVOLUTION:**
+Technology migration became a strategic discipline as software accumulated technical debt at scale. Martin Fowler's "Technical Debt" concept (1992) gave language to the cost of deferred migration. Gartner's 6R framework (2011) provided a portfolio decision structure. Enterprise architects began using wave-based migration (discrete cohorts with shared infrastructure dependencies resolved first) to manage sequencing risk. The discipline evolved from "replace old technology with new" to portfolio analysis: assess dependency graphs, sequence migrations to minimise coupled changes, and measure success by reduced operational burden rather than technology version numbers.
 ---
 
 ### 📘 Textbook Definition
@@ -399,13 +406,60 @@ kubectl exec -n monitoring \
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Sequence changes by dependency, not by ease. The temptation is always to migrate the "easy" systems first and save hard dependencies for later. But easy systems are easy precisely because they depend on the hard systems. Migrating easy systems first creates a period where they run on new technology while their dependencies remain legacy - creating hybrid complexity without reducing risk. The correct sequence is: resolve shared dependencies first, then migrate dependents.
+
+**Where else this pattern appears:**
+- **Database migration sequencing:** Migrate reporting and analytics databases (fewer dependents, lower risk) first; use the learnings to de-risk the transactional database migration that everything else depends on.
+- **Framework upgrades:** Upgrade shared libraries (Spring Core, Hibernate) before application-level components that depend on them. A framework upgrade that breaks 30 services simultaneously creates 30 concurrent incidents.
+- **API retirement:** Retire old API versions only after all clients have migrated, not when the new version launches. The version launch and retirement are separate events separated by weeks or months.
+
+---
+
+### 💡 The Surprising Truth
+
+Technology migrations are almost always underestimated by a factor of 2-5x, and the underestimation is structural, not accidental. Teams estimate the effort to build the new system but systematically omit: (1) running old and new systems in parallel during the transition, (2) migrating all existing data and validating its correctness, (3) updating all tooling, monitoring, and documentation that references the old system, and (4) transferring institutional knowledge about the old system's quirks to engineers working on the new one. Items 2-4 are invisible at planning time and only become visible when you are deep in the migration and cannot stop.
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Sequence changes by dependency, not by ease. The temptation is always to migrate the "easy" systems first and save hard dependencies for later. But easy systems are easy precisely because they depend on the hard systems. Migrating easy systems first creates a period where they run on new technology while their dependencies remain legacy - creating hybrid complexity without reducing risk. The correct sequence is: resolve shared dependencies first, then migrate dependents.
+
+**Where else this pattern appears:**
+- **Database migration sequencing:** Migrate reporting and analytics databases (fewer dependents, lower risk) first; use the learnings to de-risk the transactional database migration that everything else depends on.
+- **Framework upgrades:** Upgrade shared libraries (Spring Core, Hibernate) before application-level components that depend on them. A framework upgrade that breaks 30 services simultaneously creates 30 concurrent incidents.
+- **API retirement:** Retire old API versions only after all clients have migrated, not when the new version launches. The version launch and retirement are separate events separated by weeks or months.
+
+---
+
+### 💡 The Surprising Truth
+
+Technology migrations are almost always underestimated by a factor of 2-5x, and the underestimation is structural, not accidental. Teams estimate the effort to build the new system but systematically omit: (1) running old and new systems in parallel during the transition, (2) migrating all existing data and validating its correctness, (3) updating all tooling, monitoring, and documentation that references the old system, and (4) transferring institutional knowledge about the old system's quirks to engineers working on the new one. Items 2-4 are invisible at planning time and only become visible when you are deep in the migration and cannot stop.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A 200-app migration has been underway for 18 months. 80 apps are migrated, 120 remain. A new CTO is appointed who wants to accelerate - proposing increasing migration capacity from 30% to 80% of all engineering teams. Evaluate the risks of this acceleration. What happens to product feature delivery, team morale, and migration quality? What is the right capacity model, and how would you negotiate it with the CTO?
 
+*Hint:* Think about what migration capacity is taken from: it comes directly from product feature capacity. At 80% migration / 20% product, evaluate the compound effect: if the migration takes 50% longer than planned (typical), you've spent 18 months at minimal product velocity. Explore whether a 30-40% migration / 60-70% product split produces better overall outcomes through sustainable pace, and what governance mechanism prevents the migration percentage creeping upward under schedule pressure.
+
+*Hint:* Think about what migration capacity is taken from: it comes directly from product feature capacity. At 80% migration / 20% product, evaluate the compound effect: if the migration takes 50% longer than planned (typical), you've spent 18 months at minimal product velocity. Explore whether a 30-40% migration / 60-70% product split produces better overall outcomes through sustainable pace, and what governance mechanism prevents the migration percentage creeping upward under schedule pressure.
+
 **Q2.** Your migration strategy specifies a rollback trigger of "P99 latency > 500ms for 5 consecutive minutes on the new service." During Wave 3 execution, the new service hits P99 = 480ms - below the trigger. Teams argue over whether to roll back or continue. What governance process prevents this ambiguity? How do you set rollback triggers that are unambiguous, and who has authority to override a trigger?
+
+*Hint:* Think about what makes rollback triggers unambiguous: they must be objective (metric + threshold + duration + measurement method, all pre-agreed), non-negotiable once triggered (override requires a defined quorum, not the migration team alone), and tested in staging before the production wave begins. Explore what pre-launch governance document (rollback authority matrix, pre-agreed override process) would have prevented the ambiguity you described.
+
+*Hint:* Think about what makes rollback triggers unambiguous: they must be objective (metric + threshold + duration + measurement method, all pre-agreed), non-negotiable once triggered (override requires a defined quorum, not the migration team alone), and tested in staging before the production wave begins. Explore what pre-launch governance document (rollback authority matrix, pre-agreed override process) would have prevented the ambiguity you described.
 
 **Q3.** Compare two migration governance models: (A) centralised migration programme office with a chief architect approving all migration decisions, (B) federated model where each team owns their migration with loose coordination via shared standards. For an organisation of 500 engineers and 300 applications, evaluate both models on: decision speed, standards consistency, team autonomy, risk management, and scalability.
 
+*Hint:* Think about what each model optimises for: centralised decisions produce consistency but create a bottleneck (all 300 apps queue on one chief architect); federated decisions produce speed but allow standards drift across 500 engineers. Explore whether a hybrid model (federated decisions within centrally-defined guardrails enforced by automated compliance checks) captures the speed of federated with the consistency of centralised, and what the guardrails look like in practice (ADR templates, technology radar, CI/CD policy gates).
+
+*Hint:* Think about what each model optimises for: centralised decisions produce consistency but create a bottleneck (all 300 apps queue on one chief architect); federated decisions produce speed but allow standards drift across 500 engineers. Explore whether a hybrid model (federated decisions within centrally-defined guardrails enforced by automated compliance checks) captures the speed of federated with the consistency of centralised, and what the guardrails look like in practice (ADR templates, technology radar, CI/CD policy gates).

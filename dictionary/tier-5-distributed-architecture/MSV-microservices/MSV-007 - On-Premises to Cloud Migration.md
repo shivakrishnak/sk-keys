@@ -18,6 +18,7 @@ tags:
   - microservices
   - devops
   - production
+status: complete
 ---
 
 # MSV-007 - On-Premises to Cloud Migration
@@ -43,6 +44,12 @@ The cost of running on-premises infrastructure - capital expenditure, operationa
 **THE INVENTION MOMENT:**
 Cloud migration frameworks (AWS CAF, Google Cloud Adoption Framework) formalised the migration journey as a progression of strategies - from the lowest-effort Lift-and-Shift (move as-is) through Re-platforming (optimise for cloud) to Re-architecting (redesign as cloud-native). Organisations can choose the appropriate strategy per workload based on business value and migration effort.
 
+
+**EVOLUTION:**
+On-premises to cloud migration began as a cost-reduction initiative after AWS launched in 2006, with IT teams initially treating cloud as cheaper hosting. Gartner's 5R (later 6R: Retire, Retain, Rehost, Replatform, Repurchase, Refactor) framework emerged to structure migration decisions. Netflix's public documentation of its AWS migration (2009-2016) demonstrated that cloud-native architecture - not just cloud hosting - was where the real value lay. The discipline evolved from "lift-and-shift everything" to portfolio analysis: migrate workloads where cloud offers genuine advantage, retain where cloud creates cost or compliance problems, and retire workloads that serve no current purpose.
+
+**EVOLUTION:**
+On-premises to cloud migration began as a cost-reduction initiative after AWS launched in 2006, with IT teams initially treating cloud as cheaper hosting. Gartner's 5R (later 6R: Retire, Retain, Rehost, Replatform, Repurchase, Refactor) framework emerged to structure migration decisions. Netflix's public documentation of its AWS migration (2009-2016) demonstrated that cloud-native architecture - not just cloud hosting - was where the real value lay. The discipline evolved from "lift-and-shift everything" to portfolio analysis: migrate workloads where cloud offers genuine advantage, retain where cloud creates cost or compliance problems, and retire workloads that serve no current purpose.
 ---
 
 ### 📘 Textbook Definition
@@ -378,13 +385,60 @@ done
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Treat migration as a portfolio decision, not a single technology choice. Different workloads need different migration strategies based on their characteristics - age, coupling, compliance requirements, scaling needs. Applying one strategy (lift-and-shift, or re-architect) to an entire portfolio is as irrational as investing all capital in one asset class regardless of market conditions.
+
+**Where else this pattern appears:**
+- **Security posture migration:** Not all security controls should move to cloud-native equivalents simultaneously. Retain on-premises HSMs for highest-sensitivity keys while migrating application-layer security to cloud-native IAM - different assets, different migration strategies.
+- **Data storage tiering:** Hot, warm, and cold data have different migration priorities and target tiers (S3, S3 Glacier, Glacier Deep Archive). The same portfolio analysis applies: different data, different treatment based on access pattern characteristics.
+- **Team skill migration:** Technical skills don't migrate in a big bang. Identify the 20% of engineers who learn cloud fastest and make them migration leads; have them teach the remaining 80% progressively - portfolio sequencing applied to people, not workloads.
+
+---
+
+### 💡 The Surprising Truth
+
+The most counterintuitive finding from large-scale cloud migrations is that the most expensive applications to migrate are often the most strategically valuable ones. Legacy systems serving critical business functions were built over decades with hard-won knowledge about edge cases, regulatory requirements, and business logic - no written specification exists; the code IS the specification. The applications cheapest to migrate (stateless, well-documented, commodity workloads) are often the least strategically valuable. Companies that start with "easy wins" create a portfolio of migrated commodity workloads and a growing backlog of expensive-but-critical legacy systems. The strategic migrations always come last and always cost more than budgeted.
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+Treat migration as a portfolio decision, not a single technology choice. Different workloads need different migration strategies based on their characteristics - age, coupling, compliance requirements, scaling needs. Applying one strategy (lift-and-shift, or re-architect) to an entire portfolio is as irrational as investing all capital in one asset class regardless of market conditions.
+
+**Where else this pattern appears:**
+- **Security posture migration:** Not all security controls should move to cloud-native equivalents simultaneously. Retain on-premises HSMs for highest-sensitivity keys while migrating application-layer security to cloud-native IAM - different assets, different migration strategies.
+- **Data storage tiering:** Hot, warm, and cold data have different migration priorities and target tiers (S3, S3 Glacier, Glacier Deep Archive). The same portfolio analysis applies: different data, different treatment based on access pattern characteristics.
+- **Team skill migration:** Technical skills don't migrate in a big bang. Identify the 20% of engineers who learn cloud fastest and make them migration leads; have them teach the remaining 80% progressively - portfolio sequencing applied to people, not workloads.
+
+---
+
+### 💡 The Surprising Truth
+
+The most counterintuitive finding from large-scale cloud migrations is that the most expensive applications to migrate are often the most strategically valuable ones. Legacy systems serving critical business functions were built over decades with hard-won knowledge about edge cases, regulatory requirements, and business logic - no written specification exists; the code IS the specification. The applications cheapest to migrate (stateless, well-documented, commodity workloads) are often the least strategically valuable. Companies that start with "easy wins" create a portfolio of migrated commodity workloads and a growing backlog of expensive-but-critical legacy systems. The strategic migrations always come last and always cost more than budgeted.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** A financial services company migrates 50 applications to AWS using lift-and-shift. Post-migration, the monthly cloud bill is 4× higher than expected on-premises costs. The CFO demands an explanation. Walk through the five most common root causes of post-migration cost overruns, the diagnostic approach for each, and the remediation steps to bring costs in line with projections.
 
+*Hint:* Think about what lift-and-shift leaves unchanged that drives cost: EC2 instances sized for on-premises peak load (over-provisioned 24/7), data transfer egress costs (no on-premises equivalent), per-vCPU licensing on more virtual cores than physical cores, and no cloud-native services (still running self-managed message brokers and databases on EC2). Explore how rightsizing analysis + cloud-native service adoption would change the cost model for the 5 largest cost drivers.
+
+*Hint:* Think about what lift-and-shift leaves unchanged that drives cost: EC2 instances sized for on-premises peak load (over-provisioned 24/7), data transfer egress costs (no on-premises equivalent), per-vCPU licensing on more virtual cores than physical cores, and no cloud-native services (still running self-managed message brokers and databases on EC2). Explore how rightsizing analysis + cloud-native service adoption would change the cost model for the 5 largest cost drivers.
+
 **Q2.** Your company has a 20-year-old mission-critical Oracle database (500GB, 200 stored procedures, used by 30 applications). A cloud migration project proposes migrating it to Aurora PostgreSQL (Re-platform). Evaluate the migration complexity across five dimensions: stored procedure compatibility, application query compatibility, migration tooling, rollback strategy, and cutover window. What is your recommended migration approach?
+
+*Hint:* Think about what AWS Schema Conversion Tool and DMS actually convert automatically (DML statements) vs what requires manual effort (complex PL/SQL stored procedures with Oracle-specific syntax, hints, and packages). Explore whether a side-by-side dual-run strategy (Oracle and Aurora both active, application routing by query type) is feasible to validate query equivalence before cutover, and what the rollback plan looks like at the cutover window stage.
+
+*Hint:* Think about what AWS Schema Conversion Tool and DMS actually convert automatically (DML statements) vs what requires manual effort (complex PL/SQL stored procedures with Oracle-specific syntax, hints, and packages). Explore whether a side-by-side dual-run strategy (Oracle and Aurora both active, application routing by query type) is feasible to validate query equivalence before cutover, and what the rollback plan looks like at the cutover window stage.
 
 **Q3.** The Retain strategy means keeping some workloads on-premises indefinitely in a hybrid architecture. This creates a hybrid connectivity requirement between on-premises and cloud environments. Describe the network topology, security model, and operational monitoring required to manage a production hybrid architecture where 30% of workloads remain on-premises and 70% run in cloud, with latency-sensitive cross-boundary API calls.
 
+*Hint:* Think about the latency reality of hybrid: a cross-boundary API call from cloud to on-premises and back adds at minimum 10-30ms via Direct Connect vs sub-1ms for intra-cloud calls. Explore whether the 30% on-premises workloads should be co-located in the nearest AWS Direct Connect region to minimise cross-boundary latency, and what the disaster recovery plan is when the Direct Connect circuit has a maintenance window or failure.
+
+*Hint:* Think about the latency reality of hybrid: a cross-boundary API call from cloud to on-premises and back adds at minimum 10-30ms via Direct Connect vs sub-1ms for intra-cloud calls. Explore whether the 30% on-premises workloads should be co-located in the nearest AWS Direct Connect region to minimise cross-boundary latency, and what the disaster recovery plan is when the Direct Connect circuit has a maintenance window or failure.

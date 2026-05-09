@@ -18,6 +18,7 @@ tags:
   - bestpractice
   - microservices
   - mental-model
+status: complete
 ---
 
 # MSV-010 - Proof of Concept (POC) in Architecture
@@ -43,6 +44,12 @@ Architecture decisions are expensive to reverse. Committing to a technology choi
 **THE INVENTION MOMENT:**
 The Proof of Concept (POC) emerged as the discipline of validating the highest-risk assumptions about an architecture before committing to its full implementation. A POC is not a prototype - it is a focused experiment that answers one specific question: "Does this technology/pattern work for our specific requirement?"
 
+
+**EVOLUTION:**
+Proof of Concept became a formal architecture discipline as systems grew complex enough that architectural risks could not be assessed from specifications alone. The Architecture Decision Record (ADR) concept (Michael Nygard, 2011) provided a format for capturing POC outcomes. Architecture Trade-off Analysis Method (ATAM, Bass et al., 2003) established criteria for evaluating alternatives before committing. The discipline evolved from "build it and see" to structured risk-driven experimentation: identify the highest-risk assumption, design the minimal experiment to validate it, and record results as architectural decisions that inform future choices.
+
+**EVOLUTION:**
+Proof of Concept became a formal architecture discipline as systems grew complex enough that architectural risks could not be assessed from specifications alone. The Architecture Decision Record (ADR) concept (Michael Nygard, 2011) provided a format for capturing POC outcomes. Architecture Trade-off Analysis Method (ATAM, Bass et al., 2003) established criteria for evaluating alternatives before committing. The discipline evolved from "build it and see" to structured risk-driven experimentation: identify the highest-risk assumption, design the minimal experiment to validate it, and record results as architectural decisions that inform future choices.
 ---
 
 ### 📘 Textbook Definition
@@ -398,13 +405,60 @@ cat poc/README.md | grep "dataset size"
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+A POC is a risk-reduction experiment, not a feature prototype. Its purpose is not to demonstrate what the technology can do, but to establish that it handles your specific constraints. POCs that prove only happy-path capability are not architecture validations - they are demos. The measure of a good POC is the precision of the risk it eliminates, not the impressiveness of what it builds.
+
+**Where else this pattern appears:**
+- **Security design validation:** Before adopting a new authentication framework, POC the failure modes: what happens when the IdP is unreachable? What happens to in-flight sessions during certificate rotation? Validate failure paths, not success paths.
+- **Data pipeline validation:** Before adopting a stream processing framework, POC at 110% of peak expected load with realistic message schemas and consumer lag simulation. Never POC at 50% load with synthetic data - the risk is at the boundary, not the centre.
+- **Infrastructure selection:** Before adopting a new database, POC the backup/restore procedure including time to restore to a consistent state. Technology that cannot meet RTO in a restore is not a valid choice regardless of other merits.
+
+---
+
+### 💡 The Surprising Truth
+
+POCs suffer from a specific cognitive bias: the team that runs the POC almost always concludes the technology is suitable, even when it is not. This is not dishonesty - it is the natural result of effort justification bias. The team spent weeks learning the technology and developing expertise; concluding the technology is unsuitable means admitting that investment was wasted. A POC that concludes "not suitable" requires more political courage than a positive conclusion. The mitigation is to define success and failure criteria, and who has authority to declare failure, before the POC begins - removing the decision from the team that ran the experiment.
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+A POC is a risk-reduction experiment, not a feature prototype. Its purpose is not to demonstrate what the technology can do, but to establish that it handles your specific constraints. POCs that prove only happy-path capability are not architecture validations - they are demos. The measure of a good POC is the precision of the risk it eliminates, not the impressiveness of what it builds.
+
+**Where else this pattern appears:**
+- **Security design validation:** Before adopting a new authentication framework, POC the failure modes: what happens when the IdP is unreachable? What happens to in-flight sessions during certificate rotation? Validate failure paths, not success paths.
+- **Data pipeline validation:** Before adopting a stream processing framework, POC at 110% of peak expected load with realistic message schemas and consumer lag simulation. Never POC at 50% load with synthetic data - the risk is at the boundary, not the centre.
+- **Infrastructure selection:** Before adopting a new database, POC the backup/restore procedure including time to restore to a consistent state. Technology that cannot meet RTO in a restore is not a valid choice regardless of other merits.
+
+---
+
+### 💡 The Surprising Truth
+
+POCs suffer from a specific cognitive bias: the team that runs the POC almost always concludes the technology is suitable, even when it is not. This is not dishonesty - it is the natural result of effort justification bias. The team spent weeks learning the technology and developing expertise; concluding the technology is unsuitable means admitting that investment was wasted. A POC that concludes "not suitable" requires more political courage than a positive conclusion. The mitigation is to define success and failure criteria, and who has authority to declare failure, before the POC begins - removing the decision from the team that ran the experiment.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** Your team has just completed a POC validating that Apache Kafka can handle 10,000 events/second with P99 latency of 8ms using exactly-once semantics. The POC was conducted with a 6-broker cluster, 48 partitions, and a single consumer group. Production will have: 3 consumer groups (notifications, analytics, audit), peak load of 50,000 events/second, and a requirement to not exceed P99 = 20ms. Evaluate whether the POC sufficiently validates the production architecture, identify what the POC does NOT validate, and design additional validation steps.
 
+*Hint:* Think about what the single-consumer-group POC does not test: three consumer groups competing for the same partitions will rebalance independently and may produce head-of-line blocking on shared partitions. The exactly-once semantics overhead also scales with the number of consumer group transactions. Explore what additional POC phases (consumer group isolation test, throughput ceiling test at 50K/sec, EOS overhead with 3 concurrent groups) would independently validate each risk.
+
+*Hint:* Think about what the single-consumer-group POC does not test: three consumer groups competing for the same partitions will rebalance independently and may produce head-of-line blocking on shared partitions. The exactly-once semantics overhead also scales with the number of consumer group transactions. Explore what additional POC phases (consumer group isolation test, throughput ceiling test at 50K/sec, EOS overhead with 3 concurrent groups) would independently validate each risk.
+
 **Q2.** An architecture team runs a POC to validate a new API gateway technology. The POC takes 3 weeks and concludes the technology is not suitable for the requirement. A senior engineer who championed the technology argues the POC was "too narrow" and the real capability wasn't tested. How do you adjudicate this disagreement? What governance process ensures POC questions and success criteria are agreed before execution, preventing post-hoc invalidation of results?
+
+*Hint:* Think about what the "POC was too narrow" argument means precisely: did the agreed scope exclude something the senior engineer now claims is essential? If so, why wasn't that scope in the original criteria? Explore a governance process where success criteria are locked by all stakeholders before execution begins, with a formal change request process for in-flight scope changes that requires explicit sign-off from all stakeholders - making post-hoc scope expansion visible and costly.
+
+*Hint:* Think about what the "POC was too narrow" argument means precisely: did the agreed scope exclude something the senior engineer now claims is essential? If so, why wasn't that scope in the original criteria? Explore a governance process where success criteria are locked by all stakeholders before execution begins, with a formal change request process for in-flight scope changes that requires explicit sign-off from all stakeholders - making post-hoc scope expansion visible and costly.
 
 **Q3.** A company conducts 8 POCs over 6 months during an architecture transformation programme. Each POC generates data but the results are scattered across wikis, code repos, and personal notes. One year later, a new team makes the same technology choice that a POC already invalidated - repeating 3 weeks of investigation. Design a POC knowledge management system that ensures POC results are discoverable, searchable, and integrated into future architecture decisions without creating bureaucratic overhead.
 
+*Hint:* Think about what makes POC knowledge discoverable: it must be stored where engineers look when starting new work (linked from the code that implements the chosen technology, not in a standalone wiki page), indexed by technology + decision context + outcome, and updated when the decision is revisited. Explore whether Architecture Decision Records (ADRs) stored in the code repository alongside the technology they document are more durable than wiki pages, and what metadata an ADR needs to be searchable by future engineers.
+
+*Hint:* Think about what makes POC knowledge discoverable: it must be stored where engineers look when starting new work (linked from the code that implements the chosen technology, not in a standalone wiki page), indexed by technology + decision context + outcome, and updated when the decision is revisited. Explore whether Architecture Decision Records (ADRs) stored in the code repository alongside the technology they document are more durable than wiki pages, and what metadata an ADR needs to be searchable by future engineers.

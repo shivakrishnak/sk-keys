@@ -17,6 +17,7 @@ tags:
   - pattern
   - deep-dive
   - distributed
+status: complete
 ---
 
 # MSV-014 - Domain-Driven Design (DDD)
@@ -42,6 +43,12 @@ Business logic is scattered across the codebase in random utility classes. The d
 **THE INVENTION MOMENT:**
 This is exactly why Eric Evans created Domain-Driven Design - to make the software model a first-class representation of the actual business domain, with a shared, unambiguous language that eliminates translation overhead.
 
+
+**EVOLUTION:**
+Domain-Driven Design was formalised by Eric Evans in "Domain-Driven Design: Tackling Complexity in the Heart of Software" (2003), synthesising patterns from object-oriented design that had been emerging since the 1990s. DDD gained renewed relevance with microservices: Bounded Context became the primary tool for defining service boundaries. Vaughn Vernon's "Implementing Domain-Driven Design" (2013) translated Evans' concepts into practical patterns. The discipline evolved from a design philosophy for complex OO systems to the architectural foundation of microservices: Bounded Contexts map to services, Aggregates define consistency boundaries, and Domain Events define inter-service communication.
+
+**EVOLUTION:**
+Domain-Driven Design was formalised by Eric Evans in "Domain-Driven Design: Tackling Complexity in the Heart of Software" (2003), synthesising patterns from object-oriented design that had been emerging since the 1990s. DDD gained renewed relevance with microservices: Bounded Context became the primary tool for defining service boundaries. Vaughn Vernon's "Implementing Domain-Driven Design" (2013) translated Evans' concepts into practical patterns. The discipline evolved from a design philosophy for complex OO systems to the architectural foundation of microservices: Bounded Contexts map to services, Aggregates define consistency boundaries, and Domain Events define inter-service communication.
 ---
 
 ### 📘 Textbook Definition
@@ -521,11 +528,62 @@ WHERE wait_event_type = 'Lock'
 └──────────────────────────────────────────────────────────┘
 ```
 
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+The model IS the design. In DDD, code directly expresses domain concepts using the language of domain experts. When code drifts from business language, it becomes harder to reason about and harder to change correctly - bugs appear at the gap between what the business says and what the code does. Aligning model language with business language is not aesthetics; it is correctness.
+
+**Where else this pattern appears:**
+- **API design:** REST APIs that use business verbs (`/orders/{id}/approve`, `/claims/{id}/dispute`) rather than CRUD verbs (`PUT /orders/{id}`) express domain intent and make the API self-documenting via the Ubiquitous Language.
+- **Event naming:** Domain events named after business facts (`OrderApproved`, `ClaimDisputed`, `AccountSuspended`) rather than technical operations (`OrderUpdated`, `StatusChanged`) preserve business meaning for downstream consumers.
+- **Testing:** Tests named in domain language (`when_premium_customer_orders_above_threshold_discount_applies`) rather than implementation language (`test_calculate_discount_method`) serve as living documentation of business rules.
+
+---
+
+### 💡 The Surprising Truth
+
+Eric Evans spent the year after publishing "Domain-Driven Design" realising the book had the patterns in the wrong order. The most valuable concept - Context Mapping (how Bounded Contexts relate to each other) - appears in Part IV, near the end. Most practitioners who read the book stop after Part II (Entity, Value Object, Aggregate) and never reach Context Mapping. As a result, thousands of teams implement DDD's tactical patterns without ever implementing its most important strategic pattern. Evans has publicly said that if he were writing the book again, he would start with strategic design and treat tactical patterns as implementation details.
+
+---
+
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:**
+The model IS the design. In DDD, code directly expresses domain concepts using the language of domain experts. When code drifts from business language, it becomes harder to reason about and harder to change correctly - bugs appear at the gap between what the business says and what the code does. Aligning model language with business language is not aesthetics; it is correctness.
+
+**Where else this pattern appears:**
+- **API design:** REST APIs that use business verbs (`/orders/{id}/approve`, `/claims/{id}/dispute`) rather than CRUD verbs (`PUT /orders/{id}`) express domain intent and make the API self-documenting via the Ubiquitous Language.
+- **Event naming:** Domain events named after business facts (`OrderApproved`, `ClaimDisputed`, `AccountSuspended`) rather than technical operations (`OrderUpdated`, `StatusChanged`) preserve business meaning for downstream consumers.
+- **Testing:** Tests named in domain language (`when_premium_customer_orders_above_threshold_discount_applies`) rather than implementation language (`test_calculate_discount_method`) serve as living documentation of business rules.
+
+---
+
+### 💡 The Surprising Truth
+
+Eric Evans spent the year after publishing "Domain-Driven Design" realising the book had the patterns in the wrong order. The most valuable concept - Context Mapping (how Bounded Contexts relate to each other) - appears in Part IV, near the end. Most practitioners who read the book stop after Part II (Entity, Value Object, Aggregate) and never reach Context Mapping. As a result, thousands of teams implement DDD's tactical patterns without ever implementing its most important strategic pattern. Evans has publicly said that if he were writing the book again, he would start with strategic design and treat tactical patterns as implementation details.
 ---
 
 ### 🧠 Think About This Before We Continue
 
 **Q1.** You are designing a healthcare platform with three teams: Clinical (manages patient care plans), Billing (manages insurance claims), and Scheduling (manages appointments). The word "patient" appears in all three teams' code and means something slightly different in each. Design the Bounded Context strategy: what fields does each context's "patient" model contain, how do they share identity, and what happens when a patient's demographic data changes - who is the source of truth and how do the other contexts learn about the change?
 
+*Hint:* Think about what "same identity, different data" means in practice: the patient has one unique ID across all contexts, but each context maintains only the attributes it needs (Clinical: diagnosis history; Billing: insurance IDs; Scheduling: time zone and availability). Explore which context is the authoritative source for demographic data and whether a `PatientDemographicChanged` domain event published by an Identity context and consumed by Clinical, Billing, and Scheduling would propagate changes without coupling the contexts directly.
+
+*Hint:* Think about what "same identity, different data" means in practice: the patient has one unique ID across all contexts, but each context maintains only the attributes it needs (Clinical: diagnosis history; Billing: insurance IDs; Scheduling: time zone and availability). Explore which context is the authoritative source for demographic data and whether a `PatientDemographicChanged` domain event published by an Identity context and consumed by Clinical, Billing, and Scheduling would propagate changes without coupling the contexts directly.
+
 **Q2.** A DDD practitioner insists that Aggregates should never span more than one database transaction and all cross-aggregate coordination should use eventual consistency via Domain Events. A senior developer pushes back: "Eventual consistency means we might charge a customer for an order we then can't fulfil." Trace the exact sequence of events in both the consistent and eventual-consistent models for this scenario, and identify the precise conditions under which eventual consistency is safe and when it is not.
 
+*Hint:* Think about the exact sequence in both models for: order placed → inventory reserved → payment processed. In the consistent model, all three happen atomically. In the eventual model, each is a separate domain event. Explore what happens when payment fails after inventory is already reserved: the Saga pattern (orchestration or choreography with compensating transactions) must explicitly un-reserve inventory. Map out what data could be in an incorrect state during the compensation window and whether the business can tolerate that inconsistency window.
+
+**Q3 (Design Trade-off):** Your DDD system has 8 bounded contexts, each with its own model of "Product" (different schema, different status vocabulary, different ownership). A business requirement arrives: generate a consolidated product report spanning all 8 contexts. How do you produce the report without coupling the contexts or introducing a shared product model?
+
+*Hint:* Think about whether the reporting requirement belongs in a separate Bounded Context (a Reporting Context) that subscribes to domain events from all 8 contexts and builds its own denormalised product model optimised for reporting queries. Explore how CQRS applied at the cross-context level (all contexts publish events; reporting context builds a read model) solves the problem without violating context boundaries, and what the eventual consistency lag means for report freshness requirements.
+
+*Hint:* Think about the exact sequence in both models for: order placed → inventory reserved → payment processed. In the consistent model, all three happen atomically. In the eventual model, each is a separate domain event. Explore what happens when payment fails after inventory is already reserved: the Saga pattern (orchestration or choreography with compensating transactions) must explicitly un-reserve inventory. Map out what data could be in an incorrect state during the compensation window and whether the business can tolerate that inconsistency window.
+
+**Q3 (Design Trade-off):** Your DDD system has 8 bounded contexts, each with its own model of "Product" (different schema, different status vocabulary, different ownership). A business requirement arrives: generate a consolidated product report spanning all 8 contexts. How do you produce the report without coupling the contexts or introducing a shared product model?
+
+*Hint:* Think about whether the reporting requirement belongs in a separate Bounded Context (a Reporting Context) that subscribes to domain events from all 8 contexts and builds its own denormalised product model optimised for reporting queries. Explore how CQRS applied at the cross-context level (all contexts publish events; reporting context builds a read model) solves the problem without violating context boundaries, and what the eventual consistency lag means for report freshness requirements.
