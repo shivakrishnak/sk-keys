@@ -356,6 +356,7 @@ public class Order {
 **Reusable Engineering Principle:** Co-locating data and the rules that govern that data produces a single authoritative source of truth. When logic is separated from data (in service classes, stored procedures, or validation scripts), the same rule inevitably appears in multiple places with divergent implementations.
 
 **Where else this pattern appears:**
+
 - **Financial instruments:** a `Bond` object knows its yield calculation; a `Derivative` knows its valuation model; the financial object is the authoritative home for the mathematics that governs it - separating the math from the instrument would require every calculator to re-implement it.
 - **Legal contracts:** a contract document embeds the rules that govern its interpretation; the contract is not a data record that a separate rules engine evaluates - the rules and the data are inseparable.
 - **Physical systems:** a circuit breaker "knows" its trip threshold and resets itself when conditions are right - the behaviour is built into the device, not into a separate monitoring system that inspects the device.
@@ -371,15 +372,18 @@ A Domain Model is not just object-oriented programming - it requires deliberatel
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-043 - SOLID Principles (the Domain Model is the application of OOP principles to business domain design; SOLID provides the guiding constraints)
 - SAP-050 - Cohesion and SAP-051 - Coupling (a well-designed Domain Model has high cohesion per object and low coupling between objects)
 
 **Builds On This (learn these next):**
+
 - SAP-024 - Anemic Domain Model (the anti-pattern to understand and recognise in existing codebases)
 - SAP-025 - Rich Domain Model (the concrete expression of the Domain Model pattern with full behavior encapsulation)
 - SAP-030 - Aggregate Root (how to define consistency boundaries within a larger domain model)
 
 **Alternatives / Comparisons:**
+
 - SAP-024 - Anemic Domain Model (simpler; correct for pure CRUD with no meaningful business rules)
 - Transaction Script - procedural approach without an object model; appropriate for simple scripting scenarios
 
@@ -409,12 +413,12 @@ A Domain Model is not just object-oriented programming - it requires deliberatel
 
 **Q1.** A `Customer` domain object has a `purchaseHistory` collection that could contain thousands of items. Loading the entire history every time a Customer object is created would be prohibitively expensive. Yet the `Customer.calculateLifetimeValue()` method needs that data. How do you balance the "domain object owns its behavior" principle with the practical need to avoid loading gigabytes of data just to call one method?
 
-*Hint:* Research JPA lazy loading and the aggregate root boundary - specifically Evans' rule that repositories load complete aggregates. If `purchaseHistory` is too large to load eagerly, it signals that `PurchaseHistory` should be its own aggregate root with its own repository, not a collection within `Customer`. Then `Customer.calculateLifetimeValue()` becomes a domain service that takes both the `Customer` and a `PurchaseSummary` query result as parameters.
+_Hint:_ Research JPA lazy loading and the aggregate root boundary - specifically Evans' rule that repositories load complete aggregates. If `purchaseHistory` is too large to load eagerly, it signals that `PurchaseHistory` should be its own aggregate root with its own repository, not a collection within `Customer`. Then `Customer.calculateLifetimeValue()` becomes a domain service that takes both the `Customer` and a `PurchaseSummary` query result as parameters.
 
 **Q2.** Two Bounded Contexts both have an `Order` concept, but they model it differently - the `Shipping` context cares about delivery addresses and tracking, while the `Billing` context cares about payments and invoices. Should there be one shared `Order` domain model, or two? What are the implications of each choice?
 
-*Hint:* Research Evans' Bounded Context pattern - specifically the "context map" concept and the rule that each bounded context has its own domain model. A shared `Order` class serving two contexts will inevitably accumulate fields and methods that are irrelevant to one context, creating coupling. The correct solution is two separate `Order` classes (one per context) with an anti-corruption layer translating between them when the contexts need to interact.
+_Hint:_ Research Evans' Bounded Context pattern - specifically the "context map" concept and the rule that each bounded context has its own domain model. A shared `Order` class serving two contexts will inevitably accumulate fields and methods that are irrelevant to one context, creating coupling. The correct solution is two separate `Order` classes (one per context) with an anti-corruption layer translating between them when the contexts need to interact.
 
 **Q3.** A team adopts Domain Model but finds that their rich domain objects are difficult to serialise for REST APIs. The `Order` object has private fields, no public setters, and throws exceptions for invalid states - but JSON serialisers (Jackson, Gson) require no-arg constructors and public setters to deserialise. How do you design the boundary between the rich domain model and the API serialisation layer without compromising domain integrity?
 
-*Hint:* Research the "Data Transfer Object" (DTO) pattern and specifically how the "Application Service" ring in Clean Architecture maps between DTOs (which can be serialised freely) and domain objects (which enforce invariants). Look at Jackson's `@JsonCreator` and `@JsonProperty` annotations on constructor parameters as an alternative to public setters, and Kotlin's `data class` as a language feature that provides value-based equality and copy semantics without mutable setters.
+_Hint:_ Research the "Data Transfer Object" (DTO) pattern and specifically how the "Application Service" ring in Clean Architecture maps between DTOs (which can be serialised freely) and domain objects (which enforce invariants). Look at Jackson's `@JsonCreator` and `@JsonProperty` annotations on constructor parameters as an alternative to public setters, and Kotlin's `data class` as a language feature that provides value-based equality and copy semantics without mutable setters.

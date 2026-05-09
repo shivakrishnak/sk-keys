@@ -1,20 +1,24 @@
 ﻿---
-layout: default
-title: "Domain Events"
-parent: "Software Architecture Patterns"
-grand_parent: "Technical Dictionary"
-nav_order: 31
-permalink: /software-architecture/domain-events/
 id: SAP-031
+title: Domain Events
 category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
 difficulty: ★★★
-depends_on: Aggregate Root, Domain Model, Event-Driven Architecture, Outbox Pattern
-used_by: CQRS, Event Sourcing, Saga Pattern, Microservices
-related: Aggregate Root, Event Sourcing, Integration Events, Outbox Pattern, CQRS
+depends_on: SAP-023, SAP-030
+used_by: SAP-018, SAP-019
+related: SAP-018, SAP-019, SAP-030
 tags:
   - architecture
   - ddd
   - pattern
+status: complete
+version: 1
+layout: default
+parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
+nav_order: 31
+permalink: /software-architecture/domain-events/
   - deep-dive
   - events
   - advanced
@@ -24,15 +28,11 @@ tags:
 
 ⚡ TL;DR - Domain Events capture something significant that happened in the business domain - they are the authoritative record of a state change, expressed in the language of the business, and are the mechanism for decoupled, cross-aggregate coordination.
 
----
-
-### 📊 Entry Metadata
-
-| #744            | Category: Software Architecture Patterns                                 | Difficulty: ★★★ |
-| :-------------- | :----------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Aggregate Root, Domain Model, Event-Driven Architecture, Outbox Pattern  |                 |
-| **Used by:**    | CQRS, Event Sourcing, Saga Pattern, Microservices                        |                 |
-| **Related:**    | Aggregate Root, Event Sourcing, Integration Events, Outbox Pattern, CQRS |                 |
+| Field          | Value                     |
+| -------------- | ------------------------- |
+| **Depends on** | SAP-023, SAP-030          |
+| **Used by**    | SAP-018, SAP-019          |
+| **Related**    | SAP-018, SAP-019, SAP-030 |
 
 ---
 
@@ -45,6 +45,9 @@ Without Domain Events, `OrderService.cancel()` directly calls `InventoryService`
 
 **THE DOMAIN EVENT SOLUTION:**
 `Order.cancel()` raises an `OrderCancelledEvent`. The order knows nothing about who needs to react. Each downstream service subscribes to `OrderCancelledEvent` and reacts independently. Adding a new consumer doesn't touch the order domain. The order is decoupled from its reactions.
+
+**EVOLUTION:**
+Eric Evans introduced Domain Events in later editions of DDD (the concept was refined in the DDD community after the 2003 book, with Evans retroactively embracing it as a first-class pattern). Udi Dahan and Greg Young popularized the pattern in the 2006-2010 period through their work on CQRS and Event Sourcing. The term "Domain Event" distinguishes business-significant occurrences from technical messaging (which predates DDD). The pattern became mainstream with the rise of microservices (2014+), where loose coupling between services required event-driven communication. Today, Domain Events drive event-driven architecture at cloud scale, with Apache Kafka providing the infrastructure for publishing and subscribing to events across services.
 
 ---
 
@@ -411,23 +414,36 @@ public class OrderApplicationService {
 
 ---
 
-### 🔗 Related Keywords
+### � Transferable Wisdom
 
-**Prerequisites:**
+**Reusable Engineering Principle:** When significant state changes occur, record what happened rather than issuing direct commands to all interested parties. Let interested parties pull the information they need from the record rather than being pushed commands they must execute.
 
-- `Aggregate Root` - the source of domain events
-- `Domain Model` - domain events express what happens in the domain model
+**Where else this pattern appears:**
+- **Git commit history:** Each commit is a Domain Event - it records what changed, who changed it, when it changed, and why (commit message). No one "commands" git's history; it records facts, and tooling (CI/CD, code review, blame) reacts to those facts independently.
+- **Double-entry bookkeeping:** Every financial transaction is recorded as an immutable event (journal entry). No financial entry is ever deleted or modified - only new entries are added. This is Domain Events applied to accounting, and it predates object-oriented programming by 500 years.
+- **Medical records:** A patient record accumulates events (diagnoses, prescriptions, procedures) immutably. Medical history is never overwritten - new events extend the record. A doctor reads the history to understand the current state.
 
-**Builds On This:**
+---
 
-- `Event Sourcing` - stores aggregate state as a sequence of domain events
-- `Outbox Pattern` - guarantees reliable event publishing
-- `Saga Pattern` - orchestrates multi-step processes using domain events
+### 💡 The Surprising Truth
 
-**Related:**
+The hardest part of Domain Events is determining what constitutes a "significant business occurrence." Teams new to Domain Events create events for everything - `CustomerFirstNameUpdated`, `OrderItemQuantityChanged` - which produces an event flood of low-level state changes that nobody handles differently. Real Domain Events should be named in past-tense business language: `OrderPlaced`, `PaymentProcessed`, `ItemShipped`, `CustomerUpgraded`. The test: can a business analyst read the event name and immediately understand its business significance? If not, it is probably a database change notification dressed up as a Domain Event, not a real business event.
 
-- `CQRS` - command side raises domain events; read side projects them into query models
-- `Integration Events` - cross-service version of domain events
+---
+
+### �🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- SAP-023 - Domain Model (domain events express what happened in the domain model; understanding what domain objects are is required to understand what events they raise)
+- SAP-030 - Aggregate Root (domain events are raised by aggregate roots during state transitions; understanding which object raises the event and why requires understanding aggregates)
+
+**Builds On This (learn these next):**
+- SAP-018 - CQRS Pattern (the command side raises domain events; the read side projects them into query models; CQRS is the architectural framework that makes Domain Events central)
+- SAP-019 - Event Sourcing Pattern (stores aggregate state as a sequence of domain events; Event Sourcing takes Domain Events to their logical conclusion by making events the primary storage format)
+
+**Alternatives / Comparisons:**
+- SAP-019 - Event Sourcing (closely related; Domain Events raise and forget; Event Sourcing stores every raised event as the source of truth)
+- SAP-030 - Aggregate Root (complementary; aggregates raise events; they are not alternatives but collaborators)
 
 ---
 
@@ -457,4 +473,12 @@ public class OrderApplicationService {
 
 **Q1.** You have a `PaymentProcessedEvent` that is raised when a payment succeeds. Multiple services subscribe to it: order fulfillment, billing, fraud detection, and analytics. The fraud detection handler is slow (external API call) and sometimes times out. Should all handlers run in the same transaction? Should the slow handler be moved to an asynchronous queue? What are the consistency implications of each approach?
 
+*Hint:* Research the distinction between "in-process domain events" (handled synchronously in the same transaction) and "integration events" (published to a message broker for asynchronous processing). Specifically: in-process handlers that fail will rollback the entire transaction including the payment. Asynchronous handlers via Kafka/RabbitMQ decouple the payment from fraud detection but introduce eventual consistency. Research the "Outbox Pattern" for guaranteed delivery of integration events after the transaction commits.
+
 **Q2.** Event schemas evolve over time. An `OrderPlacedEvent` initially has `customerId: UUID`. Six months later, a new field `customerTier: String` is added. There are thousands of historical events stored in the event store in the old format. You need to add a new event handler that uses `customerTier`. How do you handle schema evolution without breaking existing handlers or corrupting historical event data?
+
+*Hint:* Research event schema evolution strategies: (1) Upcasting - a component that transforms old events into new format before they reach handlers; (2) Optional fields with defaults - the new `customerTier` field defaults to `STANDARD` when absent; (3) Event versioning with separate handler per version (`OrderPlacedEventV1`, `OrderPlacedEventV2`). Research how Axon Framework's `EventUpcaster` interface handles this in practice.
+
+**Q3.** Two aggregate roots both need to react to the same domain event. An `OrderPlacedEvent` needs to trigger both an inventory reservation (updating `InventoryAggregate`) and a loyalty points award (updating `CustomerLoyaltyAggregate`). Both updates must eventually succeed, but they can't be in the same transaction (different aggregates). If the inventory reservation succeeds but the loyalty points update fails, how do you ensure eventual consistency?
+
+*Hint:* Research the "Process Manager" (or "Saga") pattern - specifically how a Saga coordinates multiple aggregate updates in response to domain events. The Saga subscribes to `OrderPlacedEvent`, triggers the inventory reservation command, waits for `InventoryReservedEvent`, then triggers the loyalty points command. If any step fails, the Saga issues compensating commands. Research how Axon Framework's `@SagaEventHandler` implements this.

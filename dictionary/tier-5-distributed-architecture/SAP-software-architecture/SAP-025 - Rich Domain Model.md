@@ -407,6 +407,7 @@ void approved_loan_raises_LoanApprovedEvent() {
 **Reusable Engineering Principle:** Objects that guard their own invariants remove the burden of invariant enforcement from every caller. The object is the single point of truth for what is valid. This encapsulation principle scales from individual objects to systems.
 
 **Where else this pattern appears:**
+
 - **Vending machines:** the machine enforces all its own rules (insufficient funds, unknown denomination, out of stock) internally; no external system needs to validate each operation before triggering it.
 - **Type systems:** a strong type system is a rich domain model at the language level - a `NonEmptyString` type enforces the invariant "this string is never empty" at compile time without any caller needing to check.
 - **Electrical safety standards:** a circuit breaker enforces the "maximum current" invariant internally and trips itself; no external monitoring system needs to detect overcurrent and then command the breaker.
@@ -422,13 +423,16 @@ Rich domain models are the hardest design to persist with most ORMs. JPA/Hiberna
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-023 - Domain Model (the foundational concept; Rich Domain Model is the concrete expression of the Domain Model pattern)
 - SAP-024 - Anemic Domain Model (the anti-pattern; understanding what a Rich Domain Model replaces reveals why the investment is worthwhile)
 
 **Builds On This (learn these next):**
+
 - SAP-030 - Aggregate Root (how to define consistency boundaries in a system of rich domain objects; aggregates are the organizing principle for rich models)
 
 **Alternatives / Comparisons:**
+
 - SAP-024 - Anemic Domain Model (correct for simple CRUD with no meaningful business rules; the trade-off is explicit)
 - Transaction Script - procedural alternative; correct for simple workflows with no need for an object model
 
@@ -459,12 +463,12 @@ Rich domain models are the hardest design to persist with most ORMs. JPA/Hiberna
 
 **Q1.** Your `Order` aggregate has grown to include 15 methods and references to `Customer`, `Product`, `Inventory`, and `Payment` domain objects. It's becoming difficult to understand and test. How do you decide which behaviors belong on `Order` itself versus in a domain service, and what rule helps you make that distinction?
 
-*Hint:* Research Evans' rule for Domain Services: behavior that naturally belongs to no single entity or value object should live in a Domain Service. Specifically, if the behavior requires data from MULTIPLE aggregates (Order + Inventory + Customer) it does not naturally belong on any one of them. The test: "If I delete this method from Order and put it in a service, does Order still make sense?" If yes, the service is correct.
+_Hint:_ Research Evans' rule for Domain Services: behavior that naturally belongs to no single entity or value object should live in a Domain Service. Specifically, if the behavior requires data from MULTIPLE aggregates (Order + Inventory + Customer) it does not naturally belong on any one of them. The test: "If I delete this method from Order and put it in a service, does Order still make sense?" If yes, the service is correct.
 
 **Q2.** You need to import legacy data from an old system that doesn't conform to your rich domain model's invariants (for example, some historical orders have a `null` customer). How do you handle this in a system where your domain model strictly enforces that an order always has a customer?
 
-*Hint:* Research the "Anti-Corruption Layer" pattern (SAP-034) and specifically the technique of using a separate "import" aggregate or "migration" bounded context that accepts legacy data without invariant enforcement, then transforms it into valid domain events that the main bounded context can consume. Also look at database migration strategies that accept legacy nulls during import but enforce NOT NULL constraints after cleanup.
+_Hint:_ Research the "Anti-Corruption Layer" pattern (SAP-034) and specifically the technique of using a separate "import" aggregate or "migration" bounded context that accepts legacy data without invariant enforcement, then transforms it into valid domain events that the main bounded context can consume. Also look at database migration strategies that accept legacy nulls during import but enforce NOT NULL constraints after cleanup.
 
 **Q3.** A Rich Domain Model enforces the "always valid" principle: a domain object must never be in an invalid state. But during a multi-step business process (a loan application with 5 stages), the `LoanApplication` object transitions through partially-complete states that would fail a "fully valid" check. How do you design an `LoanApplication` that enforces appropriate invariants at each stage without introducing a god-object with 50 validity conditions?
 
-*Hint:* Research the "State Pattern" applied to Domain objects and specifically the concept of "stage-specific invariants" - a `LoanApplication` in `DRAFT` state has different valid invariants than one in `SUBMITTED` or `APPROVED` state. Look at how Evans treats this with separate domain concepts per stage (DraftApplication, SubmittedApplication, ApprovedApplication) versus a single entity with a state machine.
+_Hint:_ Research the "State Pattern" applied to Domain objects and specifically the concept of "stage-specific invariants" - a `LoanApplication` in `DRAFT` state has different valid invariants than one in `SUBMITTED` or `APPROVED` state. Look at how Evans treats this with separate domain concepts per stage (DraftApplication, SubmittedApplication, ApprovedApplication) versus a single entity with a state machine.

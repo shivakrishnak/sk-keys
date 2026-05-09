@@ -1,20 +1,24 @@
 ﻿---
-layout: default
-title: "Value Objects"
-parent: "Software Architecture Patterns"
-grand_parent: "Technical Dictionary"
-nav_order: 32
-permalink: /software-architecture/value-objects/
 id: SAP-032
+title: Value Objects
 category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
 difficulty: ★★★
-depends_on: Domain Model, Rich Domain Model, Aggregate Root, Entities
-used_by: DDD, Clean Architecture, Functional Programming Patterns
-related: Entities, Aggregate Root, Domain Model, Immutability, Type Safety
+depends_on: SAP-023, SAP-043
+used_by: SAP-030
+related: SAP-030, SAP-033
 tags:
   - architecture
   - ddd
   - pattern
+status: complete
+version: 1
+layout: default
+parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
+nav_order: 32
+permalink: /software-architecture/value-objects/
   - deep-dive
   - advanced
 ---
@@ -23,15 +27,11 @@ tags:
 
 ⚡ TL;DR - A Value Object is a domain concept defined entirely by its attributes - it has no identity, is immutable, and two value objects with the same attributes are equal regardless of which instance they are.
 
----
-
-### 📊 Entry Metadata
-
-| #745            | Category: Software Architecture Patterns                          | Difficulty: ★★★ |
-| :-------------- | :---------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Domain Model, Rich Domain Model, Aggregate Root, Entities         |                 |
-| **Used by:**    | DDD, Clean Architecture, Functional Programming Patterns          |                 |
-| **Related:**    | Entities, Aggregate Root, Domain Model, Immutability, Type Safety |                 |
+| Field          | Value            |
+| -------------- | ---------------- |
+| **Depends on** | SAP-023, SAP-043 |
+| **Used by**    | SAP-030          |
+| **Related**    | SAP-030, SAP-033 |
 
 ---
 
@@ -42,6 +42,9 @@ A financial system uses `BigDecimal` for money and `String` for currency codes. 
 
 **THE VALUE OBJECT SOLUTION:**
 Replace primitives with domain-typed Value Objects: `Money(amount, currency)` and `AccountId`. The method becomes `transfer(Money amount, AccountId from, AccountId to)`. You can't accidentally swap a `String` and an `AccountId`. `Money.subtract(fee)` checks that both are in the same currency and throws if they're not. The business rules travel with the type.
+
+**EVOLUTION:**
+Martin Fowler documented Value Object as a pattern in "Patterns of Enterprise Application Architecture" (2002), but the concept predates that - it was part of SmallTalk's OOP culture and was deeply embedded in Evans's DDD (2003) as one of the three fundamental building blocks (Entities, Value Objects, Services). The pattern was theoretically sound but practically painful in Java, requiring manual implementation of `equals()`, `hashCode()`, and `copy()`. Kotlin's `data class` (2016) made Value Objects practical with one line of code. Java 16's `record` keyword (2021) finally provided a standard Java solution. Today, Value Objects are also the foundation of TypeScript's type-safe patterns, where wrapping primitives in branded types provides compile-time safety at zero runtime cost.
 
 ---
 
@@ -415,22 +418,36 @@ grep -rn "String\|BigDecimal\|UUID" \
 
 ---
 
-### 🔗 Related Keywords
+### � Transferable Wisdom
 
-**Prerequisites:**
+**Reusable Engineering Principle:** Replace primitive types with domain-typed wrappers wherever business constraints apply to the primitive. The wrapper is the single place where those constraints are enforced, making invalid states unrepresentable.
 
-- `Domain Model` - Value Objects are building blocks of domain models
-- `Entities` - the contrast class to understand what Value Objects are not
+**Where else this pattern appears:**
+- **Newtypes in Rust/Haskell:** The newtype pattern wraps a primitive in a typed struct to prevent accidental misuse. A `Kilometers(f64)` and `Miles(f64)` are different types despite wrapping the same primitive - the compiler prevents passing Miles where Kilometers is expected. This is Value Object at the type system level.
+- **SQL column constraints:** A `CHECK (price >= 0)` constraint wraps the `DECIMAL` type with a business rule. The database enforces the constraint regardless of which application writes to the column - the constraint travels with the data, not with the application code.
+- **CSS color values:** A CSS `color` is not a string - it is a value with rules about valid formats (hex, rgb, hsl) and specific equality semantics (\`#FF0000\` and \`rgb(255, 0, 0)\` represent the same color). Value Object applied to styling.
 
-**Builds On This:**
+---
 
-- `Aggregate Root` - uses Value Objects internally for typed attributes
-- `Domain Events` - should contain Value Objects, not primitives
+### 💡 The Surprising Truth
 
-**Related Patterns:**
+Value Objects are more frequently the correct modeling choice than Entities, but developers default to Entities because ORMs make entities easier to persist. In a well-modeled domain, Value Objects should significantly outnumber Entities. A `Customer` entity has attributes that are Value Objects: `EmailAddress`, `PhoneNumber`, `PostalAddress`, `Money` (balance), `CustomerTier`. The `Order` entity's attributes are Value Objects: `OrderDate`, `Money` (total), `ShippingAddress`, `OrderStatus`. The entity is the rare thing that needs identity; most domain concepts are defined by their value. When a codebase has 20 entities and 5 value objects, it almost certainly has primitive obsession.
 
-- `Immutability` - the property that makes Value Objects safe and composable
-- `Type Safety` - what Value Objects provide at the domain level
+---
+
+### �🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- SAP-023 - Domain Model (value objects are the building blocks of domain models; understanding domain models provides the context for why typed domain values matter)
+- SAP-043 - SOLID Principles (value object immutability follows from Single Responsibility and Open/Closed principles; understanding SOLID explains why value objects should not have setters)
+
+**Builds On This (learn these next):**
+- SAP-030 - Aggregate Root (aggregate roots use value objects as typed attributes for their internal state; value objects appear throughout aggregate design)
+- SAP-033 - Entities (the complementary concept; understanding both value objects and entities together defines when identity matters and when it does not)
+
+**Alternatives / Comparisons:**
+- SAP-033 - Entities (the contrast; use an entity when identity matters and the object is tracked over time; use a value object when the concept is defined purely by its attributes)
+- Primitive types (always-available alternative; correct for truly primitive values with no business constraints; wrong when constraints or operations are needed)
 
 ---
 
@@ -459,4 +476,12 @@ grep -rn "String\|BigDecimal\|UUID" \
 
 **Q1.** A `PostalAddress` Value Object has five fields: `street`, `city`, `postcode`, `county`, `country`. An `Order` has a `deliveryAddress: PostalAddress`. A customer moves and updates their address. Should the `Order`'s delivery address change automatically? What does this tell you about the relationship between the `Customer`'s address (which might change) and the `Order`'s delivery address (which is the address at the time of order placement)?
 
+*Hint:* Research the difference between a "snapshot" value and a "reference" value - specifically: the Order's delivery address is a snapshot of the address AT THE TIME OF ORDER PLACEMENT, not a reference to the Customer's current address. This is exactly why the delivery address should be a Value Object (immutable snapshot) stored on the Order, not a foreign key reference to the Customer's current address. This is also why value objects should be embedded in the owning entity's table (JPA `@Embedded`) rather than normalized into a separate address table with a foreign key.
+
 **Q2.** You have a `Quantity` Value Object that wraps an integer. Two quantities can only be added if they have the same unit (kilograms, litres, pieces). This sounds like a Value Object with type-checking behavior. But what happens when you need to convert between units - `Quantity(2, LITRES).toMillilitres()` should return `Quantity(2000, MILLILITRES)`. Does this conversion method belong on the Value Object, or on a domain service? What is the design principle that guides this decision?
+
+*Hint:* Research Evans's rule for Domain Services versus Value Object methods: behavior belongs on the Value Object if it uses only the object's own data and produces a result of the same or related type. `toMillilitres()` uses only the quantity's own data (value + unit) and returns a related `Quantity` - it belongs on the Value Object. A Domain Service would be needed if the conversion required external data (e.g., a currency exchange rate that must be looked up) or if the operation involved multiple distinct domain concepts.
+
+**Q3.** You are building a financial trading system where a `Price` value object wraps a `BigDecimal`. The system processes millions of prices per second. Java `BigDecimal` uses heap allocation and creates garbage, causing GC pressure at scale. A primitive `long` (storing price as integer cents) would be 10x faster but loses the type safety of `Price`. How do you design `Price` as a Value Object that provides type safety without heap allocation?
+
+*Hint:* Research Java's Project Valhalla "value types" (inline classes) - specifically the motivation that value objects currently require heap allocation in Java but value types will allow stack allocation. Also research the current workaround: using a primitive-backed value object where the `long` is stored as a field but all operations go through the `Price` wrapper, then using the JVM JIT's scalar replacement optimization to eliminate the object allocation in tight loops. This reveals a known limitation of Value Objects in Java that Project Valhalla is designed to fix.

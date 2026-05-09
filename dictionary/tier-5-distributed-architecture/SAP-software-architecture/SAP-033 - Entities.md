@@ -1,36 +1,35 @@
 ﻿---
-layout: default
-title: "Entities"
-parent: "Software Architecture Patterns"
-grand_parent: "Technical Dictionary"
-nav_order: 33
-permalink: /software-architecture/entities/
 id: SAP-033
+title: Entities
 category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
 difficulty: ★★☆
-depends_on: Domain Model, Value Objects, Aggregate Root
-used_by: DDD, Rich Domain Model, JPA, Repository Pattern
-related: Value Objects, Aggregate Root, Domain Model, Identity Map
+depends_on: SAP-023, SAP-032
+used_by: SAP-030
+related: SAP-030, SAP-032
 tags:
   - architecture
   - ddd
   - pattern
-  - intermediate
+status: complete
+version: 1
+layout: default
+parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
+nav_order: 33
+permalink: /software-architecture/entities/
 ---
 
 # SAP-033 - Entities
 
 ⚡ TL;DR - An Entity is a domain object with a unique identity that persists through time and state changes - two entities with the same attributes are still different objects if they have different identities.
 
----
-
-### 📊 Entry Metadata
-
-| #746            | Category: Software Architecture Patterns                  | Difficulty: ★★☆ |
-| :-------------- | :-------------------------------------------------------- | :-------------- |
-| **Depends on:** | Domain Model, Value Objects, Aggregate Root               |                 |
-| **Used by:**    | DDD, Rich Domain Model, JPA, Repository Pattern           |                 |
-| **Related:**    | Value Objects, Aggregate Root, Domain Model, Identity Map |                 |
+| Field          | Value            |
+| -------------- | ---------------- |
+| **Depends on** | SAP-023, SAP-032 |
+| **Used by**    | SAP-030          |
+| **Related**    | SAP-030, SAP-032 |
 
 ---
 
@@ -41,6 +40,9 @@ A system manages customer accounts. Two customers, "Alice Smith" at "123 Main St
 
 **THE ENTITY SOLUTION:**
 Assign unique identities. `Customer #12345` and `Customer #67890` are distinct customers forever, regardless of how their names, addresses, or statuses change. The identity is the anchor that ties together all the changes that happen to a thing over its lifetime.
+
+**EVOLUTION:**
+Eric Evans gave the Entity pattern its DDD-specific definition in "Domain-Driven Design" (2003): an object defined by its identity, not its attributes. The concept predates DDD - object databases (ObjectStore, Versant, 1990s) tracked object identity explicitly. JPA/Hibernate (2001+) operationalised the concept with the `@Id` annotation and identity map pattern - the persistence framework ensures that loading the same entity twice returns the same object instance. The key evolution was distinguishing Entities from Value Objects precisely: JPA entities always have an `@Id`, while Value Objects have no persistent identity. Kotlin and Java records made Value Objects practical, sharpening the entity/value object distinction in modern codebases.
 
 ---
 
@@ -340,20 +342,34 @@ public int hashCode() { return id.hashCode(); }
 
 ---
 
-### 🔗 Related Keywords
+### � Transferable Wisdom
 
-**Prerequisites:**
+**Reusable Engineering Principle:** When a thing must be tracked and distinguished from other things with identical attributes, assign it a stable, persistent identity that survives all attribute changes. The identity is the anchor for all historical records about that thing.
 
-- `Domain Model` - entities are the core building blocks
+**Where else this pattern appears:**
+- **National identity documents:** A passport number is an entity identity. Two people named "John Smith" born on the same day are different entities because they have different passport numbers. The passport number survives name changes, address changes, and nationality changes.
+- **Git commits:** A commit SHA is an entity identity. Two commits with identical content are still different commits (different SHA) because they occur at different points in time and have different parents. The SHA is the immutable identity.
+- **Social Security / National Insurance numbers:** Government-assigned persistent identities that survive name changes, address changes, and marital status changes. The number is the entity identity; the attributes are mutable but the identity is permanent.
 
-**Compare With:**
+---
 
-- `Value Objects` - the contrast concept; understanding both is essential
+### 💡 The Surprising Truth
 
-**Builds On This:**
+The hardest entity design question is not "what is the identity?" but "at what point is something a DIFFERENT entity rather than the SAME entity that changed?" If a ship has every plank replaced over time, is it the same ship? (Ship of Theseus.) In software: if a company undergoes a merger and the resulting company has a new name, new headquarters, new officers, and new shareholders - is it the same `Company` entity or a new one? The answer determines whether you UPDATE the existing entity (same identity) or CREATE a new entity and ARCHIVE the old one. There is no universal rule - the business domain determines what counts as "same thing" versus "different thing," and getting this wrong causes data corruption that is expensive to diagnose years later.
 
-- `Aggregate Root` - entities are organized into aggregates with one root
-- `Repository Pattern` - loads and saves entities (specifically aggregate roots)
+---
+
+### �🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- SAP-023 - Domain Model (entities are the core building blocks of domain models; understanding the domain model provides the context for why tracked, mutable domain objects with identity are the primary unit of design)
+- SAP-032 - Value Objects (the complementary concept; understanding both entities and value objects together is how you decide whether a domain concept needs identity or can be defined by its value)
+
+**Builds On This (learn these next):**
+- SAP-030 - Aggregate Root (entities are organized into aggregates with one root entity; the aggregate root is the entity that other entities access only through)
+
+**Alternatives / Comparisons:**
+- SAP-032 - Value Objects (use when the concept is defined by its attributes and equality by value is correct; use an Entity when identity persists across attribute changes)
 
 ---
 
@@ -380,4 +396,12 @@ public int hashCode() { return id.hashCode(); }
 
 **Q1.** A `Product` entity in an e-commerce system has a name, description, price, and SKU. An admin changes the price. Is it still the same product? Of course. But an analyst wants to know: "What was the price of this product 6 months ago?" The product's current state doesn't hold that history. How do you handle entity state history without losing the entity's current state, and what patterns exist for this problem?
 
+*Hint:* Research the "Temporal Pattern" and specifically Martin Fowler's "Temporal Patterns" article - which documents BiTemporal modeling (transaction time vs. valid time), Snapshot pattern (store entity state snapshots with timestamps), and the Event Sourcing approach (derive current state by replaying historical events). Also research the Hibernate Envers library which adds automatic audit table generation for entity history.
+
 **Q2.** A `UserSession` object exists for the duration of a user's login session. It has a session ID, a user ID, expiry time, and device information. Is `UserSession` an Entity or a Value Object? Defend your answer using the criteria above, and describe what consequences your decision has for how you implement `equals()` and `hashCode()`.
+
+*Hint:* Research the Entity criterion: does identity persist through attribute changes? A session's expiry time can be extended (refresh token) - the session is still the same session with the same session ID. Two sessions with identical user ID and device but different session IDs are DIFFERENT sessions (different concurrent logins). This means `UserSession` IS an entity: it has a stable identity (session ID), it changes over time (expiry refresh), and two otherwise identical sessions are distinct if their IDs differ. Therefore `equals()` and `hashCode()` should use only the session ID.
+
+**Q3.** Your system models a `BankAccount` entity with an `accountNumber` (String) as the identity. A regulatory change requires that account numbers be re-issued in a new format (they now have a 2-letter country prefix). Existing accounts must migrate from old format to new format over 18 months. During migration, the SAME bank account has TWO different account numbers. How do you handle this entity identity crisis without breaking transaction history, customer records, or cross-system references?
+
+*Hint:* Research the "Surrogate Key" pattern - specifically the concept of using an internal, system-generated UUID as the true entity identity, while the externally-visible account number is just an attribute that can change. The surrogate key (`accountId: UUID`) is the entity's true identity; the `accountNumber` is a human-readable alias that changes during migration. All internal references use the UUID; account number is only for display and customer-facing APIs. This is the standard database design pattern for exactly this problem.

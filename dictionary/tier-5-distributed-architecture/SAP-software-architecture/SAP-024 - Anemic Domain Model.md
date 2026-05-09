@@ -364,6 +364,7 @@ grep -rn "\.setStatus\|\.setState\|\.setAmount" \
 **Reusable Engineering Principle:** Separating data from the rules that govern that data forces every consumer to re-implement those rules. When logic is not co-located with data, duplication is architectural, not accidental.
 
 **Where else this pattern appears:**
+
 - **Plain SQL stored procedures:** all business logic in stored procedures with tables as data stores is the Anemic Domain Model at the database level - the tables have no behaviour, the procedures do everything.
 - **REST API anti-patterns:** a data API that exposes CRUD operations on resources (PUT /orders/123 with arbitrary JSON) is an anemic model at the API level - clients must know all the business rules and apply them externally.
 - **Configuration-driven systems:** systems where all business rules are in XML/YAML configuration files and the code is a generic rule executor are the Anemic Domain Model applied to the rules layer.
@@ -379,12 +380,15 @@ Martin Fowler himself acknowledged that the Anemic Domain Model is sometimes the
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-023 - Domain Model (the concept that the anemic model violates; understanding the rich domain model is required to recognise the anti-pattern)
 
 **Builds On This (learn these next):**
+
 - SAP-025 - Rich Domain Model (the solution that replaces the anemic model when business logic complexity justifies it)
 
 **Alternatives / Comparisons:**
+
 - Transaction Script - a legitimate procedural alternative for simple domains where no object model is needed
 - SAP-025 - Rich Domain Model (the correct approach for domains with meaningful business rules)
 
@@ -415,12 +419,12 @@ Martin Fowler himself acknowledged that the Anemic Domain Model is sometimes the
 
 **Q1.** Your team is debating whether to refactor a large existing codebase from an anemic model to a rich domain model. The codebase has 40 service classes, 20 domain entities, and 600 tests that test services. Refactoring would move logic from services into domain objects. What is the migration risk, and what strategy would you use to migrate safely without breaking the existing 600 tests?
 
-*Hint:* Research the "strangler fig" refactoring pattern and the "Mikado Method" - specifically the technique of introducing rich domain behavior incrementally: start by adding methods to domain objects that call through to the existing service logic (delegation), then slowly migrate the logic into the domain object while keeping the service test coverage green. The 600 service tests can migrate to domain object tests as logic moves.
+_Hint:_ Research the "strangler fig" refactoring pattern and the "Mikado Method" - specifically the technique of introducing rich domain behavior incrementally: start by adding methods to domain objects that call through to the existing service logic (delegation), then slowly migrate the logic into the domain object while keeping the service test coverage green. The 600 service tests can migrate to domain object tests as logic moves.
 
 **Q2.** A developer argues: "Our application is a form-based admin tool that does mostly CRUD - an anemic model is fine for us." Another developer argues: "Even CRUD apps get business rules added over time, so we should start with a rich model." Who is right, and what factors should guide the decision?
 
-*Hint:* Research Martin Fowler's "When to use a Rich Domain Model" guidance and specifically the factors: complexity of business logic NOW (not anticipated future complexity), team's DDD expertise, rate of business rule change. The key insight is that starting with a rich model for simple CRUD adds overhead with no benefit - but there is a clear threshold where the anemic model's logic duplication becomes more expensive than refactoring to a rich model.
+_Hint:_ Research Martin Fowler's "When to use a Rich Domain Model" guidance and specifically the factors: complexity of business logic NOW (not anticipated future complexity), team's DDD expertise, rate of business rule change. The key insight is that starting with a rich model for simple CRUD adds overhead with no benefit - but there is a clear threshold where the anemic model's logic duplication becomes more expensive than refactoring to a rich model.
 
 **Q3.** A team discovers their `OrderService` has 47 methods. After analysis, they find that 30 of these methods could be moved directly onto the `Order` domain object without any external dependencies (no repository calls, no event publishing). The other 17 require infrastructure access. How do you use this analysis to prioritise the refactoring from anemic to rich model, and what is the precise test that determines whether a method belongs on the domain object or in a service?
 
-*Hint:* Research the "Tell Don't Ask" principle (SAP-048) applied to this analysis - specifically: a method belongs on a domain object if it only uses data that the object already has (its fields and methods) and makes a decision based purely on that data. A method belongs in a service if it requires data from outside the object (repository, external service, configuration) to make its decision. This is the precise test for the anemic model refactoring boundary.
+_Hint:_ Research the "Tell Don't Ask" principle (SAP-048) applied to this analysis - specifically: a method belongs on a domain object if it only uses data that the object already has (its fields and methods) and makes a decision based purely on that data. A method belongs in a service if it requires data from outside the object (repository, external service, configuration) to make its decision. This is the precise test for the anemic model refactoring boundary.
