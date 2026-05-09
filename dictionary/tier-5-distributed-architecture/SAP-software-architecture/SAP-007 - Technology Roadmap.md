@@ -1,33 +1,37 @@
-﻿---
-layout: default
-title: "Technology Roadmap"
-parent: "Software Architecture Patterns"
-grand_parent: "Technical Dictionary"
-nav_order: 7
-permalink: /software-architecture/technology-roadmap/
+---
 id: SAP-007
+title: Technology Roadmap
 category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
 difficulty: ★★★
-depends_on: Architecture Decision Record (ADR), Engineering Strategy, Architecture Review, Technical Debt Management
-used_by: Engineering Strategy, Architecture Review, Technology Migration Strategy
-related: Architecture Decision Record (ADR), Architecture Review, Engineering Strategy, Technical Debt Management
+depends_on: SAP-006, SAP-008, SAP-064
+used_by: SAP-008
+related: SAP-006, SAP-008, SAP-053, SAP-057
 tags:
   - architecture
   - advanced
   - pattern
   - bestpractice
   - mental-model
+status: complete
+version: 1
+layout: default
+parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
+nav_order: 7
+permalink: /software-architecture/technology-roadmap/
 ---
 
 # SAP-007 - Technology Roadmap
 
 ⚡ TL;DR - A technology roadmap is a time-phased view of planned technology changes, investments, and retirements - linking engineering decisions to business strategy.
 
-| #2301 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Architecture Decision Record (ADR), Engineering Strategy, Architecture Review, Technical Debt Management | |
-| **Used by:** | Engineering Strategy, Architecture Review, Technology Migration Strategy | |
-| **Related:** | Architecture Decision Record (ADR), Architecture Review, Engineering Strategy, Technical Debt Management | |
+| Field          | Value                              |
+| -------------- | ---------------------------------- |
+| **Depends on** | SAP-006, SAP-008, SAP-064          |
+| **Used by**    | SAP-008                            |
+| **Related**    | SAP-006, SAP-008, SAP-053, SAP-057 |
 
 ---
 
@@ -41,6 +45,9 @@ Technology fragmentation at scale creates: increased operational overhead (suppo
 
 **THE INVENTION MOMENT:**
 A technology roadmap provides the shared, time-phased view of where the technology portfolio is heading - which technologies are being adopted, which are stable, which are being phased out, and on what timeline. It replaces uncoordinated local decisions with coordinated direction.
+
+**EVOLUTION:**
+Technology roadmaps as a planning artefact predate software engineering, originating in product strategy (Philips Technology Roadmap, 1987). ThoughtWorks popularised the tech radar format around 2010 with the quadrant model (Adopt/Trial/Assess/Hold). Zalando and CNCF later published open radars, turning the format into an industry-sharing mechanism. Today, radars are generated programmatically from ADR data and team surveys, tightly coupled to live technology inventories and integrated with developer portals like Backstage.
 
 ---
 
@@ -56,6 +63,7 @@ A **Technology Roadmap** is a strategic planning document that defines the organ
 A quarterly-updated view of which technologies the organisation is adopting, holding, trialling, or retiring - and why.
 
 **One analogy:**
+
 > A city's urban planning zoning map. It shows which areas are designated for development (Adopt), which are established residential (Hold), which are earmarked for demolition and redevelopment (Retire), and which are experimental mixed-use zones (Trial). Developers (engineering teams) consult the map before building so individual choices align with the planned city layout. The map evolves as strategic priorities change.
 
 **One insight:**
@@ -66,6 +74,7 @@ A technology roadmap's primary function is enabling independent teams to make lo
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. The roadmap covers all technology layers: infrastructure, platforms, frameworks, languages, tools.
 2. Each technology has an explicit status: Adopt / Trial / Hold / Retire.
 3. The roadmap is time-phased - not a static inventory but a direction over time.
@@ -156,6 +165,7 @@ A technology roadmap is a solution to **Conway's Law** applied to tooling: the t
 ### 🔄 The Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 Q1 Roadmap update:
   → Architecture team collects inputs:
@@ -172,6 +182,7 @@ Q1 Roadmap update:
 ```
 
 **FAILURE PATH:**
+
 ```
 Stale roadmap (not updated for 18 months):
   → Teams consult roadmap → "AWS Lambda in Trial"
@@ -227,23 +238,23 @@ entries:
 
 ### ⚖️ Comparison Table
 
-| Format | Visualisation | Update Cadence | Best For |
-|---|---|---|---|
-| **ThoughtWorks Radar** | Concentric rings | Quarterly | Engineering teams, public sharing |
-| **Timeline Roadmap** | Gantt-style lanes | Monthly | Executive communication |
-| **Technology Register** | Spreadsheet | Continuous | Security inventory, governance |
-| **ADR-based Roadmap** | Linked ADR index | Per-decision | Small teams, code-centric |
+| Format                  | Visualisation     | Update Cadence | Best For                          |
+| ----------------------- | ----------------- | -------------- | --------------------------------- |
+| **ThoughtWorks Radar**  | Concentric rings  | Quarterly      | Engineering teams, public sharing |
+| **Timeline Roadmap**    | Gantt-style lanes | Monthly        | Executive communication           |
+| **Technology Register** | Spreadsheet       | Continuous     | Security inventory, governance    |
+| **ADR-based Roadmap**   | Linked ADR index  | Per-decision   | Small teams, code-centric         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                | Reality                                                                                                                                                                                         |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The roadmap dictates every technology choice | The roadmap provides guidance, not mandates (except for Retire). Teams retain autonomy for choices not covered. The roadmap's power is simplifying the decision space, not eliminating judgment |
-| Roadmaps are a platform team responsibility | Roadmaps require input from all engineering teams. They fail when maintained exclusively by a central team without practitioner input |
-| Roadmaps only cover new technologies | Technology retirement and stabilisation decisions are equally important. A roadmap that only lists "exciting new tech" neglects the majority of an organisation's existing stack |
-| Quarterly updates are too frequent | Quarterly updates reflect the pace of technology change. Annual updates lead to roadmaps that are always 6–12 months stale and lose credibility |
+| Roadmaps are a platform team responsibility  | Roadmaps require input from all engineering teams. They fail when maintained exclusively by a central team without practitioner input                                                           |
+| Roadmaps only cover new technologies         | Technology retirement and stabilisation decisions are equally important. A roadmap that only lists "exciting new tech" neglects the majority of an organisation's existing stack                |
+| Quarterly updates are too frequent           | Quarterly updates reflect the pace of technology change. Annual updates lead to roadmaps that are always 6–12 months stale and lose credibility                                                 |
 
 ---
 
@@ -256,6 +267,7 @@ entries:
 **Root Cause:** Roadmap not visible or not integrated into the decision-making workflow.
 
 **Diagnostic:**
+
 ```bash
 # Survey: "Did you consult the technology roadmap
 # before making your last major technology choice?"
@@ -278,6 +290,7 @@ grep -r "technology-radar\|roadmap" \
 **Root Cause:** Teams found roadmap guidance impractical. No feedback mechanism to update roadmap based on actual adoption patterns.
 
 **Diagnostic:**
+
 ```bash
 # Compare service tech stacks vs. roadmap status:
 # From service catalog or SBOM:
@@ -299,6 +312,7 @@ jq '.services[].database' service-catalog.json \
 **Root Cause:** Roadmap treated as a compliance requirement rather than guidance.
 
 **Diagnostic:**
+
 ```bash
 # Survey: "Has the technology roadmap blocked a decision
 # you believed was correct for your context?"
@@ -311,19 +325,41 @@ jq '.services[].database' service-catalog.json \
 
 ---
 
+### � Transferable Wisdom
+
+**Reusable Engineering Principle:** Planning instruments that aggregate decentralised local signals into a coherent shared direction are valuable in any domain where coordination failure is the primary risk. The roadmap translates individually rational team choices into a system-level view, preventing the tragedy of the commons in shared technical infrastructure.
+
+**Where else this pattern appears:**
+
+- **City infrastructure planning:** utility and road master plans coordinate individual construction projects without mandating every choice - each project consults the map, not a central authority.
+- **Product roadmaps:** product roadmaps coordinate feature investment across product areas, providing directional clarity without micromanaging individual team choices or delivery timelines.
+- **Regulatory compliance calendars:** compliance calendars map upcoming regulatory requirements (GDPR, DORA, PCI-DSS) onto the organisation's systems, enabling coordinated preparation rather than last-minute parallel scrambles.
+
+---
+
+### 💡 The Surprising Truth
+
+The most important column in a technology roadmap is not "Adopt" - it is "Hold" and "Retire." Most organisations have no formal process for retiring technology; they accumulate it indefinitely. A roadmap that makes retirement explicit and schedules it removes the inertia that causes deprecated libraries, end-of-life databases, and unsupported frameworks to persist in production for years - creating the security exposure and operational overhead that "Adopt" decisions were meant to avoid.
+
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- `Architecture Decision Record (ADR)` - individual technology decisions captured in ADRs aggregate into the technology roadmap; understanding ADRs provides the granular decision layer beneath the roadmap
-- `Technical Debt Management` - the technology roadmap's Retire ring is driven by technical debt analysis; understanding technical debt helps prioritise roadmap retirement decisions
+
+- SAP-006 - Architecture Decision Record (ADR) (the granular decision record that feeds and implements roadmap guidance)
+- SAP-064 - Technical Debt Mental Model (roadmaps are the primary governance mechanism for planned technical debt retirement)
 
 **Builds On This (learn these next):**
-- `Architecture Review` - the governance process that validates implementation against roadmap guidance; the roadmap sets the targets, architecture review validates alignment
-- `Engineering Strategy` - the roadmap is one output of the engineering strategy; understanding the relationship between strategy and roadmap clarifies how roadmap decisions are derived
+
+- SAP-008 - Architecture Review (the governance process that validates implementation against roadmap targets)
+- SAP-053 - Architecture Decision Records (ADR) Strategy (organisational ADR practice that produces the signals the roadmap aggregates)
+- SAP-057 - Architecture Governance at Scale (how technology roadmaps fit into the broader governance picture at large organisations)
 
 **Alternatives / Comparisons:**
-- `Engineering Strategy` - the broader strategy from which the roadmap derives its technical themes; strategy is the "why," roadmap is the "what"
-- `Architecture Review Board` - the governance body that produces and enforces the technology roadmap
+
+- SAP-056 - Architecture Fitness Functions (automated continuous variant for measurable constraints; complements the roadmap's strategic view)
+- Architecture Review Board (ARB) - the governance body that produces and enforces the technology roadmap at larger organisations
 
 ---
 
@@ -365,7 +401,12 @@ jq '.services[].database' service-catalog.json \
 
 **Q1.** Your organisation's technology roadmap lists React as "Adopt" and Angular as "Hold." A team building a new front-end application has 4 senior Angular engineers and 0 React engineers. They propose using Angular for the new application. Evaluate the tension between roadmap guidance and team capability constraints. Design a decision framework that balances roadmap consistency with pragmatic team-capability considerations, including the conditions under which a deviation from the roadmap is justified.
 
+_Hint:_ Research how ThoughtWorks manages "Adopt" vs "Trial" signals from practitioners who may have more current information than the central architecture team - the tension between centralised authority and practitioner knowledge is a known challenge in knowledge management, and the radar's "Trial" quadrant was designed specifically to handle it.
+
 **Q2.** A technology radar lists Log4j as "Hold" (in use, no new projects). A critical Log4Shell-type vulnerability is discovered. The security team needs to patch or replace all usages within 72 hours. However, the technology register shows Log4j is in 34 services owned by 12 different teams. Design the incident response process that leverages the technology roadmap's inventory to coordinate the 72-hour remediation, and explain what additional registry data would accelerate the response.
+
+_Hint:_ Look at how the actual Log4Shell (CVE-2021-44228) response played out at organisations with formal technology inventories vs those without - CISA published a retrospective on response time variation, and the difference is instructive for exactly what metadata fields matter in a technology register.
 
 **Q3.** An organisation's technology roadmap is produced by a central architecture team and published quarterly. An engineer on a product team argues that the radar becomes stale within weeks because the central team is too slow to respond to new technology signals from practitioners. Design an alternative roadmap governance model that incorporates practitioner signals continuously while maintaining quality and consistency, specifying: who contributes, who decides, and how conflicts between central guidance and team signals are resolved.
 
+_Hint:_ Study the open-source CNCF Technology Radar contribution model and the Backstage community process - both allow practitioner proposals with lightweight vetting, directly addressing the feedback latency problem while maintaining quality through structured peer review.

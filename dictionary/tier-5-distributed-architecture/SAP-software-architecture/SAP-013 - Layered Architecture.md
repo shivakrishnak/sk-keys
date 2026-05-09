@@ -1,37 +1,37 @@
 ﻿---
-layout: default
-title: "Layered Architecture"
-parent: "Software Architecture Patterns"
-grand_parent: "Technical Dictionary"
-nav_order: 13
-permalink: /software-architecture/layered-architecture/
 id: SAP-013
+title: Layered Architecture
 category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
 difficulty: ★☆☆
-depends_on: Separation of Concerns, Object-Oriented Design, Dependency Inversion
-used_by: Hexagonal Architecture, Clean Architecture, Spring Core, Repository Pattern
-related: Hexagonal Architecture, Clean Architecture, Onion Architecture, Vertical Slice Architecture
+depends_on: SAP-043, SAP-050, SAP-051
+used_by: SAP-014, SAP-015, SAP-021
+related: SAP-014, SAP-015, SAP-016, SAP-017
 tags:
   - architecture
   - pattern
   - foundational
   - mental-model
   - bestpractice
+status: complete
+version: 1
+layout: default
+parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
+nav_order: 13
+permalink: /software-architecture/layered-architecture/
 ---
 
 # SAP-013 - Layered Architecture
 
 ⚡ TL;DR - Layered Architecture organises code into horizontal tiers where each tier can only communicate with the tier directly below it.
 
----
-
-### 📊 Entry Metadata
-
-| #726            | Category: Software Architecture Patterns                                                    | Difficulty: ★☆☆ |
-| :-------------- | :------------------------------------------------------------------------------------------ | :-------------- |
-| **Depends on:** | Separation of Concerns, Object-Oriented Design, Dependency Inversion                        |                 |
-| **Used by:**    | Hexagonal Architecture, Clean Architecture, Spring Core, Repository Pattern                 |                 |
-| **Related:**    | Hexagonal Architecture, Clean Architecture, Onion Architecture, Vertical Slice Architecture |                 |
+| Field          | Value                              |
+| -------------- | ---------------------------------- |
+| **Depends on** | SAP-043, SAP-050, SAP-051          |
+| **Used by**    | SAP-014, SAP-015, SAP-021          |
+| **Related**    | SAP-014, SAP-015, SAP-016, SAP-017 |
 
 ---
 
@@ -45,6 +45,9 @@ A routine database migration takes three weeks. A bug fix in payment logic accid
 
 **THE INVENTION MOMENT:**
 This is exactly why Layered Architecture was created - to draw clear boundaries between concerns so that changes in one area don't cascade unpredictably through the whole system.
+
+**EVOLUTION:**
+Layered Architecture was formalised by the OSI network model (ISO 7498, 1984) - the most widely deployed layered design in computing history. In application software, the three-tier model became standard through the 1990s enterprise Java era (EJB, then Spring, then Spring Boot all defaulted to layered architecture). Its dominance peaked in the 2000s; alternatives emerged as CRUD-heavy layering proved insufficient for complex domain logic. Today, layered architecture remains the default starting point for enterprise applications but is frequently extended by hexagonal or clean variants for complex domains.
 
 ---
 
@@ -361,24 +364,41 @@ grep -rn "return.*Entity" src/main/java/**/controller/
 
 ---
 
-### 🔗 Related Keywords
+### 💎 Transferable Wisdom
+
+**Reusable Engineering Principle:** Constraints on dependency direction are a general mechanism for managing complexity. The direction of allowed dependencies determines where change propagates through a system. By constraining propagation to flow downward only, layered architecture limits the blast radius of any given change to the layers above it.
+
+**Where else this pattern appears:**
+
+- **OSI network model:** the internet is built on 7 layers where each layer provides services to the layer above through a stable interface - changes in the transport layer (TCP) do not require changes in the application layer (HTTP).
+- **Legal hierarchy:** constitutional law constrains statutory law constrains regulations constrains enforcement - a lower layer cannot override a higher layer's principles; changes propagate upward, not downward.
+- **Supply chains:** finished goods depend on components; components do not depend on how goods are used - the same dependency direction constraint manages change propagation in physical manufacturing.
+
+---
+
+### 💡 The Surprising Truth
+
+Layered Architecture does not actually eliminate coupling - it redirects it. In a strict layered system, the domain layer is still tightly coupled to the data layer through DAO interfaces. When a Layered Architecture suffers from "transaction script seeping into the domain," the root cause is not indiscipline - it is that the layered model provides no structural mechanism to prevent it. The dependency rule in Layered Architecture is convention, not constraint. ArchUnit or similar fitness functions are required to enforce it mechanically, because the architecture alone cannot stop a developer from directly calling a repository from a controller.
+
+---
+
+### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
-- `Separation of Concerns` - the core principle that justifies creating layers
-- `Dependency Inversion Principle` - why upper layers depend on interfaces, not concrete implementations
+- SAP-043 - SOLID Principles (the design principles that justify why layers should depend on interfaces, not concretions)
+- SAP-050 - Cohesion and SAP-051 - Coupling (the core concepts; layered architecture is a mechanism for managing coupling between concerns)
 
 **Builds On This (learn these next):**
 
-- `Hexagonal Architecture` - extends layering by inverting ALL dependencies toward the domain
-- `Clean Architecture` - applies strict dependency rules with explicit rings instead of top-down layers
-- `Repository Pattern` - the standard way to implement the data access layer
-- `Domain Model` - the domain objects that populate the middle layers
+- SAP-014 - Hexagonal Architecture (extends layering by inverting all dependencies toward the domain)
+- SAP-015 - Clean Architecture (applies strict dependency rules with explicit concentric rings)
+- SAP-017 - Vertical Slice Architecture (an alternative that organises by feature instead of technical tier)
 
 **Alternatives / Comparisons:**
 
-- `Vertical Slice Architecture` - groups code by feature rather than by technical tier
-- `Modular Monolith Patterns` - adds module boundaries that layered architecture lacks
+- SAP-017 - Vertical Slice Architecture (groups code by feature rather than by technical tier; preferred when teams own end-to-end features)
+- SAP-039 - Modular Monolith Patterns (adds horizontal module boundaries that layered architecture lacks)
 
 ---
 
@@ -417,4 +437,12 @@ grep -rn "return.*Entity" src/main/java/**/controller/
 
 **Q1.** In a standard four-layer architecture, a new requirement arrives: "Send an email whenever an order is placed." The emailing logic is an infrastructure concern, but it must be triggered by a business event in the domain layer. The domain layer is not allowed to depend on infrastructure. How do you satisfy both the dependency rule and the business requirement without putting email code in the domain?
 
-**Q2.** A team adopts strict layered architecture, enforcing it with ArchUnit tests. Six months later, a performance profiling session shows that 40% of response time is spent mapping objects between layers (entity → domain object → DTO). The team wants to eliminate the domain object for simple read operations and return database results directly to the controller. What does this decision cost architecturally, and under what precise conditions is it a valid trade-off rather than technical debt?
+*Hint:* Research the Observer pattern and specifically the Domain Event pattern from DDD - the domain publishes an event (OrderPlaced) without knowing who listens; an infrastructure event listener subscribes and sends the email. This inverts the dependency without violating the layering rule.
+
+**Q2.** A team adopts strict layered architecture, enforcing it with ArchUnit tests. Six months later, a performance profiling session shows that 40% of response time is spent mapping objects between layers (entity -> domain object -> DTO). The team wants to eliminate the domain object for simple read operations and return database results directly to the controller. What does this decision cost architecturally, and under what precise conditions is it a valid trade-off rather than technical debt?
+
+*Hint:* Research the CQRS pattern - specifically how it separates the read model (which can bypass layers for performance) from the write model (which must honour domain invariants). This gives a principled framework for the "bypass the domain for reads" decision rather than making it an unprincipled exception.
+
+**Q3.** An engineering team is adopting Domain-Driven Design within their existing layered architecture. They want to move business logic from service classes into rich domain entities. However, their ORM (JPA/Hibernate) requires entity classes to be mutable (public setters, no-arg constructor) for session management, which conflicts with DDD's always-valid entity and immutable value object principles. How do you design the boundary between ORM entity classes and DDD domain objects to get the benefits of both?
+
+*Hint:* Research Vaughn Vernon's "Implementing Domain-Driven Design" chapter on persistence and the concept of separating the ORM persistence model from the domain model using a mapping layer - then compare with the Spring Data "Active Record for JPA" approach to understand the trade-off between mapping overhead and persistence purity.
