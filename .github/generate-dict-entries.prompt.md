@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: "Generate Technical Dictionary keyword entries (Master Prompt v3.1) for a category or tier"
+description: "Generate Technical Dictionary keyword entries (Master Prompt v4.0) for a category or tier"
 tools:
   - run_in_terminal
   - read_file
@@ -9,11 +9,11 @@ tools:
 
 # Technical Dictionary - Entry Generator
 
-Generate complete, spec-compliant v3.1 keyword entries for all stub files in a **category** or **tier**.
+Generate complete, spec-compliant v4.0 keyword entries for all stub files in a **category** or **tier**.
 
 **Target:** `${input:target:Category code (e.g. MSV, JVM) or tier number (e.g. 3, 5)}`
 **Batch size:** `${input:batchSize:Entries per batch (default: 10)}`
-**Mode:** `${input:mode:generate (default) | upgrade-v31}`
+**Mode:** `${input:mode:generate (default) | upgrade-v40}`
 
 ---
 
@@ -39,7 +39,7 @@ If the output says **"Nothing to generate"**, stop here — all entries are comp
 
 ---
 
-## Phase 2 — Generate content for each batch _(skip when mode = upgrade-v31)_
+## Phase 2 — Generate content for each batch _(skip when mode = upgrade-v40)_
 
 Work through **one batch at a time**. For each entry in the batch:
 
@@ -47,11 +47,11 @@ Work through **one batch at a time**. For each entry in the batch:
 
 Read the stub file to capture its exact frontmatter (id, title, nav_order, permalink, tags, depends_on, used_by, related, difficulty).
 
-### 2b. Generate full v3.1 content
+### 2b. Generate full v4.0 content
 
 Apply every rule from the workspace `copilot-instructions.md` (already loaded). Key constraints:
 
-**Structure** — YAML frontmatter plus all 22 content sections in order:
+**Structure** — YAML frontmatter plus all 23 content sections in order:
 
 1. YAML frontmatter (update `status: draft` → `status: complete`)
 2. `# CODE-NNN - KEYWORD NAME`
@@ -63,7 +63,7 @@ Apply every rule from the workspace `copilot-instructions.md` (already loaded). 
 8. `### 🔩 First Principles Explanation`
 9. `### 🧪 Thought Experiment`
 10. `### 🧠 Mental Model / Analogy`
-11. `### 📶 Gradual Depth - Four Levels`
+11. `### 📶 Gradual Depth - Five Levels`
 12. `### ⚙️ How It Works (Mechanism)`
 13. `### 🔄 The Complete Picture - End-to-End Flow`
 14. `### 💻 Code Example` _(if programmatic)_
@@ -72,10 +72,11 @@ Apply every rule from the workspace `copilot-instructions.md` (already loaded). 
 17. `### ⚠️ Common Misconceptions` _(min 4 rows)_
 18. `### 🚨 Failure Modes & Diagnosis` _(min 3 modes)_
 19. `### 🔗 Related Keywords`
-20. `### 📌 Quick Reference Card`
-21. `### 💎 Transferable Wisdom`
+20. `### 📌 Quick Reference Card` _(9-row box with ANTI-PATTERN row)_
+21. `### 💎 Transferable Wisdom` _(principle + 3 apps + industry)_
 22. `### 💡 The Surprising Truth`
-23. `### 🧠 Think About This Before We Continue` (3 Qs with _Hint:_ per question)
+23. `### ✅ Mastery Checklist` _(5 testable indicators)_
+24. `### 🧠 Think About This Before We Continue` _(3 Qs with Hint, at least 1 TYPE G)_
 
 **Formatting rules:**
 
@@ -87,7 +88,7 @@ Apply every rule from the workspace `copilot-instructions.md` (already loaded). 
 **YAML rules:**
 
 - Preserve all existing frontmatter fields (id, nav_order, permalink, tags)
-- Add or update: `status: complete`, `version: 1`
+- Add or update: `status: complete`, `version: 3`
 - Double-quote any `title:` containing `: ` (colon + space)
 - Use full IDs for `depends_on`, `used_by`, `related` (e.g. `MSV-006, DST-001`)
 - No em dashes (`—`) anywhere — use hyphens (`-`)
@@ -102,7 +103,7 @@ Apply every rule from the workspace `copilot-instructions.md` (already loaded). 
 
 ### 2c. Write the file
 
-Replace the entire stub content with the generated v3.1 entry.
+Replace the entire stub content with the generated v4.0 entry.
 
 ### 2d. Confirm
 
@@ -190,9 +191,9 @@ After all batches are written:
 cd C:\ASK\MyWorkspace\sk-keys
 git add dictionary/
 # For generate mode:
-git commit -m "feat: generate ${input:target} entries - full v3.1 content"
-# For upgrade-v31 mode:
-# git commit -m "upgrade: →v3.1 ${input:target} entries - batch N"
+git commit -m "feat: generate ${input:target} entries - full v4.0 content"
+# For upgrade-v40 mode:
+# git commit -m "upgrade: →v4.0 ${input:target} entries - batch N"
 ```
 
 ---
@@ -206,4 +207,4 @@ git commit -m "feat: generate ${input:target} entries - full v3.1 content"
   --v3-only
 ```
 
-All generated entries should show `complete`. For upgrade-v31 mode, confirm `version: 2` is set on upgraded files. If any show otherwise, fix before committing.
+All generated entries should show `complete`. For upgrade-v40 mode, confirm `version: 3` is set on upgraded files. If any show otherwise, fix before committing.

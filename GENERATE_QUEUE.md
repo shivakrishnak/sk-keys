@@ -1,6 +1,6 @@
 # generate_queue.py — Usage Guide
 
-Finds stub / draft entries that need full v3.0 content generated,
+Finds stub / draft entries that need full v4.0 content generated,
 and outputs ready-to-paste batch invocations for Copilot.
 
 **Script location:** `tmp/generate_queue.py`
@@ -140,7 +140,7 @@ Generate dictionary entries MSV-003 through MSV-007:
   MSV-067      | Microservices Migration Strategy (Strangler Fig) | ★★★
 
 Category: Microservices | Tier: tier-5-distributed-architecture | Folder: MSV-microservices
-Follow Master Prompt v3.0 exactly.
+Follow Master Prompt v4.0 exactly.
 
 --------------------------------------------------------------
 # Batch 2  (MSV-068 through MSV-072)
@@ -180,7 +180,7 @@ The agent will automatically:
 
 - Run `generate_queue.py` to discover stubs
 - Read each stub's existing frontmatter
-- Generate full v3.0 content for each entry
+- Generate full v4.0 content for each entry
 - Write each file
 - Verify and commit
 
@@ -198,14 +198,14 @@ Generate dictionary entries MSV-003 through MSV-007:
   MSV-067      | Microservices Migration Strategy    | ★★★
 
 Category: Microservices | Tier: tier-5-distributed-architecture | Folder: MSV-microservices
-Follow Master Prompt v3.0 exactly.
+Follow Master Prompt v4.0 exactly.
 ```
 
-Copilot will read each stub, generate full v3.0 content, and write the files.
+Copilot will read each stub, generate full v4.0 content, and write the files.
 Repeat for each batch block until all stubs are done.
 
 > **Requirement for both options:** The workspace must have `.github/copilot-instructions.md`
-> open or attached — it contains the full Master Prompt v3.0 spec that drives generation.
+> open or attached — it contains the full Master Prompt v4.0 spec that drives generation.
 > In Agent mode this is loaded automatically from the workspace.
 
 ---
@@ -213,10 +213,10 @@ Repeat for each batch block until all stubs are done.
 ### Step 3 — Verify
 
 ```powershell
-# Check all generated files for v3.0 compliance
+# Check all generated files for v4.0 compliance
 python tmp/check_all_categories.py --category MSV --v3-only
 
-# Expected: every generated entry shows v3.0 + complete
+# Expected: every generated entry shows v4.0 + complete
 # If any show v2.1 or earlier, re-generate that batch
 ```
 
@@ -226,7 +226,7 @@ python tmp/check_all_categories.py --category MSV --v3-only
 
 ```powershell
 git add dictionary/
-git commit -m "feat: generate MSV-003-MSV-007 - full v3.0 entries"
+git commit -m "feat: generate MSV-003-MSV-007 - full v4.0 entries"
 ```
 
 ---
@@ -247,4 +247,4 @@ git commit -m "feat: generate MSV-003-MSV-007 - full v3.0 entries"
 | `tmp/generate_queue.py`                   | This script — stub discovery and batch output  |
 | `tmp/check_all_categories.py`             | Full audit — version and compliance check      |
 | `.github/generate-dict-entries.prompt.md` | VS Code agent prompt that drives the full loop |
-| `.github/copilot-instructions.md`         | Master Prompt v3.0 spec (loaded automatically) |
+| `.github/copilot-instructions.md`         | Master Prompt v4.0 spec (loaded automatically) |

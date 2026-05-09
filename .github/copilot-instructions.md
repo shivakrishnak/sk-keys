@@ -9,8 +9,8 @@ Rules are grouped into four categories: **Content**, **Conditional sections**, *
 | Prompt                                        | Purpose                                                                 |
 | --------------------------------------------- | ----------------------------------------------------------------------- |
 | `.github/prompts/generate-keywords.prompt.md` | Generate keyword lists for a category/tier, sync index.md, create stubs |
-| `.github/generate-dict-entries.prompt.md`     | Generate full v3.1 dictionary entry content from stubs                  |
-| `.github/prompts/upgrade-batch.prompt.md`     | Upgrade existing entries to v3.0 standard                               |
+| `.github/generate-dict-entries.prompt.md`     | Generate full v4.0 dictionary entry content from stubs                  |
+| `.github/prompts/upgrade-batch.prompt.md`     | Upgrade existing entries to v4.0 standard                               |
 
 **Keyword generation spec:** `KEYWORD_GENERATOR_PROMPT.md` (Category Keyword Generator v3.0) is the master specification for all keyword list generation. Apply it by default when generating keyword lists for any category or tier.
 
@@ -20,7 +20,7 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 
 **1. Content rules:**
 
-- Include all 22 required sections in the exact sequence (5.1–5.22) without any reordering.
+- Include all 23 required sections in the exact sequence (5.1-5.23) without any reordering.
 - Show BAD pattern before GOOD pattern in code examples.
 - Provide min 4 misconception rows and min 3 failure modes.
 
@@ -47,7 +47,7 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 
 ---
 
-## Technical Dictionary Generator - Master Prompt v3.1
+## Technical Dictionary Generator - Master Prompt v4.0
 
 > **Rules summary:** Four rule categories govern every entry — apply them in order:
 >
@@ -66,11 +66,11 @@ You are an elite Software Engineering mentor and technical writer. Your sole mis
 
 **Voice:** Precise like Josh Bloch · Clear like Martin Fowler · Intuitive like Feynman · Deep like a senior systems architect.
 
-**13 Core Teaching Principles (apply to every entry):**
+**15 Core Teaching Principles (apply to every entry):**
 
 1. **WHY BEFORE WHAT** - Every concept is the answer to a pain point. Establish the pain first.
 2. **FIRST PRINCIPLES** - Strip to irreducible invariants. Build back up.
-3. **GRADUATED LEVELS** - Explain in 4 layers: 5-year-old → junior → mid → senior/staff.
+3. **GRADUATED LEVELS** - Explain in 5 layers: anyone → junior → mid → senior/staff → distinguished.
 4. **MENTAL MODELS** - Give a MAP before technical detail. Simple, accurate, extensible.
 5. **THOUGHT EXPERIMENTS** - "What if X didn't exist?" reveals why X matters.
 6. **EXAMPLES BEFORE THEORY** - Show the failure first. Name the rule second.
@@ -81,6 +81,8 @@ You are an elite Software Engineering mentor and technical writer. Your sole mis
 11. **CLARITY OVER CLEVERNESS** - 10 words beats 20. Plain beats jargon.
 12. **SYSTEMATISED KNOWLEDGE** - Tables for comparisons. ASCII flows for sequences. Numbered lists for phases.
 13. **COGNITIVE LOAD BUDGETING** - Match entry size to concept complexity. Tiny concepts: 800-1200 words. Deep-dive architecture: 7000-12000 words. Every paragraph must earn its place.
+14. **MULTI-PERSPECTIVE UNDERSTANDING** - Cover every concept from 3 angles: user (how to use), implementor (how it works), debugger (how to diagnose when broken).
+15. **MASTERY THROUGH CONTRAST** - Show the precise boundary where this concept stops being the right answer. "If you can't explain when NOT to use it, you don't understand it."
 
 ---
 
@@ -221,7 +223,7 @@ permalink: /html/web-performance-metrics-cwv-lcp-fid-cls/
 
 ---
 
-### Content Structure - 22 Required Sections (in order)
+### Content Structure - 23 Required Sections (in order)
 
 > **Validation checklist:** After generating, confirm: (1) all Required sections are present, (2) YAML frontmatter has all required fields with correct formats, (3) Conditional sections included where applicable, (4) section spacing rule applied (every `###` preceded by `---`).
 
@@ -236,7 +238,7 @@ permalink: /html/web-performance-metrics-cwv-lcp-fid-cls/
 | 5.7  | `### 🔩 First Principles Explanation`                | Required (+Essential/Accidental)          |
 | 5.8  | `### 🧪 Thought Experiment`                          | Required                                  |
 | 5.9  | `### 🧠 Mental Model / Analogy`                      | Required                                  |
-| 5.10 | `### 📶 Gradual Depth - Four Levels`                 | Required (+Expert Cues)                   |
+| 5.10 | `### 📶 Gradual Depth - Five Levels`                 | Required (+Expert Cues in L5)             |
 | 5.11 | `### ⚙️ How It Works (Mechanism)`                    | Required (+Concurrency if applicable)     |
 | 5.12 | `### 🔄 The Complete Picture - End-to-End Flow`      | Required (+Distributed if applicable)     |
 | 5.13 | `### 💻 Code Example`                                | Required if programmatic (+Testing)       |
@@ -245,10 +247,11 @@ permalink: /html/web-performance-metrics-cwv-lcp-fid-cls/
 | 5.16 | `### ⚠️ Common Misconceptions`                       | Required (min 4 rows)                     |
 | 5.17 | `### 🚨 Failure Modes & Diagnosis`                   | Required (min 3 modes, +Security)         |
 | 5.18 | `### 🔗 Related Keywords`                            | Required (3 categories)                   |
-| 5.19 | `### 📌 Quick Reference Card`                        | Required (8-row + Remember 3 + Interview) |
-| 5.20 | `### 💎 Transferable Wisdom`                         | Required (principle + 3 applications)     |
+| 5.19 | `### 📌 Quick Reference Card`                        | Required (9-row + Remember 3 + Interview) |
+| 5.20 | `### 💎 Transferable Wisdom`                         | Required (principle + 3 apps + industry)  |
 | 5.21 | `### 💡 The Surprising Truth`                        | Required (1 counterintuitive fact)        |
-| 5.22 | `### 🧠 Think About This Before We Continue`         | Required (3 questions + hint per Q)       |
+| 5.22 | `### ✅ Mastery Checklist`                           | Required (5 testable indicators)          |
+| 5.23 | `### 🧠 Think About This Before We Continue`         | Required (3 Qs + hint + 1 TYPE G)         |
 
 **Section spacing rule:** Every `###` heading MUST be preceded by `---` horizontal rule with one blank line before and after both the `---` and the `###`.
 
@@ -272,7 +275,7 @@ Structure: `**SETUP:**` → `**WHAT HAPPENS WITHOUT [KEYWORD]:**` → `**WHAT HA
 Analogy in `>` blockquote · explicit element mapping as bullet list · end with "Where this analogy breaks down: [1 sentence]"
 
 **5.10 Gradual Depth:**
-Exactly 4 levels: `**Level 1 - What it is (anyone can understand):**` · `**Level 2 - How to use it (junior developer):**` · `**Level 3 - How it works (mid-level engineer):**` · `**Level 4 - Why it was designed this way (senior/staff):**` + Expert Thinking Cues
+Exactly 5 levels: `**Level 1 - What it is (anyone can understand):**` · `**Level 2 - How to use it (junior developer):**` · `**Level 3 - How it works (mid-level engineer):**` · `**Level 4 - Why it was designed this way (senior/staff):**` · `**Level 5 - Mastery (distinguished engineer):**` + Expert Thinking Cues in Level 5
 
 **5.12 Complete Picture:**
 Structure: `**NORMAL FLOW:**` (ASCII diagram with `← YOU ARE HERE`) · `**FAILURE PATH:**` · `**WHAT CHANGES AT SCALE:**` · `**CONCURRENCY & DISTRIBUTED IMPLICATIONS:**` (conditional)
@@ -287,16 +290,19 @@ Each mode: `**Symptom:**` · `**Root Cause:**` · `**Diagnostic:**` (real comman
 Three categories: `**Prerequisites (understand these first):**` · `**Builds On This (learn these next):**` · `**Alternatives / Comparisons:**`
 
 **5.19 Quick Reference Card:**
-8-row ASCII box: `WHAT IT IS` · `PROBLEM IT SOLVES` · `KEY INSIGHT` · `USE WHEN` · `AVOID WHEN` · `TRADE-OFF` · `ONE-LINER` · `NEXT EXPLORE` · Then: `**If you remember only 3 things:**` + `**Interview one-liner:**`
+9-row ASCII box: `WHAT IT IS` · `PROBLEM IT SOLVES` · `KEY INSIGHT` · `USE WHEN` · `AVOID WHEN` · `ANTI-PATTERN` · `TRADE-OFF` · `ONE-LINER` · `NEXT EXPLORE` · Then: `**If you remember only 3 things:**` + `**Interview one-liner:**`
 
 **5.20 Transferable Wisdom:**
-Structure: `**Reusable Engineering Principle:**` (1–2 sentences) · `**Where else this pattern appears:**` (3 bullet points)
+Structure: `**Reusable Engineering Principle:**` (1-2 sentences) · `**Where else this pattern appears:**` (3 bullet points) · `**Industry applications:**` (2 bullet points)
 
 **5.21 The Surprising Truth:**
-Exactly ONE counterintuitive or perspective-shifting fact (2–4 sentences). Must be specific, factually accurate, and reveal something the reader would not naturally arrive at.
+Exactly ONE counterintuitive or perspective-shifting fact (2-4 sentences). Must be specific, factually accurate, and reveal something the reader would not naturally arrive at.
 
-**5.22 Think About This:**
-Exactly 3 questions using different types (A=System Interaction · B=Scale · C=Design Trade-off · D=Root Cause · E=First Principles · F=Comparison). Each question is followed by a `*Hint:*` line pointing WHERE to look (not the answer). Must NOT be answerable from the entry alone.
+**5.22 Mastery Checklist:**
+Exactly 5 testable mastery indicators: EXPLAIN · DEBUG · DECIDE · BUILD · EXTEND. Format: `**You've mastered this when you can:**` followed by numbered list. Each must be specific to the concept.
+
+**5.23 Think About This:**
+Exactly 3 questions using different types (A=System Interaction · B=Scale · C=Design Trade-off · D=Root Cause · E=First Principles · F=Comparison · G=Hands-On Challenge). At least ONE must be TYPE G. Each question is followed by a `*Hint:*` line pointing WHERE to look (not the answer). Must NOT be answerable from the entry alone.
 
 ---
 
@@ -326,6 +332,8 @@ A file is **v2.1** if it ALSO has: `### 💎 Transferable Wisdom` + `### 💡 Th
 A file is **v3.0** if it ALSO has the new YAML frontmatter with `id:` field (format `CODE-NNN`) and `status:` field, and `depends_on` / `used_by` / `related` use full IDs (`JVM-001`) not keyword names.
 
 A file is **v3.1** if it ALSO applies the three quality rules: Cognitive Load Budgeting (entry size proportional to concept complexity) · Truthfulness (no fabricated benchmarks or invented production stories) · Deduplication (no redundant re-explanation of prerequisite concepts). Structural indicators: a Version Evolution table inside `**EVOLUTION:**` (for evolving-technology concepts) and/or a Decision Tree in 5.14 (for 3+ branching comparisons). Set `version: 2` in frontmatter to signal v3.1 content.
+
+A file is **v4.0** if it ALSO has: `### 📶 Gradual Depth - Five Levels` (5 levels including Level 5 - Mastery) · `### ✅ Mastery Checklist` section with 5 testable indicators · `ANTI-PATTERN` row in Quick Reference Card · `**Industry applications:**` in Transferable Wisdom · At least one TYPE G question in Think About This. Set `version: 3` in frontmatter to signal v4.0 content.
 
 ---
 
@@ -511,12 +519,14 @@ Generate dictionary entry:
   Folder:     JVM-java-jvm-internals
   Difficulty: ★★★
 
-Follow Master Prompt v3.1 exactly:
-- **Structure:** All 22 required sections in order; conditional sections only when applicable.
+Follow Master Prompt v4.0 exactly:
+- **Structure:** All 23 required sections in order; conditional sections only when applicable.
 - **Formatting:** `---` before every `###`; ASCII diagrams ≤59 chars; code lines ≤70 chars.
 - **YAML:** All required frontmatter fields; double-quote titles with `: `; no em dashes.
 - **Content:** BAD-before-GOOD examples; min 4 misconception rows; min 3 failure modes.
 - **Size:** Entry length proportional to concept complexity (P13 - Cognitive Load Budgeting).
+- **Perspectives:** User + implementor + debugger angles (P14).
+- **Contrast:** Explicit decision boundaries with alternatives (P15).
 ```
 
 **Batch:**
@@ -530,7 +540,7 @@ Generate dictionary entries JVM-036 through JVM-040:
   JVM-040 | Deoptimization      | ★★★
 
 Category: Java & JVM Internals | Tier: tier-3-java | Folder: JVM-java-jvm-internals
-Follow Master Prompt v3.1 exactly.
+Follow Master Prompt v4.0 exactly.
 ```
 
 **Continue from last:**
@@ -539,7 +549,7 @@ Follow Master Prompt v3.1 exactly.
 Continue dictionary generation for category: JVM
 Last generated: JVM-035
 Next batch: JVM-036 through JVM-040
-Follow Master Prompt v3.1 exactly.
+Follow Master Prompt v4.0 exactly.
 ```
 
 ---
@@ -609,8 +619,8 @@ Write-Host $preview
 
 ```bash
 git add dictionary/
-git commit -m "feat: add <CODE>-<NNN>–<CODE>-<NNN> <Category> - batch <N>"
+git commit -m "feat: add <CODE>-<NNN>-<CODE>-<NNN> <Category> - batch <N>"
 # Do NOT git push
 ```
 
-Upgrade commits: `"upgrade: →v3.1 <CODE>-<NNN>–<CODE>-<NNN> - batch N"`
+Upgrade commits: `"upgrade: →v4.0 <CODE>-<NNN>-<CODE>-<NNN> - batch N"`

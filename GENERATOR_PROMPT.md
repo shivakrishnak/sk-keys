@@ -1,4 +1,4 @@
-﻿# 🎯 Technical Dictionary Generator - Master Prompt v3.1
+﻿# 🎯 Technical Dictionary Generator - Master Prompt v4.0
 
 > **This is the authoritative generation spec** for every keyword entry in this dictionary.
 > Paste the prompt below into any AI assistant to generate entries that conform to the full standard.
@@ -7,7 +7,7 @@
 
 ````
 ═══════════════════════════════════════════════════════════════════════════
-TECHNICAL DICTIONARY GENERATOR - MASTER PROMPT v3.1
+TECHNICAL DICTIONARY GENERATOR - MASTER PROMPT v4.0
 ═══════════════════════════════════════════════════════════════════════════
 
 You are an elite Software Engineering mentor and technical writer.
@@ -62,11 +62,13 @@ PRINCIPLE 2: FIRST PRINCIPLES THINKING
    would force you to the same design?"
 
 PRINCIPLE 3: GRADUATED LEVELS OF UNDERSTANDING
-  Explain in 4 layers - each self-contained:
+  Explain in 5 layers - each self-contained:
     Layer 1 (5-year-old): one analogy, one sentence
     Layer 2 (junior dev): what it is, why it exists
     Layer 3 (mid engineer): how it works, trade-offs
     Layer 4 (senior/staff): internals, failure modes, at-scale behaviour
+    Layer 5 (distinguished): cross-system reasoning, novel application,
+      teaching others, recognizing the pattern in unfamiliar domains
   Each reader should find their entry point and learn upward.
 
 PRINCIPLE 4: MENTAL MODELS OVER JARGON
@@ -162,6 +164,29 @@ PRINCIPLE 13: COGNITIVE LOAD BUDGETING
   These are GUIDELINES, not hard limits. The test is:
   "Does every paragraph earn its place?" If removing a paragraph
   loses nothing, remove it. If adding one fills a gap, add it.
+
+PRINCIPLE 14: MULTI-PERSPECTIVE UNDERSTANDING
+  Every concept must be understood from three angles:
+    - THE USER: How to use it correctly. API surface, patterns,
+      guardrails. "What do I need to know to not break things?"
+    - THE IMPLEMENTOR: How it works inside. Data structures,
+      algorithms, protocols. "What happens under the hood?"
+    - THE DEBUGGER: How to diagnose when it breaks. Symptoms,
+      root causes, diagnostic tools. "It's 3 AM and this is broken."
+  If an entry only covers one perspective, it is incomplete.
+  Most tutorials cover only the user angle. Most docs cover only
+  the implementor angle. This dictionary covers ALL THREE.
+
+PRINCIPLE 15: MASTERY THROUGH CONTRAST
+  Understanding what something IS NOT is as powerful as
+  understanding what it IS. Every concept exists in tension
+  with alternatives. The reader must understand:
+    - The precise boundary where this concept STOPS being
+      the right answer and an alternative takes over
+    - What problem this concept solves WORSE than alternatives
+    - The specific conditions that flip the decision
+  "If you can't explain when NOT to use it, you don't
+   truly understand it."
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 2: ID SYSTEM, FILE FORMAT & FOLDER STRUCTURE
@@ -971,21 +996,20 @@ Content rules:
   - 150–250 words total
 
 ─────────────────────────────────────────────────────────────────────────
-5.10  GRADUAL DEPTH - FOUR LEVELS  [REQUIRED - NEW SECTION]
+5.10  GRADUAL DEPTH - FIVE LEVELS  [REQUIRED - UPGRADED v4.0]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
-  ### 📶 Gradual Depth - Four Levels
+  ### 📶 Gradual Depth - Five Levels
 
 PURPOSE: Every reader finds their level. Junior devs learn
 the essentials. Seniors learn the internals. Each level
 builds directly on the previous.
 
 Content rules:
-  - EXACTLY four levels, always labelled exactly as below:
+  - EXACTLY five levels, always labelled exactly as below:
   - Each level self-contained but references the level above
   - Each level 2–5 sentences (prose, not bullets)
-  - This section replaces the old "Simple Elaborated" section
 
   **Level 1 - What it is (anyone can understand):**
   [Plain English. No jargon. A smart non-engineer understands.]
@@ -1003,11 +1027,18 @@ Content rules:
    considered and rejected. What makes this design elegant or flawed.
    Edge cases that expose the design's limits.]
 
-  **EXPERT THINKING CUES (weave into Level 4):**
+  **Level 5 - Mastery (distinguished engineer):**
+  [Cross-system reasoning. Novel application of this concept to
+   solve problems it wasn't originally designed for. Teaching others.
+   Recognizing this pattern in unfamiliar domains. What would you
+   change about the design if starting over today?]
+
+  **EXPERT THINKING CUES (weave into Level 5):**
   - What do experts notice that beginners miss?
   - What heuristic does a staff engineer use to decide?
   - What red flag signals misuse of this concept?
   - What's the decision framework for choosing this over alternatives?
+  - How does this concept compose with other concepts at scale?
 
 ─────────────────────────────────────────────────────────────────────────
 5.11  HOW IT WORKS - MECHANISM  [REQUIRED]
@@ -1285,7 +1316,9 @@ Content rules:
   - Added "PROBLEM IT SOLVES" row - the WHY
   - Added "KEY INSIGHT" row - the non-obvious truth
   - Added "TRADE-OFF" row - always show the cost
+  - Added "ANTI-PATTERN" row - most dangerous misuse (v4.0)
   - Total box width: exactly 60 characters (including borders)
+  - Total rows: 9
 
   After the ASCII box, include:
 
@@ -1311,7 +1344,7 @@ the pattern that applies to 10 other concepts the reader
 will encounter. Charlie Munger's "mental model lattice."
 
 Content rules:
-  - EXACTLY 2 parts:
+  - EXACTLY 3 parts:
 
   **Reusable Engineering Principle:**
   [1–2 sentences: the general principle this concept exemplifies.
@@ -1324,6 +1357,10 @@ Content rules:
   - [Domain/concept 1] - [how same principle manifests]
   - [Domain/concept 2] - [how same principle manifests]
   - [Domain/concept 3] - [how same principle manifests]
+
+  **Industry applications:**
+  - [Industry/system type 1] - [why this concept is critical there]
+  - [Industry/system type 2] - [how it's applied differently]
 
 ─────────────────────────────────────────────────────────────────────────
 5.21  THE SURPRISING TRUTH  [REQUIRED - NEW SECTION]
@@ -1354,7 +1391,41 @@ Content rules:
     * What happens at extreme scale that nobody mentions in tutorials
 
 ─────────────────────────────────────────────────────────────────────────
-5.22  THINK ABOUT THIS  [REQUIRED]
+5.22  MASTERY CHECKLIST  [REQUIRED - NEW SECTION]
+─────────────────────────────────────────────────────────────────────────
+
+Section header:
+  ### ✅ Mastery Checklist
+
+PURPOSE: Measurable self-assessment. The reader should know
+EXACTLY when they have mastered this concept - not "I read it"
+but "I can DO these things."
+
+Content rules:
+  - EXACTLY 5 mastery indicators, numbered
+  - Each indicator must be TESTABLE - not vague
+  - Mix of skill types:
+    * EXPLAIN: Can you teach this to a junior without jargon?
+    * DEBUG: Given [specific symptom], can you identify root cause?
+    * DECIDE: In [specific scenario], can you choose correctly
+      between this and its alternative under time pressure?
+    * BUILD: Can you implement/configure this correctly from memory?
+    * EXTEND: Can you apply this pattern to a novel problem
+      in a different domain?
+  - Format:
+
+    **You've mastered this when you can:**
+    1. [EXPLAIN] [specific testable statement]
+    2. [DEBUG] [specific diagnostic scenario]
+    3. [DECIDE] [specific decision scenario with alternatives]
+    4. [BUILD] [specific implementation/configuration task]
+    5. [EXTEND] [specific novel application scenario]
+
+  - Each must be specific to THIS concept - not generic
+  - The reader should be able to literally test themselves
+
+─────────────────────────────────────────────────────────────────────────
+5.23  THINK ABOUT THIS  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
@@ -1379,6 +1450,10 @@ Content rules:
     TYPE F - Comparison Depth:
       "Both X and Y solve problem P. What is the precise condition
        that makes X correct and Y wrong - or vice versa?"
+    TYPE G - Hands-On Challenge:
+      "Build/implement/diagnose [specific mini-task] using this
+       concept. What decisions do you face? What would you test first?"
+  - At least ONE of Q1-Q3 MUST be TYPE G (hands-on challenge)
   - Questions must NOT be answerable from entry content alone
   - Questions must require connecting to OTHER concepts
   - Each question MUST be followed by a *Hint:* line
@@ -1478,6 +1553,26 @@ THE PRODUCTION REALITY TEST - apply to section 5.17:
   Every failure mode must include a REAL diagnostic command.
   If you cannot name the command: the failure mode is not real enough.
 
+THE DANGEROUS ENGINEER TEST (v4.0):
+  After reading this entry, can the reader:
+    1. Use this concept correctly under production pressure?
+    2. Diagnose when it breaks without Googling?
+    3. Explain to someone else why NOT to misuse it?
+    4. Choose between this and its alternatives in <60 seconds?
+  If any answer is NO: strengthen the relevant section.
+
+THE MULTI-PERSPECTIVE TEST (v4.0) - apply to sections 5.10-5.13:
+  Does the entry cover all three angles from P14?
+    ☐ USER perspective: how to use it correctly
+    ☐ IMPLEMENTOR perspective: how it works inside
+    ☐ DEBUGGER perspective: how to diagnose when it breaks
+  If any angle is missing, the entry is incomplete.
+
+THE CONTRAST TEST (v4.0) - apply to sections 5.14, 5.19:
+  Does the reader know precisely WHEN to stop using this concept
+  and switch to an alternative? If the decision boundary is vague,
+  sharpen it. P15 demands explicit contrast.
+
 ALWAYS INCLUDE:
   - Version-specific behaviour (Java 8/11/17/21, Node 18/20, etc.)
   - Real tool references: jcmd, jstat, kubectl, docker stats,
@@ -1551,28 +1646,32 @@ KNOWLEDGE DEDUPLICATION
 DEPTH CALIBRATION:
 
   ★☆☆ Foundational:
-    - Layer 1 and 2 emphasis
-    - 1–2 code examples (basic usage)
+    - Layer 1-2 emphasis, Layer 5 optional (brief)
+    - 1-2 code examples (basic usage)
     - 3 failure modes minimum
     - 4 misconceptions minimum
     - Thought experiment: simple, direct
+    - Mastery checklist: focus on EXPLAIN + USE indicators
 
   ★★☆ Intermediate:
-    - Layer 2 and 3 emphasis
-    - 2–4 code examples (usage + production pattern)
+    - Layer 2-3 emphasis, Layer 5 encouraged
+    - 2-4 code examples (usage + production pattern)
     - 4 failure modes minimum
     - 5 misconceptions minimum
     - Comparison table: always required
     - Thought experiment: involves system interaction
+    - Mastery checklist: focus on DEBUG + DECIDE indicators
 
   ★★★ Deep-dive:
-    - Layer 3 and 4 emphasis
-    - 3–5 code examples (production + diagnostic + tuning)
+    - Layer 3-5 emphasis, Layer 5 required (full depth)
+    - 3-5 code examples (production + diagnostic + tuning)
     - 5 failure modes minimum
     - 6 misconceptions minimum
     - Comparison table: always required
     - First principles: full invariants + derived design
     - Thought experiment: pushes to scale or edge case
+    - Mastery checklist: all 5 types required, high bar
+    - Industry applications: required in Transferable Wisdom
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 8: COMPLETE ENTRY SKELETON - COPY EXACTLY
@@ -1695,7 +1794,7 @@ Where this analogy breaks down: [1 sentence.]
 
 ---
 
-### 📶 Gradual Depth - Four Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [Plain English. No jargon.]
@@ -1708,6 +1807,10 @@ Where this analogy breaks down: [1 sentence.]
 
 **Level 4 - Why it was designed this way (senior/staff):**
 [Design decisions. Alternatives rejected. Edge cases.]
+
+**Level 5 - Mastery (distinguished engineer):**
+[Cross-system reasoning. Novel application. Teaching others.
+ What would you change if redesigning today?]
 
 ---
 
@@ -1829,6 +1932,8 @@ Fix:
 ├──────────────┼───────────────────────────────────────────┤
 │ AVOID WHEN   │ [specific condition NOT to use this]      │
 ├──────────────┼───────────────────────────────────────────┤
+│ ANTI-PATTERN │ [most dangerous misuse - 1 line]          │
+├──────────────┼───────────────────────────────────────────┤
 │ TRADE-OFF    │ [gain] vs [cost]                          │
 ├──────────────┼───────────────────────────────────────────┤
 │ ONE-LINER    │ "[memorable metaphor insight]"            │
@@ -1856,6 +1961,10 @@ Fix:
 - [Domain 2] - [how same principle manifests]
 - [Domain 3] - [how same principle manifests]
 
+**Industry applications:**
+- [Industry/system 1] - [why critical there]
+- [Industry/system 2] - [how applied differently]
+
 ---
 
 ### 💡 The Surprising Truth
@@ -1863,6 +1972,17 @@ Fix:
 [2–4 sentences. One counterintuitive, jaw-dropping fact that
  makes this concept permanently memorable. Something the reader
  would not naturally arrive at on their own.]
+
+---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. [EXPLAIN] [specific testable statement]
+2. [DEBUG] [specific diagnostic scenario]
+3. [DECIDE] [specific decision scenario with alternatives]
+4. [BUILD] [specific implementation/configuration task]
+5. [EXTEND] [specific novel application scenario]
 
 ---
 ### 🧠 Think About This Before We Continue
@@ -1894,11 +2014,11 @@ SINGLE ENTRY:
     Folder:     [CODE-folder-name]
     Difficulty: [★☆☆ | ★★☆ | ★★★]
 
-  Follow Master Prompt v3.1 exactly.
+  Follow Master Prompt v4.0 exactly.
   Use the complete skeleton from Section 8.
   Do not skip any required section.
   Do not add sections not in the spec.
-  Apply all 13 teaching principles from Section 1.
+  Apply all 15 teaching principles from Section 1.
 
 BATCH OF 5:
 
@@ -1914,7 +2034,7 @@ BATCH OF 5:
   Tier:       [tier-N-name]
   Folder:     [CODE-folder-name]
 
-  Follow Master Prompt v3.1 exactly.
+  Follow Master Prompt v4.0 exactly.
   Each entry is a separate markdown file.
   Sequential IDs - no gaps.
   Each entry fully self-contained.
@@ -1926,7 +2046,7 @@ CONTINUE FROM LAST:
   Next batch: [CODE]-[NNN] through [CODE]-[NNN]
 
   Confirm next ID = last + 1.
-  Follow Master Prompt v3.1 exactly.
+  Follow Master Prompt v4.0 exactly.
 
 CROSS-CATEGORY BATCH:
 
@@ -1938,7 +2058,7 @@ CROSS-CATEGORY BATCH:
 
   Each entry goes in its own category folder.
   Cross-category depends_on uses full IDs: JVM-001, SEC-023.
-  Follow Master Prompt v3.1 exactly.
+  Follow Master Prompt v4.0 exactly.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 10: SELF-VALIDATION CHECKLIST
@@ -1964,7 +2084,7 @@ FRONTMATTER:
   ☐ status: one of draft / in-progress / complete
   ☐ version: integer, starts at 1
 
-STRUCTURE (23 sections check):
+STRUCTURE (24 sections check):
   ☐ 5.1  Title line with keyword name
   ☐ 5.2  TL;DR - one sentence, max 25 words
   ☐ 5.3  Metadata table with Related row
@@ -1974,7 +2094,7 @@ STRUCTURE (23 sections check):
   ☐ 5.7  First Principles - invariants + trade-offs + essential/accidental (UPGRADED)
   ☐ 5.8  Thought Experiment
   ☐ 5.9  Mental Model / Analogy - with breakdown note
-  ☐ 5.10 Gradual Depth - four levels + expert thinking cues (UPGRADED)
+  ☐ 5.10 Gradual Depth - FIVE levels + expert cues in Level 5 (v4.0)
   ☐ 5.11 How It Works - mechanism + concurrency behavior (UPGRADED)
   ☐ 5.12 The Complete Picture - E2E + distributed implications (UPGRADED)
   ☐ 5.13 Code Example + testing strategy (if programmatic) (UPGRADED)
@@ -1983,10 +2103,11 @@ STRUCTURE (23 sections check):
   ☐ 5.16 Common Misconceptions - min 4 rows
   ☐ 5.17 Failure Modes & Diagnosis - min 3, with security mode (UPGRADED)
   ☐ 5.18 Related Keywords - 3 categories
-  ☐ 5.19 Quick Reference Card - 8-row + "remember 3" + interview (UPGRADED)
-  ☐ 5.20 Transferable Wisdom
-  ☐ 5.21 The Surprising Truth - one counterintuitive fact (NEW)
-  ☐ 5.22 Think About This - 3 questions each with hint (UPGRADED)
+  ☐ 5.19 Quick Reference Card - 9-row + "remember 3" + interview (v4.0)
+  ☐ 5.20 Transferable Wisdom + industry applications (v4.0)
+  ☐ 5.21 The Surprising Truth - one counterintuitive fact
+  ☐ 5.22 Mastery Checklist - 5 testable indicators (v4.0 NEW)
+  ☐ 5.23 Think About This - 3 questions, at least 1 TYPE G (v4.0)
 
 CONTENT QUALITY:
   ☐ Reader can understand fully without external lookup
@@ -1995,19 +2116,22 @@ CONTENT QUALITY:
   ☐ At least one failure mode addresses security (if attack surface exists)
   ☐ Thought experiment uses concrete numbers/steps
   ☐ Analogy includes "where it breaks down" note
-  ☐ Gradual depth - all 4 levels present and escalating
-  ☐ Level 4 includes expert thinking cues
+  ☐ Gradual depth - all 5 levels present and escalating (v4.0)
+  ☐ Level 5 includes expert thinking cues and cross-system reasoning
   ☐ End-to-end flow shows failure path AND scale behaviour
   ☐ Essential vs accidental complexity distinguished in First Principles
   ☐ Historical evolution included in Problem section
   ☐ Comparison table has "Best For" + "How to choose" note
   ☐ Related Keywords uses 3-category structure
-  ☐ Quick Reference Card has all 8 rows + "remember 3" + interview
+  ☐ Quick Reference Card has all 9 rows + "remember 3" + interview (v4.0)
   ☐ Transferable Wisdom extracts reusable principle + 3 applications
+  ☐ Transferable Wisdom includes industry applications (v4.0)
   ☐ Surprising Truth is genuinely counterintuitive and specific
+  ☐ Mastery Checklist has 5 testable indicators (v4.0)
   ☐ Testing/verification strategy stated (if concept is testable)
   ☐ Concurrency behavior noted (if applicable)
   ☐ Think About This has exactly 3 questions, all different types
+  ☐ At least one TYPE G (hands-on challenge) question (v4.0)
   ☐ Each question is followed by a *Hint:* direction pointer
 
 FORMATTING:
@@ -2027,7 +2151,7 @@ FORMATTING:
 TEACHING PRINCIPLES (Section 1):
   ☐ P1: WHY established before WHAT
   ☐ P2: Core invariants identified
-  ☐ P3: All 4 levels of understanding present
+  ☐ P3: All 5 levels of understanding present (v4.0)
   ☐ P4: Mental model is simple, accurate, extensible
   ☐ P5: Thought experiment reveals truth simply
   ☐ P6: Examples precede rules
@@ -2038,6 +2162,8 @@ TEACHING PRINCIPLES (Section 1):
   ☐ P11: No unnecessary complexity or jargon
   ☐ P12: Knowledge systematised via tables, flows, lists
   ☐ P13: Entry size proportional to concept complexity
+  ☐ P14: All 3 perspectives covered: user, implementor, debugger (v4.0)
+  ☐ P15: Decision boundary with alternatives is explicit (v4.0)
 
 TRUTHFULNESS:
   ☐ No fabricated benchmarks, latency numbers, or scale claims
@@ -2051,7 +2177,7 @@ DEDUPLICATION:
   ☐ Word budget spent on what makes THIS concept distinctive
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 11: CHANGE LOG - v1 → v2 → v2.1 → v3.0 → v3.1
+SECTION 11: CHANGE LOG - v1 → v2 → v2.1 → v3.0 → v3.1 → v4.0
 ═══════════════════════════════════════════════════════════════════════════
 
 ─────────────────────────────────────────────────────────────────────────
@@ -2182,7 +2308,7 @@ OTHER CHANGES:
   - Category list: updated to match 43-category master list
 
 ═══════════════════════════════════════════════════════════════════════════
-END OF MASTER PROMPT v3.1
+END OF MASTER PROMPT v4.0
 ═══════════════════════════════════════════════════════════════════════════
 ```
 
