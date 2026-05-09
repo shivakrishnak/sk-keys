@@ -419,6 +419,7 @@ public class OrderApplicationService {
 **Reusable Engineering Principle:** When significant state changes occur, record what happened rather than issuing direct commands to all interested parties. Let interested parties pull the information they need from the record rather than being pushed commands they must execute.
 
 **Where else this pattern appears:**
+
 - **Git commit history:** Each commit is a Domain Event - it records what changed, who changed it, when it changed, and why (commit message). No one "commands" git's history; it records facts, and tooling (CI/CD, code review, blame) reacts to those facts independently.
 - **Double-entry bookkeeping:** Every financial transaction is recorded as an immutable event (journal entry). No financial entry is ever deleted or modified - only new entries are added. This is Domain Events applied to accounting, and it predates object-oriented programming by 500 years.
 - **Medical records:** A patient record accumulates events (diagnoses, prescriptions, procedures) immutably. Medical history is never overwritten - new events extend the record. A doctor reads the history to understand the current state.
@@ -434,14 +435,17 @@ The hardest part of Domain Events is determining what constitutes a "significant
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-023 - Domain Model (domain events express what happened in the domain model; understanding what domain objects are is required to understand what events they raise)
 - SAP-030 - Aggregate Root (domain events are raised by aggregate roots during state transitions; understanding which object raises the event and why requires understanding aggregates)
 
 **Builds On This (learn these next):**
+
 - SAP-018 - CQRS Pattern (the command side raises domain events; the read side projects them into query models; CQRS is the architectural framework that makes Domain Events central)
 - SAP-019 - Event Sourcing Pattern (stores aggregate state as a sequence of domain events; Event Sourcing takes Domain Events to their logical conclusion by making events the primary storage format)
 
 **Alternatives / Comparisons:**
+
 - SAP-019 - Event Sourcing (closely related; Domain Events raise and forget; Event Sourcing stores every raised event as the source of truth)
 - SAP-030 - Aggregate Root (complementary; aggregates raise events; they are not alternatives but collaborators)
 

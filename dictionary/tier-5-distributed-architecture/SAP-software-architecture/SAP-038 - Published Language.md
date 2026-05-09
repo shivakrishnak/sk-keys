@@ -1,21 +1,24 @@
 ﻿---
-layout: default
-title: "Published Language"
-parent: "Software Architecture Patterns"
-grand_parent: "Technical Dictionary"
-nav_order: 38
-permalink: /software-architecture/published-language/
 id: SAP-038
+title: Published Language
 category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
 difficulty: ★★★
-depends_on: Bounded Context, Open Host Service, Context Map, Domain Events
-used_by: API design, Microservices, Event-driven architectures, DDD
-related: Open Host Service, Bounded Context, Context Map, Schema Registry, API Versioning
+depends_on: SAP-037, SAP-035
+used_by: SAP-037
+related: SAP-035, SAP-037
 tags:
   - architecture
   - ddd
   - pattern
-  - deep-dive
+status: complete
+version: 1
+layout: default
+parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
+nav_order: 38
+permalink: /software-architecture/published-language/
   - advanced
   - strategic
 ---
@@ -24,15 +27,11 @@ tags:
 
 ⚡ TL;DR - A Published Language is a well-documented, versioned data exchange format that enables Bounded Contexts to communicate without sharing internal domain models - it is the lingua franca at context boundaries.
 
----
-
-### 📊 Entry Metadata
-
-| #751            | Category: Software Architecture Patterns                                         | Difficulty: ★★★ |
-| :-------------- | :------------------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Bounded Context, Open Host Service, Context Map, Domain Events                   |                 |
-| **Used by:**    | API design, Microservices, Event-driven architectures, DDD                       |                 |
-| **Related:**    | Open Host Service, Bounded Context, Context Map, Schema Registry, API Versioning |                 |
+| Field          | Value            |
+| -------------- | ---------------- |
+| **Depends on** | SAP-037, SAP-035 |
+| **Used by**    | SAP-037          |
+| **Related**    | SAP-035, SAP-037 |
 
 ---
 
@@ -43,6 +42,9 @@ Two microservices need to exchange order data. Service A uses `Order.customerId:
 
 **THE PUBLISHED LANGUAGE SOLUTION:**
 Define a formal, shared exchange language: a documented schema with agreed names, types, and semantics. Both services translate their internal models to and from this language. The Published Language is the neutral ground - neither service's internal model, but a documented contract that both can implement against.
+
+**EVOLUTION:**
+Eric Evans introduced Published Language in "Domain-Driven Design" (2003) as the companion to Open Host Service - OHS defines the service interface, PL defines the exchange format. The concept predates DDD in EDI (Electronic Data Interchange) formats from the 1970s-80s. WSDL and XML Schema (2001) were the first formal PL tooling for web services. JSON Schema (2007) and OpenAPI (2011) replaced them for REST. Apache Avro and Protocol Buffers brought schema evolution capabilities. Confluent Schema Registry (2015) made Published Language for Kafka events a first-class infrastructure concern - every event's schema is versioned, stored, and enforced centrally.
 
 ---
 
@@ -366,18 +368,36 @@ curl -X POST \
 
 ---
 
-### 🔗 Related Keywords
+### 💎 Transferable Wisdom
 
-**Prerequisites:**
+**Reusable Engineering Principle:** Systems that must exchange data long-term need a common language that is independent of either system's internal representation. The common language must be versioned, documented, and stable; it is the contract both sides depend on.
 
-- `Open Host Service` - OHS publishes a language
-- `Bounded Context` - contexts use Published Language to communicate
+**Where else this pattern appears:**
+- **Legal contract language:** Legal documents use a precise, formally defined vocabulary ("hereinafter," "consideration," "force majeure") that is independent of either party's internal terminology. Both parties translate their intent into this neutral legal language.
+- **Musical notation:** Sheet music is a Published Language for music - a formal, agreed-upon notation that any trained musician (any system) can read and perform. The composer's internal mental model and the performer's interpretation are both separate from the notation.
+- **GeoJSON/GPX formats:** Geographic data exchange formats define a Published Language for location data. Navigation apps, mapping services, and GPS devices all speak GeoJSON, regardless of their internal data structures.
 
-**Related:**
+---
 
-- `Context Map` - shows Published Language relationships
-- `Schema Registry` - tool for managing Published Language schemas
-- `API Versioning` - the versioning practice for Published Languages
+### 💡 The Surprising Truth
+
+The hardest part of a Published Language is NOT the initial design - it is versioning over time. A Published Language that can never be changed is often too rigid; one that changes frequently breaks all consumers. The practical solution is additive versioning: new fields can always be added (consumers ignore unknown fields), but no existing fields can be removed or renamed without a major version increment with deprecation period. This is the same evolution strategy used by JSON-LD, Protocol Buffers, and Avro - and it requires establishing the versioning rules BEFORE the first consumer integrates, not after breaking changes have already occurred.
+
+---
+
+### �🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- SAP-037 - Open Host Service (the OHS publishes a language; understanding OHS explains the context in which Published Language is defined and maintained)
+- SAP-035 - Context Map (the Context Map shows which contexts are connected by Published Language relationships; understanding Context Map provides the strategic picture)
+
+**Builds On This (learn these next):**
+- SAP-037 - Open Host Service (complementary; OHS is the service boundary, Published Language is the exchange format; they are designed together)
+- SAP-035 - Context Map (the Context Map shows where Published Language relationships exist; completing the strategic DDD picture)
+
+**Alternatives / Comparisons:**
+- SAP-036 - Shared Kernel (alternative exchange approach: share code rather than define a neutral language; lower translation overhead but higher coupling)
+- Domain-specific schema languages (OpenAPI, Avro, Protobuf - tools for defining Published Language formally; not alternatives but implementation mechanisms)
 
 ---
 
@@ -406,4 +426,12 @@ curl -X POST \
 
 **Q1.** You're designing the Published Language for an `OrderPlaced` event. The event needs to carry product information (product IDs, names, quantities). Should the Published Language include the full product name and description, or just the product ID? What are the implications of each choice for consumers who need to display order details to customers?
 
+*Hint:* Research the "fat event" vs "thin event" design choice - specifically the trade-off between self-contained events (include all data consumers might need - fat) and reference events (include only IDs, consumers look up data - thin). Fat events: consumers don't need extra API calls but the event payload grows and may contain stale data. Thin events: smaller payloads but consumers must call the product service to get names, creating a dependency. Research the "event-carried state transfer" pattern as a middle ground.
+
 **Q2.** Your event's Published Language uses `totalAmountPence: long` (amount in pence/cents). A new requirement needs to support Japanese Yen (no fractional currency) and Kuwaiti Dinar (3 decimal places). The current schema only supports 2-decimal currencies. Designing a backward-compatible evolution of this schema - what changes, what stays, and how do you handle existing events with the old format?
+
+*Hint:* Research how financial message standards (ISO 20022, FIX Protocol) handle multi-currency amount representation - specifically the pattern of `{ amount: long, currencyCode: string, minorUnit: int }` where `minorUnit` specifies the number of decimal places for the currency (2 for USD/EUR, 0 for JPY, 3 for KWD). The evolution: add `currencyCode` and `minorUnit` fields alongside `totalAmountPence`. Old events default `currencyCode` to the original currency and `minorUnit` to 2. New events populate all three fields.
+
+**Q3.** Three teams must share a Published Language for product catalog data. Team A owns the OHS and wants to use Avro (binary, schema-enforced). Team B prefers JSON (human-readable, widely supported). Team C wants Protobuf (performance-focused). The three teams cannot agree on the serialization format. How do you resolve this technical and political disagreement, and what principle should guide the choice?
+
+*Hint:* Research the "upstream/downstream" power dynamic in OHS - the team publishing the OHS (Team A) decides the Published Language format; consuming teams (Teams B and C) use ACLs to translate the Published Language into their preferred internal format. The OHS provider should choose the format that is best for their production needs (Avro with Schema Registry for event streaming makes sense). Consumers use ACLs - not to avoid the OHS, but to translate its format into their internal representation. Research Apache Kafka Connect's converters as infrastructure that performs this translation transparently.

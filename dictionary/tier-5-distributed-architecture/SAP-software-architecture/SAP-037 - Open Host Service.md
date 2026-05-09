@@ -1,21 +1,24 @@
 ﻿---
-layout: default
-title: "Open Host Service"
-parent: "Software Architecture Patterns"
-grand_parent: "Technical Dictionary"
-nav_order: 37
-permalink: /software-architecture/open-host-service/
 id: SAP-037
+title: Open Host Service
 category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
 difficulty: ★★★
-depends_on: Bounded Context, Context Map, Domain Model, API Design
-used_by: Public APIs, Microservices, Platform architectures, DDD
-related: Bounded Context, Context Map, Published Language, Anti-Corruption Layer
+depends_on: SAP-035, SAP-034
+used_by: SAP-035, SAP-038
+related: SAP-034, SAP-035, SAP-038
 tags:
   - architecture
   - ddd
   - pattern
-  - deep-dive
+status: complete
+version: 1
+layout: default
+parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
+nav_order: 37
+permalink: /software-architecture/open-host-service/
   - advanced
   - strategic
 ---
@@ -24,15 +27,11 @@ tags:
 
 ⚡ TL;DR - An Open Host Service defines a formal, stable protocol through which a Bounded Context exposes its services to multiple consumers - rather than customizing for each, it publishes a well-documented interface that all consumers integrate against.
 
----
-
-### 📊 Entry Metadata
-
-| #750            | Category: Software Architecture Patterns                                | Difficulty: ★★★ |
-| :-------------- | :---------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Bounded Context, Context Map, Domain Model, API Design                  |                 |
-| **Used by:**    | Public APIs, Microservices, Platform architectures, DDD                 |                 |
-| **Related:**    | Bounded Context, Context Map, Published Language, Anti-Corruption Layer |                 |
+| Field          | Value                     |
+| -------------- | ------------------------- |
+| **Depends on** | SAP-035, SAP-034          |
+| **Used by**    | SAP-035, SAP-038          |
+| **Related**    | SAP-034, SAP-035, SAP-038 |
 
 ---
 
@@ -43,6 +42,9 @@ An `Inventory` service has 6 downstream consumers: Order Management, Shipping, P
 
 **THE OPEN HOST SERVICE SOLUTION:**
 The Inventory service defines one formal, stable, well-documented integration protocol. All consumers integrate against this protocol. The Inventory team owns and maintains the protocol. Consumers adapt to it (or use an ACL to translate). The host service doesn't know or care about each consumer's internal model.
+
+**EVOLUTION:**
+Eric Evans introduced Open Host Service in "Domain-Driven Design" (2003) as the pattern for a team that wants to serve many consumers without being customised for each. The original concept was protocol-level. REST API design practices (2005+) and OpenAPI/Swagger (2011) operationalised OHS with formal specification tooling - a well-documented REST API with OpenAPI spec IS an Open Host Service. GraphQL (2015) took the pattern further: consumers specify exactly what fields they need, reducing the need for ACLs on the consumer side. Today, OHS is the standard for any "platform API" that must serve diverse consumers.
 
 ---
 
@@ -344,21 +346,36 @@ public record StockDepletedEvent(
 
 ---
 
-### 🔗 Related Keywords
+### 💎 Transferable Wisdom
 
-**Prerequisites:**
+**Reusable Engineering Principle:** When one system must serve many consumers with different needs, publish ONE stable protocol optimized for integration rather than customizing separately for each consumer. The protocol absorbs consumer diversity; the implementation doesn't.
 
-- `Bounded Context` - the context providing the OHS
-- `Context Map` - shows OHS relationships on the map
+**Where else this pattern appears:**
+- **Electrical power outlets:** Each country defines one standard power outlet format (its Open Host Service). Every appliance manufacturer adapts their device to the standard (or uses a travel adapter = ACL). The power grid doesn't customise its output per device.
+- **Public transit schedules:** A train network publishes one unified GTFS (General Transit Feed Specification) data feed. All navigation apps (Google Maps, Citymapper, Transit) integrate against this standard. The transit authority doesn't produce custom feeds per app.
+- **Banking SWIFT messages:** SWIFT defines the Published Language for international bank transfers. All banks implement SWIFT. No bank builds custom bilateral protocols for each correspondent bank - one standard serves all.
 
-**Built With:**
+---
 
-- `Published Language` - the schema/protocol the OHS uses
+### 💡 The Surprising Truth
 
-**Consumer Patterns:**
+Open Host Service and Anti-Corruption Layer are complementary, not opposing patterns - but from different perspectives. The UPSTREAM team implements an OHS so consumers can integrate easily. The DOWNSTREAM team implements an ACL to protect their domain from the upstream's model. In a well-designed system, both exist simultaneously: the upstream publishes an OHS with a Published Language, AND the downstream wraps it with an ACL that translates the Published Language into their domain model. The ACL exists even for a well-designed OHS because the downstream domain has different concepts than the upstream - translation is always needed at bounded context boundaries.
 
-- `Anti-Corruption Layer` - consumers use ACL to translate OHS into their model
-- `Conformist` - consumers adopt the OHS model directly
+---
+
+### �🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- SAP-035 - Context Map (OHS is one of the relationship patterns on a Context Map; understanding Context Map shows when OHS is the right pattern versus Shared Kernel, Conformist, or Separate Ways)
+- SAP-034 - Anti-Corruption Layer (the consumer-side companion to OHS; understanding ACL from the consumer perspective completes the picture of how OHS relationships work in practice)
+
+**Builds On This (learn these next):**
+- SAP-038 - Published Language (the schema and contract that the OHS publishes; OHS defines the service boundary, Published Language defines the exchange format)
+- SAP-035 - Context Map (after understanding OHS, the Context Map shows where OHS relationships appear in the full architecture)
+
+**Alternatives / Comparisons:**
+- SAP-034 - Anti-Corruption Layer (complementary from the consumer side; ACL translates the OHS's Published Language into the consumer's domain model)
+- SAP-036 - Shared Kernel (alternative integration approach; shares code instead of publishing a service protocol; lower latency but higher coupling)
 
 ---
 
@@ -386,4 +403,12 @@ public record StockDepletedEvent(
 
 **Q1.** Your Inventory service's Open Host Service REST API is consumed by 8 services. You need to change the response format for `GET /v1/stock/{productId}` - the `quantity` field needs to become a nested object `{ available: int, reserved: int }` instead of a single integer. This is a breaking change. Design the complete migration strategy: how do you introduce v2, support both v1 and v2, notify consumers, and eventually deprecate v1?
 
+*Hint:* Research URL path versioning (`/v1/` vs `/v2/`) versus header-based versioning (`Accept: application/vnd.inventory.v2+json`). The standard approach: implement `/v2/stock/{productId}` alongside existing `/v1/`, notify all 8 consumers, give a deprecation period (e.g., 3 months), then remove `/v1/`. Research how Stripe's API versioning strategy handles this: they preserve old behavior per API key version, so consumers never break until they explicitly upgrade.
+
 **Q2.** An Open Host Service typically means the upstream team defines the integration contract. But what about API design quality? If the OHS has a poorly designed Published Language (verbose, confusing field names, inconsistent formats), should consumers just use ACLs to hide the poor design? Or should they push back on the OHS provider to improve the design? What's the governance process for improving OHS quality?
+
+*Hint:* Research the "Customer/Supplier" relationship pattern from Evans's DDD - specifically the governance model where downstream teams are customers with influence over the upstream team's (supplier's) API roadmap. The question reveals a political dimension of Context Map patterns: Conformist relationships occur when downstream has no influence; Customer/Supplier occurs when downstream teams can negotiate API improvements. The ACL should be a temporary solution while the OHS improves, not a permanent acceptance of poor design.
+
+**Q3.** Your platform team publishes an OHS for authentication (`AuthService`). All 15 application services depend on it. When `AuthService` is down, all 15 services cannot authenticate new requests. The OHS has created a single point of failure. How do you design the OHS and its consumers to maintain some level of operation when the OHS is temporarily unavailable?
+
+*Hint:* Research the "Circuit Breaker" pattern (from Microservices patterns) applied to OHS consumer resilience - specifically how a consumer that caches authentication decisions for a configurable TTL can serve requests from cache during `AuthService` outages. Research JWT tokens as a Published Language for authentication that embeds expiry and claims, enabling consumers to validate tokens locally without calling `AuthService` for every request. This converts a synchronous OHS dependency into a stateless validation operation.

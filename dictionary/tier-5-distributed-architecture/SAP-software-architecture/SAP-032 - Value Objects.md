@@ -423,6 +423,7 @@ grep -rn "String\|BigDecimal\|UUID" \
 **Reusable Engineering Principle:** Replace primitive types with domain-typed wrappers wherever business constraints apply to the primitive. The wrapper is the single place where those constraints are enforced, making invalid states unrepresentable.
 
 **Where else this pattern appears:**
+
 - **Newtypes in Rust/Haskell:** The newtype pattern wraps a primitive in a typed struct to prevent accidental misuse. A `Kilometers(f64)` and `Miles(f64)` are different types despite wrapping the same primitive - the compiler prevents passing Miles where Kilometers is expected. This is Value Object at the type system level.
 - **SQL column constraints:** A `CHECK (price >= 0)` constraint wraps the `DECIMAL` type with a business rule. The database enforces the constraint regardless of which application writes to the column - the constraint travels with the data, not with the application code.
 - **CSS color values:** A CSS `color` is not a string - it is a value with rules about valid formats (hex, rgb, hsl) and specific equality semantics (\`#FF0000\` and \`rgb(255, 0, 0)\` represent the same color). Value Object applied to styling.
@@ -438,14 +439,17 @@ Value Objects are more frequently the correct modeling choice than Entities, but
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-023 - Domain Model (value objects are the building blocks of domain models; understanding domain models provides the context for why typed domain values matter)
 - SAP-043 - SOLID Principles (value object immutability follows from Single Responsibility and Open/Closed principles; understanding SOLID explains why value objects should not have setters)
 
 **Builds On This (learn these next):**
+
 - SAP-030 - Aggregate Root (aggregate roots use value objects as typed attributes for their internal state; value objects appear throughout aggregate design)
 - SAP-033 - Entities (the complementary concept; understanding both value objects and entities together defines when identity matters and when it does not)
 
 **Alternatives / Comparisons:**
+
 - SAP-033 - Entities (the contrast; use an entity when identity matters and the object is tracked over time; use a value object when the concept is defined purely by its attributes)
 - Primitive types (always-available alternative; correct for truly primitive values with no business constraints; wrong when constraints or operations are needed)
 

@@ -364,6 +364,7 @@ grep -rn "import com.stripe\|import software.amazon\|import com.twilio" \
 **Reusable Engineering Principle:** When integrating with any external system that uses a different conceptual model, never allow the external model's types, names, or assumptions to cross the boundary. Create a translation layer that speaks both languages and insulates your system from the external system's evolution.
 
 **Where else this pattern appears:**
+
 - **Embassy translation services:** An embassy employs translators who convert diplomatic communications from one country's language and cultural conventions to another's. The sending country speaks its own language; the receiving country receives the message in its own language. The translator is the ACL.
 - **Operating system device drivers:** A device driver is an ACL between the OS kernel's abstract device model and the specific hardware register layout of a physical device. The kernel calls `write(buffer)` without knowing whether the device is a USB drive, SATA disk, or NVMe SSD. The driver translates.
 - **Currency exchange at airports:** Currency exchange booths translate between monetary systems with different units, rates, and denominations. Neither the traveler nor the local merchant needs to know how the other's currency works.
@@ -379,15 +380,18 @@ The Anti-Corruption Layer pattern reveals a fundamental truth about system integ
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-035 - Context Map (the ACL is one of the relationship patterns on a Context Map; understanding what a Context Map shows is required to know when an ACL is the right relationship pattern versus Shared Kernel or Conformist)
 - SAP-014 - Hexagonal Architecture (the ACL typically lives in the "adapter" layer of a Hexagonal Architecture; understanding Hexagonal provides the architectural slot where the ACL sits)
 
 **Builds On This (learn these next):**
+
 - SAP-035 - Context Map (the Context Map shows all ACL relationships between bounded contexts; after understanding ACL, the Context Map provides the broader strategic picture)
 - SAP-037 - Open Host Service (an alternative relationship pattern where the upstream publishes a stable API specifically for downstream consumption, potentially eliminating the need for an ACL)
 - SAP-038 - Published Language (complements Open Host Service; a published language gives the ACL a stable vocabulary to translate into)
 
 **Alternatives / Comparisons:**
+
 - SAP-037 - Open Host Service (when the upstream team publishes a stable, well-designed API, the ACL may be thinner or unnecessary; OHS reduces translation overhead)
 - Conformist pattern (deliberately adopting the upstream model without translation; correct only when the upstream model is well-designed and the integration is temporary)
 

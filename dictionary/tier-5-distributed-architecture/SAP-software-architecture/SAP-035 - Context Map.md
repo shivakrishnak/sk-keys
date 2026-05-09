@@ -337,6 +337,7 @@ relationships:
 **Reusable Engineering Principle:** Make dependencies between systems visible, explicit, and named before they become the invisible constraints that prevent independent change. An unmapped dependency is an unknown risk.
 
 **Where else this pattern appears:**
+
 - **Org chart dependency maps:** Team topology diagrams (Team Topologies) show which teams depend on which platform teams, which enabling teams exist, and what kind of interactions they have (collaboration, X-as-a-Service, facilitating). This is a Context Map for the organization.
 - **Infrastructure dependency graphs:** Terraform dependency graphs show which resources depend on which, which must be created first, and what the blast radius of a change is. This is a Context Map for infrastructure.
 - **Package dependency trees:** `npm ls` or Maven dependency trees show which packages depend on which, revealing circular dependencies and version conflicts. A dependency tree is a Context Map for software libraries.
@@ -352,16 +353,19 @@ Context Maps are the most underused DDD artifact because they require organizati
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-034 - Anti-Corruption Layer (one of the core relationship patterns shown on a Context Map; understanding ACL is required to understand what the map is documenting when it shows an ACL relationship)
 - SAP-036 - Shared Kernel (another core relationship pattern; understanding Shared Kernel and ACL gives you the two most important integration patterns the map documents)
 - SAP-037 - Open Host Service (the third major pattern; a context map is largely a picture of which contexts use ACL, Shared Kernel, OHS, or other relationship patterns)
 
 **Builds On This (learn these next):**
+
 - SAP-034 - Anti-Corruption Layer (the Context Map shows WHERE ACLs are needed; ACL is the implementation of the "Protected" relationship shown on the map)
 - SAP-036 - Shared Kernel (the Context Map shows where Shared Kernel exists; Shared Kernel requires governance to maintain)
 - SAP-037 - Open Host Service (the Context Map shows which contexts publish OHS; the Published Language formalizes the contract)
 
 **Alternatives / Comparisons:**
+
 - Service dependency graphs (show technical call dependencies but not the conceptual model relationships; do not capture Upstream/Downstream, Conformist, or Shared Kernel semantics)
 - Team Topologies diagrams (show team relationships rather than model relationships; complementary to Context Map, not an alternative)
 

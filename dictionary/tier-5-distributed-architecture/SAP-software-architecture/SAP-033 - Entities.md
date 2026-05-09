@@ -347,6 +347,7 @@ public int hashCode() { return id.hashCode(); }
 **Reusable Engineering Principle:** When a thing must be tracked and distinguished from other things with identical attributes, assign it a stable, persistent identity that survives all attribute changes. The identity is the anchor for all historical records about that thing.
 
 **Where else this pattern appears:**
+
 - **National identity documents:** A passport number is an entity identity. Two people named "John Smith" born on the same day are different entities because they have different passport numbers. The passport number survives name changes, address changes, and nationality changes.
 - **Git commits:** A commit SHA is an entity identity. Two commits with identical content are still different commits (different SHA) because they occur at different points in time and have different parents. The SHA is the immutable identity.
 - **Social Security / National Insurance numbers:** Government-assigned persistent identities that survive name changes, address changes, and marital status changes. The number is the entity identity; the attributes are mutable but the identity is permanent.
@@ -362,13 +363,16 @@ The hardest entity design question is not "what is the identity?" but "at what p
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-023 - Domain Model (entities are the core building blocks of domain models; understanding the domain model provides the context for why tracked, mutable domain objects with identity are the primary unit of design)
 - SAP-032 - Value Objects (the complementary concept; understanding both entities and value objects together is how you decide whether a domain concept needs identity or can be defined by its value)
 
 **Builds On This (learn these next):**
+
 - SAP-030 - Aggregate Root (entities are organized into aggregates with one root entity; the aggregate root is the entity that other entities access only through)
 
 **Alternatives / Comparisons:**
+
 - SAP-032 - Value Objects (use when the concept is defined by its attributes and equality by value is correct; use an Entity when identity persists across attribute changes)
 
 ---

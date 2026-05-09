@@ -399,6 +399,7 @@ grep "select.*from.*order_items" app.log | wc -l
 **Reusable Engineering Principle:** When two subsystems with different concerns must share data, a dedicated translation layer between them protects each subsystem from the other's changes. The translator is the only place that knows about both systems.
 
 **Where else this pattern appears:**
+
 - **API DTOs:** A REST API DTO (Data Transfer Object) is a Data Mapper at the HTTP boundary - it translates between the domain model (with its invariants) and the JSON representation (with its serialization constraints). The DTO is the mapper; the domain object never knows about JSON.
 - **Database migration tools:** Tools like Flyway and Liquibase are Data Mappers in reverse - they translate schema changes (migrations) into the database's SQL dialect. The migration knows about both the schema version and the SQL syntax; the application knows neither.
 - **Protocol Buffers / Avro:** Schema-first serialization frameworks generate mapper code that translates between language-native types and the wire format. The generated mapper is the Data Mapper at the messaging boundary.
@@ -414,14 +415,17 @@ Hibernate, often called a "Data Mapper" implementation, actually violates the Da
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-021 - Repository Pattern (the interface that sits in front of the Data Mapper; understanding Repository explains the separation: Repository defines WHAT operations are available, Data Mapper defines HOW they are implemented)
 - SAP-023 - Domain Model (Data Mapper exists to decouple the domain model from persistence; understanding what a domain model is and why it should know nothing about SQL is the motivation for Data Mapper)
 
 **Builds On This (learn these next):**
+
 - SAP-021 - Repository Pattern (repositories use Data Mapper internally; learning Repository shows the full persistence pattern stack)
 - SAP-022 - Unit of Work Pattern (coordinates multiple Data Mapper operations into a single atomic transaction; Hibernate's Session is an implementation of both Data Mapper and Unit of Work)
 
 **Alternatives / Comparisons:**
+
 - SAP-028 - Active Record (simpler; domain object manages its own persistence; correct for data-centric apps; wrong for complex domains)
 - SAP-021 - Repository Pattern (complementary; Repository is the interface, Data Mapper is the implementation; not alternatives but collaborators)
 
@@ -452,12 +456,12 @@ Hibernate, often called a "Data Mapper" implementation, actually violates the Da
 
 **Q1.** You're building an event-sourced system where the state of an `Account` aggregate is derived by replaying a sequence of events stored in an event store (not a traditional relational table). How do you implement Data Mapper for this storage model? The "mapper" can't do a simple row-to-object translation anymore - it must replay events to reconstruct the object. What does this mapper look like?
 
-*Hint:* Research the "Aggregate Repository" pattern in event-sourced systems - specifically how the repository's `findById()` method calls `EventStore.getEventsFor(aggregateId)`, then passes those events to `Account.rehydrate(events)` which replays them. The "Data Mapper" becomes an event replayer - it maps from a sequence of events to the current aggregate state. This is the core implementation pattern in frameworks like Axon Framework (Java) and EventStoreDB.
+_Hint:_ Research the "Aggregate Repository" pattern in event-sourced systems - specifically how the repository's `findById()` method calls `EventStore.getEventsFor(aggregateId)`, then passes those events to `Account.rehydrate(events)` which replays them. The "Data Mapper" becomes an event replayer - it maps from a sequence of events to the current aggregate state. This is the core implementation pattern in frameworks like Axon Framework (Java) and EventStoreDB.
 
 **Q2.** Hibernate's Data Mapper requires domain objects to have a no-arg constructor (for object reconstruction from database rows). But your rich domain model uses factory methods to enforce invariants at construction time - `Order.place(customerId, items)` which validates that items is not empty. The no-arg constructor allows constructing an invalid Order. How do you satisfy Hibernate's requirement without breaking the domain model's construction invariants?
 
-*Hint:* Research Hibernate's ability to use package-private or protected no-arg constructors (not public) - specifically that Hibernate uses reflection to bypass access modifiers when reconstructing objects from the database. A `protected Order() {}` constructor is accessible to Hibernate (via reflection) but not accessible to application code (which must use the factory method). This is the standard DDD/JPA solution. Also research JPA's `@PersistenceConstructor` annotation and Kotlin's `@NoArg` plugin.
+_Hint:_ Research Hibernate's ability to use package-private or protected no-arg constructors (not public) - specifically that Hibernate uses reflection to bypass access modifiers when reconstructing objects from the database. A `protected Order() {}` constructor is accessible to Hibernate (via reflection) but not accessible to application code (which must use the factory method). This is the standard DDD/JPA solution. Also research JPA's `@PersistenceConstructor` annotation and Kotlin's `@NoArg` plugin.
 
 **Q3.** You have a `Product` domain object with 50 fields, but 90% of queries only need 5 fields (name, price, SKU, stock level, category). Loading all 50 fields every time wastes memory and database bandwidth. How do you implement partial loading with Data Mapper while maintaining the invariant that a fully-loaded `Product` object is always valid?
 
-*Hint:* Research JPA's "projection" feature - specifically `@Query` with DTO constructor expressions (JPQL) and Spring Data's interface-based projections. The key insight: projections are NOT domain objects - they are read-only views that bypass the domain model entirely. This is the CQRS insight applied to the persistence layer: for reads, you don't need a full domain object with all its invariants - you need data in the right shape for the query. Only writes need the full domain object.
+_Hint:_ Research JPA's "projection" feature - specifically `@Query` with DTO constructor expressions (JPQL) and Spring Data's interface-based projections. The key insight: projections are NOT domain objects - they are read-only views that bypass the domain model entirely. This is the CQRS insight applied to the persistence layer: for reads, you don't need a full domain object with all its invariants - you need data in the right shape for the query. Only writes need the full domain object.

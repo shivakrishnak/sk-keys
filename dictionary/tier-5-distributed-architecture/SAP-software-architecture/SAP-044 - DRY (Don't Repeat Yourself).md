@@ -1,36 +1,35 @@
 ﻿---
-layout: default
+id: SAP-044
 title: "DRY (Don't Repeat Yourself)"
+category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
+difficulty: ★☆☆
+depends_on: SAP-043
+used_by:
+related: SAP-043, SAP-045, SAP-046
+tags:
+  - architecture
+  - principles
+  - pattern
+status: complete
+version: 1
+layout: default
 parent: "Software Architecture Patterns"
 grand_parent: "Technical Dictionary"
 nav_order: 44
 permalink: /software-architecture/dry/
-id: SAP-044
-category: Software Architecture Patterns
-difficulty: ★☆☆
-depends_on: Functions, Abstraction, Refactoring
-used_by: All development, Code review, Refactoring decisions
-related: SOLID Principles, KISS, YAGNI, Abstraction, Copy-Paste Programming
-tags:
-  - architecture
-  - principles
-  - beginner
-  - design
 ---
 
 # SAP-044 - DRY (Don't Repeat Yourself)
 
 ⚡ TL;DR - DRY states that every piece of knowledge must have a single, authoritative representation in a system - not that all similar-looking code must be deduplicated, but that business logic, rules, and facts must not exist in multiple places that can drift out of sync.
 
----
-
-### 📊 Entry Metadata
-
-| #757            | Category: Software Architecture Patterns                           | Difficulty: ★☆☆ |
-| :-------------- | :----------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Functions, Abstraction, Refactoring                                |                 |
-| **Used by:**    | All development, Code review, Refactoring decisions                |                 |
-| **Related:**    | SOLID Principles, KISS, YAGNI, Abstraction, Copy-Paste Programming |                 |
+| Field          | Value                     |
+| -------------- | ------------------------- |
+| **Depends on** | SAP-043                   |
+| **Used by**    | -                         |
+| **Related**    | SAP-043, SAP-045, SAP-046 |
 
 ---
 
@@ -41,6 +40,9 @@ The validation rule "email must contain exactly one @" appears in: the registrat
 
 **THE DRY SOLUTION:**
 One `EmailValidator` class with one authoritative implementation of email validation rules. All four places use this one class. When the rule changes, one change, zero missed locations, zero inconsistencies.
+
+**EVOLUTION:**
+Andrew Hunt and David Thomas coined "Don't Repeat Yourself" in "The Pragmatic Programmer" (1999), formally stating what good programmers had practised informally. The database normalisation community had the same principle as Codd's Third Normal Form (1971) - don't store the same fact in two places. The DRY principle gained new nuance with microservices (2014+): should microservices share a library (DRY at the organisation level but coupling between services) or duplicate code (WET but independent deployability)? This produced the "WET is sometimes right" insight: duplication between independently deployed services is often preferable to the coupling of a shared library.
 
 ---
 
@@ -333,17 +335,35 @@ grep -rn "total > 100" src/
 
 ---
 
-### 🔗 Related Keywords
+### 💎 Transferable Wisdom
 
-**Prerequisites:**
+**Reusable Engineering Principle:** Every piece of knowledge should have a single, authoritative representation in a system. When knowledge is represented in multiple places, maintaining consistency requires coordinating every change across every representation.
 
-- `Functions` - the most basic DRY tool (extract to function)
-- `Abstraction` - creating the right boundary to extract into
+**Where else this pattern appears:**
+- **Legal precedent system:** Common law requires that the same legal principle apply consistently across all similar cases. Previous rulings ARE the single representation of legal principles - new cases reference precedent rather than re-reasoning from scratch. DRY in jurisprudence.
+- **Scientific constants:** The speed of light (c) is defined once (in NIST's CODATA publication) and referenced everywhere. No physicist defines c independently in each paper. Single authoritative source.
+- **Enum values in database schemas:** A `status` column with valid values ('ACTIVE', 'INACTIVE', 'SUSPENDED') should be defined once (in a lookup table or enum type) and referenced everywhere. Storing the string 'ACTIVE' in ten different tables is WET; a foreign key to a `statuses` table is DRY.
 
-**Related:**
+---
 
-- `YAGNI` - don't add code you don't need; DRY says don't repeat the code you have
-- `KISS` - simplicity and DRY often reinforce each other
+### 💡 The Surprising Truth
+
+DRY is one of the most misapplied principles in software development. The most common mistake is applying DRY to syntactic similarity ("these two code blocks look the same") rather than semantic identity ("these two code blocks represent the same knowledge"). Two pieces of code may look identical but represent different knowledge that happens to have the same current implementation. Merging them under DRY creates accidental coupling: when one business rule changes, the refactoring accidentally changes the other. Hunt and Thomas explicitly stated that DRY is about "knowledge duplication," not "code duplication." The test: "If this business rule changes, how many places must change?" If one - DRY. If two - acceptable duplication.
+
+---
+
+### �🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- SAP-043 - SOLID Principles (DRY and SOLID are complementary; understanding SOLID (especially SRP) helps identify which abstractions should be extracted to apply DRY correctly)
+
+**Builds On This (learn these next):**
+- SAP-045 - KISS (counterbalancing principle; aggressive DRY can produce over-abstracted code that violates KISS; balance both)
+- SAP-046 - YAGNI (another counterbalancing principle; don't create a shared abstraction BEFORE you have the duplicated code to justify it)
+
+**Alternatives / Comparisons:**
+- WET (Write Everything Twice / Write Every Time) - acceptable for cross-service duplication where coupling is worse than repetition
+- Copy-paste programming - the extreme violation of DRY; always wrong within a single codebase
 
 ---
 
@@ -372,4 +392,12 @@ grep -rn "total > 100" src/
 
 **Q1.** You have two microservices: `OrderService` and `InvoiceService`. Both need to calculate VAT. The calculation is identical: `amount * 0.20`. Should you extract this into a shared library that both services depend on, or keep it duplicated in each service? What factors determine the right answer, and what are the risks of each approach?
 
+*Hint:* Research the microservices perspective on DRY - specifically the "coupling vs duplication" trade-off at service boundaries. Key question: does "VAT calculation" represent the SAME business knowledge in both services, or is it coincidentally the same number that could independently evolve? If VAT rates change, should OrderService and InvoiceService always change together (suggests shared library), or could they change independently (suggests acceptable duplication)? Research how Netflix, Amazon, and other microservices practitioners explicitly accept some duplication between services to preserve independent deployability.
+
 **Q2.** Your codebase has a `Customer` class with `firstName`, `lastName`, and `fullName` (stored as a separate column, always equals `firstName + " " + lastName`). Identify the DRY violation. How do you fix it at the code level, and separately, how do you fix it at the database level? Are there any cases where keeping `fullName` stored (not derived) might be acceptable - and why?
+
+*Hint:* Research database denormalization as an intentional DRY violation for performance - specifically: storing `fullName` as a computed column (database-level: `GENERATED ALWAYS AS (firstName || ' ' || lastName) STORED`) makes it derived but still indexable. The acceptable case for storing `fullName` separately: internationalization (Japanese names have surname-first ordering; `fullName` captures the locale-specific display form, not just concatenation). Research Java's Hibernate `@Formula` annotation for computed properties.
+
+**Q3.** A team applies DRY aggressively to reduce duplication. After 6 months, their codebase has a `CommonUtils` class with 200 static methods, a `BaseService` with 30 methods, and a `AbstractEntity` with 15 fields. Adding a new feature now requires modifying `CommonUtils`. The DRY principle has produced tight coupling via a god class. How do you refactor this without re-introducing the duplication that DRY was supposed to prevent?
+
+*Hint:* Research the distinction between "Don't Repeat Yourself" and "Don't Abstract Prematurely" - specifically the "Rule of Three" heuristic: don't abstract until you see the same code pattern THREE times. With only two occurrences, duplication is acceptable; at three, the pattern is clear enough to abstract safely. Research how to break up `CommonUtils` using the "Find the real category" approach: group the 200 methods by the concept they represent (`MoneyUtils`, `DateUtils`, `StringUtils`) and extract small, focused utility classes. Research the "Extension Function" pattern in Kotlin for replacing utility classes with methods on the types they operate on.

@@ -336,6 +336,7 @@ product.discontinue()                # UPDATE + business rule
 **Reusable Engineering Principle:** Co-locate data and its persistence operations when the cost of the coupling is outweighed by the simplicity gain. For simple, data-centric operations, the object and the database row ARE the same concept - forcing a separation adds indirection without value.
 
 **Where else this pattern appears:**
+
 - **Configuration objects:** A settings object that reads from a file on instantiation and writes to the file on `save()` is Active Record for configuration. The object and the persistent store are tightly coupled, and that is appropriate for configuration.
 - **File system APIs:** File objects in many languages combine data (file content) with persistence operations (`read()`, `write()`, `delete()`). The file object IS the file - the Active Record pattern applied to the file system.
 - **Browser localStorage:** In single-page apps, a `UserPreferences` class that reads from localStorage on load and writes on change is Active Record for the browser's local storage.
@@ -351,14 +352,17 @@ GitHub was built on Ruby on Rails Active Record and processed millions of pull r
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-023 - Domain Model (understanding what a rich domain model provides helps clarify Active Record's trade-off: it combines the domain object and the persistence in one class at the cost of domain purity)
 - SAP-021 - Repository Pattern (the alternative persistence approach; understanding Repository shows what Active Record has coupled together)
 
 **Builds On This (learn these next):**
+
 - SAP-029 - Data Mapper (the pattern that separates what Active Record combines; the migration path from Active Record to Data Mapper is a standard refactoring)
 - SAP-027 - Transaction Script (Active Record objects often contain Transaction Script logic for complex operations; the two patterns frequently coexist)
 
 **Alternatives / Comparisons:**
+
 - SAP-021 - Repository Pattern (separates persistence concerns from domain objects; correct when domain object needs to be testable without database)
 - SAP-029 - Data Mapper (Fowler's term for the mapper between domain and persistence layers; Hibernate implements this)
 
@@ -389,12 +393,12 @@ GitHub was built on Ruby on Rails Active Record and processed millions of pull r
 
 **Q1.** A Ruby on Rails application using Active Record has grown to handle complex financial calculations, multi-step approvals, and multi-table operations. The `Order` Active Record class has grown to 800 lines. What is the migration path from Active Record to a repository-based architecture, and what are the specific points of coupling you'd need to break?
 
-*Hint:* Research the "Strangler Fig" pattern applied to ORM migration - specifically the technique of introducing a parallel `OrderRepository` class that wraps the existing ActiveRecord model, calling `Order.find()` internally but exposing a clean interface. The 800-line model reveals which behaviors have leaked into the persistence class; those behaviors become candidates for extraction to a domain service or domain object. Research how Shopify migrated parts of their Rails monolith using this approach.
+_Hint:_ Research the "Strangler Fig" pattern applied to ORM migration - specifically the technique of introducing a parallel `OrderRepository` class that wraps the existing ActiveRecord model, calling `Order.find()` internally but exposing a clean interface. The 800-line model reveals which behaviors have leaked into the persistence class; those behaviors become candidates for extraction to a domain service or domain object. Research how Shopify migrated parts of their Rails monolith using this approach.
 
 **Q2.** Django ORM and Rails ActiveRecord are enormously productive for startups and rapid prototyping. Many large, successful applications (GitHub, Shopify, Instagram) were built on Active Record. Does their success invalidate the case for Data Mapper / Repository patterns, or does it say something specific about when and how those applications evolved their architectures?
 
-*Hint:* Research how Shopify evolved beyond pure Active Record - specifically their "Modular Monolith" approach and the introduction of service objects and form objects to handle complex business logic that doesn't belong in the Active Record model. The insight: Active Record scales for I/O complexity (traffic, data volume) but not for business logic complexity. GitHub handles complex git operations, but git operations are well-defined algorithms, not complex business rules - the domain is simple, so Active Record is appropriate indefinitely.
+_Hint:_ Research how Shopify evolved beyond pure Active Record - specifically their "Modular Monolith" approach and the introduction of service objects and form objects to handle complex business logic that doesn't belong in the Active Record model. The insight: Active Record scales for I/O complexity (traffic, data volume) but not for business logic complexity. GitHub handles complex git operations, but git operations are well-defined algorithms, not complex business rules - the domain is simple, so Active Record is appropriate indefinitely.
 
 **Q3.** A team using Rails Active Record needs to implement an `Order` that must enforce the invariant: "An order cannot be placed if any item is out of stock, and this check must be atomic." The check requires loading stock levels from a separate `inventory` table, which Active Record's callback system (`before_save`) can handle. But the `before_save` runs inside a database transaction, creating a potential deadlock if two orders try to reserve the same stock simultaneously. How do you implement the stock check correctly with Active Record?
 
-*Hint:* Research database-level locking in Active Record - specifically `Product.lock.find(id)` which issues a `SELECT ... FOR UPDATE` preventing concurrent modification. Also research the "Optimistic Locking" pattern (`lock_version` column) as an alternative that avoids locks but retries on conflict. This reveals that Active Record IS capable of handling concurrency correctly, but requires understanding the underlying database locking semantics rather than relying on Ruby-level callbacks.
+_Hint:_ Research database-level locking in Active Record - specifically `Product.lock.find(id)` which issues a `SELECT ... FOR UPDATE` preventing concurrent modification. Also research the "Optimistic Locking" pattern (`lock_version` column) as an alternative that avoids locks but retries on conflict. This reveals that Active Record IS capable of handling concurrency correctly, but requires understanding the underlying database locking semantics rather than relying on Ruby-level callbacks.

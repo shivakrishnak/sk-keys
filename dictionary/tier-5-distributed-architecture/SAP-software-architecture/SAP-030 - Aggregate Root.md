@@ -416,6 +416,7 @@ grep -rn "@Transactional" src/main/java/ --include="*.java" \
 **Reusable Engineering Principle:** Define a single authoritative entry point for any cluster of related state that must remain consistent. All mutations flow through the entry point; the entry point enforces all invariants. External entities have no direct access to internal members.
 
 **Where else this pattern appears:**
+
 - **Unix process groups:** A process group has a group leader (the aggregate root). Signals sent to the group are delivered through the leader, which decides how to propagate them. Direct access to child processes bypasses the group's consistency guarantees.
 - **Database transactions on a set of tables:** A "master" table with foreign-keyed child tables forms an aggregate. The master record's `updated_at` timestamp is the aggregate root's version number. Modifying child records without updating the master version breaks the consistency boundary.
 - **REST resource hierarchies:** A `/orders/{id}/items/{itemId}` URL structure implies that the order is the aggregate root - items are only accessible through the order. A `PUT /items/{itemId}` endpoint would bypass the aggregate root pattern.
@@ -431,16 +432,19 @@ Aggregate boundaries are one of the hardest design decisions in DDD, and getting
 ### �🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-023 - Domain Model (aggregate root is a DDD pattern for organising domain objects; understanding what domain objects are and what invariants they enforce is required)
 - SAP-031 - Domain Events (aggregates raise domain events when state changes; understanding how events enable cross-aggregate coordination without direct references is essential to keeping aggregates small)
 - SAP-032 - Value Objects (aggregates contain value objects as typed attributes; understanding the difference between entities and value objects is required to model the aggregate's internal structure)
 - SAP-033 - Entities (internal aggregate entities are accessed only through the root; understanding entities explains what the root is "guarding")
 
 **Builds On This (learn these next):**
+
 - SAP-018 - CQRS Pattern (commands are processed against aggregate roots; CQRS provides the architectural framework for how aggregates receive commands and emit events)
 - SAP-019 - Event Sourcing Pattern (stores aggregate state as a sequence of events raised by the root; the aggregate becomes a projection over its own event history)
 
 **Alternatives / Comparisons:**
+
 - SAP-021 - Repository Pattern (one repository per aggregate root is the rule; repository is not an alternative but a collaborator)
 - SAP-026 - Service Layer (if business rules are too complex to assign to a single aggregate, a domain service in the service layer coordinates multiple aggregates)
 

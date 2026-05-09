@@ -1,21 +1,24 @@
 ﻿---
-layout: default
-title: "Shared Kernel"
-parent: "Software Architecture Patterns"
-grand_parent: "Technical Dictionary"
-nav_order: 36
-permalink: /software-architecture/shared-kernel/
 id: SAP-036
+title: Shared Kernel
 category: Software Architecture Patterns
+tier: tier-5-distributed-architecture
+folder: SAP-software-architecture
 difficulty: ★★★
-depends_on: Bounded Context, Context Map, Domain Model
-used_by: DDD, Multi-module architectures, Microservices
-related: Bounded Context, Context Map, Anti-Corruption Layer, Open Host Service
+depends_on: SAP-035
+used_by: SAP-035
+related: SAP-035, SAP-037, SAP-038
 tags:
   - architecture
   - ddd
   - pattern
-  - deep-dive
+status: complete
+version: 1
+layout: default
+parent: "Software Architecture Patterns"
+grand_parent: "Technical Dictionary"
+nav_order: 36
+permalink: /software-architecture/shared-kernel/
   - advanced
   - strategic
 ---
@@ -24,15 +27,11 @@ tags:
 
 ⚡ TL;DR - A Shared Kernel is a deliberate, bounded subset of the domain model that is shared between two Bounded Contexts - any change to this shared model requires explicit coordination and agreement between both teams.
 
----
-
-### 📊 Entry Metadata
-
-| #749            | Category: Software Architecture Patterns                               | Difficulty: ★★★ |
-| :-------------- | :--------------------------------------------------------------------- | :-------------- |
-| **Depends on:** | Bounded Context, Context Map, Domain Model                             |                 |
-| **Used by:**    | DDD, Multi-module architectures, Microservices                         |                 |
-| **Related:**    | Bounded Context, Context Map, Anti-Corruption Layer, Open Host Service |                 |
+| Field          | Value                     |
+| -------------- | ------------------------- |
+| **Depends on** | SAP-035                   |
+| **Used by**    | SAP-035                   |
+| **Related**    | SAP-035, SAP-037, SAP-038 |
 
 ---
 
@@ -43,6 +42,9 @@ Two Bounded Contexts - `Order Management` and `Catalog` - both need to work with
 
 **THE SHARED KERNEL SOLUTION:**
 Explicitly define a small, shared domain model fragment that both contexts agree on. Both teams commit to keeping it stable and coordinating changes. The Shared Kernel is small by design - only the minimum concepts that genuinely must be shared.
+
+**EVOLUTION:**
+Eric Evans documented the Shared Kernel as one of the Context Map relationship patterns in "Domain-Driven Design" (2003). The pattern predated DDD in the form of shared libraries and common utility packages, but Evans gave it formal governance: shared code must be agreed upon by both teams and cannot be changed unilaterally. In the microservices era (2014+), the Shared Kernel typically manifests as a Maven/npm library published to a private package registry. The key evolution is the recognition that Shared Kernel creates a team coupling that is often more expensive than the code duplication it prevents - Vaughn Vernon and other DDD practitioners advocate using it sparingly, preferring ACL over Shared Kernel in most cases.
 
 ---
 
@@ -289,17 +291,34 @@ find shared-kernel/src/main/java -name "*.java" | wc -l
 
 ---
 
-### 🔗 Related Keywords
+### 💎 Transferable Wisdom
 
-**Prerequisites:**
+**Reusable Engineering Principle:** Shared ownership is the most expensive form of ownership. Every concept, module, or library that two independent teams must both agree to change creates a coordination tax. Minimize the surface area of what is shared.
 
-- `Bounded Context` - the contexts that share the kernel
-- `Context Map` - the map that documents Shared Kernel relationships
+**Where else this pattern appears:**
+- **Shared custody legal frameworks:** When two parties jointly own something (property, custody), changes require agreement from both. Joint ownership works only when changes are rare and coordination is feasible - which is why courts minimize jointly owned assets in divorce settlements.
+- **Open-source core libraries:** Java's `java.lang` package is a Shared Kernel for the entire Java ecosystem. Nobody changes it unilaterally - any change requires the JCP process and broad consensus. The extreme stability of `java.lang` is the price of it being universally shared.
+- **Database schemas for multiple applications:** A database schema shared by three applications is a Shared Kernel at the persistence level. Any schema change requires all three applications to be updated, tested, and deployed together - the classic multi-application coupling problem.
 
-**Compare With:**
+---
 
-- `Anti-Corruption Layer` - alternative to Shared Kernel for isolation
-- `Open Host Service` - a third alternative for sharing behavior
+### 💡 The Surprising Truth
+
+Most DDD practitioners recommend AGAINST using Shared Kernel as a first-choice pattern, despite it seeming like the obvious solution to code duplication. The reason: Shared Kernel creates a formal team coupling that is harder to remove than the duplication it prevents. Once two teams share a kernel, the kernel tends to grow (because sharing is cheaper than duplicating), and the coupling deepens over time. Evans himself noted that Shared Kernel requires a high level of discipline from both teams; without that discipline, it becomes a unstructured shared library that everyone depends on and nobody owns.
+
+---
+
+### �🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- SAP-035 - Context Map (the Shared Kernel is one of the relationship patterns on a Context Map; understanding Context Map provides the strategic picture within which Shared Kernel is a specific choice)
+
+**Builds On This (learn these next):**
+- SAP-035 - Context Map (after understanding Shared Kernel as a pattern, the Context Map shows where to use it versus ACL, OHS, or Separate Ways)
+
+**Alternatives / Comparisons:**
+- SAP-034 - Anti-Corruption Layer (alternative for isolation: instead of sharing a kernel, each context defines its own model and translates at the boundary; more work upfront, more independence long-term)
+- SAP-037 - Open Host Service (alternative for sharing: instead of sharing a library, one context publishes a stable service API; other contexts consume the API, not the source code)
 
 ---
 
@@ -327,4 +346,12 @@ find shared-kernel/src/main/java -name "*.java" | wc -l
 
 **Q1.** Your Shared Kernel currently contains `OrderId`, `CustomerId`, and `Money`. A new team wants to integrate with your system. They suggest adding their `SubscriptionId` and `InvoiceId` to the Shared Kernel because they'll need to reference orders and customers. Should these be added to the Shared Kernel? What criteria should guide this decision?
 
+*Hint:* Research Evans's criterion for the Shared Kernel boundary: "Include in the kernel only concepts that are genuinely shared between the teams and that both teams use in the same way." The key test: do BOTH existing teams (Order Management AND the new team) need `SubscriptionId`, or only the new team? If only the new team needs it, it belongs in their bounded context, not the shared kernel. Research the "gravitational pull" problem: shared kernels tend to grow because adding to the kernel is cheaper than creating an ACL, but growth increases coordination cost.
+
 **Q2.** The Shared Kernel between `Order Management` and `Shipping` contains `OrderId`. Both teams agree. But now `Order Management` needs to change `OrderId` from a `UUID` to a 10-character alphanumeric code for human readability. How do you manage this breaking change to the Shared Kernel without disrupting the `Shipping` service that's in production?
+
+*Hint:* Research semantic versioning applied to shared library releases - specifically the strategy of publishing `shared-kernel:2.0.0` with the new `OrderId` type, running `shared-kernel:1.x.x` and `2.0.0` in parallel during a migration period, updating Shipping to use `2.0.0`, then deprecating `1.x.x`. Also research "expand and contract" migration pattern: first expand (add `alphanumericOrderId` alongside existing `uuidOrderId`), migrate consumers, then contract (remove `uuidOrderId`).
+
+**Q3.** A team discovers that their Shared Kernel has grown to 47 classes across 15 packages and is now a 500KB JAR that every service depends on. Three services have different sub-sets of needs: Service A needs IDs only, Service B needs domain events only, Service C needs both plus value objects. How do you decompose the bloated Shared Kernel to minimize coupling while preserving the shared vocabulary benefits?
+
+*Hint:* Research the concept of "nano-libraries" and specifically the Module System (Java 9 JPMS) approach to fine-grained modularization. The technique: split the Shared Kernel into multiple small, focused libraries (`shared-ids:1.0.0`, `shared-events:1.0.0`, `shared-value-objects:1.0.0`). Each service depends only on the sub-library it needs. This reduces coupling without abandoning shared vocabulary. Research how Spring Framework achieves this with its many fine-grained `spring-*` modules.
