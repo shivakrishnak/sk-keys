@@ -321,19 +321,29 @@ Exactly 3 questions using different types (A=System Interaction · B=Scale · C=
 
 ### Version Detection
 
-A file is **v1** (needs upgrade) if ANY of the following are missing:
+**Frontmatter `version:` field — five-level scale:**
 
-**Section headers:** `### 🔥 The Problem This Solves` · `### ⏱️ Understand It in 30 Seconds` · `### 🧪 Thought Experiment` · `### 📶 Gradual Depth - Four Levels` · `### 🔄 The Complete Picture - End-to-End Flow` · `### ⚖️ Comparison Table` · `### 🚨 Failure Modes & Diagnosis`
+| Value | Content Level       | When to set                                                           |
+| ----- | ------------------- | --------------------------------------------------------------------- |
+| `0`   | Stub                | Placeholder only — no content generated yet                           |
+| `1`   | Pre-v2 / incomplete | Has some content but baseline sections are missing                    |
+| `2`   | v2 or v2.1          | All baseline sections present (v2.1 additions are still `version: 2`) |
+| `3`   | v3.x                | v3.0 or v3.1 — new YAML structure with `id:` field and full IDs       |
+| `4`   | v4.0                | Five-level depth, Mastery Checklist, and all v4.0 markers present     |
 
-A file is **v2** only if ALL above sections are present.
+A file is **stub** (`version: 0`) if it is a placeholder with no substantive generated content.
 
-A file is **v2.1** if it ALSO has: `### 💎 Transferable Wisdom` + `### 💡 The Surprising Truth` + `**EVOLUTION:**` in Problem section + 3 questions with `*Hint:*` in Think section.
+A file is **pre-v2** (`version: 1`) if ANY of the following are missing:
 
-A file is **v3.0** if it ALSO has the new YAML frontmatter with `id:` field (format `CODE-NNN`) and `status:` field, and `depends_on` / `used_by` / `related` use full IDs (`JVM-001`) not keyword names.
+**Section headers:** `### 🔥 The Problem This Solves` · `### ⏱️ Understand It in 30 Seconds` · `### 🧪 Thought Experiment` · `### 📶 Gradual Depth` · `### 🔄 The Complete Picture - End-to-End Flow` · `### ⚖️ Comparison Table` · `### 🚨 Failure Modes & Diagnosis`
 
-A file is **v3.1** if it ALSO applies the three quality rules: Cognitive Load Budgeting (entry size proportional to concept complexity) · Truthfulness (no fabricated benchmarks or invented production stories) · Deduplication (no redundant re-explanation of prerequisite concepts). Structural indicators: a Version Evolution table inside `**EVOLUTION:**` (for evolving-technology concepts) and/or a Decision Tree in 5.14 (for 3+ branching comparisons). Set `version: 2` in frontmatter to signal v3.1 content.
+A file is **v2** (`version: 2`) only if ALL above sections are present.
 
-A file is **v4.0** if it ALSO has: `### 📶 Gradual Depth - Five Levels` (5 levels including Level 5 - Mastery) · `### ✅ Mastery Checklist` section with 5 testable indicators · `ANTI-PATTERN` row in Quick Reference Card · `**Industry applications:**` in Transferable Wisdom · At least one TYPE G question in Think About This. Set `version: 3` in frontmatter to signal v4.0 content.
+A file is **v2.1** (still `version: 2`) if it ALSO has: `### 💎 Transferable Wisdom` + `### 💡 The Surprising Truth` + `**EVOLUTION:**` in Problem section + 3 questions with `*Hint:*` in Think section.
+
+A file is **v3.x** (`version: 3`) if it ALSO has the new YAML frontmatter with `id:` field (format `CODE-NNN`) and `status:` field, and `depends_on` / `used_by` / `related` use full IDs (`JVM-001`) not keyword names. Set `version: 3` in frontmatter to signal v3.x content.
+
+A file is **v4.0** (`version: 4`) if it ALSO has: `### 📶 Gradual Depth - Five Levels` (5 levels including Level 5 - Mastery) · `### ✅ Mastery Checklist` section with 5 testable indicators · `ANTI-PATTERN` row in Quick Reference Card · `**Industry applications:**` in Transferable Wisdom · At least one TYPE G question in Think About This. Set `version: 4` in frontmatter to signal v4.0 content.
 
 ---
 

@@ -2387,7 +2387,7 @@ Front matter rules:
   - category: <Full Category Name>
   - tier: <tier-N-name>
   - folder: <CODE-folder-name>
-  - difficulty: â˜…â˜†â˜† | â˜…â˜…â˜† | â˜…â˜…â˜…
+  - difficulty: ★☆☆ | ★★☆ | ★★★
   - depends_on: CODE-NNN, CODE-NNN
   - used_by: CODE-NNN, CODE-NNN
   - related: CODE-NNN, CODE-NNN
@@ -2526,7 +2526,7 @@ Front matter (use exact values for the chosen category):
   category: <Full Category Name>
   tier: <tier-N-name>
   folder: <CODE-folder-name>
-  difficulty: â˜…â˜†â˜† | â˜…â˜…â˜† | â˜…â˜…â˜…
+  difficulty: ★☆☆ | ★★☆ | ★★★
   depends_on: CODE-NNN, CODE-NNN
   used_by: CODE-NNN, CODE-NNN
   related: CODE-NNN, CODE-NNN

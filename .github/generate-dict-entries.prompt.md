@@ -13,7 +13,7 @@ Generate complete, spec-compliant v4.0 keyword entries for all stub files in a *
 
 **Target:** `${input:target:Category code (e.g. MSV, JVM) or tier number (e.g. 3, 5)}`
 **Batch size:** `${input:batchSize:Entries per batch (default: 10)}`
-**Mode:** `${input:mode:generate (default) | upgrade-v40}`
+**Mode:** `${input:mode:generate (default) | upgrade}`
 
 ---
 
@@ -39,7 +39,7 @@ If the output says **"Nothing to generate"**, stop here — all entries are comp
 
 ---
 
-## Phase 2 — Generate content for each batch _(skip when mode = upgrade-v40)_
+## Phase 2 — Generate content for each batch _(skip when mode = upgrade)_
 
 Work through **one batch at a time**. For each entry in the batch:
 
@@ -88,7 +88,7 @@ Apply every rule from the workspace `copilot-instructions.md` (already loaded). 
 **YAML rules:**
 
 - Preserve all existing frontmatter fields (id, nav_order, permalink, tags)
-- Add or update: `status: complete`, `version: 3`
+- Add or update: `status: complete`, `version: 4`
 - Double-quote any `title:` containing `: ` (colon + space)
 - Use full IDs for `depends_on`, `used_by`, `related` (e.g. `MSV-006, DST-001`)
 - No em dashes (`—`) anywhere — use hyphens (`-`)
@@ -111,23 +111,21 @@ After writing each batch, confirm the files were saved successfully before conti
 
 ---
 
-## Upgrade Phase — v3.0 → v4.0 _(only when mode = upgrade-v40; replaces Phase 2)_
+## Upgrade Phase — any version → v4.0 _(only when mode = upgrade; replaces Phase 2)_
 
 Work through one batch at a time. For each entry in the batch:
 
 ### U-i. Identify upgrade candidates
 
-Read each file. A valid v3.0 upgrade candidate has:
+Read each file. A valid upgrade candidate:
 
-- `id:` field in YAML frontmatter (format `CODE-NNN`)
-- `status:` and `version:` fields present
-- All 7 v3.0 structural section markers present:
+- Has a `version:` field with a value less than `4` (not already v4.0)
+- Is not a stub — has at least the v2 baseline section markers:
   `### 🔥 The Problem This Solves` · `### ⏱️ Understand It in 30 Seconds` ·
-  `### 🧪 Thought Experiment` · `### 📶 Gradual Depth - Four Levels` ·
-  `### 🔄 The Complete Picture - End-to-End Flow` ·
-  `### ⚖️ Comparison Table` · `### 🚨 Failure Modes & Diagnosis`
+  `### 🧪 Thought Experiment` · `### 🔄 The Complete Picture - End-to-End Flow` ·
+  `### 🚨 Failure Modes & Diagnosis`
 
-Skip any file where `version:` is already `2` or higher (already v4.0).
+Skip any file where `version:` is already `4` (already v4.0) or is a stub (`version: 0`).
 
 ### U-ii. Apply v3.1 quality improvements
 
@@ -170,8 +168,10 @@ Read the full file content, then apply each check in order:
 
 ### U-iii. Update frontmatter
 
-- Increment `version:` by 1 (e.g. `version: 1` → `version: 2`)
-- Do NOT change `id`, `nav_order`, `permalink`, `status`, `tags`, or any other field.
+- Set `version: 4` (v4.0 complete)
+- If `id:` field is absent, add it using the `CODE-NNN` prefix from the filename
+- If `status:` field is absent, add `status: complete`
+- Do NOT change `nav_order`, `permalink`, `tags`, or any other existing field.
 
 ### U-iv. Write the file
 
@@ -192,7 +192,7 @@ cd C:\ASK\MyWorkspace\sk-keys
 git add dictionary/
 # For generate mode:
 git commit -m "feat: generate ${input:target} entries - full v4.0 content"
-# For upgrade-v40 mode:
+# For upgrade mode:
 # git commit -m "upgrade: →v4.0 ${input:target} entries - batch N"
 ```
 
@@ -207,4 +207,4 @@ git commit -m "feat: generate ${input:target} entries - full v4.0 content"
   --v3-only
 ```
 
-All generated entries should show `complete`. For upgrade-v40 mode, confirm `version: 3` is set on upgraded files. If any show otherwise, fix before committing.
+All generated entries should show `complete`. For upgrade mode, confirm `version: 4` is set on upgraded files. If any show otherwise, fix before committing.
