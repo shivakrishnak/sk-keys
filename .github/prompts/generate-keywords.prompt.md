@@ -36,6 +36,8 @@ stub files only when needed.
 
 ## Phase 0 - Resolve Target
 
+> **Decision rule:** Resolve the target type first, then follow exactly one path below. Do not combine paths.
+
 From the input target, determine:
 
 - If a **3-letter category code** (e.g. `RCT`, `JVM`, `SEC`):
@@ -109,9 +111,11 @@ Report all sync issues before proceeding.
 Using `KEYWORD_GENERATOR_PROMPT.md` v3.0 specification:
 
 1. Set `Starting ID = CODE-{HIGHEST_ID + 1}` (or CODE-001 if new category)
-2. Generate the complete keyword list covering ALL levels:
+2. Generate the complete keyword list for all applicable levels based on the category/tier.
+   Include every level that is relevant to this technology domain:
    L0 (Orientation), L1 (Foundational), L2 (Working), L3 (Intermediate),
-   L4 (Expert), L4.5 (Architect), L5 (Creator), META (Meta-Skills)
+   L4 (Expert), L4.5 (Architect), L5 (Creator), META (Meta-Skills).
+   Omit a level only if it has no meaningful keywords for this specific category.
 3. Apply ALL 22 rules from Section 2
 4. Use ALL 11 output components from Section 3
 5. Run ALL 16 quality checks from Section 4
@@ -129,18 +133,19 @@ If the category already has substantial coverage, run a **Gap Analysis** instead
 
 ## Phase 3 - Sync Index.md (NON-DESTRUCTIVE)
 
-> **NON-NEGOTIABLE SAFETY RULES** (from Section 3.10 of v3.0 spec):
+> **NON-NEGOTIABLE SAFETY RULES** (from Section 3.10 of v3.0 spec).
+> Apply these as a checklist - verify each before writing the file:
 >
-> 1. **NEVER** delete an existing keyword row from index.md
-> 2. **NEVER** modify an existing keyword row's content
-> 3. **NEVER** reorder existing rows
-> 4. **NEVER** change the YAML frontmatter (layout, title, parent, nav_order, has_children, permalink)
-> 5. **NEVER** change the title heading (breaks all child entry `parent:` references)
-> 6. **ALWAYS** preserve exact whitespace, formatting, and content of existing rows
-> 7. **ALWAYS** update the `**Keywords:**` count line to reflect the new total
-> 8. **ALWAYS** assign new IDs starting from HIGHEST_ID + 1
-> 9. **ALWAYS** place new rows AFTER all existing rows
-> 10. If in doubt about ANY existing content: **DO NOT MODIFY IT**. Only append.
+> - [ ] **NEVER** delete an existing keyword row from index.md
+> - [ ] **NEVER** modify an existing keyword row's content
+> - [ ] **NEVER** reorder existing rows
+> - [ ] **NEVER** change the YAML frontmatter (layout, title, parent, nav_order, has_children, permalink)
+> - [ ] **NEVER** change the title heading (breaks all child entry `parent:` references)
+> - [ ] **ALWAYS** preserve exact whitespace, formatting, and content of existing rows
+> - [ ] **ALWAYS** update the `**Keywords:**` count line to reflect the new total
+> - [ ] **ALWAYS** assign new IDs starting from HIGHEST_ID + 1
+> - [ ] **ALWAYS** place new rows AFTER all existing rows
+> - [ ] If in doubt about ANY existing content: **DO NOT MODIFY IT**. Only append.
 
 ### 3a. Fix orphan files first
 

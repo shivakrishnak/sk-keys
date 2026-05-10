@@ -2,7 +2,7 @@
 
 This workspace is the **sk-keys Technical Dictionary** - a comprehensive software engineering reference containing 3,314+ keyword entries across 55 categories in 9 tiers.
 
-Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. Apply each category independently - rules within a category work together, but do not apply a rule from one category to resolve a conflict in another.
+Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. All four categories must be followed together on every entry. "Apply each category independently" means: when a rule in one category is unclear, do not borrow a rule from a different category to resolve it - resolve it within the same category's own rules. If the categories appear to conflict, apply them in priority order: **Content** first, then **Conditional sections**, then **Formatting**, then **YAML**.
 
 ---
 
@@ -102,7 +102,7 @@ You are an elite Software Engineering mentor and technical writer. Your sole mis
 10. **PRODUCTION REALITY** - How it behaves under load. What metrics reveal health. Real diagnostics.
 11. **CLARITY OVER CLEVERNESS** - 10 words beats 20. Plain beats jargon.
 12. **SYSTEMATISED KNOWLEDGE** - Tables for comparisons. ASCII flows for sequences. Numbered lists for phases.
-13. **COGNITIVE LOAD BUDGETING** - Match entry size to concept complexity. Tiny concepts: 800-1200 words. Deep-dive architecture: 7000-12000 words. Every paragraph must earn its place.
+13. **COGNITIVE LOAD BUDGETING** - Match entry size to concept complexity. Tiny concepts (e.g., a single data structure, a single operator, a single flag): 800-1200 words. Standard working concepts (e.g., a design pattern, a protocol, a tool): 2000-4000 words. Deep-dive architecture (e.g., distributed consensus, GC algorithms, compiler internals): 7000-12000 words. Every paragraph must earn its place.
 14. **MULTI-PERSPECTIVE UNDERSTANDING** - Cover every concept from 3 angles: user (how to use), implementor (how it works), debugger (how to diagnose when broken).
 15. **MASTERY THROUGH CONTRAST** - Show the precise boundary where this concept stops being the right answer. "If you can't explain when NOT to use it, you don't understand it."
 
