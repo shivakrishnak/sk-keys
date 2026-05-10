@@ -39,7 +39,6 @@ React hooks, fiber architecture, reconciliation, Server Components, SSR, state m
 | RCT-022 | React Trade-off Framing (Complexity vs Flexibility) | ★★★ |
 | RCT-023 | State Management Mental Model | ★★★ |
 | RCT-024 | Component Design Thinking | ★★★ |
-| RCT-024 | JSX Syntax and Rules                                    | ★☆☆ |
 | RCT-025 | Functional Components                                   | ★☆☆ |
 | RCT-026 | Props and Prop Types                                    | ★☆☆ |
 | RCT-027 | State with useState Hook                                | ★☆☆ |

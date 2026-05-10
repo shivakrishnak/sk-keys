@@ -91,3 +91,4 @@ AWS global infrastructure, core services (EC2, S3, RDS, Lambda, EKS), IaC, secur
 | AWS-075 | Cloud Trade-off Framing | ★★★ |
 | AWS-076 | AWS Service Selection Mental Model | ★★★ |
 | AWS-077 | Cloud Cost Mental Model | ★★★ |
+| AWS-065 | Immutable Infrastructure | ★★★ |

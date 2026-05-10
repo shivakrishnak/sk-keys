@@ -43,14 +43,14 @@ A comprehensive software engineering reference - **2,200+ keyword entries** acro
 
 ### Tier 4 - Data
 
-| #   | Category                                                                          | Count | Range           |
-| --- | --------------------------------------------------------------------------------- | ----- | --------------- |
-| 12  | [Database Fundamentals](./tier-4-data/DBF-database-fundamentals/)                 | 67    | DBF-001–DBF-067 |
-| 13  | [NoSQL & Distributed Databases](./tier-4-data/NDB-nosql-distributed/)             | 53    | NDB-001–NDB-053 |
-| 14  | [Caching](./tier-4-data/CCH-caching/)                                             | 37    | CCH-001–CCH-037 |
-| 15  | [Data Fundamentals](./tier-4-data/DAT-data-fundamentals/)                         | 54    | DAT-001–DAT-054 |
-| 16  | [Big Data & Streaming](./tier-4-data/BIG-bigdata-streaming/)                      | 35    | BIG-001–BIG-057 |
-| 16a | [Messaging & Event Streaming](./tier-4-data/MSG-messaging-streaming/)             | 33    | MSG-001–MSG-033 |
+| #   | Category                                                              | Count | Range           |
+| --- | --------------------------------------------------------------------- | ----- | --------------- |
+| 12  | [Database Fundamentals](./tier-4-data/DBF-database-fundamentals/)     | 67    | DBF-001–DBF-067 |
+| 13  | [NoSQL & Distributed Databases](./tier-4-data/NDB-nosql-distributed/) | 53    | NDB-001–NDB-053 |
+| 14  | [Caching](./tier-4-data/CCH-caching/)                                 | 37    | CCH-001–CCH-037 |
+| 15  | [Data Fundamentals](./tier-4-data/DAT-data-fundamentals/)             | 54    | DAT-001–DAT-054 |
+| 16  | [Big Data & Streaming](./tier-4-data/BIG-bigdata-streaming/)          | 35    | BIG-001–BIG-057 |
+| 16a | [Messaging & Event Streaming](./tier-4-data/MSG-messaging-streaming/) | 33    | MSG-001–MSG-033 |
 
 ### Tier 5 - Distributed Architecture
 

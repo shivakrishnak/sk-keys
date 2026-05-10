@@ -1,13 +1,14 @@
 ---
+id: AWS-065
 version: 1
 layout: default
-title: "955b - Immutable Infrastructure"
+title: "Immutable Infrastructure"
 parent: "Cloud - AWS"
 grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /cloud-aws/immutable-infrastructure/
 ---
-# AWS-065 - 955b - Immutable Infrastructure
+# AWS-065 - Immutable Infrastructure
 
 `#devops` `#sdlc` `#intermediate` `#reliability`
 
