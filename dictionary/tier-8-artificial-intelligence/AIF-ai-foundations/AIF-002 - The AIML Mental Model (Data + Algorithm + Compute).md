@@ -6,7 +6,7 @@ tier: tier-8-artificial-intelligence
 folder: AIF-ai-foundations
 difficulty: ★☆☆
 depends_on: AIF-001
-used_by: AIF-006, AIF-008, AIF-024
+used_by: AIF-006, AIF-028, AIF-011
 related: AIF-001, AIF-003, AIF-006
 tags:
   - ai
@@ -29,7 +29,7 @@ permalink: /ai-foundations/the-ai-ml-mental-model-data-algorithm-compute/
 | AIF-002 | Category: AI Foundations | Difficulty: ★☆☆ |
 | :--- | :--- | :--- |
 | **Depends on:** | AIF-001 | |
-| **Used by:** | AIF-006, AIF-008, AIF-024 | |
+| **Used by:** | AIF-006, AIF-028, AIF-011 | |
 | **Related:** | AIF-001, AIF-003, AIF-006 | |
 
 ---
@@ -359,8 +359,8 @@ below confidence threshold.
 
 **Builds On This (learn these next):**
 - AIF-006 - Machine Learning Basics
-- AIF-024 - Training
-- AIF-021 - Model Parameters
+- AIF-011 - Training
+- AIF-010 - Model Parameters
 
 **Alternatives / Comparisons:**
 - AIF-003 provides the taxonomic map; AIF-002 provides the engineering

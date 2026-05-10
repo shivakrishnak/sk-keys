@@ -6,8 +6,8 @@ tier: tier-8-artificial-intelligence
 folder: RAG-rag-agents-llmops
 difficulty: ★☆☆
 depends_on: RAG-007
-used_by: RAG-001, RAG-010, RAG-013
-related: RAG-009, RAG-043, NDB-001
+used_by: RAG-001, RAG-010, RAG-015
+related: RAG-009, RAG-045, NDB-001
 tags:
   - rag
   - foundational
@@ -29,8 +29,8 @@ permalink: /rag/vector-databases-fundamentals/
 | Field | Value |
 |-------|-------|
 | **Depends on** | RAG-007 |
-| **Used by** | RAG-001, RAG-010, RAG-013 |
-| **Related** | RAG-009, RAG-043, NDB-001 |
+| **Used by** | RAG-001, RAG-010, RAG-015 |
+| **Related** | RAG-009, RAG-045, NDB-001 |
 
 ---
 
@@ -372,12 +372,12 @@ GOOD: Scale up RAM (preferred), switch to IVF (more memory-efficient, slightly l
 - `RAG-009 - Similarity Search` — the distance metrics used
 
 **Builds On This (learn these next):**
-- `RAG-013 - Vector Database Options` — comparing Pinecone, Weaviate, Qdrant, Chroma
-- `RAG-043 - Vector DB Selection Framework` — how to choose for production
-- `RAG-046 - Vector Index Algorithm Research` — HNSW, IVF, ScaNN internals
+- `RAG-015 - Vector Database Options` — comparing Pinecone, Weaviate, Qdrant, Chroma
+- `RAG-045 - Vector DB Selection Framework` — how to choose for production
+- `RAG-048 - Vector Index Algorithm Research` — HNSW, IVF, ScaNN internals
 
 **Alternatives / Comparisons:**
-- `RAG-014 - Hybrid Search` — combining vector DB with sparse search (BM25)
+- `RAG-016 - Hybrid Search` — combining vector DB with sparse search (BM25)
 - `NDB-001 - NoSQL Databases` — vector DBs in the broader NoSQL context
 
 ---
@@ -406,7 +406,7 @@ GOOD: Scale up RAM (preferred), switch to IVF (more memory-efficient, slightly l
 +--------------------------------------------------+
 | ONE-LINER     | "Fast semantic search at scale"  |
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-013, RAG-043, RAG-046        |
+| NEXT EXPLORE  | RAG-015, RAG-045, RAG-048        |
 +--------------------------------------------------+
 ```
 

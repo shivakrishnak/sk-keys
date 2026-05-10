@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JLG-java-language
 difficulty: ★☆☆
 depends_on: JLG-001
-used_by: JLG-003, JLG-004, JLG-052
-related: JLG-005, JLG-043, SPR-002
+used_by: JLG-003, JLG-004, JLG-084
+related: JLG-005, JLG-075, SPR-002
 tags:
   - java
   - foundational
@@ -29,8 +29,8 @@ permalink: /jlg/the-java-ecosystem-map-se-ee-me-android/
 | Field          | Value                                                                                                                                                         |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Depends on** | [[JLG-001 - What Is Java - History and Philosophy]]                                                                                                           |
-| **Used by**    | [[JLG-003 - Why Java Is Still Dominant]], [[JLG-004 - Java vs Other JVM Languages (Kotlin, Scala, Groovy)]], [[JLG-052 - Java Ecosystem Selection Framework]] |
-| **Related**    | [[JLG-005 - Java Versioning and LTS Release Strategy]], [[JLG-043 - Java Modularity Strategy (JPMS)]], [[SPR-002 - The Spring Ecosystem Map]]                 |
+| **Used by**    | [[JLG-003 - Why Java Is Still Dominant]], [[JLG-004 - Java vs Other JVM Languages (Kotlin, Scala, Groovy)]], [[JLG-084 - Java Ecosystem Selection Framework]] |
+| **Related**    | [[JLG-005 - Java Versioning and LTS Release Strategy]], [[JLG-075 - Java Modularity Strategy (JPMS)]], [[SPR-002 - The Spring Ecosystem Map]]                 |
 
 ---
 
@@ -394,7 +394,7 @@ find ~/.m2 -name "log4j*.jar" | grep "2\.[0-9]"
 **Builds On This (learn these next):**
 
 - [[JLG-003 - Why Java Is Still Dominant]] - why the ecosystem remains relevant
-- [[JLG-043 - Java Modularity Strategy (JPMS)]] - Java SE modularisation
+- [[JLG-075 - Java Modularity Strategy (JPMS)]] - Java SE modularisation
 - [[SPR-002 - The Spring Ecosystem Map]] - the Spring portfolio built on this platform
 
 **Alternatives / Comparisons:**
@@ -424,7 +424,7 @@ find ~/.m2 -name "log4j*.jar" | grep "2\.[0-9]"
 | ONE-LINER     | SE=core; jakarta=enterprise specs;       |
 |               | Android=own runtime; ME=tiny devices     |
 | NEXT EXPLORE  | JLG-003 (Why Java Dominates),            |
-|               | JLG-043 (JPMS Modularity)                |
+|               | JLG-075 (JPMS Modularity)                |
 +----------------------------------------------------------+
 ```
 

@@ -11,7 +11,7 @@ permalink: /observability/
 
 Logging, metrics, distributed tracing, OpenTelemetry, Prometheus, Grafana, alerting, and SRE principles.
 
-**Keywords:** OBS-001– (62 terms)
+**Keywords:** OBS-001–OBS-046 (56 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -28,52 +28,46 @@ Logging, metrics, distributed tracing, OpenTelemetry, Prometheus, Grafana, alert
 | OBS-011 | SLI (Service Level Indicator) | ★☆☆ |
 | OBS-012 | SLO (Service Level Objective) | ★☆☆ |
 | OBS-013 | SLA (Service Level Agreement) | ★☆☆ |
-| OBS-014 | Prometheus -- Metrics Collection | ★★☆ |
-| OBS-015 | Grafana -- Dashboards | ★★☆ |
-| OBS-016 | OpenTelemetry -- The Standard | ★★☆ |
-| OBS-017 | Jaeger / Zipkin -- Distributed Tracing | ★★☆ |
-| OBS-018 | ELK / EFK Stack -- Log Management | ★★☆ |
-| OBS-019 | Error Budget | ★★☆ |
-| OBS-020 | Alerting Anti-Patterns (Alert Fatigue) | ★★☆ |
-| OBS-021 | Health Check Patterns | ★★☆ |
-| OBS-028 | Datadog -- Observability Platform | ★★☆ |
-| OBS-029 | Dynatrace -- Full-Stack Monitoring | ★★☆ |
-| OBS-030 | Incident Management Process | ★★☆ |
-| OBS-031 | Runbooks and Playbooks | ★★☆ |
-| OBS-032 | Log Aggregation at Scale | ★★☆ |
-| OBS-033 | Trace Sampling Strategies | ★★☆ |
-| OBS-034 | RED Method (Rate, Errors, Duration) | ★★☆ |
-| OBS-035 | USE Method (Utilization, Saturation, Errors) | ★★☆ |
-| OBS-036 | Golden Signals | ★★☆ |
-| OBS-037 | Cardinality in Metrics Systems | ★★★ |
-| OBS-038 | Continuous Profiling (Pyroscope, Parca) | ★★★ |
-| OBS-039 | eBPF for Observability | ★★★ |
-| OBS-040 | Chaos Engineering for Observability | ★★★ |
-| OBS-041 | Post-Mortem and Blameless Culture | ★★★ |
-| OBS-042 | Toil Reduction Strategy | ★★★ |
-| OBS-043 | Capacity Planning with Metrics | ★★★ |
-| OBS-044 | Observability at Scale (Sampling, Aggregation) | ★★★ |
-| OBS-045 | SRE Book -- Core Principles Deep Dive | ★★★ |
-| OBS-046 | Observability Platform Architecture Design | ★★★ |
-| OBS-047 | SLO-Based Alerting Strategy | ★★★ |
-| OBS-048 | Observability-Driven Development Strategy | ★★★ |
-| OBS-049 | Platform Observability Engineering | ★★★ |
-| OBS-050 | Observability System Design Internals | ★★★ |
-| OBS-051 | Time-Series Database Design | ★★★ |
-| OBS-052 | Distributed Tracing System Architecture | ★★★ |
-| OBS-053 | Formal SLO Theory | ★★★ |
-| OBS-054 | Observability-First Thinking | ★★★ |
-| OBS-055 | SLO Trade-off Framing | ★★★ |
-| OBS-056 | Reliability Mental Model | ★★★ |
-| OBS-057 | Observability Interview Preparation Guide | ★☆☆ |
-| OBS-058 | OpenTelemetry | ★★★ |
-| OBS-059 | Service Level Objectives (SLOs) Deep Dive | ★★★ |
-| OBS-060 | Error Budgets | ★★★ |
-| OBS-061 | Chaos Engineering | ★★★ |
-| OBS-062 | Production On-Call Runbook Design | ★★★ |
-|  | AWS CloudWatch Dashboards | ★★★ |
-|  | AWS CloudWatch Log Insights | ★★★ |
-|  | AWS CloudWatch Alarms | ★★★ |
-|  | AWS X-Ray (Distributed Tracing) | ★★★ |
-|  | Actionable Alerting Patterns | ★★★ |
-|  | AppDynamics | ★★★ |
+| OBS-016 | Observability Interview Preparation Guide | ★☆☆ |
+| OBS-017 | Prometheus -- Metrics Collection | ★★☆ |
+| OBS-018 | Grafana -- Dashboards | ★★☆ |
+| OBS-019 | OpenTelemetry -- The Standard | ★★☆ |
+| OBS-020 | Jaeger / Zipkin -- Distributed Tracing | ★★☆ |
+| OBS-021 | ELK / EFK Stack -- Log Management | ★★☆ |
+| OBS-022 | Error Budget | ★★☆ |
+| OBS-022 | Alerting Anti-Patterns (Alert Fatigue) | ★★☆ |
+| OBS-022 | Health Check Patterns | ★★☆ |
+| OBS-023 | Datadog -- Observability Platform | ★★☆ |
+| OBS-024 | Dynatrace -- Full-Stack Monitoring | ★★☆ |
+| OBS-025 | Incident Management Process | ★★☆ |
+| OBS-026 | Runbooks and Playbooks | ★★☆ |
+| OBS-027 | Log Aggregation at Scale | ★★☆ |
+| OBS-023 | Trace Sampling Strategies | ★★☆ |
+| OBS-024 | RED Method (Rate, Errors, Duration) | ★★☆ |
+| OBS-025 | USE Method (Utilization, Saturation, Errors) | ★★☆ |
+| OBS-026 | Golden Signals | ★★☆ |
+| OBS-027 | Cardinality in Metrics Systems | ★★★ |
+| OBS-023 | Continuous Profiling (Pyroscope, Parca) | ★★★ |
+| OBS-024 | eBPF for Observability | ★★★ |
+| OBS-025 | Chaos Engineering for Observability | ★★★ |
+| OBS-026 | Post-Mortem and Blameless Culture | ★★★ |
+| OBS-027 | Toil Reduction Strategy | ★★★ |
+| OBS-028 | Capacity Planning with Metrics | ★★★ |
+| OBS-029 | Observability at Scale (Sampling, Aggregation) | ★★★ |
+| OBS-030 | SRE Book -- Core Principles Deep Dive | ★★★ |
+| OBS-031 | Observability Platform Architecture Design | ★★★ |
+| OBS-032 | SLO-Based Alerting Strategy | ★★★ |
+| OBS-033 | Observability-Driven Development Strategy | ★★★ |
+| OBS-034 | Platform Observability Engineering | ★★★ |
+| OBS-035 | Observability System Design Internals | ★★★ |
+| OBS-036 | Time-Series Database Design | ★★★ |
+| OBS-037 | Distributed Tracing System Architecture | ★★★ |
+| OBS-038 | Formal SLO Theory | ★★★ |
+| OBS-039 | Observability-First Thinking | ★★★ |
+| OBS-040 | SLO Trade-off Framing | ★★★ |
+| OBS-041 | Reliability Mental Model | ★★★ |
+| OBS-042 | OpenTelemetry | ★★★ |
+| OBS-043 | Service Level Objectives (SLOs) Deep Dive | ★★★ |
+| OBS-044 | Error Budgets | ★★★ |
+| OBS-045 | Chaos Engineering | ★★★ |
+| OBS-046 | Production On-Call Runbook Design | ★★★ |

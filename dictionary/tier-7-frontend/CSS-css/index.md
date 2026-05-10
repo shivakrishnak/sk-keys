@@ -11,7 +11,7 @@ permalink: /css/
 
 CSS cascade, specificity, Flexbox, Grid, animations, preprocessors, CSS architecture, and modern CSS features.
 
-**Keywords:** CSS-001–CSS-050 (49 terms)
+**Keywords:** CSS-001–CSS-047 (49 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -28,39 +28,39 @@ CSS cascade, specificity, Flexbox, Grid, animations, preprocessors, CSS architec
 | CSS-011 | CSS Display (block, inline, inline-block, none) | ★☆☆ |
 | CSS-012 | CSS Position (static, relative, absolute, fixed, sticky) | ★☆☆ |
 | CSS-013 | CSS Flexbox | ★☆☆ |
-| CSS-014 | CSS Grid | ★★☆ |
-| CSS-015 | CSS Custom Properties (Variables) | ★★☆ |
-| CSS-016 | CSS Media Queries and Responsive Design | ★★☆ |
-| CSS-017 | CSS Animations and Transitions | ★★☆ |
-| CSS-018 | CSS Pseudo-Classes and Pseudo-Elements | ★★☆ |
-| CSS-019 | CSS Z-Index and Stacking Context | ★★☆ |
-| CSS-020 | Sass / SCSS Preprocessor | ★★☆ |
-| CSS-021 | CSS BEM Naming Convention | ★★☆ |
-| CSS-022 | CSS Modules | ★★☆ |
-| CSS-023 | Tailwind CSS (Utility-First) | ★★☆ |
-| CSS-024 | CSS-in-JS (Styled-Components, Emotion) | ★★☆ |
-| CSS-025 | CSS Container Queries | ★★☆ |
-| CSS-026 | CSS Logical Properties | ★★☆ |
-| CSS-027 | CSS Scroll Snap | ★★☆ |
-| CSS-028 | CSS Clipping and Masking | ★★☆ |
-| CSS-029 | CSS Transforms and Perspective | ★★☆ |
-| CSS-030 | CSS Subgrid | ★★☆ |
-| CSS-031 | CSS Houdini (Paint, Layout Worklets) | ★★☆ |
-| CSS-032 | CSS Performance (Reflow, Repaint, Compositing) | ★★★ |
-| CSS-033 | CSS Cascade Layers (@layer) | ★★★ |
-| CSS-034 | CSS Nesting (Native) | ★★★ |
-| CSS-035 | CSS Paint API | ★★★ |
-| CSS-036 | CSS Architecture at Scale (Tokens, Design Systems) | ★★★ |
-| CSS-037 | CSS Framework Selection Strategy | ★★★ |
-| CSS-038 | Design Token Architecture | ★★★ |
-| CSS-039 | CSS Theming Strategy (Dark Mode, Multi-Brand) | ★★★ |
-| CSS-040 | Browser Layout Engine Internals | ★★★ |
-| CSS-041 | CSS Specification Design Philosophy | ★★★ |
-| CSS-042 | CSS Performance Research | ★★★ |
-| CSS-043 | CSS Architecture Trade-off Framing | ★★★ |
-| CSS-044 | Cascade Mental Model (Specificity Wars) | ★★★ |
-| CSS-045 | CSS Naming Strategy Thinking | ★★★ |
-| CSS-046 | CSS Interview Preparation Guide | ★☆☆ |
-| CSS-048 | CSS Scroll-Driven Animations | ★★★ |
-| CSS-049 | CSS Cascade Layers | ★★★ |
-| CSS-050 | CSS Houdini (Paint API) | ★★★ |
+| CSS-016 | CSS Interview Preparation Guide | ★☆☆ |
+| CSS-017 | CSS Grid | ★★☆ |
+| CSS-018 | CSS Custom Properties (Variables) | ★★☆ |
+| CSS-019 | CSS Media Queries and Responsive Design | ★★☆ |
+| CSS-020 | CSS Animations and Transitions | ★★☆ |
+| CSS-021 | CSS Pseudo-Classes and Pseudo-Elements | ★★☆ |
+| CSS-022 | CSS Z-Index and Stacking Context | ★★☆ |
+| CSS-023 | Sass / SCSS Preprocessor | ★★☆ |
+| CSS-024 | CSS BEM Naming Convention | ★★☆ |
+| CSS-025 | CSS Modules | ★★☆ |
+| CSS-026 | Tailwind CSS (Utility-First) | ★★☆ |
+| CSS-027 | CSS-in-JS (Styled-Components, Emotion) | ★★☆ |
+| CSS-028 | CSS Container Queries | ★★☆ |
+| CSS-029 | CSS Logical Properties | ★★☆ |
+| CSS-030 | CSS Scroll Snap | ★★☆ |
+| CSS-031 | CSS Clipping and Masking | ★★☆ |
+| CSS-032 | CSS Transforms and Perspective | ★★☆ |
+| CSS-033 | CSS Subgrid | ★★☆ |
+| CSS-034 | CSS Houdini (Paint, Layout Worklets) | ★★☆ |
+| CSS-035 | CSS Performance (Reflow, Repaint, Compositing) | ★★★ |
+| CSS-036 | CSS Cascade Layers (@layer) | ★★★ |
+| CSS-037 | CSS Nesting (Native) | ★★★ |
+| CSS-038 | CSS Paint API | ★★★ |
+| CSS-039 | CSS Architecture at Scale (Tokens, Design Systems) | ★★★ |
+| CSS-040 | CSS Framework Selection Strategy | ★★★ |
+| CSS-041 | Design Token Architecture | ★★★ |
+| CSS-042 | CSS Theming Strategy (Dark Mode, Multi-Brand) | ★★★ |
+| CSS-043 | Browser Layout Engine Internals | ★★★ |
+| CSS-044 | CSS Specification Design Philosophy | ★★★ |
+| CSS-045 | CSS Performance Research | ★★★ |
+| CSS-046 | CSS Architecture Trade-off Framing | ★★★ |
+| CSS-014 | Cascade Mental Model (Specificity Wars) | ★★★ |
+| CSS-015 | CSS Naming Strategy Thinking | ★★★ |
+| CSS-047 | CSS Scroll-Driven Animations | ★★★ |
+| CSS-047 | CSS Cascade Layers | ★★★ |
+| CSS-047 | CSS Houdini (Paint API) | ★★★ |

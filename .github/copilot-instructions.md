@@ -1,6 +1,6 @@
 ﻿# GitHub Copilot - Workspace Instructions
 
-This workspace is the **sk-keys Technical Dictionary** - a comprehensive software engineering reference containing 3,314+ keyword entries across 55 categories in 9 tiers.
+This workspace is the **sk-keys Technical Dictionary** - a comprehensive software engineering reference containing 3,638+ keyword entries across 55 categories in 9 tiers.
 
 Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. All four categories must be followed together on every entry. "Apply each category independently" means: when a rule in one category is unclear, do not borrow a rule from a different category to resolve it - resolve it within the same category's own rules. If the categories appear to conflict, apply them in priority order: **Content** first, then **Conditional sections**, then **Formatting**, then **YAML**.
 

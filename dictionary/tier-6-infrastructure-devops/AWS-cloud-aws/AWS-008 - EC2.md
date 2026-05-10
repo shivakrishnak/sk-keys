@@ -1,0 +1,305 @@
+---
+version: 1
+layout: default
+title: "EC2"
+parent: "Cloud - AWS"
+grand_parent: "Technical Dictionary"
+nav_order: 8
+permalink: /cloud-aws/ec2/
+id: AWS-021
+category: "Cloud - AWS"
+difficulty: "★☆☆"
+depends_on:
+  [
+    "VPC",
+    "Subnets (Public / Private)",
+    "Security Groups",
+    "IAM (Identity and Access Management)",
+  ]
+used_by: ["Auto Scaling Groups", "ELB / ALB / NLB", "EKS", "ECS / Fargate"]
+related: ["EC2 Instance Types", "Auto Scaling Groups", "EBS / EFS", "AMI"]
+tags: [aws, ec2, virtual-machine, compute, cloud, instances]
+---
+
+# EC2
+
+## ⚡ TL;DR
+
+**EC2 (Elastic Compute Cloud)** provides resizable virtual machines (instances) in AWS. Choose from hundreds of instance types (CPU, memory, GPU, storage optimized). Key decisions: instance type, AMI (OS image), VPC/subnet/security group placement, IAM instance profile, and storage (EBS). Foundation of most AWS architectures.
+
+---
+
+## 🔥 Problem This Solves
+
+You need a server to run your application code - without buying physical hardware, managing data center racks, or dealing with hardware failures. EC2 gives you a virtual server in minutes, configurable via API, scalable from 1 to thousands.
+
+---
+
+## 📘 Textbook Definition
+
+Amazon Elastic Compute Cloud (EC2) is a web service that provides secure, resizable compute capacity in the cloud. EC2 instances are virtual machines running on AWS hypervisors (Nitro/Xen), with configurable CPU, memory, storage, and network. Instances are billed per second (Linux) or per hour (Windows), with no upfront hardware cost.
+
+---
+
+## ⏱️ 30 Seconds
+
+```
+EC2 instance key attributes:
+  AMI:        OS + pre-installed software image (Amazon Linux, Ubuntu, custom)
+  Instance type: t3.medium (2 vCPU, 4GB RAM), m5.xlarge (4 vCPU, 16GB), etc.
+  VPC/Subnet: where it lives on the network
+  Security Group: firewall
+  Key Pair:   SSH access (PEM key)
+  IAM Role:   permissions to call AWS APIs
+  EBS Volume: persistent storage (root + additional)
+
+Lifecycle: pending → running → stopping → stopped → terminated
+```
+
+---
+
+## 🔩 First Principles
+
+- **Virtualized compute**: Nitro hypervisor (AWS's custom bare-metal hypervisor) for near-native performance
+- **Ephemeral by default**: instance store is lost on stop/terminate; use EBS for persistence
+- **Instance metadata**: http://169.254.169.254 - get IAM credentials, instance ID, AZ from inside instance
+- **User Data**: shell script or cloud-init config that runs on first boot; use for bootstrapping
+- **Placement groups**: cluster (low latency), spread (fault isolation), partition (large distributed apps)
+
+---
+
+## 🧪 Thought Experiment
+
+You run a Java Spring Boot app on EC2. Peak load: need 4 instances. Off-peak: 1 instance is enough. Auto Scaling Group: set min=1, max=4, CPU alarm at 70%. During peak, ASG launches 3 more instances automatically. During off-peak, terminates them. Your app is stateless (state in RDS/ElastiCache) so any instance can serve any request.
+
+---
+
+## 🧠 Mental Model / Analogy
+
+EC2 = **renting a server at a data center**, but instead of calling a data center tech and waiting a week, you order online and it's ready in 60 seconds. You can choose the server size (instance type), the operating system (AMI), the network location (VPC/subnet), and return it any time. Billed by the second.
+
+---
+
+## 📶 Gradual Depth
+
+**Level 1 - Beginner**: Launch EC2 via console. Choose instance type, Amazon Linux 2 AMI, VPC/subnet, security group (allow SSH/HTTP). Connect via SSH. Install and run your app.
+
+**Level 2 - Practitioner**: Use User Data script for bootstrapping. Attach IAM instance profile for API access (no hardcoded keys). Use SSM Session Manager instead of SSH (no open port 22). Create custom AMI for faster launch. Store app logs in CloudWatch.
+
+**Level 3 - Advanced**: Nitro instances: enhanced networking (ENA), EBS optimization, NVMe instance store, hardware acceleration. Placement groups: cluster placement (HPC, all instances in same AZ rack, <1ms latency, up to 100Gbps); spread placement (HA, instances on different racks). EC2 Instance Connect (browser SSH). Instance metadata service v2 (IMDSv2): requires session token, prevents SSRF attacks.
+
+**Level 4 - Expert**: Graviton3 (ARM-based): up to 40% better price/performance for many workloads (Java, Python). Bare-metal instances (m5.metal): no hypervisor; direct hardware access for VMware workloads, nested virtualization. EC2 Mac instances: Mac mini in AWS data center for iOS/macOS builds. Hibernation: save instance state to EBS, resume later. EC2 Dedicated Hosts vs Dedicated Instances: Dedicated Hosts = physical server affinity (license compliance); Dedicated Instances = instance isolation (no hardware sharing).
+
+---
+
+## ⚙️ How It Works
+
+### Launch EC2 (Terraform)
+
+```hcl
+# Latest Amazon Linux 2 AMI
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
+resource "aws_instance" "app" {
+  ami           = data.aws_ami.amazon_linux.id
+  instance_type = "t3.medium"
+
+  subnet_id              = aws_subnet.private_a.id
+  vpc_security_group_ids = [aws_security_group.app.id]
+  iam_instance_profile   = aws_iam_instance_profile.app.name
+
+  # Enable IMDSv2 (security best practice)
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"  # IMDSv2
+    http_put_response_hop_limit = 1
+  }
+
+  # Bootstrap script
+  user_data = base64encode(<<-EOF
+    #!/bin/bash
+    yum update -y
+    yum install -y java-17-amazon-corretto
+    aws s3 cp s3://my-app-bucket/app.jar /opt/app/
+    systemctl enable myapp
+    systemctl start myapp
+  EOF
+  )
+
+  root_block_device {
+    volume_type           = "gp3"
+    volume_size           = 20
+    encrypted             = true
+    delete_on_termination = true
+  }
+
+  tags = {
+    Name        = "app-server"
+    Environment = "production"
+    Team        = "payments"
+  }
+}
+```
+
+### IMDSv2 (Security Best Practice)
+
+```bash
+# Inside EC2: get instance metadata securely (IMDSv2)
+TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" \
+  -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+
+# Get instance ID
+curl -H "X-aws-ec2-metadata-token: $TOKEN" \
+  http://169.254.169.254/latest/meta-data/instance-id
+
+# Get IAM role credentials
+curl -H "X-aws-ec2-metadata-token: $TOKEN" \
+  http://169.254.169.254/latest/meta-data/iam/security-credentials/my-role
+
+# Get AZ
+curl -H "X-aws-ec2-metadata-token: $TOKEN" \
+  http://169.254.169.254/latest/meta-data/placement/availability-zone
+```
+
+### User Data for Java App
+
+```bash
+#!/bin/bash
+set -e
+
+# Update and install Java
+yum update -y
+yum install -y java-17-amazon-corretto-headless
+
+# Create service user
+useradd -r -s /sbin/nologin appuser
+
+# Install CloudWatch Agent
+yum install -y amazon-cloudwatch-agent
+cat > /opt/aws/amazon-cloudwatch-agent/etc/app-config.json << 'CWCONFIG'
+{
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [{
+          "file_path": "/var/log/myapp/*.log",
+          "log_group_name": "/apps/my-spring-boot-app",
+          "log_stream_name": "{instance_id}"
+        }]
+      }
+    }
+  }
+}
+CWCONFIG
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+  -a fetch-config -m ec2 -s \
+  -c file:/opt/aws/amazon-cloudwatch-agent/etc/app-config.json
+
+# Download and start app
+mkdir -p /opt/myapp
+aws s3 cp s3://my-app-bucket/app.jar /opt/myapp/app.jar
+chown -R appuser:appuser /opt/myapp
+
+# Create systemd service
+cat > /etc/systemd/system/myapp.service << 'SERVICE'
+[Unit]
+Description=My Spring Boot App
+After=network.target
+
+[Service]
+User=appuser
+ExecStart=/usr/bin/java -jar /opt/myapp/app.jar
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+
+systemctl daemon-reload
+systemctl enable myapp
+systemctl start myapp
+```
+
+---
+
+## ⚖️ Comparison Table: EC2 vs Managed Services
+
+|                 | EC2                     | ECS Fargate        | Lambda                 |
+| --------------- | ----------------------- | ------------------ | ---------------------- |
+| **Control**     | Full OS access          | Container level    | Function only          |
+| **Scaling**     | ASG (minutes)           | Task (seconds)     | Automatic (ms)         |
+| **Pricing**     | Per-second              | Per vCPU/GB-s      | Per request + duration |
+| **Maintenance** | OS patching required    | Container only     | None                   |
+| **Cold start**  | None                    | ~30s               | 0-1s                   |
+| **Use case**    | Legacy, heavy workloads | Containerized apps | Event-driven           |
+
+---
+
+## ⚠️ Common Misconceptions
+
+| Misconception               | Reality                                                                 |
+| --------------------------- | ----------------------------------------------------------------------- |
+| "Stopped EC2 costs nothing" | Stopped: EBS storage + EIP still billed                                 |
+| "Terminate = stop"          | Terminate = permanently deletes instance and EBS (by default)           |
+| "Any AMI works anywhere"    | AMIs are region-specific; must copy or find equivalent in target region |
+| "EC2 = always-on server"    | With ASG, instances come and go; design for statelessness               |
+
+---
+
+## 🔗 Related Keywords
+
+- [EC2 Instance Types](/cloud-aws/ec2-instance-types/) - choosing the right size/family
+- [Auto Scaling Groups](/cloud-aws/auto-scaling-groups/) - dynamic EC2 scaling
+- [EBS / EFS](/cloud-aws/ebs-efs/) - EC2 storage options
+- [IAM Roles / Policies](/cloud-aws/iam-roles-policies/) - EC2 instance profile
+
+---
+
+## 📌 Quick Reference Card
+
+```bash
+# Launch instance (basic)
+aws ec2 run-instances \
+  --image-id ami-12345 \
+  --instance-type t3.medium \
+  --subnet-id subnet-12345 \
+  --security-group-ids sg-12345 \
+  --iam-instance-profile Name=my-instance-profile \
+  --key-name my-keypair
+
+# Describe running instances
+aws ec2 describe-instances \
+  --filters Name=instance-state-name,Values=running \
+  --query 'Reservations[].Instances[].[InstanceId,InstanceType,PrivateIpAddress]'
+
+# Connect via SSM (no SSH needed)
+aws ssm start-session --target i-12345abcde
+
+# Create AMI from running instance
+aws ec2 create-image \
+  --instance-id i-12345 \
+  --name "my-app-ami-$(date +%Y%m%d)"
+
+# Stop/Start/Terminate
+aws ec2 stop-instances --instance-ids i-12345
+aws ec2 start-instances --instance-ids i-12345
+aws ec2 terminate-instances --instance-ids i-12345
+
+# Check instance type
+curl -H "X-aws-ec2-metadata-token: $TOKEN" \
+  http://169.254.169.254/latest/meta-data/instance-type
+```
+
+---
+
+## 🧠 Think About This
+
+The most important EC2 operational practice is treating instances as **cattle, not pets**. Pets are named, maintained, and fixed when sick. Cattle are numbered, identical, and replaced when sick. This means: never SSH to production instances to make changes (use automation, AMIs, User Data). Don't install software manually on running instances. When an instance needs an update: update the AMI, launch new instances, drain and terminate old ones. This practice makes your infrastructure reproducible, testable, and recoverable. It also means SSM Session Manager > SSH: Session Manager works through IAM roles, leaves CloudTrail audit logs, and doesn't require port 22 to be open - a meaningful security improvement.

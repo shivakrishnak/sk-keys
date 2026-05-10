@@ -7,7 +7,7 @@ folder: SPR-spring-core
 difficulty: ★☆☆
 depends_on: SPR-001, SPR-002, SPR-003
 used_by:
-related: SPR-016, SPR-017, SPR-018
+related: SPR-057, SPR-058, SPR-059
 tags:
   - spring
   - java
@@ -31,7 +31,7 @@ permalink: /spr/spring-vs-jakarta-ee-vs-micronaut-vs-quarkus/
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Depends on** | [[SPR-001 - What Is Spring - History and Philosophy]], [[SPR-002 - The Spring Ecosystem Map]], [[SPR-003 - Why Spring Boot Changed Java Development]] |
 | **Used by**    | -                                                                                                                                                     |
-| **Related**    | [[SPR-016 - Micronaut Framework]], [[SPR-017 - Micronaut vs Spring Boot]], [[SPR-018 - Quarkus Framework]]                                            |
+| **Related**    | [[SPR-057 - Micronaut Framework]], [[SPR-058 - Micronaut vs Spring Boot]], [[SPR-059 - Quarkus Framework]]                                            |
 
 ---
 
@@ -412,18 +412,18 @@ cat src/main/webapp/WEB-INF/beans.xml
 
 - [[SPR-001 - What Is Spring - History and Philosophy]] - the history context for this comparison
 - [[SPR-002 - The Spring Ecosystem Map]] - what Spring's ecosystem provides
-- [[SPR-019 - IoC (Inversion of Control)]] - the shared concept all four implement differently
+- [[SPR-006 - IoC (Inversion of Control)]] - the shared concept all four implement differently
 
 **Builds On This (learn these next):**
 
-- [[SPR-016 - Micronaut Framework]] - Micronaut in depth
-- [[SPR-017 - Micronaut vs Spring Boot]] - detailed head-to-head
-- [[SPR-018 - Quarkus Framework]] - Quarkus in depth
+- [[SPR-057 - Micronaut Framework]] - Micronaut in depth
+- [[SPR-058 - Micronaut vs Spring Boot]] - detailed head-to-head
+- [[SPR-059 - Quarkus Framework]] - Quarkus in depth
 
 **Alternatives / Comparisons:**
 
-- [[SPR-066 - Spring Native and GraalVM Integration]] - Spring's response to compile-time frameworks
-- [[SPR-073 - Spring Boot AOT Compilation]] - AOT in Spring Boot 3
+- [[SPR-084 - Spring Native and GraalVM Integration]] - Spring's response to compile-time frameworks
+- [[SPR-033 - Spring Boot AOT Compilation]] - AOT in Spring Boot 3
 - Vert.x (not in SPR - see DST category) - fully reactive, non-framework toolkit
 
 ---
@@ -441,7 +441,7 @@ cat src/main/webapp/WEB-INF/beans.xml
 |               | (Micronaut/Quarkus)                        |
 | ONE-LINER     | Spring=ecosystem, EE=standards,            |
 |               | Micronaut/Quarkus=startup                  |
-| NEXT EXPLORE  | SPR-016 (Micronaut), SPR-018 (Quarkus)     |
+| NEXT EXPLORE  | SPR-057 (Micronaut), SPR-059 (Quarkus)     |
 +----------------------------------------------------------+
 ```
 

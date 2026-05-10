@@ -6,8 +6,8 @@ tier: tier-5-distributed-architecture
 folder: MSV-microservices
 difficulty: ★☆☆
 depends_on:
-used_by: MSV-002, MSV-003, MSV-004, MSV-005
-related: MSV-006, DST-001, SAP-001
+used_by: MSV-026, MSV-007, MSV-002, MSV-003
+related: MSV-014, DST-001, SAP-001
 tags:
   - microservices
   - foundational
@@ -29,8 +29,8 @@ permalink: /msv/what-are-microservices/
 | Field          | Value                              |
 | -------------- | ---------------------------------- |
 | **Depends on** | —                                  |
-| **Used by**    | MSV-002, MSV-003, MSV-004, MSV-005 |
-| **Related**    | MSV-006, DST-001, SAP-001          |
+| **Used by**    | MSV-026, MSV-007, MSV-002, MSV-003 |
+| **Related**    | MSV-014, DST-001, SAP-001          |
 
 ---
 
@@ -362,20 +362,20 @@ GOOD: Outbox pattern + saga choreography for eventual consistency.
 
 **Prerequisites (understand these first):**
 
-- `MSV-002 - Monolith vs Microservices` — understand the trade-off before committing
+- `MSV-026 - Monolith vs Microservices` — understand the trade-off before committing
 - `DST-001 - Distributed Systems` — microservices are distributed systems
 - `SAP-001 - Service-Oriented Architecture` — the precursor pattern
 
 **Builds On This (learn these next):**
 
-- `MSV-006 - Service Discovery` — how services find each other
-- `MSV-010 - API Gateway` — entry point for external traffic
-- `MSV-004 - The Microservices Ecosystem Map` — the full set of concerns
+- `MSV-014 - Service Discovery` — how services find each other
+- `MSV-039 - API Gateway` — entry point for external traffic
+- `MSV-002 - The Microservices Ecosystem Map` — the full set of concerns
 
 **Alternatives / Comparisons:**
 
-- `MSV-002 - Monolith vs Microservices` — when NOT to use microservices
-- `MSV-005 - When NOT to Use Microservices` — constraints and prerequisites
+- `MSV-026 - Monolith vs Microservices` — when NOT to use microservices
+- `MSV-003 - When NOT to Use Microservices` — constraints and prerequisites
 
 ---
 
@@ -404,7 +404,7 @@ GOOD: Outbox pattern + saga choreography for eventual consistency.
 │ ONE-LINER     │ "One team, one service,          │
 │               │ one database"                    │
 ├──────────────────────────────────────────────────┤
-│ NEXT EXPLORE  │ MSV-002, MSV-005, MSV-006        │
+│ NEXT EXPLORE  │ MSV-026, MSV-003, MSV-014        │
 └──────────────────────────────────────────────────┘
 ```
 

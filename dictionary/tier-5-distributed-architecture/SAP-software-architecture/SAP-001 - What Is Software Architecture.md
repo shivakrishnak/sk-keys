@@ -6,7 +6,7 @@ tier: tier-5-distributed-architecture
 folder: SAP-software-architecture
 difficulty: ★☆☆
 depends_on:
-used_by: SAP-002, SAP-003, SAP-004, SAP-005, SAP-006
+used_by: SAP-002, SAP-003, SAP-004, SAP-005, SAP-056
 related: SAP-004, SAP-005, DST-001
 tags:
   - architecture
@@ -29,7 +29,7 @@ permalink: /software-architecture/what-is-software-architecture/
 | SAP-001 | Category: Software Architecture Patterns | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | - | |
-| **Used by:** | SAP-002, SAP-003, SAP-004, SAP-005, SAP-006 | |
+| **Used by:** | SAP-002, SAP-003, SAP-004, SAP-005, SAP-056 | |
 | **Related:** | SAP-004, SAP-005, DST-001 | |
 
 ---
@@ -303,7 +303,7 @@ ArchRule rule = layeredArchitecture()
 **Failure Mode 3: Over-Architecture**
 **Symptom:** A CRUD app for 100 users has 12 microservices and a custom message bus.
 **Root Cause:** Pattern cargo-culting. Complexity adopted for prestige or speculative requirements.
-**Fix:** Apply YAGNI (SAP-046) to architectural decisions. Validate: "Does this complexity address a real, current quality requirement?"
+**Fix:** Apply YAGNI (SAP-045) to architectural decisions. Validate: "Does this complexity address a real, current quality requirement?"
 **Prevention:** Require every architectural decision to trace to a numbered quality attribute scenario.
 
 ---
@@ -312,12 +312,12 @@ ArchRule rule = layeredArchitecture()
 
 **Prerequisites (understand these first):**
 - SAP-004 - Architecture vs Design vs Implementation
-- SAP-043 - SOLID Principles
+- SAP-044 - SOLID Principles
 
 **Builds On This (learn these next):**
 - SAP-002 - Why Architecture Decisions Matter
 - SAP-003 - The Architecture Landscape - Styles and Patterns
-- SAP-006 - Architecture Decision Record (ADR)
+- SAP-056 - Architecture Decision Record (ADR)
 
 **Alternatives / Comparisons:**
 - DST-001 - Distributed Systems (architecture at systems level)
@@ -350,7 +350,7 @@ ArchRule rule = layeredArchitecture()
 +----------------------------------------------------------+
 | ONE-LINER      | Architecture = load-bearing decisions.  |
 +----------------------------------------------------------+
-| NEXT EXPLORE   | SAP-002, SAP-006, SAP-013               |
+| NEXT EXPLORE   | SAP-002, SAP-056, SAP-034               |
 +----------------------------------------------------------+
 ```
 

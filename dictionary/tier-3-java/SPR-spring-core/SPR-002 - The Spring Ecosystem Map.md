@@ -7,7 +7,7 @@ folder: SPR-spring-core
 difficulty: ★☆☆
 depends_on: SPR-001
 used_by: SPR-003, SPR-004, SPR-005
-related: SPR-010, SPR-044, SPR-050
+related: SPR-051, SPR-067, SPR-030
 tags:
   - spring
   - java
@@ -31,7 +31,7 @@ permalink: /spr/the-spring-ecosystem-map/
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Depends on** | [[SPR-001 - What Is Spring - History and Philosophy]]                                                                                                                   |
 | **Used by**    | [[SPR-003 - Why Spring Boot Changed Java Development]], [[SPR-004 - Spring vs Jakarta EE vs Micronaut vs Quarkus]], [[SPR-005 - Spring in Production - What to Expect]] |
-| **Related**    | [[SPR-010 - Spring Cloud Overview]], [[SPR-044 - Auto-Configuration]], [[SPR-050 - Spring Security]]                                                                    |
+| **Related**    | [[SPR-051 - Spring Cloud Overview]], [[SPR-067 - Auto-Configuration]], [[SPR-030 - Spring Security]]                                                                    |
 
 ---
 
@@ -388,20 +388,20 @@ public SecurityFilterChain filterChain(HttpSecurity http)
 **Prerequisites (understand these first):**
 
 - [[SPR-001 - What Is Spring - History and Philosophy]] - the foundation the ecosystem builds on
-- [[SPR-019 - IoC (Inversion of Control)]] - the shared container concept
-- [[SPR-044 - Auto-Configuration]] - the mechanism connecting ecosystem projects
+- [[SPR-006 - IoC (Inversion of Control)]] - the shared container concept
+- [[SPR-067 - Auto-Configuration]] - the mechanism connecting ecosystem projects
 
 **Builds On This (learn these next):**
 
 - [[SPR-003 - Why Spring Boot Changed Java Development]] - how Boot unified the ecosystem
-- [[SPR-010 - Spring Cloud Overview]] - the distributed systems layer
-- [[SPR-051 - Spring Data JPA]] - the data access layer
+- [[SPR-051 - Spring Cloud Overview]] - the distributed systems layer
+- [[SPR-071 - Spring Data JPA]] - the data access layer
 
 **Alternatives / Comparisons:**
 
 - [[SPR-004 - Spring vs Jakarta EE vs Micronaut vs Quarkus]] - competing ecosystems
-- Micronaut Framework (SPR-016) - compile-time DI with a similar module structure
-- Quarkus Framework (SPR-018) - Kubernetes-native alternative ecosystem
+- Micronaut Framework (SPR-057) - compile-time DI with a similar module structure
+- Quarkus Framework (SPR-059) - Kubernetes-native alternative ecosystem
 
 ---
 
@@ -416,7 +416,7 @@ public SecurityFilterChain filterChain(HttpSecurity http)
 | AVOID WHEN    | -                                          |
 | TRADE-OFF     | BOM consistency vs version flexibility     |
 | ONE-LINER     | start.spring.io = the ecosystem menu       |
-| NEXT EXPLORE  | SPR-003 (Boot), SPR-044 (Auto-Config)      |
+| NEXT EXPLORE  | SPR-003 (Boot), SPR-067 (Auto-Config)      |
 +----------------------------------------------------------+
 ```
 
@@ -452,7 +452,7 @@ The [start.spring.io](https://start.spring.io) project initialiser processes ove
 
 **Question 1 (A - System Interaction):** When Spring Boot auto-configures a `DataSource` and an `EntityManagerFactory`, they must start and stop in a specific order. What mechanism ensures the connection pool is ready before the JPA layer tries to use it?
 
-_Hint:_ Look at `@DependsOn` and `SmartLifecycle` ordering in [[SPR-046 - Spring Boot Startup Lifecycle]] and compare with how Spring Batch depends on a `DataSource`.
+_Hint:_ Look at `@DependsOn` and `SmartLifecycle` ordering in [[SPR-069 - Spring Boot Startup Lifecycle]] and compare with how Spring Batch depends on a `DataSource`.
 
 **Question 2 (B - Scale):** A large monolith imports 30 Spring starter dependencies. How does this affect startup time, memory footprint, and how might you measure the contribution of each starter?
 
@@ -460,4 +460,4 @@ _Hint:_ Use Spring Boot Actuator's `/actuator/startup` endpoint (Spring Boot 2.4
 
 **Question 3 (F - Comparison):** Micronaut and Quarkus also offer an ecosystem of modules with a similar starter/auto-configuration concept. What is the fundamental technical difference in _how_ their module activation works compared to Spring Boot's runtime classpath scanning approach?
 
-_Hint:_ Compare Spring Boot's `@ConditionalOnClass` (evaluated at JVM startup) with Micronaut's compile-time bean factory generation in [[SPR-017 - Micronaut vs Spring Boot]].
+_Hint:_ Compare Spring Boot's `@ConditionalOnClass` (evaluated at JVM startup) with Micronaut's compile-time bean factory generation in [[SPR-058 - Micronaut vs Spring Boot]].

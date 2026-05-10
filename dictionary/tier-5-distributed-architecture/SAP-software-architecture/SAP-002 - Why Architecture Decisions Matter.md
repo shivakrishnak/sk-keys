@@ -6,8 +6,8 @@ tier: tier-5-distributed-architecture
 folder: SAP-software-architecture
 difficulty: ★☆☆
 depends_on: SAP-001
-used_by: SAP-006, SAP-056, SAP-062
-related: SAP-003, SAP-006, SAP-064
+used_by: SAP-056, SAP-026, SAP-082
+related: SAP-003, SAP-056, SAP-064
 tags:
   - architecture
   - foundational
@@ -29,8 +29,8 @@ permalink: /software-architecture/why-architecture-decisions-matter/
 | SAP-002 | Category: Software Architecture Patterns | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | SAP-001 | |
-| **Used by:** | SAP-006, SAP-056, SAP-062 | |
-| **Related:** | SAP-003, SAP-006, SAP-064 | |
+| **Used by:** | SAP-056, SAP-026, SAP-082 | |
+| **Related:** | SAP-003, SAP-056, SAP-064 | |
 
 ---
 
@@ -278,7 +278,7 @@ grep -r "req/sec\|ms p99\|99.9%\|concurrent" docs/architecture/
 **Failure Mode 3: Decision Amnesia**
 **Symptom:** The team re-litigates the same architectural debate every 6 months because context was never recorded.
 **Root Cause:** No ADR practice. Decision rationale lives only in individuals' memories.
-**Fix:** Introduce ADRs (SAP-006). Even simple ones: "We chose X because of Y. We considered Z but rejected it because of W."
+**Fix:** Introduce ADRs (SAP-056). Even simple ones: "We chose X because of Y. We considered Z but rejected it because of W."
 **Prevention:** Make ADRs a required artefact for all architectural decisions. Treat them as living documents.
 
 ---
@@ -289,9 +289,9 @@ grep -r "req/sec\|ms p99\|99.9%\|concurrent" docs/architecture/
 - SAP-001 - What Is Software Architecture
 
 **Builds On This (learn these next):**
-- SAP-006 - Architecture Decision Record (ADR)
-- SAP-056 - Architecture Fitness Functions
-- SAP-062 - Architecture Trade-off Framing
+- SAP-056 - Architecture Decision Record (ADR)
+- SAP-026 - Architecture Fitness Functions
+- SAP-082 - Architecture Trade-off Framing
 
 **Alternatives / Comparisons:**
 - SAP-064 - Technical Debt Mental Model (decisions as debt)
@@ -323,7 +323,7 @@ grep -r "req/sec\|ms p99\|99.9%\|concurrent" docs/architecture/
 +----------------------------------------------------------+
 | ONE-LINER      | Wrong architecture = compounding debt.  |
 +----------------------------------------------------------+
-| NEXT EXPLORE   | SAP-006, SAP-062, SAP-064               |
+| NEXT EXPLORE   | SAP-056, SAP-082, SAP-064               |
 +----------------------------------------------------------+
 ```
 

@@ -11,7 +11,7 @@ permalink: /networking/
 
 OSI model, TCP/IP stack, DNS, CDN, load balancing, TLS, overlay networking, network security, performance tuning, and creator-level protocol design theory.
 
-**Keywords:** NET-001–NET-083 (83 terms)
+**Keywords:** NET-001–NET-014 (83 terms)
 
 | ID      | Keyword                                          | Difficulty |
 |---------|--------------------------------------------------|------------|
@@ -23,78 +23,78 @@ OSI model, TCP/IP stack, DNS, CDN, load balancing, TLS, overlay networking, netw
 | NET-006 | OSI Model | ★☆☆ |
 | NET-007 | TCP/IP Stack | ★☆☆ |
 | NET-008 | IP Addressing | ★☆☆ |
-| NET-009 | Subnet and CIDR | ★★☆ |
-| NET-010 | DNS | ★☆☆ |
-| NET-011 | TCP | ★★☆ |
-| NET-012 | UDP | ★★☆ |
-| NET-013 | Socket, Port and Ephemeral Port | ★★☆ |
-| NET-014 | Bandwidth vs Throughput | ★★☆ |
-| NET-015 | Packet Loss, Latency and Jitter | ★★☆ |
-| NET-016 | Firewall | ★★☆ |
-| NET-017 | MAC Address and Ethernet Frame | ★☆☆ |
-| NET-018 | TCP Handshake | ★★☆ |
-| NET-019 | TCP Teardown | ★★☆ |
-| NET-020 | Congestion Control | ★★★ |
-| NET-021 | Flow Control | ★★★ |
-| NET-022 | Sliding Window | ★★★ |
-| NET-023 | NAT | ★★☆ |
-| NET-024 | DNS Resolution Flow | ★★☆ |
-| NET-025 | DHCP | ★☆☆ |
+| NET-015 | DNS | ★☆☆ |
+| NET-009 | MAC Address and Ethernet Frame | ★☆☆ |
+| NET-016 | DHCP | ★☆☆ |
+| NET-017 | ICMP / ping / traceroute | ★☆☆ |
+| NET-018 | Network Topologies | ★☆☆ |
+| NET-019 | Networking Interview Preparation Guide | ★☆☆ |
+| NET-020 | Subnet and CIDR | ★★☆ |
+| NET-021 | TCP | ★★☆ |
+| NET-010 | UDP | ★★☆ |
+| NET-022 | Socket, Port and Ephemeral Port | ★★☆ |
+| NET-023 | Bandwidth vs Throughput | ★★☆ |
+| NET-035 | Packet Loss, Latency and Jitter | ★★☆ |
+| NET-036 | Firewall | ★★☆ |
+| NET-037 | TCP Handshake | ★★☆ |
+| NET-024 | TCP Teardown | ★★☆ |
+| NET-025 | NAT | ★★☆ |
+| NET-011 | DNS Resolution Flow | ★★☆ |
 | NET-026 | ARP | ★★☆ |
-| NET-027 | ICMP / ping / traceroute | ★☆☆ |
-| NET-028 | Proxy vs Reverse Proxy | ★★☆ |
-| NET-029 | VPN | ★★☆ |
-| NET-030 | CDN | ★★☆ |
-| NET-031 | Anycast | ★★★ |
-| NET-032 | Load Balancer L4 and L7 | ★★☆ |
-| NET-033 | Network Latency Optimization | ★★★ |
-| NET-034 | BGP | ★★★ |
-| NET-035 | Network Topologies | ★☆☆ |
-| NET-036 | QUIC | ★★★ |
-| NET-037 | East-West vs North-South Traffic | ★★★ |
-| NET-038 | Service Discovery | ★★★ |
-| NET-039 | Overlay Networks | ★★★ |
-| NET-040 | VLAN | ★★★ |
-| NET-041 | TLS / SSL | ★★☆ |
-| NET-042 | Certificate Authority | ★★☆ |
-| NET-043 | Network Observability | ★★★ |
-| NET-044 | Zero Trust Networking | ★★★ |
-| NET-045 | Network Policies | ★★★ |
-| NET-046 | mTLS | ★★★ |
-| NET-047 | BGP Route Leaks and Hijacking | ★★★ |
-| NET-048 | DDoS Attack Patterns and Mitigation | ★★★ |
-| NET-049 | DNSSEC | ★★★ |
-| NET-050 | IPv6 and Migration Strategy | ★★★ |
-| NET-051 | eBPF for Networking | ★★★ |
-| NET-052 | Network Performance Tuning at Scale | ★★★ |
-| NET-053 | East-West Encryption at Scale | ★★★ |
-| NET-054 | Network Architecture Design at Scale | ★★★ |
-| NET-055 | Multi-Region Network Topology Strategy | ★★★ |
-| NET-056 | Zero Trust Network Architecture Design | ★★★ |
-| NET-057 | Service Mesh vs API Gateway Decision Framework | ★★★ |
-| NET-058 | TCP/IP Protocol Design Principles | ★★★ |
-| NET-059 | BGP Internals and Internet Routing Architecture | ★★★ |
-| NET-060 | Congestion Control Algorithm Design | ★★★ |
-| NET-061 | Future Networking - HTTP3 QUIC IPv6 at Scale | ★★★ |
-| NET-062 | Network Debugging Mental Model | ★★★ |
-| NET-063 | Latency vs Throughput Trade-off Thinking | ★★★ |
-| NET-064 | Protocol Selection Framework | ★★★ |
-| NET-065 | BGP Route Selection / ECMP | ★★★ |
-| NET-066 | OSPF / IGP Interior Routing | ★★★ |
-| NET-067 | Network Namespaces (Deep) | ★★★ |
-| NET-068 | RDMA (Remote Direct Memory Access) | ★★★ |
-| NET-069 | NIC Offloading (TSO, GRO, RSS) | ★★★ |
-| NET-070 | TCP Protocol Design Rationale (Cerf-Kahn) | ★★★ |
-| NET-071 | IP Protocol Design Philosophy (RFC 791) | ★★★ |
-| NET-072 | DNS System Design Rationale (Mockapetris) | ★★★ |
-| NET-073 | QUIC Protocol Design (IETF RFC 9000) | ★★★ |
-| NET-074 | BGP Internet Architecture Theory | ★★★ |
-| NET-075 | Software-Defined Networking (SDN) Theory | ★★★ |
-| NET-076 | Network Calculus / QoS Theory | ★★★ |
-| NET-077 | Internet Architecture Theory (RFC 1958) | ★★★ |
-| NET-078 | HTTP Protocol Evolution Theory | ★★★ |
-| NET-079 | Network Topology Design Patterns | ★★★ |
-| NET-080 | SD-WAN (Software-Defined WAN) | ★★★ |
-| NET-081 | NTP and Time Synchronization | ★★☆ |
-| NET-082 | IPv6 Addressing and Migration | ★★☆ |
-| NET-083 | Networking Interview Preparation Guide | ★☆☆ |
+| NET-012 | Proxy vs Reverse Proxy | ★★☆ |
+| NET-027 | VPN | ★★☆ |
+| NET-028 | CDN | ★★☆ |
+| NET-029 | Load Balancer L4 and L7 | ★★☆ |
+| NET-038 | TLS / SSL | ★★☆ |
+| NET-030 | Certificate Authority | ★★☆ |
+| NET-039 | NTP and Time Synchronization | ★★☆ |
+| NET-040 | IPv6 Addressing and Migration | ★★☆ |
+| NET-013 | Congestion Control | ★★★ |
+| NET-041 | Flow Control | ★★★ |
+| NET-042 | Sliding Window | ★★★ |
+| NET-038 | Anycast | ★★★ |
+| NET-044 | Network Latency Optimization | ★★★ |
+| NET-045 | BGP | ★★★ |
+| NET-031 | QUIC | ★★★ |
+| NET-032 | East-West vs North-South Traffic | ★★★ |
+| NET-046 | Service Discovery | ★★★ |
+| NET-047 | Overlay Networks | ★★★ |
+| NET-048 | VLAN | ★★★ |
+| NET-049 | Network Observability | ★★★ |
+| NET-050 | Zero Trust Networking | ★★★ |
+| NET-051 | Network Policies | ★★★ |
+| NET-052 | mTLS | ★★★ |
+| NET-053 | BGP Route Leaks and Hijacking | ★★★ |
+| NET-054 | DDoS Attack Patterns and Mitigation | ★★★ |
+| NET-055 | DNSSEC | ★★★ |
+| NET-056 | IPv6 and Migration Strategy | ★★★ |
+| NET-057 | eBPF for Networking | ★★★ |
+| NET-058 | Network Performance Tuning at Scale | ★★★ |
+| NET-059 | East-West Encryption at Scale | ★★★ |
+| NET-060 | Network Architecture Design at Scale | ★★★ |
+| NET-061 | Multi-Region Network Topology Strategy | ★★★ |
+| NET-062 | Zero Trust Network Architecture Design | ★★★ |
+| NET-063 | Service Mesh vs API Gateway Decision Framework | ★★★ |
+| NET-064 | TCP/IP Protocol Design Principles | ★★★ |
+| NET-065 | BGP Internals and Internet Routing Architecture | ★★★ |
+| NET-066 | Congestion Control Algorithm Design | ★★★ |
+| NET-067 | Future Networking - HTTP3 QUIC IPv6 at Scale | ★★★ |
+| NET-068 | Network Debugging Mental Model | ★★★ |
+| NET-069 | Latency vs Throughput Trade-off Thinking | ★★★ |
+| NET-070 | Protocol Selection Framework | ★★★ |
+| NET-071 | BGP Route Selection / ECMP | ★★★ |
+| NET-072 | OSPF / IGP Interior Routing | ★★★ |
+| NET-073 | Network Namespaces (Deep) | ★★★ |
+| NET-074 | RDMA (Remote Direct Memory Access) | ★★★ |
+| NET-075 | NIC Offloading (TSO, GRO, RSS) | ★★★ |
+| NET-076 | TCP Protocol Design Rationale (Cerf-Kahn) | ★★★ |
+| NET-077 | IP Protocol Design Philosophy (RFC 791) | ★★★ |
+| NET-078 | DNS System Design Rationale (Mockapetris) | ★★★ |
+| NET-079 | QUIC Protocol Design (IETF RFC 9000) | ★★★ |
+| NET-080 | BGP Internet Architecture Theory | ★★★ |
+| NET-081 | Software-Defined Networking (SDN) Theory | ★★★ |
+| NET-082 | Network Calculus / QoS Theory | ★★★ |
+| NET-083 | Internet Architecture Theory (RFC 1958) | ★★★ |
+| NET-033 | HTTP Protocol Evolution Theory | ★★★ |
+| NET-034 | Network Topology Design Patterns | ★★★ |
+| NET-014 | SD-WAN (Software-Defined WAN) | ★★★ |

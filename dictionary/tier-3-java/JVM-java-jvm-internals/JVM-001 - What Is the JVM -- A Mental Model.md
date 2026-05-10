@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JVM-java-jvm-internals
 difficulty: ★☆☆
 depends_on:
-used_by: JVM-002, JVM-003, JVM-004, JVM-005
-related: JVM-008, JVM-041, JVM-048
+used_by: JVM-002, JVM-003, JVM-008, JVM-004
+related: JVM-009, JVM-045, JVM-052
 tags:
   - jvm
   - java
@@ -29,8 +29,8 @@ permalink: /jvm/what-is-the-jvm-a-mental-model/
 | Field | Value |
 |---|---|
 | **Depends on** | (none - entry point) |
-| **Used by** | [[JVM-002 - Why the JVM Was Invented]], [[JVM-003 - JVM vs JRE vs JDK]], [[JVM-004 - How Java Code Runs - Bytecode to Execution]], [[JVM-005 - The JVM Ecosystem Map]] |
-| **Related** | [[JVM-008 - Bytecode]], [[JVM-041 - JIT Compiler]], [[JVM-048 - GraalVM]] |
+| **Used by** | [[JVM-002 - Why the JVM Was Invented]], [[JVM-003 - JVM vs JRE vs JDK]], [[JVM-008 - How Java Code Runs - Bytecode to Execution]], [[JVM-004 - The JVM Ecosystem Map]] |
+| **Related** | [[JVM-009 - Bytecode]], [[JVM-045 - JIT Compiler]], [[JVM-052 - GraalVM]] |
 
 ---
 
@@ -332,11 +332,11 @@ GOOD: Use build tool (Maven/Gradle) fat-jar plugin to include all dependencies i
 **Builds On This (learn these next):**
 - [[JVM-002 - Why the JVM Was Invented]] - The problem the JVM was created to solve
 - [[JVM-003 - JVM vs JRE vs JDK]] - Component breakdown
-- [[JVM-004 - How Java Code Runs - Bytecode to Execution]] - Execution mechanics
-- [[JVM-041 - JIT Compiler]] - How the JVM achieves native-level performance
+- [[JVM-008 - How Java Code Runs - Bytecode to Execution]] - Execution mechanics
+- [[JVM-045 - JIT Compiler]] - How the JVM achieves native-level performance
 
 **Alternatives / Comparisons:**
-- [[JVM-048 - GraalVM]] - Extended JVM with polyglot and native image capabilities
+- [[JVM-052 - GraalVM]] - Extended JVM with polyglot and native image capabilities
 - CLR (.NET runtime) - Microsoft's equivalent managed runtime
 
 ---
@@ -365,8 +365,8 @@ GOOD: Use build tool (Maven/Gradle) fat-jar plugin to include all dependencies i
 +--------------------------------------------------+
 | ONE-LINER     | java -Xmx512m -jar app.jar        |
 +--------------------------------------------------+
-| NEXT EXPLORE  | JVM-004 bytecode execution,       |
-|               | JVM-041 JIT compiler              |
+| NEXT EXPLORE  | JVM-008 bytecode execution,       |
+|               | JVM-045 JIT compiler              |
 +--------------------------------------------------+
 ```
 
@@ -402,7 +402,7 @@ The JVM's bytecode format was intentionally designed to be verifiable without ex
 *Hint:* Look at the ClassLoader subsystem and the Bytecode Verifier's role in the Class Loading lifecycle.
 
 **Q2 (Scale):** A Kubernetes pod running your JVM app restarts every few minutes due to liveness probe failures. GC logs show a 20-second Full GC pause. What trade-off in JVM memory design is causing this, and what two JVM-level interventions target it directly?
-*Hint:* Explore the relationship between heap sizing, Old Generation promotion, and GC algorithm selection under the GC chapters (JVM-033 to JVM-039).
+*Hint:* Explore the relationship between heap sizing, Old Generation promotion, and GC algorithm selection under the GC chapters (JVM-038 to JVM-043).
 
 **Q3 (Design Trade-off):** GraalVM Native Image compiles bytecode to a native binary at build time, eliminating JVM startup cost. But it removes JIT compilation. What performance characteristic does this trade away, and for which class of applications does this trade-off make Native Image the wrong choice?
-*Hint:* Consider the JIT compilation warm-up curve described in [[JVM-041 - JIT Compiler]] and [[JVM-047 - AOT Compilation]].
+*Hint:* Consider the JIT compilation warm-up curve described in [[JVM-045 - JIT Compiler]] and [[JVM-051 - AOT Compilation]].

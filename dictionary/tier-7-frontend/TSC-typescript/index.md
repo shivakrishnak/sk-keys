@@ -27,39 +27,39 @@ TypeScript type system, generics, utility types, mapped types, conditional types
 | TSC-010 | TypeScript Enums | ★☆☆ |
 | TSC-011 | TypeScript Arrays and Tuples | ★☆☆ |
 | TSC-012 | tsconfig.json Configuration | ★☆☆ |
-| TSC-013 | TypeScript Union and Intersection Types | ★★☆ |
-| TSC-014 | TypeScript Type Narrowing and Type Guards | ★★☆ |
-| TSC-015 | TypeScript Generics | ★★☆ |
-| TSC-016 | TypeScript Utility Types (Partial, Required, Pick, Omit, Record) | ★★☆ |
-| TSC-017 | TypeScript Modules and Namespaces | ★★☆ |
-| TSC-018 | TypeScript Decorators | ★★☆ |
-| TSC-019 | TypeScript Declaration Files (.d.ts) | ★★☆ |
-| TSC-020 | TypeScript Strict Mode | ★★☆ |
-| TSC-021 | TypeScript with React (JSX, Component Typing) | ★★☆ |
-| TSC-022 | TypeScript Mapped Types | ★★☆ |
-| TSC-023 | TypeScript Conditional Types | ★★☆ |
-| TSC-024 | TypeScript Template Literal Types | ★★☆ |
-| TSC-025 | TypeScript Infer Keyword | ★★☆ |
-| TSC-026 | TypeScript Discriminated Unions | ★★☆ |
-| TSC-027 | TypeScript Module Augmentation | ★★☆ |
-| TSC-028 | TypeScript Project References | ★★☆ |
-| TSC-029 | TypeScript Path Aliases | ★★☆ |
-| TSC-030 | TypeScript with Node.js (Backend Typing) | ★★☆ |
-| TSC-031 | TypeScript Compiler API | ★★★ |
-| TSC-032 | TypeScript Type-Level Programming | ★★★ |
-| TSC-033 | TypeScript ESM vs CJS Modules | ★★★ |
-| TSC-034 | TypeScript Performance (Compilation Speed) | ★★★ |
-| TSC-035 | TypeScript Migration Strategy (JS to TS) | ★★★ |
-| TSC-036 | TypeScript Architecture Strategy (Strict Typing, Shared Types) | ★★★ |
-| TSC-037 | TypeScript Monorepo Strategy (Type Sharing) | ★★★ |
-| TSC-038 | TypeScript Security Strategy (Zod, Runtime Validation) | ★★★ |
-| TSC-039 | TypeScript Type System Internals | ★★★ |
-| TSC-040 | TypeScript Specification Design Philosophy | ★★★ |
-| TSC-041 | TypeScript Checker Architecture Research | ★★★ |
-| TSC-042 | TypeScript Trade-off Framing (Type Safety vs Productivity) | ★★★ |
-| TSC-043 | Structural vs Nominal Typing Mental Model | ★★★ |
-| TSC-044 | TypeScript Migration Mindset | ★★★ |
-| TSC-045 | Type-First Design Thinking | ★★★ |
-| TSC-046 | TypeScript Interview Preparation Guide | ★☆☆ |
+| TSC-015 | TypeScript Interview Preparation Guide | ★☆☆ |
+| TSC-016 | TypeScript Union and Intersection Types | ★★☆ |
+| TSC-017 | TypeScript Type Narrowing and Type Guards | ★★☆ |
+| TSC-018 | TypeScript Generics | ★★☆ |
+| TSC-019 | TypeScript Utility Types (Partial, Required, Pick, Omit, Record) | ★★☆ |
+| TSC-020 | TypeScript Modules and Namespaces | ★★☆ |
+| TSC-021 | TypeScript Decorators | ★★☆ |
+| TSC-022 | TypeScript Declaration Files (.d.ts) | ★★☆ |
+| TSC-023 | TypeScript Strict Mode | ★★☆ |
+| TSC-024 | TypeScript with React (JSX, Component Typing) | ★★☆ |
+| TSC-025 | TypeScript Mapped Types | ★★☆ |
+| TSC-026 | TypeScript Conditional Types | ★★☆ |
+| TSC-027 | TypeScript Template Literal Types | ★★☆ |
+| TSC-028 | TypeScript Infer Keyword | ★★☆ |
+| TSC-029 | TypeScript Discriminated Unions | ★★☆ |
+| TSC-030 | TypeScript Module Augmentation | ★★☆ |
+| TSC-031 | TypeScript Project References | ★★☆ |
+| TSC-032 | TypeScript Path Aliases | ★★☆ |
+| TSC-033 | TypeScript with Node.js (Backend Typing) | ★★☆ |
+| TSC-034 | TypeScript Compiler API | ★★★ |
+| TSC-035 | TypeScript Type-Level Programming | ★★★ |
+| TSC-036 | TypeScript ESM vs CJS Modules | ★★★ |
+| TSC-037 | TypeScript Performance (Compilation Speed) | ★★★ |
+| TSC-038 | TypeScript Migration Strategy (JS to TS) | ★★★ |
+| TSC-039 | TypeScript Architecture Strategy (Strict Typing, Shared Types) | ★★★ |
+| TSC-040 | TypeScript Monorepo Strategy (Type Sharing) | ★★★ |
+| TSC-041 | TypeScript Security Strategy (Zod, Runtime Validation) | ★★★ |
+| TSC-042 | TypeScript Type System Internals | ★★★ |
+| TSC-043 | TypeScript Specification Design Philosophy | ★★★ |
+| TSC-044 | TypeScript Checker Architecture Research | ★★★ |
+| TSC-045 | TypeScript Trade-off Framing (Type Safety vs Productivity) | ★★★ |
+| TSC-046 | Structural vs Nominal Typing Mental Model | ★★★ |
+| TSC-013 | TypeScript Migration Mindset | ★★★ |
+| TSC-014 | Type-First Design Thinking | ★★★ |
 | TSC-047 | Template Literal Types | ★★★ |
 | TSC-048 | Mapped Types | ★★★ |

@@ -29,7 +29,7 @@ permalink: /dpt/the-gang-of-four----origin-and-philosophy/
 | :-------------- | :------------------------ | :-------------- |
 | **Depends on:** | DPT-001                   |                 |
 | **Used by:**    | DPT-003, DPT-004, DPT-005 |                 |
-| **Related:**    | DPT-001, DPT-003, DPT-041 |                 |
+| **Related:**    | DPT-001, DPT-003, DPT-072 |                 |
 
 ---
 
@@ -399,12 +399,12 @@ Document:
 **Builds On This (learn these next):**
 
 - [[DPT-006 - Singleton]]
-- [[DPT-007 - Factory Method]]
-- [[DPT-041 - Decorator vs Proxy vs Adapter]]
+- [[DPT-048 - Factory Method]]
+- [[DPT-072 - Decorator vs Proxy vs Adapter]]
 
 **Alternatives / Comparisons:**
 
-- [[DPT-062 - Pattern Evolution in Modern Languages]]
+- [[DPT-082 - Pattern Evolution in Modern Languages]]
 
 ---
 
@@ -424,7 +424,7 @@ Document:
 | TRADE-OFF       Vocabulary clarity vs possible      |
 |                 over-application                    |
 | ONE-LINER       The vocabulary of OOP design        |
-| NEXT EXPLORE    DPT-006 to DPT-060 (the 23 patterns)|
+| NEXT EXPLORE    DPT-006 to DPT-029 (the 23 patterns)|
 +-----------------------------------------------------+
 ```
 

@@ -6,7 +6,7 @@ tier: tier-8-artificial-intelligence
 folder: RAG-rag-agents-llmops
 difficulty: ★☆☆
 depends_on:
-used_by: RAG-020, RAG-025, RAG-041
+used_by: RAG-022, RAG-027, RAG-043
 related: RAG-001, RAG-005, AIF-001
 tags:
   - rag
@@ -29,7 +29,7 @@ permalink: /rag/ai-agents-ecosystem-map/
 | Field | Value |
 |-------|-------|
 | **Depends on** | — |
-| **Used by** | RAG-020, RAG-025, RAG-041 |
+| **Used by** | RAG-022, RAG-027, RAG-043 |
 | **Related** | RAG-001, RAG-005, AIF-001 |
 
 ---
@@ -300,13 +300,13 @@ GOOD: Apply principle of least privilege. Read-only tools by default. Write/dele
 - `RAG-001 - What Is RAG` — knowledge access for agents
 
 **Builds On This (learn these next):**
-- `RAG-020 - AI Agents Fundamentals` — detailed four-component breakdown
-- `RAG-021 - ReAct Agent Pattern` — the core planning loop
-- `RAG-025 - Multi-Agent Systems` — scaling to multiple agents
+- `RAG-022 - AI Agents Fundamentals` — detailed four-component breakdown
+- `RAG-023 - ReAct Agent Pattern` — the core planning loop
+- `RAG-027 - Multi-Agent Systems` — scaling to multiple agents
 
 **Alternatives / Comparisons:**
-- `RAG-041 - Agent Architecture Strategy` — single vs multi-agent decisions
-- `RAG-047 - Agent Framework Design Research` — advanced framework internals
+- `RAG-043 - Agent Architecture Strategy` — single vs multi-agent decisions
+- `RAG-049 - Agent Framework Design Research` — advanced framework internals
 
 ---
 
@@ -333,7 +333,7 @@ GOOD: Apply principle of least privilege. Read-only tools by default. Write/dele
 +--------------------------------------------------+
 | ONE-LINER     | "LLM + Tools + Memory + Planning"|
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-020, RAG-021, RAG-025        |
+| NEXT EXPLORE  | RAG-022, RAG-023, RAG-027        |
 +--------------------------------------------------+
 ```
 

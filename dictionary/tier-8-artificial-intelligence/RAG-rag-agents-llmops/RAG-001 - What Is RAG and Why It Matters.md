@@ -373,7 +373,7 @@ GOOD: Keep retrieved context in user-turn position, clearly delimited. Apply inp
 
 **Alternatives / Comparisons:**
 - `RAG-003 - RAG vs Fine-Tuning` — when to use each
-- `RAG-023 - Advanced RAG Patterns` — corrective RAG, self-RAG
+- `RAG-025 - Advanced RAG Patterns` — corrective RAG, self-RAG
 
 ---
 
@@ -401,7 +401,7 @@ GOOD: Keep retrieved context in user-turn position, clearly delimited. Apply inp
 +--------------------------------------------------+
 | ONE-LINER     | "Open-book exam for LLMs"        |
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-002, RAG-008, RAG-017        |
+| NEXT EXPLORE  | RAG-002, RAG-008, RAG-019        |
 +--------------------------------------------------+
 ```
 

@@ -28,8 +28,8 @@ permalink: /dst/why-distribution-is-hard/
 | DST-002         | Category: Distributed Systems      | Difficulty: ★☆☆ |
 | :-------------- | :--------------------------------- | :-------------- |
 | **Depends on:** | DST-001                            |                 |
-| **Used by:**    | DST-003, DST-006                   |                 |
-| **Related:**    | DST-001, DST-004, DST-006, DST-060 |                 |
+| **Used by:**    | DST-003, DST-022                   |                 |
+| **Related:**    | DST-001, DST-004, DST-022, DST-066 |                 |
 
 ---
 
@@ -369,8 +369,8 @@ curl -s http://service/actuator/metrics/executor.active
 **Builds On This (learn these next):**
 
 - [[DST-004 - The Fallacies of Distributed Computing]]
-- [[DST-006 - CAP Theorem]]
-- [[DST-060 - FLP Impossibility]]
+- [[DST-022 - CAP Theorem]]
+- [[DST-066 - FLP Impossibility]]
 
 **Alternatives / Comparisons:**
 
@@ -393,7 +393,7 @@ curl -s http://service/actuator/metrics/executor.active
 |                 in "modern" cloud infrastructure    |
 | TRADE-OFF       Strong consistency vs availability  |
 | ONE-LINER       Physics, not bugs, makes dist hard  |
-| NEXT EXPLORE    DST-006 (CAP), DST-060 (FLP),DST-015|
+| NEXT EXPLORE    DST-022 (CAP), DST-066 (FLP),DST-040|
 +-----------------------------------------------------+
 ```
 

@@ -27,45 +27,45 @@ LLM architectures, prompt engineering, function calling, fine-tuning (LoRA, QLoR
 | LLM-010 | Token and Context Window | ★☆☆ |
 | LLM-011 | LLM APIs (OpenAI, Anthropic, Gemini API) | ★☆☆ |
 | LLM-012 | LLM Hallucination -- What It Is and Why It Happens | ★☆☆ |
-| LLM-013 | Chain-of-Thought (CoT) Prompting | ★★☆ |
-| LLM-014 | Structured Output (JSON Mode, Function Calling) | ★★☆ |
-| LLM-015 | Prompt Injection and Security | ★★☆ |
-| LLM-016 | LLM Evaluation Metrics (BLEU, ROUGE, BERTScore) | ★★☆ |
-| LLM-017 | LLM Cost Optimization (Caching, Batching) | ★★☆ |
-| LLM-018 | Embedding Models and Semantic Search | ★★☆ |
-| LLM-019 | Fine-Tuning Fundamentals | ★★☆ |
-| LLM-020 | Instruction Tuning and RLHF | ★★☆ |
-| LLM-021 | LLM Streaming (Token Streaming, SSE) | ★★☆ |
-| LLM-022 | LLM Rate Limits and Retry Strategies | ★★☆ |
-| LLM-023 | Parameter-Efficient Fine-Tuning (LoRA, QLoRA) | ★★☆ |
-| LLM-024 | LLM Quantization (GGUF, AWQ, GPTQ) | ★★☆ |
-| LLM-025 | Open Source LLMs (Llama, Mistral, Gemma) | ★★☆ |
-| LLM-026 | LLM Inference Optimization (vLLM, TGI, Ollama) | ★★☆ |
-| LLM-027 | Constitutional AI and RLAIF | ★★☆ |
-| LLM-028 | LLM Safety and Alignment | ★★☆ |
-| LLM-029 | Multimodal LLMs (Vision, Audio, Code) | ★★☆ |
-| LLM-030 | LLM Context Window Extension (RoPE, ALiBi) | ★★☆ |
-| LLM-031 | LLM Benchmarks (MMLU, HumanEval, HELM) | ★★☆ |
-| LLM-032 | Transformer Architecture Deep Dive | ★★★ |
-| LLM-033 | Attention Mechanism Internals (Scaled Dot-Product, MHA) | ★★★ |
-| LLM-034 | Pre-Training at Scale (GPT, BERT, T5) | ★★★ |
-| LLM-035 | LLM Memory Architecture (KV Cache, Flash Attention) | ★★★ |
-| LLM-036 | Mixture of Experts (MoE) Architecture | ★★★ |
-| LLM-037 | LLM Training Infrastructure (FSDP, DeepSpeed) | ★★★ |
-| LLM-038 | Emergent Capabilities in LLMs | ★★★ |
-| LLM-039 | LLM Red-Teaming and Adversarial Attacks | ★★★ |
-| LLM-040 | LLM Architecture Strategy (Provider Selection, Self-Hosted vs API) | ★★★ |
-| LLM-041 | LLM Fine-Tuning Strategy (When to Fine-Tune vs RAG vs Prompt) | ★★★ |
-| LLM-042 | LLM Evaluation Strategy | ★★★ |
-| LLM-043 | LLM Cost and Latency Architecture Design | ★★★ |
-| LLM-044 | LLM Safety Architecture Design | ★★★ |
-| LLM-045 | Transformer Architecture Research (xFormers, State Space Models) | ★★★ |
-| LLM-046 | LLM Scaling Laws (Chinchilla, Kaplan) | ★★★ |
-| LLM-047 | Interpretability Research (Mechanistic Interpretability) | ★★★ |
-| LLM-048 | LLM Trade-off Framing (Capability vs Safety vs Cost) | ★★★ |
-| LLM-049 | Prompt Engineering Mental Model | ★★★ |
-| LLM-050 | LLM Production Reality Thinking | ★★★ |
-| LLM-051 | LLM Interview Preparation Guide | ★☆☆ |
+| LLM-015 | LLM Interview Preparation Guide | ★☆☆ |
+| LLM-016 | Chain-of-Thought (CoT) Prompting | ★★☆ |
+| LLM-017 | Structured Output (JSON Mode, Function Calling) | ★★☆ |
+| LLM-018 | Prompt Injection and Security | ★★☆ |
+| LLM-019 | LLM Evaluation Metrics (BLEU, ROUGE, BERTScore) | ★★☆ |
+| LLM-020 | LLM Cost Optimization (Caching, Batching) | ★★☆ |
+| LLM-021 | Embedding Models and Semantic Search | ★★☆ |
+| LLM-022 | Fine-Tuning Fundamentals | ★★☆ |
+| LLM-023 | Instruction Tuning and RLHF | ★★☆ |
+| LLM-024 | LLM Streaming (Token Streaming, SSE) | ★★☆ |
+| LLM-025 | LLM Rate Limits and Retry Strategies | ★★☆ |
+| LLM-026 | Parameter-Efficient Fine-Tuning (LoRA, QLoRA) | ★★☆ |
+| LLM-027 | LLM Quantization (GGUF, AWQ, GPTQ) | ★★☆ |
+| LLM-028 | Open Source LLMs (Llama, Mistral, Gemma) | ★★☆ |
+| LLM-029 | LLM Inference Optimization (vLLM, TGI, Ollama) | ★★☆ |
+| LLM-030 | Constitutional AI and RLAIF | ★★☆ |
+| LLM-031 | LLM Safety and Alignment | ★★☆ |
+| LLM-032 | Multimodal LLMs (Vision, Audio, Code) | ★★☆ |
+| LLM-033 | LLM Context Window Extension (RoPE, ALiBi) | ★★☆ |
+| LLM-034 | LLM Benchmarks (MMLU, HumanEval, HELM) | ★★☆ |
+| LLM-035 | Transformer Architecture Deep Dive | ★★★ |
+| LLM-036 | Attention Mechanism Internals (Scaled Dot-Product, MHA) | ★★★ |
+| LLM-037 | Pre-Training at Scale (GPT, BERT, T5) | ★★★ |
+| LLM-038 | LLM Memory Architecture (KV Cache, Flash Attention) | ★★★ |
+| LLM-039 | Mixture of Experts (MoE) Architecture | ★★★ |
+| LLM-040 | LLM Training Infrastructure (FSDP, DeepSpeed) | ★★★ |
+| LLM-041 | Emergent Capabilities in LLMs | ★★★ |
+| LLM-042 | LLM Red-Teaming and Adversarial Attacks | ★★★ |
+| LLM-043 | LLM Architecture Strategy (Provider Selection, Self-Hosted vs API) | ★★★ |
+| LLM-044 | LLM Fine-Tuning Strategy (When to Fine-Tune vs RAG vs Prompt) | ★★★ |
+| LLM-045 | LLM Evaluation Strategy | ★★★ |
+| LLM-046 | LLM Cost and Latency Architecture Design | ★★★ |
+| LLM-047 | LLM Safety Architecture Design | ★★★ |
+| LLM-048 | Transformer Architecture Research (xFormers, State Space Models) | ★★★ |
+| LLM-049 | LLM Scaling Laws (Chinchilla, Kaplan) | ★★★ |
+| LLM-050 | Interpretability Research (Mechanistic Interpretability) | ★★★ |
+| LLM-051 | LLM Trade-off Framing (Capability vs Safety vs Cost) | ★★★ |
+| LLM-013 | Prompt Engineering Mental Model | ★★★ |
+| LLM-014 | LLM Production Reality Thinking | ★★★ |
 | LLM-052 | Structured Output Generation | ★★★ |
 | LLM-053 | LLM Evaluation Frameworks | ★★★ |
 | LLM-054 | LLM Fine-Tuning (LoRA, QLoRA, PEFT) | ★★★ |

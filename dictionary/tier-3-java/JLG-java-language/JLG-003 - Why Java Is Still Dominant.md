@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JLG-java-language
 difficulty: ★☆☆
 depends_on: JLG-001, JLG-002
-used_by: JLG-052
-related: JLG-004, JLG-005, JLG-045
+used_by: JLG-084
+related: JLG-004, JLG-005, JLG-077
 tags:
   - java
   - foundational
@@ -29,8 +29,8 @@ permalink: /jlg/why-java-is-still-dominant/
 | Field          | Value                                                                                                                                                                  |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Depends on** | [[JLG-001 - What Is Java - History and Philosophy]], [[JLG-002 - The Java Ecosystem Map (SE, EE, ME, Android)]]                                                        |
-| **Used by**    | [[JLG-052 - Java Ecosystem Selection Framework]]                                                                                                                       |
-| **Related**    | [[JLG-004 - Java vs Other JVM Languages (Kotlin, Scala, Groovy)]], [[JLG-005 - Java Versioning and LTS Release Strategy]], [[JLG-045 - Java in Polyglot Architecture]] |
+| **Used by**    | [[JLG-084 - Java Ecosystem Selection Framework]]                                                                                                                       |
+| **Related**    | [[JLG-004 - Java vs Other JVM Languages (Kotlin, Scala, Groovy)]], [[JLG-005 - Java Versioning and LTS Release Strategy]], [[JLG-077 - Java in Polyglot Architecture]] |
 
 ---
 
@@ -365,7 +365,7 @@ mvn org.owasp:dependency-check-maven:check
 **Builds On This (learn these next):**
 
 - [[JLG-004 - Java vs Other JVM Languages (Kotlin, Scala, Groovy)]] - when to choose a Java alternative
-- [[JLG-052 - Java Ecosystem Selection Framework]] - framework for technology decisions
+- [[JLG-084 - Java Ecosystem Selection Framework]] - framework for technology decisions
 
 **Alternatives / Comparisons:**
 
@@ -393,7 +393,7 @@ mvn org.owasp:dependency-check-maven:check
 | ONE-LINER     | Java wins by network effect, not by       |
 |               | being the best language                  |
 | NEXT EXPLORE  | JLG-004 (vs JVM languages),              |
-|               | JLG-052 (selection framework)            |
+|               | JLG-084 (selection framework)            |
 +----------------------------------------------------------+
 ```
 

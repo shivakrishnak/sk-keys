@@ -11,7 +11,7 @@ permalink: /angular/
 
 Angular architecture, components, directives, pipes, DI, routing, RxJS integration, state management (NgRx), change detection, SSR, testing, and performance optimization.
 
-**Keywords:** ANG-001–ANG-052 (50 terms)
+**Keywords:** ANG-001–ANG-050 (50 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -27,41 +27,41 @@ Angular architecture, components, directives, pipes, DI, routing, RxJS integrati
 | ANG-010 | Angular Services and Dependency Injection | ★☆☆ |
 | ANG-011 | Angular Modules (NgModule) | ★☆☆ |
 | ANG-012 | Angular Routing | ★☆☆ |
-| ANG-013 | Angular Forms (Template-Driven and Reactive) | ★★☆ |
-| ANG-014 | Angular Pipes | ★★☆ |
-| ANG-015 | Angular HTTP Client | ★★☆ |
-| ANG-016 | RxJS Fundamentals for Angular | ★★☆ |
-| ANG-017 | Angular Lifecycle Hooks | ★★☆ |
-| ANG-018 | Angular Component Communication (Input, Output, EventEmitter) | ★★☆ |
-| ANG-019 | Angular Standalone Components (v15+) | ★★☆ |
-| ANG-020 | Angular Signals (v17+) | ★★☆ |
-| ANG-021 | Angular Testing (Jasmine, Karma, Spectator) | ★★☆ |
-| ANG-022 | NgRx State Management | ★★☆ |
-| ANG-023 | Angular Change Detection Strategy (OnPush) | ★★☆ |
-| ANG-024 | Angular Lazy Loading and Code Splitting | ★★☆ |
-| ANG-025 | Angular Server-Side Rendering (SSR with Angular Universal) | ★★☆ |
-| ANG-026 | Angular Interceptors | ★★☆ |
-| ANG-027 | Angular Guards (Route Guards) | ★★☆ |
-| ANG-028 | Angular Custom Decorators and Metadata | ★★☆ |
-| ANG-029 | Angular Internationalization (i18n) | ★★☆ |
-| ANG-030 | Angular PWA (Service Worker, App Shell) | ★★☆ |
-| ANG-031 | Angular Performance Optimization | ★★★ |
-| ANG-032 | Angular Ivy Compiler Internals | ★★★ |
-| ANG-033 | Angular Dependency Injection System Internals | ★★★ |
-| ANG-034 | Angular Security (XSS, CSRF, Sanitization) | ★★★ |
-| ANG-035 | Angular Monorepo with Nx | ★★★ |
-| ANG-036 | Angular Micro-Frontend Architecture | ★★★ |
-| ANG-037 | Angular Architecture Strategy (Module Federation) | ★★★ |
-| ANG-038 | Angular State Management Selection (NgRx vs Akita vs Elf) | ★★★ |
-| ANG-039 | Angular Migration Strategy (AngularJS to Angular) | ★★★ |
-| ANG-040 | Angular Enterprise Design Patterns | ★★★ |
-| ANG-041 | Angular Compiler Architecture Research | ★★★ |
-| ANG-042 | Angular Signals Deep Dive -- Reactivity Internals | ★★★ |
-| ANG-043 | RxJS Scheduler and Virtual Time Research | ★★★ |
-| ANG-044 | Angular vs React Trade-off Framing | ★★★ |
-| ANG-045 | Angular Opinionated Framework Mental Model | ★★★ |
-| ANG-046 | Reactive Programming Thinking (RxJS) | ★★★ |
-| ANG-047 | Angular Complexity vs React Freedom | ★★★ |
-| ANG-048 | Angular Interview Preparation Guide | ★☆☆ |
+| ANG-015 | Angular Interview Preparation Guide | ★☆☆ |
+| ANG-016 | Angular Forms (Template-Driven and Reactive) | ★★☆ |
+| ANG-017 | Angular Pipes | ★★☆ |
+| ANG-018 | Angular HTTP Client | ★★☆ |
+| ANG-019 | RxJS Fundamentals for Angular | ★★☆ |
+| ANG-020 | Angular Lifecycle Hooks | ★★☆ |
+| ANG-021 | Angular Component Communication (Input, Output, EventEmitter) | ★★☆ |
+| ANG-022 | Angular Standalone Components (v15+) | ★★☆ |
+| ANG-023 | Angular Signals (v17+) | ★★☆ |
+| ANG-024 | Angular Testing (Jasmine, Karma, Spectator) | ★★☆ |
+| ANG-025 | NgRx State Management | ★★☆ |
+| ANG-026 | Angular Change Detection Strategy (OnPush) | ★★☆ |
+| ANG-027 | Angular Lazy Loading and Code Splitting | ★★☆ |
+| ANG-028 | Angular Server-Side Rendering (SSR with Angular Universal) | ★★☆ |
+| ANG-029 | Angular Interceptors | ★★☆ |
+| ANG-030 | Angular Guards (Route Guards) | ★★☆ |
+| ANG-031 | Angular Custom Decorators and Metadata | ★★☆ |
+| ANG-033 | Angular Internationalization (i18n) | ★★☆ |
+| ANG-035 | Angular PWA (Service Worker, App Shell) | ★★☆ |
+| ANG-036 | Angular 17+ Control Flow Syntax (@if, @for) | ★★☆ |
+| ANG-037 | Angular Performance Optimization | ★★★ |
+| ANG-038 | Angular Ivy Compiler Internals | ★★★ |
+| ANG-039 | Angular Dependency Injection System Internals | ★★★ |
+| ANG-040 | Angular Security (XSS, CSRF, Sanitization) | ★★★ |
+| ANG-041 | Angular Monorepo with Nx | ★★★ |
+| ANG-042 | Angular Micro-Frontend Architecture | ★★★ |
+| ANG-043 | Angular Architecture Strategy (Module Federation) | ★★★ |
+| ANG-044 | Angular State Management Selection (NgRx vs Akita vs Elf) | ★★★ |
+| ANG-045 | Angular Migration Strategy (AngularJS to Angular) | ★★★ |
+| ANG-046 | Angular Enterprise Design Patterns | ★★★ |
+| ANG-047 | Angular Compiler Architecture Research | ★★★ |
+| ANG-048 | Angular Signals Deep Dive -- Reactivity Internals | ★★★ |
+| ANG-049 | RxJS Scheduler and Virtual Time Research | ★★★ |
+| ANG-013 | Angular vs React Trade-off Framing | ★★★ |
+| ANG-049 | Angular Opinionated Framework Mental Model | ★★★ |
+| ANG-014 | Reactive Programming Thinking (RxJS) | ★★★ |
+| ANG-049 | Angular Complexity vs React Freedom | ★★★ |
 | ANG-050 | Angular Module Federation (Micro-Frontends) | ★★★ |
-| ANG-052 | Angular 17+ Control Flow Syntax (@if, @for) | ★★☆ |

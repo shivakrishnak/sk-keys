@@ -27,42 +27,42 @@ Terraform, Ansible, Pulumi, AWS CDK, Helm, GitOps, IaC security, enterprise-scal
 | IAC-010 | Terraform Modules | ★☆☆ |
 | IAC-011 | Terraform Variables and Outputs | ★☆☆ |
 | IAC-012 | Terraform Providers | ★☆☆ |
-| IAC-013 | Terraform Remote State | ★★☆ |
-| IAC-014 | Terraform Workspaces | ★★☆ |
-| IAC-015 | Terraform Backends | ★★☆ |
-| IAC-016 | Terraform Import | ★★☆ |
-| IAC-017 | Ansible Basics (playbooks, inventory, roles) | ★★☆ |
-| IAC-018 | AWS CDK (Cloud Development Kit) | ★★☆ |
-| IAC-019 | Pulumi -- IaC with Real Languages | ★★☆ |
-| IAC-020 | Helm -- Kubernetes Package Manager | ★★☆ |
-| IAC-021 | GitOps Workflow for IaC | ★★☆ |
-| IAC-022 | Terraform State Locking and Drift Detection | ★★☆ |
-| IAC-023 | Terraform Testing (Terratest, checkov) | ★★☆ |
-| IAC-024 | Crossplane -- Kubernetes-Native IaC | ★★☆ |
-| IAC-025 | Open Policy Agent (OPA) for IaC | ★★☆ |
-| IAC-026 | IaC Security Scanning (tfsec, Bridgecrew) | ★★☆ |
-| IAC-027 | Immutable Infrastructure Pattern | ★★☆ |
-| IAC-028 | Idempotency in IaC | ★★☆ |
-| IAC-029 | Secret Management in IaC | ★★☆ |
-| IAC-030 | IaC Module Versioning Strategy | ★★☆ |
-| IAC-031 | Packer -- Machine Image Building | ★★☆ |
-| IAC-032 | Terraform Provider Development | ★★★ |
-| IAC-033 | Terraform Enterprise and Cloud (Remote Operations) | ★★★ |
-| IAC-034 | Multi-Cloud IaC Strategy | ★★★ |
-| IAC-035 | IaC at Enterprise Scale (Terragrunt, Atlantis) | ★★★ |
-| IAC-036 | IaC Drift and Reconciliation Strategy | ★★★ |
-| IAC-037 | IaC Compliance Enforcement | ★★★ |
-| IAC-038 | IaC Architecture Strategy | ★★★ |
-| IAC-039 | Platform Engineering with IaC | ★★★ |
-| IAC-040 | Golden Path Templates and Internal Developer Platform | ★★★ |
-| IAC-041 | IaC Tool Selection Framework | ★★★ |
-| IAC-042 | IaC Abstraction Layer Design | ★★★ |
-| IAC-043 | Desired State Convergence Theory | ★★★ |
-| IAC-044 | IaC Language Design Research | ★★★ |
-| IAC-045 | IaC Trade-off Framing | ★★★ |
-| IAC-046 | Infrastructure Automation Mental Model | ★★★ |
-| IAC-047 | Mutable vs Immutable Infrastructure Thinking | ★★★ |
-| IAC-048 | Infrastructure as Code Interview Preparation Guide | ★☆☆ |
+| IAC-015 | Infrastructure as Code Interview Preparation Guide | ★☆☆ |
+| IAC-016 | Terraform Remote State | ★★☆ |
+| IAC-017 | Terraform Workspaces | ★★☆ |
+| IAC-018 | Terraform Backends | ★★☆ |
+| IAC-019 | Terraform Import | ★★☆ |
+| IAC-020 | Ansible Basics (playbooks, inventory, roles) | ★★☆ |
+| IAC-021 | AWS CDK (Cloud Development Kit) | ★★☆ |
+| IAC-022 | Pulumi -- IaC with Real Languages | ★★☆ |
+| IAC-023 | Helm -- Kubernetes Package Manager | ★★☆ |
+| IAC-024 | GitOps Workflow for IaC | ★★☆ |
+| IAC-025 | Terraform State Locking and Drift Detection | ★★☆ |
+| IAC-026 | Terraform Testing (Terratest, checkov) | ★★☆ |
+| IAC-027 | Crossplane -- Kubernetes-Native IaC | ★★☆ |
+| IAC-028 | Open Policy Agent (OPA) for IaC | ★★☆ |
+| IAC-029 | IaC Security Scanning (tfsec, Bridgecrew) | ★★☆ |
+| IAC-030 | Immutable Infrastructure Pattern | ★★☆ |
+| IAC-031 | Idempotency in IaC | ★★☆ |
+| IAC-032 | Secret Management in IaC | ★★☆ |
+| IAC-033 | IaC Module Versioning Strategy | ★★☆ |
+| IAC-034 | Packer -- Machine Image Building | ★★☆ |
+| IAC-035 | Terraform Provider Development | ★★★ |
+| IAC-036 | Terraform Enterprise and Cloud (Remote Operations) | ★★★ |
+| IAC-037 | Multi-Cloud IaC Strategy | ★★★ |
+| IAC-038 | IaC at Enterprise Scale (Terragrunt, Atlantis) | ★★★ |
+| IAC-039 | IaC Drift and Reconciliation Strategy | ★★★ |
+| IAC-040 | IaC Compliance Enforcement | ★★★ |
+| IAC-041 | IaC Architecture Strategy | ★★★ |
+| IAC-042 | Platform Engineering with IaC | ★★★ |
+| IAC-043 | Golden Path Templates and Internal Developer Platform | ★★★ |
+| IAC-044 | IaC Tool Selection Framework | ★★★ |
+| IAC-045 | IaC Abstraction Layer Design | ★★★ |
+| IAC-046 | Desired State Convergence Theory | ★★★ |
+| IAC-047 | IaC Language Design Research | ★★★ |
+| IAC-048 | IaC Trade-off Framing | ★★★ |
+| IAC-013 | Infrastructure Automation Mental Model | ★★★ |
+| IAC-014 | Mutable vs Immutable Infrastructure Thinking | ★★★ |
 | IAC-049 | Terraform State Management | ★★★ |
 | IAC-050 | Terraform Modules and Reuse | ★★★ |
 | IAC-051 | Pulumi (IaC with Real Languages) | ★★★ |

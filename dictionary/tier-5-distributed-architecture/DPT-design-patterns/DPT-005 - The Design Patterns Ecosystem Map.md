@@ -28,8 +28,8 @@ permalink: /dpt/the-design-patterns-ecosystem-map/
 | DPT-005         | Category: Design Patterns                   | Difficulty: ★☆☆ |
 | :-------------- | :------------------------------------------ | :-------------- |
 | **Depends on:** | DPT-001, DPT-002, DPT-003, DPT-004          |                 |
-| **Used by:**    | DPT-006, DPT-007, DPT-008, DPT-009, DPT-010 |                 |
-| **Related:**    | DPT-001, DPT-002, DPT-004, DPT-061          |                 |
+| **Used by:**    | DPT-006, DPT-048, DPT-015, DPT-049, DPT-016 |                 |
+| **Related:**    | DPT-001, DPT-002, DPT-004, DPT-081          |                 |
 
 ---
 
@@ -391,11 +391,11 @@ crossing into other levels' territory
 
 - [[DPT-006 - Singleton]]
 - [[DPT-052 - CQRS Pattern]]
-- [[DPT-057 - Circuit Breaker Pattern]]
+- [[DPT-078 - Circuit Breaker Pattern]]
 
 **Alternatives / Comparisons:**
 
-- [[DPT-061 - Pattern Selection Framework]]
+- [[DPT-081 - Pattern Selection Framework]]
 
 ---
 
@@ -415,7 +415,7 @@ crossing into other levels' territory
 | TRADE-OFF       Orientation time vs jumping to      |
 |                 first familiar pattern              |
 | ONE-LINER       Navigate to the right level first  |
-| NEXT EXPLORE    DPT-006 through DPT-060 per level   |
+| NEXT EXPLORE    DPT-006 through DPT-029 per level   |
 +-----------------------------------------------------+
 ```
 

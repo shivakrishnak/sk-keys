@@ -6,7 +6,7 @@ tier: tier-8-artificial-intelligence
 folder: RAG-rag-agents-llmops
 difficulty: ★☆☆
 depends_on:
-used_by: RAG-028, RAG-029, RAG-042
+used_by: RAG-030, RAG-031, RAG-044
 related: RAG-001, AIF-001
 tags:
   - rag
@@ -29,7 +29,7 @@ permalink: /rag/llmops-what-it-is-and-why-it-exists/
 | Field | Value |
 |-------|-------|
 | **Depends on** | — |
-| **Used by** | RAG-028, RAG-029, RAG-042 |
+| **Used by** | RAG-030, RAG-031, RAG-044 |
 | **Related** | RAG-001, AIF-001 |
 
 ---
@@ -315,12 +315,12 @@ GOOD: Reduce chunk size or add context compression (summarise retrieved chunks b
 - `AIF-001 - Large Language Models` — the component being operated
 
 **Builds On This (learn these next):**
-- `RAG-028 - LLMOps Fundamentals` — detailed LLMOps practices
-- `RAG-029 - LLM Observability` — production monitoring in depth
-- `RAG-042 - LLMOps Maturity Model` — maturity stages
+- `RAG-030 - LLMOps Fundamentals` — detailed LLMOps practices
+- `RAG-031 - LLM Observability` — production monitoring in depth
+- `RAG-044 - LLMOps Maturity Model` — maturity stages
 
 **Alternatives / Comparisons:**
-- `RAG-030 - LLM CI/CD` — applying CI/CD discipline to LLM deployments
+- `RAG-032 - LLM CI/CD` — applying CI/CD discipline to LLM deployments
 
 ---
 
@@ -347,7 +347,7 @@ GOOD: Reduce chunk size or add context compression (summarise retrieved chunks b
 +--------------------------------------------------+
 | ONE-LINER     | "DevOps for LLM applications"   |
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-028, RAG-029, RAG-017        |
+| NEXT EXPLORE  | RAG-030, RAG-031, RAG-019        |
 +--------------------------------------------------+
 ```
 

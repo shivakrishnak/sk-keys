@@ -1,0 +1,27 @@
+---
+id: AIP-031
+title: AI Accessibility in Products
+category: AI Product Engineering
+tier: tier-8-artificial-intelligence
+folder: AIP-ai-product
+difficulty: ★★☆
+depends_on:
+used_by:
+related:
+tags:
+  - aip
+  - intermediate
+  - deep-dive
+  - tradeoff
+status: draft
+version: 0
+layout: default
+parent: "AI Product Engineering"
+grand_parent: "Technical Dictionary"
+nav_order: 27
+permalink: /aip/ai-accessibility-in-products/
+---
+
+# AIP-029 - AI Accessibility in Products
+
+> Entry stub. Generate full content using Master Prompt v3.0.

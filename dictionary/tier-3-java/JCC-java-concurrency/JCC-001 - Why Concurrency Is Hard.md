@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JCC-java-concurrency
 difficulty: ★☆☆
 depends_on:
-used_by: JCC-002, JCC-006, JCC-013, JCC-020, JCC-021
-related: JCC-002, JCC-004, JCC-020
+used_by: JCC-002, JCC-006, JCC-014, JCC-044, JCC-015
+related: JCC-002, JCC-004, JCC-044
 tags:
   - java
   - concurrency
@@ -30,8 +30,8 @@ permalink: /jcc/why-concurrency-is-hard/
 | Metadata        |                                             |     |
 | :-------------- | :------------------------------------------ | :-- |
 | **Depends on:** | (none - entry point)                        |     |
-| **Used by:**    | JCC-002, JCC-006, JCC-013, JCC-020, JCC-021 |     |
-| **Related:**    | JCC-002, JCC-004, JCC-020                   |     |
+| **Used by:**    | JCC-002, JCC-006, JCC-014, JCC-044, JCC-015 |     |
+| **Related:**    | JCC-002, JCC-004, JCC-044                   |     |
 
 ---
 
@@ -317,15 +317,15 @@ synchronized (account) {
 **Prerequisites (understand these first):**
 
 - [[JCC-002 - The Thread Safety Problem -- A Mental Model]] - the structured framework built on this foundation
-- [[JCC-020 - Java Memory Model (JMM)]] - the formal specification of Java's visibility and ordering guarantees
+- [[JCC-044 - Java Memory Model (JMM)]] - the formal specification of Java's visibility and ordering guarantees
 - [[CSF-001]] - CS Fundamentals: how CPUs and memory actually work
 
 **Builds On This (learn these next):**
 
-- [[JCC-013 - synchronized]] - the primary tool for mutual exclusion and visibility
-- [[JCC-014 - volatile]] - visibility and ordering without mutual exclusion
-- [[JCC-021 - Race Condition]] - deep dive into the atomicity failure mode
-- [[JCC-022 - CAS (Compare-And-Swap)]] - hardware-atomic operations
+- [[JCC-014 - synchronized]] - the primary tool for mutual exclusion and visibility
+- [[JCC-038 - volatile]] - visibility and ordering without mutual exclusion
+- [[JCC-015 - Race Condition]] - deep dive into the atomicity failure mode
+- [[JCC-045 - CAS (Compare-And-Swap)]] - hardware-atomic operations
 
 **Alternatives / Comparisons:**
 
@@ -345,7 +345,7 @@ synchronized (account) {
 │ AVOID WHEN    │ (foundational - always relevant)    │
 │ TRADE-OFF     │ Correctness vs raw performance      │
 │ ONE-LINER     │ Threads lie about what they see     │
-│ NEXT EXPLORE  │ JCC-013 synchronized, JCC-014 volatile│
+│ NEXT EXPLORE  │ JCC-014 synchronized, JCC-038 volatile│
 └────────────────────────────────────────────────────┘
 ```
 
@@ -388,4 +388,4 @@ _Hint:_ Think about the OS scheduler and thread interleaving - that is independe
 _Hint:_ Look at `LongAdder` and understand why it scales better than `AtomicLong` under contention.
 
 **Q3 (C - Design Trade-off):** A senior engineer proposes making all shared state immutable and passing messages between threads instead of sharing references. How does this design eliminate two of the three root causes, and what new problem does it introduce?
-_Hint:_ Consider the Actor Model (JCC-045) and what happens to the "message queue" itself - is it shared mutable state?
+_Hint:_ Consider the Actor Model (JCC-063) and what happens to the "message queue" itself - is it shared mutable state?

@@ -26,43 +26,43 @@ Platform engineering, internal developer platforms (IDP), golden paths, develope
 | PLT-009 | Self-Service Infrastructure Patterns | ★☆☆ |
 | PLT-010 | Developer Portal (Backstage, Port) | ★☆☆ |
 | PLT-011 | Platform Team Topology and Team Interactions | ★☆☆ |
-| PLT-012 | DORA Metrics (Deployment Frequency, Lead Time, MTTR, CFR) | ★★☆ |
-| PLT-013 | SPACE Framework for Developer Productivity | ★★☆ |
-| PLT-014 | Cognitive Load in Software Engineering | ★★☆ |
-| PLT-015 | Technical Debt Management Strategy | ★★☆ |
-| PLT-016 | Engineering Metrics and OKRs | ★★☆ |
-| PLT-017 | Software Supply Chain Security (SLSA, SBOM) | ★★☆ |
-| PLT-018 | API Platform Design (API Gateway, Developer Portal) | ★★☆ |
-| PLT-019 | Feature Management and Feature Flags at Scale | ★★☆ |
-| PLT-020 | Monorepo Tooling (Nx, Turborepo, Bazel) | ★★☆ |
-| PLT-021 | Trunk-Based Development at Scale | ★★☆ |
-| PLT-022 | Release Engineering (Release Trains, Freeze, Hotfix) | ★★☆ |
-| PLT-023 | Incident Management Platform Design | ★★☆ |
-| PLT-024 | On-Call Engineering Best Practices | ★★☆ |
-| PLT-025 | Post-Mortem Culture and Blameless Reviews | ★★☆ |
-| PLT-026 | Continuous Deployment Safety Practices | ★★☆ |
-| PLT-027 | Progressive Delivery (Canary, Dark Launch, A/B) | ★★☆ |
-| PLT-028 | Semantic Versioning and Release Policy | ★★☆ |
-| PLT-029 | Build System Performance (Cache, Remote Execution) | ★★☆ |
-| PLT-030 | Service Catalog and Software Inventory | ★★☆ |
-| PLT-031 | Platform Engineering Roadmap Design | ★★★ |
-| PLT-032 | IDP Architecture (Backstage Plugins, Custom Scaffolding) | ★★★ |
-| PLT-033 | Engineering Effectiveness Research (McKinsey, DX Core) | ★★★ |
-| PLT-034 | Platform as a Product Design | ★★★ |
-| PLT-035 | Multi-Cloud Platform Strategy | ★★★ |
-| PLT-036 | Platform Engineering Strategy (Build vs Buy) | ★★★ |
-| PLT-037 | Developer Productivity Architecture | ★★★ |
-| PLT-038 | Engineering Transformation Strategy | ★★★ |
-| PLT-039 | Platform Reliability and SLO Design | ★★★ |
-| PLT-040 | AI-Augmented Developer Tooling Strategy | ★★★ |
-| PLT-041 | Platform Engineering Research Frontiers | ★★★ |
-| PLT-042 | Software Engineering Science (Empirical SE Research) | ★★★ |
-| PLT-043 | Conway's Law and Org Design Research | ★★★ |
-| PLT-044 | Platform Trade-off Framing (Standardization vs Flexibility) | ★★★ |
-| PLT-045 | Developer Experience Mental Model | ★★★ |
-| PLT-046 | Platform vs Enablement Thinking | ★★★ |
-| PLT-047 | Engineering Metrics Mental Model (Leading vs Lagging) | ★★★ |
-| PLT-048 | Platform Engineering Interview Preparation Guide | ★☆☆ |
+| PLT-014 | Platform Engineering Interview Preparation Guide | ★☆☆ |
+| PLT-015 | DORA Metrics (Deployment Frequency, Lead Time, MTTR, CFR) | ★★☆ |
+| PLT-016 | SPACE Framework for Developer Productivity | ★★☆ |
+| PLT-017 | Cognitive Load in Software Engineering | ★★☆ |
+| PLT-018 | Technical Debt Management Strategy | ★★☆ |
+| PLT-019 | Engineering Metrics and OKRs | ★★☆ |
+| PLT-020 | Software Supply Chain Security (SLSA, SBOM) | ★★☆ |
+| PLT-021 | API Platform Design (API Gateway, Developer Portal) | ★★☆ |
+| PLT-022 | Feature Management and Feature Flags at Scale | ★★☆ |
+| PLT-023 | Monorepo Tooling (Nx, Turborepo, Bazel) | ★★☆ |
+| PLT-024 | Trunk-Based Development at Scale | ★★☆ |
+| PLT-025 | Release Engineering (Release Trains, Freeze, Hotfix) | ★★☆ |
+| PLT-026 | Incident Management Platform Design | ★★☆ |
+| PLT-027 | On-Call Engineering Best Practices | ★★☆ |
+| PLT-028 | Post-Mortem Culture and Blameless Reviews | ★★☆ |
+| PLT-029 | Continuous Deployment Safety Practices | ★★☆ |
+| PLT-030 | Progressive Delivery (Canary, Dark Launch, A/B) | ★★☆ |
+| PLT-031 | Semantic Versioning and Release Policy | ★★☆ |
+| PLT-032 | Build System Performance (Cache, Remote Execution) | ★★☆ |
+| PLT-033 | Service Catalog and Software Inventory | ★★☆ |
+| PLT-034 | Platform Engineering Roadmap Design | ★★★ |
+| PLT-035 | IDP Architecture (Backstage Plugins, Custom Scaffolding) | ★★★ |
+| PLT-036 | Engineering Effectiveness Research (McKinsey, DX Core) | ★★★ |
+| PLT-037 | Platform as a Product Design | ★★★ |
+| PLT-038 | Multi-Cloud Platform Strategy | ★★★ |
+| PLT-039 | Platform Engineering Strategy (Build vs Buy) | ★★★ |
+| PLT-040 | Developer Productivity Architecture | ★★★ |
+| PLT-041 | Engineering Transformation Strategy | ★★★ |
+| PLT-042 | Platform Reliability and SLO Design | ★★★ |
+| PLT-043 | AI-Augmented Developer Tooling Strategy | ★★★ |
+| PLT-044 | Platform Engineering Research Frontiers | ★★★ |
+| PLT-045 | Software Engineering Science (Empirical SE Research) | ★★★ |
+| PLT-046 | Conway's Law and Org Design Research | ★★★ |
+| PLT-047 | Platform Trade-off Framing (Standardization vs Flexibility) | ★★★ |
+| PLT-048 | Developer Experience Mental Model | ★★★ |
+| PLT-012 | Platform vs Enablement Thinking | ★★★ |
+| PLT-013 | Engineering Metrics Mental Model (Leading vs Lagging) | ★★★ |
 | PLT-049 | Golden Paths and Developer Portals | ★★★ |
 | PLT-050 | Backstage Developer Portal | ★★★ |
 | PLT-051 | Platform Engineering Metrics | ★★★ |

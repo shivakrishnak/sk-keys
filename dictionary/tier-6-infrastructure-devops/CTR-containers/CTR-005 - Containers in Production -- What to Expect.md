@@ -6,8 +6,8 @@ tier: tier-6-infrastructure-devops
 folder: CTR-containers
 difficulty: ★☆☆
 depends_on: CTR-001, CTR-002, CTR-003
-used_by: CTR-026
-related: CTR-003, CTR-026, CTR-031
+used_by: CTR-027
+related: CTR-003, CTR-027, CTR-028
 tags:
   - containers
   - production
@@ -32,8 +32,8 @@ that local development never demands.
 | | |
 |---|---|
 | **Depends on** | CTR-001, CTR-002, CTR-003 |
-| **Used by** | CTR-026 |
-| **Related** | CTR-003, CTR-026, CTR-031 |
+| **Used by** | CTR-027 |
+| **Related** | CTR-003, CTR-027, CTR-028 |
 
 ---
 
@@ -422,11 +422,11 @@ deploying to production.
 - `[[CTR-003 - The Container Ecosystem Map]]`
 
 **Builds On This (learn these next):**
-- `[[CTR-026 - Container Orchestration]]` - how orchestrators manage containers
-- `[[CTR-031 - Container Resource Limits]]` - CPU and memory limits in depth
-- `[[CTR-032 - Container Health Check]]` - liveness/readiness probes
-- `[[CTR-039 - Container Logging]]` - stdout logging patterns
-- `[[CTR-021 - Container Security]]` - production security hardening
+- `[[CTR-027 - Container Orchestration]]` - how orchestrators manage containers
+- `[[CTR-028 - Container Resource Limits]]` - CPU and memory limits in depth
+- `[[CTR-017 - Container Health Check]]` - liveness/readiness probes
+- `[[CTR-030 - Container Logging]]` - stdout logging patterns
+- `[[CTR-035 - Container Security]]` - production security hardening
 
 **Alternatives / Comparisons:**
 - AWS ECS - managed container orchestration alternative to Kubernetes
@@ -456,7 +456,7 @@ deploying to production.
 │ ONE-LINER     Resource limits + health       │
 │               checks + stdout logs + non-    │
 │               root = minimum viable prod     │
-│ NEXT EXPLORE  CTR-026, CTR-031, CTR-032      │
+│ NEXT EXPLORE  CTR-027, CTR-028, CTR-017      │
 └──────────────────────────────────────────────┘
 ```
 

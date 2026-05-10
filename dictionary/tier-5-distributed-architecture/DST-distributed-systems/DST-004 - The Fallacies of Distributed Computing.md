@@ -28,8 +28,8 @@ permalink: /dst/the-fallacies-of-distributed-computing/
 | DST-004         | Category: Distributed Systems      | Difficulty: ★☆☆ |
 | :-------------- | :--------------------------------- | :-------------- |
 | **Depends on:** | DST-001, DST-002                   |                 |
-| **Used by:**    | DST-003, DST-044                   |                 |
-| **Related:**    | DST-002, DST-003, DST-046, DST-044 |                 |
+| **Used by:**    | DST-003, DST-028                   |                 |
+| **Related:**    | DST-002, DST-003, DST-010, DST-028 |                 |
 
 ---
 
@@ -408,9 +408,9 @@ curl -s http://service/actuator/metrics/executor.active
 
 **Builds On This (learn these next):**
 
-- [[DST-042 - Circuit Breaker]]
-- [[DST-044 - Retry with Backoff]]
-- [[DST-046 - Timeout]]
+- [[DST-027 - Circuit Breaker]]
+- [[DST-028 - Retry with Backoff]]
+- [[DST-010 - Timeout]]
 
 **Alternatives / Comparisons:**
 
@@ -433,7 +433,7 @@ curl -s http://service/actuator/metrics/executor.active
 | AVOID           "We're on the same VPC; it's fine"  |
 | TRADE-OFF       Engineering effort vs resilience     |
 | ONE-LINER       8 lies your network tells you       |
-| NEXT EXPLORE    DST-042, DST-044, DST-046, DST-043  |
+| NEXT EXPLORE    DST-027, DST-028, DST-010, DST-009  |
 +-----------------------------------------------------+
 ```
 

@@ -6,7 +6,7 @@ tier: tier-8-artificial-intelligence
 folder: RAG-rag-agents-llmops
 difficulty: ★☆☆
 depends_on: RAG-001
-used_by: RAG-010, RAG-023
+used_by: RAG-010, RAG-025
 related: RAG-006, RAG-007, RAG-008
 tags:
   - rag
@@ -29,7 +29,7 @@ permalink: /rag/rag-mental-model/
 | Field | Value |
 |-------|-------|
 | **Depends on** | RAG-001 |
-| **Used by** | RAG-010, RAG-023 |
+| **Used by** | RAG-010, RAG-025 |
 | **Related** | RAG-006, RAG-007, RAG-008 |
 
 ---
@@ -300,12 +300,12 @@ GOOD: "Answer ONLY using the provided context. If the context does not contain e
 
 **Builds On This (learn these next):**
 - `RAG-010 - RAG Pipeline Basics` — full implementation
-- `RAG-017 - RAG Evaluation` — how to measure each phase
-- `RAG-018 - Query Transformation` — improving the Retrieve phase
-- `RAG-023 - Advanced RAG Patterns` — extending each phase
+- `RAG-019 - RAG Evaluation` — how to measure each phase
+- `RAG-020 - Query Transformation` — improving the Retrieve phase
+- `RAG-025 - Advanced RAG Patterns` — extending each phase
 
 **Alternatives / Comparisons:**
-- `RAG-033 - Agentic RAG` — when agents control the Retrieve phase dynamically
+- `RAG-035 - Agentic RAG` — when agents control the Retrieve phase dynamically
 
 ---
 
@@ -333,7 +333,7 @@ GOOD: "Answer ONLY using the provided context. If the context does not contain e
 +--------------------------------------------------+
 | ONE-LINER     | "Find -> Prepare -> Answer"      |
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-008, RAG-017, RAG-018        |
+| NEXT EXPLORE  | RAG-008, RAG-019, RAG-020        |
 +--------------------------------------------------+
 ```
 

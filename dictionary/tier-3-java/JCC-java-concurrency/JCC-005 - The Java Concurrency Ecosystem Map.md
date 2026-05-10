@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JCC-java-concurrency
 difficulty: ★☆☆
 depends_on: JCC-001, JCC-002, JCC-003, JCC-004
-used_by: JCC-006, JCC-013, JCC-024, JCC-028
-related: JCC-003, JCC-004, JCC-050
+used_by: JCC-006, JCC-014, JCC-016, JCC-049
+related: JCC-003, JCC-004, JCC-068
 tags:
   - java
   - concurrency
@@ -30,8 +30,8 @@ permalink: /jcc/the-java-concurrency-ecosystem-map/
 | Metadata        |                                    |     |
 | :-------------- | :--------------------------------- | :-- |
 | **Depends on:** | JCC-001, JCC-002, JCC-003, JCC-004 |     |
-| **Used by:**    | JCC-006, JCC-013, JCC-024, JCC-028 |     |
-| **Related:**    | JCC-003, JCC-004, JCC-050          |     |
+| **Used by:**    | JCC-006, JCC-014, JCC-016, JCC-049 |     |
+| **Related:**    | JCC-003, JCC-004, JCC-068          |     |
 
 ---
 
@@ -365,14 +365,14 @@ CompletableFuture.supplyAsync(() -> riskyOp())
 **Builds On This (learn these next):**
 
 - [[JCC-006 - Thread (Java)]] - Zone 1 in depth
-- [[JCC-013 - synchronized]] - Zone 2 in depth
-- [[JCC-024 - Executor]] - Zone 3 foundation
-- [[JCC-036 - ConcurrentHashMap]] - Zone 4 primary data structure
+- [[JCC-014 - synchronized]] - Zone 2 in depth
+- [[JCC-016 - Executor]] - Zone 3 foundation
+- [[JCC-054 - ConcurrentHashMap]] - Zone 4 primary data structure
 
 **Alternatives / Comparisons:**
 
-- [[JCC-050 - Thread Model Selection Framework]] - systematic tool selection using this map
-- [[JCC-046 - Concurrency Architecture Patterns in Java]] - patterns that span multiple zones
+- [[JCC-068 - Thread Model Selection Framework]] - systematic tool selection using this map
+- [[JCC-064 - Concurrency Architecture Patterns in Java]] - patterns that span multiple zones
 
 ---
 
@@ -387,7 +387,7 @@ CompletableFuture.supplyAsync(() -> riskyOp())
 │ AVOID WHEN    │ N/A - orientation map, not a tool   │
 │ TRADE-OFF     │ Higher zone = less control, less bug │
 │ ONE-LINER     │ Zone 3+4 for most; Zone 6 in Java 21│
-│ NEXT EXPLORE  │ JCC-006 Thread, JCC-024 Executor     │
+│ NEXT EXPLORE  │ JCC-006 Thread, JCC-016 Executor     │
 └────────────────────────────────────────────────────┘
 ```
 

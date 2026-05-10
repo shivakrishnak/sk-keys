@@ -6,8 +6,8 @@ tier: tier-8-artificial-intelligence
 folder: RAG-rag-agents-llmops
 difficulty: ★☆☆
 depends_on: RAG-001
-used_by: RAG-050
-related: RAG-040, AIF-001
+used_by: RAG-013
+related: RAG-042, AIF-001
 tags:
   - rag
   - foundational
@@ -29,8 +29,8 @@ permalink: /rag/rag-vs-fine-tuning/
 | Field | Value |
 |-------|-------|
 | **Depends on** | RAG-001 |
-| **Used by** | RAG-050 |
-| **Related** | RAG-040, AIF-001 |
+| **Used by** | RAG-013 |
+| **Related** | RAG-042, AIF-001 |
 
 ---
 
@@ -310,12 +310,12 @@ GOOD: Use LoRA (Low-Rank Adaptation) — trains only small adapter layers, prese
 - `AIF-001 - Large Language Models` — what fine-tuning modifies
 
 **Builds On This (learn these next):**
-- `RAG-040 - RAG Architecture Strategy` — strategic architecture decisions
-- `RAG-050 - RAG vs Fine-Tuning Decision Framework` — extended decision criteria
+- `RAG-042 - RAG Architecture Strategy` — strategic architecture decisions
+- `RAG-013 - RAG vs Fine-Tuning Decision Framework` — extended decision criteria
 
 **Alternatives / Comparisons:**
-- `RAG-023 - Advanced RAG Patterns` — when basic RAG is insufficient
-- `RAG-028 - LLMOps Fundamentals` — operationalising both approaches
+- `RAG-025 - Advanced RAG Patterns` — when basic RAG is insufficient
+- `RAG-030 - LLMOps Fundamentals` — operationalising both approaches
 
 ---
 
@@ -343,7 +343,7 @@ GOOD: Use LoRA (Low-Rank Adaptation) — trains only small adapter layers, prese
 +--------------------------------------------------+
 | ONE-LINER     | "Knowledge = RAG, Behavior = FT" |
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-040, RAG-050, RAG-028        |
+| NEXT EXPLORE  | RAG-042, RAG-013, RAG-030        |
 +--------------------------------------------------+
 ```
 

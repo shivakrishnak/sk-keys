@@ -1,0 +1,26 @@
+---
+id: SEC-049
+title: CORS - Cross-Origin Security
+category: Security
+tier: tier-2-networking-security
+folder: SEC-security
+difficulty: ★★☆
+depends_on:
+used_by:
+related:
+tags:
+  - sec
+  - intermediate
+  - pattern
+status: draft
+version: 0
+layout: default
+parent: "Security"
+grand_parent: "Technical Dictionary"
+nav_order: 38
+permalink: /sec/cors-cross-origin-security/
+---
+
+# SEC-038 - CORS - Cross-Origin Security
+
+> Entry stub. Generate full content using Master Prompt v3.0.

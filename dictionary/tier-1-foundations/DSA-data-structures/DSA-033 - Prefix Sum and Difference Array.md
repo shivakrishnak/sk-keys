@@ -9,9 +9,9 @@ category: Data Structures & Algorithms
 tier: tier-1-foundations
 folder: DSA-data-structures
 difficulty: ★★☆
-depends_on: DSA-001, DSA-018, DSA-019
-used_by: DSA-025, DSA-040, DSA-049
-related: DSA-011, DSA-012, DSA-039
+depends_on: DSA-001, DSA-015, DSA-020
+used_by: DSA-026, DSA-038, DSA-059
+related: DSA-009, DSA-010, DSA-037
 tags:
   - algorithm
   - datastructure
@@ -28,9 +28,9 @@ version: 1
 
 | Metadata | Value |
 |---|---|
-| **Depends on** | [[DSA-001 - Array]], [[DSA-018 - Time Complexity Big-O]], [[DSA-019 - Space Complexity]] |
-| **Used by** | [[DSA-025 - Dynamic Programming]], [[DSA-040 - Sliding Window]], [[DSA-049 - Longest Common Subsequence]] |
-| **Related** | [[DSA-011 - Segment Tree]], [[DSA-012 - Fenwick Tree (BIT)]], [[DSA-039 - Two Pointer]] |
+| **Depends on** | [[DSA-001 - Array]], [[DSA-015 - Time Complexity Big-O]], [[DSA-020 - Space Complexity]] |
+| **Used by** | [[DSA-026 - Dynamic Programming]], [[DSA-038 - Sliding Window]], [[DSA-059 - Longest Common Subsequence]] |
+| **Related** | [[DSA-009 - Segment Tree]], [[DSA-010 - Fenwick Tree (BIT)]], [[DSA-037 - Two Pointer]] |
 
 ---
 
@@ -419,17 +419,17 @@ public long query(int l, int r) {
 
 **Prerequisites (understand these first):**
 - [[DSA-001 - Array]] - the underlying data structure both techniques operate on
-- [[DSA-018 - Time Complexity Big-O]] - needed to appreciate the O(nq → n+q) transformation
-- [[DSA-019 - Space Complexity]] - the O(n) extra space trade-off
+- [[DSA-015 - Time Complexity Big-O]] - needed to appreciate the O(nq → n+q) transformation
+- [[DSA-020 - Space Complexity]] - the O(n) extra space trade-off
 
 **Builds On This (learn these next):**
-- [[DSA-011 - Segment Tree]] - generalises prefix sum to support O(log n) point updates + range queries
-- [[DSA-012 - Fenwick Tree (BIT)]] - compact, cache-friendly alternative for prefix sums with point updates
-- [[DSA-025 - Dynamic Programming]] - many DP optimisations use prefix sums to collapse O(n) transitions to O(1)
+- [[DSA-009 - Segment Tree]] - generalises prefix sum to support O(log n) point updates + range queries
+- [[DSA-010 - Fenwick Tree (BIT)]] - compact, cache-friendly alternative for prefix sums with point updates
+- [[DSA-026 - Dynamic Programming]] - many DP optimisations use prefix sums to collapse O(n) transitions to O(1)
 
 **Alternatives / Comparisons:**
-- [[DSA-039 - Two Pointer]] - alternative O(n) technique for sliding-window sums without preprocessing
-- [[DSA-040 - Sliding Window]] - handles contiguous ranges without building a prefix array
+- [[DSA-037 - Two Pointer]] - alternative O(n) technique for sliding-window sums without preprocessing
+- [[DSA-038 - Sliding Window]] - handles contiguous ranges without building a prefix array
 
 ---
 
@@ -458,8 +458,8 @@ public long query(int l, int r) {
 │ ONE-LINER     │ Index your data once; answer      │
 │               │ any range query in constant time  │
 ├──────────────────────────────────────────────────┤
-│ NEXT EXPLORE  │ DSA-011 Segment Tree              │
-│               │ DSA-012 Fenwick Tree (BIT)        │
+│ NEXT EXPLORE  │ DSA-009 Segment Tree              │
+│               │ DSA-010 Fenwick Tree (BIT)        │
 └──────────────────────────────────────────────────┘
 ```
 

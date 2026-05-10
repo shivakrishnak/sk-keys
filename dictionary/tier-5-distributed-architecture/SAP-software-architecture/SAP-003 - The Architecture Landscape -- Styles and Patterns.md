@@ -6,8 +6,8 @@ tier: tier-5-distributed-architecture
 folder: SAP-software-architecture
 difficulty: ★☆☆
 depends_on: SAP-001, SAP-002
-used_by: SAP-013, SAP-014, SAP-015, SAP-018
-related: SAP-005, SAP-013, SAP-039
+used_by: SAP-034, SAP-063, SAP-064, SAP-008
+related: SAP-005, SAP-034, SAP-075
 tags:
   - architecture
   - foundational
@@ -29,8 +29,8 @@ permalink: /software-architecture/architecture-landscape-styles-patterns/
 | SAP-003 | Category: Software Architecture Patterns | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | SAP-001, SAP-002 | |
-| **Used by:** | SAP-013, SAP-014, SAP-015, SAP-018 | |
-| **Related:** | SAP-005, SAP-013, SAP-039 | |
+| **Used by:** | SAP-034, SAP-063, SAP-064, SAP-008 | |
+| **Related:** | SAP-005, SAP-034, SAP-075 | |
 
 ---
 
@@ -140,15 +140,15 @@ Architecture styles are crystallised institutional knowledge. Each style represe
 
 **The five major style families:**
 
-**1. Layered (n-tier)** - Components organised in horizontal layers. Each layer serves the layer above and is served by the layer below. Traffic flows top-to-bottom. Easy to reason about, easy to test. Performance bottleneck risk from excessive layers. Core styles: layered architecture (SAP-013), onion (SAP-016), clean (SAP-015), hexagonal (SAP-014).
+**1. Layered (n-tier)** - Components organised in horizontal layers. Each layer serves the layer above and is served by the layer below. Traffic flows top-to-bottom. Easy to reason about, easy to test. Performance bottleneck risk from excessive layers. Core styles: layered architecture (SAP-034), onion (SAP-017), clean (SAP-064), hexagonal (SAP-063).
 
-**2. Pipeline / Dataflow** - Data passes through a sequence of processing stages. Stages are independent; the pipeline is composable. Excellent for batch processing, ETL, and streaming. Weak for interactive or transactional scenarios. Core styles: pipes and filters (SAP-041), streaming architectures.
+**2. Pipeline / Dataflow** - Data passes through a sequence of processing stages. Stages are independent; the pipeline is composable. Excellent for batch processing, ETL, and streaming. Weak for interactive or transactional scenarios. Core styles: pipes and filters (SAP-077), streaming architectures.
 
-**3. Event-driven** - Components communicate via events. Producers emit events without knowing consumers. High decoupling. Complex to trace and debug. Scales well under bursty load. Core styles: event sourcing (SAP-019), CQRS (SAP-018), message-passing.
+**3. Event-driven** - Components communicate via events. Producers emit events without knowing consumers. High decoupling. Complex to trace and debug. Scales well under bursty load. Core styles: event sourcing (SAP-018), CQRS (SAP-008), message-passing.
 
-**4. Component / Service-based** - System decomposed into independently deployable units. Units communicate via defined interfaces (REST, gRPC, events). High team autonomy. Operational complexity. Core styles: microservices, SOA, modular monolith (SAP-039).
+**4. Component / Service-based** - System decomposed into independently deployable units. Units communicate via defined interfaces (REST, gRPC, events). High team autonomy. Operational complexity. Core styles: microservices, SOA, modular monolith (SAP-075).
 
-**5. Domain-driven** - Decomposition follows business domain boundaries, not technical layers. Bounded contexts create explicit team and service boundaries. Complex upfront modelling. Core styles: DDD patterns (SAP-023 to SAP-038).
+**5. Domain-driven** - Decomposition follows business domain boundaries, not technical layers. Bounded contexts create explicit team and service boundaries. Complex upfront modelling. Core styles: DDD patterns (SAP-065 to SAP-074).
 
 ---
 
@@ -244,7 +244,7 @@ ArchRule rule = noClasses()
 **Failure Mode 3: Style Cargo-Culting**
 **Symptom:** The team has 3 developers and 18 microservices. Deployments require 4 hours of coordination.
 **Root Cause:** Style adopted from conference talks and company prestige, not from quality requirement analysis.
-**Fix:** Apply YAGNI (SAP-046) to architecture. Consolidate to a modular monolith (SAP-039) until team and traffic justify decomposition.
+**Fix:** Apply YAGNI (SAP-045) to architecture. Consolidate to a modular monolith (SAP-075) until team and traffic justify decomposition.
 **Prevention:** Require explicit quality attribute justification before adopting a more complex style.
 
 ---
@@ -256,13 +256,13 @@ ArchRule rule = noClasses()
 - SAP-002 - Why Architecture Decisions Matter
 
 **Builds On This (learn these next):**
-- SAP-013 - Layered Architecture
-- SAP-014 - Hexagonal Architecture
-- SAP-018 - CQRS Pattern
+- SAP-034 - Layered Architecture
+- SAP-063 - Hexagonal Architecture
+- SAP-008 - CQRS Pattern
 
 **Alternatives / Comparisons:**
 - SAP-005 - The Software Architecture Ecosystem Map
-- SAP-039 - Modular Monolith Patterns
+- SAP-075 - Modular Monolith Patterns
 
 ---
 
@@ -291,7 +291,7 @@ ArchRule rule = noClasses()
 | ONE-LINER      | Styles = structural vocabulary with     |
 |                | encoded trade-offs.                     |
 +----------------------------------------------------------+
-| NEXT EXPLORE   | SAP-013, SAP-014, SAP-018, SAP-039      |
+| NEXT EXPLORE   | SAP-034, SAP-063, SAP-008, SAP-075      |
 +----------------------------------------------------------+
 ```
 

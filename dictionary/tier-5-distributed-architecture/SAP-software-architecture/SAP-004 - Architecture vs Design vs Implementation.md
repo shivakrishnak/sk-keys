@@ -6,8 +6,8 @@ tier: tier-5-distributed-architecture
 folder: SAP-software-architecture
 difficulty: ★☆☆
 depends_on: SAP-001
-used_by: SAP-002, SAP-003, SAP-006
-related: SAP-001, SAP-043, SAP-050
+used_by: SAP-002, SAP-003, SAP-056
+related: SAP-001, SAP-044, SAP-012
 tags:
   - architecture
   - foundational
@@ -29,8 +29,8 @@ permalink: /software-architecture/architecture-vs-design-vs-implementation/
 | SAP-004 | Category: Software Architecture Patterns | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | SAP-001 | |
-| **Used by:** | SAP-002, SAP-003, SAP-006 | |
-| **Related:** | SAP-001, SAP-043, SAP-050 | |
+| **Used by:** | SAP-002, SAP-003, SAP-056 | |
+| **Related:** | SAP-001, SAP-044, SAP-012 | |
 
 ---
 
@@ -296,12 +296,12 @@ on other teams or services?" If yes, it is not architectural.
 
 **Builds On This (learn these next):**
 - SAP-002 - Why Architecture Decisions Matter
-- SAP-006 - Architecture Decision Record (ADR)
-- SAP-056 - Architecture Fitness Functions
+- SAP-056 - Architecture Decision Record (ADR)
+- SAP-026 - Architecture Fitness Functions
 
 **Alternatives / Comparisons:**
-- SAP-043 - SOLID Principles (design-level principles)
-- SAP-050 - Cohesion (design-level metric)
+- SAP-044 - SOLID Principles (design-level principles)
+- SAP-012 - Cohesion (design-level metric)
 
 ---
 
@@ -329,7 +329,7 @@ on other teams or services?" If yes, it is not architectural.
 +----------------------------------------------------------+
 | ONE-LINER      | Match decision process to reversal cost.|
 +----------------------------------------------------------+
-| NEXT EXPLORE   | SAP-002, SAP-006, SAP-056               |
+| NEXT EXPLORE   | SAP-002, SAP-056, SAP-026               |
 +----------------------------------------------------------+
 ```
 

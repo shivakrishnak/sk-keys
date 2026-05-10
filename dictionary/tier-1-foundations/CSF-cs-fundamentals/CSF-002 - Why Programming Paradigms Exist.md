@@ -28,8 +28,8 @@ permalink: /csf/why-programming-paradigms-exist/
 | CSF-002         | Category: CS Fundamentals - Paradigms       | Difficulty: ★☆☆ |
 | :-------------- | :------------------------------------------ | :-------------- |
 | **Depends on:** | CSF-001                                     |                 |
-| **Used by:**    | CSF-006, CSF-007, CSF-008, CSF-009, CSF-010 |                 |
-| **Related:**    | CSF-001, CSF-003, CSF-006, CSF-009, CSF-010 |                 |
+| **Used by:**    | CSF-006, CSF-007, CSF-008, CSF-009, CSF-024 |                 |
+| **Related:**    | CSF-001, CSF-003, CSF-006, CSF-009, CSF-024 |                 |
 
 ---
 
@@ -351,7 +351,7 @@ List<Integer> result = items.stream()
 - [[CSF-006 - Imperative Programming]]
 - [[CSF-007 - Declarative Programming]]
 - [[CSF-009 - Object-Oriented Programming (OOP)]]
-- [[CSF-010 - Functional Programming]]
+- [[CSF-024 - Functional Programming]]
 
 **Alternatives / Comparisons:**
 
@@ -378,7 +378,7 @@ List<Integer> result = items.stream()
 │                 verbose workarounds                  │
 │ ONE-LINER       Pick the lens that makes the         │
 │                 problem visible, not the one you know│
-│ NEXT EXPLORE    CSF-006, CSF-009, CSF-010, CSF-003   │
+│ NEXT EXPLORE    CSF-006, CSF-009, CSF-024, CSF-003   │
 └─────────────────────────────────────────────────────┘
 ```
 

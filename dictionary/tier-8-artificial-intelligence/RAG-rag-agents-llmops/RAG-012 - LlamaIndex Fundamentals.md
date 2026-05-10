@@ -7,7 +7,7 @@ folder: RAG-rag-agents-llmops
 difficulty: ★☆☆
 depends_on: RAG-001, RAG-010
 used_by:
-related: RAG-011, RAG-020
+related: RAG-011, RAG-022
 tags:
   - rag
   - foundational
@@ -30,7 +30,7 @@ permalink: /rag/llamaindex-fundamentals/
 | -------------- | ---------------- |
 | **Depends on** | RAG-001, RAG-010 |
 | **Used by**    | —                |
-| **Related**    | RAG-011, RAG-020 |
+| **Related**    | RAG-011, RAG-022 |
 
 ---
 
@@ -351,11 +351,11 @@ Use an external vector DB (`StorageContext` with Qdrant/Pinecone) for production
 **Builds On This (learn these next):**
 
 - `RAG-011 - LangChain Fundamentals` — the orchestration-centric alternative
-- `RAG-020 - AI Agents Fundamentals` — LlamaIndex agent patterns
+- `RAG-022 - AI Agents Fundamentals` — LlamaIndex agent patterns
 
 **Alternatives / Comparisons:**
 
-- `RAG-019 - Document Parsing` — what happens before LlamaIndex ingestion
+- `RAG-021 - Document Parsing` — what happens before LlamaIndex ingestion
 
 ---
 
@@ -383,7 +383,7 @@ Use an external vector DB (`StorageContext` with Qdrant/Pinecone) for production
 +--------------------------------------------------+
 | ONE-LINER     | "Smart filing cabinet for LLMs" |
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-011, RAG-019, RAG-020        |
+| NEXT EXPLORE  | RAG-011, RAG-021, RAG-022        |
 +--------------------------------------------------+
 ```
 

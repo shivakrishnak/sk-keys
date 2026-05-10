@@ -6,7 +6,7 @@ tier: tier-8-artificial-intelligence
 folder: RAG-rag-agents-llmops
 difficulty: ★☆☆
 depends_on: RAG-007
-used_by: RAG-010, RAG-019
+used_by: RAG-010, RAG-021
 related: RAG-006, RAG-009
 tags:
   - rag
@@ -29,7 +29,7 @@ permalink: /rag/chunking-strategies-for-rag/
 | Field | Value |
 |-------|-------|
 | **Depends on** | RAG-007 |
-| **Used by** | RAG-010, RAG-019 |
+| **Used by** | RAG-010, RAG-021 |
 | **Related** | RAG-006, RAG-009 |
 
 ---
@@ -392,10 +392,10 @@ GOOD: Pre-process: extract tables as separate chunks (one table = one chunk, reg
 
 **Builds On This (learn these next):**
 - `RAG-010 - RAG Pipeline Basics` — chunking in the full pipeline
-- `RAG-019 - Document Parsing and Extraction` — what happens before chunking
+- `RAG-021 - Document Parsing and Extraction` — what happens before chunking
 
 **Alternatives / Comparisons:**
-- `RAG-014 - Hybrid Search` — chunking quality interacts with BM25 retrieval
+- `RAG-016 - Hybrid Search` — chunking quality interacts with BM25 retrieval
 
 ---
 
@@ -422,7 +422,7 @@ GOOD: Pre-process: extract tables as separate chunks (one table = one chunk, reg
 +--------------------------------------------------+
 | ONE-LINER     | "Retrieval unit sizing"          |
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-010, RAG-014, RAG-019        |
+| NEXT EXPLORE  | RAG-010, RAG-016, RAG-021        |
 +--------------------------------------------------+
 ```
 

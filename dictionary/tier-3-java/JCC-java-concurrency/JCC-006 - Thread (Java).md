@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JCC-java-concurrency
 difficulty: ★☆☆
 depends_on: JCC-001, JCC-002, JCC-005
-used_by: JCC-007, JCC-008, JCC-011, JCC-012, JCC-013, JCC-024
-related: JCC-007, JCC-011, JCC-028
+used_by: JCC-007, JCC-008, JCC-012, JCC-013, JCC-014, JCC-016
+related: JCC-007, JCC-012, JCC-049
 tags:
   - java
   - concurrency
@@ -30,8 +30,8 @@ permalink: /jcc/thread-java/
 | Metadata        |                                                      |     |
 | :-------------- | :--------------------------------------------------- | :-- |
 | **Depends on:** | JCC-001, JCC-002, JCC-005                            |     |
-| **Used by:**    | JCC-007, JCC-008, JCC-011, JCC-012, JCC-013, JCC-024 |     |
-| **Related:**    | JCC-007, JCC-011, JCC-028                            |     |
+| **Used by:**    | JCC-007, JCC-008, JCC-012, JCC-013, JCC-014, JCC-016 |     |
+| **Related:**    | JCC-007, JCC-012, JCC-049                            |     |
 
 ---
 
@@ -368,14 +368,14 @@ class Worker {
 **Builds On This (learn these next):**
 
 - [[JCC-007 - Runnable]] - the task interface executed by threads
-- [[JCC-011 - Thread Lifecycle]] - all thread states in detail
-- [[JCC-013 - synchronized]] - mutual exclusion between threads
-- [[JCC-028 - Virtual Threads (Project Loom)]] - lightweight thread model
+- [[JCC-012 - Thread Lifecycle]] - all thread states in detail
+- [[JCC-014 - synchronized]] - mutual exclusion between threads
+- [[JCC-049 - Virtual Threads (Project Loom)]] - lightweight thread model
 
 **Alternatives / Comparisons:**
 
-- [[JCC-024 - Executor]] - the abstraction that manages threads for you
-- [[JCC-029 - Carrier Thread]] - the platform thread that carries a Virtual Thread
+- [[JCC-016 - Executor]] - the abstraction that manages threads for you
+- [[JCC-050 - Carrier Thread]] - the platform thread that carries a Virtual Thread
 
 ---
 
@@ -390,7 +390,7 @@ class Worker {
 │ AVOID WHEN    │ New code (use ExecutorService / VT) │
 │ TRADE-OFF     │ Concurrency vs. synchronization cost│
 │ ONE-LINER     │ Thread = stack + scheduler + heap   │
-│ NEXT EXPLORE  │ JCC-011 Lifecycle, JCC-028 VT       │
+│ NEXT EXPLORE  │ JCC-012 Lifecycle, JCC-049 VT       │
 └────────────────────────────────────────────────────┘
 ```
 

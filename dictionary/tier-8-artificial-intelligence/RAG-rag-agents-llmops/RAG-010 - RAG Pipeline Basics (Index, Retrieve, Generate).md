@@ -6,7 +6,7 @@ tier: tier-8-artificial-intelligence
 folder: RAG-rag-agents-llmops
 difficulty: ★☆☆
 depends_on: RAG-001, RAG-007, RAG-008
-used_by: RAG-023, RAG-033
+used_by: RAG-025, RAG-035
 related: RAG-002, RAG-006, RAG-009
 tags:
   - rag
@@ -29,7 +29,7 @@ permalink: /rag/rag-pipeline-basics-index-retrieve-generate/
 | Field          | Value                     |
 | -------------- | ------------------------- |
 | **Depends on** | RAG-001, RAG-007, RAG-008 |
-| **Used by**    | RAG-023, RAG-033          |
+| **Used by**    | RAG-025, RAG-035          |
 | **Related**    | RAG-002, RAG-006, RAG-009 |
 
 ---
@@ -410,14 +410,14 @@ GOOD: top-k=4 to 6, chunk_size=512. Compute prompt token count before LLM call a
 
 **Builds On This (learn these next):**
 
-- `RAG-017 - RAG Evaluation` — measuring pipeline quality
-- `RAG-023 - Advanced RAG Patterns` — extending both pipelines
-- `RAG-033 - Agentic RAG` — dynamic query pipeline control
+- `RAG-019 - RAG Evaluation` — measuring pipeline quality
+- `RAG-025 - Advanced RAG Patterns` — extending both pipelines
+- `RAG-035 - Agentic RAG` — dynamic query pipeline control
 
 **Alternatives / Comparisons:**
 
 - `RAG-002 - The RAG Mental Model` — Retrieve/Augment/Generate framing of the same system
-- `RAG-035 - RAG at Scale` — distributed Index and Query pipelines
+- `RAG-037 - RAG at Scale` — distributed Index and Query pipelines
 
 ---
 
@@ -444,7 +444,7 @@ GOOD: top-k=4 to 6, chunk_size=512. Compute prompt token count before LLM call a
 +--------------------------------------------------+
 | ONE-LINER     | "Pre-compute to serve fast"      |
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-017, RAG-023, RAG-033        |
+| NEXT EXPLORE  | RAG-019, RAG-025, RAG-035        |
 +--------------------------------------------------+
 ```
 

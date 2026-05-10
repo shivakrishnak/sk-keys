@@ -11,7 +11,7 @@ permalink: /testing/
 
 Unit, integration, contract, E2E, TDD, BDD, mocking, test pyramid, performance testing, and test tooling.
 
-**Keywords:** TST-001–TST-076 (74 terms)
+**Keywords:** TST-001–TST-074 (74 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -21,58 +21,59 @@ Unit, integration, contract, E2E, TDD, BDD, mocking, test pyramid, performance t
 | TST-004 | Manual vs Automated Testing | ★☆☆ |
 | TST-005 | The Testing Ecosystem Map | ★☆☆ |
 | TST-006 | Unit Test | ★☆☆ |
-| TST-007 | Integration Test | ★★☆ |
-| TST-008 | Contract Test | ★★★ |
-| TST-009 | E2E Test | ★★☆ |
 | TST-010 | Smoke Test | ★☆☆ |
+| TST-026 | Testing Interview Preparation Guide | ★☆☆ |
+| TST-007 | Integration Test | ★★☆ |
+| TST-009 | E2E Test | ★★☆ |
 | TST-011 | Regression Test | ★★☆ |
 | TST-012 | Performance Test | ★★☆ |
 | TST-013 | Load Test | ★★☆ |
-| TST-014 | Stress Test | ★★★ |
-| TST-015 | Chaos Test | ★★★ |
-| TST-016 | Security Test (SAST-DAST) | ★★★ |
-| TST-017 | TDD | ★★☆ |
-| TST-018 | BDD | ★★☆ |
-| TST-019 | Mocking | ★★☆ |
-| TST-020 | Stubbing | ★★☆ |
-| TST-021 | Faking | ★★☆ |
-| TST-022 | Spying | ★★★ |
-| TST-023 | Test Pyramid | ★★☆ |
-| TST-024 | Test Diamond | ★★★ |
-| TST-025 | Test Isolation | ★★☆ |
-| TST-026 | Test Fixtures | ★★☆ |
-| TST-027 | Property-Based Testing | ★★★ |
-| TST-028 | Snapshot Testing | ★★☆ |
-| TST-029 | Testcontainers | ★★★ |
-| TST-030 | WireMock | ★★★ |
-| TST-031 | JUnit 5 | ★★☆ |
-| TST-032 | Mockito | ★★☆ |
-| TST-033 | AssertJ | ★★☆ |
-| TST-034 | Pact (Contract Testing) | ★★★ |
-| TST-035 | Test Data Management | ★★★ |
-| TST-036 | Test Environments | ★★☆ |
-| TST-037 | Flaky Tests | ★★★ |
-| TST-038 | Test Parallelization | ★★★ |
-| TST-039 | Approval Testing | ★★★ |
-| TST-040 | A-B Testing | ★★★ |
-| TST-041 | Test-Driven Infrastructure | ★★★ |
-| TST-042 | Golden Path Testing | ★★★ |
-| TST-043 | Test Coverage Targets | ★★☆ |
-| TST-044 | Penetration Testing | ★★★ |
-| TST-045 | API Testing | ★★☆ |
-| TST-046 | Postman - REST Assured | ★★☆ |
-| TST-047 | Selenium - Playwright | ★★☆ |
-| TST-048 | Gatling - k6 (Load Testing) | ★★★ |
-| TST-049 | SonarQube Quality Gate | ★★★ |
-| TST-050 | Test Reporting | ★★☆ |
-| TST-051 | JUnit 5 Parameterized Tests | ★★☆ |
-| TST-052 | Karate Framework (API Testing) | ★★★ |
-| TST-053 | Cucumber (BDD Testing) | ★★★ |
-| TST-054 | Cypress (E2E Testing) | ★★☆ |
-| TST-055 | Jest (JavaScript Testing) | ★★☆ |
-| TST-056 | Playwright (E2E Testing) | ★★☆ |
-| TST-057 | API Contract Testing (Pact  Karate) | ★★★ |
-| TST-058 | Performance Testing (JMeter, Gatling) | ★★★ |
+| TST-047 | TDD | ★★☆ |
+| TST-048 | BDD | ★★☆ |
+| TST-049 | Mocking | ★★☆ |
+| TST-037 | Stubbing | ★★☆ |
+| TST-038 | Faking | ★★☆ |
+| TST-039 | Test Pyramid | ★★☆ |
+| TST-014 | Test Isolation | ★★☆ |
+| TST-015 | Test Fixtures | ★★☆ |
+| TST-050 | Snapshot Testing | ★★☆ |
+| TST-016 | JUnit 5 | ★★☆ |
+| TST-051 | Mockito | ★★☆ |
+| TST-017 | AssertJ | ★★☆ |
+| TST-018 | Test Environments | ★★☆ |
+| TST-052 | Test Coverage Targets | ★★☆ |
+| TST-040 | API Testing | ★★☆ |
+| TST-027 | Postman - REST Assured | ★★☆ |
+| TST-053 | Selenium - Playwright | ★★☆ |
+| TST-019 | Test Reporting | ★★☆ |
+| TST-041 | JUnit 5 Parameterized Tests | ★★☆ |
+| TST-020 | Cypress (E2E Testing) | ★★☆ |
+| TST-028 | Jest (JavaScript Testing) | ★★☆ |
+| TST-029 | Playwright (E2E Testing) | ★★☆ |
+| TST-021 | Contract Test | ★★★ |
+| TST-030 | Stress Test | ★★★ |
+| TST-054 | Chaos Test | ★★★ |
+| TST-055 | Security Test (SAST-DAST) | ★★★ |
+| TST-031 | Spying | ★★★ |
+| TST-032 | Test Diamond | ★★★ |
+| TST-056 | Property-Based Testing | ★★★ |
+| TST-042 | Testcontainers | ★★★ |
+| TST-057 | WireMock | ★★★ |
+| TST-022 | Pact (Contract Testing) | ★★★ |
+| TST-043 | Test Data Management | ★★★ |
+| TST-044 | Flaky Tests | ★★★ |
+| TST-033 | Test Parallelization | ★★★ |
+| TST-034 | Approval Testing | ★★★ |
+| TST-023 | A-B Testing | ★★★ |
+| TST-024 | Test-Driven Infrastructure | ★★★ |
+| TST-035 | Golden Path Testing | ★★★ |
+| TST-058 | Penetration Testing | ★★★ |
+| TST-025 | Gatling - k6 (Load Testing) | ★★★ |
+| TST-045 | SonarQube Quality Gate | ★★★ |
+| TST-046 | Karate Framework (API Testing) | ★★★ |
+| TST-059 | Cucumber (BDD Testing) | ★★★ |
+| TST-059 | API Contract Testing (Pact  Karate) | ★★★ |
+| TST-059 | Performance Testing (JMeter, Gatling) | ★★★ |
 | TST-060 | Testing Strategy Architecture | ★★★ |
 | TST-061 | Test Automation Strategy at Scale | ★★★ |
 | TST-062 | Shift-Left Testing Design | ★★★ |
@@ -85,7 +86,6 @@ Unit, integration, contract, E2E, TDD, BDD, mocking, test pyramid, performance t
 | TST-069 | Testing Trade-off Framing | ★★★ |
 | TST-070 | Test Coverage Mental Model | ★★★ |
 | TST-071 | Testing ROI Thinking | ★★★ |
-| TST-072 | Testing Interview Preparation Guide | ★☆☆ |
-| TST-073 | Fuzz Testing | ★★★ |
-| TST-075 | Test Data Management Strategy | ★★★ |
-| TST-076 | Testing Pyramid Trade-offs | ★★★ |
+| TST-036 | Fuzz Testing | ★★★ |
+| TST-008 | Test Data Management Strategy | ★★★ |
+| TST-074 | Testing Pyramid Trade-offs | ★★★ |

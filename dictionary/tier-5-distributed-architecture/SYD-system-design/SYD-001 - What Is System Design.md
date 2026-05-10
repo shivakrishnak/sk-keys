@@ -6,8 +6,8 @@ tier: tier-5-distributed-architecture
 folder: SYD-system-design
 difficulty: ★☆☆
 depends_on:
-used_by: SYD-002, SYD-003, SYD-004, SYD-005
-related: SYD-002, SYD-005
+used_by: SYD-015, SYD-035, SYD-016, SYD-017
+related: SYD-015, SYD-017
 tags:
   - architecture
   - foundational
@@ -29,8 +29,8 @@ permalink: /syd/what-is-system-design/
 | SYD-001         | Category: System Design   | Difficulty: ★☆☆ |
 | :-------------- | :------------------------ | :-------------- |
 | **Depends on:** |                           |                 |
-| **Used by:**    | SYD-002, SYD-003, SYD-004 |                 |
-| **Related:**    | SYD-002, SYD-005          |                 |
+| **Used by:**    | SYD-015, SYD-035, SYD-016 |                 |
+| **Related:**    | SYD-015, SYD-017          |                 |
 
 ---
 
@@ -356,17 +356,17 @@ curl http://service/metrics | grep -c "http_requests_total"
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [[SYD-004 - Estimation and Back-of-Envelope Thinking]] - You need to estimate before you can design
+- [[SYD-016 - Estimation and Back-of-Envelope Thinking]] - You need to estimate before you can design
 - [[DST-001 - Distributed Systems Foundations]] - System design is usually distributed system design
 
 **Builds On This (learn these next):**
-- [[SYD-002 - The System Design Interview Mental Model]] - How to structure a design session
-- [[SYD-003 - How to Approach Any System Design Problem]] - Step-by-step methodology
-- [[SYD-005 - The System Design Ecosystem Map]] - The full vocabulary map
+- [[SYD-015 - The System Design Interview Mental Model]] - How to structure a design session
+- [[SYD-035 - How to Approach Any System Design Problem]] - Step-by-step methodology
+- [[SYD-017 - The System Design Ecosystem Map]] - The full vocabulary map
 
 **Alternatives / Comparisons:**
-- [[SYD-007 - Horizontal Scaling]] - One of the core design decisions
-- [[SYD-008 - Load Balancing]] - Core mechanism for distributing load
+- [[SYD-011 - Horizontal Scaling]] - One of the core design decisions
+- [[SYD-018 - Load Balancing]] - Core mechanism for distributing load
 
 ---
 
@@ -396,7 +396,7 @@ curl http://service/metrics | grep -c "http_requests_total"
 ║ ONE-LINER     Define components, flows,   ║
 ║               and trade-offs before code  ║
 ╠══════════════════════════════════════════╣
-║ NEXT EXPLORE  SYD-003: Design approach    ║
+║ NEXT EXPLORE  SYD-035: Design approach    ║
 ╚══════════════════════════════════════════╝
 ```
 

@@ -6,8 +6,8 @@ tier: tier-6-infrastructure-devops
 folder: CTR-containers
 difficulty: ★☆☆
 depends_on: CTR-001, CTR-003
-used_by: CTR-009
-related: CTR-001, CTR-009, CTR-024
+used_by: CTR-025
+related: CTR-001, CTR-025, CTR-020
 tags:
   - containers
   - docker
@@ -31,8 +31,8 @@ wrapping Linux primitives in a brilliant UX: one CLI, one file, one standard.
 | | |
 |---|---|
 | **Depends on** | CTR-001, CTR-003 |
-| **Used by** | CTR-009 |
-| **Related** | CTR-001, CTR-009, CTR-024 |
+| **Used by** | CTR-025 |
+| **Related** | CTR-001, CTR-025, CTR-020 |
 
 ---
 
@@ -387,14 +387,14 @@ Use rootless containers in CI and production.
 - `[[CTR-003 - The Container Ecosystem Map]]`
 
 **Builds On This (learn these next):**
-- `[[CTR-009 - Docker]]` - Docker architecture and commands in depth
-- `[[CTR-010 - Docker Image]]` - the image format in detail
-- `[[CTR-012 - Dockerfile]]` - writing production-grade Dockerfiles
-- `[[CTR-024 - OCI Standard]]` - how Docker's format became the standard
+- `[[CTR-025 - Docker]]` - Docker architecture and commands in depth
+- `[[CTR-006 - Docker Image]]` - the image format in detail
+- `[[CTR-007 - Dockerfile]]` - writing production-grade Dockerfiles
+- `[[CTR-020 - OCI Standard]]` - how Docker's format became the standard
 
 **Alternatives / Comparisons:**
-- `[[CTR-035 - Podman]]` - rootless, daemonless Docker alternative
-- `[[CTR-036 - Buildah]]` - build OCI images without a Docker daemon
+- `[[CTR-041 - Podman]]` - rootless, daemonless Docker alternative
+- `[[CTR-022 - Buildah]]` - build OCI images without a Docker daemon
 - LXC - the predecessor Docker abstracted over
 
 ---
@@ -418,7 +418,7 @@ Use rootless containers in CI and production.
 │               daemon security risk           │
 │ ONE-LINER     Git for deployment artifacts - │
 │               immutable, versioned, shareable│
-│ NEXT EXPLORE  CTR-009, CTR-012, CTR-024      │
+│ NEXT EXPLORE  CTR-025, CTR-007, CTR-020      │
 └──────────────────────────────────────────────┘
 ```
 

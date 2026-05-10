@@ -7,7 +7,7 @@ folder: RAG-rag-agents-llmops
 difficulty: ★☆☆
 depends_on: RAG-007
 used_by: RAG-006, RAG-010
-related: RAG-046, DSA-001
+related: RAG-048, DSA-001
 tags:
   - rag
   - foundational
@@ -30,7 +30,7 @@ permalink: /rag/similarity-search-cosine-dot-product-euclidean/
 |-------|-------|
 | **Depends on** | RAG-007 |
 | **Used by** | RAG-006, RAG-010 |
-| **Related** | RAG-046, DSA-001 |
+| **Related** | RAG-048, DSA-001 |
 
 ---
 
@@ -366,10 +366,10 @@ GOOD: Add re-ranking (cross-encoder) as a second stage: cosine similarity finds 
 
 **Builds On This (learn these next):**
 - `RAG-006 - Vector Databases` — systems implementing ANN similarity search
-- `RAG-046 - Vector Index Algorithm Research` — HNSW and IVF internals
+- `RAG-048 - Vector Index Algorithm Research` — HNSW and IVF internals
 
 **Alternatives / Comparisons:**
-- `RAG-014 - Hybrid Search` — combining vector similarity with BM25 keyword similarity
+- `RAG-016 - Hybrid Search` — combining vector similarity with BM25 keyword similarity
 
 ---
 
@@ -397,7 +397,7 @@ GOOD: Add re-ranking (cross-encoder) as a second stage: cosine similarity finds 
 +--------------------------------------------------+
 | ONE-LINER     | "Use cosine; it ignores length"  |
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-006, RAG-014, RAG-046        |
+| NEXT EXPLORE  | RAG-006, RAG-016, RAG-048        |
 +--------------------------------------------------+
 ```
 

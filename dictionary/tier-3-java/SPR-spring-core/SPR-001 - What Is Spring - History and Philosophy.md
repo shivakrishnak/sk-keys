@@ -7,7 +7,7 @@ folder: SPR-spring-core
 difficulty: ★☆☆
 depends_on:
 used_by: SPR-002, SPR-003, SPR-004, SPR-005
-related: SPR-019, SPR-020, SPR-044
+related: SPR-006, SPR-007, SPR-067
 tags:
   - spring
   - java
@@ -31,7 +31,7 @@ permalink: /spr/what-is-spring-history-and-philosophy/
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Depends on** | -                                                                                                                                                                                                               |
 | **Used by**    | [[SPR-002 - The Spring Ecosystem Map]], [[SPR-003 - Why Spring Boot Changed Java Development]], [[SPR-004 - Spring vs Jakarta EE vs Micronaut vs Quarkus]], [[SPR-005 - Spring in Production - What to Expect]] |
-| **Related**    | [[SPR-019 - IoC (Inversion of Control)]], [[SPR-020 - DI (Dependency Injection)]], [[SPR-044 - Auto-Configuration]]                                                                                             |
+| **Related**    | [[SPR-006 - IoC (Inversion of Control)]], [[SPR-007 - DI (Dependency Injection)]], [[SPR-067 - Auto-Configuration]]                                                                                             |
 
 ---
 
@@ -392,21 +392,21 @@ logging.level.org.springframework.security=DEBUG
 
 **Prerequisites (understand these first):**
 
-- [[SPR-019 - IoC (Inversion of Control)]] - the foundational container concept
-- [[SPR-020 - DI (Dependency Injection)]] - the injection mechanism Spring implements
+- [[SPR-006 - IoC (Inversion of Control)]] - the foundational container concept
+- [[SPR-007 - DI (Dependency Injection)]] - the injection mechanism Spring implements
 - Java Annotations (JLG category) - the metadata mechanism Spring uses
 
 **Builds On This (learn these next):**
 
 - [[SPR-002 - The Spring Ecosystem Map]] - the full Spring portfolio
 - [[SPR-003 - Why Spring Boot Changed Java Development]] - the modern entry point
-- [[SPR-021 - ApplicationContext]] - the container in depth
+- [[SPR-013 - ApplicationContext]] - the container in depth
 
 **Alternatives / Comparisons:**
 
 - [[SPR-004 - Spring vs Jakarta EE vs Micronaut vs Quarkus]] - framework comparison
-- [[SPR-016 - Micronaut Framework]] - compile-time DI alternative
-- [[SPR-018 - Quarkus Framework]] - Kubernetes-native alternative
+- [[SPR-057 - Micronaut Framework]] - compile-time DI alternative
+- [[SPR-059 - Quarkus Framework]] - Kubernetes-native alternative
 
 ---
 
@@ -422,7 +422,7 @@ logging.level.org.springframework.security=DEBUG
 |               | Quarkus/Micronaut compile-time DI is better|
 | TRADE-OFF     | Startup time + "magic" vs productivity     |
 | ONE-LINER     | Spring = POJO model + IoC container + AOP  |
-| NEXT EXPLORE  | SPR-002 (Ecosystem), SPR-019 (IoC)         |
+| NEXT EXPLORE  | SPR-002 (Ecosystem), SPR-006 (IoC)         |
 +----------------------------------------------------------+
 ```
 
@@ -458,11 +458,11 @@ Spring was not designed as a framework first - it was extracted from a book. Rod
 
 **Question 1 (A - System Interaction):** If Spring's container initialises all beans before the application handles its first request, what are the implications for expensive resources like database connection pools - and what controls the order in which they are started and stopped?
 
-_Hint:_ Look at `SmartLifecycle` ordering in [[SPR-046 - Spring Boot Startup Lifecycle]] and `HikariCP` configuration in [[SPR-048 - HikariCP]].
+_Hint:_ Look at `SmartLifecycle` ordering in [[SPR-069 - Spring Boot Startup Lifecycle]] and `HikariCP` configuration in [[SPR-029 - HikariCP]].
 
 **Question 2 (B - Scale):** Spring Boot's classpath scanning reads every class file at startup. As a microservice grows to 500+ classes, what happens to startup time, and what two mechanisms does Spring 6+ provide to address this without changing application code?
 
-_Hint:_ Look at [[SPR-073 - Spring Boot AOT Compilation]] and experiment with `-Dspring.main.lazy-initialization=true` in a local profile.
+_Hint:_ Look at [[SPR-033 - Spring Boot AOT Compilation]] and experiment with `-Dspring.main.lazy-initialization=true` in a local profile.
 
 **Question 3 (E - First Principles):** If IoC inverts control by making the container create objects instead of the application, what is the fundamental risk of giving a framework control over your object lifecycle, and how does Spring's non-invasive design philosophy attempt to mitigate vendor lock-in?
 

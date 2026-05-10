@@ -11,7 +11,7 @@ permalink: /webpack-build/
 
 Webpack, Vite, ESBuild, Rollup, code splitting, tree shaking, module federation, and build optimization.
 
-**Keywords:** WBP-001–WBP-040 (39 terms)
+**Keywords:** WBP-001–WBP-037 (39 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -25,32 +25,32 @@ Webpack, Vite, ESBuild, Rollup, code splitting, tree shaking, module federation,
 | WBP-008 | Webpack Plugins | ★☆☆ |
 | WBP-009 | Webpack Dev Server and HMR | ★☆☆ |
 | WBP-010 | Vite Fundamentals | ★☆☆ |
-| WBP-011 | Code Splitting and Lazy Loading | ★★☆ |
-| WBP-012 | Tree Shaking (Dead Code Elimination) | ★★☆ |
-| WBP-013 | Asset Optimization (Images, Fonts, CSS) | ★★☆ |
-| WBP-014 | Source Maps | ★★☆ |
-| WBP-015 | ESBuild -- Ultra-Fast Bundler | ★★☆ |
-| WBP-016 | Rollup for Library Bundling | ★★☆ |
-| WBP-017 | Turbopack (Rust-based Webpack) | ★★☆ |
-| WBP-018 | Module Federation (Micro-Frontend) | ★★☆ |
-| WBP-019 | Webpack Performance Optimization | ★★☆ |
-| WBP-020 | Caching Strategy in Bundlers (Content Hashing) | ★★☆ |
-| WBP-021 | Bundle Analysis and Size Budgets | ★★☆ |
-| WBP-022 | Babel and JavaScript Transpilation | ★★☆ |
-| WBP-023 | PostCSS and CSS Transpilation | ★★☆ |
-| WBP-024 | Webpack Dependency Graph Internals | ★★★ |
-| WBP-025 | Vite Plugin Architecture | ★★★ |
-| WBP-026 | Bundler Architecture Design (Rust vs JS) | ★★★ |
-| WBP-027 | Bundler Selection Strategy | ★★★ |
-| WBP-028 | Build Performance Strategy (Caching, Parallelism) | ★★★ |
-| WBP-029 | Micro-Frontend Build Architecture | ★★★ |
-| WBP-030 | Bundler Internals Research | ★★★ |
-| WBP-031 | JavaScript Module Format Evolution (AMD, CJS, ESM) | ★★★ |
-| WBP-032 | Bundler Trade-off Framing (Speed vs Features) | ★★★ |
-| WBP-033 | Module Graph Mental Model | ★★★ |
-| WBP-034 | Build Optimization Thinking | ★★★ |
-| WBP-035 | Webpack Interview Preparation Guide | ★☆☆ |
-| WBP-036 | Vite (Next-Generation Frontend Build Tool) | ★★☆ |
-| WBP-038 | esbuild | ★★★ |
-| WBP-039 | Module Federation (Webpack 5) | ★★★ |
-| WBP-040 | Build Tool Selection Framework | ★★★ |
+| WBP-013 | Webpack Interview Preparation Guide | ★☆☆ |
+| WBP-014 | Code Splitting and Lazy Loading | ★★☆ |
+| WBP-015 | Tree Shaking (Dead Code Elimination) | ★★☆ |
+| WBP-016 | Asset Optimization (Images, Fonts, CSS) | ★★☆ |
+| WBP-017 | Source Maps | ★★☆ |
+| WBP-018 | ESBuild -- Ultra-Fast Bundler | ★★☆ |
+| WBP-019 | Rollup for Library Bundling | ★★☆ |
+| WBP-020 | Turbopack (Rust-based Webpack) | ★★☆ |
+| WBP-021 | Module Federation (Micro-Frontend) | ★★☆ |
+| WBP-022 | Webpack Performance Optimization | ★★☆ |
+| WBP-023 | Caching Strategy in Bundlers (Content Hashing) | ★★☆ |
+| WBP-024 | Bundle Analysis and Size Budgets | ★★☆ |
+| WBP-026 | Babel and JavaScript Transpilation | ★★☆ |
+| WBP-028 | PostCSS and CSS Transpilation | ★★☆ |
+| WBP-029 | Vite (Next-Generation Frontend Build Tool) | ★★☆ |
+| WBP-030 | Webpack Dependency Graph Internals | ★★★ |
+| WBP-031 | Vite Plugin Architecture | ★★★ |
+| WBP-032 | Bundler Architecture Design (Rust vs JS) | ★★★ |
+| WBP-033 | Bundler Selection Strategy | ★★★ |
+| WBP-034 | Build Performance Strategy (Caching, Parallelism) | ★★★ |
+| WBP-035 | Micro-Frontend Build Architecture | ★★★ |
+| WBP-036 | Bundler Internals Research | ★★★ |
+| WBP-011 | JavaScript Module Format Evolution (AMD, CJS, ESM) | ★★★ |
+| WBP-025 | Bundler Trade-off Framing (Speed vs Features) | ★★★ |
+| WBP-012 | Module Graph Mental Model | ★★★ |
+| WBP-027 | Build Optimization Thinking | ★★★ |
+| WBP-037 | esbuild | ★★★ |
+| WBP-037 | Module Federation (Webpack 5) | ★★★ |
+| WBP-037 | Build Tool Selection Framework | ★★★ |

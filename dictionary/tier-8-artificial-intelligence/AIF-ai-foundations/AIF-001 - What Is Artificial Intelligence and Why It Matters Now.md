@@ -357,8 +357,8 @@ adversarial_input = clean_input + perturbation
 
 **Builds On This (learn these next):**
 - AIF-006 - Machine Learning Basics
-- AIF-008 - Neural Network
-- AIF-010 - Transformer Architecture
+- AIF-028 - Neural Network
+- AIF-028 - Transformer Architecture
 
 **Alternatives / Comparisons:**
 - Rule-based expert systems (the pre-ML approach)

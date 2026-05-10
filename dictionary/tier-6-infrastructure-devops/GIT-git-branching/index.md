@@ -28,41 +28,41 @@ Git fundamentals, branching strategies, merge vs rebase, monorepo vs polyrepo, a
 | GIT-011 | Git Conflict Resolution | ★☆☆ |
 | GIT-012 | Git Remote (origin, upstream) | ★☆☆ |
 | GIT-013 | .gitignore | ★☆☆ |
-| GIT-014 | Git Stash | ★★☆ |
-| GIT-015 | Git Tags (Lightweight and Annotated) | ★★☆ |
-| GIT-016 | Git Cherry-Pick | ★★☆ |
-| GIT-017 | Git Bisect | ★★☆ |
-| GIT-018 | Git Hooks | ★★☆ |
-| GIT-019 | Git Submodules | ★★☆ |
-| GIT-020 | Pull Requests and Code Review Workflow | ★★☆ |
-| GIT-021 | Git Log and History Exploration | ★★☆ |
-| GIT-022 | Branching Strategies Overview | ★★☆ |
-| GIT-023 | GitFlow Strategy | ★★☆ |
-| GIT-024 | Trunk-Based Development | ★★☆ |
-| GIT-025 | GitHub Flow | ★★☆ |
-| GIT-026 | Feature Flags and Branch by Abstraction | ★★☆ |
-| GIT-027 | Commit Message Conventions (Conventional Commits) | ★★☆ |
-| GIT-028 | Semantic Versioning (SemVer) | ★★☆ |
-| GIT-029 | Git Reflog -- Recovery from Mistakes | ★★☆ |
-| GIT-030 | Monorepo vs Polyrepo Strategy | ★★☆ |
-| GIT-031 | Git Large File Storage (LFS) | ★★☆ |
-| GIT-032 | Git Internals -- Objects, Trees, Blobs | ★★★ |
-| GIT-033 | Git Packfiles and Delta Compression | ★★★ |
-| GIT-034 | GitOps Fundamentals | ★★★ |
-| GIT-035 | Signed Commits and GPG Verification | ★★★ |
-| GIT-036 | Repository Security -- Supply Chain Risks | ★★★ |
-| GIT-037 | Branching Strategy Selection Framework | ★★★ |
-| GIT-038 | Monorepo Architecture Strategy | ★★★ |
-| GIT-039 | GitOps Architecture Design | ★★★ |
-| GIT-040 | Git Protocol and Data Format Internals | ★★★ |
-| GIT-041 | Distributed Version Control Theory | ★★★ |
-| GIT-042 | Git Performance at Scale | ★★★ |
-| GIT-043 | Branch Strategy Trade-off Framing | ★★★ |
-| GIT-044 | Git History Mental Model | ★★★ |
-| GIT-045 | Repository Design Thinking | ★★★ |
-| GIT-046 | Git Interview Preparation Guide | ★☆☆ |
-| GIT-047 | Git Internals (Objects, Refs, Packfiles) | ★★★ |
-| GIT-048 | Monorepo Strategy (Nx, Turborepo, Bazel) | ★★★ |
-| GIT-049 | Git LFS (Large File Storage) | ★★☆ |
-| GIT-050 | Git Hooks for Automation | ★★☆ |
+| GIT-016 | Git Interview Preparation Guide | ★☆☆ |
+| GIT-017 | Git Stash | ★★☆ |
+| GIT-018 | Git Tags (Lightweight and Annotated) | ★★☆ |
+| GIT-019 | Git Cherry-Pick | ★★☆ |
+| GIT-020 | Git Bisect | ★★☆ |
+| GIT-021 | Git Hooks | ★★☆ |
+| GIT-022 | Git Submodules | ★★☆ |
+| GIT-023 | Pull Requests and Code Review Workflow | ★★☆ |
+| GIT-024 | Git Log and History Exploration | ★★☆ |
+| GIT-025 | Branching Strategies Overview | ★★☆ |
+| GIT-026 | GitFlow Strategy | ★★☆ |
+| GIT-027 | Trunk-Based Development | ★★☆ |
+| GIT-028 | GitHub Flow | ★★☆ |
+| GIT-029 | Feature Flags and Branch by Abstraction | ★★☆ |
+| GIT-030 | Commit Message Conventions (Conventional Commits) | ★★☆ |
+| GIT-031 | Semantic Versioning (SemVer) | ★★☆ |
+| GIT-032 | Git Reflog -- Recovery from Mistakes | ★★☆ |
+| GIT-035 | Monorepo vs Polyrepo Strategy | ★★☆ |
+| GIT-038 | Git Large File Storage (LFS) | ★★☆ |
+| GIT-039 | Git LFS (Large File Storage) | ★★☆ |
+| GIT-040 | Git Hooks for Automation | ★★☆ |
+| GIT-041 | Git Internals -- Objects, Trees, Blobs | ★★★ |
+| GIT-042 | Git Packfiles and Delta Compression | ★★★ |
+| GIT-043 | GitOps Fundamentals | ★★★ |
+| GIT-044 | Signed Commits and GPG Verification | ★★★ |
+| GIT-045 | Repository Security -- Supply Chain Risks | ★★★ |
+| GIT-046 | Branching Strategy Selection Framework | ★★★ |
+| GIT-047 | Monorepo Architecture Strategy | ★★★ |
+| GIT-048 | GitOps Architecture Design | ★★★ |
+| GIT-014 | Git Protocol and Data Format Internals | ★★★ |
+| GIT-049 | Distributed Version Control Theory | ★★★ |
+| GIT-050 | Git Performance at Scale | ★★★ |
+| GIT-015 | Branch Strategy Trade-off Framing | ★★★ |
+| GIT-033 | Git History Mental Model | ★★★ |
+| GIT-034 | Repository Design Thinking | ★★★ |
+| GIT-036 | Git Internals (Objects, Refs, Packfiles) | ★★★ |
+| GIT-037 | Monorepo Strategy (Nx, Turborepo, Bazel) | ★★★ |
 | GIT-051 | GitHub Actions Deep Dive | ★★★ |

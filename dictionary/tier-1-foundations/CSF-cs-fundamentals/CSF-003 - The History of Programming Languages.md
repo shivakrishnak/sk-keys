@@ -28,8 +28,8 @@ permalink: /csf/the-history-of-programming-languages/
 | CSF-003         | Category: CS Fundamentals - Paradigms | Difficulty: ★☆☆ |
 | :-------------- | :------------------------------------ | :-------------- |
 | **Depends on:** | CSF-001, CSF-002                      |                 |
-| **Used by:**    | CSF-006, CSF-007, CSF-009, CSF-010    |                 |
-| **Related:**    | CSF-002, CSF-004, CSF-014, CSF-051    |                 |
+| **Used by:**    | CSF-006, CSF-007, CSF-009, CSF-024    |                 |
+| **Related:**    | CSF-002, CSF-004, CSF-011, CSF-050    |                 |
 
 ---
 
@@ -343,8 +343,8 @@ as language design quality.
 
 - [[CSF-006 - Imperative Programming]]
 - [[CSF-009 - Object-Oriented Programming (OOP)]]
-- [[CSF-010 - Functional Programming]]
-- [[CSF-014 - Compiled vs Interpreted Languages]]
+- [[CSF-024 - Functional Programming]]
+- [[CSF-011 - Compiled vs Interpreted Languages]]
 
 **Alternatives / Comparisons:**
 
@@ -371,7 +371,7 @@ as language design quality.
 │                 less control/performance              │
 │ ONE-LINER       History reveals *why* languages are   │
 │                 designed the way they are             │
-│ NEXT EXPLORE    CSF-014, CSF-058, CSF-077, DSA-001    │
+│ NEXT EXPLORE    CSF-011, CSF-062, CSF-081, DSA-001    │
 └─────────────────────────────────────────────────────┘
 ```
 

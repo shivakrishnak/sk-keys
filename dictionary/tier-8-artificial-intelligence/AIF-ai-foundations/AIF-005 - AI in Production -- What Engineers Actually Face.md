@@ -6,8 +6,8 @@ tier: tier-8-artificial-intelligence
 folder: AIF-ai-foundations
 difficulty: ★☆☆
 depends_on: AIF-001, AIF-002, AIF-003, AIF-004
-used_by: AIF-046, AIF-047
-related: AIF-019, AIF-034, AIF-046
+used_by: AIF-010, AIF-010
+related: AIF-022, AIF-010, AIF-010
 tags:
   - ai
   - foundational
@@ -29,8 +29,8 @@ permalink: /ai-foundations/ai-in-production-what-engineers-actually-face/
 | AIF-005 | Category: AI Foundations | Difficulty: ★☆☆ |
 | :--- | :--- | :--- |
 | **Depends on:** | AIF-001, AIF-002, AIF-003, AIF-004 | |
-| **Used by:** | AIF-046, AIF-047 | |
-| **Related:** | AIF-019, AIF-034, AIF-046 | |
+| **Used by:** | AIF-010, AIF-010 | |
+| **Related:** | AIF-022, AIF-010, AIF-010 | |
 
 ---
 
@@ -533,15 +533,15 @@ prompt tests in CI pipeline.
 **Prerequisites (understand these first):**
 - AIF-001 - What Is Artificial Intelligence and Why It Matters Now
 - AIF-004 - The AI Ecosystem Map
-- AIF-019 - Hallucination
+- AIF-022 - Hallucination
 
 **Builds On This (learn these next):**
-- AIF-046 - AI Architecture Strategy (Build vs Buy vs Fine-Tune)
-- AIF-047 - ML Platform Engineering Design
-- AIF-034 - Latency vs Throughput (AI)
+- AIF-010 - AI Architecture Strategy (Build vs Buy vs Fine-Tune)
+- AIF-010 - ML Platform Engineering Design
+- AIF-010 - Latency vs Throughput (AI)
 
 **Alternatives / Comparisons:**
-- AIF-047 - ML Platform Engineering Design (the platform-level view of
+- AIF-010 - ML Platform Engineering Design (the platform-level view of
   the same production concerns)
 
 ---
@@ -570,7 +570,7 @@ prompt tests in CI pipeline.
 +--------------------------------------------------+
 | ONE-LINER     | Monitor, version, retrain loop |
 +--------------------------------------------------+
-| NEXT EXPLORE  | AIF-046 AI Architecture        |
+| NEXT EXPLORE  | AIF-010 AI Architecture        |
 +--------------------------------------------------+
 ```
 

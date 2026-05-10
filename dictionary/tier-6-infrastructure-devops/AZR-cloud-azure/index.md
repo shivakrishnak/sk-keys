@@ -11,7 +11,7 @@ permalink: /cloud-azure/
 
 Azure global infrastructure, core services, DevOps, security, cost management, and hybrid connectivity.
 
-**Keywords:** AZR-001–AZR-061 (59 terms)
+**Keywords:** AZR-001–AZR-059 (59 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -28,49 +28,49 @@ Azure global infrastructure, core services, DevOps, security, cost management, a
 | AZR-011 | Azure App Service | ★☆☆ |
 | AZR-012 | Azure Blob Storage | ★☆☆ |
 | AZR-013 | Azure SQL Database | ★☆☆ |
-| AZR-014 | Azure Virtual Network (VNet) | ★★☆ |
-| AZR-015 | Azure Load Balancer and Application Gateway | ★★☆ |
-| AZR-016 | Azure Kubernetes Service (AKS) | ★★☆ |
-| AZR-017 | Azure Container Instances | ★★☆ |
-| AZR-018 | Azure Functions (Serverless) | ★★☆ |
-| AZR-019 | Azure Service Bus | ★★☆ |
-| AZR-020 | Azure Event Hub | ★★☆ |
-| AZR-021 | Azure Cosmos DB | ★★☆ |
-| AZR-022 | Azure Key Vault | ★★☆ |
-| AZR-023 | Azure DevOps (Pipelines, Boards) | ★★☆ |
-| AZR-024 | Azure Monitor and Log Analytics | ★★☆ |
-| AZR-025 | Azure CDN and Front Door | ★★☆ |
-| AZR-026 | Azure API Management | ★★☆ |
-| AZR-027 | Azure Service Fabric | ★★☆ |
-| AZR-028 | Azure Cache for Redis | ★★☆ |
-| AZR-029 | Azure Cognitive Services and OpenAI | ★★☆ |
-| AZR-030 | Azure Synapse Analytics | ★★☆ |
-| AZR-031 | Azure Data Factory | ★★☆ |
-| AZR-032 | Azure Event Grid | ★★☆ |
-| AZR-033 | Azure Logic Apps | ★★☆ |
-| AZR-034 | Azure Managed Identity | ★★☆ |
-| AZR-035 | Azure Policy and RBAC | ★★☆ |
-| AZR-036 | Azure Private Endpoint | ★★☆ |
-| AZR-037 | Azure Terraform Integration | ★★☆ |
-| AZR-038 | Azure Bicep (IaC) | ★★☆ |
-| AZR-039 | Azure Security Center (Defender) | ★★★ |
-| AZR-040 | Azure Landing Zone Architecture | ★★★ |
-| AZR-041 | Azure Multi-Region Deployment | ★★★ |
-| AZR-042 | Azure ExpressRoute and VPN Gateway | ★★★ |
-| AZR-043 | Azure Cost Management and Optimization | ★★★ |
-| AZR-044 | Azure Site Recovery (DR) | ★★★ |
-| AZR-045 | Azure Arc (Hybrid Cloud) | ★★★ |
-| AZR-046 | Azure Observability Strategy | ★★★ |
-| AZR-047 | Azure Architecture Strategy (Enterprise) | ★★★ |
-| AZR-048 | Azure Migration Strategy | ★★★ |
-| AZR-049 | Azure Platform Engineering Strategy | ★★★ |
-| AZR-050 | Azure vs AWS Selection Framework | ★★★ |
-| AZR-051 | Azure Service Internals Deep Dives | ★★★ |
-| AZR-052 | Cloud-Native Architecture on Azure | ★★★ |
-| AZR-053 | Azure Research and Novel Patterns | ★★★ |
-| AZR-054 | Azure Service Selection Mental Model | ★★★ |
-| AZR-055 | Cloud Cost Mental Model (Azure) | ★★★ |
-| AZR-056 | Azure Interview Preparation Guide | ★☆☆ |
-| AZR-057 | Azure DevOps Pipelines | ★★☆ |
-| AZR-060 | Azure Cost Management | ★★★ |
-| AZR-061 | Azure Architecture Best Practices | ★★★ |
+| AZR-016 | Azure Interview Preparation Guide | ★☆☆ |
+| AZR-017 | Azure Virtual Network (VNet) | ★★☆ |
+| AZR-018 | Azure Load Balancer and Application Gateway | ★★☆ |
+| AZR-019 | Azure Kubernetes Service (AKS) | ★★☆ |
+| AZR-020 | Azure Container Instances | ★★☆ |
+| AZR-021 | Azure Functions (Serverless) | ★★☆ |
+| AZR-022 | Azure Service Bus | ★★☆ |
+| AZR-023 | Azure Event Hub | ★★☆ |
+| AZR-024 | Azure Cosmos DB | ★★☆ |
+| AZR-025 | Azure Key Vault | ★★☆ |
+| AZR-026 | Azure DevOps (Pipelines, Boards) | ★★☆ |
+| AZR-027 | Azure Monitor and Log Analytics | ★★☆ |
+| AZR-028 | Azure CDN and Front Door | ★★☆ |
+| AZR-029 | Azure API Management | ★★☆ |
+| AZR-030 | Azure Service Fabric | ★★☆ |
+| AZR-031 | Azure Cache for Redis | ★★☆ |
+| AZR-032 | Azure Cognitive Services and OpenAI | ★★☆ |
+| AZR-033 | Azure Synapse Analytics | ★★☆ |
+| AZR-034 | Azure Data Factory | ★★☆ |
+| AZR-035 | Azure Event Grid | ★★☆ |
+| AZR-036 | Azure Logic Apps | ★★☆ |
+| AZR-037 | Azure Managed Identity | ★★☆ |
+| AZR-038 | Azure Policy and RBAC | ★★☆ |
+| AZR-039 | Azure Private Endpoint | ★★☆ |
+| AZR-041 | Azure Terraform Integration | ★★☆ |
+| AZR-043 | Azure Bicep (IaC) | ★★☆ |
+| AZR-044 | Azure DevOps Pipelines | ★★☆ |
+| AZR-045 | Azure Security Center (Defender) | ★★★ |
+| AZR-046 | Azure Landing Zone Architecture | ★★★ |
+| AZR-047 | Azure Multi-Region Deployment | ★★★ |
+| AZR-048 | Azure ExpressRoute and VPN Gateway | ★★★ |
+| AZR-049 | Azure Cost Management and Optimization | ★★★ |
+| AZR-050 | Azure Site Recovery (DR) | ★★★ |
+| AZR-051 | Azure Arc (Hybrid Cloud) | ★★★ |
+| AZR-052 | Azure Observability Strategy | ★★★ |
+| AZR-053 | Azure Architecture Strategy (Enterprise) | ★★★ |
+| AZR-054 | Azure Migration Strategy | ★★★ |
+| AZR-055 | Azure Platform Engineering Strategy | ★★★ |
+| AZR-056 | Azure vs AWS Selection Framework | ★★★ |
+| AZR-057 | Azure Service Internals Deep Dives | ★★★ |
+| AZR-014 | Cloud-Native Architecture on Azure | ★★★ |
+| AZR-040 | Azure Research and Novel Patterns | ★★★ |
+| AZR-015 | Azure Service Selection Mental Model | ★★★ |
+| AZR-042 | Cloud Cost Mental Model (Azure) | ★★★ |
+| AZR-058 | Azure Cost Management | ★★★ |
+| AZR-059 | Azure Architecture Best Practices | ★★★ |

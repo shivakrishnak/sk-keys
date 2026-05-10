@@ -1,0 +1,27 @@
+---
+id: API-079
+title: API Design Trade-off Framing
+category: HTTP & APIs
+tier: tier-2-networking-security
+folder: API-http-apis
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - api
+  - advanced
+  - mental-model
+  - bestpractice
+status: draft
+version: 0
+layout: default
+parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
+nav_order: 77
+permalink: /api/api-design-trade-off-framing/
+---
+
+# API-077 - API Design Trade-off Framing
+
+> Entry stub. Generate full content using Master Prompt v3.0.

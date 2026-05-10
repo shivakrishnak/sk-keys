@@ -28,8 +28,8 @@ permalink: /csf/how-code-becomes-execution-big-picture/
 | CSF-004         | Category: CS Fundamentals - Paradigms | Difficulty: ★☆☆ |
 | :-------------- | :------------------------------------ | :-------------- |
 | **Depends on:** | CSF-001, CSF-003                      |                 |
-| **Used by:**    | CSF-014, CSF-058, CSF-062             |                 |
-| **Related:**    | CSF-014, CSF-058, CSF-062, CSF-005    |                 |
+| **Used by:**    | CSF-011, CSF-062, CSF-066             |                 |
+| **Related:**    | CSF-011, CSF-062, CSF-066, CSF-005    |                 |
 
 ---
 
@@ -361,9 +361,9 @@ ldd /path/to/binary
 
 **Builds On This (learn these next):**
 
-- [[CSF-014 - Compiled vs Interpreted Languages]]
-- [[CSF-058 - JIT vs AOT Compilation Deep Dive]]
-- [[CSF-062 - Language Runtime Internals]]
+- [[CSF-011 - Compiled vs Interpreted Languages]]
+- [[CSF-062 - JIT vs AOT Compilation Deep Dive]]
+- [[CSF-066 - Language Runtime Internals]]
 
 **Alternatives / Comparisons:**
 
@@ -389,7 +389,7 @@ ldd /path/to/binary
 │ TRADE-OFF       Compile-time safety vs startup speed  │
 │ ONE-LINER       Source code → phases of transformation│
 │                 → CPU instructions                   │
-│ NEXT EXPLORE    CSF-014, CSF-058, JVM-001, JVM-004    │
+│ NEXT EXPLORE    CSF-011, CSF-062, JVM-001, JVM-008    │
 └─────────────────────────────────────────────────────┘
 ```
 

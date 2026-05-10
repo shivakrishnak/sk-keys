@@ -11,88 +11,87 @@ permalink: /jvm/
 
 JVM architecture, bytecode, class loading, garbage collection (Serial, G1, ZGC), memory model (heap, stack, Metaspace), JIT compilation, performance profiling, and GraalVM.
 
-**Keywords:** JVM-001– (81 terms)
+**Keywords:** JVM-001–JVM-080 (80 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
 | JVM-001 | What Is the JVM - A Mental Model | ★☆☆ |
 | JVM-002 | Why the JVM Was Invented | ★☆☆ |
 | JVM-003 | JVM vs JRE vs JDK | ★☆☆ |
-| JVM-004 | How Java Code Runs - Bytecode to Execution | ★★☆ |
-| JVM-005 | The JVM Ecosystem Map (OpenJDK, GraalVM, Languages) | ★☆☆ |
-| JVM-006 | JRE | ★☆☆ |
-| JVM-007 | JDK | ★☆☆ |
-| JVM-008 | Bytecode | ★★☆ |
-| JVM-009 | Class Loader | ★★☆ |
-| JVM-010 | Stack Memory | ★★☆ |
-| JVM-011 | Heap Memory | ★★☆ |
-| JVM-012 | Metaspace | ★★☆ |
-| JVM-013 | Stack Frame | ★★★ |
-| JVM-014 | Operand Stack | ★★★ |
-| JVM-015 | Local Variable Table | ★★★ |
-| JVM-016 | Object Header | ★★★ |
-| JVM-017 | Escape Analysis | ★★★ |
-| JVM-018 | Memory Barrier | ★★★ |
-| JVM-019 | Happens-Before | ★★★ |
-| JVM-020 | GC Roots | ★★★ |
-| JVM-021 | Reference Types (Strong, Soft, Weak, Phantom) | ★★★ |
-| JVM-022 | Young Generation | ★★☆ |
-| JVM-023 | Eden Space | ★★☆ |
-| JVM-024 | Survivor Space | ★★☆ |
-| JVM-025 | Old Generation | ★★☆ |
-| JVM-026 | Minor GC | ★★☆ |
-| JVM-027 | Major GC | ★★★ |
-| JVM-028 | Full GC | ★★★ |
-| JVM-029 | Stop-The-World (STW) | ★★★ |
-| JVM-030 | Serial GC | ★★☆ |
-| JVM-031 | Parallel GC | ★★☆ |
-| JVM-032 | CMS (Concurrent Mark Sweep) | ★★★ |
-| JVM-033 | G1GC | ★★★ |
-| JVM-034 | ZGC | ★★★ |
-| JVM-035 | Shenandoah GC | ★★★ |
-| JVM-036 | GC Tuning | ★★★ |
-| JVM-037 | GC Logs | ★★☆ |
-| JVM-038 | GC Pause | ★★★ |
-| JVM-039 | Throughput vs Latency (GC) | ★★★ |
-| JVM-040 | Finalization | ★★★ |
-| JVM-041 | JIT Compiler | ★★★ |
-| JVM-042 | C1 C2 Compiler | ★★★ |
-| JVM-043 | Tiered Compilation | ★★★ |
-| JVM-044 | Method Inlining | ★★★ |
-| JVM-045 | Deoptimization | ★★★ |
-| JVM-046 | OSR (On-Stack Replacement) | ★★★ |
-| JVM-047 | AOT (Ahead-of-Time Compilation) | ★★★ |
-| JVM-048 | GraalVM | ★★★ |
-| JVM-049 | Native Image | ★★★ |
-| JVM-050 | TLAB (Thread Local Allocation Buffer) | ★★★ |
-| JVM-051 | Safepoint | ★★★ |
-| JVM-052 | Card Table | ★★★ |
-| JVM-053 | Write Barrier | ★★★ |
-| JVM-054 | Remembered Set | ★★★ |
-| JVM-055 | GC Tuning Strategy for Production JVMs | ★★★ |
-| JVM-056 | JVM Architecture Decisions at Scale | ★★★ |
-| JVM-057 | JVM Selection Framework (HotSpot vs GraalVM) | ★★★ |
-| JVM-058 | Heap Sizing and Memory Planning Strategy | ★★★ |
-| JVM-059 | JVM Observability Strategy | ★★★ |
-| JVM-060 | JVM Specification Deep Dive | ★★★ |
-| JVM-061 | GC Algorithm Design Principles | ★★★ |
-| JVM-062 | JIT Compilation Research (Truffle, Graal IR) | ★★★ |
-| JVM-063 | JVM Language Design (Bytecode Targeting) | ★★★ |
-| JVM-064 | JVM-First Debugging Mental Model | ★★★ |
-| JVM-065 | Performance Intuition via JVM Internals | ★★★ |
-| JVM-066 | GC Trade-off Framing | ★★★ |
-| JVM-067 | Method Area | ★★☆ |
-| JVM-068 | PC Register (Program Counter) | ★★★ |
-| JVM-069 | Native Method Stack | ★★★ |
-| JVM-070 | JVM Safepoints and Stop-the-World Events | ★★★ |
-| JVM-071 | Heap Dump | ★★☆ |
-| JVM-072 | Thread Dump | ★★☆ |
-| JVM-073 | Class Loading Delegation Model | ★★★ |
-| JVM-074 | Compressed OOPs | ★★★ |
-| JVM-075 | Class Data Sharing (CDS / AppCDS) | ★★★ |
+| JVM-008 | The JVM Ecosystem Map (OpenJDK, GraalVM, Languages) | ★☆☆ |
+| JVM-004 | JRE | ★☆☆ |
+| JVM-005 | JDK | ★☆☆ |
+| JVM-006 | JVM Interview Preparation Guide | ★☆☆ |
+| JVM-009 | How Java Code Runs - Bytecode to Execution | ★★☆ |
+| JVM-010 | Bytecode | ★★☆ |
+| JVM-011 | Class Loader | ★★☆ |
+| JVM-012 | Stack Memory | ★★☆ |
+| JVM-013 | Heap Memory | ★★☆ |
+| JVM-025 | Metaspace | ★★☆ |
+| JVM-026 | Young Generation | ★★☆ |
+| JVM-027 | Eden Space | ★★☆ |
+| JVM-028 | Survivor Space | ★★☆ |
+| JVM-029 | Old Generation | ★★☆ |
+| JVM-030 | Minor GC | ★★☆ |
+| JVM-031 | Serial GC | ★★☆ |
+| JVM-032 | Parallel GC | ★★☆ |
+| JVM-033 | GC Logs | ★★☆ |
+| JVM-014 | Method Area | ★★☆ |
+| JVM-015 | Heap Dump | ★★☆ |
+| JVM-016 | Thread Dump | ★★☆ |
+| JVM-017 | Stack Frame | ★★★ |
+| JVM-018 | Operand Stack | ★★★ |
+| JVM-034 | Local Variable Table | ★★★ |
+| JVM-035 | Object Header | ★★★ |
+| JVM-036 | Escape Analysis | ★★★ |
+| JVM-019 | Memory Barrier | ★★★ |
+| JVM-020 | Happens-Before | ★★★ |
+| JVM-037 | GC Roots | ★★★ |
+| JVM-038 | Reference Types (Strong, Soft, Weak, Phantom) | ★★★ |
+| JVM-039 | Major GC | ★★★ |
+| JVM-040 | Full GC | ★★★ |
+| JVM-041 | Stop-The-World (STW) | ★★★ |
+| JVM-021 | CMS (Concurrent Mark Sweep) | ★★★ |
+| JVM-042 | G1GC | ★★★ |
+| JVM-043 | ZGC | ★★★ |
+| JVM-044 | Shenandoah GC | ★★★ |
+| JVM-045 | GC Tuning | ★★★ |
+| JVM-046 | GC Pause | ★★★ |
+| JVM-047 | Throughput vs Latency (GC) | ★★★ |
+| JVM-048 | Finalization | ★★★ |
+| JVM-049 | JIT Compiler | ★★★ |
+| JVM-050 | C1 C2 Compiler | ★★★ |
+| JVM-051 | Tiered Compilation | ★★★ |
+| JVM-052 | Method Inlining | ★★★ |
+| JVM-053 | Deoptimization | ★★★ |
+| JVM-054 | OSR (On-Stack Replacement) | ★★★ |
+| JVM-055 | AOT (Ahead-of-Time Compilation) | ★★★ |
+| JVM-056 | GraalVM | ★★★ |
+| JVM-057 | Native Image | ★★★ |
+| JVM-058 | TLAB (Thread Local Allocation Buffer) | ★★★ |
+| JVM-059 | Safepoint | ★★★ |
+| JVM-060 | Card Table | ★★★ |
+| JVM-061 | Write Barrier | ★★★ |
+| JVM-062 | Remembered Set | ★★★ |
+| JVM-063 | GC Tuning Strategy for Production JVMs | ★★★ |
+| JVM-064 | JVM Architecture Decisions at Scale | ★★★ |
+| JVM-065 | JVM Selection Framework (HotSpot vs GraalVM) | ★★★ |
+| JVM-066 | Heap Sizing and Memory Planning Strategy | ★★★ |
+| JVM-067 | JVM Observability Strategy | ★★★ |
+| JVM-068 | JVM Specification Deep Dive | ★★★ |
+| JVM-069 | GC Algorithm Design Principles | ★★★ |
+| JVM-070 | JIT Compilation Research (Truffle, Graal IR) | ★★★ |
+| JVM-022 | JVM Language Design (Bytecode Targeting) | ★★★ |
+| JVM-071 | JVM-First Debugging Mental Model | ★★★ |
+| JVM-072 | Performance Intuition via JVM Internals | ★★★ |
+| JVM-073 | GC Trade-off Framing | ★★★ |
+| JVM-023 | PC Register (Program Counter) | ★★★ |
+| JVM-024 | Native Method Stack | ★★★ |
+| JVM-074 | JVM Safepoints and Stop-the-World Events | ★★★ |
+| JVM-075 | Class Loading Delegation Model | ★★★ |
+| JVM-076 | Compressed OOPs | ★★★ |
+| JVM-076 | Class Data Sharing (CDS / AppCDS) | ★★★ |
 | JVM-077 | GraalVM Truffle Framework | ★★★ |
 | JVM-078 | JVM Bytecode Instrumentation | ★★★ |
 | JVM-079 | JVM Startup Optimization (AppCDS, AOT) | ★★★ |
 | JVM-080 | JVM Flags Reference and Tuning Guide | ★★★ |
-| JVM-081 | JVM Interview Preparation Guide | ★☆☆ |
-|  | JVM Architecture (Overview) | ★☆☆ |

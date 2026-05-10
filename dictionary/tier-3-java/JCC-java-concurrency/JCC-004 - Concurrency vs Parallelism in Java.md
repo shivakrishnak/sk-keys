@@ -6,7 +6,7 @@ tier: tier-3-java
 folder: JCC-java-concurrency
 difficulty: ★☆☆
 depends_on: JCC-001
-used_by: JCC-005, JCC-027, JCC-028, JCC-048
+used_by: JCC-005, JCC-048, JCC-049, JCC-066
 related: JCC-001, JCC-003, JCC-005
 tags:
   - java
@@ -30,7 +30,7 @@ permalink: /jcc/concurrency-vs-parallelism-in-java/
 | Metadata        |                                    |     |
 | :-------------- | :--------------------------------- | :-- |
 | **Depends on:** | JCC-001                            |     |
-| **Used by:**    | JCC-005, JCC-027, JCC-028, JCC-048 |     |
+| **Used by:**    | JCC-005, JCC-048, JCC-049, JCC-066 |     |
 | **Related:**    | JCC-001, JCC-003, JCC-005          |     |
 
 ---
@@ -355,14 +355,14 @@ List<Result> results = customPool.submit(
 
 **Builds On This (learn these next):**
 
-- [[JCC-027 - ForkJoinPool]] - the primary Java parallelism tool
-- [[JCC-028 - Virtual Threads (Project Loom)]] - the primary Java concurrency tool (Java 21+)
+- [[JCC-048 - ForkJoinPool]] - the primary Java parallelism tool
+- [[JCC-049 - Virtual Threads (Project Loom)]] - the primary Java concurrency tool (Java 21+)
 - [[JCC-005 - The Java Concurrency Ecosystem Map]] - all tools mapped to their use cases
 
 **Alternatives / Comparisons:**
 
-- [[JCC-048 - Concurrent System Design at Scale]] - applying this distinction at system design level
-- [[JCC-025 - ExecutorService]] - the I/O concurrency workhorse
+- [[JCC-066 - Concurrent System Design at Scale]] - applying this distinction at system design level
+- [[JCC-017 - ExecutorService]] - the I/O concurrency workhorse
 
 ---
 
@@ -378,7 +378,7 @@ List<Result> results = customPool.submit(
 │ TRADE-OFF     │ Thread count vs. CPU utilization    │
 │ ONE-LINER     │ Concurrent = overlapping; parallel  │
 │               │ = simultaneous                      │
-│ NEXT EXPLORE  │ JCC-027 ForkJoinPool, JCC-028 VT    │
+│ NEXT EXPLORE  │ JCC-048 ForkJoinPool, JCC-049 VT    │
 └────────────────────────────────────────────────────┘
 ```
 

@@ -11,8 +11,8 @@ tier: tier-5-distributed-architecture
 folder: DPT-design-patterns
 difficulty: ★☆☆
 depends_on:
-used_by: DPT-011, DPT-038, DPT-039
-related: DPT-007, DPT-011, DPT-039
+used_by: DPT-008, DPT-054, DPT-027
+related: DPT-048, DPT-008, DPT-027
 tags:
   - pattern
   - foundational

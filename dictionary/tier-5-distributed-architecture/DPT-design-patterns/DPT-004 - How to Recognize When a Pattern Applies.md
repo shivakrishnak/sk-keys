@@ -28,8 +28,8 @@ permalink: /dpt/how-to-recognize-when-a-pattern-applies/
 | DPT-004         | Category: Design Patterns | Difficulty: ★☆☆ |
 | :-------------- | :------------------------ | :-------------- |
 | **Depends on:** | DPT-001, DPT-002, DPT-003 |                 |
-| **Used by:**    | DPT-005, DPT-061          |                 |
-| **Related:**    | DPT-001, DPT-061, DPT-070 |                 |
+| **Used by:**    | DPT-005, DPT-081          |                 |
+| **Related:**    | DPT-001, DPT-081, DPT-086 |                 |
 
 ---
 
@@ -61,7 +61,7 @@ a teachable skill. DDD's "strategic design" formalized
 the context analysis that precedes pattern selection.
 
 **EVOLUTION:**
-Modern: pattern selection frameworks (DPT-061) provide
+Modern: pattern selection frameworks (DPT-081) provide
 systematic decision trees. IDEs (IntelliJ) suggest
 refactorings (e.g., "convert to Strategy") based on
 code structure detection. AI code assistants can
@@ -419,12 +419,12 @@ number of future listeners; loose coupling required"
 **Builds On This (learn these next):**
 
 - [[DPT-005 - The Design Patterns Ecosystem Map]]
-- [[DPT-061 - Pattern Selection Framework]]
-- [[DPT-070 - Pattern-Recognition Mental Model]]
+- [[DPT-081 - Pattern Selection Framework]]
+- [[DPT-086 - Pattern-Recognition Mental Model]]
 
 **Alternatives / Comparisons:**
 
-- [[DPT-071 - Pattern Trade-off Framing]]
+- [[DPT-043 - Pattern Trade-off Framing]]
 
 ---
 
@@ -443,7 +443,7 @@ number of future listeners; loose coupling required"
 |                 application                         |
 | TRADE-OFF       Recognition time vs direct coding   |
 | ONE-LINER       Forces first; then pattern          |
-| NEXT EXPLORE    DPT-005, DPT-061, DPT-070           |
+| NEXT EXPLORE    DPT-005, DPT-081, DPT-086           |
 +-----------------------------------------------------+
 ```
 

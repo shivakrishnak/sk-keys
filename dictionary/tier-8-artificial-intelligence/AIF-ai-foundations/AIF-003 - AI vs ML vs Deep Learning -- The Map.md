@@ -6,8 +6,8 @@ tier: tier-8-artificial-intelligence
 folder: AIF-ai-foundations
 difficulty: ★☆☆
 depends_on: AIF-001, AIF-002
-used_by: AIF-006, AIF-008, AIF-009
-related: AIF-001, AIF-002, AIF-008, AIF-040
+used_by: AIF-006, AIF-028, AIF-028
+related: AIF-001, AIF-002, AIF-028, AIF-010
 tags:
   - ai
   - foundational
@@ -29,8 +29,8 @@ permalink: /ai-foundations/ai-vs-ml-vs-deep-learning-the-map/
 | AIF-003 | Category: AI Foundations | Difficulty: ★☆☆ |
 | :--- | :--- | :--- |
 | **Depends on:** | AIF-001, AIF-002 | |
-| **Used by:** | AIF-006, AIF-008, AIF-009 | |
-| **Related:** | AIF-001, AIF-002, AIF-008, AIF-040 | |
+| **Used by:** | AIF-006, AIF-028, AIF-028 | |
+| **Related:** | AIF-001, AIF-002, AIF-028, AIF-010 | |
 
 ---
 
@@ -375,12 +375,12 @@ gradient boosting) over DL - same predictive power, far better auditability.
 
 **Builds On This (learn these next):**
 - AIF-006 - Machine Learning Basics
-- AIF-008 - Neural Network
-- AIF-009 - Deep Learning
-- AIF-040 - Foundation Models
+- AIF-028 - Neural Network
+- AIF-028 - Deep Learning
+- AIF-010 - Foundation Models
 
 **Alternatives / Comparisons:**
-- AIF-040 - Foundation Models (the modern generative AI layer in detail)
+- AIF-010 - Foundation Models (the modern generative AI layer in detail)
 - AIF-006 for the traditional ML layer
 
 ---

@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JLG-java-language
 difficulty: ★☆☆
 depends_on: JLG-001, JLG-002, JLG-003
-used_by: JLG-045, JLG-052
-related: JLG-043, JLG-049, JLG-051
+used_by: JLG-077, JLG-084
+related: JLG-075, JLG-081, JLG-083
 tags:
   - java
   - foundational
@@ -29,8 +29,8 @@ permalink: /jlg/java-vs-other-jvm-languages-kotlin-scala-groovy/
 | Field          | Value                                                                                                                                                     |
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Depends on** | [[JLG-001 - What Is Java - History and Philosophy]], [[JLG-002 - The Java Ecosystem Map (SE, EE, ME, Android)]], [[JLG-003 - Why Java Is Still Dominant]] |
-| **Used by**    | [[JLG-045 - Java in Polyglot Architecture]], [[JLG-052 - Java Ecosystem Selection Framework]]                                                             |
-| **Related**    | [[JLG-043 - Java Modularity Strategy (JPMS)]], [[JLG-049 - Java Language Design History and Rationale]], [[JLG-051 - Language Feature Trade-off Framing]] |
+| **Used by**    | [[JLG-077 - Java in Polyglot Architecture]], [[JLG-084 - Java Ecosystem Selection Framework]]                                                             |
+| **Related**    | [[JLG-075 - Java Modularity Strategy (JPMS)]], [[JLG-081 - Java Language Design History and Rationale]], [[JLG-083 - Language Feature Trade-off Framing]] |
 
 ---
 
@@ -414,8 +414,8 @@ shell.evaluate(userProvidedScript)
 
 **Builds On This (learn these next):**
 
-- [[JLG-045 - Java in Polyglot Architecture]] - mixing JVM languages in one system
-- [[JLG-052 - Java Ecosystem Selection Framework]] - systematic language selection
+- [[JLG-077 - Java in Polyglot Architecture]] - mixing JVM languages in one system
+- [[JLG-084 - Java Ecosystem Selection Framework]] - systematic language selection
 
 **Alternatives / Comparisons:**
 
@@ -443,8 +443,8 @@ shell.evaluate(userProvidedScript)
 |               | team ramp-up; Scala: power vs complexity |
 | ONE-LINER     | All compile to same bytecode; domain and |
 |               | framework determine the right choice     |
-| NEXT EXPLORE  | JLG-045 (Polyglot),                      |
-|               | JLG-052 (Selection Framework)            |
+| NEXT EXPLORE  | JLG-077 (Polyglot),                      |
+|               | JLG-084 (Selection Framework)            |
 +----------------------------------------------------------+
 ```
 

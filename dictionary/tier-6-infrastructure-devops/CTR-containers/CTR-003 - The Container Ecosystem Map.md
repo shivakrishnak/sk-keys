@@ -6,8 +6,8 @@ tier: tier-6-infrastructure-devops
 folder: CTR-containers
 difficulty: ★☆☆
 depends_on: CTR-001, CTR-002
-used_by: CTR-008, CTR-009
-related: CTR-009, CTR-025, CTR-026
+used_by: CTR-024, CTR-025
+related: CTR-025, CTR-021, CTR-027
 tags:
   - containers
   - docker
@@ -31,8 +31,8 @@ and orchestrators - understanding the map prevents picking tools blindly.
 | | |
 |---|---|
 | **Depends on** | CTR-001, CTR-002 |
-| **Used by** | CTR-008, CTR-009 |
-| **Related** | CTR-009, CTR-025, CTR-026 |
+| **Used by** | CTR-024, CTR-025 |
+| **Related** | CTR-025, CTR-021, CTR-027 |
 
 ---
 
@@ -374,16 +374,16 @@ Gatekeeper) that only allows images from approved, scanned registries.
 - `[[CTR-002 - VMs vs Containers - A Mental Model]]`
 
 **Builds On This (learn these next):**
-- `[[CTR-009 - Docker]]` - the build + runtime toolchain
+- `[[CTR-025 - Docker]]` - the build + runtime toolchain
 - `[[CTR-016 - Container Registry]]` - the distribution layer
-- `[[CTR-025 - containerd]]` - the production runtime
-- `[[CTR-026 - Container Orchestration]]` - the orchestration layer
-- `[[CTR-024 - OCI Standard]]` - the standards linking all layers
+- `[[CTR-021 - containerd]]` - the production runtime
+- `[[CTR-027 - Container Orchestration]]` - the orchestration layer
+- `[[CTR-020 - OCI Standard]]` - the standards linking all layers
 
 **Alternatives / Comparisons:**
-- `[[CTR-035 - Podman]]` - Docker-compatible daemonless alternative
-- `[[CTR-036 - Buildah]]` - daemonless image build tool
-- `[[CTR-042 - Container Runtime Interface (CRI)]]` - the runtime API
+- `[[CTR-041 - Podman]]` - Docker-compatible daemonless alternative
+- `[[CTR-022 - Buildah]]` - daemonless image build tool
+- `[[CTR-046 - Container Runtime Interface (CRI)]]` - the runtime API
 
 ---
 
@@ -406,7 +406,7 @@ Gatekeeper) that only allows images from approved, scanned registries.
 │               more layers = more joints      │
 │ ONE-LINER     Build → Store → Run →          │
 │               Orchestrate, linked by OCI     │
-│ NEXT EXPLORE  CTR-009, CTR-024, CTR-025      │
+│ NEXT EXPLORE  CTR-025, CTR-020, CTR-021      │
 └──────────────────────────────────────────────┘
 ```
 

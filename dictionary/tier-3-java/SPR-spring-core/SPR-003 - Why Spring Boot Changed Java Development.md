@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: SPR-spring-core
 difficulty: ★☆☆
 depends_on: SPR-001, SPR-002
-used_by: SPR-044, SPR-045, SPR-046
-related: SPR-004, SPR-049, SPR-051
+used_by: SPR-067, SPR-068, SPR-069
+related: SPR-004, SPR-070, SPR-071
 tags:
   - spring
   - java
@@ -30,8 +30,8 @@ permalink: /spr/why-spring-boot-changed-java-development/
 | Field          | Value                                                                                                                          |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | **Depends on** | [[SPR-001 - What Is Spring - History and Philosophy]], [[SPR-002 - The Spring Ecosystem Map]]                                  |
-| **Used by**    | [[SPR-044 - Auto-Configuration]], [[SPR-045 - Spring Boot Actuator]], [[SPR-046 - Spring Boot Startup Lifecycle]]              |
-| **Related**    | [[SPR-004 - Spring vs Jakarta EE vs Micronaut vs Quarkus]], [[SPR-049 - Backpressure (Spring)]], [[SPR-051 - Spring Data JPA]] |
+| **Used by**    | [[SPR-067 - Auto-Configuration]], [[SPR-068 - Spring Boot Actuator]], [[SPR-069 - Spring Boot Startup Lifecycle]]              |
+| **Related**    | [[SPR-004 - Spring vs Jakarta EE vs Micronaut vs Quarkus]], [[SPR-070 - Backpressure (Spring)]], [[SPR-071 - Spring Data JPA]] |
 
 ---
 
@@ -442,19 +442,19 @@ management:
 
 - [[SPR-001 - What Is Spring - History and Philosophy]] - the framework Boot is built upon
 - [[SPR-002 - The Spring Ecosystem Map]] - the projects Boot assembles
-- [[SPR-019 - IoC (Inversion of Control)]] - the container Boot auto-configures
+- [[SPR-006 - IoC (Inversion of Control)]] - the container Boot auto-configures
 
 **Builds On This (learn these next):**
 
-- [[SPR-044 - Auto-Configuration]] - the mechanism that makes Boot work
-- [[SPR-045 - Spring Boot Actuator]] - production observability included with Boot
-- [[SPR-046 - Spring Boot Startup Lifecycle]] - Boot's ordered startup sequence
+- [[SPR-067 - Auto-Configuration]] - the mechanism that makes Boot work
+- [[SPR-068 - Spring Boot Actuator]] - production observability included with Boot
+- [[SPR-069 - Spring Boot Startup Lifecycle]] - Boot's ordered startup sequence
 
 **Alternatives / Comparisons:**
 
 - [[SPR-004 - Spring vs Jakarta EE vs Micronaut vs Quarkus]] - ecosystem comparison
-- [[SPR-016 - Micronaut Framework]] - compile-time alternative with similar conveniences
-- [[SPR-018 - Quarkus Framework]] - Kubernetes-native with similar starter model
+- [[SPR-057 - Micronaut Framework]] - compile-time alternative with similar conveniences
+- [[SPR-059 - Quarkus Framework]] - Kubernetes-native with similar starter model
 
 ---
 
@@ -471,7 +471,7 @@ management:
 | TRADE-OFF     | Startup "magic" vs zero-setup productivity|
 | ONE-LINER     | start.spring.io → @SpringBootApplication   |
 |               | → java -jar                               |
-| NEXT EXPLORE  | SPR-044 (Auto-Config), SPR-046 (Lifecycle) |
+| NEXT EXPLORE  | SPR-067 (Auto-Config), SPR-069 (Lifecycle) |
 +----------------------------------------------------------+
 ```
 
@@ -511,8 +511,8 @@ _Hint:_ Think about the security failure mode above (auto-configured Security se
 
 **Question 2 (B - Scale):** A platform team wants every microservice to automatically report metrics to a central Prometheus instance without developers having to configure anything. How would you implement this as a custom Spring Boot starter, and what conditions would you use?
 
-_Hint:_ Look at how `spring-boot-starter-actuator` and Micrometer's `PrometheusAutoConfiguration` work in [[SPR-045 - Spring Boot Actuator]].
+_Hint:_ Look at how `spring-boot-starter-actuator` and Micrometer's `PrometheusAutoConfiguration` work in [[SPR-068 - Spring Boot Actuator]].
 
 **Question 3 (D - Root Cause):** A developer adds `spring-boot-starter-security` to their project and suddenly all their integration tests fail with HTTP 401. The tests worked before. What is the root cause, and what is the minimal correct fix that does not reduce security in production?
 
-_Hint:_ Look at `@WithMockUser`, `@WithAnonymousUser`, and `SecurityMockMvcConfigurer` in [[SPR-058 - Spring Boot Testing]].
+_Hint:_ Look at `@WithMockUser`, `@WithAnonymousUser`, and `SecurityMockMvcConfigurer` in [[SPR-032 - Spring Boot Testing]].

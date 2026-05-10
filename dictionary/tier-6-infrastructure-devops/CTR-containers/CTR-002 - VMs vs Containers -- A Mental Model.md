@@ -6,8 +6,8 @@ tier: tier-6-infrastructure-devops
 folder: CTR-containers
 difficulty: ★☆☆
 depends_on: CTR-001
-used_by: CTR-027
-related: CTR-001, CTR-008, CTR-027
+used_by: CTR-008
+related: CTR-001, CTR-024, CTR-008
 tags:
   - containers
   - docker
@@ -31,8 +31,8 @@ virtualise the OS process boundary, sharing one kernel across all units.
 | | |
 |---|---|
 | **Depends on** | CTR-001 |
-| **Used by** | CTR-027 |
-| **Related** | CTR-001, CTR-008, CTR-027 |
+| **Used by** | CTR-008 |
+| **Related** | CTR-001, CTR-024, CTR-008 |
 
 ---
 
@@ -396,9 +396,9 @@ time and image pull time.
 - Linux processes, namespaces, cgroups
 
 **Builds On This (learn these next):**
-- `[[CTR-027 - Docker vs VM]]` - detailed comparison with examples
-- `[[CTR-017 - Linux Namespaces]]` - the isolation primitive
-- `[[CTR-018 - Cgroups]]` - the resource control primitive
+- `[[CTR-008 - Docker vs VM]]` - detailed comparison with examples
+- `[[CTR-018 - Linux Namespaces]]` - the isolation primitive
+- `[[CTR-010 - Cgroups]]` - the resource control primitive
 - `[[K8S-001]]` - Kubernetes runs containers on VM nodes
 
 **Alternatives / Comparisons:**
@@ -429,7 +429,7 @@ time and image pull time.
 │               Containers: fast / shared risk │
 │ ONE-LINER     VM = own house; container =   │
 │               room in shared flat            │
-│ NEXT EXPLORE  CTR-008, CTR-017, CTR-027      │
+│ NEXT EXPLORE  CTR-024, CTR-018, CTR-008      │
 └──────────────────────────────────────────────┘
 ```
 

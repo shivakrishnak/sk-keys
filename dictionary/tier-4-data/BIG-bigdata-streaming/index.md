@@ -11,7 +11,7 @@ permalink: /big-data/
 
 Hadoop, Spark (RDD, DataFrame, Streaming), Flink, Apache Beam, windowing, watermarks, Lambda/Kappa architectures, Databricks, Apache Airflow, dbt, and big data platform design.
 
-**Keywords:** BIG-001–BIG-049 (47 terms)
+**Keywords:** BIG-001–BIG-045 (47 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -20,45 +20,45 @@ Hadoop, Spark (RDD, DataFrame, Streaming), Flink, Apache Beam, windowing, waterm
 | BIG-003 | The Big Data Ecosystem Map (Hadoop, Spark, Kafka) | ★☆☆ |
 | BIG-004 | Why Distributed Processing Matters | ★☆☆ |
 | BIG-005 | Big Data in Production -- What to Expect | ★☆☆ |
-| BIG-006 | Distributed Computing | ★★☆ |
-| BIG-007 | MapReduce | ★★☆ |
-| BIG-008 | Apache Hadoop | ★★☆ |
-| BIG-009 | HDFS | ★★★ |
-| BIG-010 | Apache Spark | ★★★ |
-| BIG-011 | Spark RDD | ★★★ |
-| BIG-012 | Spark DataFrame  Dataset | ★★★ |
-| BIG-013 | Spark Streaming | ★★★ |
-| BIG-014 | Apache Flink | ★★★ |
-| BIG-015 | Windowing (Tumbling, Sliding, Session) | ★★★ |
-| BIG-016 | Watermark | ★★★ |
-| BIG-017 | Event Time vs Processing Time | ★★★ |
-| BIG-018 | Lambda Architecture | ★★★ |
-| BIG-019 | Kappa Architecture | ★★★ |
-| BIG-020 | Batch vs Stream Processing | ★★☆ |
-| BIG-021 | Backpressure (Streaming) | ★★★ |
-| BIG-022 | Apache Beam | ★★★ |
-| BIG-023 | Change Data Capture (CDC) | ★★★ |
-| BIG-024 | Streaming Architecture Design | ★★★ |
-| BIG-025 | Lambda Architecture vs Kappa Architecture Trade-offs | ★★★ |
-| BIG-026 | Real-Time Analytics Platform Design | ★★★ |
-| BIG-027 | Event-Driven Architecture Strategy | ★★★ |
-| BIG-028 | Big Data Platform Selection Framework | ★★★ |
-| BIG-029 | Distributed Stream Processing Internals | ★★★ |
-| BIG-030 | Consensus in Distributed Streaming Systems | ★★★ |
-| BIG-031 | State Management in Streaming Pipelines | ★★★ |
-| BIG-032 | Fault Tolerance in Distributed Pipelines | ★★★ |
-| BIG-033 | Batch vs Stream Trade-off Framing | ★★★ |
-| BIG-034 | Big Data System Selection Mental Model | ★★★ |
-| BIG-035 | Data Pipeline Design Thinking | ★★★ |
-| BIG-036 | Spark SQL | ★★☆ |
-| BIG-037 | PySpark API Fundamentals | ★★☆ |
-| BIG-038 | Databricks Platform | ★★★ |
-| BIG-039 | Apache Airflow (Orchestration) | ★★☆ |
-| BIG-040 | dbt (Data Build Tool) | ★★☆ |
-| BIG-041 | Streaming Data Pipeline Design Patterns | ★★★ |
-| BIG-042 | Big Data Platform Cost Optimization | ★★★ |
-| BIG-043 | Big Data Interview Preparation Guide | ★☆☆ |
-| BIG-046 | Data Lakehouse Architecture | ★★★ |
-| BIG-047 | Stream Processing Exactly-Once Semantics | ★★★ |
-| BIG-048 | Data Quality in Streaming Pipelines | ★★★ |
-| BIG-049 | Real-Time Analytics Architecture | ★★★ |
+| BIG-008 | Big Data Interview Preparation Guide | ★☆☆ |
+| BIG-009 | Distributed Computing | ★★☆ |
+| BIG-015 | MapReduce | ★★☆ |
+| BIG-021 | Apache Hadoop | ★★☆ |
+| BIG-022 | Batch vs Stream Processing | ★★☆ |
+| BIG-023 | Spark SQL | ★★☆ |
+| BIG-024 | PySpark API Fundamentals | ★★☆ |
+| BIG-025 | Apache Airflow (Orchestration) | ★★☆ |
+| BIG-010 | dbt (Data Build Tool) | ★★☆ |
+| BIG-026 | HDFS | ★★★ |
+| BIG-027 | Apache Spark | ★★★ |
+| BIG-023 | Spark RDD | ★★★ |
+| BIG-029 | Spark DataFrame  Dataset | ★★★ |
+| BIG-030 | Spark Streaming | ★★★ |
+| BIG-016 | Apache Flink | ★★★ |
+| BIG-031 | Windowing (Tumbling, Sliding, Session) | ★★★ |
+| BIG-032 | Watermark | ★★★ |
+| BIG-023 | Event Time vs Processing Time | ★★★ |
+| BIG-034 | Lambda Architecture | ★★★ |
+| BIG-035 | Kappa Architecture | ★★★ |
+| BIG-036 | Backpressure (Streaming) | ★★★ |
+| BIG-037 | Apache Beam | ★★★ |
+| BIG-038 | Change Data Capture (CDC) | ★★★ |
+| BIG-039 | Streaming Architecture Design | ★★★ |
+| BIG-040 | Lambda Architecture vs Kappa Architecture Trade-offs | ★★★ |
+| BIG-011 | Real-Time Analytics Platform Design | ★★★ |
+| BIG-012 | Event-Driven Architecture Strategy | ★★★ |
+| BIG-041 | Big Data Platform Selection Framework | ★★★ |
+| BIG-013 | Distributed Stream Processing Internals | ★★★ |
+| BIG-014 | Consensus in Distributed Streaming Systems | ★★★ |
+| BIG-017 | State Management in Streaming Pipelines | ★★★ |
+| BIG-018 | Fault Tolerance in Distributed Pipelines | ★★★ |
+| BIG-042 | Batch vs Stream Trade-off Framing | ★★★ |
+| BIG-019 | Big Data System Selection Mental Model | ★★★ |
+| BIG-020 | Data Pipeline Design Thinking | ★★★ |
+| BIG-043 | Databricks Platform | ★★★ |
+| BIG-006 | Streaming Data Pipeline Design Patterns | ★★★ |
+| BIG-007 | Big Data Platform Cost Optimization | ★★★ |
+| BIG-044 | Data Lakehouse Architecture | ★★★ |
+| BIG-045 | Stream Processing Exactly-Once Semantics | ★★★ |
+| BIG-044 | Data Quality in Streaming Pipelines | ★★★ |
+| BIG-045 | Real-Time Analytics Architecture | ★★★ |

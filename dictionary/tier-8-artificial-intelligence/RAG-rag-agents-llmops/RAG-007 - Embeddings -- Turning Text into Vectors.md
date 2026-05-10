@@ -371,7 +371,7 @@ GOOD: Evaluate domain-specific embedding models (BiomedBERT for medical, legal-b
 - `RAG-008 - Chunking Strategies` — what text to embed
 
 **Alternatives / Comparisons:**
-- `RAG-014 - Hybrid Search` — combining embeddings with sparse retrieval (BM25)
+- `RAG-016 - Hybrid Search` — combining embeddings with sparse retrieval (BM25)
 
 ---
 
@@ -399,7 +399,7 @@ GOOD: Evaluate domain-specific embedding models (BiomedBERT for medical, legal-b
 +--------------------------------------------------+
 | ONE-LINER     | "Meaning as geometry"            |
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-006, RAG-008, RAG-014        |
+| NEXT EXPLORE  | RAG-006, RAG-008, RAG-016        |
 +--------------------------------------------------+
 ```
 

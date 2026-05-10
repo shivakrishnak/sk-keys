@@ -1,0 +1,26 @@
+---
+id: API-012
+title: JSON vs XML Data Format
+category: HTTP & APIs
+tier: tier-2-networking-security
+folder: API-http-apis
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - api
+  - foundational
+  - first-principles
+status: draft
+version: 0
+layout: default
+parent: "HTTP & APIs"
+grand_parent: "Technical Dictionary"
+nav_order: 13
+permalink: /api/json-vs-xml-data-format/
+---
+
+# API-013 - JSON vs XML Data Format
+
+> Entry stub. Generate full content using Master Prompt v3.0.

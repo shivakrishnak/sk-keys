@@ -7,7 +7,7 @@ folder: SPR-spring-core
 difficulty: ★☆☆
 depends_on: SPR-001, SPR-002, SPR-003
 used_by:
-related: SPR-044, SPR-045, SPR-046
+related: SPR-067, SPR-068, SPR-069
 tags:
   - spring
   - java
@@ -31,7 +31,7 @@ permalink: /spr/spring-in-production-what-to-expect/
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Depends on** | [[SPR-001 - What Is Spring - History and Philosophy]], [[SPR-002 - The Spring Ecosystem Map]], [[SPR-003 - Why Spring Boot Changed Java Development]] |
 | **Used by**    | -                                                                                                                                                     |
-| **Related**    | [[SPR-044 - Auto-Configuration]], [[SPR-045 - Spring Boot Actuator]], [[SPR-046 - Spring Boot Startup Lifecycle]]                                     |
+| **Related**    | [[SPR-067 - Auto-Configuration]], [[SPR-068 - Spring Boot Actuator]], [[SPR-069 - Spring Boot Startup Lifecycle]]                                     |
 
 ---
 
@@ -515,13 +515,13 @@ public SecurityFilterChain actuatorSecurity(
 
 - [[SPR-001 - What Is Spring - History and Philosophy]] - the framework being deployed
 - [[SPR-003 - Why Spring Boot Changed Java Development]] - Boot features used here
-- [[SPR-044 - Auto-Configuration]] - how Actuator and health probes are auto-configured
+- [[SPR-067 - Auto-Configuration]] - how Actuator and health probes are auto-configured
 
 **Builds On This (learn these next):**
 
-- [[SPR-045 - Spring Boot Actuator]] - Actuator endpoints in depth
-- [[SPR-046 - Spring Boot Startup Lifecycle]] - startup phase and readiness state
-- [[SPR-048 - HikariCP]] - connection pool tuning detail
+- [[SPR-068 - Spring Boot Actuator]] - Actuator endpoints in depth
+- [[SPR-069 - Spring Boot Startup Lifecycle]] - startup phase and readiness state
+- [[SPR-029 - HikariCP]] - connection pool tuning detail
 
 **Alternatives / Comparisons:**
 
@@ -544,7 +544,7 @@ public SecurityFilterChain actuatorSecurity(
 | TRADE-OFF     | Config complexity vs operational resilience|
 | ONE-LINER     | Health + metrics + graceful shutdown +     |
 |               | JVM tuning = production-ready             |
-| NEXT EXPLORE  | SPR-045 (Actuator), SPR-048 (HikariCP)    |
+| NEXT EXPLORE  | SPR-068 (Actuator), SPR-029 (HikariCP)    |
 +----------------------------------------------------------+
 ```
 
@@ -580,12 +580,12 @@ The most common cause of Spring Boot production incidents is not a Spring bug or
 
 **Question 1 (A - System Interaction):** Spring Boot's readiness probe mechanism depends on `ApplicationAvailability` bean tracking `ReadinessState`. What specific events during Spring context startup change the state from `REFUSING_TRAFFIC` to `ACCEPTING_TRAFFIC`, and what happens if a `CommandLineRunner` throws an exception after the context refreshes?
 
-_Hint:_ Look at `ApplicationReadyEvent` vs `ContextRefreshedEvent` in [[SPR-046 - Spring Boot Startup Lifecycle]] and trace the `ReadinessState` transition sequence.
+_Hint:_ Look at `ApplicationReadyEvent` vs `ContextRefreshedEvent` in [[SPR-069 - Spring Boot Startup Lifecycle]] and trace the `ReadinessState` transition sequence.
 
 **Question 2 (D - Root Cause):** A service passes its readiness probe and receives traffic, but 20% of requests return HTTP 503. The logs show `HikariPool-1 - Connection is not available`. The pool size is 20 and the database reports only 15 active connections. What are the two most likely root causes, and how would you distinguish between them using metrics?
 
-_Hint:_ Look at `hikaricp.connections.active` vs `hikaricp.connections.pending` vs query execution time in [[SPR-048 - HikariCP]] and consider both pool sizing and slow query duration.
+_Hint:_ Look at `hikaricp.connections.active` vs `hikaricp.connections.pending` vs query execution time in [[SPR-029 - HikariCP]] and consider both pool sizing and slow query duration.
 
 **Question 3 (C - Design Trade-off):** Graceful shutdown waits for in-flight requests to complete before the JVM exits. If a request takes 5 minutes (e.g., a long-running batch operation triggered via HTTP), graceful shutdown would block for 5 minutes - potentially exceeding Kubernetes `terminationGracePeriodSeconds`. How should long-running HTTP-triggered operations be architectured to be compatible with graceful shutdown?
 
-_Hint:_ Consider offloading to [[ASY-001]] async processing or [[SPR-006 - Spring Batch]] triggered asynchronously, rather than holding an HTTP connection open for the duration.
+_Hint:_ Consider offloading to [[ASY-001]] async processing or [[SPR-047 - Spring Batch]] triggered asynchronously, rather than holding an HTTP connection open for the duration.

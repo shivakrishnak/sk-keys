@@ -28,8 +28,8 @@ permalink: /csf/the-cs-ecosystem-map-languages-runtimes-os/
 | CSF-005         | Category: CS Fundamentals - Paradigms | Difficulty: ★☆☆ |
 | :-------------- | :------------------------------------ | :-------------- |
 | **Depends on:** | CSF-001, CSF-004                      |                 |
-| **Used by:**    | CSF-006, CSF-009, CSF-014, CSF-062    |                 |
-| **Related:**    | CSF-004, CSF-014, CSF-062, OSY-001    |                 |
+| **Used by:**    | CSF-006, CSF-009, CSF-011, CSF-066    |                 |
+| **Related:**    | CSF-004, CSF-011, CSF-066, OSY-001    |                 |
 
 ---
 
@@ -336,8 +336,8 @@ java -version; node --version; python3 --version
 
 **Builds On This (learn these next):**
 
-- [[CSF-014 - Compiled vs Interpreted Languages]]
-- [[CSF-062 - Language Runtime Internals]]
+- [[CSF-011 - Compiled vs Interpreted Languages]]
+- [[CSF-066 - Language Runtime Internals]]
 - [[OSY-001 - Operating Systems - What They Are]]
 
 **Alternatives / Comparisons:**
@@ -365,7 +365,7 @@ java -version; node --version; python3 --version
 │                 to hardware = control/performance      │
 │ ONE-LINER       Know which layer owns the problem      │
 │                 before you start debugging            │
-│ NEXT EXPLORE    OSY-001, JVM-001, CSF-062, CTR-001     │
+│ NEXT EXPLORE    OSY-001, JVM-001, CSF-066, CTR-001     │
 └─────────────────────────────────────────────────────┘
 ```
 

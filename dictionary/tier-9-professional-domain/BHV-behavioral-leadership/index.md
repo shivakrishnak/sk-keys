@@ -11,7 +11,7 @@ permalink: /leadership/
 
 Technical leadership, staff engineering, stakeholder communication, agile practices, and career development.
 
-**Keywords:** BHV-001–BHV-072 (72 terms)
+**Keywords:** BHV-001–BHV-008 (72 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -21,69 +21,69 @@ Technical leadership, staff engineering, stakeholder communication, agile practi
 | BHV-004 | Technical Career Progression Mental Model | ★☆☆ |
 | BHV-005 | Behavioral Skills in Engineering -- Why They Matter | ★☆☆ |
 | BHV-006 | STAR Method | ★☆☆ |
-| BHV-007 | Situational Leadership | ★★☆ |
-| BHV-008 | Technical Leadership | ★★☆ |
-| BHV-009 | Engineering Manager vs Tech Lead | ★★☆ |
-| BHV-010 | Staff Engineer vs Principal Engineer | ★★★ |
-| BHV-011 | Scope of Influence | ★★★ |
-| BHV-012 | Mentoring vs Coaching | ★★☆ |
-| BHV-013 | Technical Roadmap | ★★★ |
-| BHV-014 | Stakeholder Communication | ★★☆ |
-| BHV-015 | Technical Debt Management | ★★★ |
-| BHV-016 | Prioritization (MoSCoW, RICE) | ★★☆ |
-| BHV-017 | Estimation Techniques | ★★☆ |
+| BHV-051 | Scrum | ★☆☆ |
+| BHV-036 | Kanban | ★☆☆ |
+| BHV-007 | Sprint Planning | ★☆☆ |
+| BHV-015 | Retrospective | ★☆☆ |
+| BHV-050 | Confluence  Documentation Tooling | ★☆☆ |
+| BHV-018 | Behavioral Interview Mastery Guide | ★☆☆ |
+| BHV-051 | Situational Leadership | ★★☆ |
+| BHV-036 | Technical Leadership | ★★☆ |
+| BHV-007 | Engineering Manager vs Tech Lead | ★★☆ |
+| BHV-018 | Mentoring vs Coaching | ★★☆ |
+| BHV-036 | Stakeholder Communication | ★★☆ |
+| BHV-018 | Prioritization (MoSCoW, RICE) | ★★☆ |
+| BHV-036 | Estimation Techniques | ★★☆ |
+| BHV-024 | Psychological Safety | ★★☆ |
+| BHV-030 | Feedback (Giving and Receiving) | ★★☆ |
+| BHV-042 | Cross-Functional Collaboration | ★★☆ |
+| BHV-020 | Conflict Resolution | ★★☆ |
+| BHV-021 | Agile Principles | ★★☆ |
+| BHV-022 | OKRs | ★★☆ |
+| BHV-038 | Technical Interview Preparation | ★★☆ |
+| BHV-017 | Behavioral Interview Patterns | ★★☆ |
+| BHV-039 | Failure Stories (Learning from Mistakes) | ★★☆ |
+| BHV-028 | Documentation Culture | ★★☆ |
+| BHV-023 | Writing for Engineers | ★★☆ |
+| BHV-052 | Root Cause Analysis (RCA) | ★★☆ |
+| BHV-046 | Bug Triage Process | ★★☆ |
+| BHV-013 | Stakeholder Management | ★★☆ |
+| BHV-008 | Backlog Management (JIRA, VersionOne) | ★★☆ |
+| BHV-014 | Writing Engineering Design Documents | ★★☆ |
+| BHV-015 | Staff Engineer vs Principal Engineer | ★★★ |
+| BHV-050 | Scope of Influence | ★★★ |
+| BHV-051 | Technical Roadmap | ★★★ |
+| BHV-007 | Technical Debt Management | ★★★ |
 | BHV-018 | Risk Management | ★★★ |
-| BHV-019 | Incident Command | ★★★ |
-| BHV-020 | Blameless Culture | ★★★ |
-| BHV-021 | Psychological Safety | ★★☆ |
-| BHV-022 | Feedback (Giving and Receiving) | ★★☆ |
-| BHV-023 | Cross-Functional Collaboration | ★★☆ |
-| BHV-024 | Conflict Resolution | ★★☆ |
-| BHV-025 | Agile Principles | ★★☆ |
-| BHV-026 | Scrum | ★☆☆ |
-| BHV-027 | Kanban | ★☆☆ |
-| BHV-028 | Sprint Planning | ★☆☆ |
-| BHV-029 | Retrospective | ★☆☆ |
-| BHV-030 | OKRs | ★★☆ |
-| BHV-031 | Engineering Strategy | ★★★ |
-| BHV-032 | Build vs Buy vs Outsource | ★★★ |
-| BHV-033 | Technical Interview Preparation | ★★☆ |
-| BHV-034 | System Design Interview | ★★★ |
-| BHV-035 | Behavioral Interview Patterns | ★★☆ |
-| BHV-036 | Failure Stories (Learning from Mistakes) | ★★☆ |
-| BHV-037 | Project Leadership | ★★★ |
-| BHV-038 | Driving Adoption | ★★★ |
-| BHV-039 | Influence Without Authority | ★★★ |
-| BHV-040 | Negotiation in Engineering | ★★★ |
-| BHV-041 | Documentation Culture | ★★☆ |
-| BHV-042 | Writing for Engineers | ★★☆ |
-| BHV-043 | Presentations for Technical Audiences | ★★★ |
-| BHV-044 | Career Laddering | ★★★ |
-| BHV-045 | Personal Brand (Engineering) | ★★★ |
-| BHV-046 | Root Cause Analysis (RCA) | ★★☆ |
-| BHV-047 | Bug Triage Process | ★★☆ |
-| BHV-048 | Stakeholder Management | ★★☆ |
-| BHV-049 | Technology Evangelism | ★★★ |
-| BHV-050 | POC to Production Strategy | ★★★ |
-| BHV-051 | Compliance-Oriented SDLC | ★★★ |
-| BHV-052 | Financial Services Domain Knowledge | ★★★ |
-| BHV-053 | Regulated Domain Engineering | ★★★ |
-| BHV-054 | Backlog Management (JIRA, VersionOne) | ★★☆ |
-| BHV-055 | Confluence  Documentation Tooling | ★☆☆ |
-| BHV-056 | Engineering Standards Enforcement | ★★★ |
-| BHV-057 | Engineering Leadership Strategy | ★★★ |
-| BHV-058 | Technical Strategy Communication | ★★★ |
-| BHV-059 | Engineering Culture Design | ★★★ |
-| BHV-060 | Hiring and Building Engineering Teams | ★★★ |
-| BHV-061 | Executive Engineering Presence | ★★★ |
-| BHV-062 | Staff+ Engineering Influence Research | ★★★ |
-| BHV-063 | Engineering Organization Design | ★★★ |
-| BHV-064 | Technical Vision and Roadmap Design | ★★★ |
-| BHV-065 | Organizational Psychology for Engineers | ★★★ |
-| BHV-066 | Leadership Trade-off Framing | ★★★ |
-| BHV-067 | Engineering Communication Mental Model | ★★★ |
-| BHV-068 | Career Growth Thinking | ★★★ |
-| BHV-069 | Behavioral Interview Mastery Guide | ★☆☆ |
-| BHV-070 | Technical Leadership Communication | ★★★ |
-| BHV-071 | Engineering Manager vs Tech Lead Career Decision | ★★★ |
-| BHV-072 | Writing Engineering Design Documents | ★★☆ |
+| BHV-036 | Incident Command | ★★★ |
+| BHV-024 | Blameless Culture | ★★★ |
+| BHV-052 | Engineering Strategy | ★★★ |
+| BHV-046 | Build vs Buy vs Outsource | ★★★ |
+| BHV-008 | System Design Interview | ★★★ |
+| BHV-050 | Project Leadership | ★★★ |
+| BHV-051 | Driving Adoption | ★★★ |
+| BHV-007 | Influence Without Authority | ★★★ |
+| BHV-018 | Negotiation in Engineering | ★★★ |
+| BHV-052 | Presentations for Technical Audiences | ★★★ |
+| BHV-046 | Career Laddering | ★★★ |
+| BHV-008 | Personal Brand (Engineering) | ★★★ |
+| BHV-018 | Technology Evangelism | ★★★ |
+| BHV-052 | POC to Production Strategy | ★★★ |
+| BHV-046 | Compliance-Oriented SDLC | ★★★ |
+| BHV-008 | Financial Services Domain Knowledge | ★★★ |
+| BHV-018 | Regulated Domain Engineering | ★★★ |
+| BHV-008 | Engineering Standards Enforcement | ★★★ |
+| BHV-018 | Engineering Leadership Strategy | ★★★ |
+| BHV-008 | Technical Strategy Communication | ★★★ |
+| BHV-018 | Engineering Culture Design | ★★★ |
+| BHV-008 | Hiring and Building Engineering Teams | ★★★ |
+| BHV-018 | Executive Engineering Presence | ★★★ |
+| BHV-008 | Staff+ Engineering Influence Research | ★★★ |
+| BHV-018 | Engineering Organization Design | ★★★ |
+| BHV-008 | Technical Vision and Roadmap Design | ★★★ |
+| BHV-018 | Organizational Psychology for Engineers | ★★★ |
+| BHV-008 | Leadership Trade-off Framing | ★★★ |
+| BHV-018 | Engineering Communication Mental Model | ★★★ |
+| BHV-008 | Career Growth Thinking | ★★★ |
+| BHV-008 | Technical Leadership Communication | ★★★ |
+| BHV-008 | Engineering Manager vs Tech Lead Career Decision | ★★★ |

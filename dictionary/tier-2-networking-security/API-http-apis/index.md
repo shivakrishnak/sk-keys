@@ -11,11 +11,11 @@ permalink: /http-apis/
 
 HTTP versions, REST, GraphQL, gRPC, WebSocket, API security, authentication, API design best practices, and creator-level protocol specification theory.
 
-**Keywords:** API-001--API-092 (92 terms)
+**Keywords:** API-001–API-016 (87 terms)
 
-> ⚠️ **Duplicates resolved:** `API-037` relabelled "API Key Authentication Pattern" (was duplicate of `API-001`). `API-052` / `API-053` kept as distinct entries: deep-dive vs conceptual Pagination.
+> ⚠️ **Duplicates resolved:** `API-035` relabelled "API Key Authentication Pattern" (was duplicate of `API-001`). `API-044` / `API-045` kept as distinct entries: deep-dive vs conceptual Pagination.
 
-**Keywords:** API-001–API-087 (87 terms)
+**Keywords:** API-001–API-016 (87 terms)
 
 | ID      | Keyword                                          | Difficulty |
 |---------|--------------------------------------------------|------------|
@@ -26,83 +26,83 @@ HTTP versions, REST, GraphQL, gRPC, WebSocket, API security, authentication, API
 | API-005 | The API Ecosystem Map | ★☆☆ |
 | API-006 | HTTP Methods | ★☆☆ |
 | API-007 | HTTP Status Codes | ★☆☆ |
-| API-008 | HTTP Headers | ★★☆ |
-| API-009 | HTTP-1.1 Protocol | ★☆☆ |
-| API-010 | REST | ★☆☆ |
-| API-011 | API Keys | ★☆☆ |
-| API-012 | URL and URI Structure | ★☆☆ |
-| API-013 | Request / Response Lifecycle | ★☆☆ |
-| API-014 | JSON vs XML Data Format | ★☆☆ |
-| API-015 | Content Negotiation | ★★☆ |
-| API-016 | Stateless Design Principle | ★☆☆ |
-| API-017 | WebSocket | ★★☆ |
-| API-018 | HTTP-2 | ★★☆ |
-| API-019 | HTTP-3 / QUIC | ★★★ |
-| API-020 | Keep-Alive / Connection Pooling | ★★☆ |
-| API-021 | Idempotency in HTTP | ★★☆ |
-| API-022 | RESTful Constraints (Richardson Maturity) | ★★☆ |
-| API-023 | OAuth2 | ★★☆ |
-| API-024 | JWT | ★★☆ |
-| API-025 | CORS | ★★☆ |
-| API-026 | OpenAPI / Swagger | ★★☆ |
-| API-027 | API Versioning | ★★☆ |
-| API-028 | API Gateway | ★★☆ |
-| API-029 | Webhook | ★★☆ |
-| API-030 | Server-Sent Events (SSE) | ★★☆ |
-| API-031 | Long Polling | ★★☆ |
-| API-032 | GraphQL | ★★☆ |
-| API-033 | API Rate Limiting | ★★☆ |
-| API-034 | HATEOAS | ★★★ |
-| API-035 | OIDC | ★★★ |
-| API-036 | HMAC | ★★★ |
-| API-037 | gRPC | ★★☆ |
-| API-038 | Protocol Buffers | ★★☆ |
-| API-039 | gRPC Streaming | ★★★ |
-| API-040 | GraphQL Schema | ★★☆ |
-| API-041 | GraphQL Resolvers | ★★☆ |
-| API-042 | GraphQL N+1 Problem | ★★★ |
-| API-043 | GraphQL Subscriptions | ★★★ |
-| API-044 | API Caching | ★★☆ |
-| API-045 | ETag / Cache-Control | ★★☆ |
-| API-046 | Pagination - Cursor Offset Keyset | ★★☆ |
-| API-047 | BFF (Backend for Frontend) | ★★★ |
-| API-048 | API Contract Testing | ★★★ |
-| API-049 | API Mocking | ★★☆ |
-| API-050 | API Authentication Patterns | ★★☆ |
-| API-051 | API Documentation | ★☆☆ |
-| API-052 | SOAP | ★★☆ |
-| API-053 | WSDL | ★★☆ |
-| API-054 | API Backward Compatibility | ★★☆ |
-| API-055 | API Throttling | ★★☆ |
-| API-056 | API Observability | ★★★ |
-| API-057 | API Security Best Practices | ★★☆ |
-| API-058 | API Gateway Patterns | ★★★ |
-| API-059 | API Deprecation Strategy | ★★☆ |
-| API-060 | XSS via API | ★★☆ |
-| API-061 | CSRF | ★★☆ |
-| API-062 | SSRF | ★★★ |
-| API-063 | SQL Injection via API | ★★☆ |
-| API-064 | API Management Platform | ★★★ |
-| API-065 | API Design Best Practices | ★★☆ |
-| API-066 | API Strategy at Scale | ★★★ |
-| API-067 | API Platform Design | ★★★ |
-| API-068 | API Migration Strategy (REST to gRPC) | ★★★ |
-| API-069 | API-First Development Culture | ★★★ |
-| API-070 | HTTP Protocol Design Internals | ★★★ |
-| API-071 | Hypermedia APIs - Deep Theory | ★★★ |
-| API-072 | Protocol Design Trade-offs at Scale | ★★★ |
-| API-073 | API Specification Language Design | ★★★ |
-| API-074 | Protocol Selection Mental Model | ★★★ |
-| API-075 | API Design Trade-off Framing | ★★★ |
-| API-076 | Consumer-First API Thinking | ★★★ |
-| API-077 | HTTP/2 Design Rationale (RFC 7540) | ★★★ |
-| API-078 | HTTP/3 over QUIC Design Rationale (RFC 9114) | ★★★ |
-| API-079 | gRPC Protocol Specification Design | ★★★ |
-| API-080 | GraphQL Specification Design (Lee Byron) | ★★★ |
-| API-081 | OpenAPI Specification Design | ★★★ |
-| API-082 | WebSocket Protocol RFC 6455 Design | ★★★ |
-| API-083 | API Design Review Checklist | ★★☆ |
-| API-084 | REST vs GraphQL vs gRPC Decision Framework | ★★★ |
-| API-085 | OWASP API Security Top 10 Deep Dive | ★★★ |
-| API-086 | API Load Testing and Performance | ★★★ |
-| API-087 | HTTP and API Interview Preparation Guide | ★☆☆ |
+| API-017 | HTTP-1.1 Protocol | ★☆☆ |
+| API-008 | REST | ★☆☆ |
+| API-009 | API Keys | ★☆☆ |
+| API-010 | URL and URI Structure | ★☆☆ |
+| API-011 | Request / Response Lifecycle | ★☆☆ |
+| API-012 | JSON vs XML Data Format | ★☆☆ |
+| API-013 | Stateless Design Principle | ★☆☆ |
+| API-018 | API Documentation | ★☆☆ |
+| API-014 | HTTP and API Interview Preparation Guide | ★☆☆ |
+| API-019 | HTTP Headers | ★★☆ |
+| API-020 | Content Negotiation | ★★☆ |
+| API-055 | WebSocket | ★★☆ |
+| API-021 | HTTP-2 | ★★☆ |
+| API-022 | Keep-Alive / Connection Pooling | ★★☆ |
+| API-023 | Idempotency in HTTP | ★★☆ |
+| API-024 | RESTful Constraints (Richardson Maturity) | ★★☆ |
+| API-025 | OAuth2 | ★★☆ |
+| API-026 | JWT | ★★☆ |
+| API-027 | CORS | ★★☆ |
+| API-028 | OpenAPI / Swagger | ★★☆ |
+| API-029 | API Versioning | ★★☆ |
+| API-030 | API Gateway | ★★☆ |
+| API-031 | Webhook | ★★☆ |
+| API-032 | Server-Sent Events (SSE) | ★★☆ |
+| API-033 | Long Polling | ★★☆ |
+| API-034 | GraphQL | ★★☆ |
+| API-056 | API Rate Limiting | ★★☆ |
+| API-057 | gRPC | ★★☆ |
+| API-058 | Protocol Buffers | ★★☆ |
+| API-035 | GraphQL Schema | ★★☆ |
+| API-036 | GraphQL Resolvers | ★★☆ |
+| API-059 | API Caching | ★★☆ |
+| API-037 | ETag / Cache-Control | ★★☆ |
+| API-038 | Pagination - Cursor Offset Keyset | ★★☆ |
+| API-060 | API Mocking | ★★☆ |
+| API-061 | API Authentication Patterns | ★★☆ |
+| API-039 | SOAP | ★★☆ |
+| API-040 | WSDL | ★★☆ |
+| API-041 | API Backward Compatibility | ★★☆ |
+| API-062 | API Throttling | ★★☆ |
+| API-063 | API Security Best Practices | ★★☆ |
+| API-042 | API Deprecation Strategy | ★★☆ |
+| API-050 | XSS via API | ★★☆ |
+| API-015 | CSRF | ★★☆ |
+| API-044 | SQL Injection via API | ★★☆ |
+| API-045 | API Design Best Practices | ★★☆ |
+| API-046 | API Design Review Checklist | ★★☆ |
+| API-047 | HTTP-3 / QUIC | ★★★ |
+| API-064 | HATEOAS | ★★★ |
+| API-048 | OIDC | ★★★ |
+| API-065 | HMAC | ★★★ |
+| API-049 | gRPC Streaming | ★★★ |
+| API-050 | GraphQL N+1 Problem | ★★★ |
+| API-051 | GraphQL Subscriptions | ★★★ |
+| API-066 | BFF (Backend for Frontend) | ★★★ |
+| API-052 | API Contract Testing | ★★★ |
+| API-067 | API Observability | ★★★ |
+| API-053 | API Gateway Patterns | ★★★ |
+| API-068 | SSRF | ★★★ |
+| API-069 | API Management Platform | ★★★ |
+| API-070 | API Strategy at Scale | ★★★ |
+| API-071 | API Platform Design | ★★★ |
+| API-072 | API Migration Strategy (REST to gRPC) | ★★★ |
+| API-073 | API-First Development Culture | ★★★ |
+| API-074 | HTTP Protocol Design Internals | ★★★ |
+| API-075 | Hypermedia APIs - Deep Theory | ★★★ |
+| API-076 | Protocol Design Trade-offs at Scale | ★★★ |
+| API-077 | API Specification Language Design | ★★★ |
+| API-078 | Protocol Selection Mental Model | ★★★ |
+| API-079 | API Design Trade-off Framing | ★★★ |
+| API-080 | Consumer-First API Thinking | ★★★ |
+| API-081 | HTTP/2 Design Rationale (RFC 7540) | ★★★ |
+| API-082 | HTTP/3 over QUIC Design Rationale (RFC 9114) | ★★★ |
+| API-083 | gRPC Protocol Specification Design | ★★★ |
+| API-084 | GraphQL Specification Design (Lee Byron) | ★★★ |
+| API-054 | OpenAPI Specification Design | ★★★ |
+| API-085 | WebSocket Protocol RFC 6455 Design | ★★★ |
+| API-086 | REST vs GraphQL vs gRPC Decision Framework | ★★★ |
+| API-087 | OWASP API Security Top 10 Deep Dive | ★★★ |
+| API-016 | API Load Testing and Performance | ★★★ |

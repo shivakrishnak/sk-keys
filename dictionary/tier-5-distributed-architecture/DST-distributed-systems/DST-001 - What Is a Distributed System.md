@@ -28,7 +28,7 @@ permalink: /dst/what-is-a-distributed-system/
 | DST-001         | Category: Distributed Systems      | Difficulty: ★☆☆ |
 | :-------------- | :--------------------------------- | :-------------- |
 | **Depends on:** |                                    |                 |
-| **Used by:**    | DST-002, DST-003, DST-006          |                 |
+| **Used by:**    | DST-002, DST-003, DST-022          |                 |
 | **Related:**    | DST-002, DST-003, DST-004, DST-005 |                 |
 
 ---
@@ -211,7 +211,7 @@ The key properties you must design for: **consistency**
 the system respond despite failures?), **partition
 tolerance** (does it function when the network splits?).
 CAP theorem: you can only guarantee two of these three
-at the same time (see DST-006).
+at the same time (see DST-022).
 
 **Level 4 - Why it was designed this way (senior/staff):**
 The FLP impossibility theorem (Fischer, Lynch, Paterson, 1985) proves that in an asynchronous distributed system,
@@ -329,11 +329,11 @@ GROUP BY payment_id HAVING COUNT(*) > 1;
 **Mode 2: Cascading Failure (No Circuit Breaker)**
 **Symptom:** One slow service causes all callers to queue, exhausting thread pools; system-wide outage.
 **Root Cause:** No timeout; no circuit breaker; one degraded node takes down the whole system.
-**Fix:** Circuit breaker (DST-042) + bulkhead (DST-043) + timeout (DST-046) on all outbound calls.
+**Fix:** Circuit breaker (DST-027) + bulkhead (DST-009) + timeout (DST-010) on all outbound calls.
 
 **Mode 3: Clock Skew Causing Event Misordering**
 **Symptom:** Events appear out of order; audit log inconsistent.
-**Fix:** Use Lamport clocks (DST-015) or vector clocks (DST-016) for logical ordering, not wall clock.
+**Fix:** Use Lamport clocks (DST-040) or vector clocks (DST-041) for logical ordering, not wall clock.
 
 ---
 
@@ -348,7 +348,7 @@ GROUP BY payment_id HAVING COUNT(*) > 1;
 
 - [[DST-002 - Why Distribution Is Hard]]
 - [[DST-004 - The Fallacies of Distributed Computing]]
-- [[DST-006 - CAP Theorem]]
+- [[DST-022 - CAP Theorem]]
 
 **Alternatives / Comparisons:**
 
@@ -372,7 +372,7 @@ GROUP BY payment_id HAVING COUNT(*) > 1;
 |                 distribution adds real complexity   |
 | TRADE-OFF       Simplicity vs scale/resilience      |
 | ONE-LINER       Many machines; one appearance       |
-| NEXT EXPLORE    DST-002, DST-006 (CAP), DST-004     |
+| NEXT EXPLORE    DST-002, DST-022 (CAP), DST-004     |
 +-----------------------------------------------------+
 ```
 

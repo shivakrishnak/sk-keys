@@ -28,8 +28,8 @@ permalink: /dst/the-distributed-systems-ecosystem-map/
 | DST-005         | Category: Distributed Systems | Difficulty: ★☆☆ |
 | :-------------- | :---------------------------- | :-------------- |
 | **Depends on:** | DST-001, DST-002, DST-003     |                 |
-| **Used by:**    | DST-006                       |                 |
-| **Related:**    | DST-003, DST-004, DST-006     |                 |
+| **Used by:**    | DST-022                       |                 |
+| **Related:**    | DST-003, DST-004, DST-022     |                 |
 
 ---
 
@@ -388,9 +388,9 @@ no tool is forced into the wrong domain
 
 **Builds On This (learn these next):**
 
-- [[DST-006 - CAP Theorem]]
-- [[DST-040 - Gossip Protocol]]
-- [[DST-042 - Circuit Breaker]]
+- [[DST-022 - CAP Theorem]]
+- [[DST-055 - Gossip Protocol]]
+- [[DST-027 - Circuit Breaker]]
 
 **Alternatives / Comparisons:**
 
@@ -412,7 +412,7 @@ no tool is forced into the wrong domain
 | AVOID           "Use Kafka for everything"          |
 | TRADE-OFF       Tool breadth vs operational overhead|
 | ONE-LINER       Kafka=order; etcd=coord; OTel=observ|
-| NEXT EXPLORE    DST-006, DST-042, CNCF Landscape   |
+| NEXT EXPLORE    DST-022, DST-027, CNCF Landscape   |
 +-----------------------------------------------------+
 ```
 

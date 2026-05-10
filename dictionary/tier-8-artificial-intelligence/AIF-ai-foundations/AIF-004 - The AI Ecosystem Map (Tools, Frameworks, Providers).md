@@ -6,8 +6,8 @@ tier: tier-8-artificial-intelligence
 folder: AIF-ai-foundations
 difficulty: ★☆☆
 depends_on: AIF-001, AIF-002, AIF-003
-used_by: AIF-005, AIF-046
-related: AIF-003, AIF-005, AIF-046
+used_by: AIF-005, AIF-010
+related: AIF-003, AIF-005, AIF-010
 tags:
   - ai
   - foundational
@@ -29,8 +29,8 @@ permalink: /ai-foundations/the-ai-ecosystem-map-tools-frameworks-providers/
 | AIF-004 | Category: AI Foundations | Difficulty: ★☆☆ |
 | :--- | :--- | :--- |
 | **Depends on:** | AIF-001, AIF-002, AIF-003 | |
-| **Used by:** | AIF-005, AIF-046 | |
-| **Related:** | AIF-003, AIF-005, AIF-046 | |
+| **Used by:** | AIF-005, AIF-010 | |
+| **Related:** | AIF-003, AIF-005, AIF-010 | |
 
 ---
 
@@ -387,11 +387,11 @@ loading in CI/CD pipeline.
 
 **Builds On This (learn these next):**
 - AIF-005 - AI in Production - What Engineers Actually Face
-- AIF-046 - AI Architecture Strategy (Build vs Buy vs Fine-Tune)
-- AIF-024 - Training
+- AIF-010 - AI Architecture Strategy (Build vs Buy vs Fine-Tune)
+- AIF-011 - Training
 
 **Alternatives / Comparisons:**
-- AIF-046 - AI Architecture Strategy (the decision framework for choosing
+- AIF-010 - AI Architecture Strategy (the decision framework for choosing
   between build, buy, and fine-tune)
 
 ---

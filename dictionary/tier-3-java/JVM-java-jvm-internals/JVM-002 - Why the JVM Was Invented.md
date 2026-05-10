@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JVM-java-jvm-internals
 difficulty: ★☆☆
 depends_on: JVM-001
-used_by: JVM-005
-related: JVM-003, JVM-048, JVM-049
+used_by: JVM-004
+related: JVM-003, JVM-052, JVM-053
 tags:
   - jvm
   - java
@@ -29,8 +29,8 @@ permalink: /jvm/why-the-jvm-was-invented/
 | Field | Value |
 |---|---|
 | **Depends on** | [[JVM-001 - What Is the JVM - A Mental Model]] |
-| **Used by** | [[JVM-005 - The JVM Ecosystem Map]] |
-| **Related** | [[JVM-003 - JVM vs JRE vs JDK]], [[JVM-048 - GraalVM]], [[JVM-049 - Native Image]] |
+| **Used by** | [[JVM-004 - The JVM Ecosystem Map]] |
+| **Related** | [[JVM-003 - JVM vs JRE vs JDK]], [[JVM-052 - GraalVM]], [[JVM-053 - Native Image]] |
 
 ---
 
@@ -248,12 +248,12 @@ GOOD: Ship separate native library builds per platform inside the jar, load the 
 
 **Builds On This (learn these next):**
 - [[JVM-003 - JVM vs JRE vs JDK]] - Component breakdown
-- [[JVM-004 - How Java Code Runs - Bytecode to Execution]] - Execution mechanics
-- [[JVM-005 - The JVM Ecosystem Map]] - Current ecosystem breadth
+- [[JVM-008 - How Java Code Runs - Bytecode to Execution]] - Execution mechanics
+- [[JVM-004 - The JVM Ecosystem Map]] - Current ecosystem breadth
 
 **Alternatives / Comparisons:**
-- [[JVM-048 - GraalVM]] - Extended JVM with native compilation
-- [[JVM-049 - Native Image]] - Build-time translation; same invention rationale, different timing
+- [[JVM-052 - GraalVM]] - Extended JVM with native compilation
+- [[JVM-053 - Native Image]] - Build-time translation; same invention rationale, different timing
 
 ---
 
@@ -281,8 +281,8 @@ GOOD: Ship separate native library builds per platform inside the jar, load the 
 +--------------------------------------------------+
 | ONE-LINER     | javac -> .class -> any JVM        |
 +--------------------------------------------------+
-| NEXT EXPLORE  | JVM-004 bytecode execution,       |
-|               | JVM-049 Native Image              |
+| NEXT EXPLORE  | JVM-008 bytecode execution,       |
+|               | JVM-053 Native Image              |
 +--------------------------------------------------+
 ```
 

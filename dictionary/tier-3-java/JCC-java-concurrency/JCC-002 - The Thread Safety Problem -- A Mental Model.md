@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JCC-java-concurrency
 difficulty: ★☆☆
 depends_on: JCC-001
-used_by: JCC-013, JCC-014, JCC-016, JCC-020, JCC-021
-related: JCC-001, JCC-020, JCC-021
+used_by: JCC-014, JCC-038, JCC-040, JCC-044, JCC-015
+related: JCC-001, JCC-044, JCC-015
 tags:
   - java
   - concurrency
@@ -30,8 +30,8 @@ permalink: /jcc/the-thread-safety-problem-a-mental-model/
 | Metadata        |                                             |     |
 | :-------------- | :------------------------------------------ | :-- |
 | **Depends on:** | JCC-001                                     |     |
-| **Used by:**    | JCC-013, JCC-014, JCC-016, JCC-020, JCC-021 |     |
-| **Related:**    | JCC-001, JCC-020, JCC-021                   |     |
+| **Used by:**    | JCC-014, JCC-038, JCC-040, JCC-044, JCC-015 |     |
+| **Related:**    | JCC-001, JCC-044, JCC-015                   |     |
 
 ---
 
@@ -320,20 +320,20 @@ class Service {
 **Prerequisites (understand these first):**
 
 - [[JCC-001 - Why Concurrency Is Hard]] - the three root causes this model addresses
-- [[JCC-020 - Java Memory Model (JMM)]] - formal definition of visibility and ordering
+- [[JCC-044 - Java Memory Model (JMM)]] - formal definition of visibility and ordering
 
 **Builds On This (learn these next):**
 
-- [[JCC-013 - synchronized]] - the primary Java tool for enforcing thread safety
-- [[JCC-014 - volatile]] - visibility without mutual exclusion
-- [[JCC-021 - Race Condition]] - detailed analysis of the atomicity failure
-- [[JCC-036 - ConcurrentHashMap]] - canonical thread-safe collection
+- [[JCC-014 - synchronized]] - the primary Java tool for enforcing thread safety
+- [[JCC-038 - volatile]] - visibility without mutual exclusion
+- [[JCC-015 - Race Condition]] - detailed analysis of the atomicity failure
+- [[JCC-054 - ConcurrentHashMap]] - canonical thread-safe collection
 
 **Alternatives / Comparisons:**
 
-- [[JCC-019 - ThreadLocal]] - eliminate sharing rather than synchronize it
-- [[JCC-037 - CopyOnWriteArrayList]] - thread safety via immutable snapshots
-- [[JCC-038 - Atomic Classes]] - lock-free thread safety for single variables
+- [[JCC-043 - ThreadLocal]] - eliminate sharing rather than synchronize it
+- [[JCC-055 - CopyOnWriteArrayList]] - thread safety via immutable snapshots
+- [[JCC-056 - Atomic Classes]] - lock-free thread safety for single variables
 
 ---
 
@@ -348,7 +348,7 @@ class Service {
 │ AVOID WHEN    │ N/A - it is a design lens, not a tool│
 │ TRADE-OFF     │ Safety enforcement vs. throughput    │
 │ ONE-LINER     │ Safe = class invariants hold always  │
-│ NEXT EXPLORE  │ JCC-013 synchronized, JCC-036 CHM    │
+│ NEXT EXPLORE  │ JCC-014 synchronized, JCC-054 CHM    │
 └────────────────────────────────────────────────────┘
 ```
 

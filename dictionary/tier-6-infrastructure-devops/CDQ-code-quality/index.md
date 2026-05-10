@@ -11,7 +11,7 @@ permalink: /code-quality/
 
 Code standards, static analysis, code smells, refactoring, cyclomatic complexity, and architecture fitness.
 
-**Keywords:** CDQ-001–CDQ-047 (46 terms)
+**Keywords:** CDQ-001–CDQ-045 (46 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -24,40 +24,40 @@ Code standards, static analysis, code smells, refactoring, cyclomatic complexity
 | CDQ-007 | Coding Conventions | ★☆☆ |
 | CDQ-008 | Style Guide | ★☆☆ |
 | CDQ-009 | Linting | ★☆☆ |
-| CDQ-010 | Static Analysis | ★★☆ |
-| CDQ-011 | SonarQube | ★★☆ |
-| CDQ-012 | Checkstyle | ★★☆ |
-| CDQ-013 | PMD | ★★☆ |
-| CDQ-014 | SpotBugs | ★★☆ |
-| CDQ-015 | Code Review | ★★☆ |
-| CDQ-016 | Code Review Best Practices | ★★☆ |
-| CDQ-017 | Pair Programming | ★★☆ |
-| CDQ-018 | Code Coverage | ★★☆ |
-| CDQ-019 | Line Coverage | ★★☆ |
-| CDQ-020 | Branch Coverage | ★★★ |
-| CDQ-021 | Mutation Testing | ★★★ |
-| CDQ-022 | Code Smell | ★★☆ |
-| CDQ-023 | Long Method | ★★☆ |
-| CDQ-024 | God Class | ★★☆ |
-| CDQ-025 | Feature Envy | ★★★ |
-| CDQ-026 | Data Clumps | ★★★ |
-| CDQ-027 | Primitive Obsession | ★★★ |
-| CDQ-028 | Shotgun Surgery | ★★★ |
-| CDQ-029 | Divergent Change | ★★★ |
-| CDQ-030 | Technical Debt | ★★☆ |
-| CDQ-031 | Code Quality Architecture (Quality Gates) | ★★★ |
-| CDQ-032 | Technical Debt Strategy | ★★★ |
-| CDQ-033 | Code Review Process Design | ★★★ |
-| CDQ-034 | Static Analysis at Scale | ★★★ |
-| CDQ-035 | Engineering Excellence Program Design | ★★★ |
-| CDQ-036 | Software Quality Measurement Research | ★★★ |
-| CDQ-037 | Formal Verification Approaches | ★★★ |
-| CDQ-038 | Program Analysis Theory | ★★★ |
-| CDQ-039 | Software Reliability Engineering Metrics | ★★★ |
-| CDQ-040 | Quality Trade-off Framing | ★★★ |
-| CDQ-041 | Technical Debt Mental Model | ★★★ |
-| CDQ-042 | Code Review Mindset | ★★★ |
-| CDQ-043 | Code Quality Interview Preparation Guide | ★☆☆ |
+| CDQ-012 | Code Quality Interview Preparation Guide | ★☆☆ |
+| CDQ-013 | Static Analysis | ★★☆ |
+| CDQ-014 | SonarQube | ★★☆ |
+| CDQ-015 | Checkstyle | ★★☆ |
+| CDQ-016 | PMD | ★★☆ |
+| CDQ-017 | SpotBugs | ★★☆ |
+| CDQ-018 | Code Review | ★★☆ |
+| CDQ-019 | Code Review Best Practices | ★★☆ |
+| CDQ-020 | Pair Programming | ★★☆ |
+| CDQ-025 | Code Coverage | ★★☆ |
+| CDQ-027 | Line Coverage | ★★☆ |
+| CDQ-028 | Code Smell | ★★☆ |
+| CDQ-026 | Long Method | ★★☆ |
+| CDQ-021 | God Class | ★★☆ |
+| CDQ-022 | Technical Debt | ★★☆ |
+| CDQ-029 | Branch Coverage | ★★★ |
+| CDQ-030 | Mutation Testing | ★★★ |
+| CDQ-031 | Feature Envy | ★★★ |
+| CDQ-024 | Data Clumps | ★★★ |
+| CDQ-032 | Primitive Obsession | ★★★ |
+| CDQ-023 | Shotgun Surgery | ★★★ |
+| CDQ-033 | Divergent Change | ★★★ |
+| CDQ-034 | Code Quality Architecture (Quality Gates) | ★★★ |
+| CDQ-035 | Technical Debt Strategy | ★★★ |
+| CDQ-036 | Code Review Process Design | ★★★ |
+| CDQ-037 | Static Analysis at Scale | ★★★ |
+| CDQ-038 | Engineering Excellence Program Design | ★★★ |
+| CDQ-039 | Software Quality Measurement Research | ★★★ |
+| CDQ-040 | Formal Verification Approaches | ★★★ |
+| CDQ-041 | Program Analysis Theory | ★★★ |
+| CDQ-042 | Software Reliability Engineering Metrics | ★★★ |
+| CDQ-043 | Quality Trade-off Framing | ★★★ |
+| CDQ-010 | Technical Debt Mental Model | ★★★ |
+| CDQ-011 | Code Review Mindset | ★★★ |
 | CDQ-044 | Technical Debt Quantification | ★★★ |
-| CDQ-046 | Code Coverage Goals and Anti-Patterns | ★★★ |
-| CDQ-047 | Continuous Code Quality Strategy | ★★★ |
+| CDQ-045 | Code Coverage Goals and Anti-Patterns | ★★★ |
+| CDQ-045 | Continuous Code Quality Strategy | ★★★ |

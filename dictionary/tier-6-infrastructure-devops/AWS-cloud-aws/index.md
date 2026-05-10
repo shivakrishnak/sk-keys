@@ -11,7 +11,7 @@ permalink: /cloud-aws/
 
 AWS global infrastructure, core services (EC2, S3, RDS, Lambda, EKS), IaC, security, and cost optimization.
 
-**Keywords:** AWS-001–AWS-082 (81 terms)
+**Keywords:** AWS-001–AWS-079 (81 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -20,79 +20,79 @@ AWS global infrastructure, core services (EC2, S3, RDS, Lambda, EKS), IaC, secur
 | AWS-003 | Cloud vs On-Premise -- Real Trade-offs | ★☆☆ |
 | AWS-004 | AWS Well-Architected Framework | ★☆☆ |
 | AWS-005 | The AWS Ecosystem Map | ★☆☆ |
-| AWS-006 | AWS CloudFront | ★★☆ |
-| AWS-007 | Lambda@Edge | ★★★ |
-| AWS-008 | AWS Step Functions | ★★★ |
-| AWS-009 | AWS SQS | ★★☆ |
-| AWS-010 | AWS SNS | ★★☆ |
-| AWS-011 | AWS Kinesis | ★★★ |
-| AWS-012 | AWS Parameter Store | ★★★ |
-| AWS-013 | AWS Secrets Manager | ★★★ |
-| AWS-014 | AWS KMS (Key Management Service) | ★★★ |
-| AWS-015 | AWS PrivateLink | ★★★ |
-| AWS-016 | AWS Shield | ★★★ |
-| AWS-017 | AWS Control Tower | ★★★ |
-| AWS-018 | AWS CDK (Cloud Development Kit) | ★★★ |
-| AWS-019 | AWS CloudFormation | ★★★ |
-| AWS-020 | AWS WAF | ★★★ |
-| AWS-021 | AWS ECS  Fargate | ★★★ |
-| AWS-022 | AWS VPC Architecture Deep Dive | ★★★ |
-| AWS-023 | AWS Cost Tagging Strategy | ★★★ |
-| AWS-024 | AWS Well-Architected Review | ★★★ |
-| AWS-025 | AWS Global Infrastructure | ★☆☆ |
-| AWS-026 | Region  AZ  Edge Location | ★☆☆ |
-| AWS-027 | IAM (Identity and Access Management) | ★★☆ |
-| AWS-028 | IAM Roles  Policies | ★★☆ |
-| AWS-029 | VPC | ★★☆ |
-| AWS-030 | Subnets (Public  Private) | ★★☆ |
-| AWS-031 | Security Groups | ★★☆ |
-| AWS-032 | NACLs | ★★★ |
-| AWS-033 | Internet Gateway  NAT Gateway | ★★☆ |
-| AWS-034 | VPC Peering | ★★★ |
-| AWS-035 | Transit Gateway | ★★★ |
-| AWS-036 | Route 53 | ★★☆ |
-| AWS-037 | EC2 | ★☆☆ |
-| AWS-038 | EC2 Instance Types | ★★☆ |
-| AWS-039 | Auto Scaling Groups | ★★☆ |
-| AWS-040 | ELB  ALB  NLB | ★★☆ |
-| AWS-041 | S3 | ★☆☆ |
-| AWS-042 | S3 Storage Classes | ★★☆ |
-| AWS-043 | S3 Lifecycle Policies | ★★★ |
-| AWS-044 | EBS  EFS | ★★☆ |
-| AWS-045 | RDS | ★★☆ |
-| AWS-046 | Aurora | ★★★ |
-| AWS-047 | DynamoDB | ★★★ |
-| AWS-048 | ElastiCache | ★★☆ |
-| AWS-049 | SQS | ★★☆ |
-| AWS-050 | SNS | ★★☆ |
-| AWS-051 | Kinesis | ★★★ |
-| AWS-052 | Lambda | ★★☆ |
-| AWS-053 | API Gateway (AWS) | ★★☆ |
-| AWS-054 | ECS  Fargate | ★★☆ |
-| AWS-055 | EKS | ★★★ |
-| AWS-056 | CloudFormation | ★★★ |
-| AWS-057 | CDK | ★★★ |
-| AWS-058 | CloudWatch | ★★☆ |
-| AWS-059 | X-Ray | ★★★ |
-| AWS-060 | AWS Cost Optimization | ★★★ |
-| AWS-061 | AWS Security Best Practices | ★★★ |
-| AWS-062 | Well-Architected Framework | ★★★ |
-| AWS-063 | Spot Instances  Reserved Instances | ★★★ |
-| AWS-064 | AWS Service Limits | ★★★ |
-| AWS-065 | Immutable Infrastructure | ★☆☆ |
-| AWS-066 | AWS Architecture Strategy (Multi-AZ, Multi-Region) | ★★★ |
-| AWS-067 | AWS Cost Optimization Framework | ★★★ |
-| AWS-068 | AWS Security Architecture | ★★★ |
-| AWS-069 | AWS Migration Strategy (6 Rs) | ★★★ |
-| AWS-070 | AWS Platform Engineering | ★★★ |
-| AWS-071 | AWS Service Internals Deep Dives | ★★★ |
-| AWS-072 | Cloud-Native Architecture Design | ★★★ |
-| AWS-073 | AWS Infrastructure as Code at Scale | ★★★ |
-| AWS-074 | AWS Novel Service Patterns Research | ★★★ |
-| AWS-075 | Cloud Trade-off Framing | ★★★ |
-| AWS-076 | AWS Service Selection Mental Model | ★★★ |
-| AWS-077 | Cloud Cost Mental Model | ★★★ |
-| AWS-078 | AWS Interview Preparation Guide | ★☆☆ |
-| AWS-080 | AWS Cost Optimization Strategies | ★★★ |
-| AWS-081 | AWS Landing Zone and Account Strategy | ★★★ |
-| AWS-082 | AWS Security Architecture Patterns | ★★★ |
+| AWS-038 | AWS Global Infrastructure | ★☆☆ |
+| AWS-053 | Region  AZ  Edge Location | ★☆☆ |
+| AWS-021 | EC2 | ★☆☆ |
+| AWS-039 | S3 | ★☆☆ |
+| AWS-040 | Immutable Infrastructure | ★☆☆ |
+| AWS-008 | AWS Interview Preparation Guide | ★☆☆ |
+| AWS-022 | AWS CloudFront | ★★☆ |
+| AWS-023 | AWS SQS | ★★☆ |
+| AWS-024 | AWS SNS | ★★☆ |
+| AWS-009 | IAM (Identity and Access Management) | ★★☆ |
+| AWS-025 | IAM Roles  Policies | ★★☆ |
+| AWS-054 | VPC | ★★☆ |
+| AWS-018 | Subnets (Public  Private) | ★★☆ |
+| AWS-027 | Security Groups | ★★☆ |
+| AWS-055 | Internet Gateway  NAT Gateway | ★★☆ |
+| AWS-056 | Route 53 | ★★☆ |
+| AWS-028 | EC2 Instance Types | ★★☆ |
+| AWS-029 | Auto Scaling Groups | ★★☆ |
+| AWS-030 | ELB  ALB  NLB | ★★☆ |
+| AWS-012 | S3 Storage Classes | ★★☆ |
+| AWS-035 | EBS  EFS | ★★☆ |
+| AWS-041 | RDS | ★★☆ |
+| AWS-042 | ElastiCache | ★★☆ |
+| AWS-043 | SQS | ★★☆ |
+| AWS-018 | SNS | ★★☆ |
+| AWS-045 | Lambda | ★★☆ |
+| AWS-057 | API Gateway (AWS) | ★★☆ |
+| AWS-046 | ECS  Fargate | ★★☆ |
+| AWS-031 | CloudWatch | ★★☆ |
+| AWS-032 | Lambda@Edge | ★★★ |
+| AWS-047 | AWS Step Functions | ★★★ |
+| AWS-036 | AWS Kinesis | ★★★ |
+| AWS-048 | AWS Parameter Store | ★★★ |
+| AWS-049 | AWS Secrets Manager | ★★★ |
+| AWS-050 | AWS KMS (Key Management Service) | ★★★ |
+| AWS-013 | AWS PrivateLink | ★★★ |
+| AWS-006 | AWS Shield | ★★★ |
+| AWS-033 | AWS Control Tower | ★★★ |
+| AWS-007 | AWS CDK (Cloud Development Kit) | ★★★ |
+| AWS-015 | AWS CloudFormation | ★★★ |
+| AWS-058 | AWS WAF | ★★★ |
+| AWS-059 | AWS ECS  Fargate | ★★★ |
+| AWS-016 | AWS VPC Architecture Deep Dive | ★★★ |
+| AWS-017 | AWS Cost Tagging Strategy | ★★★ |
+| AWS-018 | AWS Well-Architected Review | ★★★ |
+| AWS-060 | NACLs | ★★★ |
+| AWS-019 | VPC Peering | ★★★ |
+| AWS-051 | Transit Gateway | ★★★ |
+| AWS-020 | S3 Lifecycle Policies | ★★★ |
+| AWS-034 | Aurora | ★★★ |
+| AWS-061 | DynamoDB | ★★★ |
+| AWS-062 | Kinesis | ★★★ |
+| AWS-052 | EKS | ★★★ |
+| AWS-063 | CloudFormation | ★★★ |
+| AWS-064 | CDK | ★★★ |
+| AWS-065 | X-Ray | ★★★ |
+| AWS-066 | AWS Cost Optimization | ★★★ |
+| AWS-010 | AWS Security Best Practices | ★★★ |
+| AWS-067 | Well-Architected Framework | ★★★ |
+| AWS-014 | Spot Instances  Reserved Instances | ★★★ |
+| AWS-068 | AWS Service Limits | ★★★ |
+| AWS-069 | AWS Architecture Strategy (Multi-AZ, Multi-Region) | ★★★ |
+| AWS-070 | AWS Cost Optimization Framework | ★★★ |
+| AWS-071 | AWS Security Architecture | ★★★ |
+| AWS-072 | AWS Migration Strategy (6 Rs) | ★★★ |
+| AWS-073 | AWS Platform Engineering | ★★★ |
+| AWS-074 | AWS Service Internals Deep Dives | ★★★ |
+| AWS-075 | Cloud-Native Architecture Design | ★★★ |
+| AWS-076 | AWS Infrastructure as Code at Scale | ★★★ |
+| AWS-077 | AWS Novel Service Patterns Research | ★★★ |
+| AWS-078 | Cloud Trade-off Framing | ★★★ |
+| AWS-011 | AWS Service Selection Mental Model | ★★★ |
+| AWS-037 | Cloud Cost Mental Model | ★★★ |
+| AWS-079 | AWS Cost Optimization Strategies | ★★★ |
+| AWS-079 | AWS Landing Zone and Account Strategy | ★★★ |
+| AWS-079 | AWS Security Architecture Patterns | ★★★ |

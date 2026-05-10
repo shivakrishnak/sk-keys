@@ -10,8 +10,8 @@ tier: tier-2-networking-security
 folder: SEC-security
 difficulty: ★☆☆
 depends_on:
-used_by: SEC-002, SEC-004, SEC-005, SEC-006, SEC-008
-related: SEC-002, SEC-005, SEC-008, SEC-055
+used_by: SEC-002, SEC-004, SEC-005, SEC-006, SEC-027
+related: SEC-002, SEC-005, SEC-027, SEC-088
 tags:
   - security
   - foundational
@@ -28,8 +28,8 @@ version: 1
 | Attribute  | Details                                                                                                                                                                                    |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Depends on | -                                                                                                                                                                                          |
-| Used by    | [[SEC-002 - Authentication vs Authorization]], [[SEC-004 - Principle of Least Privilege]], [[SEC-005 - Defense in Depth]], [[SEC-006 - Security by Design]], [[SEC-008 - Threat Modeling]] |
-| Related    | [[SEC-002 - Authentication vs Authorization]], [[SEC-005 - Defense in Depth]], [[SEC-008 - Threat Modeling]], [[SEC-055 - OWASP Top 10]]                                                   |
+| Used by    | [[SEC-002 - Authentication vs Authorization]], [[SEC-004 - Principle of Least Privilege]], [[SEC-005 - Defense in Depth]], [[SEC-006 - Security by Design]], [[SEC-027 - Threat Modeling]] |
+| Related    | [[SEC-002 - Authentication vs Authorization]], [[SEC-005 - Defense in Depth]], [[SEC-027 - Threat Modeling]], [[SEC-088 - OWASP Top 10]]                                                   |
 
 ---
 
@@ -392,11 +392,11 @@ aws wafv2 get-sampled-requests \
 
 - [[SEC-002 - Authentication vs Authorization]] - the primary mechanism for enforcing Confidentiality and Integrity at the identity layer
 - [[SEC-005 - Defense in Depth]] - applies CIA properties across multiple independent security layers
-- [[SEC-008 - Threat Modeling]] - uses CIA as the classification system for attacker capabilities and impacts
+- [[SEC-027 - Threat Modeling]] - uses CIA as the classification system for attacker capabilities and impacts
 
 **Alternatives / Comparisons:**
 
-- [[SEC-055 - OWASP Top 10]] - a complementary classification of the most common web application vulnerabilities, many of which map to CIA violations
+- [[SEC-088 - OWASP Top 10]] - a complementary classification of the most common web application vulnerabilities, many of which map to CIA violations
 - Parkerian Hexad - extends CIA with Possession, Authenticity, and Utility (used in some academic contexts)
 - NIST Cybersecurity Framework - organizes security functions (Identify, Protect, Detect, Respond, Recover) around CIA as the underlying property set
 
@@ -413,7 +413,7 @@ aws wafv2 get-sampled-requests \
 | AVOID WHEN   | Used as a substitute for a threat model     |
 | TRADE-OFF    | C, I, A conflict - choose trade-offs wisely |
 | ONE-LINER    | Secret, correct, accessible - guarantee all |
-| NEXT EXPLORE | SEC-008 Threat Modeling                    |
+| NEXT EXPLORE | SEC-027 Threat Modeling                    |
 +----------------------------------------------------------+
 ```
 

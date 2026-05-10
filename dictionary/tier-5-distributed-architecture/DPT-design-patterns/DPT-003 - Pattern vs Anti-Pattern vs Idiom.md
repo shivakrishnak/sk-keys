@@ -28,8 +28,8 @@ permalink: /dpt/pattern-vs-anti-pattern-vs-idiom/
 | DPT-003         | Category: Design Patterns | Difficulty: ★☆☆ |
 | :-------------- | :------------------------ | :-------------- |
 | **Depends on:** | DPT-001, DPT-002          |                 |
-| **Used by:**    | DPT-004, DPT-005, DPT-042 |                 |
-| **Related:**    | DPT-001, DPT-042, DPT-063 |                 |
+| **Used by:**    | DPT-004, DPT-005, DPT-055 |                 |
+| **Related:**    | DPT-001, DPT-055, DPT-083 |                 |
 
 ---
 
@@ -400,9 +400,9 @@ Document in review comment with pattern/anti-pattern name
 
 **Builds On This (learn these next):**
 
-- [[DPT-042 - Anti-Patterns Overview]]
-- [[DPT-043 - God Object Anti-Pattern]]
-- [[DPT-063 - Anti-Pattern Recognition and Refactoring]]
+- [[DPT-055 - Anti-Patterns Overview]]
+- [[DPT-028 - God Object Anti-Pattern]]
+- [[DPT-083 - Anti-Pattern Recognition and Refactoring]]
 
 **Alternatives / Comparisons:**
 
@@ -427,7 +427,7 @@ Document in review comment with pattern/anti-pattern name
 | TRADE-OFF       Vocabulary clarity vs taxonomic     |
 |                 over-precision                      |
 | ONE-LINER       Named good vs named bad solutions   |
-| NEXT EXPLORE    DPT-042, DPT-043, DPT-063           |
+| NEXT EXPLORE    DPT-055, DPT-028, DPT-083           |
 +-----------------------------------------------------+
 ```
 

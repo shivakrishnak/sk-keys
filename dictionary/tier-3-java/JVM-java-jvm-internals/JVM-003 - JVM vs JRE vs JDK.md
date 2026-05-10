@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JVM-java-jvm-internals
 difficulty: ★☆☆
 depends_on: JVM-001
-used_by: JVM-004, JVM-005
-related: JVM-006, JVM-007, JVM-047
+used_by: JVM-008, JVM-004
+related: JVM-005, JVM-006, JVM-051
 tags:
   - jvm
   - java
@@ -29,8 +29,8 @@ permalink: /jvm/jvm-vs-jre-vs-jdk/
 | Field | Value |
 |---|---|
 | **Depends on** | [[JVM-001 - What Is the JVM - A Mental Model]] |
-| **Used by** | [[JVM-004 - How Java Code Runs - Bytecode to Execution]], [[JVM-005 - The JVM Ecosystem Map]] |
-| **Related** | [[JVM-006 - JRE]], [[JVM-007 - JDK]], [[JVM-047 - AOT Compilation]] |
+| **Used by** | [[JVM-008 - How Java Code Runs - Bytecode to Execution]], [[JVM-004 - The JVM Ecosystem Map]] |
+| **Related** | [[JVM-005 - JRE]], [[JVM-006 - JDK]], [[JVM-051 - AOT Compilation]] |
 
 ---
 
@@ -342,12 +342,12 @@ Re-run `jlink` with the correct module list; use `jdeps` first to enumerate all 
 - [[JVM-001 - What Is the JVM - A Mental Model]] - The JVM concept
 
 **Builds On This (learn these next):**
-- [[JVM-004 - How Java Code Runs - Bytecode to Execution]] - What the JVM actually does
-- [[JVM-047 - AOT Compilation]] - Alternative to JRE: GraalVM Native Image (no JVM at runtime)
+- [[JVM-008 - How Java Code Runs - Bytecode to Execution]] - What the JVM actually does
+- [[JVM-051 - AOT Compilation]] - Alternative to JRE: GraalVM Native Image (no JVM at runtime)
 
 **Alternatives / Comparisons:**
-- [[JVM-006 - JRE]] - JRE deep dive
-- [[JVM-007 - JDK]] - JDK deep dive
+- [[JVM-005 - JRE]] - JRE deep dive
+- [[JVM-006 - JDK]] - JDK deep dive
 
 ---
 
@@ -375,8 +375,8 @@ Re-run `jlink` with the correct module list; use `jdeps` first to enumerate all 
 +--------------------------------------------------+
 | ONE-LINER     | javac (JDK) -> .class -> java (JRE)|
 +--------------------------------------------------+
-| NEXT EXPLORE  | JVM-004 execution mechanics,      |
-|               | JVM-047 jlink/native image        |
+| NEXT EXPLORE  | JVM-008 execution mechanics,      |
+|               | JVM-051 jlink/native image        |
 +--------------------------------------------------+
 ```
 
@@ -409,10 +409,10 @@ Since Java 11, Oracle no longer provides a standalone JRE download. The canonica
 ### 🧠 Think About This Before We Continue
 
 **Q1 (System Interaction):** A security scanner reports that your production Docker image contains `javac` - the Java compiler. You are running a `FROM eclipse-temurin:21-jdk` base image. Why is the compiler present, and what is the exact change needed to remove it without breaking the application?
-*Hint:* Investigate the multi-stage Docker build pattern and the `jlink` tool documented in this entry and [[JVM-007 - JDK]].
+*Hint:* Investigate the multi-stage Docker build pattern and the `jlink` tool documented in this entry and [[JVM-006 - JDK]].
 
 **Q2 (Scale):** You have 500 microservices each packaged as Docker images. Each uses `FROM eclipse-temurin:21-jdk` (300MB JDK layer). If you switch to `jlink` minimal runtimes of 50MB each, what is the infrastructure saving, and what new risk do you introduce that a single shared JDK base image did not have?
 *Hint:* Think about security patches. When a JVM vulnerability is disclosed, how does the patch propagation differ between a shared base image and 500 custom `jlink` runtimes?
 
 **Q3 (Design Trade-off):** GraalVM Native Image eliminates the JRE entirely at runtime - the native binary contains everything it needs. Under what specific production scenario does this approach become worse than a traditional JDK deployment, despite the footprint and startup advantages?
-*Hint:* Consider the JIT compilation warm-up curve in [[JVM-041 - JIT Compiler]] and what happens to throughput of a long-running, CPU-intensive server after 30 minutes of operation.
+*Hint:* Consider the JIT compilation warm-up curve in [[JVM-045 - JIT Compiler]] and what happens to throughput of a long-running, CPU-intensive server after 30 minutes of operation.

@@ -10,8 +10,8 @@ tier: tier-2-networking-security
 folder: IAM-iam-access
 difficulty: ★☆☆
 depends_on: SEC-001
-used_by: SEC-003, SEC-013, SEC-014, SEC-015
-related: SEC-013, SEC-014, SEC-034, SEC-004
+used_by: SEC-003, SEC-009, SEC-010, SEC-011
+related: SEC-009, SEC-010, SEC-045, SEC-004
 tags:
   - security
   - foundational
@@ -28,8 +28,8 @@ version: 1
 | Attribute  | Details                                                                                                                                                   |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Depends on | [[SEC-001 - CIA Triad (Confidentiality, Integrity, Availability)]]                                                                                        |
-| Used by    | [[SEC-003 - IAAA]], [[SEC-013 - Session-Based Authentication]], [[SEC-014 - Token-Based Authentication]], [[SEC-015 - Access Token]]                      |
-| Related    | [[SEC-013 - Session-Based Authentication]], [[SEC-014 - Token-Based Authentication]], [[SEC-034 - OAuth 2.0]], [[SEC-004 - Principle of Least Privilege]] |
+| Used by    | [[SEC-003 - IAAA]], [[SEC-009 - Session-Based Authentication]], [[SEC-010 - Token-Based Authentication]], [[SEC-011 - Access Token]]                      |
+| Related    | [[SEC-009 - Session-Based Authentication]], [[SEC-010 - Token-Based Authentication]], [[SEC-045 - OAuth 2.0]], [[SEC-004 - Principle of Least Privilege]] |
 
 ---
 
@@ -340,9 +340,9 @@ curl -H "Authorization: Bearer <regular_user_token>" \
 
 **Builds On This (learn these next):**
 
-- [[SEC-013 - Session-Based Authentication]] - one implementation of the authentication step
-- [[SEC-014 - Token-Based Authentication]] - modern stateless authentication with embedded claims
-- [[SEC-034 - OAuth 2.0]] - the industry-standard authorization delegation framework
+- [[SEC-009 - Session-Based Authentication]] - one implementation of the authentication step
+- [[SEC-010 - Token-Based Authentication]] - modern stateless authentication with embedded claims
+- [[SEC-045 - OAuth 2.0]] - the industry-standard authorization delegation framework
 - [[SEC-004 - Principle of Least Privilege]] - the authorization design principle that minimizes permission scope
 
 **Alternatives / Comparisons:**
@@ -365,7 +365,7 @@ curl -H "Authorization: Bearer <regular_user_token>" \
 | AVOID WHEN   | N/A - always separate these two concerns    |
 | TRADE-OFF    | More components; independent auditability   |
 | ONE-LINER    | Prove identity first; enforce policy second |
-| NEXT EXPLORE | SEC-034 OAuth 2.0, SEC-013 Session Auth     |
+| NEXT EXPLORE | SEC-045 OAuth 2.0, SEC-009 Session Auth     |
 +----------------------------------------------------------+
 ```
 

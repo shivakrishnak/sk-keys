@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JCC-java-concurrency
 difficulty: ★☆☆
 depends_on: JCC-001, JCC-002
-used_by: JCC-005, JCC-024, JCC-028, JCC-040
-related: JCC-004, JCC-005, JCC-028
+used_by: JCC-005, JCC-016, JCC-049, JCC-058
+related: JCC-004, JCC-005, JCC-049
 tags:
   - java
   - concurrency
@@ -30,8 +30,8 @@ permalink: /jcc/java-concurrency-approach-history-and-philosophy/
 | Metadata        |                                    |     |
 | :-------------- | :--------------------------------- | :-- |
 | **Depends on:** | JCC-001, JCC-002                   |     |
-| **Used by:**    | JCC-005, JCC-024, JCC-028, JCC-040 |     |
-| **Related:**    | JCC-004, JCC-005, JCC-028          |     |
+| **Used by:**    | JCC-005, JCC-016, JCC-049, JCC-058 |     |
+| **Related:**    | JCC-004, JCC-005, JCC-049          |     |
 
 ---
 
@@ -346,13 +346,13 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 **Builds On This (learn these next):**
 
 - [[JCC-005 - The Java Concurrency Ecosystem Map]] - the current state of all tools
-- [[JCC-028 - Virtual Threads (Project Loom)]] - Era 4 in depth
-- [[JCC-040 - Structured Concurrency]] - the task lifecycle model from Era 4
+- [[JCC-049 - Virtual Threads (Project Loom)]] - Era 4 in depth
+- [[JCC-058 - Structured Concurrency]] - the task lifecycle model from Era 4
 
 **Alternatives / Comparisons:**
 
 - [[JCC-004 - Concurrency vs Parallelism in Java]] - the conceptual distinction between the two goals
-- [[JCC-024 - Executor]] - the Era 2 foundation for thread management
+- [[JCC-016 - Executor]] - the Era 2 foundation for thread management
 
 ---
 
@@ -368,7 +368,7 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 │ TRADE-OFF     │ Abstraction vs control               │
 │ ONE-LINER     │ Era 4 restores sequential model at   │
 │               │ scale by making blocking cheap       │
-│ NEXT EXPLORE  │ JCC-028 Virtual Threads, JCC-040 SC  │
+│ NEXT EXPLORE  │ JCC-049 Virtual Threads, JCC-058 SC  │
 └────────────────────────────────────────────────────┘
 ```
 

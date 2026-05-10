@@ -7,7 +7,7 @@ folder: JLG-java-language
 difficulty: ★☆☆
 depends_on: JLG-001
 used_by: JLG-041
-related: JLG-002, JLG-043, JLG-049
+related: JLG-002, JLG-075, JLG-081
 tags:
   - java
   - foundational
@@ -30,7 +30,7 @@ permalink: /jlg/java-versioning-and-lts-release-strategy/
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Depends on** | [[JLG-001 - What Is Java - History and Philosophy]]                                                                                                                 |
 | **Used by**    | [[JLG-041 - Java Version Migration Strategy (8 to 17 to 21)]]                                                                                                       |
-| **Related**    | [[JLG-002 - The Java Ecosystem Map (SE, EE, ME, Android)]], [[JLG-043 - Java Modularity Strategy (JPMS)]], [[JLG-049 - Java Language Design History and Rationale]] |
+| **Related**    | [[JLG-002 - The Java Ecosystem Map (SE, EE, ME, Android)]], [[JLG-075 - Java Modularity Strategy (JPMS)]], [[JLG-081 - Java Language Design History and Rationale]] |
 
 ---
 
@@ -395,7 +395,7 @@ java -version 2>&1 | head -1
 **Builds On This (learn these next):**
 
 - [[JLG-041 - Java Version Migration Strategy (8 to 17 to 21)]] - how to execute the upgrade
-- [[JLG-043 - Java Modularity Strategy (JPMS)]] - JPMS introduced in Java 9
+- [[JLG-075 - Java Modularity Strategy (JPMS)]] - JPMS introduced in Java 9
 
 **Alternatives / Comparisons:**
 
@@ -424,7 +424,7 @@ java -version 2>&1 | head -1
 |               | features experimental only; --release    |
 |               | not --source/--target                    |
 | NEXT EXPLORE  | JLG-041 (Migration Strategy),            |
-|               | JLG-043 (JPMS from Java 9)               |
+|               | JLG-075 (JPMS from Java 9)               |
 +----------------------------------------------------------+
 ```
 

@@ -6,8 +6,8 @@ tier: tier-6-infrastructure-devops
 folder: CTR-containers
 difficulty: ★☆☆
 depends_on:
-used_by: CTR-002, CTR-003, CTR-008, CTR-009
-related: CTR-002, CTR-027, K8S-001
+used_by: CTR-002, CTR-003, CTR-024, CTR-025
+related: CTR-002, CTR-008, K8S-001
 tags:
   - containers
   - docker
@@ -30,8 +30,8 @@ dependencies so it runs identically everywhere, eliminating environment drift.
 | | |
 |---|---|
 | **Depends on** | - |
-| **Used by** | CTR-002, CTR-003, CTR-008, CTR-009 |
-| **Related** | CTR-002, CTR-027, K8S-001 |
+| **Used by** | CTR-002, CTR-003, CTR-024, CTR-025 |
+| **Related** | CTR-002, CTR-008, K8S-001 |
 
 ---
 
@@ -444,18 +444,18 @@ with a descriptive error if any are absent.
 
 **Prerequisites (understand these first):**
 - Linux processes and the kernel
-- `[[CTR-017 - Linux Namespaces]]` - the kernel isolation primitives
-- `[[CTR-018 - Cgroups]]` - the resource limit mechanism
+- `[[CTR-018 - Linux Namespaces]]` - the kernel isolation primitives
+- `[[CTR-010 - Cgroups]]` - the resource limit mechanism
 
 **Builds On This (learn these next):**
 - `[[CTR-002 - VMs vs Containers -- A Mental Model]]`
-- `[[CTR-008 - Container]]` - the runtime unit in detail
-- `[[CTR-009 - Docker]]` - the toolchain that popularised containers
-- `[[CTR-010 - Docker Image]]` - the immutable artifact
-- `[[CTR-026 - Container Orchestration]]` - managing containers at scale
+- `[[CTR-024 - Container]]` - the runtime unit in detail
+- `[[CTR-025 - Docker]]` - the toolchain that popularised containers
+- `[[CTR-006 - Docker Image]]` - the immutable artifact
+- `[[CTR-027 - Container Orchestration]]` - managing containers at scale
 
 **Alternatives / Comparisons:**
-- `[[CTR-027 - Docker vs VM]]` - full comparison
+- `[[CTR-008 - Docker vs VM]]` - full comparison
 - Virtual Machines - stronger isolation, higher overhead
 - Bare metal - no isolation benefits, maximum performance
 
@@ -480,7 +480,7 @@ with a descriptive error if any are absent.
 │               kernel-shared risk             │
 │ ONE-LINER     Sealed box: code + deps run    │
 │               identically everywhere         │
-│ NEXT EXPLORE  CTR-009, CTR-010, K8S-001      │
+│ NEXT EXPLORE  CTR-025, CTR-006, K8S-001      │
 └──────────────────────────────────────────────┘
 ```
 

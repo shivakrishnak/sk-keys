@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JCC-java-concurrency
 difficulty: ★☆☆
 depends_on: JCC-006
-used_by: JCC-008, JCC-024, JCC-025
-related: JCC-006, JCC-008, JCC-024
+used_by: JCC-008, JCC-016, JCC-017
+related: JCC-006, JCC-008, JCC-016
 tags:
   - java
   - concurrency
@@ -30,8 +30,8 @@ permalink: /jcc/runnable/
 | Metadata        |                           |     |
 | :-------------- | :------------------------ | :-- |
 | **Depends on:** | JCC-006                   |     |
-| **Used by:**    | JCC-008, JCC-024, JCC-025 |     |
-| **Related:**    | JCC-006, JCC-008, JCC-024 |     |
+| **Used by:**    | JCC-008, JCC-016, JCC-017 |     |
+| **Related:**    | JCC-006, JCC-008, JCC-016 |     |
 
 ---
 
@@ -372,8 +372,8 @@ List<Future<String>> futures = items.stream()
 **Builds On This (learn these next):**
 
 - [[JCC-008 - Callable]] - the return-value version of Runnable
-- [[JCC-024 - Executor]] - the abstraction that accepts Runnable for execution
-- [[JCC-025 - ExecutorService]] - extended executor with lifecycle management
+- [[JCC-016 - Executor]] - the abstraction that accepts Runnable for execution
+- [[JCC-017 - ExecutorService]] - extended executor with lifecycle management
 
 **Alternatives / Comparisons:**
 
@@ -393,7 +393,7 @@ List<Future<String>> futures = items.stream()
 │ AVOID WHEN    │ Need return value (use Callable)      │
 │ TRADE-OFF     │ Simplicity vs. result/exception power│
 │ ONE-LINER     │ Runnable = the what, not the how     │
-│ NEXT EXPLORE  │ JCC-008 Callable, JCC-024 Executor   │
+│ NEXT EXPLORE  │ JCC-008 Callable, JCC-016 Executor   │
 └────────────────────────────────────────────────────┘
 ```
 

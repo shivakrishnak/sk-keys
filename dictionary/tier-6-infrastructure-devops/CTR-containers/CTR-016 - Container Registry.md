@@ -5,9 +5,9 @@ category: Containers
 tier: tier-6-infrastructure-devops
 folder: CTR-containers
 difficulty: ★★☆
-depends_on: CTR-009, CTR-010, CTR-024, CTR-033
-used_by: CTR-023, CTR-033, CTR-034, CTR-026
-related: CTR-010, CTR-033, CTR-023, CTR-024, CTR-009
+depends_on: CTR-025, CTR-006, CTR-020, CTR-029
+used_by: CTR-019, CTR-029, CTR-040, CTR-027
+related: CTR-006, CTR-029, CTR-019, CTR-020, CTR-025
 tags:
   - containers
   - docker

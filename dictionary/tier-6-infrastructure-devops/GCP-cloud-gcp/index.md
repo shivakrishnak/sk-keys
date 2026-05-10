@@ -11,23 +11,23 @@ permalink: /cloud-gcp/
 
 Google Cloud Platform: Compute (GCE, GKE, Cloud Run, Functions), storage (GCS, BigQuery, Spanner, Firestore), messaging (Pub/Sub), networking (VPC, Load Balancing, Armor, CDN), AI/ML (Vertex AI), data engineering (Dataflow, Composer), and GCP vs AWS vs Azure decision frameworks.
 
-**Keywords:** GCP-001–GCP-045 (45 terms)
+**Keywords:** GCP-001–GCP-003 (45 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
 | GCP-001 | What Is GCP and the Google Cloud Model | ★☆☆ |
 | GCP-002 | The GCP Service Landscape -- A Map | ★☆☆ |
-| GCP-003 | GCP vs AWS vs Azure -- Key Differences | ★★☆ |
-| GCP-004 | GCP Well-Architected Pillars | ★★☆ |
-| GCP-005 | The GCP Ecosystem Map | ★☆☆ |
-| GCP-006 | Google Compute Engine (GCE) | ★★☆ |
-| GCP-007 | Google Kubernetes Engine (GKE) | ★★☆ |
-| GCP-008 | Google Cloud Run | ★★☆ |
-| GCP-009 | Google Cloud Functions | ★★☆ |
-| GCP-010 | Google Cloud Storage (GCS) | ★☆☆ |
-| GCP-011 | Google BigQuery | ★★☆ |
-| GCP-012 | Google Cloud Pub/Sub | ★★☆ |
-| GCP-013 | Google Cloud Spanner | ★★★ |
+| GCP-008 | The GCP Ecosystem Map | ★☆☆ |
+| GCP-009 | Google Cloud Storage (GCS) | ★☆☆ |
+| GCP-006 | GCP Interview Preparation Guide | ★☆☆ |
+| GCP-010 | GCP vs AWS vs Azure -- Key Differences | ★★☆ |
+| GCP-011 | GCP Well-Architected Pillars | ★★☆ |
+| GCP-004 | Google Compute Engine (GCE) | ★★☆ |
+| GCP-012 | Google Kubernetes Engine (GKE) | ★★☆ |
+| GCP-007 | Google Cloud Run | ★★☆ |
+| GCP-013 | Google Cloud Functions | ★★☆ |
+| GCP-028 | Google BigQuery | ★★☆ |
+| GCP-024 | Google Cloud Pub/Sub | ★★☆ |
 | GCP-014 | Google Cloud SQL | ★★☆ |
 | GCP-015 | Google Cloud Firestore | ★★☆ |
 | GCP-016 | Google Cloud IAM | ★★☆ |
@@ -35,28 +35,28 @@ Google Cloud Platform: Compute (GCE, GKE, Cloud Run, Functions), storage (GCS, B
 | GCP-018 | Google Cloud Load Balancing | ★★☆ |
 | GCP-019 | Google Cloud CDN | ★★☆ |
 | GCP-020 | Google Cloud Armor | ★★☆ |
-| GCP-021 | Google Vertex AI | ★★★ |
-| GCP-022 | Google Cloud Dataflow | ★★★ |
-| GCP-023 | Google Cloud Composer (Airflow) | ★★☆ |
-| GCP-024 | Cloud Monitoring and Logging (Cloud Operations) | ★★☆ |
-| GCP-025 | GCP Cost Management and Billing | ★★☆ |
-| GCP-026 | Cloud Bigtable | ★★★ |
-| GCP-027 | Cloud Memorystore (Redis on GCP) | ★★★ |
-| GCP-028 | Cloud SQL | ★★☆ |
-| GCP-029 | Secret Manager | ★★☆ |
-| GCP-030 | Cloud DNS | ★★☆ |
-| GCP-031 | Cloud Interconnect | ★★★ |
-| GCP-032 | Cloud NAT | ★★★ |
-| GCP-033 | Cloud Endpoints | ★★★ |
-| GCP-034 | GCP IAM (Cloud Identity and Access Management) | ★★★ |
-| GCP-035 | Organization Policy Service | ★★★ |
-| GCP-036 | Cloud Operations Suite (Monitoring, Logging) | ★★☆ |
-| GCP-037 | Cloud Trace and Cloud Profiler | ★★★ |
-| GCP-038 | Anthos and Multi-Cloud Strategy | ★★★ |
-| GCP-039 | GCP Cost Management and Budgets | ★★★ |
-| GCP-040 | GCP Migration Strategy | ★★★ |
-| GCP-041 | GCP Architecture Best Practices | ★★★ |
-| GCP-042 | Cloud Identity | ★★★ |
-| GCP-043 | GCP vs AWS vs Azure Decision Framework | ★★★ |
-| GCP-044 | GCP Data Analytics Architecture | ★★★ |
-| GCP-045 | GCP Interview Preparation Guide | ★☆☆ |
+| GCP-025 | Google Cloud Composer (Airflow) | ★★☆ |
+| GCP-026 | Cloud Monitoring and Logging (Cloud Operations) | ★★☆ |
+| GCP-029 | GCP Cost Management and Billing | ★★☆ |
+| GCP-030 | Cloud SQL | ★★☆ |
+| GCP-021 | Secret Manager | ★★☆ |
+| GCP-033 | Cloud DNS | ★★☆ |
+| GCP-034 | Cloud Operations Suite (Monitoring, Logging) | ★★☆ |
+| GCP-022 | Google Cloud Spanner | ★★★ |
+| GCP-023 | Google Vertex AI | ★★★ |
+| GCP-031 | Google Cloud Dataflow | ★★★ |
+| GCP-035 | Cloud Bigtable | ★★★ |
+| GCP-036 | Cloud Memorystore (Redis on GCP) | ★★★ |
+| GCP-037 | Cloud Interconnect | ★★★ |
+| GCP-027 | Cloud NAT | ★★★ |
+| GCP-038 | Cloud Endpoints | ★★★ |
+| GCP-032 | GCP IAM (Cloud Identity and Access Management) | ★★★ |
+| GCP-039 | Organization Policy Service | ★★★ |
+| GCP-040 | Cloud Trace and Cloud Profiler | ★★★ |
+| GCP-041 | Anthos and Multi-Cloud Strategy | ★★★ |
+| GCP-042 | GCP Cost Management and Budgets | ★★★ |
+| GCP-043 | GCP Migration Strategy | ★★★ |
+| GCP-044 | GCP Architecture Best Practices | ★★★ |
+| GCP-045 | Cloud Identity | ★★★ |
+| GCP-005 | GCP vs AWS vs Azure Decision Framework | ★★★ |
+| GCP-003 | GCP Data Analytics Architecture | ★★★ |

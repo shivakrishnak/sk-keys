@@ -27,45 +27,45 @@ RAG pipelines, vector search, agentic AI, multi-agent systems, MCP, LangChain, L
 | RAG-010 | RAG Pipeline Basics (Index, Retrieve, Generate) | ★☆☆ |
 | RAG-011 | LangChain Fundamentals | ★☆☆ |
 | RAG-012 | LlamaIndex Fundamentals | ★☆☆ |
-| RAG-013 | Vector Database Options (Pinecone, Weaviate, Qdrant, Chroma) | ★★☆ |
-| RAG-014 | Hybrid Search (Dense + Sparse / BM25) | ★★☆ |
-| RAG-015 | Re-ranking in RAG (Cross-Encoder, Cohere Rerank) | ★★☆ |
-| RAG-016 | Metadata Filtering in Vector Search | ★★☆ |
-| RAG-017 | RAG Evaluation (RAGAs, Faithfulness, Relevance) | ★★☆ |
-| RAG-018 | Query Transformation (HyDE, Step-Back, Multi-Query) | ★★☆ |
-| RAG-019 | Document Parsing and Extraction for RAG | ★★☆ |
-| RAG-020 | AI Agents Fundamentals (Tools, Memory, Planning) | ★★☆ |
-| RAG-021 | ReAct Agent Pattern | ★★☆ |
-| RAG-022 | Tool Calling and Function Calling in Agents | ★★☆ |
-| RAG-023 | Advanced RAG Patterns (Corrective RAG, Self-RAG) | ★★☆ |
-| RAG-024 | Graph RAG (Knowledge Graphs + LLM) | ★★☆ |
-| RAG-025 | Multi-Agent Systems (Orchestration, Communication) | ★★☆ |
-| RAG-026 | Agent Memory Systems (Short-Term, Long-Term, Episodic) | ★★☆ |
-| RAG-027 | Agent Planning Strategies (MCTS, Tree-of-Thought) | ★★☆ |
-| RAG-028 | LLMOps Fundamentals (Prompt Versioning, Experiment Tracking) | ★★☆ |
-| RAG-029 | LLM Observability (Langfuse, Helicone, Traceloop) | ★★☆ |
-| RAG-030 | LLM CI/CD (Prompt Testing, Regression) | ★★☆ |
-| RAG-031 | Guardrails and Output Validation (NeMo, Guardrails AI) | ★★☆ |
-| RAG-032 | Semantic Caching for LLMs | ★★☆ |
-| RAG-033 | Agentic RAG (Agents that Query and Refine) | ★★★ |
-| RAG-034 | Multimodal RAG (Images, Audio, Video + Text) | ★★★ |
-| RAG-035 | RAG at Scale (Distributed Index, Sharding) | ★★★ |
-| RAG-036 | Agent Reliability and Failure Recovery | ★★★ |
-| RAG-037 | Knowledge Graph Construction from Unstructured Data | ★★★ |
-| RAG-038 | LLMOps Platform Design (MLflow, W&B, ZenML) | ★★★ |
-| RAG-039 | AI Application Security (Prompt Injection, Data Exfil) | ★★★ |
-| RAG-040 | RAG Architecture Strategy (Naive vs Modular vs Agentic) | ★★★ |
-| RAG-041 | Agent Architecture Strategy (Single vs Multi-Agent) | ★★★ |
-| RAG-042 | LLMOps Maturity Model | ★★★ |
-| RAG-043 | Vector DB Selection Framework | ★★★ |
-| RAG-044 | AI Application Reliability Strategy | ★★★ |
-| RAG-045 | RAG System Design Internals | ★★★ |
-| RAG-046 | Vector Index Algorithm Research (HNSW, IVF, ScaNN) | ★★★ |
-| RAG-047 | Agent Framework Design Research | ★★★ |
-| RAG-048 | RAG Trade-off Framing (Precision vs Recall vs Latency) | ★★★ |
-| RAG-049 | Agent Reliability Mental Model | ★★★ |
-| RAG-050 | RAG vs Fine-Tuning Decision Framework | ★★★ |
-| RAG-051 | RAG Interview Preparation Guide | ★☆☆ |
+| RAG-015 | RAG Interview Preparation Guide | ★☆☆ |
+| RAG-016 | Vector Database Options (Pinecone, Weaviate, Qdrant, Chroma) | ★★☆ |
+| RAG-017 | Hybrid Search (Dense + Sparse / BM25) | ★★☆ |
+| RAG-018 | Re-ranking in RAG (Cross-Encoder, Cohere Rerank) | ★★☆ |
+| RAG-019 | Metadata Filtering in Vector Search | ★★☆ |
+| RAG-020 | RAG Evaluation (RAGAs, Faithfulness, Relevance) | ★★☆ |
+| RAG-021 | Query Transformation (HyDE, Step-Back, Multi-Query) | ★★☆ |
+| RAG-022 | Document Parsing and Extraction for RAG | ★★☆ |
+| RAG-023 | AI Agents Fundamentals (Tools, Memory, Planning) | ★★☆ |
+| RAG-024 | ReAct Agent Pattern | ★★☆ |
+| RAG-025 | Tool Calling and Function Calling in Agents | ★★☆ |
+| RAG-026 | Advanced RAG Patterns (Corrective RAG, Self-RAG) | ★★☆ |
+| RAG-027 | Graph RAG (Knowledge Graphs + LLM) | ★★☆ |
+| RAG-028 | Multi-Agent Systems (Orchestration, Communication) | ★★☆ |
+| RAG-029 | Agent Memory Systems (Short-Term, Long-Term, Episodic) | ★★☆ |
+| RAG-030 | Agent Planning Strategies (MCTS, Tree-of-Thought) | ★★☆ |
+| RAG-031 | LLMOps Fundamentals (Prompt Versioning, Experiment Tracking) | ★★☆ |
+| RAG-032 | LLM Observability (Langfuse, Helicone, Traceloop) | ★★☆ |
+| RAG-033 | LLM CI/CD (Prompt Testing, Regression) | ★★☆ |
+| RAG-034 | Guardrails and Output Validation (NeMo, Guardrails AI) | ★★☆ |
+| RAG-035 | Semantic Caching for LLMs | ★★☆ |
+| RAG-036 | Agentic RAG (Agents that Query and Refine) | ★★★ |
+| RAG-037 | Multimodal RAG (Images, Audio, Video + Text) | ★★★ |
+| RAG-038 | RAG at Scale (Distributed Index, Sharding) | ★★★ |
+| RAG-039 | Agent Reliability and Failure Recovery | ★★★ |
+| RAG-040 | Knowledge Graph Construction from Unstructured Data | ★★★ |
+| RAG-041 | LLMOps Platform Design (MLflow, W&B, ZenML) | ★★★ |
+| RAG-042 | AI Application Security (Prompt Injection, Data Exfil) | ★★★ |
+| RAG-043 | RAG Architecture Strategy (Naive vs Modular vs Agentic) | ★★★ |
+| RAG-044 | Agent Architecture Strategy (Single vs Multi-Agent) | ★★★ |
+| RAG-045 | LLMOps Maturity Model | ★★★ |
+| RAG-046 | Vector DB Selection Framework | ★★★ |
+| RAG-047 | AI Application Reliability Strategy | ★★★ |
+| RAG-048 | RAG System Design Internals | ★★★ |
+| RAG-049 | Vector Index Algorithm Research (HNSW, IVF, ScaNN) | ★★★ |
+| RAG-050 | Agent Framework Design Research | ★★★ |
+| RAG-051 | RAG Trade-off Framing (Precision vs Recall vs Latency) | ★★★ |
+| RAG-013 | Agent Reliability Mental Model | ★★★ |
+| RAG-014 | RAG vs Fine-Tuning Decision Framework | ★★★ |
 | RAG-052 | RAG Evaluation (RAGAS, TruLens) | ★★★ |
 | RAG-053 | Knowledge Graph RAG | ★★★ |
 | RAG-054 | Corrective RAG (CRAG) | ★★★ |

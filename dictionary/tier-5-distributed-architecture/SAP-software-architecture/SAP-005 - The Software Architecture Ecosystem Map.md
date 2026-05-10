@@ -6,8 +6,8 @@ tier: tier-5-distributed-architecture
 folder: SAP-software-architecture
 difficulty: ★☆☆
 depends_on: SAP-001, SAP-003, SAP-004
-used_by: SAP-006, SAP-057, SAP-061
-related: SAP-003, SAP-058, SAP-063
+used_by: SAP-056, SAP-027, SAP-081
+related: SAP-003, SAP-028, SAP-029
 tags:
   - architecture
   - foundational
@@ -29,8 +29,8 @@ permalink: /software-architecture/software-architecture-ecosystem-map/
 | SAP-005 | Category: Software Architecture Patterns | Difficulty: ★☆☆ |
 |:---|:---|:---|
 | **Depends on:** | SAP-001, SAP-003, SAP-004 | |
-| **Used by:** | SAP-006, SAP-057, SAP-061 | |
-| **Related:** | SAP-003, SAP-058, SAP-063 | |
+| **Used by:** | SAP-056, SAP-027, SAP-081 | |
+| **Related:** | SAP-003, SAP-028, SAP-029 | |
 
 ---
 
@@ -140,27 +140,27 @@ The ecosystem map is a metacognitive tool. It enables architects to reason about
 
 **Zone 1 - Structural Styles**
 Concerns: How is the system decomposed? How do components connect?
-Key patterns: Layered (SAP-013), Hexagonal (SAP-014), Clean (SAP-015), Microservices, Modular Monolith (SAP-039), Pipes & Filters (SAP-041).
+Key patterns: Layered (SAP-034), Hexagonal (SAP-063), Clean (SAP-064), Microservices, Modular Monolith (SAP-075), Pipes & Filters (SAP-077).
 Driven by: Deployability, team autonomy, scalability, testability.
 
 **Zone 2 - Domain Patterns**
 Concerns: How is business logic structured? How are domain boundaries drawn?
-Key patterns: DDD (SAP-023–SAP-038), CQRS (SAP-018), Event Sourcing (SAP-019), Aggregate Root (SAP-030), Bounded Context.
+Key patterns: DDD (SAP-065–SAP-074), CQRS (SAP-008), Event Sourcing (SAP-018), Aggregate Root (SAP-067), Bounded Context.
 Driven by: Domain complexity, consistency requirements, team alignment with business.
 
 **Zone 3 - Data & Integration Patterns**
 Concerns: How does data flow? How do services share state?
-Key patterns: Repository (SAP-021), Data Mapper (SAP-029), Anti-Corruption Layer (SAP-034), Saga, Outbox pattern.
+Key patterns: Repository (SAP-040), Data Mapper (SAP-066), Anti-Corruption Layer (SAP-070), Saga, Outbox pattern.
 Driven by: Data consistency, isolation, performance, migration safety.
 
 **Zone 4 - Quality Attribute Techniques**
 Concerns: How are non-functional requirements achieved?
-Key patterns: Fitness functions (SAP-056), circuit breaker, bulkhead, caching, CDN, rate limiting.
+Key patterns: Fitness functions (SAP-026), circuit breaker, bulkhead, caching, CDN, rate limiting.
 Driven by: Specific quality attribute targets (latency, availability, security).
 
 **Zone 5 - Governance & Communication**
 Concerns: How are decisions made, recorded, and communicated?
-Key patterns: ADR (SAP-006), C4 Model (SAP-058), Architecture Review (SAP-008), Tech Radar.
+Key patterns: ADR (SAP-056), C4 Model (SAP-028), Architecture Review (SAP-058), Tech Radar.
 Driven by: Team size, decision cadence, distributed team coordination.
 
 ---
@@ -266,13 +266,13 @@ If < 3, it is a knowledge blind spot.
 - SAP-004 - Architecture vs Design vs Implementation
 
 **Builds On This (learn these next):**
-- SAP-006 - Architecture Decision Record (ADR)
-- SAP-057 - Architecture Governance at Scale
-- SAP-061 - Evolutionary Architecture Design
+- SAP-056 - Architecture Decision Record (ADR)
+- SAP-027 - Architecture Governance at Scale
+- SAP-081 - Evolutionary Architecture Design
 
 **Alternatives / Comparisons:**
-- SAP-058 - Formal Architecture Specification (C4, ADL, UML)
-- SAP-063 - Architecture Necessity Assessment
+- SAP-028 - Formal Architecture Specification (C4, ADL, UML)
+- SAP-029 - Architecture Necessity Assessment
 
 ---
 
@@ -300,7 +300,7 @@ If < 3, it is a knowledge blind spot.
 +----------------------------------------------------------+
 | ONE-LINER      | Zone first, pattern second.             |
 +----------------------------------------------------------+
-| NEXT EXPLORE   | SAP-006, SAP-013, SAP-057, SAP-058      |
+| NEXT EXPLORE   | SAP-056, SAP-034, SAP-027, SAP-028      |
 +----------------------------------------------------------+
 ```
 

@@ -28,7 +28,7 @@ permalink: /dst/the-distributed-systems-landscape----a-map/
 | DST-003         | Category: Distributed Systems      | Difficulty: ★☆☆ |
 | :-------------- | :--------------------------------- | :-------------- |
 | **Depends on:** | DST-001, DST-002                   |                 |
-| **Used by:**    | DST-006                            |                 |
+| **Used by:**    | DST-022                            |                 |
 | **Related:**    | DST-001, DST-002, DST-004, DST-005 |                 |
 
 ---
@@ -375,9 +375,9 @@ Response
 
 **Builds On This (learn these next):**
 
-- [[DST-006 - CAP Theorem]]
-- [[DST-022 - Leader Election]]
-- [[DST-042 - Circuit Breaker]]
+- [[DST-022 - CAP Theorem]]
+- [[DST-045 - Leader Election]]
+- [[DST-027 - Circuit Breaker]]
 
 **Alternatives / Comparisons:**
 
@@ -402,7 +402,7 @@ Response
 | TRADE-OFF       Map depth vs breadth                |
 | ONE-LINER       5 domains: consistency, ordering,   |
 |                 coordination, fault-tol, observ    |
-| NEXT EXPLORE    DST-006, DST-022, DST-042, DST-049  |
+| NEXT EXPLORE    DST-022, DST-045, DST-027, DST-056  |
 +-----------------------------------------------------+
 ```
 

@@ -29,36 +29,36 @@ HTML structure, semantics, accessibility, Web Components, performance, and progr
 | HTM-012 | HTML Images and Media | ★☆☆ |
 | HTM-013 | HTML Tables | ★☆☆ |
 | HTM-014 | HTML Lists (ul, ol, dl) | ★☆☆ |
-| HTM-015 | HTML Head Elements (meta, title, link, script) | ★★☆ |
-| HTM-016 | HTML5 APIs (Canvas, Video, Audio) | ★★☆ |
-| HTM-017 | Web Accessibility (ARIA, WCAG) | ★★☆ |
-| HTM-018 | HTML Validation and Standards | ★★☆ |
-| HTM-019 | HTML Templating (Jinja, Thymeleaf, Handlebars) | ★★☆ |
-| HTM-020 | HTML Custom Data Attributes (data-*) | ★★☆ |
-| HTM-021 | HTML Microdata and Schema.org | ★★☆ |
-| HTM-022 | Open Graph Protocol (og: meta tags) | ★★☆ |
-| HTM-023 | HTML Security (XSS Prevention, CSP) | ★★☆ |
-| HTM-024 | Web Components (Custom Elements, Shadow DOM, Templates) | ★★☆ |
-| HTM-025 | HTML Performance (Critical Path, Lazy Loading, Preload) | ★★☆ |
-| HTM-026 | Progressive Web Apps (PWA, Service Worker, Manifest) | ★★☆ |
-| HTM-027 | HTML Internationalization (lang, dir, charset) | ★★☆ |
-| HTM-028 | Server-Side Rendering (SSR) vs Client-Side Rendering | ★★☆ |
-| HTM-029 | Static Site Generation (SSG) Pattern | ★★☆ |
-| HTM-030 | HTML5 History API and SPAs | ★★☆ |
-| HTM-031 | Browser Rendering Pipeline (Parse, CSSOM, Layout, Paint) | ★★★ |
-| HTM-032 | DOM Manipulation Performance | ★★★ |
-| HTM-033 | Web Performance Metrics (CWV: LCP, FID, CLS) | ★★★ |
-| HTM-034 | Shadow DOM Internals | ★★★ |
-| HTM-035 | Browser HTML Parsing Algorithm | ★★★ |
-| HTM-036 | HTML Architecture Strategy (Component Libraries, Design Systems) | ★★★ |
-| HTM-037 | Rendering Strategy Selection (CSR vs SSR vs SSG vs ISR) | ★★★ |
-| HTM-038 | Web Accessibility Strategy | ★★★ |
-| HTM-039 | Browser Internals -- Rendering Engine Deep Dive | ★★★ |
-| HTM-040 | HTML Specification Design Philosophy | ★★★ |
-| HTM-041 | Web Standards Trade-off Framing | ★★★ |
-| HTM-042 | Semantic HTML Mental Model | ★★★ |
-| HTM-043 | HTML Interview Preparation Guide | ★☆☆ |
-| HTM-044 | Web Components | ★★★ |
-| HTM-045 | Progressive Enhancement | ★★☆ |
+| HTM-017 | HTML Interview Preparation Guide | ★☆☆ |
+| HTM-018 | HTML Head Elements (meta, title, link, script) | ★★☆ |
+| HTM-019 | HTML5 APIs (Canvas, Video, Audio) | ★★☆ |
+| HTM-020 | Web Accessibility (ARIA, WCAG) | ★★☆ |
+| HTM-021 | HTML Validation and Standards | ★★☆ |
+| HTM-022 | HTML Templating (Jinja, Thymeleaf, Handlebars) | ★★☆ |
+| HTM-023 | HTML Custom Data Attributes (data-*) | ★★☆ |
+| HTM-024 | HTML Microdata and Schema.org | ★★☆ |
+| HTM-025 | Open Graph Protocol (og: meta tags) | ★★☆ |
+| HTM-026 | HTML Security (XSS Prevention, CSP) | ★★☆ |
+| HTM-027 | Web Components (Custom Elements, Shadow DOM, Templates) | ★★☆ |
+| HTM-028 | HTML Performance (Critical Path, Lazy Loading, Preload) | ★★☆ |
+| HTM-029 | Progressive Web Apps (PWA, Service Worker, Manifest) | ★★☆ |
+| HTM-030 | HTML Internationalization (lang, dir, charset) | ★★☆ |
+| HTM-031 | Server-Side Rendering (SSR) vs Client-Side Rendering | ★★☆ |
+| HTM-033 | Static Site Generation (SSG) Pattern | ★★☆ |
+| HTM-035 | HTML5 History API and SPAs | ★★☆ |
+| HTM-036 | Progressive Enhancement | ★★☆ |
+| HTM-037 | Browser Rendering Pipeline (Parse, CSSOM, Layout, Paint) | ★★★ |
+| HTM-038 | DOM Manipulation Performance | ★★★ |
+| HTM-039 | Web Performance Metrics (CWV: LCP, FID, CLS) | ★★★ |
+| HTM-040 | Shadow DOM Internals | ★★★ |
+| HTM-041 | Browser HTML Parsing Algorithm | ★★★ |
+| HTM-042 | HTML Architecture Strategy (Component Libraries, Design Systems) | ★★★ |
+| HTM-043 | Rendering Strategy Selection (CSR vs SSR vs SSG vs ISR) | ★★★ |
+| HTM-044 | Web Accessibility Strategy | ★★★ |
+| HTM-015 | Browser Internals -- Rendering Engine Deep Dive | ★★★ |
+| HTM-045 | HTML Specification Design Philosophy | ★★★ |
+| HTM-016 | Web Standards Trade-off Framing | ★★★ |
+| HTM-032 | Semantic HTML Mental Model | ★★★ |
+| HTM-034 | Web Components | ★★★ |
 | HTM-046 | HTML Email Development | ★★★ |
 | HTM-047 | Microdata and JSON-LD for SEO | ★★★ |

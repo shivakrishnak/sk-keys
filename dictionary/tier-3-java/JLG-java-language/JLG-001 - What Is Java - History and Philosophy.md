@@ -7,7 +7,7 @@ folder: JLG-java-language
 difficulty: ★☆☆
 depends_on:
 used_by: JLG-002, JLG-003, JLG-004, JLG-005
-related: JLG-049, SPR-001, JVM-001
+related: JLG-081, SPR-001, JVM-001
 tags:
   - java
   - foundational
@@ -30,7 +30,7 @@ permalink: /jlg/what-is-java-history-and-philosophy/
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Depends on** | -                                                                                                                                                                                                                               |
 | **Used by**    | [[JLG-002 - The Java Ecosystem Map (SE, EE, ME, Android)]], [[JLG-003 - Why Java Is Still Dominant]], [[JLG-004 - Java vs Other JVM Languages (Kotlin, Scala, Groovy)]], [[JLG-005 - Java Versioning and LTS Release Strategy]] |
-| **Related**    | [[JLG-049 - Java Language Design History and Rationale]], [[SPR-001 - What Is Spring - History and Philosophy]], [[JVM-001 - JVM Architecture Overview]]                                                                        |
+| **Related**    | [[JLG-081 - Java Language Design History and Rationale]], [[SPR-001 - What Is Spring - History and Philosophy]], [[JVM-001 - JVM Architecture Overview]]                                                                        |
 
 ---
 

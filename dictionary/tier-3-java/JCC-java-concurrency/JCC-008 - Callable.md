@@ -6,8 +6,8 @@ tier: tier-3-java
 folder: JCC-java-concurrency
 difficulty: ★☆☆
 depends_on: JCC-006, JCC-007
-used_by: JCC-009, JCC-024, JCC-025
-related: JCC-007, JCC-009, JCC-025
+used_by: JCC-009, JCC-016, JCC-017
+related: JCC-007, JCC-009, JCC-017
 tags:
   - java
   - concurrency
@@ -30,8 +30,8 @@ permalink: /jcc/callable/
 | Metadata        |                           |     |
 | :-------------- | :------------------------ | :-- |
 | **Depends on:** | JCC-006, JCC-007          |     |
-| **Used by:**    | JCC-009, JCC-024, JCC-025 |     |
-| **Related:**    | JCC-007, JCC-009, JCC-025 |     |
+| **Used by:**    | JCC-009, JCC-016, JCC-017 |     |
+| **Related:**    | JCC-007, JCC-009, JCC-017 |     |
 
 ---
 
@@ -378,13 +378,13 @@ try {
 **Builds On This (learn these next):**
 
 - [[JCC-009 - Future]] - the result handle returned by `executor.submit(Callable)`
-- [[JCC-025 - ExecutorService]] - the service that accepts `Callable` for execution
-- [[JCC-010 - CompletableFuture]] - non-blocking evolution of `Future`
+- [[JCC-017 - ExecutorService]] - the service that accepts `Callable` for execution
+- [[JCC-037 - CompletableFuture]] - non-blocking evolution of `Future`
 
 **Alternatives / Comparisons:**
 
 - [[JCC-007 - Runnable]] - when no return value is needed
-- [[JCC-010 - CompletableFuture]] - non-blocking async computation
+- [[JCC-037 - CompletableFuture]] - non-blocking async computation
 
 ---
 
@@ -399,7 +399,7 @@ try {
 │ AVOID WHEN    │ No result needed (use Runnable)     │
 │ TRADE-OFF     │ Result + exceptions vs. blocking get│
 │ ONE-LINER     │ Callable = Runnable + return + throws│
-│ NEXT EXPLORE  │ JCC-009 Future, JCC-010 CFuture     │
+│ NEXT EXPLORE  │ JCC-009 Future, JCC-037 CFuture     │
 └────────────────────────────────────────────────────┘
 ```
 

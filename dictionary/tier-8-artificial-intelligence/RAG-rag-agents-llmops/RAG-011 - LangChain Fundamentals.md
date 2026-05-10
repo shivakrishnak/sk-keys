@@ -7,7 +7,7 @@ folder: RAG-rag-agents-llmops
 difficulty: ★☆☆
 depends_on: RAG-001, RAG-010
 used_by:
-related: RAG-012, RAG-020
+related: RAG-012, RAG-022
 tags:
   - rag
   - foundational
@@ -30,7 +30,7 @@ permalink: /rag/langchain-fundamentals/
 | -------------- | ---------------- |
 | **Depends on** | RAG-001, RAG-010 |
 | **Used by**    | —                |
-| **Related**    | RAG-012, RAG-020 |
+| **Related**    | RAG-012, RAG-022 |
 
 ---
 
@@ -309,11 +309,11 @@ for chunk in ChatOpenAI(model="gpt-4o").stream("hello"):
 **Builds On This (learn these next):**
 
 - `RAG-012 - LlamaIndex Fundamentals` — the data-centric alternative
-- `RAG-020 - AI Agents Fundamentals` — LangChain/LangGraph agent patterns
+- `RAG-022 - AI Agents Fundamentals` — LangChain/LangGraph agent patterns
 
 **Alternatives / Comparisons:**
 
-- `RAG-025 - Multi-Agent Systems` — LangGraph for multi-agent orchestration
+- `RAG-027 - Multi-Agent Systems` — LangGraph for multi-agent orchestration
 
 ---
 
@@ -340,7 +340,7 @@ for chunk in ChatOpenAI(model="gpt-4o").stream("hello"):
 +--------------------------------------------------+
 | ONE-LINER     | "LEGO bricks for LLM pipelines" |
 +--------------------------------------------------+
-| NEXT EXPLORE  | RAG-012, RAG-020, LangGraph docs |
+| NEXT EXPLORE  | RAG-012, RAG-022, LangGraph docs |
 +--------------------------------------------------+
 ```
 

@@ -5,9 +5,9 @@ category: Java Concurrency
 tier: tier-3-java
 folder: JCC-java-concurrency
 difficulty: ★☆☆
-depends_on: JCC-007, JCC-008, JCC-025
-used_by: JCC-010, JCC-025
-related: JCC-008, JCC-010, JCC-025
+depends_on: JCC-007, JCC-008, JCC-017
+used_by: JCC-037, JCC-017
+related: JCC-008, JCC-037, JCC-017
 tags:
   - java
   - concurrency
@@ -29,9 +29,9 @@ permalink: /jcc/future/
 
 | Metadata        |                           |     |
 | :-------------- | :------------------------ | :-- |
-| **Depends on:** | JCC-007, JCC-008, JCC-025 |     |
-| **Used by:**    | JCC-010, JCC-025          |     |
-| **Related:**    | JCC-008, JCC-010, JCC-025 |     |
+| **Depends on:** | JCC-007, JCC-008, JCC-017 |     |
+| **Used by:**    | JCC-037, JCC-017          |     |
+| **Related:**    | JCC-008, JCC-037, JCC-017 |     |
 
 ---
 
@@ -372,17 +372,17 @@ catch (ExecutionException e) {
 **Prerequisites (understand these first):**
 
 - [[JCC-008 - Callable]] - the task that produces the Future result
-- [[JCC-025 - ExecutorService]] - the service that returns Futures from submitted tasks
+- [[JCC-017 - ExecutorService]] - the service that returns Futures from submitted tasks
 
 **Builds On This (learn these next):**
 
-- [[JCC-010 - CompletableFuture]] - the non-blocking, composable evolution of Future
-- [[JCC-040 - Structured Concurrency]] - Java 21 alternative to Future-based task management
+- [[JCC-037 - CompletableFuture]] - the non-blocking, composable evolution of Future
+- [[JCC-058 - Structured Concurrency]] - Java 21 alternative to Future-based task management
 
 **Alternatives / Comparisons:**
 
-- [[JCC-010 - CompletableFuture]] - adds callbacks, chaining, non-blocking composition
-- [[JCC-040 - Structured Concurrency]] - lifetime-scoped task results without Future
+- [[JCC-037 - CompletableFuture]] - adds callbacks, chaining, non-blocking composition
+- [[JCC-058 - Structured Concurrency]] - lifetime-scoped task results without Future
 
 ---
 
@@ -397,7 +397,7 @@ catch (ExecutionException e) {
 │ AVOID WHEN    │ Need callbacks/chaining (use CF)     │
 │ TRADE-OFF     │ Simplicity vs. blocking get()        │
 │ ONE-LINER     │ Future = ticket for async result     │
-│ NEXT EXPLORE  │ JCC-010 CompletableFuture            │
+│ NEXT EXPLORE  │ JCC-037 CompletableFuture            │
 └────────────────────────────────────────────────────┘
 ```
 

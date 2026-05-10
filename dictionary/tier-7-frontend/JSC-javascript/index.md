@@ -24,40 +24,40 @@ JS engine, event loop, closures, prototypes, async patterns, modules, memory, an
 | JSC-007 | 1291b - Heap (JS) | ★☆☆ |
 | JSC-008 | Call Stack (JS) | ★☆☆ |
 | JSC-009 | 1292b - Web APIs | ★☆☆ |
-| JSC-010 | Event Loop | ★★☆ |
-| JSC-011 | Task Queue (Macrotask) | ★★☆ |
-| JSC-012 | Microtask Queue | ★★☆ |
-| JSC-013 | var-let-const | ★☆☆ |
-| JSC-014 | Hoisting | ★★☆ |
-| JSC-015 | Temporal Dead Zone | ★★☆ |
-| JSC-016 | Scope | ★★☆ |
-| JSC-017 | Closure | ★★★ |
-| JSC-018 | 1300b - Lexical Environment | ★★★ |
-| JSC-019 | Prototype Chain | ★★★ |
-| JSC-020 | Prototypal Inheritance | ★★☆ |
-| JSC-021 | this keyword | ★★★ |
-| JSC-022 | Binding (call, apply, bind) | ★★☆ |
-| JSC-023 | Arrow Functions | ★★☆ |
-| JSC-024 | Execution Context | ★★★ |
-| JSC-025 | Higher-Order Functions (JS) | ★★☆ |
-| JSC-026 | IIFE | ★☆☆ |
-| JSC-027 | JavaScript Architecture Strategy (Module Systems, Bundlers) | ★★★ |
-| JSC-028 | JavaScript Performance Optimization Strategy | ★★★ |
-| JSC-029 | JavaScript Security Strategy | ★★★ |
-| JSC-030 | JavaScript Runtime Selection (Node vs Deno vs Bun) | ★★★ |
-| JSC-031 | JavaScript at Scale (TypeScript, Monorepos, Large Apps) | ★★★ |
-| JSC-032 | V8 Engine Internals (JIT, Hidden Classes, Turbofan) | ★★★ |
-| JSC-033 | JavaScript Specification (ECMAScript) Design | ★★★ |
-| JSC-034 | WebAssembly and the Future of JS | ★★★ |
-| JSC-035 | JavaScript Research Frontiers | ★★★ |
-| JSC-036 | JavaScript Trade-off Framing | ★★★ |
-| JSC-037 | Async Mental Model (Promises vs Callbacks vs async/await) | ★★★ |
-| JSC-038 | JavaScript Ecosystem Fatigue Thinking | ★★★ |
-| JSC-039 | JavaScript Interview Preparation Guide | ★☆☆ |
-| JSC-040 | Generators and Iterators | ★★★ |
-| JSC-041 | Proxies and Reflect API | ★★★ |
-| JSC-042 | Symbol Type | ★★☆ |
-| JSC-043 | WeakMap and WeakSet | ★★☆ |
-| JSC-044 | ArrayBuffer and TypedArray | ★★★ |
-| JSC-045 | JavaScript Module System (ESM, CJS, AMD) | ★★☆ |
+| JSC-010 | var-let-const | ★☆☆ |
+| JSC-016 | IIFE | ★☆☆ |
+| JSC-017 | JavaScript Interview Preparation Guide | ★☆☆ |
+| JSC-013 | Event Loop | ★★☆ |
+| JSC-018 | Task Queue (Macrotask) | ★★☆ |
+| JSC-026 | Microtask Queue | ★★☆ |
+| JSC-027 | Hoisting | ★★☆ |
+| JSC-011 | Temporal Dead Zone | ★★☆ |
+| JSC-031 | Scope | ★★☆ |
+| JSC-032 | Prototypal Inheritance | ★★☆ |
+| JSC-028 | Binding (call, apply, bind) | ★★☆ |
+| JSC-033 | Arrow Functions | ★★☆ |
+| JSC-019 | Higher-Order Functions (JS) | ★★☆ |
+| JSC-029 | Symbol Type | ★★☆ |
+| JSC-034 | WeakMap and WeakSet | ★★☆ |
+| JSC-020 | JavaScript Module System (ESM, CJS, AMD) | ★★☆ |
+| JSC-014 | Closure | ★★★ |
+| JSC-035 | 1300b - Lexical Environment | ★★★ |
+| JSC-036 | Prototype Chain | ★★★ |
+| JSC-037 | this keyword | ★★★ |
+| JSC-038 | Execution Context | ★★★ |
+| JSC-039 | JavaScript Architecture Strategy (Module Systems, Bundlers) | ★★★ |
+| JSC-040 | JavaScript Performance Optimization Strategy | ★★★ |
+| JSC-041 | JavaScript Security Strategy | ★★★ |
+| JSC-042 | JavaScript Runtime Selection (Node vs Deno vs Bun) | ★★★ |
+| JSC-012 | JavaScript at Scale (TypeScript, Monorepos, Large Apps) | ★★★ |
+| JSC-043 | V8 Engine Internals (JIT, Hidden Classes, Turbofan) | ★★★ |
+| JSC-044 | JavaScript Specification (ECMAScript) Design | ★★★ |
+| JSC-023 | WebAssembly and the Future of JS | ★★★ |
+| JSC-015 | JavaScript Research Frontiers | ★★★ |
+| JSC-024 | JavaScript Trade-off Framing | ★★★ |
+| JSC-045 | Async Mental Model (Promises vs Callbacks vs async/await) | ★★★ |
+| JSC-021 | JavaScript Ecosystem Fatigue Thinking | ★★★ |
+| JSC-030 | Generators and Iterators | ★★★ |
+| JSC-025 | Proxies and Reflect API | ★★★ |
+| JSC-022 | ArrayBuffer and TypedArray | ★★★ |
 | JSC-046 | Web Workers | ★★★ |

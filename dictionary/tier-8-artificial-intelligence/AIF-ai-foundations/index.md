@@ -22,57 +22,57 @@ ML basics, neural networks, transformer architecture, attention, embeddings, fin
 | AIF-005 | AI in Production - What Engineers Actually Face | ★☆☆ |
 | AIF-006 | Machine Learning Basics | ★☆☆ |
 | AIF-007 | Supervised vs Unsupervised Learning | ★☆☆ |
-| AIF-008 | Neural Network | ★★☆ |
-| AIF-009 | Deep Learning | ★★☆ |
-| AIF-010 | Transformer Architecture | ★★★ |
-| AIF-011 | Attention Mechanism | ★★★ |
-| AIF-012 | Self-Attention | ★★★ |
-| AIF-013 | Embedding | ★★★ |
-| AIF-014 | Tokenization | ★★☆ |
-| AIF-015 | Token | ★★☆ |
+| AIF-010 | AI Foundations Interview Preparation Guide | ★☆☆ |
+| AIF-020 | Neural Network | ★★☆ |
+| AIF-025 | Deep Learning | ★★☆ |
+| AIF-026 | Tokenization | ★★☆ |
+| AIF-027 | Token | ★★☆ |
 | AIF-016 | Context Window | ★★☆ |
-| AIF-017 | Temperature | ★★☆ |
-| AIF-018 | Top-p  Top-k Sampling | ★★★ |
-| AIF-019 | Hallucination | ★★☆ |
-| AIF-020 | Grounding | ★★★ |
-| AIF-021 | Model Parameters | ★★★ |
-| AIF-022 | Model Weights | ★★★ |
+| AIF-021 | Temperature | ★★☆ |
+| AIF-022 | Hallucination | ★★☆ |
 | AIF-023 | Inference | ★★☆ |
-| AIF-024 | Training | ★★★ |
-| AIF-025 | Fine-Tuning | ★★★ |
-| AIF-026 | RLHF (Reinforcement Learning from Human Feedback) | ★★★ |
-| AIF-027 | Pre-training | ★★★ |
-| AIF-028 | Transfer Learning | ★★★ |
-| AIF-029 | Few-Shot Learning | ★★★ |
-| AIF-030 | Zero-Shot Learning | ★★★ |
-| AIF-031 | In-Context Learning | ★★★ |
-| AIF-032 | Overfitting  Underfitting | ★★☆ |
-| AIF-033 | Bias in AI | ★★☆ |
-| AIF-034 | Latency vs Throughput (AI) | ★★★ |
-| AIF-035 | Model Quantization | ★★★ |
-| AIF-036 | Model Pruning | ★★★ |
-| AIF-037 | Distillation | ★★★ |
-| AIF-038 | Multimodal Models | ★★★ |
-| AIF-039 | Vision Language Models | ★★★ |
-| AIF-040 | Foundation Models | ★★★ |
-| AIF-041 | Open Source vs Proprietary Models | ★★☆ |
-| AIF-042 | Model Evaluation Metrics | ★★★ |
-| AIF-043 | Benchmark (AI) | ★★★ |
-| AIF-044 | AI Safety | ★★★ |
-| AIF-045 | Responsible AI | ★★★ |
-| AIF-046 | AI Architecture Strategy (Build vs Buy vs Fine-Tune) | ★★★ |
-| AIF-047 | ML Platform Engineering Design | ★★★ |
-| AIF-048 | Responsible AI and Bias Mitigation Strategy | ★★★ |
-| AIF-049 | AI Safety Architecture | ★★★ |
-| AIF-050 | AI Research Frontier (Self-Supervised, World Models) | ★★★ |
-| AIF-051 | Theoretical ML -- VC Dimension, PAC Learning | ★★★ |
-| AIF-052 | Optimization Theory (SGD, Adam, Loss Landscapes) | ★★★ |
-| AIF-053 | Information Theory for ML (Cross-Entropy, KL Divergence) | ★★★ |
-| AIF-054 | Neural Architecture Research | ★★★ |
-| AIF-055 | AI Trade-off Framing (Performance vs Interpretability) | ★★★ |
-| AIF-056 | Model Selection Mental Model | ★★★ |
-| AIF-057 | AI Hype vs Reality Thinking | ★★★ |
-| AIF-058 | AI Foundations Interview Preparation Guide | ★☆☆ |
+| AIF-011 | Overfitting  Underfitting | ★★☆ |
+| AIF-028 | Bias in AI | ★★☆ |
+| AIF-012 | Open Source vs Proprietary Models | ★★☆ |
+| AIF-029 | Transformer Architecture | ★★★ |
+| AIF-030 | Attention Mechanism | ★★★ |
+| AIF-031 | Self-Attention | ★★★ |
+| AIF-013 | Embedding | ★★★ |
+| AIF-032 | Top-p  Top-k Sampling | ★★★ |
+| AIF-033 | Grounding | ★★★ |
+| AIF-034 | Model Parameters | ★★★ |
+| AIF-035 | Model Weights | ★★★ |
+| AIF-017 | Training | ★★★ |
+| AIF-018 | Fine-Tuning | ★★★ |
+| AIF-036 | RLHF (Reinforcement Learning from Human Feedback) | ★★★ |
+| AIF-037 | Pre-training | ★★★ |
+| AIF-014 | Transfer Learning | ★★★ |
+| AIF-024 | Few-Shot Learning | ★★★ |
+| AIF-038 | Zero-Shot Learning | ★★★ |
+| AIF-039 | In-Context Learning | ★★★ |
+| AIF-040 | Latency vs Throughput (AI) | ★★★ |
+| AIF-041 | Model Quantization | ★★★ |
+| AIF-042 | Model Pruning | ★★★ |
+| AIF-019 | Distillation | ★★★ |
+| AIF-043 | Multimodal Models | ★★★ |
+| AIF-015 | Vision Language Models | ★★★ |
+| AIF-044 | Foundation Models | ★★★ |
+| AIF-045 | Model Evaluation Metrics | ★★★ |
+| AIF-046 | Benchmark (AI) | ★★★ |
+| AIF-047 | AI Safety | ★★★ |
+| AIF-048 | Responsible AI | ★★★ |
+| AIF-049 | AI Architecture Strategy (Build vs Buy vs Fine-Tune) | ★★★ |
+| AIF-050 | ML Platform Engineering Design | ★★★ |
+| AIF-051 | Responsible AI and Bias Mitigation Strategy | ★★★ |
+| AIF-052 | AI Safety Architecture | ★★★ |
+| AIF-053 | AI Research Frontier (Self-Supervised, World Models) | ★★★ |
+| AIF-054 | Theoretical ML -- VC Dimension, PAC Learning | ★★★ |
+| AIF-055 | Optimization Theory (SGD, Adam, Loss Landscapes) | ★★★ |
+| AIF-056 | Information Theory for ML (Cross-Entropy, KL Divergence) | ★★★ |
+| AIF-057 | Neural Architecture Research | ★★★ |
+| AIF-058 | AI Trade-off Framing (Performance vs Interpretability) | ★★★ |
+| AIF-008 | Model Selection Mental Model | ★★★ |
+| AIF-009 | AI Hype vs Reality Thinking | ★★★ |
 | AIF-059 | Neural Architecture Search (NAS) | ★★★ |
 | AIF-060 | Federated Learning | ★★★ |
 | AIF-061 | AI Ethics and Responsible AI | ★★★ |

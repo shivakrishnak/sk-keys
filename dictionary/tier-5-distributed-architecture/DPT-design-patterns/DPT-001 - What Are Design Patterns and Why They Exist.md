@@ -29,7 +29,7 @@ permalink: /dpt/what-are-design-patterns-and-why-they-exist/
 | :-------------- | :--------------------------------- | :-------------- |
 | **Depends on:** |                                    |                 |
 | **Used by:**    | DPT-002, DPT-003, DPT-004, DPT-005 |                 |
-| **Related:**    | DPT-002, DPT-003, DPT-061          |                 |
+| **Related:**    | DPT-002, DPT-003, DPT-081          |                 |
 
 ---
 
