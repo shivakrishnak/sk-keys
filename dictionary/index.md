@@ -8,7 +8,7 @@ permalink: /
 
 # Technical Dictionary
 
-A comprehensive software engineering reference - **3,275+ keyword entries** across **54 categories** in **9 tiers**.
+A comprehensive software engineering reference - **3,314+ keyword entries** across **55 categories** in **9 tiers**.
 
 ---
 
@@ -29,15 +29,15 @@ A comprehensive software engineering reference - **3,275+ keyword entries** acro
 | --- | ---------------------------------------------------------------------------- | ----- | --------------- |
 | 5   | [Networking](./tier-2-networking-security/NET-networking/)                   | 78    | NET-001–NET-078 |
 | 6   | [HTTP & APIs](./tier-2-networking-security/API-http-apis/)                   | 82    | API-001–API-082 |
-| 7   | [Security](./tier-2-networking-security/SEC-security/)                       | 128   | SEC-001–SEC-142 |
+| 7   | [Security](./tier-2-networking-security/SEC-security/)                       | 142   | SEC-001–SEC-142 |
 | 7a  | [Identity & Access Management](./tier-2-networking-security/IAM-iam-access/) | 12    | IAM-001–IAM-012 |
-| 7b  | [Cryptography](./tier-2-networking-security/CRY-cryptography/)               | 26    | CRY-001–CRY-037 |
+| 7b  | [Cryptography](./tier-2-networking-security/CRY-cryptography/)               | 26    | CRY-001–CRY-026 |
 
 ### Tier 3 - Java
 
 | #   | Category                                                      | Count | Range           |
 | --- | ------------------------------------------------------------- | ----- | --------------- |
-| 8   | [Java & JVM Internals](./tier-3-java/JVM-java-jvm-internals/) | 75    | JVM-001–JVM-075 |
+| 8   | [Java & JVM Internals](./tier-3-java/JVM-java-jvm-internals/) | 76    | JVM-001–JVM-076 |
 | 9   | [Java Language](./tier-3-java/JLG-java-language/)             | 94    | JLG-001–JLG-094 |
 | 10  | [Java Concurrency](./tier-3-java/JCC-java-concurrency/)       | 92    | JCC-001–JCC-092 |
 | 11  | [Spring Core](./tier-3-java/SPR-spring-core/)                 | 98    | SPR-001–SPR-098 |
@@ -51,7 +51,7 @@ A comprehensive software engineering reference - **3,275+ keyword entries** acro
 | 13  | [NoSQL & Distributed Databases](./tier-4-data/NDB-nosql-distributed/) | 53    | NDB-001–NDB-053 |
 | 14  | [Caching](./tier-4-data/CCH-caching/)                                 | 47    | CCH-001–CCH-047 |
 | 15  | [Data Fundamentals](./tier-4-data/DAT-data-fundamentals/)             | 54    | DAT-001–DAT-054 |
-| 16  | [Big Data & Streaming](./tier-4-data/BIG-bigdata-streaming/)          | 42    | BIG-001–BIG-064 |
+| 16  | [Big Data & Streaming](./tier-4-data/BIG-bigdata-streaming/)          | 42    | BIG-001–BIG-042 |
 | 16a | [Messaging & Event Streaming](./tier-4-data/MSG-messaging-streaming/) | 46    | MSG-001–MSG-046 |
 
 ### Tier 5 - Distributed Architecture
@@ -72,6 +72,7 @@ A comprehensive software engineering reference - **3,275+ keyword entries** acro
 | 23  | [Kubernetes](./tier-6-infrastructure-devops/K8S-kubernetes/)                      | 77    | K8S-001–K8S-077 |
 | 24  | [Cloud - AWS](./tier-6-infrastructure-devops/AWS-cloud-aws/)                      | 77    | AWS-001–AWS-077 |
 | 25  | [Cloud - Azure](./tier-6-infrastructure-devops/AZR-cloud-azure/)                  | 55    | AZR-001–AZR-055 |
+| 25a | [Cloud - GCP](./tier-6-infrastructure-devops/GCP-cloud-gcp/)                      | 25    | GCP-001–GCP-025 |
 | 26  | [CI/CD](./tier-6-infrastructure-devops/CCD-cicd/)                                 | 83    | CCD-001–CCD-083 |
 | 27  | [Git & Branching Strategy](./tier-6-infrastructure-devops/GIT-git-branching/)     | 45    | GIT-001–GIT-045 |
 | 28  | [Maven & Build Tools](./tier-6-infrastructure-devops/MVN-maven-build/)            | 47    | MVN-001–MVN-047 |
@@ -119,7 +120,7 @@ A comprehensive software engineering reference - **3,275+ keyword entries** acro
 
 | Stat             | Value        |
 | ---------------- | ------------ |
-| Total categories | 54           |
+| Total categories | 55           |
 | Tiers            | 9            |
 | Difficulty       |              |
 | ★☆☆              | Foundational |

@@ -9,9 +9,9 @@ permalink: /cryptography/
 
 # Cryptography
 
-Encryption (AES, RSA), hashing (Bcrypt, SHA-256), PKI, TLS, digital signatures, key management, HSM, password storage, and advanced cryptographic research (ZKPs, post-quantum, homomorphic encryption).
+Encryption (AES, RSA), hashing (Bcrypt, SHA-256), PKI, TLS, digital signatures, key management, HSM, password storage, post-quantum cryptography, and advanced cryptographic research (ZKPs, homomorphic encryption).
 
-**Keywords:** CRY-001--CRY-037 (26 terms)
+**Keywords:** CRY-001--CRY-026 (26 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -27,17 +27,17 @@ Encryption (AES, RSA), hashing (Bcrypt, SHA-256), PKI, TLS, digital signatures, 
 | CRY-010 | Certificate Management Lifecycle | ★★☆ |
 | CRY-011 | Cryptographic Failures | ★★☆ |
 | CRY-012 | Cryptographic Protocol Design Flaws | ★★★ |
-| CRY-024 | Cryptographic Primitive Design | ★★★ |
-| CRY-025 | Formal Security Proofs | ★★★ |
-| CRY-026 | Provable Security (Reduction Theory) | ★★★ |
-| CRY-027 | Elliptic Curve Cryptography (Theory) | ★★★ |
-| CRY-028 | Post-Quantum Cryptography | ★★★ |
-| CRY-029 | Secure Multiparty Computation | ★★★ |
-| CRY-030 | Zero-Knowledge Proofs | ★★★ |
-| CRY-031 | Homomorphic Encryption | ★★★ |
-| CRY-032 | TLS Protocol Design Rationale | ★★★ |
-| CRY-033 | OAuth 2.0 Specification Design Rationale | ★★★ |
-| CRY-034 | Capability-Based Security Model | ★★★ |
-| CRY-035 | Security Protocol Verification (BAN Logic) | ★★★ |
-| CRY-036 | Threat Modeling Formal Methods | ★★★ |
-| CRY-037 | Applied Cryptography Research | ★★★ |
+| CRY-013 | Cryptographic Primitive Design | ★★★ |
+| CRY-014 | Formal Security Proofs | ★★★ |
+| CRY-015 | Provable Security (Reduction Theory) | ★★★ |
+| CRY-016 | Elliptic Curve Cryptography (Theory) | ★★★ |
+| CRY-017 | Post-Quantum Cryptography | ★★★ |
+| CRY-018 | Secure Multiparty Computation | ★★★ |
+| CRY-019 | Zero-Knowledge Proofs | ★★★ |
+| CRY-020 | Homomorphic Encryption | ★★★ |
+| CRY-021 | TLS Protocol Design Rationale | ★★★ |
+| CRY-022 | OAuth 2.0 Specification Design Rationale | ★★★ |
+| CRY-023 | Capability-Based Security Model | ★★★ |
+| CRY-024 | Security Protocol Verification (BAN Logic) | ★★★ |
+| CRY-025 | Threat Modeling Formal Methods | ★★★ |
+| CRY-026 | Applied Cryptography Research | ★★★ |

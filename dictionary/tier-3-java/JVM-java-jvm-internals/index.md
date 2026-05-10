@@ -2,16 +2,16 @@
 layout: default
 title: "Java & JVM Internals"
 parent: "Technical Dictionary"
-nav_order: 7
+nav_order: 8
 has_children: true
 permalink: /jvm/
 ---
 
 # Java & JVM Internals
 
-JVM architecture, memory model, garbage collection algorithms, JIT compilation, GraalVM, AOT compilation, and JVM specification theory.
+JVM architecture, bytecode, class loading, garbage collection (Serial, G1, ZGC), memory model (heap, stack, Metaspace), JIT compilation, performance profiling, and GraalVM.
 
-**Keywords:** JVM-001--JVM-075 (75 terms)
+**Keywords:** JVM-001--JVM-076 (76 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -84,9 +84,10 @@ JVM architecture, memory model, garbage collection algorithms, JIT compilation, 
 | JVM-067 | Method Area | ★★☆ |
 | JVM-068 | PC Register (Program Counter) | ★★★ |
 | JVM-069 | Native Method Stack | ★★★ |
-| JVM-070 | JVM Flags (-Xms, -Xmx, -XX: Flags) | ★★☆ |
+| JVM-070 | JVM Safepoints and Stop-the-World Events | ★★★ |
 | JVM-071 | Heap Dump | ★★☆ |
 | JVM-072 | Thread Dump | ★★☆ |
 | JVM-073 | Class Loading Delegation Model | ★★★ |
 | JVM-074 | Compressed OOPs | ★★★ |
 | JVM-075 | Class Data Sharing (CDS / AppCDS) | ★★★ |
+| JVM-076 | JVM Architecture (Overview) | ★☆☆ |

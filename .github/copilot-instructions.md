@@ -1,6 +1,6 @@
 ﻿# GitHub Copilot - Workspace Instructions
 
-This workspace is the **sk-keys Technical Dictionary** - a comprehensive software engineering reference containing 3,275+ keyword entries across 54 categories in 9 tiers.
+This workspace is the **sk-keys Technical Dictionary** - a comprehensive software engineering reference containing 3,314+ keyword entries across 55 categories in 9 tiers.
 
 Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. Apply each category independently - rules within a category work together, but do not apply a rule from one category to resolve a conflict in another.
 
@@ -402,6 +402,7 @@ A file is **v4.0** (`version: 4` = `LATEST_VERSION`) if it ALSO has: `### 📶 G
 | K8S  | Kubernetes                     | tier-6-infrastructure-devops    | K8S-kubernetes            |
 | AWS  | Cloud - AWS                    | tier-6-infrastructure-devops    | AWS-cloud-aws             |
 | AZR  | Cloud - Azure                  | tier-6-infrastructure-devops    | AZR-cloud-azure           |
+| GCP  | Cloud - GCP                    | tier-6-infrastructure-devops    | GCP-cloud-gcp             |
 | CCD  | CI/CD                          | tier-6-infrastructure-devops    | CCD-cicd                  |
 | GIT  | Git & Branching Strategy       | tier-6-infrastructure-devops    | GIT-git-branching         |
 | MVN  | Maven & Build Tools            | tier-6-infrastructure-devops    | MVN-maven-build           |

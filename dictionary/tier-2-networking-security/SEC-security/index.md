@@ -9,9 +9,9 @@ permalink: /security/
 
 # Security
 
-Application security (AppSec), web attacks (OWASP), vulnerability management, secrets management, security testing (SAST/DAST/pentest), and secure SDLC. Authentication and authorization are in Identity & Access Management. Cryptography is in Cryptography.
+Application security (AppSec), web attack vectors (OWASP Top 10, XSS, CSRF, SQLi, SSRF, command injection), secrets management, security testing (SAST/DAST/pentest), secure SDLC, and DevSecOps. Authentication and authorization are in Identity & Access Management. Cryptographic algorithms are in Cryptography.
 
-**Keywords:** SEC-001--SEC-142 (128 terms)
+**Keywords:** SEC-001--SEC-142 (142 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -22,6 +22,11 @@ Application security (AppSec), web attacks (OWASP), vulnerability management, se
 | SEC-005 | The Security Ecosystem Map (AppSec NetSec CloudSec) | ★☆☆ |
 | SEC-006 | Security Principles (OWASP, CWE, CVE) | ★☆☆ |
 | SEC-007 | CIA Triad (Confidentiality, Integrity, Availability) | ★☆☆ |
+| SEC-008 | Security Architecture Principles | ★★☆ |
+| SEC-009 | Cryptography for Application Developers | ★★☆ |
+| SEC-010 | Public Key Infrastructure (PKI) Basics | ★★☆ |
+| SEC-011 | TLS and Secure Protocols for Developers | ★★☆ |
+| SEC-012 | Password and Credential Security Basics | ★☆☆ |
 | SEC-013 | Principle of Least Privilege | ★☆☆ |
 | SEC-014 | Secure Defaults | ★☆☆ |
 | SEC-015 | OWASP Top 10 - Overview | ★☆☆ |
@@ -31,10 +36,14 @@ Application security (AppSec), web attacks (OWASP), vulnerability management, se
 | SEC-019 | CSRF (Cross-Site Request Forgery) | ★★☆ |
 | SEC-020 | SQL Injection | ★★☆ |
 | SEC-021 | SSRF (Server-Side Request Forgery) | ★★☆ |
+| SEC-022 | API Authentication Patterns | ★★☆ |
 | SEC-023 | Input Validation and Output Encoding | ★★☆ |
 | SEC-024 | Secure HTTP Headers (CSP, HSTS, X-Frame-Options) | ★★☆ |
 | SEC-025 | CORS - Cross-Origin Security | ★★☆ |
+| SEC-026 | Role-Based and Attribute-Based Access Control | ★★☆ |
+| SEC-027 | API Authorization Design Patterns | ★★★ |
 | SEC-028 | API Key Security Patterns | ★★☆ |
+| SEC-029 | Certificate Pinning and Trust Anchors | ★★★ |
 | SEC-030 | Security Logging and Monitoring | ★★☆ |
 | SEC-031 | Dependency and Supply Chain Security Basics | ★★☆ |
 | SEC-032 | Secure Coding Practices | ★★☆ |
@@ -44,17 +53,22 @@ Application security (AppSec), web attacks (OWASP), vulnerability management, se
 | SEC-036 | XXE Injection | ★★☆ |
 | SEC-037 | Insecure Deserialization | ★★☆ |
 | SEC-038 | Broken Access Control and IDOR | ★★☆ |
+| SEC-039 | Cryptographic Misuse and Common Errors | ★★★ |
 | SEC-040 | Secrets Management at Scale (Vault, AWS Secrets) | ★★☆ |
 | SEC-041 | Zero Trust Security Model | ★★☆ |
 | SEC-042 | Container Security | ★★☆ |
 | SEC-043 | Threat Modeling (STRIDE, PASTA) | ★★☆ |
 | SEC-044 | Penetration Testing Fundamentals | ★★☆ |
 | SEC-045 | Security Audit and Code Review | ★★☆ |
+| SEC-046 | Service-to-Service Security Patterns | ★★★ |
 | SEC-047 | Privilege Escalation Patterns | ★★☆ |
 | SEC-048 | Supply Chain Attacks (SolarWinds, XZ Utils) | ★★★ |
 | SEC-049 | Log4Shell - CVE-2021-44228 | ★★★ |
 | SEC-050 | Heartbleed - CVE-2014-0160 | ★★★ |
 | SEC-051 | Memory Safety Vulnerabilities and Exploitation | ★★★ |
+| SEC-052 | Advanced Authentication Attack Patterns | ★★★ |
+| SEC-053 | OAuth 2.0 Security Analysis | ★★★ |
+| SEC-054 | Cryptographic Security Evaluation | ★★★ |
 | SEC-055 | Lateral Movement Techniques | ★★★ |
 | SEC-056 | Incident Response Playbook | ★★★ |
 | SEC-057 | Security Hardening at Scale | ★★★ |
