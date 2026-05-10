@@ -10,8 +10,9 @@ The full spec is in `copilot-instructions.md` (already loaded as workspace instr
 
 ## How to invoke
 
-Use one target at a time. If you are upgrading one category, pass `CODE`.
-If you are upgrading a range, pass `START` and `END`.
+Use one target at a time: pass either `CODE` alone for a single category, or `START` and `END` together for a range — but not both modes simultaneously.
+
+> **Input validation:** If `CODE` is missing or not a recognized 3-letter category code, stop and report: `"Invalid CODE '{{CODE}}'. Provide a valid 3-letter category code (e.g. DST, JVM)."` If using range mode and `START` or `END` are missing or not 3-digit numbers, stop and report the issue before proceeding.
 
 ```
 @upgrade-batch  CODE=DST  START=066  END=070
@@ -49,19 +50,27 @@ For each scaffolded file:
 
 1. Read the file (first 30 lines to see YAML, then skim for [FILL] stubs)
 2. Replace ALL `[FILL:...]` stubs with full v4.0 content per spec
-3. Follow copilot-instructions.md rules exactly:
+3. Apply copilot-instructions.md rules using this grouped checklist:
+
+   **Formatting:**
    - Every `###` preceded by `---` with blank lines before and after both
    - ASCII diagrams ≤59 chars wide; code lines ≤70 chars
    - BAD pattern before GOOD pattern in code examples
+
+   **Content minimums:**
    - Min 4 misconception rows; min 3 failure modes (at least 1 security)
    - 3 Think questions (types A/B/C/D/E/F/G), each with `*Hint:*`, at least 1 TYPE G
-   - Tags from approved taxonomy only
-   - Section 5.15 (Flow/Lifecycle): include ONLY if multi-phase lifecycle exists
-   - `depends_on` / `used_by` / `related`: full IDs only (CODE-NNN)
    - 5 Gradual Depth levels (Level 5 = Mastery for distinguished engineers)
-   - Quick Reference Card: 9 rows (includes ANTI-PATTERN)
    - Mastery Checklist: 5 testable indicators (EXPLAIN/DEBUG/DECIDE/BUILD/EXTEND)
+   - Quick Reference Card: 9 rows (includes ANTI-PATTERN)
    - Transferable Wisdom: includes **Industry applications:**
+
+   **YAML & references:**
+   - Tags from approved taxonomy only
+   - `depends_on` / `used_by` / `related`: full IDs only (CODE-NNN)
+
+   **Conditional sections:**
+   - Section 5.15 (Flow/Lifecycle): include ONLY if multi-phase lifecycle exists
 
 Use `replace_string_in_file` to replace each stub with actual content.
 Complete one file fully before moving to the next.
