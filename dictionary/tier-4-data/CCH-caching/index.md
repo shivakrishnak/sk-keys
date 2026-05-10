@@ -52,3 +52,13 @@ Cache patterns, eviction policies, stampede prevention, distributed caching, and
 | CCH-035 | Cache Trade-off Framing | ★★★ |
 | CCH-036 | Invalidation Problem Mental Model | ★★★ |
 | CCH-037 | Cache Selection Framework | ★★★ |
+| CCH-038 | HTTP Cache-Control Header | ★★☆ |
+| CCH-039 | ETag and Conditional Requests | ★★☆ |
+| CCH-040 | CDN Caching (Edge Caching) | ★★☆ |
+| CCH-041 | Browser Caching Strategies | ★★☆ |
+| CCH-042 | Cache Busting Techniques | ★★☆ |
+| CCH-043 | Database Query Cache | ★★★ |
+| CCH-044 | Spring Cache Abstraction | ★★☆ |
+| CCH-045 | Object vs Fragment Caching | ★★☆ |
+| CCH-046 | Service Worker Cache (Offline-First) | ★★★ |
+| CCH-047 | Cache Observability and Monitoring | ★★★ |

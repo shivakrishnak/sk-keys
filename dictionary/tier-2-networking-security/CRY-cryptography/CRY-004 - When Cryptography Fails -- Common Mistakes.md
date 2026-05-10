@@ -1,0 +1,22 @@
+---
+id: CRY-004
+title: When Cryptography Fails -- Common Mistakes
+category: Cryptography
+tier: tier-2-networking-security
+folder: CRY-cryptography
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - security
+  - cryptography
+  - foundational
+status: draft
+version: 0
+layout: default
+parent: "Cryptography"
+grand_parent: "Technical Dictionary"
+nav_order: 4
+permalink: /cryptography/when-cryptography-fails-common-mistakes/
+---

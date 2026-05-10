@@ -8,7 +8,7 @@ permalink: /
 
 # Technical Dictionary
 
-A comprehensive software engineering reference - **2,200+ keyword entries** across **51 categories** in **9 tiers**.
+A comprehensive software engineering reference - **3,275+ keyword entries** across **54 categories** in **9 tiers**.
 
 ---
 
@@ -25,11 +25,13 @@ A comprehensive software engineering reference - **2,200+ keyword entries** acro
 
 ### Tier 2 - Networking & Security
 
-| #   | Category                                                   | Count | Range           |
-| --- | ---------------------------------------------------------- | ----- | --------------- |
-| 5   | [Networking](./tier-2-networking-security/NET-networking/) | 78    | NET-001–NET-078 |
-| 6   | [HTTP & APIs](./tier-2-networking-security/API-http-apis/) | 82    | API-001–API-082 |
-| 7   | [Security](./tier-2-networking-security/SEC-security/)     | 156   | SEC-001–SEC-156 |
+| #   | Category                                                                     | Count | Range           |
+| --- | ---------------------------------------------------------------------------- | ----- | --------------- |
+| 5   | [Networking](./tier-2-networking-security/NET-networking/)                   | 78    | NET-001–NET-078 |
+| 6   | [HTTP & APIs](./tier-2-networking-security/API-http-apis/)                   | 82    | API-001–API-082 |
+| 7   | [Security](./tier-2-networking-security/SEC-security/)                       | 128   | SEC-001–SEC-142 |
+| 7a  | [Identity & Access Management](./tier-2-networking-security/IAM-iam-access/) | 12    | IAM-001–IAM-012 |
+| 7b  | [Cryptography](./tier-2-networking-security/CRY-cryptography/)               | 26    | CRY-001–CRY-037 |
 
 ### Tier 3 - Java
 
@@ -47,10 +49,10 @@ A comprehensive software engineering reference - **2,200+ keyword entries** acro
 | --- | --------------------------------------------------------------------- | ----- | --------------- |
 | 12  | [Database Fundamentals](./tier-4-data/DBF-database-fundamentals/)     | 67    | DBF-001–DBF-067 |
 | 13  | [NoSQL & Distributed Databases](./tier-4-data/NDB-nosql-distributed/) | 53    | NDB-001–NDB-053 |
-| 14  | [Caching](./tier-4-data/CCH-caching/)                                 | 37    | CCH-001–CCH-037 |
+| 14  | [Caching](./tier-4-data/CCH-caching/)                                 | 47    | CCH-001–CCH-047 |
 | 15  | [Data Fundamentals](./tier-4-data/DAT-data-fundamentals/)             | 54    | DAT-001–DAT-054 |
-| 16  | [Big Data & Streaming](./tier-4-data/BIG-bigdata-streaming/)          | 35    | BIG-001–BIG-057 |
-| 16a | [Messaging & Event Streaming](./tier-4-data/MSG-messaging-streaming/) | 33    | MSG-001–MSG-033 |
+| 16  | [Big Data & Streaming](./tier-4-data/BIG-bigdata-streaming/)          | 42    | BIG-001–BIG-064 |
+| 16a | [Messaging & Event Streaming](./tier-4-data/MSG-messaging-streaming/) | 46    | MSG-001–MSG-046 |
 
 ### Tier 5 - Distributed Architecture
 
@@ -117,7 +119,7 @@ A comprehensive software engineering reference - **2,200+ keyword entries** acro
 
 | Stat             | Value        |
 | ---------------- | ------------ |
-| Total categories | 51           |
+| Total categories | 54           |
 | Tiers            | 9            |
 | Difficulty       |              |
 | ★☆☆              | Foundational |

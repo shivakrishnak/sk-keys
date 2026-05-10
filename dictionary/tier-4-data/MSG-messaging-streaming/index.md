@@ -11,7 +11,7 @@ permalink: /messaging-streaming/
 
 Message brokers, event streaming, Kafka internals, RabbitMQ, SQS/SNS, Pulsar, messaging patterns (DLQ, outbox, fan-out, ordering), and event-driven architecture.
 
-**Keywords:** MSG-001--MSG-033 (33 terms)
+**Keywords:** MSG-001--MSG-046 (46 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -48,3 +48,16 @@ Message brokers, event streaming, Kafka internals, RabbitMQ, SQS/SNS, Pulsar, me
 | MSG-031 | Message Deduplication | ★★☆ |
 | MSG-032 | Kafka Internals Deep Dive (Replication, ISR, Log Compaction) | ★★★ |
 | MSG-033 | Message Queue Algorithm Research | ★★★ |
+| MSG-034 | Kafka Connect | ★★☆ |
+| MSG-035 | Kafka Schema Registry | ★★☆ |
+| MSG-036 | Azure Service Bus | ★★☆ |
+| MSG-037 | GCP Cloud Pub/Sub | ★★☆ |
+| MSG-038 | ActiveMQ | ★★☆ |
+| MSG-039 | AMQP Protocol | ★★☆ |
+| MSG-040 | Message Priority and TTL | ★★☆ |
+| MSG-041 | Request-Reply Pattern | ★★☆ |
+| MSG-042 | Topic Exchange Routing (RabbitMQ Exchanges) | ★★☆ |
+| MSG-043 | Message Serialization (Avro, Protobuf, JSON) | ★★☆ |
+| MSG-044 | Consumer Poll Loop and Backpressure | ★★★ |
+| MSG-045 | Kafka Lag Monitoring and Consumer Health | ★★★ |
+| MSG-046 | Messaging Architecture Selection Framework | ★★★ |

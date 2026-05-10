@@ -1,6 +1,6 @@
 ﻿# GitHub Copilot - Workspace Instructions
 
-This workspace is the **sk-keys Technical Dictionary** - a comprehensive software engineering reference containing 1,770+ keyword entries across 50 categories in 9 tiers.
+This workspace is the **sk-keys Technical Dictionary** - a comprehensive software engineering reference containing 3,275+ keyword entries across 54 categories in 9 tiers.
 
 Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. Apply each category independently - rules within a category work together, but do not apply a rule from one category to resolve a conflict in another.
 
@@ -380,6 +380,8 @@ A file is **v4.0** (`version: 4` = `LATEST_VERSION`) if it ALSO has: `### 📶 G
 | NET  | Networking                     | tier-2-networking-security      | NET-networking            |
 | API  | HTTP & APIs                    | tier-2-networking-security      | API-http-apis             |
 | SEC  | Security                       | tier-2-networking-security      | SEC-security              |
+| IAM  | Identity & Access Management   | tier-2-networking-security      | IAM-iam-access            |
+| CRY  | Cryptography                   | tier-2-networking-security      | CRY-cryptography          |
 | JVM  | Java & JVM Internals           | tier-3-java                     | JVM-java-jvm-internals    |
 | JLG  | Java Language                  | tier-3-java                     | JLG-java-language         |
 | JCC  | Java Concurrency               | tier-3-java                     | JCC-java-concurrency      |

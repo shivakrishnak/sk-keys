@@ -8,16 +8,17 @@ grand_parent: "Technical Dictionary"
 nav_order: 65
 permalink: /cloud-aws/immutable-infrastructure/
 ---
+
 # AWS-065 - Immutable Infrastructure
 
 `#devops` `#sdlc` `#intermediate` `#reliability`
 
 ⚡ TL;DR - Never patch or modify running servers; instead, build a new image and replace the old instance entirely.
 
-| #955 | category: Cloud - AWS
-|:---|:---|:---|
-| **Depends on:** | IaC, CI/CD Pipeline, Containers | |
-| **Used by:** | GitOps, IaC, Cloud-Native Architecture | |
+| #955            | category: Cloud - AWS                  |
+| :-------------- | :------------------------------------- | :-- |
+| **Depends on:** | IaC, CI/CD Pipeline, Containers        |     |
+| **Used by:**    | GitOps, IaC, Cloud-Native Architecture |     |
 
 ---
 
@@ -45,6 +46,7 @@ The alternative to immutable infrastructure is mutable infrastructure - patching
 Patching servers over time creates configuration drift. Two servers that started identical diverge over months of patching. You cannot reproduce a server exactly. "It worked on the staging server" becomes meaningless.
 
 **The insight:**
+
 > "Treat infrastructure like a compiled binary: you don't edit a compiled binary - you recompile. Build, don't patch."
 
 ```
@@ -146,12 +148,12 @@ spec:
   template:
     spec:
       containers:
-      - name: myapp
-        image: myapp:v2.0.0     # change this = new immutable pods
-        # Never: kubectl exec pod -- apt-get install something
-        securityContext:
-          readOnlyRootFilesystem: true    # enforce immutability at container level
-          allowPrivilegeEscalation: false
+        - name: myapp
+          image: myapp:v2.0.0 # change this = new immutable pods
+          # Never: kubectl exec pod -- apt-get install something
+          securityContext:
+            readOnlyRootFilesystem: true # enforce immutability at container level
+            allowPrivilegeEscalation: false
 ```
 
 ---
@@ -180,12 +182,12 @@ spec:
 
 ### ⚠️ Common Misconceptions
 
-| ❌ Wrong Belief | ✅ Correct Reality |
-|---|---|
+| ❌ Wrong Belief                               | ✅ Correct Reality                                                       |
+| --------------------------------------------- | ------------------------------------------------------------------------ |
 | Immutable means you can never change anything | Configuration changes go through the build pipeline, not manual patching |
-| It's only for containers | Applies to VMs, Lambda functions, and any deployable artifact |
-| It makes debugging impossible | Centralized logging + distributed tracing replace SSH-based debugging |
-| It wastes resources on rebuilds | Build time is cheap; avoiding snowflakes saves far more time |
+| It's only for containers                      | Applies to VMs, Lambda functions, and any deployable artifact            |
+| It makes debugging impossible                 | Centralized logging + distributed tracing replace SSH-based debugging    |
+| It wastes resources on rebuilds               | Build time is cheap; avoiding snowflakes saves far more time             |
 
 ---
 
@@ -239,7 +241,6 @@ Teams still SSH in for emergencies but don't track what was changed.
 
 ### 🧠 Think About This Before We Continue
 
-**Q1.** How does immutable infrastructure change the approach to debugging production issues?  
-**Q2.** What must be externalised from an application before it can be deployed as truly immutable infrastructure?  
+**Q1.** How does immutable infrastructure change the approach to debugging production issues?
+**Q2.** What must be externalised from an application before it can be deployed as truly immutable infrastructure?
 **Q3.** How does immutable infrastructure interact with database schema migrations?
-

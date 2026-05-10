@@ -11,7 +11,7 @@ permalink: /big-data-streaming/
 
 Distributed computing, MapReduce, Apache Spark, Flink, Hadoop, stream processing patterns, Lambda/Kappa architectures, and big data platform design. (Kafka and messaging topics have moved to Messaging & Event Streaming.)
 
-**Keywords:** BIG-001--BIG-057 (35 terms)
+**Keywords:** BIG-001--BIG-064 (42 terms)
 
 | ID      | Keyword                                              | Difficulty |
 | ------- | ---------------------------------------------------- | ---------- |
@@ -50,3 +50,11 @@ Distributed computing, MapReduce, Apache Spark, Flink, Hadoop, stream processing
 | BIG-055 | Batch vs Stream Trade-off Framing                    | ★★★        |
 | BIG-056 | Big Data System Selection Mental Model               | ★★★        |
 | BIG-057 | Data Pipeline Design Thinking                        | ★★★        |
+| BIG-072 | Big Data Platform Cost Optimization | ★★★ |
+| BIG-058 | Spark SQL | ★★☆ |
+| BIG-059 | PySpark API Fundamentals | ★★☆ |
+| BIG-060 | Databricks Platform | ★★★ |
+| BIG-061 | Apache Airflow (Orchestration) | ★★☆ |
+| BIG-062 | dbt (Data Build Tool) | ★★☆ |
+| BIG-063 | Streaming Data Pipeline Design Patterns | ★★★ |
+| BIG-064 | Big Data Platform Cost Optimization | ★★★ |
