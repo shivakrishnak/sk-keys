@@ -384,6 +384,7 @@ A file is **v4.0** (`version: 4` = `LATEST_VERSION`) if it ALSO has: `### 📶 G
 | JLG  | Java Language                  | tier-3-java                     | JLG-java-language         |
 | JCC  | Java Concurrency               | tier-3-java                     | JCC-java-concurrency      |
 | SPR  | Spring Core                    | tier-3-java                     | SPR-spring-core           |
+| JPH  | JPA & Hibernate                | tier-3-java                     | JPH-jpa-hibernate         |
 | DBF  | Database Fundamentals          | tier-4-data                     | DBF-database-fundamentals |
 | NDB  | NoSQL & Distributed Databases  | tier-4-data                     | NDB-nosql-distributed     |
 | CCH  | Caching                        | tier-4-data                     | CCH-caching               |
