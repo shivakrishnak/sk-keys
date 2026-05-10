@@ -240,7 +240,7 @@ def main():
         if not renames:
             continue
         print(f"  {cat_dir.name}: {len(renames)} renames")
-        if not dry_run:
+        if not args.dry_run:
             # Two-pass rename to avoid collision (e.g. CSF-002→CSF-001 then CSF-001→CSF-003)
             # First pass: rename to temp names
             temp_map = {}
@@ -267,7 +267,7 @@ def main():
     print("\n=== Phase 4: Updating cross-references ===")
     all_md = list(BASE.rglob("*.md"))
     print(f"  Scanning {len(all_md)} .md files...")
-    if not dry_run:
+    if not args.dry_run:
         apply_global_replacements(all_md, id_map, dry_run=False)
     else:
         print("  (dry-run: skipping cross-reference update)")

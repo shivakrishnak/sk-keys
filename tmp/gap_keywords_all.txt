@@ -1,0 +1,3371 @@
+=== CSF-cs-fundamentals (85) ===
+  [★☆☆] What Is Computer Science - A Map
+  [★☆☆] Why Programming Paradigms Exist
+  [★☆☆] The History of Programming Languages
+  [★☆☆] How Code Becomes Execution - Big Picture
+  [★☆☆] The CS Ecosystem Map (Languages, Runtimes, OS)
+  [★☆☆] Imperative Programming
+  [★☆☆] Declarative Programming
+  [★☆☆] Procedural Programming
+  [★☆☆] Object-Oriented Programming (OOP)
+  [★★☆] Functional Programming
+  [★★☆] Event-Driven Programming
+  [★★☆] Type Systems (Static vs Dynamic)
+  [★☆☆] Strong vs Weak Typing
+  [★☆☆] Compiled vs Interpreted Languages
+  [★★☆] Memory Management Models
+  [★☆☆] Abstraction
+  [★☆☆] Synchronous vs Asynchronous
+  [★★☆] Concurrency vs Parallelism
+  [★☆☆] Variables, Types, and Scope
+  [★☆☆] Control Flow (if, loops, switch)
+  [★☆☆] Functions and Procedures
+  [★☆☆] Error vs Exception
+  [★☆☆] Stack vs Heap Memory
+  [★☆☆] Encapsulation
+  [★☆☆] Polymorphism
+  [★☆☆] Inheritance
+  [★★☆] Composition over Inheritance
+  [★★☆] Recursion
+  [★★☆] First-Class Functions
+  [★★☆] Higher-Order Functions
+  [★★☆] Side Effects
+  [★★☆] Idempotency
+  [★★☆] Closures
+  [★★☆] Immutability
+  [★★☆] Null Safety and Null Anti-Pattern
+  [★★☆] Exception Handling Patterns
+  [★★☆] Modules and Packages
+  [★★☆] Interfaces vs Abstract Classes
+  [★★☆] Generics and Parametric Polymorphism
+  [★★☆] Pattern Matching
+  [★★☆] Reactive Programming
+  [★★☆] Aspect-Oriented Programming
+  [★★★] Metaprogramming
+  [★★★] Tail Recursion
+  [★★★] Referential Transparency
+  [★★☆] Algebraic Data Types (ADTs)
+  [★★☆] Monads and Functors
+  [★★☆] Continuation-Passing Style (CPS)
+  [★★☆] Memory Leak Detection and Tooling
+  [★★☆] Garbage Collection Algorithms Overview
+  [★★☆] Type Inference
+  [★★☆] Structural vs Nominal Typing
+  [★★☆] Concurrency Anti-Patterns (Shared State)
+  [★★☆] Testing Paradigms for CS Concepts
+  [★★☆] Language Performance Trade-offs
+  [★★★] Turing Completeness
+  [★★★] Memory Safety Vulnerabilities in Lang Design
+  [★★★] JIT vs AOT Compilation Deep Dive
+  [★★★] GC Pause Analysis and Production Impact
+  [★★★] Concurrency Models Compared (Actor, CSP, STM)
+  [★★★] Undefined Behaviour in Language Specs
+  [★★★] Language Runtime Internals
+  [★★★] Therac-25 Incident (1985) - Software Fails
+  [★★★] Ariane 5 Overflow Bug (1996)
+  [★★★] Dependency Hell and Package Management
+  [★★★] Polyglot Architecture Strategy
+  [★★★] Language Evaluation Framework
+  [★★★] Paradigm Migration Strategy (OOP → FP)
+  [★★★] Type System Design for Large Codebases
+  [★★★] Compiler/Runtime Selection at Scale
+  [★★★] Church-Turing Thesis
+  [★★★] Lambda Calculus
+  [★★★] Curry-Howard Correspondence
+  [★★★] Category Theory for Programmers
+  [★★★] Formal Semantics (Denotational, Operational)
+  [★★★] Type Theory (System F, HM Inference)
+  [★★★] Language Design Rationale (Rust, Go, Kotlin)
+  [★★★] Paradigm-Agnostic Thinking
+  [★★★] Trade-off Framing (Any Language Choice)
+  [★★★] First-Principles Language Selection
+  [★☆☆] Abstraction Levels in Computing
+  [★★☆] Computational Complexity Overview
+  [★★★] Formal Reasoning in Software
+  [★★★] Software Correctness and Proof
+  [★★★] Cross-Paradigm Design Patterns
+=== DSA-data-structures (89) ===
+  [★☆☆] Why Data Structures and Algorithms Matter
+  [★☆☆] The Problem of Efficiency
+  [★☆☆] DSA in Real Systems - Where They Appear
+  [★☆☆] How to Think About Problems Algorithmically
+  [★☆☆] The DSA Ecosystem Map (LeetCode, Competitions)
+  [★★☆] Time Complexity Big-O
+  [★★☆] Space Complexity
+  [★☆☆] Array
+  [★☆☆] LinkedList
+  [★☆☆] Stack
+  [★☆☆] Queue Deque
+  [★☆☆] HashMap
+  [★★☆] Graph
+  [★☆☆] Tree (Binary Tree Basics)
+  [★☆☆] Recursion and Base Cases
+  [★☆☆] Iteration vs Recursion
+  [★☆☆] Sorting - Why It Matters
+  [★☆☆] Searching - Linear vs Binary
+  [★★☆] TreeMap
+  [★★☆] Heap (Min-Max)
+  [★★☆] Priority Queue
+  [★★☆] Trie
+  [★★☆] LRU Cache
+  [★★☆] Binary Search
+  [★★☆] Quicksort
+  [★★☆] Mergesort
+  [★★☆] BFS
+  [★★☆] DFS
+  [★★☆] Two Pointer
+  [★★☆] Sliding Window
+  [★★☆] Memoization
+  [★★★] Bit Manipulation
+  [★★☆] Prefix Sum & Difference Array
+  [★★☆] Common Coding Anti-Patterns
+  [★★★] Amortized Analysis
+  [★★☆] Divide and Conquer
+  [★★☆] Greedy Algorithm
+  [★★★] Dynamic Programming
+  [★★☆] Tabulation (Bottom-Up DP)
+  [★★☆] Backtracking
+  [★★☆] Topological Sort
+  [★★☆] Dijkstra
+  [★★☆] Union-Find (Disjoint Set)
+  [★★★] Timsort
+  [★★★] Heapsort
+  [★★★] Radix Sort
+  [★★★] String Matching (KMP, Rabin-Karp)
+  [★★☆] Hashing Techniques
+  [★★★] Longest Common Subsequence
+  [★★★] Knapsack Problem
+  [★★☆] Sorting Stability
+  [★★☆] Space-Time Trade-off
+  [★★☆] Recursion vs Iteration Trade-offs
+  [★★☆] In-Place vs Out-of-Place
+  [★★☆] Algorithm Complexity Profiling Tools
+  [★★☆] Cache-Friendly Data Structures
+  [★★★] Segment Tree
+  [★★★] Fenwick Tree (BIT)
+  [★★★] Skip List
+  [★★★] Bloom Filter
+  [★★★] Consistent Hash Ring
+  [★★★] LFU Cache
+  [★★★] Bellman-Ford
+  [★★★] A-Star Search
+  [★★★] Kruskal Prim
+  [★★★] Graph Coloring
+  [★★★] Minimum Spanning Tree
+  [★★★] Strongly Connected Components
+  [★★★] NP-Complete Problems
+  [★★★] P vs NP
+  [★★★] Complexity Classes
+  [★★★] Randomized Algorithms
+  [★★★] B-Tree and B+ Tree
+  [★★★] Algorithm Correctness and Loop Invariants
+  [★★★] Memory Hierarchy Impact on Algorithm Choice
+  [★★★] Choosing Data Structures at System Scale
+  [★★★] Algorithm Selection Framework
+  [★★★] Distributed DSA - Consistent Hashing at Scale
+  [★★★] Trade-off Navigation: Latency vs Correctness
+  [★★★] Approximation Algorithms
+  [★★★] Monte Carlo vs Las Vegas Algorithms
+  [★★★] Information-Theoretic Complexity Bounds
+  [★★★] Streaming Algorithms and Sketches
+  [★★★] Algorithm Design Paradigm Research
+  [★★★] Recognising Problem Class on Sight
+  [★★★] Trade-off Reasoning for Any DS Choice
+  [★★★] Back-of-Envelope Complexity Estimation
+  [★★★] PSPACE and EXPTIME -- Beyond P vs NP
+  [★★★] Online Algorithms and Competitive Analysis
+=== LNX-linux (73) ===
+  [★☆☆] What Is Linux and Why It Powers the World
+  [★☆☆] The Linux Kernel - A Simple Mental Model
+  [★☆☆] Linux Distributions - The Ecosystem Map
+  [★☆☆] Why Engineers Learn Linux
+  [★☆☆] Open Source and the GNU Philosophy
+  [★☆☆] Linux File System Hierarchy
+  [★☆☆] File Permissions (chmod, chown)
+  [★☆☆] Users and Groups
+  [★☆☆] Shell (bash, zsh)
+  [★☆☆] stdin / stdout / stderr
+  [★☆☆] Pipes and Redirection
+  [★☆☆] Process Management (ps, top, kill)
+  [★☆☆] Environment Variables
+  [★☆☆] Package Managers (apt, yum, dnf)
+  [★☆☆] SSH
+  [★★☆] Symbolic Links and Hard Links
+  [★☆☆] Basic Text Editors (vim, nano)
+  [★☆☆] File Operations (cp, mv, rm, mkdir)
+  [★★☆] Shell Scripting
+  [★☆☆] Cron Jobs
+  [★☆☆] SCP / rsync
+  [★☆☆] curl / wget
+  [★★☆] grep / awk / sed
+  [★★☆] find / xargs
+  [★☆☆] tar / gzip / zip
+  [★★☆] Linux Networking (ip, ss, netstat)
+  [★★☆] Systemd / Init System
+  [★☆☆] tmux / screen
+  [★★☆] Log Management (journalctl, syslog)
+  [★★☆] Shell Scripting Anti-Patterns
+  [★★☆] User Permission Anti-Pattern (run as root)
+  [★★★] /proc File System
+  [★★★] /sys File System
+  [★★★] iptables / nftables
+  [★★★] tcpdump / Wireshark
+  [★★★] strace / ltrace
+  [★★☆] lsof
+  [★★★] ulimit
+  [★★☆] swap Management
+  [★★☆] Memory (free, vmstat)
+  [★★☆] Disk I/O (iostat, iotop)
+  [★★★] Kernel Modules
+  [★★☆] /etc/hosts / DNS Resolution
+  [★★☆] System Call Tracing and Analysis
+  [★★☆] Linux Performance Profiling Tools
+  [★★☆] Service Security Hardening Basics
+  [★★★] Linux Namespaces
+  [★★★] Cgroups
+  [★★★] SELinux / AppArmor
+  [★★★] Linux Security Hardening
+  [★★☆] Signals (SIGTERM, SIGKILL, SIGHUP)
+  [★★☆] Zombie Processes
+  [★★★] Linux Performance Tuning
+  [★★★] eBPF (Extended Berkeley Packet Filter)
+  [★★★] perf / flamegraph
+  [★★★] Heartbleed Impact on Linux Systems (2014)
+  [★★★] Dirty COW Vulnerability (2016)
+  [★★★] NUMA Topology and CPU Affinity
+  [★★★] Linux Fleet Standardisation Strategy
+  [★★★] Golden Image vs Immutable Infrastructure
+  [★★★] Kernel Version Policy at Scale
+  [★★★] Linux-Based Platform Engineering
+  [★★★] Linux Kernel Architecture Deep Dive
+  [★★★] Kernel Development and Patch Contribution
+  [★★★] Scheduler Algorithm Design (CFS, FIFO)
+  [★★★] VFS (Virtual File System) Architecture
+  [★★★] Unix Philosophy as Engineering Principle
+  [★★★] Everything-Is-a-File Thinking
+  [★★★] Observability-First System Navigation
+  [★★★] Linux Networking Stack Internals
+  [★★★] Linux Memory Management (mm subsystem)
+  [★★★] Container Runtime Internals (runc, containerd)
+  [★★★] POSIX Standard
+=== OSY-operating-systems (75) ===
+  [★☆☆] What Is an Operating System
+  [★☆☆] Why Operating Systems Exist
+  [★☆☆] The OS Abstraction Stack
+  [★☆☆] Major OS Families (Unix, Windows, RTOS)
+  [★☆☆] How Hardware Becomes Software - A Map
+  [★☆☆] Process
+  [★☆☆] Thread
+  [★☆☆] Process vs Thread
+  [★★☆] User Space vs Kernel Space
+  [★★☆] System Call (syscall)
+  [★★☆] Virtual Memory
+  [★★☆] File Descriptor
+  [★★☆] Blocking IO
+  [★★☆] Non-Blocking IO
+  [★★☆] Mutex
+  [★★☆] Deadlock
+  [★☆☆] CPU Scheduling Basics
+  [★☆☆] Memory Allocation Basics
+  [★★☆] Fiber / Coroutine
+  [★★☆] Context Switch
+  [★★☆] Scheduler / Preemption
+  [★★☆] Paging
+  [★★☆] Async IO
+  [★★☆] Semaphore
+  [★★☆] Condition Variable
+  [★★★] Livelock
+  [★★☆] Starvation
+  [★★☆] Fork / Exec
+  [★★☆] Inode / File System
+  [★★☆] Thread Pool Pattern
+  [★★☆] Concurrency Anti-Patterns (Race Condition)
+  [★★☆] Page Fault
+  [★★★] TLB (Translation Lookaside Buffer)
+  [★★★] Memory-Mapped File (mmap)
+  [★★★] epoll / kqueue / io_uring
+  [★★★] Page Cache
+  [★★★] Spinlock
+  [★★★] Signal Handling
+  [★★★] Swap / Thrashing
+  [★★☆] Memory Profiling Tools (valgrind, heaptrack)
+  [★★☆] I/O Scheduling Algorithms
+  [★★☆] OS Security - Privilege Escalation
+  [★★☆] Testing Concurrent Code
+  [★★★] Zero-Copy (sendfile)
+  [★★★] NUMA
+  [★★★] Cache Line
+  [★★★] False Sharing
+  [★★★] Buddy System / Slab Allocator
+  [★★★] io_uring Deep Dive
+  [★★★] Spectre and Meltdown (2018)
+  [★★★] Linux OOM Killer Behaviour
+  [★★★] Lock-Free Data Structures
+  [★★★] Memory Barriers and CPU Ordering
+  [★★★] OS Selection Framework (Linux, RTOS, BSD)
+  [★★★] Kernel Tuning Strategy at Fleet Scale
+  [★★★] Concurrency Architecture Patterns
+  [★★★] Platform Thread Model Design
+  [★★★] OS Kernel Architecture and Design
+  [★★★] Scheduling Algorithm Theory (CFS, EDF)
+  [★★★] Memory Manager Design (SLUB, SLOB)
+  [★★★] Formal Verification of OS Components
+  [★★★] Hardware-Software Co-design Thinking
+  [★★★] Performance Intuition from First Principles
+  [★★★] Latency Sources Mental Model
+  [★★★] RCU (Read-Copy-Update)
+  [★★★] Real-Time OS (RTOS) Concepts
+  [★★★] NUMA Scheduler
+  [★★★] io_uring Internals
+  [★★★] OS Kernel Design Patterns
+  [★★★] Formal OS Verification (seL4)
+  [★★★] Hardware Transactional Memory (HTM)
+  [★★★] Memory Consistency Models (x86 TSO, ARM)
+  [★★★] Virtual Machine Monitor (Hypervisor) Theory
+  [★★★] Capability-Based OS Design
+  [★★★] POSIX Standard
+=== API-http-apis (82) ===
+  [★☆☆] What Is an API and Why It Matters
+  [★☆☆] The Client-Server Model - A Map
+  [★☆☆] HTTP - The Language of the Web
+  [★☆☆] API Design Philosophy (REST vs RPC vs Graph)
+  [★☆☆] The API Ecosystem Map
+  [★☆☆] HTTP Methods
+  [★☆☆] HTTP Status Codes
+  [★★☆] HTTP Headers
+  [★☆☆] HTTP-1.1 Protocol
+  [★☆☆] REST
+  [★☆☆] API Keys
+  [★☆☆] URL and URI Structure
+  [★☆☆] Request / Response Lifecycle
+  [★☆☆] JSON vs XML Data Format
+  [★★☆] Content Negotiation
+  [★☆☆] Stateless Design Principle
+  [★★☆] WebSocket
+  [★★☆] HTTP-2
+  [★★★] HTTP-3 / QUIC
+  [★★☆] Keep-Alive / Connection Pooling
+  [★★☆] Idempotency in HTTP
+  [★★☆] RESTful Constraints (Richardson Maturity)
+  [★★☆] OAuth2
+  [★★☆] JWT
+  [★★☆] CORS
+  [★★☆] OpenAPI / Swagger
+  [★★☆] API Versioning
+  [★★☆] API Gateway
+  [★★☆] Webhook
+  [★★☆] Server-Sent Events (SSE)
+  [★★☆] Long Polling
+  [★★☆] GraphQL
+  [★★☆] API Rate Limiting
+  [★★★] HATEOAS
+  [★★★] OIDC
+  [★★★] HMAC
+  [★★☆] gRPC
+  [★★☆] Protocol Buffers
+  [★★★] gRPC Streaming
+  [★★☆] GraphQL Schema
+  [★★☆] GraphQL Resolvers
+  [★★★] GraphQL N+1 Problem
+  [★★★] GraphQL Subscriptions
+  [★★☆] API Caching
+  [★★☆] ETag / Cache-Control
+  [★★☆] Pagination - Cursor Offset Keyset
+  [★★★] BFF (Backend for Frontend)
+  [★★★] API Contract Testing
+  [★★☆] API Mocking
+  [★★☆] API Authentication Patterns
+  [★☆☆] API Documentation
+  [★★☆] SOAP
+  [★★☆] WSDL
+  [★★☆] API Backward Compatibility
+  [★★☆] API Throttling
+  [★★★] API Observability
+  [★★☆] API Security Best Practices
+  [★★★] API Gateway Patterns
+  [★★☆] API Deprecation Strategy
+  [★★☆] XSS via API
+  [★★☆] CSRF
+  [★★★] SSRF
+  [★★☆] SQL Injection via API
+  [★★★] API Management Platform
+  [★★☆] API Design Best Practices
+  [★★★] API Strategy at Scale
+  [★★★] API Platform Design
+  [★★★] API Migration Strategy (REST to gRPC)
+  [★★★] API-First Development Culture
+  [★★★] HTTP Protocol Design Internals
+  [★★★] Hypermedia APIs - Deep Theory
+  [★★★] Protocol Design Trade-offs at Scale
+  [★★★] API Specification Language Design
+  [★★★] Protocol Selection Mental Model
+  [★★★] API Design Trade-off Framing
+  [★★★] Consumer-First API Thinking
+  [★★★] HTTP/2 Design Rationale (RFC 7540)
+  [★★★] HTTP/3 over QUIC Design Rationale (RFC 9114)
+  [★★★] gRPC Protocol Specification Design
+  [★★★] GraphQL Specification Design (Lee Byron)
+  [★★★] OpenAPI Specification Design
+  [★★★] WebSocket Protocol RFC 6455 Design
+=== CRY-cryptography (26) ===
+  [★☆☆] What Is Cryptography and Why It Matters
+  [★☆☆] The Cryptography Ecosystem Map (Hashing, Encryption, PKI, TLS)
+  [★☆☆] Symmetric vs Asymmetric Mental Model
+  [★☆☆] When Cryptography Fails -- Common Mistakes
+  [★☆☆] Cryptography in Production -- What Engineers Face
+  [★☆☆] Encryption Basics
+  [★☆☆] Public Key Cryptography (PKI)
+  [★☆☆] Hashing and Password Storage
+  [★☆☆] HTTPS and TLS Basics
+  [★★☆] Certificate Management Lifecycle
+  [★★☆] Cryptographic Failures
+  [★★★] Cryptographic Protocol Design Flaws
+  [★★★] Cryptographic Primitive Design
+  [★★★] Formal Security Proofs
+  [★★★] Provable Security (Reduction Theory)
+  [★★★] Elliptic Curve Cryptography (Theory)
+  [★★★] Post-Quantum Cryptography
+  [★★★] Secure Multiparty Computation
+  [★★★] Zero-Knowledge Proofs
+  [★★★] Homomorphic Encryption
+  [★★★] TLS Protocol Design Rationale
+  [★★★] OAuth 2.0 Specification Design Rationale
+  [★★★] Capability-Based Security Model
+  [★★★] Security Protocol Verification (BAN Logic)
+  [★★★] Threat Modeling Formal Methods
+  [★★★] Applied Cryptography Research
+=== IAM-iam-access (12) ===
+  [★☆☆] What Is Identity and Access Management
+  [★☆☆] The IAM Ecosystem Map (OAuth, JWT, SAML, Passkeys)
+  [★☆☆] Authentication vs Authorization Mental Model
+  [★☆☆] The IAM Security Threat Landscape
+  [★☆☆] IAM in Production -- What Engineers Face
+  [★☆☆] Authentication vs Authorization
+  [★★☆] Session Management Security
+  [★★☆] OAuth2 Security Model
+  [★★☆] JWT Security
+  [★★☆] mTLS and Service-to-Service Authentication
+  [★★★] JWT Algorithm Confusion Attacks
+  [★★★] OAuth2 Attack Vectors
+=== NET-networking (78) ===
+  [★☆☆] Why Networking Matters - The Internet as Infrastructure
+  [★☆☆] How Data Travels from A to B - A Map
+  [★☆☆] The Internet History and Architecture
+  [★☆☆] Networks Engineers Encounter (LAN, WAN, Cloud)
+  [★☆☆] The Networking Ecosystem Map
+  [★☆☆] OSI Model
+  [★☆☆] TCP/IP Stack
+  [★☆☆] IP Addressing
+  [★★☆] Subnet and CIDR
+  [★☆☆] DNS
+  [★★☆] TCP
+  [★★☆] UDP
+  [★★☆] Socket, Port and Ephemeral Port
+  [★★☆] Bandwidth vs Throughput
+  [★★☆] Packet Loss, Latency and Jitter
+  [★★☆] Firewall
+  [★☆☆] MAC Address and Ethernet Frame
+  [★★☆] TCP Handshake
+  [★★☆] TCP Teardown
+  [★★★] Congestion Control
+  [★★★] Flow Control
+  [★★★] Sliding Window
+  [★★☆] NAT
+  [★★☆] DNS Resolution Flow
+  [★☆☆] DHCP
+  [★★☆] ARP
+  [★☆☆] ICMP / ping / traceroute
+  [★★☆] Proxy vs Reverse Proxy
+  [★★☆] VPN
+  [★★☆] CDN
+  [★★★] Anycast
+  [★★☆] Load Balancer L4 and L7
+  [★★★] Network Latency Optimization
+  [★★★] BGP
+  [★☆☆] Network Topologies
+  [★★★] QUIC
+  [★★★] East-West vs North-South Traffic
+  [★★★] Service Discovery
+  [★★★] Overlay Networks
+  [★★★] VLAN
+  [★★☆] TLS / SSL
+  [★★☆] Certificate Authority
+  [★★★] Network Observability
+  [★★★] Zero Trust Networking
+  [★★★] Network Policies
+  [★★★] mTLS
+  [★★★] BGP Route Leaks and Hijacking
+  [★★★] DDoS Attack Patterns and Mitigation
+  [★★★] DNSSEC
+  [★★★] IPv6 and Migration Strategy
+  [★★★] eBPF for Networking
+  [★★★] Network Performance Tuning at Scale
+  [★★★] East-West Encryption at Scale
+  [★★★] Network Architecture Design at Scale
+  [★★★] Multi-Region Network Topology Strategy
+  [★★★] Zero Trust Network Architecture Design
+  [★★★] Service Mesh vs API Gateway Decision Framework
+  [★★★] TCP/IP Protocol Design Principles
+  [★★★] BGP Internals and Internet Routing Architecture
+  [★★★] Congestion Control Algorithm Design
+  [★★★] Future Networking - HTTP3 QUIC IPv6 at Scale
+  [★★★] Network Debugging Mental Model
+  [★★★] Latency vs Throughput Trade-off Thinking
+  [★★★] Protocol Selection Framework
+  [★★★] BGP Route Selection / ECMP
+  [★★★] OSPF / IGP Interior Routing
+  [★★★] Network Namespaces (Deep)
+  [★★★] RDMA (Remote Direct Memory Access)
+  [★★★] NIC Offloading (TSO, GRO, RSS)
+  [★★★] TCP Protocol Design Rationale (Cerf-Kahn)
+  [★★★] IP Protocol Design Philosophy (RFC 791)
+  [★★★] DNS System Design Rationale (Mockapetris)
+  [★★★] QUIC Protocol Design (IETF RFC 9000)
+  [★★★] BGP Internet Architecture Theory
+  [★★★] Software-Defined Networking (SDN) Theory
+  [★★★] Network Calculus / QoS Theory
+  [★★★] Internet Architecture Theory (RFC 1958)
+  [★★★] HTTP Protocol Evolution Theory
+=== SEC-security (142) ===
+  [★☆☆] Why Security Matters - The Adversarial Mindset
+  [★☆☆] The Security Threat Landscape - A Map
+  [★☆☆] How Attackers Think - Attack Surfaces and Vectors
+  [★☆☆] Defense in Depth - The Security Layering Principle
+  [★☆☆] The Security Ecosystem Map (AppSec NetSec CloudSec)
+  [★☆☆] Security Principles (OWASP, CWE, CVE)
+  [★☆☆] CIA Triad (Confidentiality, Integrity, Availability)
+  [★★☆] Security Architecture Principles
+  [★★☆] Cryptography for Application Developers
+  [★★☆] Public Key Infrastructure (PKI) Basics
+  [★★☆] TLS and Secure Protocols for Developers
+  [★☆☆] Password and Credential Security Basics
+  [★☆☆] Principle of Least Privilege
+  [★☆☆] Secure Defaults
+  [★☆☆] OWASP Top 10 - Overview
+  [★☆☆] Security Misconfiguration
+  [★☆☆] Credentials and Secrets Management Basics
+  [★★☆] Cross-Site Scripting (XSS)
+  [★★☆] CSRF (Cross-Site Request Forgery)
+  [★★☆] SQL Injection
+  [★★☆] SSRF (Server-Side Request Forgery)
+  [★★☆] API Authentication Patterns
+  [★★☆] Input Validation and Output Encoding
+  [★★☆] Secure HTTP Headers (CSP, HSTS, X-Frame-Options)
+  [★★☆] CORS - Cross-Origin Security
+  [★★☆] Role-Based and Attribute-Based Access Control
+  [★★★] API Authorization Design Patterns
+  [★★☆] API Key Security Patterns
+  [★★★] Certificate Pinning and Trust Anchors
+  [★★☆] Security Logging and Monitoring
+  [★★☆] Dependency and Supply Chain Security Basics
+  [★★☆] Secure Coding Practices
+  [★★☆] OWASP Top 10 - Deep Dive Per Vulnerability
+  [★★☆] Command Injection
+  [★★☆] Path Traversal
+  [★★☆] XXE Injection
+  [★★☆] Insecure Deserialization
+  [★★☆] Broken Access Control and IDOR
+  [★★★] Cryptographic Misuse and Common Errors
+  [★★☆] Secrets Management at Scale (Vault, AWS Secrets)
+  [★★☆] Zero Trust Security Model
+  [★★☆] Container Security
+  [★★☆] Threat Modeling (STRIDE, PASTA)
+  [★★☆] Penetration Testing Fundamentals
+  [★★☆] Security Audit and Code Review
+  [★★★] Service-to-Service Security Patterns
+  [★★☆] Privilege Escalation Patterns
+  [★★★] Supply Chain Attacks (SolarWinds, XZ Utils)
+  [★★★] Log4Shell - CVE-2021-44228
+  [★★★] Heartbleed - CVE-2014-0160
+  [★★★] Memory Safety Vulnerabilities and Exploitation
+  [★★★] Advanced Authentication Attack Patterns
+  [★★★] OAuth 2.0 Security Analysis
+  [★★★] Cryptographic Security Evaluation
+  [★★★] Lateral Movement Techniques
+  [★★★] Incident Response Playbook
+  [★★★] Security Hardening at Scale
+  [★★★] SSRF at Scale - Cloud Metadata Exploitation
+  [★★★] DDoS Attack Patterns and Defense
+  [★★★] Security Architecture Design Patterns
+  [★★★] DevSecOps Strategy and Pipeline Security
+  [★★★] Zero Trust Architecture Design
+  [★★★] Compliance-Driven Security (GDPR, SOC2, PCI-DSS)
+  [★★★] Cryptographic Primitive Design
+  [★★★] Security Protocol Formal Analysis
+  [★★★] Formal Verification of Security Properties
+  [★★★] SAST and DAST Pipeline Design and Automation
+  [★★★] Adversarial Thinking as Engineering Mindset
+  [★★★] Security Trade-off Framing
+  [★★★] Threat Modeling as First-Principles Tool
+  [★★★] OWASP A05 - Security Misconfiguration (Deep)
+  [★★★] Cryptographic Failures
+  [★★☆] Vulnerable and Outdated Components
+  [★★☆] Brute-Force Attack
+  [★★★] Credential Stuffing
+  [★★★] Timing Attack
+  [★★★] Replay Attack
+  [★★☆] Man-in-the-Middle Attack
+  [★★☆] DDoS Attack
+  [★☆☆] Phishing
+  [★★☆] Social Engineering
+  [★★★] Supply Chain Attack
+  [★★★] Prompt Injection (AI Security)
+  [★★☆] Input Sanitization vs Escaping
+  [★★★] Content Security Policy (CSP)
+  [★★★] Security Headers (HSTS, X-Frame-Options)
+  [★★☆] Secrets Management
+  [★☆☆] Environment Variables for Secrets
+  [★☆☆] .env File Pattern
+  [★★★] Vault (HashiCorp)
+  [★★☆] API Key Security
+  [★★☆] Rate Limiting for Security
+  [★★☆] Brute-Force Prevention
+  [★★★] Account Lockout Policy
+  [★★★] DDoS Protection
+  [★★★] WAF (Web Application Firewall)
+  [★★★] Penetration Testing
+  [★★★] Red Team / Blue Team
+  [★★☆] SAST (Static Application Security Testing)
+  [★★★] DAST (Dynamic Application Security Testing)
+  [★★★] SCA (Software Composition Analysis)
+  [★★★] SBOM (Software Bill of Materials)
+  [★★☆] CVE (Common Vulnerabilities and Exposures)
+  [★★★] CVSS Score
+  [★★★] Security Audit
+  [★★★] SIEM (Security Information and Event Management)
+  [★★★] Security Logging and Monitoring
+  [★★★] Incident Response
+  [★★★] RASP (Runtime Application Self-Protection)
+  [★★☆] Dependency Scanning
+  [★★★] Container Security Scanning
+  [★★★] Secret Scanning (in Git)
+  [★☆☆] Threat vs Vulnerability vs Risk
+  [★☆☆] Malware Overview
+  [★☆☆] Firewall (Conceptual)
+  [★☆☆] HTTPS Overview (Conceptual)
+  [★☆☆] Nonrepudiation
+  [★☆☆] Security vs Privacy
+  [★☆☆] Password Security Basics
+  [★☆☆] What is a Security Vulnerability
+  [★☆☆] Security Policy (Conceptual)
+  [★★☆] CORS Security Implications
+  [★★☆] Insecure Direct Object Reference (IDOR)
+  [★★☆] Clickjacking
+  [★★☆] Open Redirect
+  [★★☆] Session Hijacking / Token Theft
+  [★★☆] OWASP API Security Top 10
+  [★★☆] CIS Benchmarks (Security Hardening)
+  [★★★] mTLS (Mutual TLS)
+  [★★★] Memory Safety Vulnerabilities
+  [★★★] Side-Channel Attack (Deep)
+  [★★★] Container Security Hardening
+  [★★★] Network Segmentation Security
+  [★★★] Compliance-Driven Security (PCI-DSS, SOX, GDPR)
+  [★★★] OWASP LLM Top 10
+  [★★★] Agent Permission Model
+  [★★★] Zero-Day Vulnerability
+  [★★★] Threat Intelligence (MITRE ATT&CK)
+  [★★★] Defense in Depth Architecture
+  [★★★] Security Architecture Review
+  [★★★] Digital Forensics (Basics)
+  [★★★] Exploit Development (Conceptual)
+=== JCC-java-concurrency (92) ===
+  [★☆☆] Why Concurrency Is Hard
+  [★☆☆] The Thread Safety Problem: A Mental Model
+  [★☆☆] Java Concurrency Approach: History and Philosophy
+  [★☆☆] Concurrency vs Parallelism in Java
+  [★☆☆] The Java Concurrency Ecosystem Map
+  [★☆☆] Thread (Java)
+  [★☆☆] Runnable
+  [★☆☆] Callable
+  [★☆☆] Future
+  [★★★] CompletableFuture
+  [★★☆] Thread Lifecycle
+  [★★☆] Thread States
+  [★★☆] synchronized
+  [★★★] volatile
+  [★★★] wait notify notifyAll
+  [★★★] ReentrantLock
+  [★★★] ReadWriteLock
+  [★★★] StampedLock
+  [★★★] ThreadLocal
+  [★★★] Java Memory Model (JMM)
+  [★★☆] Race Condition
+  [★★★] CAS (Compare-And-Swap)
+  [★★★] Optimistic Locking (Java)
+  [★★☆] Executor
+  [★★☆] ExecutorService
+  [★★★] ThreadPoolExecutor
+  [★★★] ForkJoinPool
+  [★★★] Virtual Threads (Project Loom)
+  [★★★] Carrier Thread
+  [★★★] Continuation
+  [★★☆] Semaphore (Java)
+  [★★☆] CountDownLatch
+  [★★★] CyclicBarrier
+  [★★★] Phaser
+  [★★☆] BlockingQueue
+  [★★★] ConcurrentHashMap
+  [★★★] CopyOnWriteArrayList
+  [★★★] Atomic Classes
+  [★★★] VarHandle
+  [★★★] Structured Concurrency
+  [★★★] Scoped Values
+  [★★★] Thread Dump Analysis
+  [★★★] Deadlock Detection (Java)
+  [★★★] Lock Striping
+  [★★★] Actor Model
+  [★★★] Concurrency Architecture Patterns in Java
+  [★★★] Virtual Thread Migration Strategy (Loom)
+  [★★★] Concurrent System Design at Scale
+  [★★★] Lock-Free Algorithm Strategy
+  [★★★] Thread Model Selection Framework
+  [★★★] Java Memory Model Specification Deep Dive
+  [★★★] Lock-Free Data Structure Design
+  [★★★] Concurrent Algorithm Research
+  [★★★] Structured Concurrency Design Principles
+  [★★★] Concurrency-First Thinking
+  [★★★] Shared State Risk Intuition
+  [★★★] Thread Safety Trade-off Framing
+  [★★☆] ScheduledExecutorService
+  [★★☆] CompletableFuture Composition Patterns
+  [★★☆] Parallel Streams
+  [★★☆] Fork-Join Framework Pattern
+  [★★☆] Thread Interruption and Cancellation
+  [★★☆] CompletionService
+  [★★☆] Condition Interface (Lock Conditions)
+  [★★★] Amdahl's Law
+  [★★★] Thread Pinning (Virtual Threads Problem)
+  [★★★] JMM Happens-Before - Deep Rules
+  [★★★] Lock-Free Data Structures
+  [★★★] Memory Visibility Diagnostics (jstack, JFR)
+  [★★★] False Sharing (Java Context)
+  [★★★] Busy-Wait vs Blocking
+  [★★★] JSR 133 - Java Memory Model Specification
+  [★★★] Project Loom Design Rationale
+  [★★★] Structured Concurrency Theory
+  [★★★] Reactive Streams Specification
+  [★★★] Actor Model Theory (Erlang / Akka Roots)
+  [★★★] Lock-Free Algorithm Theory (CAS Foundations)
+  [★★☆] Daemon Threads
+  [★★☆] Thread Priority
+  [★★☆] ThreadFactory
+  [★★☆] Immutable Object Pattern
+  [★★☆] Producer-Consumer Pattern
+  [★★☆] Liveness Issues (Livelock / Starvation)
+  [★★★] ABA Problem
+  [★★★] Work-Stealing Algorithm
+  [★☆☆] Thread Groups (Legacy)
+  [★★★] Double-Checked Locking Pattern
+  [★★★] ExecutorService Rejection Policies
+  [★★☆] Concurrent Queue Variants (LinkedBlockingQueue, SynchronousQueue, DelayQueue)
+  [★★☆] Thread Safety Annotations (@GuardedBy, @ThreadSafe)
+  [★★☆] synchronized Block vs synchronized Method
+  [★★★] Java Reactive Programming (RxJava)
+=== JLG-java-language (94) ===
+  [★☆☆] What Is Java - History and Philosophy
+  [★☆☆] The Java Ecosystem Map (SE, EE, ME, Android)
+  [★☆☆] Why Java Is Still Dominant
+  [★☆☆] Java vs Other JVM Languages (Kotlin, Scala, Groovy)
+  [★☆☆] Java Versioning and LTS Release Strategy
+  [★☆☆] Java EE  J2EE Overview
+  [★★☆] JSP (Java Server Pages)
+  [★★☆] Java Servlet
+  [★★☆] Java Collections Deep Dive (List, Map, Set)
+  [★★☆] Java Exception Hierarchy (Checked vs Unchecked)
+  [★★☆] Java Keywords (static, final, volatile, synchronized, transient)
+  [★★☆] Java File IO and Serialization
+  [★★☆] Java Abstract Classes vs Interfaces
+  [★☆☆] Java Access Modifiers
+  [★★☆] Java Constructors Deep Dive
+  [★★☆] Java Memory Management (Stack vs Heap Practical)
+  [★★★] Java 8 to Java 17 Migration Guide
+  [★★☆] Java 17 Features (Records, Sealed, Pattern Matching)
+  [★★★] Java Profiling (YourKit, JFR)
+  [★★★] Java Performance Tuning
+  [★★☆] String Pool String Interning
+  [★★☆] Autoboxing Unboxing
+  [★★★] Integer Cache
+  [★★☆] Generics
+  [★★★] Type Erasure
+  [★★★] Bounded Wildcards
+  [★★★] Covariance Contravariance
+  [★★☆] Varargs
+  [★★★] Reflection
+  [★★★] Annotation Processing (APT)
+  [★★☆] Serialization Deserialization
+  [★★☆] Records (Java 16+)
+  [★★★] Sealed Classes (Java 17+)
+  [★★★] Pattern Matching (Java 21+)
+  [★★★] invokedynamic
+  [★★☆] Optional
+  [★★☆] Stream API
+  [★★☆] Functional Interfaces
+  [★★☆] Method References
+  [★★☆] Lambda Expressions
+  [★★★] Java Version Migration Strategy (8 to 17 to 21)
+  [★★★] Java API Design at Scale
+  [★★★] Java Modularity Strategy (JPMS)
+  [★★★] Java Performance Profiling at Scale
+  [★★★] Java in Polyglot Architecture
+  [★★★] Java Language Specification Deep Dive
+  [★★★] Project Valhalla: Value Types and Primitives
+  [★★★] Project Panama: Foreign Function and Memory API
+  [★★★] Java Language Design History and Rationale
+  [★★★] Java API Design Thinking
+  [★★★] Language Feature Trade-off Framing
+  [★★★] Java Ecosystem Selection Framework
+  [★★☆] Java Module System (JPMS, Java 9+)
+  [★☆☆] Java Program Structure (class, method, main)
+  [★☆☆] Variables and Data Types in Java
+  [★☆☆] Control Flow (if/else, for, while)
+  [★☆☆] Java Arrays (Basics)
+  [★☆☆] Classes and Objects (Basics)
+  [★☆☆] Packages and Imports
+  [★☆☆] Java Standard Library Overview (java.lang, java.util)
+  [★☆☆] Inheritance and Polymorphism
+  [★☆☆] Primitive Types and Wrapper Classes
+  [★★☆] Enums
+  [★★☆] String Methods (Common Operations)
+  [★★☆] Java DateTime API (java.time)
+  [★★☆] Try-with-Resources
+  [★★☆] Comparable vs Comparator
+  [★★☆] Iterators and Iterable
+  [★★☆] Java 8 Features Overview (streams, lambdas, Optional)
+  [★★☆] equals() and hashCode() Contract
+  [★★☆] instanceof and Type Casting
+  [★★☆] Text Blocks (Java 15+)
+  [★★☆] Switch Expressions (Java 14+)
+  [★★☆] Java Interfaces (Practical Usage)
+  [★★☆] Java NIO (Non-Blocking I/O)
+  [★★★] MethodHandles
+  [★★★] Java Agents (java.lang.instrument)
+  [★★★] Class File Format (javap)
+  [★★★] JFR (Java Flight Recorder) Deep Dive
+  [★★★] Hidden Classes (Java 15+)
+  [★★★] java.util.concurrent.Flow (Reactive Java)
+  [★★★] String Deduplication (GC Feature)
+  [★★★] JEP (Java Enhancement Proposal) Process
+  [★★★] Project Amber Design Rationale
+  [★★☆] Java Socket API (Socket, ServerSocket)
+  [★★★] UDP Sockets (DatagramSocket, DatagramPacket)
+  [★★★] Java NIO Channels (SocketChannel, Selector)
+  [★★☆] Java HttpClient (java.net.http, Java 11+)
+  [★★☆] Nested Classes, Inner Classes, Anonymous Classes
+  [★☆☆] Method Overloading vs Overriding
+  [★★☆] StringBuilder and StringBuffer
+  [★★☆] Java Logging (SLF4J, Logback, java.util.logging)
+  [★★☆] Regular Expressions in Java (java.util.regex)
+  [★★★] Object Cloning (Cloneable, copy constructors)
+=== JPH-jpa-hibernate (56) ===
+  [★☆☆] The Object-Relational Mismatch Problem
+  [★☆☆] What is ORM (Object-Relational Mapping)
+  [★☆☆] JPA vs JDBC - Why ORM Exists
+  [★☆☆] Hibernate as JPA Implementation
+  [★☆☆] JPA Ecosystem Map (Hibernate, EclipseLink, MyBatis)
+  [★☆☆] @Entity
+  [★☆☆] @Id and @GeneratedValue
+  [★☆☆] @Table and @Column
+  [★★☆] EntityManager
+  [★★☆] Persistence Context
+  [★★☆] Entity Lifecycle (NEW, MANAGED, DETACHED, REMOVED)
+  [★☆☆] JPA Configuration (persistence.xml, application.properties)
+  [★★☆] JPQL (Java Persistence Query Language)
+  [★★☆] Spring Data JPA Repository
+  [★★☆] CrudRepository and JpaRepository
+  [★★☆] @OneToOne
+  [★★☆] @OneToMany and @ManyToOne
+  [★★☆] @ManyToMany
+  [★★☆] @JoinColumn and @JoinTable
+  [★★☆] FetchType (LAZY vs EAGER)
+  [★★☆] CascadeType
+  [★★☆] @Query (Spring Data JPA)
+  [★★☆] Derived Query Methods (findBy, countBy)
+  [★★☆] Pagination and Sorting (Pageable, Sort)
+  [★★☆] @Transactional with JPA
+  [★★☆] N+1 Problem (ORM Context)
+  [★★☆] HQL (Hibernate Query Language)
+  [★★☆] @NamedQuery and Native Queries
+  [★★☆] DTO Projections in Spring Data JPA
+  [★★☆] Hibernate Session vs EntityManager
+  [★★★] First Level Cache (Persistence Context Cache)
+  [★★★] Second Level Cache (Ehcache, Redis)
+  [★★★] Query Cache
+  [★★★] Criteria API
+  [★★★] EntityGraph (Solving N+1)
+  [★★★] Optimistic Locking (@Version)
+  [★★★] Pessimistic Locking (LockModeType)
+  [★★★] Inheritance Mapping Strategies (SINGLE_TABLE, JOINED, TABLE_PER_CLASS)
+  [★★★] @Embedded and @Embeddable
+  [★★★] @ElementCollection
+  [★★★] Spring Data Specifications
+  [★★★] Hibernate Validator (Bean Validation)
+  [★★★] Hibernate Batch Processing
+  [★★★] Hibernate Statistics and Monitoring
+  [★★★] Connection Pooling with JPA (HikariCP)
+  [★★★] Multi-Tenancy in JPA and Hibernate
+  [★★★] Hibernate Envers (Auditing and History)
+  [★★★] Hibernate vs MyBatis vs JOOQ
+  [★★★] @Converter and AttributeConverter
+  [★★★] Dirty Checking and Flush Mode
+  [★★★] QueryDSL with JPA
+  [★★★] JPA at Scale - Architecture Patterns
+  [★★★] ORM Selection Framework
+  [★★★] Spring Data JPA Architecture Design
+  [★★★] JPA Specification (JSR 338 / Jakarta Persistence)
+  [★★★] Hibernate Internals Deep Dive
+=== JVM-java-jvm-internals (76) ===
+  [★☆☆] What Is the JVM - A Mental Model
+  [★☆☆] Why the JVM Was Invented
+  [★☆☆] JVM vs JRE vs JDK
+  [★★☆] How Java Code Runs - Bytecode to Execution
+  [★☆☆] The JVM Ecosystem Map (OpenJDK, GraalVM, Languages)
+  [★☆☆] JRE
+  [★☆☆] JDK
+  [★★☆] Bytecode
+  [★★☆] Class Loader
+  [★★☆] Stack Memory
+  [★★☆] Heap Memory
+  [★★☆] Metaspace
+  [★★★] Stack Frame
+  [★★★] Operand Stack
+  [★★★] Local Variable Table
+  [★★★] Object Header
+  [★★★] Escape Analysis
+  [★★★] Memory Barrier
+  [★★★] Happens-Before
+  [★★★] GC Roots
+  [★★★] Reference Types (Strong, Soft, Weak, Phantom)
+  [★★☆] Young Generation
+  [★★☆] Eden Space
+  [★★☆] Survivor Space
+  [★★☆] Old Generation
+  [★★☆] Minor GC
+  [★★★] Major GC
+  [★★★] Full GC
+  [★★★] Stop-The-World (STW)
+  [★★☆] Serial GC
+  [★★☆] Parallel GC
+  [★★★] CMS (Concurrent Mark Sweep)
+  [★★★] G1GC
+  [★★★] ZGC
+  [★★★] Shenandoah GC
+  [★★★] GC Tuning
+  [★★☆] GC Logs
+  [★★★] GC Pause
+  [★★★] Throughput vs Latency (GC)
+  [★★★] Finalization
+  [★★★] JIT Compiler
+  [★★★] C1 C2 Compiler
+  [★★★] Tiered Compilation
+  [★★★] Method Inlining
+  [★★★] Deoptimization
+  [★★★] OSR (On-Stack Replacement)
+  [★★★] AOT (Ahead-of-Time Compilation)
+  [★★★] GraalVM
+  [★★★] Native Image
+  [★★★] TLAB (Thread Local Allocation Buffer)
+  [★★★] Safepoint
+  [★★★] Card Table
+  [★★★] Write Barrier
+  [★★★] Remembered Set
+  [★★★] GC Tuning Strategy for Production JVMs
+  [★★★] JVM Architecture Decisions at Scale
+  [★★★] JVM Selection Framework (HotSpot vs GraalVM)
+  [★★★] Heap Sizing and Memory Planning Strategy
+  [★★★] JVM Observability Strategy
+  [★★★] JVM Specification Deep Dive
+  [★★★] GC Algorithm Design Principles
+  [★★★] JIT Compilation Research (Truffle, Graal IR)
+  [★★★] JVM Language Design (Bytecode Targeting)
+  [★★★] JVM-First Debugging Mental Model
+  [★★★] Performance Intuition via JVM Internals
+  [★★★] GC Trade-off Framing
+  [★★☆] Method Area
+  [★★★] PC Register (Program Counter)
+  [★★★] Native Method Stack
+  [★★★] JVM Safepoints and Stop-the-World Events
+  [★★☆] Heap Dump
+  [★★☆] Thread Dump
+  [★★★] Class Loading Delegation Model
+  [★★★] Compressed OOPs
+  [★★★] Class Data Sharing (CDS / AppCDS)
+  [★☆☆] JVM Architecture (Overview)
+=== SPR-spring-core (98) ===
+  [★☆☆] What Is Spring - History and Philosophy
+  [★☆☆] The Spring Ecosystem Map
+  [★☆☆] Why Spring Boot Changed Java Development
+  [★☆☆] Spring vs Jakarta EE vs Micronaut vs Quarkus
+  [★☆☆] Spring in Production - What to Expect
+  [★★★] Spring Batch
+  [★★★] Spring Batch Job  Step  Tasklet
+  [★★★] Spring Batch ItemReader  ItemProcessor  ItemWriter
+  [★★★] Spring Batch Chunk Processing
+  [★★★] Spring Cloud Overview
+  [★★★] Spring Cloud Config
+  [★★★] Spring Cloud Gateway
+  [★★★] Spring Cloud Service Discovery (Eureka)
+  [★★★] Spring Cloud Load Balancer
+  [★★★] Spring Cloud Circuit Breaker
+  [★★★] Micronaut Framework
+  [★★★] Micronaut vs Spring Boot
+  [★★★] Quarkus Framework
+  [★☆☆] IoC (Inversion of Control)
+  [★☆☆] DI (Dependency Injection)
+  [★★☆] ApplicationContext
+  [★★☆] BeanFactory
+  [★☆☆] Bean
+  [★★☆] Bean Lifecycle
+  [★★☆] Bean Scope
+  [★★★] BeanPostProcessor
+  [★★★] BeanFactoryPostProcessor
+  [★★☆] @Autowired
+  [★★☆] @Qualifier  @Primary
+  [★★☆] @Configuration  @Bean
+  [★★★] Circular Dependency
+  [★★★] CGLIB Proxy
+  [★★★] JDK Dynamic Proxy
+  [★★☆] AOP (Aspect-Oriented Programming)
+  [★★☆] Aspect
+  [★★☆] Advice
+  [★★☆] Pointcut
+  [★★☆] JoinPoint
+  [★★★] Weaving
+  [★★☆] DispatcherServlet
+  [★★★] HandlerMapping
+  [★★☆] Filter vs Interceptor
+  [★★☆] @Transactional
+  [★★★] Transaction Propagation
+  [★★★] Transaction Isolation Levels
+  [★★★] N+1 Problem
+  [★★☆] Lazy vs Eager Loading
+  [★★☆] HikariCP
+  [★★★] Auto-Configuration
+  [★★☆] Spring Boot Actuator
+  [★★★] Spring Boot Startup Lifecycle
+  [★★★] WebFlux  Reactive
+  [★★★] Mono  Flux
+  [★★★] Backpressure (Spring)
+  [★★★] Spring Security
+  [★★☆] Spring Data JPA
+  [★★★] Spring Cloud
+  [★★☆] Spring Boot Testing
+  [★★★] Spring Architecture at Scale
+  [★★★] Spring Migration Strategy (MVC to WebFlux)
+  [★★★] Spring Boot Configuration Strategy
+  [★★★] Spring Security Architecture Design
+  [★★★] Microservice Decomposition with Spring Cloud
+  [★★★] Spring Framework Internals Deep Dive
+  [★★★] Spring Reactive Model (Project Reactor Internals)
+  [★★★] Spring Native and GraalVM Integration
+  [★★★] Spring Specification and Extension Points
+  [★★★] IoC-First Thinking
+  [★★★] Spring Configuration Trade-off Framing
+  [★★★] Framework Selection Mental Model
+  [★☆☆] @Component / @Service / @Repository
+  [★☆☆] @SpringBootApplication
+  [★★☆] @RestController / @Controller
+  [★★☆] @RequestMapping / @GetMapping / @PostMapping
+  [★★☆] @RequestBody / @ResponseBody
+  [★★☆] @PathVariable / @RequestParam
+  [★★☆] Spring Profiles (@Profile, application.yml)
+  [★★☆] Spring Validation (@Valid, @NotNull)
+  [★★☆] Exception Handling (@ExceptionHandler, @ControllerAdvice)
+  [★★☆] Spring Cache Abstraction (@Cacheable)
+  [★★☆] Spring Events (ApplicationEvent, @EventListener)
+  [★★☆] Conditional Beans (@ConditionalOnProperty)
+  [★★☆] ResponseEntity and HTTP Status Handling
+  [★☆☆] Spring Boot DevTools
+  [★★☆] Spring Retry
+  [★★☆] MockMvc
+  [★★☆] @MockBean / @SpyBean
+  [★★★] Spring Context Refresh (AbstractApplicationContext)
+  [★★★] Bean Definition Registry
+  [★★★] Spring Boot AOT Compilation (Spring 6)
+  [★★★] Spring + Virtual Threads (Spring 6.1)
+  [★★★] Spring Security OAuth2 Resource Server
+  [★★★] Spring Data REST
+  [★★★] Spring Native Image Support
+  [★★★] Spring Framework Design Rationale
+  [★★★] Project Reactor Design (Reactive Streams Spec)
+  [★★★] Spring Boot Auto-Configuration Algorithm
+  [★★★] Spring Test Context Management
+=== BIG-bigdata-streaming (42) ===
+  [★☆☆] What Is Big Data -- The 3Vs Problem
+  [★☆☆] The Streaming vs Batch Divide
+  [★☆☆] The Big Data Ecosystem Map (Hadoop, Spark, Kafka)
+  [★☆☆] Why Distributed Processing Matters
+  [★☆☆] Big Data in Production -- What to Expect
+  [★★☆] Distributed Computing
+  [★★☆] MapReduce
+  [★★☆] Apache Hadoop
+  [★★★] HDFS
+  [★★★] Apache Spark
+  [★★★] Spark RDD
+  [★★★] Spark DataFrame  Dataset
+  [★★★] Spark Streaming
+  [★★★] Apache Flink
+  [★★★] Windowing (Tumbling, Sliding, Session)
+  [★★★] Watermark
+  [★★★] Event Time vs Processing Time
+  [★★★] Lambda Architecture
+  [★★★] Kappa Architecture
+  [★★☆] Batch vs Stream Processing
+  [★★★] Backpressure (Streaming)
+  [★★★] Apache Beam
+  [★★★] Change Data Capture (CDC)
+  [★★★] Streaming Architecture Design
+  [★★★] Lambda Architecture vs Kappa Architecture Trade-offs
+  [★★★] Real-Time Analytics Platform Design
+  [★★★] Event-Driven Architecture Strategy
+  [★★★] Big Data Platform Selection Framework
+  [★★★] Distributed Stream Processing Internals
+  [★★★] Consensus in Distributed Streaming Systems
+  [★★★] State Management in Streaming Pipelines
+  [★★★] Fault Tolerance in Distributed Pipelines
+  [★★★] Batch vs Stream Trade-off Framing
+  [★★★] Big Data System Selection Mental Model
+  [★★★] Data Pipeline Design Thinking
+  [★★☆] Spark SQL
+  [★★☆] PySpark API Fundamentals
+  [★★★] Databricks Platform
+  [★★☆] Apache Airflow (Orchestration)
+  [★★☆] dbt (Data Build Tool)
+  [★★★] Streaming Data Pipeline Design Patterns
+  [★★★] Big Data Platform Cost Optimization
+=== CCH-caching (47) ===
+  [★☆☆] Why Caching Exists -- The Performance Problem
+  [★☆☆] The Caching Landscape -- A Map
+  [★☆☆] Cache Anatomy (Hit, Miss, Eviction)
+  [★☆☆] When NOT to Cache
+  [★☆☆] The Cache Ecosystem Map (Redis, Memcached, CDN)
+  [★★☆] Cache-Aside
+  [★★☆] Read-Through
+  [★★☆] Write-Through
+  [★★★] Write-Behind
+  [★★★] Cache Invalidation
+  [★☆☆] TTL
+  [★★☆] Eviction Policies (LRU, LFU, FIFO)
+  [★★★] Cache Stampede
+  [★★★] Thundering Herd
+  [★★★] Negative Caching
+  [★★★] Distributed Cache
+  [★★★] Cache Coherence
+  [★★★] Multi-Level Cache
+  [★★★] Cache Warming
+  [★★★] Write-Around
+  [★★★] Cache Aside vs Read-Through Comparison
+  [★★★] Consistent Hashing in Cache
+  [★★★] Redis Cluster
+  [★★☆] Memcached vs Redis
+  [★★☆] Local Cache vs Distributed Cache
+  [★★★] Caching Architecture Strategy
+  [★★★] Cache Invalidation Architecture
+  [★★★] Distributed Cache Design
+  [★★★] Cache-Aside vs Write-Through at Scale
+  [★★★] Multi-Level Caching Strategy
+  [★★★] Cache Coherence Protocol Design
+  [★★★] Distributed Cache Algorithm Research
+  [★★★] Cache Replacement Policy Design
+  [★★★] Consistent Hashing in Cache Systems
+  [★★★] Cache Trade-off Framing
+  [★★★] Invalidation Problem Mental Model
+  [★★★] Cache Selection Framework
+  [★★☆] HTTP Cache-Control Header
+  [★★☆] ETag and Conditional Requests
+  [★★☆] CDN Caching (Edge Caching)
+  [★★☆] Browser Caching Strategies
+  [★★☆] Cache Busting Techniques
+  [★★★] Database Query Cache
+  [★★☆] Spring Cache Abstraction
+  [★★☆] Object vs Fragment Caching
+  [★★★] Service Worker Cache (Offline-First)
+  [★★★] Cache Observability and Monitoring
+=== DAT-data-fundamentals (54) ===
+  [★☆☆] What Is Data Engineering
+  [★☆☆] The Data Ecosystem -- A Map
+  [★☆☆] Data vs Information vs Knowledge
+  [★☆☆] Structured vs Unstructured vs Semi-Structured Data
+  [★☆☆] The Modern Data Stack Map
+  [★★★] AVRO Schema
+  [★★★] Schema Registry (Confluent)
+  [★☆☆] Data Types (Primitive, Complex, Semi-Structured)
+  [★☆☆] Structured vs Unstructured Data
+  [★☆☆] Semi-Structured Data
+  [★☆☆] Data Formats (JSON, XML, YAML, CSV)
+  [★★☆] Binary Formats (Avro, Parquet, ORC, Protobuf)
+  [★★☆] Columnar vs Row Storage
+  [★★☆] Avro
+  [★★☆] Parquet
+  [★★☆] ORC
+  [★★★] Delta Lake
+  [★★★] Apache Iceberg
+  [★★★] Hudi
+  [★★☆] Data Compression (gzip, snappy, zstd, lz4)
+  [★★☆] Serialization Formats
+  [★★★] Schema Registry
+  [★★★] Schema Evolution (Data)
+  [★★☆] Data Modeling
+  [★★☆] Star Schema
+  [★★☆] Snowflake Schema
+  [★★★] Data Vault
+  [★★☆] Dimensional Modeling
+  [★★☆] Fact Table vs Dimension Table
+  [★★★] SCD (Slowly Changing Dimension)
+  [★★☆] Data Lake
+  [★★☆] Data Warehouse
+  [★★★] Data Lakehouse
+  [★★★] Data Mesh
+  [★★★] Data Fabric
+  [★★★] Data Lineage
+  [★★★] Data Catalog
+  [★★★] Data Quality
+  [★★★] Data Governance
+  [★★★] Master Data Management
+  [★★☆] OLTP vs OLAP
+  [★★☆] ETL vs ELT
+  [★★★] Data Architecture Strategy (Lake vs Warehouse vs Mesh)
+  [★★★] Data Quality at Scale
+  [★★★] Data Governance Framework Design
+  [★★★] Data Platform Architecture
+  [★★★] Data Contract Strategy
+  [★★★] Data System Internals (Parquet, Arrow, Iceberg)
+  [★★★] Data Model Theory
+  [★★★] Distributed Data Processing Design
+  [★★★] Data Lineage System Architecture
+  [★★★] Data Trade-off Framing
+  [★★★] Data Modeling Mental Model
+  [★★★] Data Platform Selection Framework
+=== DBF-database-fundamentals (67) ===
+  [★☆☆] What Is a Database and Why It Exists
+  [★☆☆] The Database Landscape -- A Map
+  [★☆☆] How Data Gets Stored and Retrieved
+  [★☆☆] RDBMS vs NoSQL -- When to Choose
+  [★☆☆] The SQL Ecosystem Map
+  [★★☆] Oracle Database
+  [★★★] Complex SQL Queries (Joins, Subqueries, CTEs)
+  [★★★] Query Optimization
+  [★★★] Liquibase
+  [★★★] Flyway
+  [★★★] Database Change Management
+  [★★★] Schema Design Best Practices
+  [★★☆] Data Integrity Constraints
+  [★★★] PostgreSQL Specific Features
+  [★★★] MySQL Specific Features
+  [★☆☆] ACID
+  [★☆☆] Atomicity
+  [★☆☆] Consistency (DB)
+  [★★☆] Isolation
+  [★★☆] Durability
+  [★☆☆] Transaction
+  [★☆☆] Commit  Rollback  Savepoint
+  [★★☆] Isolation Levels
+  [★★☆] Dirty Read
+  [★★☆] Non-Repeatable Read
+  [★★☆] Phantom Read
+  [★★★] MVCC
+  [★★★] WAL (Write-Ahead Log)
+  [★★★] Redo Log  Undo Log
+  [★★☆] B-Tree
+  [★★★] B+ Tree
+  [★★★] LSM Tree
+  [★★☆] Index Types (B-Tree, Hash, Composite, Covering)
+  [★★★] Query Planner  Execution Plan
+  [★★☆] EXPLAIN
+  [★★☆] Normalization
+  [★★☆] Denormalization
+  [★★☆] Foreign Key  Referential Integrity
+  [★★★] Locking (Row, Table, Gap, Next-Key)
+  [★★★] Deadlock Detection (DB)
+  [★★☆] Connection Pooling (DB)
+  [★★☆] Prepared Statements
+  [★★☆] Read Replica
+  [★★★] Write Amplification
+  [★★★] Partitioning (DB)
+  [★★★] Materialized View
+  [★★☆] Stored Procedure  Trigger
+  [★★☆] ORM Patterns
+  [★★★] Optimistic vs Pessimistic Locking
+  [★★★] Database Replication
+  [★★☆] Master-Slave Replication
+  [★★★] Multi-Master Replication
+  [★★★] Database Sharding
+  [★★☆] Database Migration
+  [★★★] Schema Evolution
+  [★★★] Database Selection Framework
+  [★★★] Database Architecture at Scale
+  [★★★] Multi-Database Strategy (Polyglot Persistence)
+  [★★★] Database Migration Strategy
+  [★★★] Database Observability Strategy
+  [★★★] RDBMS Engine Internals (InnoDB, PostgreSQL)
+  [★★★] Transaction Protocol Design (2PC, MVCC)
+  [★★★] Query Optimizer Design
+  [★★★] Storage Engine Architecture
+  [★★★] ACID Trade-off Framing
+  [★★★] Database Selection Mental Model
+  [★★★] Query Performance Intuition
+=== MSG-messaging-streaming (46) ===
+  [★☆☆] What Is Messaging -- The Communication Problem
+  [★☆☆] The Messaging Ecosystem Map (Kafka, RabbitMQ, SQS, Pulsar)
+  [★☆☆] When to Use Messaging vs REST vs RPC
+  [★☆☆] Delivery Guarantees Mental Model (At-Least-Once, Exactly-Once)
+  [★☆☆] Messaging in Production -- What Engineers Face
+  [★★☆] Apache Kafka
+  [★★☆] Kafka Topic  Partition  Offset
+  [★★☆] Consumer Group
+  [★★★] ISR (In-Sync Replicas)
+  [★★★] Log Compaction
+  [★★★] Exactly-Once Semantics
+  [★★★] Kafka Streams
+  [★★★] KSQL
+  [★★★] Consumer Lag
+  [★★★] Idempotent Producer
+  [★★★] Transactional Producer
+  [★★☆] Dead Letter Queue (DLQ)
+  [★★☆] Fan-Out Pattern
+  [★★★] Message Ordering
+  [★★★] Pulsar
+  [★★☆] RabbitMQ
+  [★★☆] Message Broker vs Event Bus
+  [★★☆] Point-to-Point vs Pub-Sub
+  [★★☆] Competing Consumers
+  [★★★] Outbox Pattern
+  [★★★] Transactional Outbox
+  [★★★] Event-Driven Architecture
+  [★☆☆] AWS SQS and SNS
+  [★★☆] Message Schema Evolution (Avro, Protobuf)
+  [★★☆] Poison Pill Messages and Circuit Breaker
+  [★★☆] Message Deduplication
+  [★★★] Kafka Internals Deep Dive (Replication, ISR, Log Compaction)
+  [★★★] Message Queue Algorithm Research
+  [★★☆] Kafka Connect
+  [★★☆] Kafka Schema Registry
+  [★★☆] Azure Service Bus
+  [★★☆] GCP Cloud Pub/Sub
+  [★★☆] ActiveMQ
+  [★★☆] AMQP Protocol
+  [★★☆] Message Priority and TTL
+  [★★☆] Request-Reply Pattern
+  [★★☆] Topic Exchange Routing (RabbitMQ Exchanges)
+  [★★☆] Message Serialization (Avro, Protobuf, JSON)
+  [★★★] Consumer Poll Loop and Backpressure
+  [★★★] Kafka Lag Monitoring and Consumer Health
+  [★★★] Messaging Architecture Selection Framework
+=== NDB-nosql-distributed (53) ===
+  [★☆☆] Why NoSQL Was Invented
+  [★☆☆] The NoSQL Landscape -- A Map
+  [★☆☆] SQL vs NoSQL -- When to Choose What
+  [★☆☆] The CAP Theorem in Plain English
+  [★☆☆] NoSQL in Production -- What to Expect
+  [★★★] MongoDB Document Schema Design
+  [★★★] MongoDB Normalization vs Denormalization
+  [★★★] MongoDB Aggregation Pipeline
+  [★★★] MongoDB Indexing Strategies
+  [★★★] MongoDB Schema Evolution
+  [★★★] OpenSearch  Elasticsearch
+  [★★★] Snowflake (Cloud Data Warehouse)
+  [★★★] Snowflake Architecture (Virtual Warehouse, Storage)
+  [★★★] ElastiCache
+  [★★★] DynamoDB Data Modeling Patterns
+  [★★★] DynamoDB Single-Table Design
+  [★★☆] Document Store
+  [★★☆] Key-Value Store
+  [★★★] Column Family
+  [★★★] Graph DB
+  [★★★] Time-Series DB
+  [★★★] Search Engine (Elasticsearch)
+  [★★★] Eventual Consistency in NoSQL
+  [★★★] CRDTs
+  [★★★] Vector Database
+  [★★★] NewSQL
+  [★★☆] MongoDB Patterns
+  [★★☆] Redis Data Structures
+  [★★★] Redis Persistence
+  [★★★] Cassandra Data Modeling
+  [★★★] DynamoDB Patterns
+  [★★★] Hot Partition Problem
+  [★★★] Wide Column vs Document
+  [★★★] Polyglot Persistence
+  [★★★] CAP Theorem (DB)
+  [★★★] Distributed Transactions
+  [★★★] Two-Phase Commit (2PC)
+  [★★★] Saga Pattern (DB)
+  [★★★] Change Data Capture (CDC)
+  [★★★] Database Proxy (PgBouncer)
+  [★★★] Data Locality
+  [★★★] Multi-Model Database Strategy
+  [★★★] NoSQL Migration Strategy (SQL to NoSQL)
+  [★★★] Global Distribution Database Design
+  [★★★] Event Store Architecture
+  [★★★] NoSQL Selection Framework
+  [★★★] Distributed Database Internals (Consensus, Paxos)
+  [★★★] Multi-Version Concurrency Control at Scale
+  [★★★] Global Distributed Transactions Research
+  [★★★] NoSQL Engine Architecture
+  [★★★] Consistency Trade-off Framing
+  [★★★] NoSQL Selection Mental Model
+  [★★★] Distributed State Design Thinking
+=== ASY-async-background (39) ===
+  [★☆☆] What Is Async and Background Processing
+  [★☆☆] The Async Mental Model (Sync vs Async vs Parallel)
+  [★☆☆] Message Queue vs Event Bus vs Task Queue -- Map
+  [★☆☆] The Async Ecosystem Map (RabbitMQ, Kafka, Celery, SQS)
+  [★☆☆] Async in Production -- What Engineers Face
+  [★☆☆] Message Queues Fundamentals (Producer, Consumer, Queue)
+  [★☆☆] At-Least-Once vs Exactly-Once vs At-Most-Once Delivery
+  [★☆☆] Idempotency in Async Systems
+  [★☆☆] Job Queues and Worker Patterns
+  [★☆☆] RabbitMQ Fundamentals (Exchange, Queue, Binding)
+  [★☆☆] Apache Kafka Fundamentals
+  [★★☆] Amazon SQS (Simple Queue Service)
+  [★★☆] Dead Letter Queues (DLQ)
+  [★★☆] Message Retry Strategies (Exponential Backoff)
+  [★★☆] Event-Driven Architecture Patterns
+  [★★☆] Celery (Python Task Queue)
+  [★★☆] Quartz Scheduler (Java)
+  [★★☆] Cron Jobs and Scheduled Tasks
+  [★★☆] Saga Pattern (Distributed Transactions)
+  [★★☆] Outbox Pattern
+  [★★☆] Consumer Group and Partition Strategy (Kafka)
+  [★★☆] Kafka Consumer Lag and Monitoring
+  [★★☆] Async API Design (Webhooks, Callbacks, Polling)
+  [★★☆] Priority Queues
+  [★★☆] Temporal (Workflow Orchestration)
+  [★★☆] AWS Step Functions
+  [★★★] Kafka Exactly-Once Semantics (EOS)
+  [★★★] Kafka Streams and KSQL
+  [★★★] Async System Observability (Lag, Throughput, Error Rate)
+  [★★★] Backpressure in Async Systems
+  [★★★] Distributed Scheduler Design
+  [★★★] Message Broker Selection Strategy
+  [★★★] Async Architecture Pattern Selection (Queue vs Stream vs Choreography)
+  [★★★] Workflow Orchestration Architecture (Temporal vs Step Functions)
+  [★★★] Distributed Consensus in Message Systems
+  [★★★] Async Trade-off Framing (Decoupling vs Complexity)
+  [★★★] Message Delivery Guarantee Mental Model
+  [★★★] Event-Driven vs Request-Response Thinking
+  [★★★] Async Observability Mental Model
+=== DPT-design-patterns (84) ===
+  [★☆☆] What Are Design Patterns and Why They Exist
+  [★☆☆] The Gang of Four -- Origin and Philosophy
+  [★☆☆] Pattern vs Anti-Pattern vs Idiom
+  [★☆☆] How to Recognize When a Pattern Applies
+  [★☆☆] The Design Patterns Ecosystem Map
+  [★☆☆] Singleton
+  [★★☆] Factory Method
+  [★★☆] Abstract Factory
+  [★★☆] Builder
+  [★★☆] Prototype
+  [★★★] Object Pool
+  [★★☆] Adapter
+  [★★★] Bridge
+  [★★☆] Composite
+  [★★☆] Decorator
+  [★★☆] Facade
+  [★★★] Flyweight
+  [★★☆] Proxy
+  [★★☆] Chain of Responsibility
+  [★★☆] Command
+  [★★★] Interpreter
+  [★★☆] Iterator
+  [★★★] Mediator
+  [★★★] Memento
+  [★★☆] Observer
+  [★★☆] State
+  [★★☆] Strategy
+  [★★☆] Template Method
+  [★★★] Visitor
+  [★★☆] Null Object
+  [★★★] Double-Checked Locking
+  [★★☆] Producer-Consumer
+  [★★★] Thread Pool Pattern
+  [★★★] Scheduler Pattern
+  [★★★] Read-Write Lock Pattern
+  [★★★] Active Object Pattern
+  [★★★] Event Bus Pattern
+  [★★☆] Service Locator
+  [★★☆] Dependency Injection Pattern
+  [★★★] Specification Pattern
+  [★★★] Decorator vs Proxy vs Adapter
+  [★★☆] Anti-Patterns Overview
+  [★★☆] God Object Anti-Pattern
+  [★☆☆] Spaghetti Code
+  [★★☆] Golden Hammer Anti-Pattern
+  [★★☆] Cargo Cult Programming
+  [★★☆] Premature Optimization
+  [★☆☆] Magic Numbers Anti-Pattern
+  [★★☆] Lava Flow Anti-Pattern
+  [★☆☆] Copy-Paste Programming
+  [★★☆] Boat Anchor Anti-Pattern
+  [★★★] CQRS Pattern
+  [★★★] Outbox Pattern
+  [★★★] Saga Pattern
+  [★★★] Strangler Fig
+  [★★★] Bulkhead Pattern
+  [★★★] Circuit Breaker Pattern
+  [★★★] Sidecar Pattern
+  [★★★] Ambassador Pattern
+  [★★☆] Retry Pattern
+  [★★★] Pattern Selection Framework
+  [★★★] Pattern Evolution in Modern Languages
+  [★★★] Anti-Pattern Recognition and Refactoring
+  [★★★] Pattern-Driven Architecture Design
+  [★★★] Patterns in Distributed Systems
+  [★★★] Pattern Language Theory (Christopher Alexander)
+  [★★★] Formal Pattern Specification
+  [★★★] Pattern Mining and Discovery Research
+  [★★★] Meta-Pattern Design
+  [★★★] Pattern-Recognition Mental Model
+  [★★★] Pattern Trade-off Framing
+  [★★★] Over-Engineering Risk Thinking
+  [★★★] Dependency Inversion vs Dependency Injection
+  [★★☆] SOLID - Single Responsibility Principle
+  [★★☆] SOLID - Open/Closed Principle
+  [★★★] SOLID - Liskov Substitution Principle
+  [★★☆] SOLID - Interface Segregation Principle
+  [★★★] SOLID - Dependency Inversion Principle
+  [★★☆] Repository Pattern
+  [★★★] Reactor Pattern
+  [★★☆] Anti-Pattern: Shotgun Surgery
+  [★★☆] Anti-Pattern: Feature Envy
+  [★★★] Anti-Pattern: Circular Dependencies
+  [★★★] Inbox Pattern
+=== DST-distributed-systems (85) ===
+  [★☆☆] What Is a Distributed System
+  [★☆☆] Why Distribution Is Hard
+  [★☆☆] The Distributed Systems Landscape -- A Map
+  [★☆☆] The Fallacies of Distributed Computing
+  [★☆☆] The Distributed Systems Ecosystem Map
+  [★★☆] CAP Theorem
+  [★★★] PACELC
+  [★★★] Consistency Models
+  [★★★] Strong Consistency
+  [★★☆] Eventual Consistency
+  [★★★] Causal Consistency
+  [★★★] Linearizability
+  [★★★] Serializability
+  [★★☆] BASE
+  [★★★] Lamport Clock
+  [★★★] Vector Clock
+  [★★☆] Clock Skew - Clock Drift
+  [★★★] Hybrid Logical Clocks (HLC)
+  [★★★] Total Order - Partial Order
+  [★★★] Total Order Broadcast
+  [★★★] Happened-Before
+  [★★★] Leader Election
+  [★★★] Raft
+  [★★★] Paxos
+  [★★★] Replication Strategies
+  [★★★] Log Replication
+  [★★★] State Machine Replication
+  [★★★] Quorum
+  [★★★] Split Brain
+  [★★★] Fencing / Epoch
+  [★★☆] Network Partition
+  [★★★] Failure Modes
+  [★★★] Two-Phase Commit (2PC)
+  [★★★] XA Transactions
+  [★★★] Three-Phase Commit (3PC)
+  [★★★] Optimistic Concurrency Control (Distributed)
+  [★★★] Distributed Locking
+  [★★★] Consistent Hashing
+  [★★★] Virtual Nodes
+  [★★★] Gossip Protocol
+  [★★☆] Heartbeat
+  [★★☆] Circuit Breaker
+  [★★☆] Bulkhead
+  [★★☆] Retry with Backoff
+  [★★☆] Idempotency (Distributed)
+  [★★☆] Timeout
+  [★★☆] Fallback
+  [★★★] Graceful Degradation
+  [★★★] Saga Pattern
+  [★★★] Choreography vs Orchestration
+  [★★★] Distributed Tracing
+  [★★☆] Correlation ID
+  [★★★] Service Mesh
+  [★★★] Sidecar Pattern
+  [★★★] CQRS
+  [★★★] Event Sourcing
+  [★★★] Outbox Pattern
+  [★★★] Two Generals Problem
+  [★★★] Byzantine Fault Tolerance
+  [★★★] FLP Impossibility
+  [★★★] CRDT
+  [★★★] Conflict Resolution Strategies
+  [★★★] Anti-Entropy
+  [★★☆] Read Repair
+  [★★☆] Hinted Handoff
+  [★★★] Distributed System Architecture Strategy
+  [★★★] Consistency Model Selection Framework
+  [★★★] Failure Domain Design
+  [★★★] Distributed Tracing Architecture
+  [★★★] Global Distribution Strategy
+  [★★★] Distributed Consensus Algorithm Design (Raft, Paxos)
+  [★★★] Distributed Transaction Theory
+  [★★★] Formal Models for Distributed Systems (TLA+)
+  [★★★] Research Frontiers in Distributed Systems
+  [★★★] Failure-First Thinking
+  [★★★] Consistency Trade-off Framing
+  [★★★] Distribution Necessity Assessment
+  [★★★] Replication Lag
+  [★★★] Write-Ahead Log (Distributed)
+  [★★★] Distributed Rate Limiting
+  [★★★] Phi Accrual Failure Detector
+  [★★★] Global Sequence Number
+  [★★★] Distributed Cache Coherence
+  [★★★] Compaction in Distributed Logs
+  [★★★] Deterministic Simulation Testing
+=== MSV-microservices (85) ===
+  [★☆☆] What Are Microservices
+  [★★☆] Monolith vs Microservices - The Real Trade-off
+  [★☆☆] Why Microservices Became Popular
+  [★☆☆] The Microservices Ecosystem Map
+  [★☆☆] When NOT to Use Microservices
+  [★★★] Monolith to Microservices Migration
+  [★★★] On-Premises to Cloud Migration
+  [★★★] Technology Migration Strategy
+  [★★★] Re-platforming vs Re-architecting
+  [★★★] Proof of Concept (POC) in Architecture
+  [★☆☆] Monolith vs Microservices
+  [★★☆] Modular Monolith
+  [★★☆] Service Decomposition
+  [★★★] Domain-Driven Design (DDD)
+  [★★★] Bounded Context
+  [★★★] Aggregate
+  [★★★] Ubiquitous Language
+  [★★★] Anti-Corruption Layer
+  [★★★] Strangler Fig Pattern
+  [★★☆] Service Registry
+  [★★☆] Service Discovery
+  [★★★] Client-Side vs Server-Side Discovery
+  [★★☆] Health Check Patterns
+  [★★☆] Inter-Service Communication
+  [★★☆] Synchronous vs Async Communication
+  [★★☆] API Gateway (Microservices)
+  [★★★] Backend for Frontend (BFF)
+  [★★★] Service Mesh (Microservices)
+  [★★★] Istio
+  [★★★] Envoy Proxy
+  [★★★] Resilience4j
+  [★★★] Circuit Breaker (Microservices)
+  [★★★] Bulkhead Pattern
+  [★★☆] Rate Limiting (Microservices)
+  [★★☆] Timeout Strategy
+  [★★☆] Retry Strategy
+  [★★☆] Fallback Strategy
+  [★★★] Saga Pattern (Microservices)
+  [★★★] Distributed Transaction
+  [★★★] Event-Driven Microservices
+  [★★★] Eventual Consistency (Microservices)
+  [★★★] Data Isolation per Service
+  [★★★] CQRS in Microservices
+  [★★★] Event Sourcing in Microservices
+  [★★★] Shared Database Anti-Pattern
+  [★★★] Database per Service
+  [★★★] Consumer-Driven Contract Testing
+  [★★★] Pact (Contract Testing)
+  [★★★] Cross-Cutting Concerns
+  [★★★] Distributed Logging
+  [★★☆] Correlation ID (Microservices)
+  [★★★] OpenTelemetry (Microservices)
+  [★★★] Chaos Engineering
+  [★★★] Canary Deployment (Microservices)
+  [★★☆] Blue-Green Deployment
+  [★★☆] Feature Flags (Microservices)
+  [★★★] Graceful Shutdown (Microservices)
+  [★★★] Zero-Downtime Deployment
+  [★★★] Service Contract
+  [★★★] Backward Compatibility
+  [★★★] Versioning Strategy
+  [★★☆] Twelve-Factor App
+  [★★★] Sidecar Pattern (Microservices)
+  [★★★] Ambassador Pattern
+  [★★★] Adapter Pattern (Microservices)
+  [★★★] Service Decomposition Strategy
+  [★★★] Microservices Migration Strategy (Strangler Fig)
+  [★★★] Service Mesh Architecture Design
+  [★★★] Microservices Observability Architecture
+  [★★★] Event-Driven Microservices Design
+  [★★★] Service Mesh Internals (Envoy, Istio)
+  [★★★] Service-to-Service Protocol Design
+  [★★★] Domain-Driven Decomposition Theory
+  [★★★] Microservices Research and Anti-Patterns
+  [★★★] Decomposition Trade-off Framing
+  [★★★] Microservices Necessity Assessment
+  [★★★] Service Boundary Mental Model
+  [★★★] Platform Engineering
+  [★★★] Internal Developer Platform (IDP)
+  [★★★] GraphQL Federation (Microservices)
+  [★★★] Dead Letter Queue Strategy
+  [★★★] Progressive Delivery
+  [★★★] Multi-Tenancy in Microservices
+  [★★★] FinOps for Microservices
+  [★★☆] Service Catalog
+=== SAP-software-architecture (86) ===
+  [★☆☆] What Is Software Architecture
+  [★☆☆] Why Architecture Decisions Matter
+  [★☆☆] The Architecture Landscape - Styles and Patterns
+  [★☆☆] Architecture vs Design vs Implementation
+  [★☆☆] The Software Architecture Ecosystem Map
+  [★★★] Architecture Decision Record (ADR)
+  [★★★] Technology Roadmap
+  [★★★] Architecture Review
+  [★★★] Proof of Concept (POC)
+  [★★★] Enterprise Application Architecture
+  [★★★] Loose Coupling of Frontend Modules
+  [★★★] Micro-Frontend Architecture
+  [★☆☆] Layered Architecture
+  [★★★] Hexagonal Architecture
+  [★★★] Clean Architecture
+  [★★★] Onion Architecture
+  [★★★] Vertical Slice Architecture
+  [★★★] CQRS Pattern
+  [★★★] Event Sourcing Pattern
+  [★★★] Ports and Adapters
+  [★★☆] Repository Pattern
+  [★★★] Unit of Work Pattern
+  [★★★] Domain Model
+  [★★★] Anemic Domain Model
+  [★★★] Rich Domain Model
+  [★★☆] Service Layer
+  [★★☆] Transaction Script
+  [★★☆] Active Record
+  [★★★] Data Mapper
+  [★★★] Aggregate Root
+  [★★★] Domain Events
+  [★★★] Value Objects
+  [★★☆] Entities
+  [★★★] Anti-Corruption Layer
+  [★★★] Context Map
+  [★★★] Shared Kernel
+  [★★★] Open Host Service
+  [★★★] Published Language
+  [★★★] Modular Monolith Patterns
+  [★★★] Plugin Architecture
+  [★★★] Pipe and Filter
+  [★★★] Blackboard Pattern
+  [★★☆] SOLID Principles
+  [★☆☆] DRY (Don't Repeat Yourself)
+  [★☆☆] KISS (Keep It Simple, Stupid)
+  [★★☆] YAGNI (You Aren't Gonna Need It)
+  [★★☆] Law of Demeter
+  [★★☆] Tell Don't Ask
+  [★★★] Command-Query Separation (CQS)
+  [★★☆] Cohesion
+  [★★☆] Coupling
+  [★★★] Connascence
+  [★★★] Architecture Decision Records (ADR) Strategy
+  [★★★] Architecture Review Process Design
+  [★★★] Legacy Modernization Strategy
+  [★★★] Architecture Fitness Functions
+  [★★★] Architecture Governance at Scale
+  [★★★] Formal Architecture Specification (C4, ADL, UML)
+  [★★★] Architecture Theory and Research
+  [★★★] Software Architecture Pattern Research
+  [★★★] Evolutionary Architecture Design
+  [★★★] Architecture Trade-off Framing
+  [★★★] Architecture Necessity Assessment
+  [★★★] Technical Debt Mental Model
+  [★☆☆] Enterprise Architecture - What It Is and Why It Exists
+  [★☆☆] Enterprise Architecture Domains - BDAT
+  [★★☆] Business Capability Mapping
+  [★★☆] As-Is / To-Be Architecture (Current State vs Target State)
+  [★★☆] TOGAF Framework
+  [★★☆] TOGAF ADM (Architecture Development Method)
+  [★★☆] Zachman Framework
+  [★★☆] ArchiMate (EA Modelling Language)
+  [★★★] Enterprise Architecture Maturity Models
+  [★★★] Enterprise Architecture Programme Design
+  [★★★] EA Tool Selection and Vendor Landscape
+  [★★★] EA Framework Theory and Academic Foundations
+  [★★☆] Conway's Law
+  [★★★] Inverse Conway Maneuver
+  [★★★] Technical Debt Quantification
+  [★★★] Architecture Trade-off Analysis Method (ATAM)
+  [★★★] Software Architecture Anti-Patterns
+  [★★☆] Feature Toggle Architecture
+  [★★★] Strangler Fig for Monolith-to-Service Migration
+  [★★☆] Service-Oriented Architecture (SOA)
+  [★★☆] API-First Architecture
+  [★★★] Composable Architecture
+=== SYD-system-design (77) ===
+  [★☆☆] What Is System Design
+  [★★☆] The System Design Interview Mental Model
+  [★★☆] How to Approach Any System Design Problem
+  [★★☆] Estimation and Back-of-Envelope Thinking
+  [★★☆] The System Design Ecosystem Map
+  [★☆☆] Vertical Scaling
+  [★☆☆] Horizontal Scaling
+  [★★☆] Load Balancing
+  [★☆☆] Round Robin
+  [★★☆] Least Connections
+  [★★★] Consistent Hashing (Load Balancing)
+  [★★☆] Sticky Sessions
+  [★★☆] Session Affinity
+  [★★☆] Auto Scaling
+  [★★☆] SLA SLO SLI
+  [★★★] Error Budget
+  [★★☆] MTTR MTBF
+  [★★★] RTO RPO
+  [★★☆] Redundancy Failover
+  [★★★] Active-Active
+  [★★☆] Active-Passive
+  [★★★] Disaster Recovery
+  [★★★] Geo-Replication
+  [★★★] Multi-Region Architecture
+  [★★★] Thundering Herd
+  [★★☆] Back-of-Envelope Estimation
+  [★★★] Capacity Planning
+  [★★☆] Rate Limiting (System)
+  [★★★] Token Bucket
+  [★★★] Leaky Bucket
+  [★★★] Sharding (System)
+  [★★★] Hot Shard
+  [★★☆] Read-Heavy vs Write-Heavy Design
+  [★★★] Denormalization for Scale
+  [★★★] Fan-Out on Write vs Read
+  [★★☆] Push vs Pull Architecture
+  [★★☆] Polling vs Webhooks
+  [★★☆] Idempotency Key
+  [★★★] Distributed Locks
+  [★★★] Leader-Follower Pattern
+  [★★★] Write-Ahead Logging (System)
+  [★★★] Data Partitioning Strategies
+  [★★☆] URL Shortener Design
+  [★★★] Rate Limiter Design
+  [★★★] News Feed Design
+  [★★★] Search Autocomplete Design
+  [★★★] Notification System Design
+  [★★★] Chat System Design
+  [★★★] Video Streaming Design
+  [★★★] Ride-Sharing System Design
+  [★★★] System Design at Hyperscale
+  [★★★] Multi-Region Architecture Strategy
+  [★★★] Cost-Performance Trade-off Architecture
+  [★★★] System Evolution Strategy
+  [★★★] Platform Architecture Design
+  [★★★] Emergent Architecture Patterns
+  [★★★] Theoretical Foundations of Scalable Systems
+  [★★★] Formal Capacity Planning Models
+  [★★★] System Design Research and Case Studies
+  [★★★] Constraint-First System Design Thinking
+  [★★★] Scale Estimation Mental Model
+  [★★★] Trade-off Navigation Framework
+  [★☆☆] What is Scalability (Conceptual)
+  [★☆☆] What is a Cache (System Design Context)
+  [★☆☆] What is a Message Queue (Conceptual)
+  [★☆☆] What is Database Replication (Basic)
+  [★★☆] CDN Architecture Pattern
+  [★★☆] Connection Pooling (System Design)
+  [★★★] Cache Invalidation Strategies
+  [★★☆] Blob Storage Design
+  [★★★] Payment System Design
+  [★★★] File Storage System Design (Dropbox/S3)
+  [★★★] Email System Design
+  [★★★] Game Leaderboard Design
+  [★★★] Booking and Reservation System Design
+  [★★★] Real-Time Collaboration System Design
+  [★★★] Global Key-Value Store Design
+=== AWS-cloud-aws (77) ===
+  [★☆☆] What Is AWS and the Cloud Model
+  [★☆☆] The AWS Service Landscape -- A Map
+  [★☆☆] Cloud vs On-Premise -- Real Trade-offs
+  [★☆☆] AWS Well-Architected Framework
+  [★☆☆] The AWS Ecosystem Map
+  [★★☆] AWS CloudFront
+  [★★★] Lambda@Edge
+  [★★★] AWS Step Functions
+  [★★☆] AWS SQS
+  [★★☆] AWS SNS
+  [★★★] AWS Kinesis
+  [★★★] AWS Parameter Store
+  [★★★] AWS Secrets Manager
+  [★★★] AWS KMS (Key Management Service)
+  [★★★] AWS PrivateLink
+  [★★★] AWS Shield
+  [★★★] AWS Control Tower
+  [★★★] AWS CDK (Cloud Development Kit)
+  [★★★] AWS CloudFormation
+  [★★★] AWS WAF
+  [★★★] AWS ECS  Fargate
+  [★★★] AWS VPC Architecture Deep Dive
+  [★★★] AWS Cost Tagging Strategy
+  [★★★] AWS Well-Architected Review
+  ["★☆☆"] AWS Global Infrastructure
+  ["★☆☆"] Region  AZ  Edge Location
+  ["★★☆"] IAM (Identity and Access Management)
+  ["★★☆"] IAM Roles  Policies
+  ["★★☆"] VPC
+  ["★★☆"] Subnets (Public  Private)
+  ["★★☆"] Security Groups
+  ["★★★"] NACLs
+  ["★★☆"] Internet Gateway  NAT Gateway
+  ["★★★"] VPC Peering
+  ["★★★"] Transit Gateway
+  ["★★☆"] Route 53
+  ["★☆☆"] EC2
+  ["★★☆"] EC2 Instance Types
+  ["★★☆"] Auto Scaling Groups
+  ["★★☆"] ELB  ALB  NLB
+  ["★☆☆"] S3
+  ["★★☆"] S3 Storage Classes
+  ["★★★"] S3 Lifecycle Policies
+  ["★★☆"] EBS  EFS
+  ["★★☆"] RDS
+  ["★★★"] Aurora
+  ["★★★"] DynamoDB
+  ["★★☆"] ElastiCache
+  ["★★☆"] SQS
+  ["★★☆"] SNS
+  ["★★★"] Kinesis
+  ["★★☆"] Lambda
+  ["★★☆"] API Gateway (AWS)
+  ["★★☆"] ECS  Fargate
+  ["★★★"] EKS
+  ["★★★"] CloudFormation
+  ["★★★"] CDK
+  ["★★☆"] CloudWatch
+  ["★★★"] X-Ray
+  ["★★★"] AWS Cost Optimization
+  ["★★★"] AWS Security Best Practices
+  ["★★★"] Well-Architected Framework
+  ["★★★"] Spot Instances  Reserved Instances
+  ["★★★"] AWS Service Limits
+  [] Immutable Infrastructure
+  [★★★] AWS Architecture Strategy (Multi-AZ, Multi-Region)
+  [★★★] AWS Cost Optimization Framework
+  [★★★] AWS Security Architecture
+  [★★★] AWS Migration Strategy (6 Rs)
+  [★★★] AWS Platform Engineering
+  [★★★] AWS Service Internals Deep Dives
+  [★★★] Cloud-Native Architecture Design
+  [★★★] AWS Infrastructure as Code at Scale
+  [★★★] AWS Novel Service Patterns Research
+  [★★★] Cloud Trade-off Framing
+  [★★★] AWS Service Selection Mental Model
+  [★★★] Cloud Cost Mental Model
+=== AZR-cloud-azure (55) ===
+  [★☆☆] What Is Azure and the Microsoft Cloud
+  [★☆☆] The Azure Service Landscape -- A Map
+  [★☆☆] Azure vs AWS vs GCP -- Key Differences
+  [★☆☆] Azure Well-Architected Framework
+  [★☆☆] The Azure Ecosystem Map
+  [★☆☆] Azure Regions and Availability Zones
+  [★☆☆] Azure Resource Manager (ARM)
+  [★☆☆] Azure Subscriptions and Resource Groups
+  [★☆☆] Azure Active Directory (Entra ID)
+  [★☆☆] Azure Virtual Machines
+  [★☆☆] Azure App Service
+  [★☆☆] Azure Blob Storage
+  [★☆☆] Azure SQL Database
+  [★★☆] Azure Virtual Network (VNet)
+  [★★☆] Azure Load Balancer and Application Gateway
+  [★★☆] Azure Kubernetes Service (AKS)
+  [★★☆] Azure Container Instances
+  [★★☆] Azure Functions (Serverless)
+  [★★☆] Azure Service Bus
+  [★★☆] Azure Event Hub
+  [★★☆] Azure Cosmos DB
+  [★★☆] Azure Key Vault
+  [★★☆] Azure DevOps (Pipelines, Boards)
+  [★★☆] Azure Monitor and Log Analytics
+  [★★☆] Azure CDN and Front Door
+  [★★☆] Azure API Management
+  [★★☆] Azure Service Fabric
+  [★★☆] Azure Cache for Redis
+  [★★☆] Azure Cognitive Services and OpenAI
+  [★★☆] Azure Synapse Analytics
+  [★★☆] Azure Data Factory
+  [★★☆] Azure Event Grid
+  [★★☆] Azure Logic Apps
+  [★★☆] Azure Managed Identity
+  [★★☆] Azure Policy and RBAC
+  [★★☆] Azure Private Endpoint
+  [★★☆] Azure Terraform Integration
+  [★★☆] Azure Bicep (IaC)
+  [★★★] Azure Security Center (Defender)
+  [★★★] Azure Landing Zone Architecture
+  [★★★] Azure Multi-Region Deployment
+  [★★★] Azure ExpressRoute and VPN Gateway
+  [★★★] Azure Cost Management and Optimization
+  [★★★] Azure Site Recovery (DR)
+  [★★★] Azure Arc (Hybrid Cloud)
+  [★★★] Azure Observability Strategy
+  [★★★] Azure Architecture Strategy (Enterprise)
+  [★★★] Azure Migration Strategy
+  [★★★] Azure Platform Engineering Strategy
+  [★★★] Azure vs AWS Selection Framework
+  [★★★] Azure Service Internals Deep Dives
+  [★★★] Cloud-Native Architecture on Azure
+  [★★★] Azure Research and Novel Patterns
+  [★★★] Azure Service Selection Mental Model
+  [★★★] Cloud Cost Mental Model (Azure)
+=== CCD-cicd (83) ===
+  [★☆☆] What Is CI/CD and Why It Matters
+  [★☆☆] The Software Delivery Lifecycle -- A Map
+  [★☆☆] Manual vs Automated Deployment
+  [★☆☆] The CI/CD Ecosystem Map (Jenkins, GitHub Actions, GitLab)
+  [★☆☆] CI/CD in Production -- What to Expect
+  [★☆☆] Continuous Integration (CI)
+  [★☆☆] Continuous Delivery (CD)
+  [★★☆] Continuous Deployment
+  [★☆☆] Pipeline
+  [★☆☆] Build Stage
+  [★☆☆] Test Stage
+  [★☆☆] Artifact
+  [★★☆] Artifact Registry
+  [★★☆] Jenkins
+  [★★☆] GitHub Actions
+  [★★☆] GitLab CI
+  [★★☆] CircleCI
+  [★★★] Tekton
+  [★★★] ArgoCD
+  [★★☆] Pipeline as Code
+  [★★☆] Shift Left Testing
+  [★★☆] SAST (Static Analysis)
+  [★★★] DAST (Dynamic Analysis)
+  [★★★] SCA (Software Composition Analysis)
+  [★★☆] Dependency Scanning
+  [★★★] Container Scanning
+  [★★★] Secret Scanning
+  [★★★] SBOM (Software Bill of Materials)
+  [★★☆] Deployment Pipeline
+  [★★☆] Environment Promotion
+  [★★☆] Infrastructure as Code (IaC)
+  [★★★] Terraform
+  [★★★] Pulumi
+  [★★☆] Ansible
+  [★★★] GitOps
+  [★★☆] Trunk-Based Development
+  [★★☆] Feature Branch Workflow
+  [★★☆] Deployment Frequency
+  [★★☆] Lead Time for Changes
+  [★★★] Change Failure Rate
+  [★★★] Mean Time to Recovery (MTTR)
+  [★★★] DORA Metrics
+  [★★★] Progressive Delivery
+  [★★★] Canary Analysis
+  [★★★] Rollback Strategy
+  [★★★] Harness (Deployment Tool)
+  [★★★] Environment Promotion Strategy
+  [★★★] Artifact Versioning Strategy
+  [★★★] Policy as Code
+  [★★★] Open Policy Agent (OPA)
+  [★★★] Sentinel (Terraform Policy)
+  [★★★] Terraform Cloud  Enterprise
+  [★★★] Crossplane
+  [★★☆] Terraform Overview
+  [★★☆] Terraform Provider
+  [★★☆] Terraform Resource
+  [★★★] Terraform State
+  [★★★] Terraform State Backend
+  [★★★] Terraform Remote State
+  [★★★] Terraform Workspace
+  [★★★] Terraform Module
+  [★★★] Terraform Reusable Module Pattern
+  [★★☆] Terraform Plan  Apply  Destroy
+  [★★★] Terraform Import
+  [★★★] Terraform Drift Detection
+  [★★☆] Terraform Variable  Output  Local
+  [★★★] Terraform Data Source
+  [★★★] Terraform Lifecycle Rules
+  [★★★] Terraform Sentinel Policy
+  [★★★] Terragrunt
+  [★★★] Terraform Testing (Terratest)
+  [★★★] CI/CD Pipeline Architecture Design
+  [★★★] Release Strategy Design (Blue-Green, Canary)
+  [★★★] Pipeline Security Architecture (DevSecOps)
+  [★★★] Multi-Environment Deployment Strategy
+  [★★★] Platform Engineering CI/CD Strategy
+  [★★★] Continuous Delivery Principles (Jez Humble)
+  [★★★] Pipeline as Code Design Patterns
+  [★★★] Deployment Pipeline Research
+  [★★★] GitOps Architecture Design
+  [★★★] Deployment Trade-off Framing
+  [★★★] Pipeline Design Mental Model
+  [★★★] Automation Necessity Assessment
+=== CDQ-code-quality (42) ===
+  [★☆☆] What Is Code Quality and Why It Matters
+  [★☆☆] The Code Quality Landscape -- A Map
+  [★☆☆] Technical Debt -- A Mental Model
+  [★☆☆] Code Quality vs Velocity Trade-off
+  [★☆☆] The Code Quality Ecosystem Map (SonarQube, Checkstyle)
+  [★☆☆] Code Standards
+  [★☆☆] Coding Conventions
+  [★☆☆] Style Guide
+  [★☆☆] Linting
+  [★★☆] Static Analysis
+  [★★☆] SonarQube
+  [★★☆] Checkstyle
+  [★★☆] PMD
+  [★★☆] SpotBugs
+  [★★☆] Code Review
+  [★★☆] Code Review Best Practices
+  [★★☆] Pair Programming
+  [★★☆] Code Coverage
+  [★★☆] Line Coverage
+  [★★★] Branch Coverage
+  [★★★] Mutation Testing
+  [★★☆] Code Smell
+  [★★☆] Long Method
+  [★★☆] God Class
+  [★★★] Feature Envy
+  [★★★] Data Clumps
+  [★★★] Primitive Obsession
+  [★★★] Shotgun Surgery
+  [★★★] Divergent Change
+  [★★☆] Technical Debt
+  [★★★] Code Quality Architecture (Quality Gates)
+  [★★★] Technical Debt Strategy
+  [★★★] Code Review Process Design
+  [★★★] Static Analysis at Scale
+  [★★★] Engineering Excellence Program Design
+  [★★★] Software Quality Measurement Research
+  [★★★] Formal Verification Approaches
+  [★★★] Program Analysis Theory
+  [★★★] Software Reliability Engineering Metrics
+  [★★★] Quality Trade-off Framing
+  [★★★] Technical Debt Mental Model
+  [★★★] Code Review Mindset
+=== CTR-containers (54) ===
+  [★☆☆] What Is Containerization and Why It Matters
+  [★☆☆] VMs vs Containers - A Mental Model
+  [★☆☆] The Container Ecosystem Map
+  [★☆☆] Why Docker Changed Everything
+  [★☆☆] Containers in Production - What to Expect
+  [★★★] Red Hat OpenShift
+  [★★★] OpenShift vs Kubernetes
+  [★☆☆] Container
+  [★☆☆] Docker
+  [★☆☆] Docker Image
+  [★★☆] Docker Layer
+  [★☆☆] Dockerfile
+  [★★☆] Docker Build Context
+  [★★☆] Multi-Stage Build
+  [★★☆] Docker Compose
+  [★★☆] Container Registry
+  [★★★] Linux Namespaces
+  [★★★] Cgroups
+  [★★★] Container Networking
+  [★★☆] Volume Mounts
+  [★★★] Container Security
+  [★★★] Distroless Images
+  [★★★] Image Scanning
+  [★★★] OCI Standard
+  [★★★] containerd
+  [★★☆] Container Orchestration
+  [★☆☆] Docker vs VM
+  [★★★] Ephemeral Container
+  [★★★] Init Container
+  [★★★] Sidecar Container
+  [★★☆] Container Resource Limits
+  [★★☆] Container Health Check
+  [★★☆] Image Tag Strategy
+  [★★★] Docker BuildKit
+  [★★★] Podman
+  [★★★] Buildah
+  [★★★] Slim  Minimal Images
+  [★★★] Docker Networking Modes
+  [★★☆] Container Logging
+  [★★★] Docker Secrets
+  [★★★] Image Provenance  SBOM
+  [★★★] Container Runtime Interface (CRI)
+  [★★★] Container Platform Strategy
+  [★★★] Container Security Architecture
+  [★★★] Container Image Strategy at Scale
+  [★★★] Containerization Migration Strategy
+  [★★★] Multi-Runtime Container Strategy (containerd, CRI-O)
+  [★★★] Container Runtime Internals (runc, containerd)
+  [★★★] Linux Namespace and Cgroup Architecture
+  [★★★] Container Image Format Design (OCI)
+  [★★★] Container Security Research (Rootless, gVisor)
+  [★★★] Container Trade-off Framing
+  [★★★] Containerization Necessity Assessment
+  [★★★] Container Security Mental Model
+=== GCP-cloud-gcp (25) ===
+  [★☆☆] What Is GCP and the Google Cloud Model
+  [★☆☆] The GCP Service Landscape -- A Map
+  [★★☆] GCP vs AWS vs Azure -- Key Differences
+  [★★☆] GCP Well-Architected Pillars
+  [★☆☆] The GCP Ecosystem Map
+  [★★☆] Google Compute Engine (GCE)
+  [★★☆] Google Kubernetes Engine (GKE)
+  [★★☆] Google Cloud Run
+  [★★☆] Google Cloud Functions
+  [★☆☆] Google Cloud Storage (GCS)
+  [★★☆] Google BigQuery
+  [★★☆] Google Cloud Pub/Sub
+  [★★★] Google Cloud Spanner
+  [★★☆] Google Cloud SQL
+  [★★☆] Google Cloud Firestore
+  [★★☆] Google Cloud IAM
+  [★★☆] Google Cloud VPC Networking
+  [★★☆] Google Cloud Load Balancing
+  [★★☆] Google Cloud CDN
+  [★★☆] Google Cloud Armor
+  [★★★] Google Vertex AI
+  [★★★] Google Cloud Dataflow
+  [★★☆] Google Cloud Composer (Airflow)
+  [★★☆] Cloud Monitoring and Logging (Cloud Operations)
+  [★★☆] GCP Cost Management and Billing
+=== GIT-git-branching (45) ===
+  [★☆☆] What Is Git and Why Version Control Matters
+  [★☆☆] The Git Mental Model (DAG of Commits)
+  [★☆☆] Git vs Other VCS (SVN, Mercurial)
+  [★☆☆] The Git Ecosystem Map (GitHub, GitLab, Bitbucket)
+  [★☆☆] Git in Teams -- What to Expect
+  [★☆☆] Git Basics (init, clone, add, commit, push, pull)
+  [★☆☆] Git Staging Area (Index)
+  [★☆☆] Git Branches -- Create, Switch, Delete
+  [★☆☆] Git Merge
+  [★☆☆] Git Rebase
+  [★☆☆] Git Conflict Resolution
+  [★☆☆] Git Remote (origin, upstream)
+  [★☆☆] .gitignore
+  [★★☆] Git Stash
+  [★★☆] Git Tags (Lightweight and Annotated)
+  [★★☆] Git Cherry-Pick
+  [★★☆] Git Bisect
+  [★★☆] Git Hooks
+  [★★☆] Git Submodules
+  [★★☆] Pull Requests and Code Review Workflow
+  [★★☆] Git Log and History Exploration
+  [★★☆] Branching Strategies Overview
+  [★★☆] GitFlow Strategy
+  [★★☆] Trunk-Based Development
+  [★★☆] GitHub Flow
+  [★★☆] Feature Flags and Branch by Abstraction
+  [★★☆] Commit Message Conventions (Conventional Commits)
+  [★★☆] Semantic Versioning (SemVer)
+  [★★☆] Git Reflog -- Recovery from Mistakes
+  [★★☆] Monorepo vs Polyrepo Strategy
+  [★★☆] Git Large File Storage (LFS)
+  [★★★] Git Internals -- Objects, Trees, Blobs
+  [★★★] Git Packfiles and Delta Compression
+  [★★★] GitOps Fundamentals
+  [★★★] Signed Commits and GPG Verification
+  [★★★] Repository Security -- Supply Chain Risks
+  [★★★] Branching Strategy Selection Framework
+  [★★★] Monorepo Architecture Strategy
+  [★★★] GitOps Architecture Design
+  [★★★] Git Protocol and Data Format Internals
+  [★★★] Distributed Version Control Theory
+  [★★★] Git Performance at Scale
+  [★★★] Branch Strategy Trade-off Framing
+  [★★★] Git History Mental Model
+  [★★★] Repository Design Thinking
+=== IAC-infrastructure-code (47) ===
+  [★☆☆] What Is Infrastructure as Code
+  [★☆☆] IaC vs Manual Infrastructure -- The Mental Model
+  [★☆☆] The IaC Ecosystem Map (Terraform, Pulumi, Ansible, CDK)
+  [★☆☆] Declarative vs Imperative IaC
+  [★☆☆] IaC in Production -- What to Expect
+  [★☆☆] Terraform Basics (providers, resources, state)
+  [★☆☆] Terraform HCL Syntax
+  [★☆☆] Terraform State
+  [★☆☆] Terraform Plan and Apply
+  [★☆☆] Terraform Modules
+  [★☆☆] Terraform Variables and Outputs
+  [★☆☆] Terraform Providers
+  [★★☆] Terraform Remote State
+  [★★☆] Terraform Workspaces
+  [★★☆] Terraform Backends
+  [★★☆] Terraform Import
+  [★★☆] Ansible Basics (playbooks, inventory, roles)
+  [★★☆] AWS CDK (Cloud Development Kit)
+  [★★☆] Pulumi -- IaC with Real Languages
+  [★★☆] Helm -- Kubernetes Package Manager
+  [★★☆] GitOps Workflow for IaC
+  [★★☆] Terraform State Locking and Drift Detection
+  [★★☆] Terraform Testing (Terratest, checkov)
+  [★★☆] Crossplane -- Kubernetes-Native IaC
+  [★★☆] Open Policy Agent (OPA) for IaC
+  [★★☆] IaC Security Scanning (tfsec, Bridgecrew)
+  [★★☆] Immutable Infrastructure Pattern
+  [★★☆] Idempotency in IaC
+  [★★☆] Secret Management in IaC
+  [★★☆] IaC Module Versioning Strategy
+  [★★☆] Packer -- Machine Image Building
+  [★★★] Terraform Provider Development
+  [★★★] Terraform Enterprise and Cloud (Remote Operations)
+  [★★★] Multi-Cloud IaC Strategy
+  [★★★] IaC at Enterprise Scale (Terragrunt, Atlantis)
+  [★★★] IaC Drift and Reconciliation Strategy
+  [★★★] IaC Compliance Enforcement
+  [★★★] IaC Architecture Strategy
+  [★★★] Platform Engineering with IaC
+  [★★★] Golden Path Templates and Internal Developer Platform
+  [★★★] IaC Tool Selection Framework
+  [★★★] IaC Abstraction Layer Design
+  [★★★] Desired State Convergence Theory
+  [★★★] IaC Language Design Research
+  [★★★] IaC Trade-off Framing
+  [★★★] Infrastructure Automation Mental Model
+  [★★★] Mutable vs Immutable Infrastructure Thinking
+=== K8S-kubernetes (77) ===
+  [★☆☆] What Is Kubernetes and Why It Exists
+  [★☆☆] The Kubernetes Mental Model (Desired State)
+  [★☆☆] Kubernetes vs Docker Swarm vs Mesos
+  [★☆☆] The Kubernetes Ecosystem Map
+  [★☆☆] Kubernetes in Production -- What to Expect
+  ["★☆☆"] Kubernetes Architecture
+  ["★☆☆"] Pod
+  ["★☆☆"] Node
+  ["★☆☆"] Cluster
+  ["★☆☆"] Namespace (K8s)
+  ["★★☆"] Deployment
+  ["★★☆"] ReplicaSet
+  ["★★☆"] StatefulSet
+  ["★★☆"] DaemonSet
+  ["★★☆"] Job  CronJob
+  ["★★☆"] Service (K8s)
+  ["★★☆"] ClusterIP  NodePort  LoadBalancer
+  ["★★☆"] Ingress
+  ["★★★"] Ingress Controller
+  ["★★☆"] ConfigMap
+  ["★★☆"] Secret
+  ["★★☆"] HPA (Horizontal Pod Autoscaler)
+  ["★★★"] VPA (Vertical Pod Autoscaler)
+  ["★★★"] Cluster Autoscaler
+  ["★★★"] KEDA
+  ["★★☆"] PersistentVolume  PVC
+  ["★★★"] StorageClass
+  ["★★★"] kube-proxy
+  ["★★★"] CoreDNS
+  ["★★★"] etcd
+  ["★★★"] API Server
+  ["★★★"] Scheduler (K8s)
+  ["★★★"] Controller Manager
+  ["★★★"] kubelet
+  ["★★☆"] kubeadm
+  ["★★☆"] kubectl
+  ["★★☆"] Helm
+  ["★★☆"] Helm Chart
+  ["★★★"] Kustomize
+  ["★★★"] Operators
+  ["★★★"] CRD (Custom Resource Definition)
+  ["★★★"] Admission Controllers
+  ["★★★"] RBAC (K8s)
+  ["★★★"] Network Policy
+  ["★★★"] Pod Security Standards
+  ["★★☆"] Resource Requests  Limits
+  ["★★★"] QoS Classes
+  ["★★★"] Node Affinity  Anti-Affinity
+  ["★★★"] Taints and Tolerations
+  ["★★★"] Pod Disruption Budget
+  ["★★☆"] Rolling Update Strategy
+  ["★★☆"] Readiness vs Liveness vs Startup Probe
+  ["★★★"] Service Account
+  ["★★★"] Kubernetes Secrets Management
+  ["★★★"] GitOps with Kubernetes
+  ["★★★"] ArgoCD
+  ["★★★"] FluxCD
+  ["★★★"] Kubernetes Networking (CNI)
+  ["★★★"] Calico  Cilium
+  ["★★★"] Kubernetes Observability
+  ["★★★"] K8s Multi-Cluster
+  ["★★★"] Service Mesh on K8s
+  ["★★★"] K8s Cost Optimization
+  ["★★★"] K8s Security Hardening
+  ["★★★"] K8s Upgrade Strategy
+  [★★★] Kubernetes Cluster Architecture Strategy
+  [★★★] Kubernetes Multi-Cluster Strategy
+  [★★★] Kubernetes Cost Optimization Strategy
+  [★★★] Kubernetes Security Architecture
+  [★★★] Platform Engineering with Kubernetes
+  [★★★] Kubernetes Controller and Operator Design
+  [★★★] etcd and Consensus in Kubernetes
+  [★★★] Kubernetes Scheduler Algorithm Design
+  [★★★] Kubernetes API Extension Points
+  [★★★] Kubernetes Trade-off Framing
+  [★★★] Cluster Design Mental Model
+  [★★★] Kubernetes Necessity Assessment
+=== MVN-maven-build (47) ===
+  [★☆☆] What Is a Build Tool and Why It Matters
+  [★☆☆] The Build Tool Ecosystem Map (Maven, Gradle, Ant)
+  [★☆☆] Build vs Compile vs Package vs Deploy
+  [★☆☆] Dependency Management Mental Model
+  [★☆☆] Maven in the Java Ecosystem
+  [★☆☆] Maven Overview
+  [★☆☆] pom.xml
+  [★★☆] Maven Lifecycle (validate, compile, test, package, install, deploy)
+  [★★☆] Maven Goals
+  [★★☆] Maven Phases
+  [★★☆] Maven Plugins
+  [★☆☆] Maven Dependencies
+  [★★☆] Dependency Scope (compile, test, provided, runtime)
+  [★★☆] Transitive Dependencies
+  [★★★] Dependency Exclusion
+  [★★★] Dependency Convergence
+  [★★★] Maven BOM (Bill of Materials)
+  [★★☆] Maven Repository (local, central, remote)
+  [★★☆] Nexus  Artifactory
+  [★★☆] SNAPSHOT vs RELEASE
+  [★★★] Maven Profiles
+  [★★★] Maven Multi-Module Project
+  [★★☆] Maven Wrapper (mvnw)
+  [★★☆] Gradle vs Maven
+  [★★★] Gradle Build Script
+  [★★★] Gradle Tasks
+  [★★★] Gradle Incremental Build
+  [★★★] Gradle Build Cache
+  [★★★] Gradle Convention Plugins
+  [★★★] Build Reproducibility
+  [★★★] Maven Release Plugin
+  [★★★] Maven Enforcer Plugin
+  [★★★] OWASP Dependency Check
+  [★★★] Source vs Binary Distribution
+  [★★★] Build Performance Optimization
+  [★★★] Build Tool Selection Strategy (Maven vs Gradle)
+  [★★★] Monorepo Build Strategy
+  [★★★] Build Performance Optimization
+  [★★★] Dependency Security Strategy
+  [★★★] Build Pipeline Architecture
+  [★★★] Build Tool Internals (Gradle DAG, Maven Lifecycle)
+  [★★★] Custom Plugin Design
+  [★★★] Build Cache Architecture
+  [★★★] Build Hermiticity Research
+  [★★★] Dependency Mental Model
+  [★★★] Build Trade-off Framing
+  [★★★] Build Performance Intuition
+=== OBS-observability-sre (56) ===
+  [★☆☆] What Is Observability and Why It Matters
+  [★☆☆] The Three Pillars of Observability (Logs, Metrics, Traces)
+  [★☆☆] Monitoring vs Observability -- The Difference
+  [★☆☆] The Observability Ecosystem Map
+  [★☆☆] SRE -- What It Is and Why It Exists
+  [★☆☆] Metrics -- Types (Counter, Gauge, Histogram)
+  [★☆☆] Logging Fundamentals (Structured Logs)
+  [★☆☆] Distributed Tracing Fundamentals
+  [★☆☆] Alerting Fundamentals
+  [★☆☆] Dashboards and Visualization Basics
+  [★☆☆] SLI (Service Level Indicator)
+  [★☆☆] SLO (Service Level Objective)
+  [★☆☆] SLA (Service Level Agreement)
+  [★★☆] Prometheus -- Metrics Collection
+  [★★☆] Grafana -- Dashboards
+  [★★☆] OpenTelemetry -- The Standard
+  [★★☆] Jaeger / Zipkin -- Distributed Tracing
+  [★★☆] ELK / EFK Stack -- Log Management
+  [★★☆] Error Budget
+  [★★☆] Alerting Anti-Patterns (Alert Fatigue)
+  [★★☆] Health Check Patterns
+  [★★★] AWS CloudWatch Dashboards
+  [★★★] AWS CloudWatch Log Insights
+  [★★★] AWS CloudWatch Alarms
+  [★★★] AWS X-Ray (Distributed Tracing)
+  [★★★] Actionable Alerting Patterns
+  [★★★] AppDynamics
+  [★★☆] Datadog -- Observability Platform
+  [★★☆] Dynatrace -- Full-Stack Monitoring
+  [★★☆] Incident Management Process
+  [★★☆] Runbooks and Playbooks
+  [★★☆] Log Aggregation at Scale
+  [★★☆] Trace Sampling Strategies
+  [★★☆] RED Method (Rate, Errors, Duration)
+  [★★☆] USE Method (Utilization, Saturation, Errors)
+  [★★☆] Golden Signals
+  [★★★] Cardinality in Metrics Systems
+  [★★★] Continuous Profiling (Pyroscope, Parca)
+  [★★★] eBPF for Observability
+  [★★★] Chaos Engineering for Observability
+  [★★★] Post-Mortem and Blameless Culture
+  [★★★] Toil Reduction Strategy
+  [★★★] Capacity Planning with Metrics
+  [★★★] Observability at Scale (Sampling, Aggregation)
+  [★★★] SRE Book -- Core Principles Deep Dive
+  [★★★] Observability Platform Architecture Design
+  [★★★] SLO-Based Alerting Strategy
+  [★★★] Observability-Driven Development Strategy
+  [★★★] Platform Observability Engineering
+  [★★★] Observability System Design Internals
+  [★★★] Time-Series Database Design
+  [★★★] Distributed Tracing System Architecture
+  [★★★] Formal SLO Theory
+  [★★★] Observability-First Thinking
+  [★★★] SLO Trade-off Framing
+  [★★★] Reliability Mental Model
+=== PLT-platform-swe (47) ===
+  [★☆☆] What Is Platform Engineering
+  [★☆☆] The Platform Engineering Mental Model (Golden Paths, IDP)
+  [★☆☆] Platform Engineering vs DevOps vs SRE -- The Map
+  [★☆☆] The Modern SWE Ecosystem Map (Platform Tools)
+  [★☆☆] Platform Engineering in Practice -- What Teams Face
+  [★☆☆] Internal Developer Platform (IDP) Design
+  [★☆☆] Developer Experience (DX) Fundamentals
+  [★☆☆] Golden Path Templates
+  [★☆☆] Self-Service Infrastructure Patterns
+  [★☆☆] Developer Portal (Backstage, Port)
+  [★☆☆] Platform Team Topology and Team Interactions
+  [★★☆] DORA Metrics (Deployment Frequency, Lead Time, MTTR, CFR)
+  [★★☆] SPACE Framework for Developer Productivity
+  [★★☆] Cognitive Load in Software Engineering
+  [★★☆] Technical Debt Management Strategy
+  [★★☆] Engineering Metrics and OKRs
+  [★★☆] Software Supply Chain Security (SLSA, SBOM)
+  [★★☆] API Platform Design (API Gateway, Developer Portal)
+  [★★☆] Feature Management and Feature Flags at Scale
+  [★★☆] Monorepo Tooling (Nx, Turborepo, Bazel)
+  [★★☆] Trunk-Based Development at Scale
+  [★★☆] Release Engineering (Release Trains, Freeze, Hotfix)
+  [★★☆] Incident Management Platform Design
+  [★★☆] On-Call Engineering Best Practices
+  [★★☆] Post-Mortem Culture and Blameless Reviews
+  [★★☆] Continuous Deployment Safety Practices
+  [★★☆] Progressive Delivery (Canary, Dark Launch, A/B)
+  [★★☆] Semantic Versioning and Release Policy
+  [★★☆] Build System Performance (Cache, Remote Execution)
+  [★★☆] Service Catalog and Software Inventory
+  [★★★] Platform Engineering Roadmap Design
+  [★★★] IDP Architecture (Backstage Plugins, Custom Scaffolding)
+  [★★★] Engineering Effectiveness Research (McKinsey, DX Core)
+  [★★★] Platform as a Product Design
+  [★★★] Multi-Cloud Platform Strategy
+  [★★★] Platform Engineering Strategy (Build vs Buy)
+  [★★★] Developer Productivity Architecture
+  [★★★] Engineering Transformation Strategy
+  [★★★] Platform Reliability and SLO Design
+  [★★★] AI-Augmented Developer Tooling Strategy
+  [★★★] Platform Engineering Research Frontiers
+  [★★★] Software Engineering Science (Empirical SE Research)
+  [★★★] Conway's Law and Org Design Research
+  [★★★] Platform Trade-off Framing (Standardization vs Flexibility)
+  [★★★] Developer Experience Mental Model
+  [★★★] Platform vs Enablement Thinking
+  [★★★] Engineering Metrics Mental Model (Leading vs Lagging)
+=== TST-testing (71) ===
+  [★☆☆] Why Testing Matters -- The Cost of Bugs
+  [★☆☆] The Testing Landscape -- A Map
+  [★☆☆] Test Pyramid Mental Model
+  [★☆☆] Manual vs Automated Testing
+  [★☆☆] The Testing Ecosystem Map
+  [★☆☆] Unit Test
+  [★★☆] Integration Test
+  [★★★] Contract Test
+  [★★☆] E2E Test
+  [★☆☆] Smoke Test
+  [★★☆] Regression Test
+  [★★☆] Performance Test
+  [★★☆] Load Test
+  [★★★] Stress Test
+  [★★★] Chaos Test
+  [★★★] Security Test (SAST-DAST)
+  [★★☆] TDD
+  [★★☆] BDD
+  [★★☆] Mocking
+  [★★☆] Stubbing
+  [★★☆] Faking
+  [★★★] Spying
+  [★★☆] Test Pyramid
+  [★★★] Test Diamond
+  [★★☆] Test Isolation
+  [★★☆] Test Fixtures
+  [★★★] Property-Based Testing
+  [★★☆] Snapshot Testing
+  [★★★] Testcontainers
+  [★★★] WireMock
+  [★★☆] JUnit 5
+  [★★☆] Mockito
+  [★★☆] AssertJ
+  [★★★] Pact (Contract Testing)
+  [★★★] Test Data Management
+  [★★☆] Test Environments
+  [★★★] Flaky Tests
+  [★★★] Test Parallelization
+  [★★★] Approval Testing
+  [★★★] A-B Testing
+  [★★★] Test-Driven Infrastructure
+  [★★★] Golden Path Testing
+  [★★☆] Test Coverage Targets
+  [★★★] Penetration Testing
+  [★★☆] API Testing
+  [★★☆] Postman - REST Assured
+  [★★☆] Selenium - Playwright
+  [★★★] Gatling - k6 (Load Testing)
+  [★★★] SonarQube Quality Gate
+  [★★☆] Test Reporting
+  [★★☆] JUnit 5 Parameterized Tests
+  [★★★] Karate Framework (API Testing)
+  [★★★] Cucumber (BDD Testing)
+  [★★☆] Cypress (E2E Testing)
+  [★★☆] Jest (JavaScript Testing)
+  [★★☆] Playwright (E2E Testing)
+  [★★★] API Contract Testing (Pact  Karate)
+  [★★★] Performance Testing (JMeter, Gatling)
+  [★★★] SonarQube Quality Gate
+  [★★★] Testing Strategy Architecture
+  [★★★] Test Automation Strategy at Scale
+  [★★★] Shift-Left Testing Design
+  [★★★] Contract Testing Architecture
+  [★★★] Quality Engineering Strategy
+  [★★★] Testing Theory (Mutation Testing, Property-Based Testing)
+  [★★★] Test Specification Formal Methods
+  [★★★] Testing Research Frontiers
+  [★★★] Chaos Engineering Design
+  [★★★] Testing Trade-off Framing
+  [★★★] Test Coverage Mental Model
+  [★★★] Testing ROI Thinking
+=== ANG-angular (47) ===
+  [★☆☆] What Is Angular and the Framework Philosophy
+  [★☆☆] The Angular Mental Model (Modules, Components, Services)
+  [★☆☆] Angular vs React vs Vue -- Key Differences
+  [★☆☆] The Angular Ecosystem Map (CLI, NgRx, RxJS)
+  [★☆☆] Angular in Production -- What to Expect
+  [★☆☆] Angular CLI (ng new, ng generate, ng serve)
+  [★☆☆] Angular Components
+  [★☆☆] Angular Templates and Data Binding
+  [★☆☆] Angular Directives (Structural, Attribute)
+  [★☆☆] Angular Services and Dependency Injection
+  [★☆☆] Angular Modules (NgModule)
+  [★☆☆] Angular Routing
+  [★★☆] Angular Forms (Template-Driven and Reactive)
+  [★★☆] Angular Pipes
+  [★★☆] Angular HTTP Client
+  [★★☆] RxJS Fundamentals for Angular
+  [★★☆] Angular Lifecycle Hooks
+  [★★☆] Angular Component Communication (Input, Output, EventEmitter)
+  [★★☆] Angular Standalone Components (v15+)
+  [★★☆] Angular Signals (v17+)
+  [★★☆] Angular Testing (Jasmine, Karma, Spectator)
+  [★★☆] NgRx State Management
+  [★★☆] Angular Change Detection Strategy (OnPush)
+  [★★☆] Angular Lazy Loading and Code Splitting
+  [★★☆] Angular Server-Side Rendering (SSR with Angular Universal)
+  [★★☆] Angular Interceptors
+  [★★☆] Angular Guards (Route Guards)
+  [★★☆] Angular Custom Decorators and Metadata
+  [★★☆] Angular Internationalization (i18n)
+  [★★☆] Angular PWA (Service Worker, App Shell)
+  [★★★] Angular Performance Optimization
+  [★★★] Angular Ivy Compiler Internals
+  [★★★] Angular Dependency Injection System Internals
+  [★★★] Angular Security (XSS, CSRF, Sanitization)
+  [★★★] Angular Monorepo with Nx
+  [★★★] Angular Micro-Frontend Architecture
+  [★★★] Angular Architecture Strategy (Module Federation)
+  [★★★] Angular State Management Selection (NgRx vs Akita vs Elf)
+  [★★★] Angular Migration Strategy (AngularJS to Angular)
+  [★★★] Angular Enterprise Design Patterns
+  [★★★] Angular Compiler Architecture Research
+  [★★★] Angular Signals Deep Dive -- Reactivity Internals
+  [★★★] RxJS Scheduler and Virtual Time Research
+  [★★★] Angular vs React Trade-off Framing
+  [★★★] Angular Opinionated Framework Mental Model
+  [★★★] Reactive Programming Thinking (RxJS)
+  [★★★] Angular Complexity vs React Freedom
+=== CSS-css (45) ===
+  [★☆☆] What Is CSS and the Cascade Mental Model
+  [★☆☆] The Box Model -- Everything in CSS Is a Box
+  [★☆☆] CSS vs HTML vs JavaScript -- Roles
+  [★☆☆] The CSS Ecosystem Map (Preprocessors, Frameworks)
+  [★☆☆] CSS in Production -- What to Expect
+  [★☆☆] CSS Selectors (Class, ID, Attribute, Pseudo)
+  [★☆☆] CSS Specificity and Inheritance
+  [★☆☆] CSS Cascade -- Order of Application
+  [★☆☆] CSS Units (px, em, rem, %, vw, vh)
+  [★☆☆] CSS Colors and Typography
+  [★☆☆] CSS Display (block, inline, inline-block, none)
+  [★☆☆] CSS Position (static, relative, absolute, fixed, sticky)
+  [★☆☆] CSS Flexbox
+  [★★☆] CSS Grid
+  [★★☆] CSS Custom Properties (Variables)
+  [★★☆] CSS Media Queries and Responsive Design
+  [★★☆] CSS Animations and Transitions
+  [★★☆] CSS Pseudo-Classes and Pseudo-Elements
+  [★★☆] CSS Z-Index and Stacking Context
+  [★★☆] Sass / SCSS Preprocessor
+  [★★☆] CSS BEM Naming Convention
+  [★★☆] CSS Modules
+  [★★☆] Tailwind CSS (Utility-First)
+  [★★☆] CSS-in-JS (Styled-Components, Emotion)
+  [★★☆] CSS Container Queries
+  [★★☆] CSS Logical Properties
+  [★★☆] CSS Scroll Snap
+  [★★☆] CSS Clipping and Masking
+  [★★☆] CSS Transforms and Perspective
+  [★★☆] CSS Subgrid
+  [★★☆] CSS Houdini (Paint, Layout Worklets)
+  [★★★] CSS Performance (Reflow, Repaint, Compositing)
+  [★★★] CSS Cascade Layers (@layer)
+  [★★★] CSS Nesting (Native)
+  [★★★] CSS Paint API
+  [★★★] CSS Architecture at Scale (Tokens, Design Systems)
+  [★★★] CSS Framework Selection Strategy
+  [★★★] Design Token Architecture
+  [★★★] CSS Theming Strategy (Dark Mode, Multi-Brand)
+  [★★★] Browser Layout Engine Internals
+  [★★★] CSS Specification Design Philosophy
+  [★★★] CSS Performance Research
+  [★★★] CSS Architecture Trade-off Framing
+  [★★★] Cascade Mental Model (Specificity Wars)
+  [★★★] CSS Naming Strategy Thinking
+=== HTM-html (42) ===
+  [★☆☆] What Is HTML and How the Web Works
+  [★☆☆] The HTML Mental Model (Document Tree)
+  [★☆☆] HTML vs CSS vs JavaScript -- Roles
+  [★☆☆] The Web Ecosystem Map (Browsers, Standards)
+  [★☆☆] HTML in Production -- What to Expect
+  [★☆☆] HTML Document Structure (doctype, head, body)
+  [★☆☆] HTML Elements and Tags
+  [★☆☆] HTML Attributes
+  [★☆☆] Semantic HTML (header, nav, main, article, section)
+  [★☆☆] HTML Forms and Input Types
+  [★☆☆] HTML Links and Anchors
+  [★☆☆] HTML Images and Media
+  [★☆☆] HTML Tables
+  [★☆☆] HTML Lists (ul, ol, dl)
+  [★★☆] HTML Head Elements (meta, title, link, script)
+  [★★☆] HTML5 APIs (Canvas, Video, Audio)
+  [★★☆] Web Accessibility (ARIA, WCAG)
+  [★★☆] HTML Validation and Standards
+  [★★☆] HTML Templating (Jinja, Thymeleaf, Handlebars)
+  [★★☆] HTML Custom Data Attributes (data-*)
+  [★★☆] HTML Microdata and Schema.org
+  [★★☆] Open Graph Protocol (og: meta tags)
+  [★★☆] HTML Security (XSS Prevention, CSP)
+  [★★☆] Web Components (Custom Elements, Shadow DOM, Templates)
+  [★★☆] HTML Performance (Critical Path, Lazy Loading, Preload)
+  [★★☆] Progressive Web Apps (PWA, Service Worker, Manifest)
+  [★★☆] HTML Internationalization (lang, dir, charset)
+  [★★☆] Server-Side Rendering (SSR) vs Client-Side Rendering
+  [★★☆] Static Site Generation (SSG) Pattern
+  [★★☆] HTML5 History API and SPAs
+  [★★★] Browser Rendering Pipeline (Parse, CSSOM, Layout, Paint)
+  [★★★] DOM Manipulation Performance
+  [★★★] Web Performance Metrics (CWV: LCP, FID, CLS)
+  [★★★] Shadow DOM Internals
+  [★★★] Browser HTML Parsing Algorithm
+  [★★★] HTML Architecture Strategy (Component Libraries, Design Systems)
+  [★★★] Rendering Strategy Selection (CSR vs SSR vs SSG vs ISR)
+  [★★★] Web Accessibility Strategy
+  [★★★] Browser Internals -- Rendering Engine Deep Dive
+  [★★★] HTML Specification Design Philosophy
+  [★★★] Web Standards Trade-off Framing
+  [★★★] Semantic HTML Mental Model
+=== JSC-javascript (38) ===
+  [★☆☆] What Is JavaScript and Why It Rules the Web
+  [★☆☆] The JavaScript Mental Model (Event Loop, Single Thread)
+  [★☆☆] JavaScript vs TypeScript -- The Trade-off
+  [★☆☆] The JavaScript Ecosystem Map (Node, Deno, Bun, Browsers)
+  [★☆☆] JavaScript in Production -- What to Expect
+  [★☆☆] 026b - First-Class Functions
+  [★☆☆] 1291b - Heap (JS)
+  [★☆☆] Call Stack (JS)
+  [★☆☆] 1292b - Web APIs
+  [★★☆] Event Loop
+  [★★☆] Task Queue (Macrotask)
+  [★★☆] Microtask Queue
+  [★☆☆] var-let-const
+  [★★☆] Hoisting
+  [★★☆] Temporal Dead Zone
+  [★★☆] Scope
+  [★★★] Closure
+  [★★★] 1300b - Lexical Environment
+  [★★★] Prototype Chain
+  [★★☆] Prototypal Inheritance
+  [★★★] this keyword
+  [★★☆] Binding (call, apply, bind)
+  [★★☆] Arrow Functions
+  [★★★] Execution Context
+  [★★☆] Higher-Order Functions (JS)
+  [★☆☆] IIFE
+  [★★★] JavaScript Architecture Strategy (Module Systems, Bundlers)
+  [★★★] JavaScript Performance Optimization Strategy
+  [★★★] JavaScript Security Strategy
+  [★★★] JavaScript Runtime Selection (Node vs Deno vs Bun)
+  [★★★] JavaScript at Scale (TypeScript, Monorepos, Large Apps)
+  [★★★] V8 Engine Internals (JIT, Hidden Classes, Turbofan)
+  [★★★] JavaScript Specification (ECMAScript) Design
+  [★★★] WebAssembly and the Future of JS
+  [★★★] JavaScript Research Frontiers
+  [★★★] JavaScript Trade-off Framing
+  [★★★] Async Mental Model (Promises vs Callbacks vs async/await)
+  [★★★] JavaScript Ecosystem Fatigue Thinking
+=== NDJ-nodejs (45) ===
+  [★☆☆] What Is Node.js and Why It Matters
+  [★☆☆] The Node.js Mental Model (Event Loop, Non-Blocking I/O)
+  [★☆☆] Node.js vs Browser JavaScript -- Key Differences
+  [★☆☆] The Node.js Ecosystem Map (npm, Express, Fastify, NestJS)
+  [★☆☆] Node.js in Production -- What to Expect
+  [★☆☆] Node.js Modules (CommonJS vs ESM)
+  [★☆☆] Node.js File System (fs module)
+  [★☆☆] Node.js HTTP Module
+  [★☆☆] Express.js Fundamentals (Routing, Middleware)
+  [★☆☆] Node.js Events and EventEmitter
+  [★☆☆] Node.js Streams
+  [★☆☆] Node.js Buffers
+  [★☆☆] Node.js Process and Environment Variables
+  [★★☆] Fastify -- High-Performance HTTP
+  [★★☆] NestJS -- Opinionated Node.js Framework
+  [★★☆] Node.js Authentication (JWT, Sessions, Passport)
+  [★★☆] Node.js Database Access (Prisma, Sequelize, Knex)
+  [★★☆] Node.js Error Handling Patterns
+  [★★☆] Node.js Async Patterns (Callbacks, Promises, async/await)
+  [★★☆] Node.js Worker Threads
+  [★★☆] Node.js Child Processes
+  [★★☆] Node.js Cluster Module
+  [★★☆] Node.js Memory Management
+  [★★☆] Node.js Profiling and Diagnostics
+  [★★☆] Node.js Security (OWASP Node Security)
+  [★★☆] Node.js Logging (Winston, Pino)
+  [★★☆] Node.js Testing (Jest, Mocha, Supertest)
+  [★★☆] GraphQL with Node.js
+  [★★☆] WebSockets with Node.js (Socket.io, ws)
+  [★★☆] Node.js Microservices Patterns
+  [★★★] Node.js Event Loop Internals (libuv)
+  [★★★] Node.js V8 Integration
+  [★★★] Node.js Native Addons (N-API)
+  [★★★] Node.js Performance at Scale
+  [★★★] Node.js vs Deno vs Bun -- Runtime Comparison
+  [★★★] Node.js Architecture Strategy (Monolith vs Microservices)
+  [★★★] Node.js Production Deployment Strategy
+  [★★★] Node.js API Design Strategy (REST vs GraphQL vs tRPC)
+  [★★★] Node.js Event Loop Research
+  [★★★] Node.js Core Contribution and Architecture
+  [★★★] JavaScript Runtime Design Research
+  [★★★] Node.js Trade-off Framing (Single Thread Strengths/Weaknesses)
+  [★★★] Non-Blocking I/O Mental Model
+  [★★★] Backend JavaScript Thinking
+  [★★★] Node.js Performance Intuition
+=== NPM-npm-packages (35) ===
+  [★☆☆] What Is npm and Package Management
+  [★☆☆] The npm Mental Model (Registry, packages, node_modules)
+  [★☆☆] npm vs yarn vs pnpm -- Trade-offs
+  [★☆☆] The Package Management Ecosystem Map
+  [★☆☆] Package Management in Production -- What to Expect
+  [★☆☆] package.json -- Structure and Fields
+  [★☆☆] package-lock.json and Lockfiles
+  [★☆☆] npm install / ci / update
+  [★☆☆] npm Scripts
+  [★☆☆] npm publish and the Registry
+  [★☆☆] Semantic Versioning in npm (^, ~, exact)
+  [★☆☆] Dependencies vs devDependencies vs peerDependencies
+  [★★☆] yarn Workspaces
+  [★★☆] pnpm Workspaces
+  [★★☆] npm link and Local Development
+  [★★☆] npx -- Execute Without Install
+  [★★☆] Private npm Registry (Nexus, Verdaccio, GitHub Packages)
+  [★★☆] npm Audit and Security
+  [★★☆] Dependency Resolution Algorithm
+  [★★☆] node_modules Hoisting and Phantom Dependencies
+  [★★☆] npm Supply Chain Security (SBOMs, Signed Packages)
+  [★★☆] Monorepo Package Management Strategy
+  [★★☆] Publishing a Library to npm (Best Practices)
+  [★★☆] npm Workspaces
+  [★★★] pnpm Content-Addressable Store Internals
+  [★★★] npm Registry Protocol
+  [★★★] Dependency Graph Cycles and Resolution
+  [★★★] npm Package Manager Selection Strategy
+  [★★★] Monorepo vs Polyrepo Package Strategy
+  [★★★] Dependency Security Strategy
+  [★★★] Package Registry Design Research
+  [★★★] JavaScript Module System Internals
+  [★★★] Package Management Trade-off Framing
+  [★★★] Dependency Hell Mental Model
+  [★★★] Supply Chain Security Thinking
+=== RCT-react (72) ===
+  [★☆☆] What Is React and the Component Model
+  [★☆☆] The React Mental Model (Declarative UI, Virtual DOM)
+  [★☆☆] React vs Angular vs Vue -- Key Differences
+  [★☆☆] The React Ecosystem Map (Next.js, Redux, React Query)
+  [★☆☆] React in Production -- What to Expect
+  [★★★] React Accessibility (a11y)
+  [★★★] React Performance Profiling (Browser DevTools)
+  [★★☆] ESLint (React)
+  [★☆☆] Prettier
+  [★★★] Apollo Client
+  [★★★] Apollo Federation
+  [★★★] GraphQL with React
+  [★★★] React Architecture Strategy (State Management Selection)
+  [★★★] React Performance Architecture
+  [★★★] React Server Components Strategy
+  [★★★] Micro-Frontend Architecture with React
+  [★★★] React Security Strategy
+  [★★★] React Fiber Architecture Internals
+  [★★★] React Reconciliation Algorithm Deep Dive
+  [★★★] React Concurrent Mode and Scheduler
+  [★★★] React Compiler (React Forget) Research
+  [★★★] React Trade-off Framing (Complexity vs Flexibility)
+  [★★★] State Management Mental Model
+  [★★★] Component Design Thinking
+  [★☆☆] Functional Components
+  [★☆☆] Props and Prop Types
+  [★☆☆] State with useState Hook
+  [★☆☆] Side Effects with useEffect Hook
+  [★☆☆] Event Handling in React
+  [★☆☆] Conditional Rendering
+  [★☆☆] Lists and Keys
+  [★☆☆] React DevTools
+  [★☆☆] React Project Setup (Vite, CRA)
+  [★☆☆] Component Composition
+  [★☆☆] Lifting State Up
+  [★★☆] Controlled vs Uncontrolled Components
+  [★★☆] Forms in React
+  [★★☆] Fragments and Portals
+  [★★☆] Children Prop and Render Props
+  [★★☆] React Router (v6)
+  [★★☆] React Context API
+  [★★☆] Custom Hooks Pattern
+  [★★☆] useRef Hook
+  [★★☆] useMemo and useCallback
+  [★★☆] Error Boundaries
+  [★★☆] React Query - TanStack Query
+  [★★☆] Zustand State Management
+  [★★☆] Redux Toolkit
+  [★★☆] React Hook Form
+  [★★☆] Lazy Loading and Code Splitting
+  [★★☆] React.memo and PureComponent
+  [★★☆] React Testing Library Basics
+  [★★☆] Storybook for React Components
+  [★★☆] CSS-in-JS (Styled Components, Emotion)
+  [★★☆] Tailwind CSS with React
+  [★★☆] Next.js Fundamentals (SSR, SSG, ISR)
+  [★★☆] Next.js App Router
+  [★★☆] Vite Build Configuration
+  [★★☆] Environment Variables in React
+  [★★☆] React Strict Mode
+  [★★☆] useReducer Hook
+  [★★★] Compound Components Pattern
+  [★★★] Higher-Order Components (HOC)
+  [★★★] React Suspense and Concurrent Features
+  [★★★] React Performance Optimization Patterns
+  [★★★] State Management Architecture Decisions
+  [★★★] React Server Components (Deep Dive)
+  [★★★] Hydration and Server-Side Rendering Internals
+  [★★★] React Testing Strategies (Unit, Integration)
+  [★★★] React with TypeScript Patterns
+  [★★★] Accessibility Testing in React (axe, jest-axe)
+  [★★★] React Internationalization (i18n)
+=== TSC-typescript (45) ===
+  [★☆☆] What Is TypeScript and Why It Matters
+  [★☆☆] The TypeScript Mental Model (Structural Typing)
+  [★☆☆] TypeScript vs JavaScript -- The Trade-off
+  [★☆☆] The TypeScript Ecosystem Map (tsc, ts-node, vite)
+  [★☆☆] TypeScript in Production -- What to Expect
+  [★☆☆] TypeScript Basic Types (string, number, boolean, any, unknown)
+  [★☆☆] TypeScript Interfaces and Type Aliases
+  [★☆☆] TypeScript Functions (Parameter Types, Return Types, Overloads)
+  [★☆☆] TypeScript Classes and Access Modifiers
+  [★☆☆] TypeScript Enums
+  [★☆☆] TypeScript Arrays and Tuples
+  [★☆☆] tsconfig.json Configuration
+  [★★☆] TypeScript Union and Intersection Types
+  [★★☆] TypeScript Type Narrowing and Type Guards
+  [★★☆] TypeScript Generics
+  [★★☆] TypeScript Utility Types (Partial, Required, Pick, Omit, Record)
+  [★★☆] TypeScript Modules and Namespaces
+  [★★☆] TypeScript Decorators
+  [★★☆] TypeScript Declaration Files (.d.ts)
+  [★★☆] TypeScript Strict Mode
+  [★★☆] TypeScript with React (JSX, Component Typing)
+  [★★☆] TypeScript Mapped Types
+  [★★☆] TypeScript Conditional Types
+  [★★☆] TypeScript Template Literal Types
+  [★★☆] TypeScript Infer Keyword
+  [★★☆] TypeScript Discriminated Unions
+  [★★☆] TypeScript Module Augmentation
+  [★★☆] TypeScript Project References
+  [★★☆] TypeScript Path Aliases
+  [★★☆] TypeScript with Node.js (Backend Typing)
+  [★★★] TypeScript Compiler API
+  [★★★] TypeScript Type-Level Programming
+  [★★★] TypeScript ESM vs CJS Modules
+  [★★★] TypeScript Performance (Compilation Speed)
+  [★★★] TypeScript Migration Strategy (JS to TS)
+  [★★★] TypeScript Architecture Strategy (Strict Typing, Shared Types)
+  [★★★] TypeScript Monorepo Strategy (Type Sharing)
+  [★★★] TypeScript Security Strategy (Zod, Runtime Validation)
+  [★★★] TypeScript Type System Internals
+  [★★★] TypeScript Specification Design Philosophy
+  [★★★] TypeScript Checker Architecture Research
+  [★★★] TypeScript Trade-off Framing (Type Safety vs Productivity)
+  [★★★] Structural vs Nominal Typing Mental Model
+  [★★★] TypeScript Migration Mindset
+  [★★★] Type-First Design Thinking
+=== WBP-webpack-build (34) ===
+  [★☆☆] What Is a JavaScript Bundler and Why It Matters
+  [★☆☆] The Bundler Mental Model (Module Graph, Entry Points, Chunks)
+  [★☆☆] Webpack vs Vite vs Rollup vs Parcel -- Trade-offs
+  [★☆☆] The Build Tool Ecosystem Map (Frontend)
+  [★☆☆] Bundlers in Production -- What to Expect
+  [★☆☆] Webpack Basics (entry, output, loaders, plugins)
+  [★☆☆] Webpack Loaders
+  [★☆☆] Webpack Plugins
+  [★☆☆] Webpack Dev Server and HMR
+  [★☆☆] Vite Fundamentals
+  [★★☆] Code Splitting and Lazy Loading
+  [★★☆] Tree Shaking (Dead Code Elimination)
+  [★★☆] Asset Optimization (Images, Fonts, CSS)
+  [★★☆] Source Maps
+  [★★☆] ESBuild -- Ultra-Fast Bundler
+  [★★☆] Rollup for Library Bundling
+  [★★☆] Turbopack (Rust-based Webpack)
+  [★★☆] Module Federation (Micro-Frontend)
+  [★★☆] Webpack Performance Optimization
+  [★★☆] Caching Strategy in Bundlers (Content Hashing)
+  [★★☆] Bundle Analysis and Size Budgets
+  [★★☆] Babel and JavaScript Transpilation
+  [★★☆] PostCSS and CSS Transpilation
+  [★★★] Webpack Dependency Graph Internals
+  [★★★] Vite Plugin Architecture
+  [★★★] Bundler Architecture Design (Rust vs JS)
+  [★★★] Bundler Selection Strategy
+  [★★★] Build Performance Strategy (Caching, Parallelism)
+  [★★★] Micro-Frontend Build Architecture
+  [★★★] Bundler Internals Research
+  [★★★] JavaScript Module Format Evolution (AMD, CJS, ESM)
+  [★★★] Bundler Trade-off Framing (Speed vs Features)
+  [★★★] Module Graph Mental Model
+  [★★★] Build Optimization Thinking
+=== AIF-ai-foundations (57) ===
+  [★☆☆] What Is Artificial Intelligence and Why It Matters Now
+  [★☆☆] The AI/ML Mental Model (Data + Algorithm + Compute)
+  [★☆☆] AI vs ML vs Deep Learning - The Map
+  [★☆☆] The AI Ecosystem Map (Tools, Frameworks, Providers)
+  [★☆☆] AI in Production - What Engineers Actually Face
+  [★☆☆] Machine Learning Basics
+  [★☆☆] Supervised vs Unsupervised Learning
+  [★★☆] Neural Network
+  [★★☆] Deep Learning
+  [★★★] Transformer Architecture
+  [★★★] Attention Mechanism
+  [★★★] Self-Attention
+  [★★★] Embedding
+  [★★☆] Tokenization
+  [★★☆] Token
+  [★★☆] Context Window
+  [★★☆] Temperature
+  [★★★] Top-p  Top-k Sampling
+  [★★☆] Hallucination
+  [★★★] Grounding
+  [★★★] Model Parameters
+  [★★★] Model Weights
+  [★★☆] Inference
+  [★★★] Training
+  [★★★] Fine-Tuning
+  [★★★] RLHF (Reinforcement Learning from Human Feedback)
+  [★★★] Pre-training
+  [★★★] Transfer Learning
+  [★★★] Few-Shot Learning
+  [★★★] Zero-Shot Learning
+  [★★★] In-Context Learning
+  [★★☆] Overfitting  Underfitting
+  [★★☆] Bias in AI
+  [★★★] Latency vs Throughput (AI)
+  [★★★] Model Quantization
+  [★★★] Model Pruning
+  [★★★] Distillation
+  [★★★] Multimodal Models
+  [★★★] Vision Language Models
+  [★★★] Foundation Models
+  [★★☆] Open Source vs Proprietary Models
+  [★★★] Model Evaluation Metrics
+  [★★★] Benchmark (AI)
+  [★★★] AI Safety
+  [★★★] Responsible AI
+  [★★★] AI Architecture Strategy (Build vs Buy vs Fine-Tune)
+  [★★★] ML Platform Engineering Design
+  [★★★] Responsible AI and Bias Mitigation Strategy
+  [★★★] AI Safety Architecture
+  [★★★] AI Research Frontier (Self-Supervised, World Models)
+  [★★★] Theoretical ML -- VC Dimension, PAC Learning
+  [★★★] Optimization Theory (SGD, Adam, Loss Landscapes)
+  [★★★] Information Theory for ML (Cross-Entropy, KL Divergence)
+  [★★★] Neural Architecture Research
+  [★★★] AI Trade-off Framing (Performance vs Interpretability)
+  [★★★] Model Selection Mental Model
+  [★★★] AI Hype vs Reality Thinking
+=== AIP-ai-product (40) ===
+  [★☆☆] What Is AI Product Engineering
+  [★☆☆] The AI Product Mental Model (UX + LLM + Data Pipeline)
+  [★☆☆] AI Product vs Traditional Software -- Key Differences
+  [★☆☆] The AI Product Ecosystem Map
+  [★☆☆] Building AI Products -- What Teams Actually Face
+  [★☆☆] AI Product Requirements and Acceptance Criteria
+  [★☆☆] Prototyping with LLMs (Rapid Iteration)
+  [★☆☆] Feedback Loops and Human-in-the-Loop Design
+  [★☆☆] AI Feature Flags and Gradual Rollouts
+  [★☆☆] AI Product Metrics (Beyond Accuracy)
+  [★★☆] AI UX Patterns (Suggestions, Auto-Complete, Explanation)
+  [★★☆] AI Product Testing Strategy (Unit, Integration, Eval)
+  [★★☆] AI Data Pipeline Design
+  [★★☆] AI Content Moderation and Safety Filters
+  [★★☆] AI Cost Engineering (Token Budget, Caching Strategy)
+  [★★☆] AI Latency Management (Streaming, Background, Prefetch)
+  [★★☆] AI Fallback and Degradation Strategies
+  [★★☆] AI Feature Discoverability and Onboarding
+  [★★☆] AI Explainability for End Users
+  [★★☆] AI Personalization and Context Management
+  [★★☆] AI Data Privacy and Compliance (GDPR, CCPA, AI Act)
+  [★★☆] AI Model Versioning in Products
+  [★★☆] AI Output Caching and Consistency
+  [★★☆] AI Error Handling and Recovery
+  [★★☆] AI A/B Testing and Experiment Design
+  [★★☆] AI Accessibility in Products
+  [★★★] AI Product Architecture at Scale
+  [★★★] AI Multi-Tenancy and Isolation
+  [★★★] AI Regulatory Compliance (EU AI Act, FDA AI/ML)
+  [★★★] AI Model Marketplace and Provider Lock-In
+  [★★★] AI Product Strategy (Embedded vs Standalone)
+  [★★★] AI Monetization Models
+  [★★★] AI Competitive Moats and Defensibility
+  [★★★] Responsible AI Product Design
+  [★★★] AI Product Engineering Research Frontiers
+  [★★★] Human-AI Collaboration Design Research
+  [★★★] AI Product Trade-off Framing (Capability vs Safety vs UX)
+  [★★★] AI Product Mental Model (Probabilistic Output Thinking)
+  [★★★] Build vs Buy vs Fine-Tune Decision Mental Model
+  [★★★] AI Product Failure Mode Thinking
+=== LLM-llms-prompt-eng (50) ===
+  [★☆☆] What Is a Large Language Model
+  [★☆☆] The LLM Mental Model (Next Token Prediction)
+  [★☆☆] LLMs vs Traditional NLP -- What Changed
+  [★☆☆] The LLM Ecosystem Map (GPT, Claude, Gemini, Llama)
+  [★☆☆] LLMs in Production -- What Engineers Face
+  [★☆☆] Prompt Engineering Basics
+  [★☆☆] Zero-Shot, One-Shot, Few-Shot Prompting
+  [★☆☆] Temperature and Sampling Parameters
+  [★☆☆] System Prompts and Personas
+  [★☆☆] Token and Context Window
+  [★☆☆] LLM APIs (OpenAI, Anthropic, Gemini API)
+  [★☆☆] LLM Hallucination -- What It Is and Why It Happens
+  [★★☆] Chain-of-Thought (CoT) Prompting
+  [★★☆] Structured Output (JSON Mode, Function Calling)
+  [★★☆] Prompt Injection and Security
+  [★★☆] LLM Evaluation Metrics (BLEU, ROUGE, BERTScore)
+  [★★☆] LLM Cost Optimization (Caching, Batching)
+  [★★☆] Embedding Models and Semantic Search
+  [★★☆] Fine-Tuning Fundamentals
+  [★★☆] Instruction Tuning and RLHF
+  [★★☆] LLM Streaming (Token Streaming, SSE)
+  [★★☆] LLM Rate Limits and Retry Strategies
+  [★★☆] Parameter-Efficient Fine-Tuning (LoRA, QLoRA)
+  [★★☆] LLM Quantization (GGUF, AWQ, GPTQ)
+  [★★☆] Open Source LLMs (Llama, Mistral, Gemma)
+  [★★☆] LLM Inference Optimization (vLLM, TGI, Ollama)
+  [★★☆] Constitutional AI and RLAIF
+  [★★☆] LLM Safety and Alignment
+  [★★☆] Multimodal LLMs (Vision, Audio, Code)
+  [★★☆] LLM Context Window Extension (RoPE, ALiBi)
+  [★★☆] LLM Benchmarks (MMLU, HumanEval, HELM)
+  [★★★] Transformer Architecture Deep Dive
+  [★★★] Attention Mechanism Internals (Scaled Dot-Product, MHA)
+  [★★★] Pre-Training at Scale (GPT, BERT, T5)
+  [★★★] LLM Memory Architecture (KV Cache, Flash Attention)
+  [★★★] Mixture of Experts (MoE) Architecture
+  [★★★] LLM Training Infrastructure (FSDP, DeepSpeed)
+  [★★★] Emergent Capabilities in LLMs
+  [★★★] LLM Red-Teaming and Adversarial Attacks
+  [★★★] LLM Architecture Strategy (Provider Selection, Self-Hosted vs API)
+  [★★★] LLM Fine-Tuning Strategy (When to Fine-Tune vs RAG vs Prompt)
+  [★★★] LLM Evaluation Strategy
+  [★★★] LLM Cost and Latency Architecture Design
+  [★★★] LLM Safety Architecture Design
+  [★★★] Transformer Architecture Research (xFormers, State Space Models)
+  [★★★] LLM Scaling Laws (Chinchilla, Kaplan)
+  [★★★] Interpretability Research (Mechanistic Interpretability)
+  [★★★] LLM Trade-off Framing (Capability vs Safety vs Cost)
+  [★★★] Prompt Engineering Mental Model
+  [★★★] LLM Production Reality Thinking
+=== RAG-rag-agents-llmops (50) ===
+  [★☆☆] What Is RAG and Why It Matters
+  [★☆☆] The RAG Mental Model (Retrieve, Augment, Generate)
+  [★☆☆] RAG vs Fine-Tuning - When to Use What
+  [★☆☆] The AI Agents Ecosystem Map
+  [★☆☆] LLMOps - What It Is and Why It Exists
+  [★☆☆] Vector Databases Fundamentals
+  [★☆☆] Embeddings - Turning Text into Vectors
+  [★☆☆] Chunking Strategies for RAG
+  [★☆☆] Similarity Search (Cosine, Dot Product, Euclidean)
+  [★☆☆] RAG Pipeline Basics (Index, Retrieve, Generate)
+  [★☆☆] LangChain Fundamentals
+  [★☆☆] LlamaIndex Fundamentals
+  [★★☆] Vector Database Options (Pinecone, Weaviate, Qdrant, Chroma)
+  [★★☆] Hybrid Search (Dense + Sparse / BM25)
+  [★★☆] Re-ranking in RAG (Cross-Encoder, Cohere Rerank)
+  [★★☆] Metadata Filtering in Vector Search
+  [★★☆] RAG Evaluation (RAGAs, Faithfulness, Relevance)
+  [★★☆] Query Transformation (HyDE, Step-Back, Multi-Query)
+  [★★☆] Document Parsing and Extraction for RAG
+  [★★☆] AI Agents Fundamentals (Tools, Memory, Planning)
+  [★★☆] ReAct Agent Pattern
+  [★★☆] Tool Calling and Function Calling in Agents
+  [★★☆] Advanced RAG Patterns (Corrective RAG, Self-RAG)
+  [★★☆] Graph RAG (Knowledge Graphs + LLM)
+  [★★☆] Multi-Agent Systems (Orchestration, Communication)
+  [★★☆] Agent Memory Systems (Short-Term, Long-Term, Episodic)
+  [★★☆] Agent Planning Strategies (MCTS, Tree-of-Thought)
+  [★★☆] LLMOps Fundamentals (Prompt Versioning, Experiment Tracking)
+  [★★☆] LLM Observability (Langfuse, Helicone, Traceloop)
+  [★★☆] LLM CI/CD (Prompt Testing, Regression)
+  [★★☆] Guardrails and Output Validation (NeMo, Guardrails AI)
+  [★★☆] Semantic Caching for LLMs
+  [★★★] Agentic RAG (Agents that Query and Refine)
+  [★★★] Multimodal RAG (Images, Audio, Video + Text)
+  [★★★] RAG at Scale (Distributed Index, Sharding)
+  [★★★] Agent Reliability and Failure Recovery
+  [★★★] Knowledge Graph Construction from Unstructured Data
+  [★★★] LLMOps Platform Design (MLflow, W&B, ZenML)
+  [★★★] AI Application Security (Prompt Injection, Data Exfil)
+  [★★★] RAG Architecture Strategy (Naive vs Modular vs Agentic)
+  [★★★] Agent Architecture Strategy (Single vs Multi-Agent)
+  [★★★] LLMOps Maturity Model
+  [★★★] Vector DB Selection Framework
+  [★★★] AI Application Reliability Strategy
+  [★★★] RAG System Design Internals
+  [★★★] Vector Index Algorithm Research (HNSW, IVF, ScaNN)
+  [★★★] Agent Framework Design Research
+  [★★★] RAG Trade-off Framing (Precision vs Recall vs Latency)
+  [★★★] Agent Reliability Mental Model
+  [★★★] RAG vs Fine-Tuning Decision Framework
+=== BHV-behavioral-leadership (68) ===
+  [★☆☆] What Is Software Engineering Leadership
+  [★☆☆] The Engineering Mindset -- A Map
+  [★☆☆] Engineer vs Senior Engineer vs Staff Engineer
+  [★☆☆] Technical Career Progression Mental Model
+  [★☆☆] Behavioral Skills in Engineering -- Why They Matter
+  [★☆☆] STAR Method
+  [★★☆] Situational Leadership
+  [★★☆] Technical Leadership
+  [★★☆] Engineering Manager vs Tech Lead
+  [★★★] Staff Engineer vs Principal Engineer
+  [★★★] Scope of Influence
+  [★★☆] Mentoring vs Coaching
+  [★★★] Technical Roadmap
+  [★★☆] Stakeholder Communication
+  [★★★] Technical Debt Management
+  [★★☆] Prioritization (MoSCoW, RICE)
+  [★★☆] Estimation Techniques
+  [★★★] Risk Management
+  [★★★] Incident Command
+  [★★★] Blameless Culture
+  [★★☆] Psychological Safety
+  [★★☆] Feedback (Giving and Receiving)
+  [★★☆] Cross-Functional Collaboration
+  [★★☆] Conflict Resolution
+  [★★☆] Agile Principles
+  [★☆☆] Scrum
+  [★☆☆] Kanban
+  [★☆☆] Sprint Planning
+  [★☆☆] Retrospective
+  [★★☆] OKRs
+  [★★★] Engineering Strategy
+  [★★★] Build vs Buy vs Outsource
+  [★★☆] Technical Interview Preparation
+  [★★★] System Design Interview
+  [★★☆] Behavioral Interview Patterns
+  [★★☆] Failure Stories (Learning from Mistakes)
+  [★★★] Project Leadership
+  [★★★] Driving Adoption
+  [★★★] Influence Without Authority
+  [★★★] Negotiation in Engineering
+  [★★☆] Documentation Culture
+  [★★☆] Writing for Engineers
+  [★★★] Presentations for Technical Audiences
+  [★★★] Career Laddering
+  [★★★] Personal Brand (Engineering)
+  [★★☆] Root Cause Analysis (RCA)
+  [★★☆] Bug Triage Process
+  [★★☆] Stakeholder Management
+  [★★★] Technology Evangelism
+  [★★★] POC to Production Strategy
+  [★★★] Compliance-Oriented SDLC
+  [★★★] Financial Services Domain Knowledge
+  [★★★] Regulated Domain Engineering
+  [★★☆] Backlog Management (JIRA, VersionOne)
+  [★☆☆] Confluence  Documentation Tooling
+  [★★★] Engineering Standards Enforcement
+  [★★★] Engineering Leadership Strategy
+  [★★★] Technical Strategy Communication
+  [★★★] Engineering Culture Design
+  [★★★] Hiring and Building Engineering Teams
+  [★★★] Executive Engineering Presence
+  [★★★] Staff+ Engineering Influence Research
+  [★★★] Engineering Organization Design
+  [★★★] Technical Vision and Roadmap Design
+  [★★★] Organizational Psychology for Engineers
+  [★★★] Leadership Trade-off Framing
+  [★★★] Engineering Communication Mental Model
+  [★★★] Career Growth Thinking
+=== DGN-document-generation (35) ===
+  [★☆☆] What Is Document Generation and Why It Matters
+  [★☆☆] The Document Generation Mental Model (Template + Data + Renderer)
+  [★☆☆] Document Formats Ecosystem Map (PDF, Word, Excel, HTML)
+  [★☆☆] Document Generation vs Document Editing -- The Difference
+  [★☆☆] Document Generation in Production -- What to Expect
+  [★☆☆] PDF Generation Fundamentals (iText, Apache PDFBox, WeasyPrint)
+  [★☆☆] HTML-to-PDF Conversion (Puppeteer, WeasyPrint, Prince)
+  [★☆☆] Word Document Generation (docx4j, python-docx, OpenXML)
+  [★☆☆] Excel Generation (Apache POI, OpenPyXL, ExcelJS)
+  [★☆☆] Template Engines (Thymeleaf, Jinja2, Handlebars, FreeMarker)
+  [★☆☆] CSV and Data Export Generation
+  [★★☆] PDF Form Filling (AcroForms, iText)
+  [★★☆] Digital Signatures in Documents (PKCS#7, PAdES)
+  [★★☆] Document Versioning and Audit Trail
+  [★★☆] Barcode and QR Code Generation
+  [★★☆] Chart and Graph Generation in Documents
+  [★★☆] Mail Merge Pattern
+  [★★☆] Document Storage and Retrieval (S3, CDN, Signed URLs)
+  [★★☆] Async Document Generation (Queue-Based)
+  [★★☆] Document Generation Performance (Caching, Pooling)
+  [★★☆] PDF Accessibility (Tagged PDF, Section 508)
+  [★★☆] PDF/A Standard (Archiving)
+  [★★☆] Document Security (Encryption, Password Protection)
+  [★★☆] Multi-Language and Unicode in Documents
+  [★★☆] LLM-Assisted Document Generation
+  [★★★] Document Generation at Scale (Bulk, Batch, Streaming)
+  [★★★] PDF Internals (Cross-Reference Table, Object Streams)
+  [★★★] OOXML (Office Open XML) Internals
+  [★★★] Document Generation Architecture Strategy
+  [★★★] Document Template Management Strategy
+  [★★★] Document Generation Library Selection Framework
+  [★★★] PDF Format Research (PDF 2.0, PDF/UA)
+  [★★★] Document Rendering Algorithm Research
+  [★★★] Document Generation Trade-off Framing
+  [★★★] Template vs Code-Driven Generation Thinking
+=== FIN-financial-domain (44) ===
+  [★☆☆] What Is Financial Services Software Engineering
+  [★☆☆] The Financial Systems Mental Model (Money, Settlement, Risk)
+  [★☆☆] FinTech vs Traditional Banking -- The Map
+  [★☆☆] Financial Regulations Landscape (PCI DSS, PSD2, GDPR, SOX)
+  [★☆☆] Financial Systems in Production -- What Engineers Face
+  [★☆☆] Money Representation (Decimal vs Float -- Why Float is Dangerous)
+  [★☆☆] Currency and Forex (ISO 4217, FX Rates)
+  [★☆☆] Payment Processing Fundamentals (Acquiring, Issuing, Gateway)
+  [★☆☆] PCI DSS Compliance Fundamentals
+  [★☆☆] Double-Entry Accounting for Engineers
+  [★☆☆] Transaction Atomicity and Financial Consistency
+  [★★☆] Ledger Systems Design
+  [★★☆] Idempotency Keys in Payment APIs
+  [★★☆] Payment Reconciliation
+  [★★☆] Fraud Detection Systems Overview
+  [★★☆] KYC and AML Systems (Know Your Customer, Anti-Money Laundering)
+  [★★☆] SWIFT and Banking Networks
+  [★★☆] ACH and Wire Transfers
+  [★★☆] Card Networks (Visa, Mastercard, AMEX) -- How They Work
+  [★★☆] Open Banking and PSD2 APIs
+  [★★☆] ISO 20022 Financial Messaging Standard
+  [★★☆] Real-Time Payments (RTP, FedNow, Faster Payments)
+  [★★☆] Financial Data Models (Accounts, Positions, Trades)
+  [★★☆] Market Data Systems (FIX Protocol, Bloomberg, Reuters)
+  [★★☆] Regulatory Reporting Systems (MiFID II, FINRA)
+  [★★☆] Cryptocurrency and Blockchain in Finance
+  [★★☆] Financial Risk Calculation Systems (VaR, Greeks)
+  [★★★] High-Frequency Trading System Design
+  [★★★] Financial System Audit and Compliance Architecture
+  [★★★] Payment System Security (Tokenization, 3DS)
+  [★★★] Financial Platform Architecture (Core Banking Systems)
+  [★★★] Financial Event Sourcing and CQRS
+  [★★★] Settlement and Clearing System Design
+  [★★★] Financial System Architecture Strategy
+  [★★★] Regulatory Compliance Architecture Design
+  [★★★] Financial Data Platform Strategy
+  [★★★] FinTech vs Core Banking Strategy
+  [★★★] Financial Systems Research (DeFi, CBDC, Real-Time Settlement)
+  [★★★] Algorithmic Trading System Research
+  [★★★] Financial Risk Model Research
+  [★★★] Financial Systems Trade-off Framing (Consistency vs Availability)
+  [★★★] Money is State -- The Core Mental Model
+  [★★★] Compliance vs Innovation Trade-off Thinking
+  [★★★] Financial System Failure Mode Thinking
