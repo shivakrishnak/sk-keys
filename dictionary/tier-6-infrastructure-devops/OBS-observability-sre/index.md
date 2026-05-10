@@ -11,7 +11,7 @@ permalink: /observability/
 
 Logging, metrics, distributed tracing, OpenTelemetry, Prometheus, Grafana, alerting, and SRE principles.
 
-**Keywords:** OBS-001–OBS-056 (51 terms)
+**Keywords:** OBS-001–OBS-056 (56 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -36,6 +36,11 @@ Logging, metrics, distributed tracing, OpenTelemetry, Prometheus, Grafana, alert
 | OBS-019 | Error Budget | ★★☆ |
 | OBS-020 | Alerting Anti-Patterns (Alert Fatigue) | ★★☆ |
 | OBS-021 | Health Check Patterns | ★★☆ |
+| OBS-022 | AWS CloudWatch Dashboards                                 | ★★★        |
+| OBS-023 | AWS CloudWatch Log Insights                               | ★★★        |
+| OBS-024 | AWS CloudWatch Alarms                                     | ★★★        |
+| OBS-025 | AWS X-Ray (Distributed Tracing)                           | ★★★        |
+| OBS-026 | Actionable Alerting Patterns                              | ★★★        |
 | OBS-027 | AppDynamics -- APM | ★★☆ |
 | OBS-028 | Datadog -- Observability Platform | ★★☆ |
 | OBS-029 | Dynatrace -- Full-Stack Monitoring | ★★☆ |
