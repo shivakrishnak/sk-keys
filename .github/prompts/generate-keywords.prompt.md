@@ -111,6 +111,14 @@ Report all sync issues before proceeding.
 Using `KEYWORD_GENERATOR_PROMPT.md` v3.0 specification:
 
 1. Set `Starting ID = CODE-{HIGHEST_ID + 1}` (or CODE-001 if new category)
+
+   > **New category ID ordering:** When HIGHEST_ID = 0 (brand-new category), generate
+   > all keywords grouped by difficulty before assigning IDs: produce every ★☆☆ keyword
+   > first, then every ★★☆ keyword, then every ★★★ keyword. IDs are assigned in that
+   > order (001 = first ★☆☆, ... N = last ★★★). This guarantees CODE-001 is always
+   > the most foundational concept and learners progress naturally through the ID sequence.
+   > **Existing categories:** append new keywords after HIGHEST_ID — do NOT re-sort.
+
 2. Generate the complete keyword list for all applicable levels based on the category/tier.
    Include every level that is relevant to this technology domain:
    L0 (Orientation), L1 (Foundational), L2 (Working), L3 (Intermediate),
@@ -237,7 +245,7 @@ tags:
   - tag1
   - tag2
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "Full Category Name"
 grand_parent: "Technical Dictionary"
@@ -258,6 +266,7 @@ Rules for stub files:
 - `permalink:` = lowercase, hyphens only, no special characters
 - `difficulty:` = map from level (L0/L1 -> ★☆☆, L2/L3 -> ★★☆, L4/L4.5/L5 -> ★★★)
 - `tags:` from approved taxonomy only
+- `version:` = `0` (STUB_VERSION - never `1`; stubs have no generated body)
 - `status: draft` (always draft for stubs)
 - No BOM. UTF-8 encoding.
 

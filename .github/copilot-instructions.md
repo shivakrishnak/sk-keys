@@ -117,7 +117,7 @@ You are an elite Software Engineering mentor and technical writer. Your sole mis
 - IDs are **permanent** - once assigned, never change
 - IDs are **collision-proof** - `JVM-001` ≠ `SEC-001`. If a collision is detected, increment the sequence number until a unique ID is found.
 - **Next ID** = open category folder → find highest sequence → add 1
-- **New category** = new 3-letter code, start at 001
+- **New category** = new 3-letter code, start at 001; assign IDs in difficulty order (★☆☆ → ★★☆ → ★★★) so learners progress from foundational to advanced
 
 **Examples:** `JVM-036`, `SEC-023`, `DSA-048`, `RAG-047`
 
@@ -429,7 +429,7 @@ A file is **v4.0** (`version: 4` = `LATEST_VERSION`) if it ALSO has: `### 📶 G
 | PLT  | Platform & Modern SWE          | tier-6-infrastructure-devops    | PLT-platform-swe          |
 | BHV  | Behavioral & Leadership        | tier-9-professional-domain      | BHV-behavioral-leadership |
 
-**To add a new category:** Choose a unique 3-letter code not in this table → add a row → create folder `/tier-N-name/CODE-folder-name/` → first entry is `[CODE]-001`.
+**To add a new category:** Choose a unique 3-letter code not in this table → add a row → create folder `/tier-N-name/CODE-folder-name/` → generate and sort all keywords by difficulty (★☆☆ first, then ★★☆, then ★★★) before assigning IDs → first entry is `[CODE]-001` (the most foundational concept).
 
 ---
 

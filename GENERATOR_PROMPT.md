@@ -286,36 +286,43 @@ FOLDER STRUCTURE
   ├── /tier-2-networking-security/
   │     ├── /NET-networking/
   │     ├── /API-http-apis/
-  │     └── /SEC-security/
+  │     ├── /SEC-security/
+  │     ├── /IAM-iam-access/
+  │     └── /CRY-cryptography/
   ├── /tier-3-java/
   │     ├── /JVM-java-jvm-internals/
   │     ├── /JLG-java-language/
   │     ├── /JCC-java-concurrency/
-  │     └── /SPR-spring-core/
+  │     ├── /SPR-spring-core/
+  │     └── /JPH-jpa-hibernate/
   ├── /tier-4-data/
   │     ├── /DBF-database-fundamentals/
   │     ├── /NDB-nosql-distributed/
   │     ├── /CCH-caching/
   │     ├── /DAT-data-fundamentals/
-  │     └── /BIG-bigdata-streaming/
+  │     ├── /BIG-bigdata-streaming/
+  │     └── /MSG-messaging-streaming/
   ├── /tier-5-distributed-architecture/
   │     ├── /DST-distributed-systems/
   │     ├── /MSV-microservices/
   │     ├── /SYD-system-design/
   │     ├── /SAP-software-architecture/
-  │     └── /DPT-design-patterns/
+  │     ├── /DPT-design-patterns/
+  │     └── /ASY-async-background/
   ├── /tier-6-infrastructure-devops/
   │     ├── /CTR-containers/
   │     ├── /K8S-kubernetes/
   │     ├── /AWS-cloud-aws/
   │     ├── /AZR-cloud-azure/
+  │     ├── /GCP-cloud-gcp/
   │     ├── /CCD-cicd/
   │     ├── /GIT-git-branching/
   │     ├── /MVN-maven-build/
   │     ├── /CDQ-code-quality/
   │     ├── /TST-testing/
   │     ├── /OBS-observability-sre/
-  │     └── /IAC-infrastructure-code/
+  │     ├── /IAC-infrastructure-code/
+  │     └── /PLT-platform-swe/
   ├── /tier-7-frontend/
   │     ├── /HTM-html/
   │     ├── /CSS-css/
@@ -332,10 +339,8 @@ FOLDER STRUCTURE
   │     ├── /RAG-rag-agents-llmops/
   │     └── /AIP-ai-product/
   └── /tier-9-professional-domain/
-        ├── /ASY-async-background/
         ├── /DGN-document-generation/
         ├── /FIN-financial-domain/
-        ├── /PLT-platform-swe/
         └── /BHV-behavioral-leadership/
 
   Folder naming rules:
@@ -470,24 +475,30 @@ CATEGORY CODE REGISTRY
   NET  | Networking                        | tier-2-networking-security
   API  | HTTP & APIs                       | tier-2-networking-security
   SEC  | Security                          | tier-2-networking-security
+  IAM  | Identity & Access Management      | tier-2-networking-security
+  CRY  | Cryptography                      | tier-2-networking-security
   JVM  | Java & JVM Internals              | tier-3-java
   JLG  | Java Language                     | tier-3-java
   JCC  | Java Concurrency                  | tier-3-java
   SPR  | Spring Core                       | tier-3-java
+  JPH  | JPA & Hibernate                   | tier-3-java
   DBF  | Database Fundamentals             | tier-4-data
   NDB  | NoSQL & Distributed Databases     | tier-4-data
   CCH  | Caching                           | tier-4-data
   DAT  | Data Fundamentals                 | tier-4-data
   BIG  | Big Data & Streaming              | tier-4-data
+  MSG  | Messaging & Event Streaming       | tier-4-data
   DST  | Distributed Systems               | tier-5-distributed-architecture
   MSV  | Microservices                     | tier-5-distributed-architecture
   SYD  | System Design                     | tier-5-distributed-architecture
   SAP  | Software Architecture Patterns    | tier-5-distributed-architecture
   DPT  | Design Patterns                   | tier-5-distributed-architecture
+  ASY  | Async & Background Processing     | tier-5-distributed-architecture
   CTR  | Containers                        | tier-6-infrastructure-devops
   K8S  | Kubernetes                        | tier-6-infrastructure-devops
   AWS  | Cloud - AWS                       | tier-6-infrastructure-devops
   AZR  | Cloud - Azure                     | tier-6-infrastructure-devops
+  GCP  | Cloud - GCP                       | tier-6-infrastructure-devops
   CCD  | CI/CD                             | tier-6-infrastructure-devops
   GIT  | Git & Branching Strategy          | tier-6-infrastructure-devops
   MVN  | Maven & Build Tools               | tier-6-infrastructure-devops
@@ -495,6 +506,7 @@ CATEGORY CODE REGISTRY
   TST  | Testing                           | tier-6-infrastructure-devops
   OBS  | Observability & SRE               | tier-6-infrastructure-devops
   IAC  | Infrastructure as Code            | tier-6-infrastructure-devops
+  PLT  | Platform & Modern SWE             | tier-6-infrastructure-devops
   HTM  | HTML                              | tier-7-frontend
   CSS  | CSS                               | tier-7-frontend
   JSC  | JavaScript                        | tier-7-frontend
@@ -508,19 +520,21 @@ CATEGORY CODE REGISTRY
   LLM  | LLMs & Prompt Engineering         | tier-8-artificial-intelligence
   RAG  | RAG & Agents & LLMOps             | tier-8-artificial-intelligence
   AIP  | AI Product Engineering            | tier-8-artificial-intelligence
-  ASY  | Async & Background Processing     | tier-9-professional-domain
   DGN  | Document Generation               | tier-9-professional-domain
   FIN  | Financial Services Domain         | tier-9-professional-domain
-  PLT  | Platform & Modern SWE             | tier-9-professional-domain
   BHV  | Behavioral & Leadership           | tier-9-professional-domain
 
-  TOTAL: 50 categories across 9 tiers
+  TOTAL: 55 categories across 9 tiers
 
   TO ADD A NEW CATEGORY:
     1. Choose a unique 3-letter code not in this list
     2. Add to the correct tier section in this registry
     3. Create the folder: /tier-N-name/CODE-descriptive-name/
-    4. First entry = [CODE]-001
+    4. Generate and sort all keywords by difficulty before assigning IDs:
+       ★☆☆ keywords first (IDs 001, 002...), then ★★☆, then ★★★.
+       This ensures learners progress from foundational to advanced
+       as they follow the numeric ID sequence.
+    5. First entry = [CODE]-001 (the most foundational ★☆☆ keyword)
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 3: YAML FRONTMATTER - EXACT FORMAT
