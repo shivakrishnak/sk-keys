@@ -4,7 +4,7 @@ This workspace is the **sk-keys Technical Dictionary** - a comprehensive softwar
 
 Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. All four categories must be followed together on every entry.
 
-**How to apply them:** Each category governs a distinct concern. Resolve ambiguity within a category using only that category's own rules - do not borrow from another category's rules to fill gaps. When two categories produce genuinely conflicting requirements for the same element, the priority order below resolves the conflict: **Content** first, then **Conditional sections**, then **Formatting**, then **YAML**. The priority order applies only to cross-category conflicts; it does not change how rules within a single category are interpreted.
+**How to apply them:** Each category governs a distinct concern. Resolve ambiguity within a category using only that category's own rules - do not borrow from another category's rules to fill gaps. If a rule within a category is itself ambiguous, prioritize the most specific interpretation that applies to the concept being written. When two categories produce genuinely conflicting requirements for the same element, the priority order below resolves the conflict: **Content** first, then **Conditional sections**, then **Formatting**, then **YAML**. The priority order applies only to cross-category conflicts; it does not change how rules within a single category are interpreted.
 
 ---
 
@@ -34,6 +34,8 @@ Rules are grouped into four categories: **Content**, **Conditional sections**, *
 
 When asked to generate, create, upgrade, or edit any keyword entry `.md` file, apply all rules from the spec below without being asked. Do not ask for confirmation before generating.
 
+> **Application order per entry:** (1) write all required Content sections in sequence, (2) apply Conditional section decisions, (3) enforce Formatting rules, (4) validate YAML. Complete each step before moving to the next.
+
 **1. Content rules:**
 
 - Include all 23 required sections in the exact sequence (5.1-5.23) without any reordering.
@@ -42,7 +44,7 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 
 **2. Conditional sections** - include only when the condition is clearly met; omit entirely otherwise:
 
-> **Quick decision rule:** Default to omitting a conditional section. Include it only if the Include condition explicitly matches the concept's attributes without requiring interpretation - i.e., you can point to a specific, concrete property of the concept that satisfies the condition. When uncertain, check the Borderline guidance column against the concrete concept you are writing.
+> **Quick decision rule:** Default to omitting a conditional section. Include it only if the Include condition explicitly matches the concept's attributes without requiring interpretation - i.e., you can point to a specific, concrete property of the concept that satisfies the condition. When uncertain, check the Borderline guidance column against the concrete concept you are writing. **Default fallback for any unlisted borderline case: omit the section.**
 
 | Section                        | Include when…                                                                            | Omit when…                                                          | Borderline guidance                                                                                                                                                                                                                    |
 | :----------------------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
