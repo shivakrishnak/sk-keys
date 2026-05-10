@@ -11,7 +11,7 @@ permalink: /git/
 
 Git fundamentals, branching strategies, merge vs rebase, monorepo vs polyrepo, and release management.
 
-**Keywords:** GIT-001–GIT-045 (45 terms)
+**Keywords:** GIT-001–GIT-051 (51 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -60,3 +60,9 @@ Git fundamentals, branching strategies, merge vs rebase, monorepo vs polyrepo, a
 | GIT-043 | Branch Strategy Trade-off Framing | ★★★ |
 | GIT-044 | Git History Mental Model | ★★★ |
 | GIT-045 | Repository Design Thinking | ★★★ |
+| GIT-046 | Git Interview Preparation Guide | ★☆☆ |
+| GIT-047 | Git Internals (Objects, Refs, Packfiles) | ★★★ |
+| GIT-048 | Monorepo Strategy (Nx, Turborepo, Bazel) | ★★★ |
+| GIT-049 | Git LFS (Large File Storage) | ★★☆ |
+| GIT-050 | Git Hooks for Automation | ★★☆ |
+| GIT-051 | GitHub Actions Deep Dive | ★★★ |

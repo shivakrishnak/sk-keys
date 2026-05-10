@@ -11,7 +11,7 @@ permalink: /financial-services/
 
 Portfolio and trading systems, OMS/EMS, post-trade processing, IBOR/ABOR, regulatory compliance (MiFID II, SOX, PCI-DSS), low-latency design, FIX protocol, and financial-grade API patterns.
 
-**Keywords:** FIN-001–FIN-044 (44 terms)
+**Keywords:** FIN-001–FIN-049 (49 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -59,3 +59,8 @@ Portfolio and trading systems, OMS/EMS, post-trade processing, IBOR/ABOR, regula
 | FIN-042 | Money is State -- The Core Mental Model | ★★★ |
 | FIN-043 | Compliance vs Innovation Trade-off Thinking | ★★★ |
 | FIN-044 | Financial System Failure Mode Thinking | ★★★ |
+| FIN-045 | Financial Domain Interview Preparation Guide | ★☆☆ |
+| FIN-046 | High-Frequency Trading Systems | ★★★ |
+| FIN-047 | Market Data Processing | ★★★ |
+| FIN-048 | Financial Data Compliance (GDPR, MiFID II, SOX) | ★★★ |
+| FIN-049 | Risk Management Systems Architecture | ★★★ |

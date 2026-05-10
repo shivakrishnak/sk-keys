@@ -11,7 +11,7 @@ permalink: /databases/
 
 ACID, transaction isolation, indexing, locking, replication, sharding, and schema evolution.
 
-**Keywords:** DBF-001–DBF-067 (67 terms)
+**Keywords:** DBF-001–DBF-072 (72 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -82,3 +82,8 @@ ACID, transaction isolation, indexing, locking, replication, sharding, and schem
 | DBF-065 | ACID Trade-off Framing | ★★★ |
 | DBF-066 | Database Selection Mental Model | ★★★ |
 | DBF-067 | Query Performance Intuition | ★★★ |
+| DBF-068 | Database Interview Preparation Guide | ★☆☆ |
+| DBF-069 | Time-Series Database Concepts | ★★★ |
+| DBF-070 | Database Migration (Flyway, Liquibase) | ★★☆ |
+| DBF-071 | Database Sharding Strategy | ★★★ |
+| DBF-072 | Column Store vs Row Store | ★★★ |

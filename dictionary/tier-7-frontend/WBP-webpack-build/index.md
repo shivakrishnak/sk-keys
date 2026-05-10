@@ -11,7 +11,7 @@ permalink: /webpack-build/
 
 Webpack, Vite, ESBuild, Rollup, code splitting, tree shaking, module federation, and build optimization.
 
-**Keywords:** WBP-001–WBP-034 (34 terms)
+**Keywords:** WBP-001–WBP-040 (39 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -49,3 +49,8 @@ Webpack, Vite, ESBuild, Rollup, code splitting, tree shaking, module federation,
 | WBP-032 | Bundler Trade-off Framing (Speed vs Features) | ★★★ |
 | WBP-033 | Module Graph Mental Model | ★★★ |
 | WBP-034 | Build Optimization Thinking | ★★★ |
+| WBP-035 | Webpack Interview Preparation Guide | ★☆☆ |
+| WBP-036 | Vite (Next-Generation Frontend Build Tool) | ★★☆ |
+| WBP-038 | esbuild | ★★★ |
+| WBP-039 | Module Federation (Webpack 5) | ★★★ |
+| WBP-040 | Build Tool Selection Framework | ★★★ |

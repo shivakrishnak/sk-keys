@@ -11,7 +11,7 @@ permalink: /design-patterns/
 
 GoF creational, structural, behavioral patterns, concurrency patterns, and common anti-patterns.
 
-**Keywords:** DPT-001–DPT-084 (84 terms)
+**Keywords:** DPT-001–DPT-089 (89 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -87,15 +87,20 @@ GoF creational, structural, behavioral patterns, concurrency patterns, and commo
 | DPT-070 | Pattern-Recognition Mental Model | ★★★ |
 | DPT-071 | Pattern Trade-off Framing | ★★★ |
 | DPT-072 | Over-Engineering Risk Thinking | ★★★ |
-| DPT-073 | Dependency Inversion vs Dependency Injection             | ★★★ |
-| DPT-074 | SOLID - Single Responsibility Principle                  | ★★☆ |
-| DPT-075 | SOLID - Open/Closed Principle                            | ★★☆ |
-| DPT-076 | SOLID - Liskov Substitution Principle                    | ★★★ |
-| DPT-077 | SOLID - Interface Segregation Principle                  | ★★☆ |
-| DPT-078 | SOLID - Dependency Inversion Principle                   | ★★★ |
-| DPT-079 | Repository Pattern                                       | ★★☆ |
-| DPT-080 | Reactor Pattern                                          | ★★★ |
-| DPT-081 | Anti-Pattern: Shotgun Surgery                            | ★★☆ |
-| DPT-082 | Anti-Pattern: Feature Envy                               | ★★☆ |
-| DPT-083 | Anti-Pattern: Circular Dependencies                      | ★★★ |
-| DPT-084 | Inbox Pattern                                            | ★★★ |
+| DPT-073 | Dependency Inversion vs Dependency Injection | ★★★ |
+| DPT-074 | SOLID - Single Responsibility Principle | ★★☆ |
+| DPT-075 | SOLID - Open/Closed Principle | ★★☆ |
+| DPT-076 | SOLID - Liskov Substitution Principle | ★★★ |
+| DPT-077 | SOLID - Interface Segregation Principle | ★★☆ |
+| DPT-078 | SOLID - Dependency Inversion Principle | ★★★ |
+| DPT-079 | Repository Pattern | ★★☆ |
+| DPT-080 | Reactor Pattern | ★★★ |
+| DPT-081 | Anti-Pattern: Shotgun Surgery | ★★☆ |
+| DPT-082 | Anti-Pattern: Feature Envy | ★★☆ |
+| DPT-083 | Anti-Pattern: Circular Dependencies | ★★★ |
+| DPT-084 | Inbox Pattern | ★★★ |
+| DPT-085 | Design Patterns Interview Preparation Guide | ★☆☆ |
+| DPT-086 | Anti-Patterns Catalogue | ★★☆ |
+| DPT-087 | Decorator Pattern vs Inheritance | ★★☆ |
+| DPT-088 | Composite Pattern | ★★☆ |
+| DPT-089 | Visitor Pattern | ★★★ |

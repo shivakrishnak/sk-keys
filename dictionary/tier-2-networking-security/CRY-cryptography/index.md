@@ -11,7 +11,7 @@ permalink: /cryptography/
 
 Encryption (AES, RSA), hashing (Bcrypt, SHA-256), PKI, TLS, digital signatures, key management, HSM, password storage, post-quantum cryptography, and advanced cryptographic research (ZKPs, homomorphic encryption).
 
-**Keywords:** CRY-001--CRY-026 (26 terms)
+**Keywords:** CRY-001–CRY-046 (46 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -41,3 +41,23 @@ Encryption (AES, RSA), hashing (Bcrypt, SHA-256), PKI, TLS, digital signatures, 
 | CRY-024 | Security Protocol Verification (BAN Logic) | ★★★ |
 | CRY-025 | Threat Modeling Formal Methods | ★★★ |
 | CRY-026 | Applied Cryptography Research | ★★★ |
+| CRY-027 | AES (Advanced Encryption Standard) | ★★☆ |
+| CRY-028 | RSA Algorithm | ★★☆ |
+| CRY-029 | Diffie-Hellman Key Exchange | ★★☆ |
+| CRY-030 | Digital Signatures (RSA, ECDSA) | ★★☆ |
+| CRY-031 | Message Authentication Code (HMAC) | ★★☆ |
+| CRY-032 | Hash Functions (SHA-256, SHA-3, MD5) | ★☆☆ |
+| CRY-033 | Password Hashing (bcrypt, Argon2, scrypt) | ★★☆ |
+| CRY-034 | Salting and Key Stretching | ★★☆ |
+| CRY-035 | Certificate Chain Validation | ★★☆ |
+| CRY-036 | TLS Handshake Deep Dive | ★★★ |
+| CRY-037 | Perfect Forward Secrecy | ★★★ |
+| CRY-038 | Key Derivation Functions (PBKDF2, HKDF) | ★★★ |
+| CRY-039 | Cipher Modes (ECB, CBC, GCM, CTR) | ★★★ |
+| CRY-040 | Padding Attacks (PKCS7, Oracle Padding Attack) | ★★★ |
+| CRY-041 | Cryptographically Secure Random Number Generation | ★★☆ |
+| CRY-042 | Key Management and Hardware Security Modules | ★★★ |
+| CRY-043 | Certificate Revocation (CRL, OCSP Stapling) | ★★★ |
+| CRY-044 | X.509 Certificate Structure | ★★☆ |
+| CRY-045 | Elliptic Curve Diffie-Hellman (ECDH) | ★★★ |
+| CRY-046 | Cryptography Interview Preparation Guide | ★☆☆ |

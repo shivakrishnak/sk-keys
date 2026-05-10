@@ -11,7 +11,7 @@ permalink: /typescript/
 
 TypeScript type system, generics, utility types, mapped types, conditional types, and compiler internals.
 
-**Keywords:** TSC-001–TSC-045 (45 terms)
+**Keywords:** TSC-001–TSC-048 (48 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -60,3 +60,6 @@ TypeScript type system, generics, utility types, mapped types, conditional types
 | TSC-043 | Structural vs Nominal Typing Mental Model | ★★★ |
 | TSC-044 | TypeScript Migration Mindset | ★★★ |
 | TSC-045 | Type-First Design Thinking | ★★★ |
+| TSC-046 | TypeScript Interview Preparation Guide | ★☆☆ |
+| TSC-047 | Template Literal Types | ★★★ |
+| TSC-048 | Mapped Types | ★★★ |

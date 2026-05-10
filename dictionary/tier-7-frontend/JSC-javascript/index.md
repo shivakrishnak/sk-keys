@@ -11,7 +11,7 @@ permalink: /javascript/
 
 JS engine, event loop, closures, prototypes, async patterns, modules, memory, and V8 internals.
 
-**Keywords:** JSC-001–JSC-038 (38 terms)
+**Keywords:** JSC-001–JSC-046 (46 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -53,3 +53,11 @@ JS engine, event loop, closures, prototypes, async patterns, modules, memory, an
 | JSC-036 | JavaScript Trade-off Framing | ★★★ |
 | JSC-037 | Async Mental Model (Promises vs Callbacks vs async/await) | ★★★ |
 | JSC-038 | JavaScript Ecosystem Fatigue Thinking | ★★★ |
+| JSC-039 | JavaScript Interview Preparation Guide | ★☆☆ |
+| JSC-040 | Generators and Iterators | ★★★ |
+| JSC-041 | Proxies and Reflect API | ★★★ |
+| JSC-042 | Symbol Type | ★★☆ |
+| JSC-043 | WeakMap and WeakSet | ★★☆ |
+| JSC-044 | ArrayBuffer and TypedArray | ★★★ |
+| JSC-045 | JavaScript Module System (ESM, CJS, AMD) | ★★☆ |
+| JSC-046 | Web Workers | ★★★ |

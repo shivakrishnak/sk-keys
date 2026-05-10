@@ -11,7 +11,7 @@ permalink: /jpa-hibernate/
 
 JPA specification, Hibernate ORM, Spring Data JPA, entity mapping, relationships, caching, locking, query APIs, and production-grade ORM architecture patterns.
 
-**Keywords:** JPH-001--JPH-056 (56 terms)
+**Keywords:** JPH-001–JPH-061 (61 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -71,3 +71,8 @@ JPA specification, Hibernate ORM, Spring Data JPA, entity mapping, relationships
 | JPH-054 | Spring Data JPA Architecture Design | ★★★ |
 | JPH-055 | JPA Specification (JSR 338 / Jakarta Persistence) | ★★★ |
 | JPH-056 | Hibernate Internals Deep Dive | ★★★ |
+| JPH-057 | JPA Interview Preparation Guide | ★☆☆ |
+| JPH-058 | Spring Data JPA vs JOOQ vs MyBatis Decision | ★★★ |
+| JPH-059 | Hibernate 6 and Jakarta Persistence 3 Migration | ★★★ |
+| JPH-060 | JPA Auditing (@CreatedDate, @LastModifiedDate) | ★★☆ |
+| JPH-061 | JPA with Multiple Databases (Routing DataSource) | ★★★ |

@@ -11,7 +11,7 @@ permalink: /cloud-aws/
 
 AWS global infrastructure, core services (EC2, S3, RDS, Lambda, EKS), IaC, security, and cost optimization.
 
-**Keywords:** AWS-001–AWS-077 (76 terms)
+**Keywords:** AWS-001–AWS-082 (81 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -39,46 +39,47 @@ AWS global infrastructure, core services (EC2, S3, RDS, Lambda, EKS), IaC, secur
 | AWS-022 | AWS VPC Architecture Deep Dive | ★★★ |
 | AWS-023 | AWS Cost Tagging Strategy | ★★★ |
 | AWS-024 | AWS Well-Architected Review | ★★★ |
-| AWS-025 | AWS Global Infrastructure | "★☆☆" |
-| AWS-026 | Region  AZ  Edge Location | "★☆☆" |
-| AWS-027 | IAM (Identity and Access Management) | "★★☆" |
-| AWS-028 | IAM Roles  Policies | "★★☆" |
-| AWS-029 | VPC | "★★☆" |
-| AWS-030 | Subnets (Public  Private) | "★★☆" |
-| AWS-031 | Security Groups | "★★☆" |
-| AWS-032 | NACLs | "★★★" |
-| AWS-033 | Internet Gateway  NAT Gateway | "★★☆" |
-| AWS-034 | VPC Peering | "★★★" |
-| AWS-035 | Transit Gateway | "★★★" |
-| AWS-036 | Route 53 | "★★☆" |
-| AWS-037 | EC2 | "★☆☆" |
-| AWS-038 | EC2 Instance Types | "★★☆" |
-| AWS-039 | Auto Scaling Groups | "★★☆" |
-| AWS-040 | ELB  ALB  NLB | "★★☆" |
-| AWS-041 | S3 | "★☆☆" |
-| AWS-042 | S3 Storage Classes | "★★☆" |
-| AWS-043 | S3 Lifecycle Policies | "★★★" |
-| AWS-044 | EBS  EFS | "★★☆" |
-| AWS-045 | RDS | "★★☆" |
-| AWS-046 | Aurora | "★★★" |
-| AWS-047 | DynamoDB | "★★★" |
-| AWS-048 | ElastiCache | "★★☆" |
-| AWS-049 | SQS | "★★☆" |
-| AWS-050 | SNS | "★★☆" |
-| AWS-051 | Kinesis | "★★★" |
-| AWS-052 | Lambda | "★★☆" |
-| AWS-053 | API Gateway (AWS) | "★★☆" |
-| AWS-054 | ECS  Fargate | "★★☆" |
-| AWS-055 | EKS | "★★★" |
-| AWS-056 | CloudFormation | "★★★" |
-| AWS-057 | CDK | "★★★" |
-| AWS-058 | CloudWatch | "★★☆" |
-| AWS-059 | X-Ray | "★★★" |
-| AWS-060 | AWS Cost Optimization | "★★★" |
-| AWS-061 | AWS Security Best Practices | "★★★" |
-| AWS-062 | Well-Architected Framework | "★★★" |
-| AWS-063 | Spot Instances  Reserved Instances | "★★★" |
-| AWS-064 | AWS Service Limits | "★★★" |
+| AWS-025 | AWS Global Infrastructure | ★☆☆ |
+| AWS-026 | Region  AZ  Edge Location | ★☆☆ |
+| AWS-027 | IAM (Identity and Access Management) | ★★☆ |
+| AWS-028 | IAM Roles  Policies | ★★☆ |
+| AWS-029 | VPC | ★★☆ |
+| AWS-030 | Subnets (Public  Private) | ★★☆ |
+| AWS-031 | Security Groups | ★★☆ |
+| AWS-032 | NACLs | ★★★ |
+| AWS-033 | Internet Gateway  NAT Gateway | ★★☆ |
+| AWS-034 | VPC Peering | ★★★ |
+| AWS-035 | Transit Gateway | ★★★ |
+| AWS-036 | Route 53 | ★★☆ |
+| AWS-037 | EC2 | ★☆☆ |
+| AWS-038 | EC2 Instance Types | ★★☆ |
+| AWS-039 | Auto Scaling Groups | ★★☆ |
+| AWS-040 | ELB  ALB  NLB | ★★☆ |
+| AWS-041 | S3 | ★☆☆ |
+| AWS-042 | S3 Storage Classes | ★★☆ |
+| AWS-043 | S3 Lifecycle Policies | ★★★ |
+| AWS-044 | EBS  EFS | ★★☆ |
+| AWS-045 | RDS | ★★☆ |
+| AWS-046 | Aurora | ★★★ |
+| AWS-047 | DynamoDB | ★★★ |
+| AWS-048 | ElastiCache | ★★☆ |
+| AWS-049 | SQS | ★★☆ |
+| AWS-050 | SNS | ★★☆ |
+| AWS-051 | Kinesis | ★★★ |
+| AWS-052 | Lambda | ★★☆ |
+| AWS-053 | API Gateway (AWS) | ★★☆ |
+| AWS-054 | ECS  Fargate | ★★☆ |
+| AWS-055 | EKS | ★★★ |
+| AWS-056 | CloudFormation | ★★★ |
+| AWS-057 | CDK | ★★★ |
+| AWS-058 | CloudWatch | ★★☆ |
+| AWS-059 | X-Ray | ★★★ |
+| AWS-060 | AWS Cost Optimization | ★★★ |
+| AWS-061 | AWS Security Best Practices | ★★★ |
+| AWS-062 | Well-Architected Framework | ★★★ |
+| AWS-063 | Spot Instances  Reserved Instances | ★★★ |
+| AWS-064 | AWS Service Limits | ★★★ |
+| AWS-065 | Immutable Infrastructure | ★☆☆ |
 | AWS-066 | AWS Architecture Strategy (Multi-AZ, Multi-Region) | ★★★ |
 | AWS-067 | AWS Cost Optimization Framework | ★★★ |
 | AWS-068 | AWS Security Architecture | ★★★ |
@@ -91,4 +92,7 @@ AWS global infrastructure, core services (EC2, S3, RDS, Lambda, EKS), IaC, secur
 | AWS-075 | Cloud Trade-off Framing | ★★★ |
 | AWS-076 | AWS Service Selection Mental Model | ★★★ |
 | AWS-077 | Cloud Cost Mental Model | ★★★ |
-| AWS-065 | Immutable Infrastructure | ★★★ |
+| AWS-078 | AWS Interview Preparation Guide | ★☆☆ |
+| AWS-080 | AWS Cost Optimization Strategies | ★★★ |
+| AWS-081 | AWS Landing Zone and Account Strategy | ★★★ |
+| AWS-082 | AWS Security Architecture Patterns | ★★★ |

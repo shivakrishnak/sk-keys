@@ -11,7 +11,7 @@ permalink: /cloud-azure/
 
 Azure global infrastructure, core services, DevOps, security, cost management, and hybrid connectivity.
 
-**Keywords:** AZR-001–AZR-055 (55 terms)
+**Keywords:** AZR-001–AZR-061 (59 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -70,3 +70,7 @@ Azure global infrastructure, core services, DevOps, security, cost management, a
 | AZR-053 | Azure Research and Novel Patterns | ★★★ |
 | AZR-054 | Azure Service Selection Mental Model | ★★★ |
 | AZR-055 | Cloud Cost Mental Model (Azure) | ★★★ |
+| AZR-056 | Azure Interview Preparation Guide | ★☆☆ |
+| AZR-057 | Azure DevOps Pipelines | ★★☆ |
+| AZR-060 | Azure Cost Management | ★★★ |
+| AZR-061 | Azure Architecture Best Practices | ★★★ |

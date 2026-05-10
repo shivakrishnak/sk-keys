@@ -11,7 +11,7 @@ permalink: /nosql/
 
 Document stores, key-value, column-family, graph DBs, vector databases, and distributed data patterns.
 
-**Keywords:** NDB-001–NDB-053 (53 terms)
+**Keywords:** NDB-001–NDB-058 (57 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -68,3 +68,7 @@ Document stores, key-value, column-family, graph DBs, vector databases, and dist
 | NDB-051 | Consistency Trade-off Framing | ★★★ |
 | NDB-052 | NoSQL Selection Mental Model | ★★★ |
 | NDB-053 | Distributed State Design Thinking | ★★★ |
+| NDB-054 | NoSQL Interview Preparation Guide | ★☆☆ |
+| NDB-055 | Document Database Design Patterns | ★★★ |
+| NDB-056 | Graph Database (Neo4j) | ★★★ |
+| NDB-058 | NewSQL (CockroachDB, TiDB) | ★★★ |

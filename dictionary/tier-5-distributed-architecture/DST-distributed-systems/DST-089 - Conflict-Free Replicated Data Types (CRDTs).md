@@ -1,0 +1,25 @@
+---
+id: DST-089
+title: Conflict-Free Replicated Data Types (CRDTs)
+category: Distributed Systems
+tier: tier-5-distributed-architecture
+folder: DST-distributed-systems
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - dst
+  - foundational
+status: draft
+version: 0
+layout: default
+parent: "Distributed Systems"
+grand_parent: "Technical Dictionary"
+nav_order: 89
+permalink: /distributed-systems/conflict-free-replicated-data-types-crdts/
+---
+
+# DST-089 - Conflict-Free Replicated Data Types (CRDTs)
+
+> Entry stub. Generate full v4.0 content using the Master Prompt.

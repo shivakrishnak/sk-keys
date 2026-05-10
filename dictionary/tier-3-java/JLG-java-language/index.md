@@ -11,7 +11,7 @@ permalink: /java-language/
 
 Java language fundamentals, collections, generics, reflection, modern features (records, sealed classes, pattern matching), functional APIs, and creator-level language specification.
 
-**Keywords:** JLG-001--JLG-094 (94 terms)
+**Keywords:** JLG-001–JLG-098 (98 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -20,7 +20,7 @@ Java language fundamentals, collections, generics, reflection, modern features (
 | JLG-003 | Why Java Is Still Dominant | ★☆☆ |
 | JLG-004 | Java vs Other JVM Languages (Kotlin, Scala, Groovy) | ★☆☆ |
 | JLG-005 | Java Versioning and LTS Release Strategy | ★☆☆ |
-| JLG-006 | Java EE / J2EE Overview | ★☆☆ |
+| JLG-006 | Java EE  J2EE Overview | ★☆☆ |
 | JLG-007 | JSP (Java Server Pages) | ★★☆ |
 | JLG-008 | Java Servlet | ★★☆ |
 | JLG-009 | Java Collections Deep Dive (List, Map, Set) | ★★☆ |
@@ -35,17 +35,17 @@ Java language fundamentals, collections, generics, reflection, modern features (
 | JLG-018 | Java 17 Features (Records, Sealed, Pattern Matching) | ★★☆ |
 | JLG-019 | Java Profiling (YourKit, JFR) | ★★★ |
 | JLG-020 | Java Performance Tuning | ★★★ |
-| JLG-021 | String Pool / String Interning | ★★☆ |
-| JLG-022 | Autoboxing / Unboxing | ★★☆ |
+| JLG-021 | String Pool String Interning | ★★☆ |
+| JLG-022 | Autoboxing Unboxing | ★★☆ |
 | JLG-023 | Integer Cache | ★★★ |
 | JLG-024 | Generics | ★★☆ |
 | JLG-025 | Type Erasure | ★★★ |
 | JLG-026 | Bounded Wildcards | ★★★ |
-| JLG-027 | Covariance / Contravariance | ★★★ |
+| JLG-027 | Covariance Contravariance | ★★★ |
 | JLG-028 | Varargs | ★★☆ |
 | JLG-029 | Reflection | ★★★ |
 | JLG-030 | Annotation Processing (APT) | ★★★ |
-| JLG-031 | Serialization / Deserialization | ★★☆ |
+| JLG-031 | Serialization Deserialization | ★★☆ |
 | JLG-032 | Records (Java 16+) | ★★☆ |
 | JLG-033 | Sealed Classes (Java 17+) | ★★★ |
 | JLG-034 | Pattern Matching (Java 21+) | ★★★ |
@@ -61,8 +61,8 @@ Java language fundamentals, collections, generics, reflection, modern features (
 | JLG-044 | Java Performance Profiling at Scale | ★★★ |
 | JLG-045 | Java in Polyglot Architecture | ★★★ |
 | JLG-046 | Java Language Specification Deep Dive | ★★★ |
-| JLG-047 | Project Valhalla - Value Types and Primitives | ★★★ |
-| JLG-048 | Project Panama - Foreign Function and Memory API | ★★★ |
+| JLG-047 | Project Valhalla: Value Types and Primitives | ★★★ |
+| JLG-048 | Project Panama: Foreign Function and Memory API | ★★★ |
 | JLG-049 | Java Language Design History and Rationale | ★★★ |
 | JLG-050 | Java API Design Thinking | ★★★ |
 | JLG-051 | Language Feature Trade-off Framing | ★★★ |
@@ -109,3 +109,7 @@ Java language fundamentals, collections, generics, reflection, modern features (
 | JLG-092 | Java Logging (SLF4J, Logback, java.util.logging) | ★★☆ |
 | JLG-093 | Regular Expressions in Java (java.util.regex) | ★★☆ |
 | JLG-094 | Object Cloning (Cloneable, copy constructors) | ★★★ |
+| JLG-095 | Java Interview Preparation - Core Language | ★☆☆ |
+| JLG-096 | Sealed Interfaces (Java 17+) | ★★☆ |
+| JLG-097 | Java 21 Virtual Threads Practical Patterns | ★★★ |
+| JLG-098 | Foreign Memory API (Project Panama) | ★★★ |

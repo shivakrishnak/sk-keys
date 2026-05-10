@@ -11,7 +11,7 @@ permalink: /maven-build/
 
 Maven lifecycle, Gradle, dependency management, BOM, profiles, multi-module builds, and build optimization.
 
-**Keywords:** MVN-001–MVN-047 (47 terms)
+**Keywords:** MVN-001–MVN-052 (51 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -52,7 +52,6 @@ Maven lifecycle, Gradle, dependency management, BOM, profiles, multi-module buil
 | MVN-035 | Build Performance Optimization | ★★★ |
 | MVN-036 | Build Tool Selection Strategy (Maven vs Gradle) | ★★★ |
 | MVN-037 | Monorepo Build Strategy | ★★★ |
-| MVN-038 | Build Performance Optimization | ★★★ |
 | MVN-039 | Dependency Security Strategy | ★★★ |
 | MVN-040 | Build Pipeline Architecture | ★★★ |
 | MVN-041 | Build Tool Internals (Gradle DAG, Maven Lifecycle) | ★★★ |
@@ -62,3 +61,8 @@ Maven lifecycle, Gradle, dependency management, BOM, profiles, multi-module buil
 | MVN-045 | Dependency Mental Model | ★★★ |
 | MVN-046 | Build Trade-off Framing | ★★★ |
 | MVN-047 | Build Performance Intuition | ★★★ |
+| MVN-048 | Maven Interview Preparation Guide | ★☆☆ |
+| MVN-049 | Gradle Build Scripts | ★★☆ |
+| MVN-050 | Dependency Version Management (BOM) | ★★★ |
+| MVN-051 | Maven Plugin Development | ★★★ |
+| MVN-052 | Multi-Module Maven Project Strategy | ★★★ |

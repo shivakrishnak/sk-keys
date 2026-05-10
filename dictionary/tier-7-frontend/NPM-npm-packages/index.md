@@ -11,7 +11,7 @@ permalink: /npm/
 
 npm, pnpm, yarn, semantic versioning, lock files, monorepo tooling, and package security.
 
-**Keywords:** NPM-001–NPM-035 (35 terms)
+**Keywords:** NPM-001–NPM-041 (41 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -50,3 +50,9 @@ npm, pnpm, yarn, semantic versioning, lock files, monorepo tooling, and package 
 | NPM-033 | Package Management Trade-off Framing | ★★★ |
 | NPM-034 | Dependency Hell Mental Model | ★★★ |
 | NPM-035 | Supply Chain Security Thinking | ★★★ |
+| NPM-036 | npm Interview Preparation Guide | ★☆☆ |
+| NPM-037 | pnpm (Fast, Disk-Efficient Package Manager) | ★★☆ |
+| NPM-038 | Yarn Berry and Plug'n'Play | ★★★ |
+| NPM-039 | npm Security Auditing | ★★★ |
+| NPM-040 | Package Publishing Strategy | ★★★ |
+| NPM-041 | Monorepo Package Management (Nx, Turborepo) | ★★★ |

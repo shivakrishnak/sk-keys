@@ -11,15 +11,15 @@ permalink: /ai-foundations/
 
 ML basics, neural networks, transformer architecture, attention, embeddings, fine-tuning, and model evaluation.
 
-**Keywords:** AIF-001–AIF-057 (57 terms)
+**Keywords:** AIF-001–AIF-062 (62 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
 | AIF-001 | What Is Artificial Intelligence and Why It Matters Now | ★☆☆ |
 | AIF-002 | The AI/ML Mental Model (Data + Algorithm + Compute) | ★☆☆ |
-| AIF-003 | AI vs ML vs Deep Learning -- The Map | ★☆☆ |
+| AIF-003 | AI vs ML vs Deep Learning - The Map | ★☆☆ |
 | AIF-004 | The AI Ecosystem Map (Tools, Frameworks, Providers) | ★☆☆ |
-| AIF-005 | AI in Production -- What Engineers Actually Face | ★☆☆ |
+| AIF-005 | AI in Production - What Engineers Actually Face | ★☆☆ |
 | AIF-006 | Machine Learning Basics | ★☆☆ |
 | AIF-007 | Supervised vs Unsupervised Learning | ★☆☆ |
 | AIF-008 | Neural Network | ★★☆ |
@@ -72,3 +72,8 @@ ML basics, neural networks, transformer architecture, attention, embeddings, fin
 | AIF-055 | AI Trade-off Framing (Performance vs Interpretability) | ★★★ |
 | AIF-056 | Model Selection Mental Model | ★★★ |
 | AIF-057 | AI Hype vs Reality Thinking | ★★★ |
+| AIF-058 | AI Foundations Interview Preparation Guide | ★☆☆ |
+| AIF-059 | Neural Architecture Search (NAS) | ★★★ |
+| AIF-060 | Federated Learning | ★★★ |
+| AIF-061 | AI Ethics and Responsible AI | ★★★ |
+| AIF-062 | AI System Design Patterns | ★★★ |

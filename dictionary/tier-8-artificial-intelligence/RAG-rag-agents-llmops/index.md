@@ -11,17 +11,17 @@ permalink: /rag-agents/
 
 RAG pipelines, vector search, agentic AI, multi-agent systems, MCP, LangChain, LlamaIndex, and LLMOps.
 
-**Keywords:** RAG-001–RAG-050 (50 terms)
+**Keywords:** RAG-001–RAG-056 (56 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
 | RAG-001 | What Is RAG and Why It Matters | ★☆☆ |
 | RAG-002 | The RAG Mental Model (Retrieve, Augment, Generate) | ★☆☆ |
-| RAG-003 | RAG vs Fine-Tuning -- When to Use What | ★☆☆ |
+| RAG-003 | RAG vs Fine-Tuning - When to Use What | ★☆☆ |
 | RAG-004 | The AI Agents Ecosystem Map | ★☆☆ |
-| RAG-005 | LLMOps -- What It Is and Why It Exists | ★☆☆ |
+| RAG-005 | LLMOps - What It Is and Why It Exists | ★☆☆ |
 | RAG-006 | Vector Databases Fundamentals | ★☆☆ |
-| RAG-007 | Embeddings -- Turning Text into Vectors | ★☆☆ |
+| RAG-007 | Embeddings - Turning Text into Vectors | ★☆☆ |
 | RAG-008 | Chunking Strategies for RAG | ★☆☆ |
 | RAG-009 | Similarity Search (Cosine, Dot Product, Euclidean) | ★☆☆ |
 | RAG-010 | RAG Pipeline Basics (Index, Retrieve, Generate) | ★☆☆ |
@@ -65,3 +65,9 @@ RAG pipelines, vector search, agentic AI, multi-agent systems, MCP, LangChain, L
 | RAG-048 | RAG Trade-off Framing (Precision vs Recall vs Latency) | ★★★ |
 | RAG-049 | Agent Reliability Mental Model | ★★★ |
 | RAG-050 | RAG vs Fine-Tuning Decision Framework | ★★★ |
+| RAG-051 | RAG Interview Preparation Guide | ★☆☆ |
+| RAG-052 | RAG Evaluation (RAGAS, TruLens) | ★★★ |
+| RAG-053 | Knowledge Graph RAG | ★★★ |
+| RAG-054 | Corrective RAG (CRAG) | ★★★ |
+| RAG-055 | Multi-Agent Orchestration Frameworks | ★★★ |
+| RAG-056 | LLMOps Production Monitoring | ★★★ |

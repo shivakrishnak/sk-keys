@@ -11,7 +11,7 @@ permalink: /testing/
 
 Unit, integration, contract, E2E, TDD, BDD, mocking, test pyramid, performance testing, and test tooling.
 
-**Keywords:** TST-001–TST-071 (71 terms)
+**Keywords:** TST-001–TST-076 (74 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -73,7 +73,6 @@ Unit, integration, contract, E2E, TDD, BDD, mocking, test pyramid, performance t
 | TST-056 | Playwright (E2E Testing) | ★★☆ |
 | TST-057 | API Contract Testing (Pact  Karate) | ★★★ |
 | TST-058 | Performance Testing (JMeter, Gatling) | ★★★ |
-| TST-059 | SonarQube Quality Gate | ★★★ |
 | TST-060 | Testing Strategy Architecture | ★★★ |
 | TST-061 | Test Automation Strategy at Scale | ★★★ |
 | TST-062 | Shift-Left Testing Design | ★★★ |
@@ -86,3 +85,7 @@ Unit, integration, contract, E2E, TDD, BDD, mocking, test pyramid, performance t
 | TST-069 | Testing Trade-off Framing | ★★★ |
 | TST-070 | Test Coverage Mental Model | ★★★ |
 | TST-071 | Testing ROI Thinking | ★★★ |
+| TST-072 | Testing Interview Preparation Guide | ★☆☆ |
+| TST-073 | Fuzz Testing | ★★★ |
+| TST-075 | Test Data Management Strategy | ★★★ |
+| TST-076 | Testing Pyramid Trade-offs | ★★★ |

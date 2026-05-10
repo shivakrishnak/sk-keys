@@ -11,7 +11,7 @@ permalink: /angular/
 
 Angular architecture, components, directives, pipes, DI, routing, RxJS integration, state management (NgRx), change detection, SSR, testing, and performance optimization.
 
-**Keywords:** ANG-001–ANG-047 (47 terms)
+**Keywords:** ANG-001–ANG-052 (50 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -62,3 +62,6 @@ Angular architecture, components, directives, pipes, DI, routing, RxJS integrati
 | ANG-045 | Angular Opinionated Framework Mental Model | ★★★ |
 | ANG-046 | Reactive Programming Thinking (RxJS) | ★★★ |
 | ANG-047 | Angular Complexity vs React Freedom | ★★★ |
+| ANG-048 | Angular Interview Preparation Guide | ★☆☆ |
+| ANG-050 | Angular Module Federation (Micro-Frontends) | ★★★ |
+| ANG-052 | Angular 17+ Control Flow Syntax (@if, @for) | ★★☆ |

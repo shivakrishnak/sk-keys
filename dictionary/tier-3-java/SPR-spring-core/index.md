@@ -13,7 +13,7 @@ Spring IoC/DI, AOP, MVC, transactions, data access, reactive programming, Spring
 
 > **Note:** SPR-005 (Spring in Production) and SPR-057 (Spring Cloud) provide entry-level and working-level views respectively of Spring Cloud integration.
 
-**Keywords:** SPR-001--SPR-098 (98 terms)
+**Keywords:** SPR-001–SPR-101 (101 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -23,8 +23,8 @@ Spring IoC/DI, AOP, MVC, transactions, data access, reactive programming, Spring
 | SPR-004 | Spring vs Jakarta EE vs Micronaut vs Quarkus | ★☆☆ |
 | SPR-005 | Spring in Production - What to Expect | ★☆☆ |
 | SPR-006 | Spring Batch | ★★★ |
-| SPR-007 | Spring Batch Job / Step / Tasklet | ★★★ |
-| SPR-008 | Spring Batch ItemReader / ItemProcessor / ItemWriter | ★★★ |
+| SPR-007 | Spring Batch Job  Step  Tasklet | ★★★ |
+| SPR-008 | Spring Batch ItemReader  ItemProcessor  ItemWriter | ★★★ |
 | SPR-009 | Spring Batch Chunk Processing | ★★★ |
 | SPR-010 | Spring Cloud Overview | ★★★ |
 | SPR-011 | Spring Cloud Config | ★★★ |
@@ -45,8 +45,8 @@ Spring IoC/DI, AOP, MVC, transactions, data access, reactive programming, Spring
 | SPR-026 | BeanPostProcessor | ★★★ |
 | SPR-027 | BeanFactoryPostProcessor | ★★★ |
 | SPR-028 | @Autowired | ★★☆ |
-| SPR-029 | @Qualifier / @Primary | ★★☆ |
-| SPR-030 | @Configuration / @Bean | ★★☆ |
+| SPR-029 | @Qualifier  @Primary | ★★☆ |
+| SPR-030 | @Configuration  @Bean | ★★☆ |
 | SPR-031 | Circular Dependency | ★★★ |
 | SPR-032 | CGLIB Proxy | ★★★ |
 | SPR-033 | JDK Dynamic Proxy | ★★★ |
@@ -68,8 +68,8 @@ Spring IoC/DI, AOP, MVC, transactions, data access, reactive programming, Spring
 | SPR-049 | Auto-Configuration | ★★★ |
 | SPR-050 | Spring Boot Actuator | ★★☆ |
 | SPR-051 | Spring Boot Startup Lifecycle | ★★★ |
-| SPR-052 | WebFlux / Reactive | ★★★ |
-| SPR-053 | Mono / Flux | ★★★ |
+| SPR-052 | WebFlux  Reactive | ★★★ |
+| SPR-053 | Mono  Flux | ★★★ |
 | SPR-054 | Backpressure (Spring) | ★★★ |
 | SPR-055 | Spring Security | ★★★ |
 | SPR-056 | Spring Data JPA | ★★☆ |
@@ -115,3 +115,6 @@ Spring IoC/DI, AOP, MVC, transactions, data access, reactive programming, Spring
 | SPR-096 | Project Reactor Design (Reactive Streams Spec) | ★★★ |
 | SPR-097 | Spring Boot Auto-Configuration Algorithm | ★★★ |
 | SPR-098 | Spring Test Context Management | ★★★ |
+| SPR-099 | Spring Interview Preparation Guide | ★☆☆ |
+| SPR-100 | Spring Modulith (Spring 6.1+) | ★★★ |
+| SPR-101 | Spring AOT and GraalVM Native Image | ★★★ |

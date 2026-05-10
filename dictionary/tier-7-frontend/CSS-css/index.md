@@ -11,7 +11,7 @@ permalink: /css/
 
 CSS cascade, specificity, Flexbox, Grid, animations, preprocessors, CSS architecture, and modern CSS features.
 
-**Keywords:** CSS-001–CSS-045 (45 terms)
+**Keywords:** CSS-001–CSS-050 (49 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -60,3 +60,7 @@ CSS cascade, specificity, Flexbox, Grid, animations, preprocessors, CSS architec
 | CSS-043 | CSS Architecture Trade-off Framing | ★★★ |
 | CSS-044 | Cascade Mental Model (Specificity Wars) | ★★★ |
 | CSS-045 | CSS Naming Strategy Thinking | ★★★ |
+| CSS-046 | CSS Interview Preparation Guide | ★☆☆ |
+| CSS-048 | CSS Scroll-Driven Animations | ★★★ |
+| CSS-049 | CSS Cascade Layers | ★★★ |
+| CSS-050 | CSS Houdini (Paint API) | ★★★ |

@@ -11,7 +11,7 @@ permalink: /security/
 
 Application security (AppSec), web attack vectors (OWASP Top 10, XSS, CSRF, SQLi, SSRF, command injection), secrets management, security testing (SAST/DAST/pentest), secure SDLC, and DevSecOps. Authentication and authorization are in Identity & Access Management. Cryptographic algorithms are in Cryptography.
 
-**Keywords:** SEC-001--SEC-142 (142 terms)
+**Keywords:** SEC-001–SEC-145 (144 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -121,7 +121,6 @@ Application security (AppSec), web attack vectors (OWASP Top 10, XSS, CSRF, SQLi
 | SEC-104 | CVSS Score | ★★★ |
 | SEC-105 | Security Audit | ★★★ |
 | SEC-106 | SIEM (Security Information and Event Management) | ★★★ |
-| SEC-107 | Security Logging and Monitoring | ★★★ |
 | SEC-108 | Incident Response | ★★★ |
 | SEC-109 | RASP (Runtime Application Self-Protection) | ★★★ |
 | SEC-110 | Dependency Scanning | ★★☆ |
@@ -157,3 +156,6 @@ Application security (AppSec), web attack vectors (OWASP Top 10, XSS, CSRF, SQLi
 | SEC-140 | Security Architecture Review | ★★★ |
 | SEC-141 | Digital Forensics (Basics) | ★★★ |
 | SEC-142 | Exploit Development (Conceptual) | ★★★ |
+| SEC-143 | Security Interview Preparation Guide | ★☆☆ |
+| SEC-144 | OWASP Mobile Security Top 10 | ★★★ |
+| SEC-145 | Security Architecture Decision Framework | ★★★ |

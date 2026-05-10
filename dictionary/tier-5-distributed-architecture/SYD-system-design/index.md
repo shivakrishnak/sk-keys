@@ -11,15 +11,15 @@ permalink: /system-design/
 
 Scaling, load balancing, rate limiting, distributed locks, sharding, and classic system design problems.
 
-**Keywords:** SYD-001–SYD-077 (77 terms)
+**Keywords:** SYD-001–SYD-082 (81 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
 | SYD-001 | What Is System Design | ★☆☆ |
-| SYD-002 | The System Design Interview Mental Model | ★☆☆ |
-| SYD-003 | How to Approach Any System Design Problem | ★☆☆ |
-| SYD-004 | Estimation and Back-of-Envelope Thinking | ★☆☆ |
-| SYD-005 | The System Design Ecosystem Map | ★☆☆ |
+| SYD-002 | The System Design Interview Mental Model | ★★☆ |
+| SYD-003 | How to Approach Any System Design Problem | ★★☆ |
+| SYD-004 | Estimation and Back-of-Envelope Thinking | ★★☆ |
+| SYD-005 | The System Design Ecosystem Map | ★★☆ |
 | SYD-006 | Vertical Scaling | ★☆☆ |
 | SYD-007 | Horizontal Scaling | ★☆☆ |
 | SYD-008 | Load Balancing | ★★☆ |
@@ -47,12 +47,12 @@ Scaling, load balancing, rate limiting, distributed locks, sharding, and classic
 | SYD-030 | Leaky Bucket | ★★★ |
 | SYD-031 | Sharding (System) | ★★★ |
 | SYD-032 | Hot Shard | ★★★ |
-| SYD-033 | Read-Heavy vs Write-Heavy Design | ★★★ |
+| SYD-033 | Read-Heavy vs Write-Heavy Design | ★★☆ |
 | SYD-034 | Denormalization for Scale | ★★★ |
 | SYD-035 | Fan-Out on Write vs Read | ★★★ |
-| SYD-036 | Push vs Pull Architecture | ★★★ |
+| SYD-036 | Push vs Pull Architecture | ★★☆ |
 | SYD-037 | Polling vs Webhooks | ★★☆ |
-| SYD-038 | Idempotency Key | ★★★ |
+| SYD-038 | Idempotency Key | ★★☆ |
 | SYD-039 | Distributed Locks | ★★★ |
 | SYD-040 | Leader-Follower Pattern | ★★★ |
 | SYD-041 | Write-Ahead Logging (System) | ★★★ |
@@ -77,18 +77,22 @@ Scaling, load balancing, rate limiting, distributed locks, sharding, and classic
 | SYD-060 | Constraint-First System Design Thinking | ★★★ |
 | SYD-061 | Scale Estimation Mental Model | ★★★ |
 | SYD-062 | Trade-off Navigation Framework | ★★★ |
-| SYD-063 | What is Scalability (Conceptual)                     | ★☆☆ |
-| SYD-064 | What is a Cache (System Design Context)              | ★☆☆ |
-| SYD-065 | What is a Message Queue (Conceptual)                 | ★☆☆ |
-| SYD-066 | What is Database Replication (Basic)                 | ★☆☆ |
-| SYD-067 | CDN Architecture Pattern                             | ★★☆ |
-| SYD-068 | Connection Pooling (System Design)                   | ★★☆ |
-| SYD-069 | Cache Invalidation Strategies                        | ★★★ |
-| SYD-070 | Blob Storage Design                                  | ★★☆ |
-| SYD-071 | Payment System Design                                | ★★★ |
-| SYD-072 | File Storage System Design (Dropbox/S3)              | ★★★ |
-| SYD-073 | Email System Design                                  | ★★★ |
-| SYD-074 | Game Leaderboard Design                              | ★★★ |
-| SYD-075 | Booking and Reservation System Design                | ★★★ |
-| SYD-076 | Real-Time Collaboration System Design                | ★★★ |
-| SYD-077 | Global Key-Value Store Design                        | ★★★ |
+| SYD-063 | What is Scalability (Conceptual) | ★☆☆ |
+| SYD-064 | What is a Cache (System Design Context) | ★☆☆ |
+| SYD-065 | What is a Message Queue (Conceptual) | ★☆☆ |
+| SYD-066 | What is Database Replication (Basic) | ★☆☆ |
+| SYD-067 | CDN Architecture Pattern | ★★☆ |
+| SYD-068 | Connection Pooling (System Design) | ★★☆ |
+| SYD-069 | Cache Invalidation Strategies | ★★★ |
+| SYD-070 | Blob Storage Design | ★★☆ |
+| SYD-071 | Payment System Design | ★★★ |
+| SYD-072 | File Storage System Design (Dropbox/S3) | ★★★ |
+| SYD-073 | Email System Design | ★★★ |
+| SYD-074 | Game Leaderboard Design | ★★★ |
+| SYD-075 | Booking and Reservation System Design | ★★★ |
+| SYD-076 | Real-Time Collaboration System Design | ★★★ |
+| SYD-077 | Global Key-Value Store Design | ★★★ |
+| SYD-078 | System Design Interview Preparation Guide | ★☆☆ |
+| SYD-079 | System Design Interview Framework | ★★☆ |
+| SYD-081 | URL Shortener System Design | ★★☆ |
+| SYD-082 | Design a Chat System | ★★★ |

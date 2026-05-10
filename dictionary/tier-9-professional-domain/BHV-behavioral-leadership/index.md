@@ -11,7 +11,7 @@ permalink: /leadership/
 
 Technical leadership, staff engineering, stakeholder communication, agile practices, and career development.
 
-**Keywords:** BHV-001–BHV-068 (68 terms)
+**Keywords:** BHV-001–BHV-072 (72 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -83,3 +83,7 @@ Technical leadership, staff engineering, stakeholder communication, agile practi
 | BHV-066 | Leadership Trade-off Framing | ★★★ |
 | BHV-067 | Engineering Communication Mental Model | ★★★ |
 | BHV-068 | Career Growth Thinking | ★★★ |
+| BHV-069 | Behavioral Interview Mastery Guide | ★☆☆ |
+| BHV-070 | Technical Leadership Communication | ★★★ |
+| BHV-071 | Engineering Manager vs Tech Lead Career Decision | ★★★ |
+| BHV-072 | Writing Engineering Design Documents | ★★☆ |

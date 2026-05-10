@@ -11,7 +11,7 @@ permalink: /cloud-gcp/
 
 Google Cloud Platform: Compute (GCE, GKE, Cloud Run, Functions), storage (GCS, BigQuery, Spanner, Firestore), messaging (Pub/Sub), networking (VPC, Load Balancing, Armor, CDN), AI/ML (Vertex AI), data engineering (Dataflow, Composer), and GCP vs AWS vs Azure decision frameworks.
 
-**Keywords:** GCP-001--GCP-025 (25 terms)
+**Keywords:** GCP-001–GCP-045 (45 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -40,3 +40,23 @@ Google Cloud Platform: Compute (GCE, GKE, Cloud Run, Functions), storage (GCS, B
 | GCP-023 | Google Cloud Composer (Airflow) | ★★☆ |
 | GCP-024 | Cloud Monitoring and Logging (Cloud Operations) | ★★☆ |
 | GCP-025 | GCP Cost Management and Billing | ★★☆ |
+| GCP-026 | Cloud Bigtable | ★★★ |
+| GCP-027 | Cloud Memorystore (Redis on GCP) | ★★★ |
+| GCP-028 | Cloud SQL | ★★☆ |
+| GCP-029 | Secret Manager | ★★☆ |
+| GCP-030 | Cloud DNS | ★★☆ |
+| GCP-031 | Cloud Interconnect | ★★★ |
+| GCP-032 | Cloud NAT | ★★★ |
+| GCP-033 | Cloud Endpoints | ★★★ |
+| GCP-034 | GCP IAM (Cloud Identity and Access Management) | ★★★ |
+| GCP-035 | Organization Policy Service | ★★★ |
+| GCP-036 | Cloud Operations Suite (Monitoring, Logging) | ★★☆ |
+| GCP-037 | Cloud Trace and Cloud Profiler | ★★★ |
+| GCP-038 | Anthos and Multi-Cloud Strategy | ★★★ |
+| GCP-039 | GCP Cost Management and Budgets | ★★★ |
+| GCP-040 | GCP Migration Strategy | ★★★ |
+| GCP-041 | GCP Architecture Best Practices | ★★★ |
+| GCP-042 | Cloud Identity | ★★★ |
+| GCP-043 | GCP vs AWS vs Azure Decision Framework | ★★★ |
+| GCP-044 | GCP Data Analytics Architecture | ★★★ |
+| GCP-045 | GCP Interview Preparation Guide | ★☆☆ |

@@ -11,13 +11,13 @@ permalink: /java-concurrency/
 
 Java threading, synchronization, concurrent data structures, executors, virtual threads, Project Loom, and the Java Memory Model.
 
-**Keywords:** JCC-001--JCC-092 (92 terms)
+**Keywords:** JCC-001–JCC-096 (96 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
 | JCC-001 | Why Concurrency Is Hard | ★☆☆ |
-| JCC-002 | The Thread Safety Problem - A Mental Model | ★☆☆ |
-| JCC-003 | Java Concurrency Approach - History and Philosophy | ★☆☆ |
+| JCC-002 | The Thread Safety Problem: A Mental Model | ★☆☆ |
+| JCC-003 | Java Concurrency Approach: History and Philosophy | ★☆☆ |
 | JCC-004 | Concurrency vs Parallelism in Java | ★☆☆ |
 | JCC-005 | The Java Concurrency Ecosystem Map | ★☆☆ |
 | JCC-006 | Thread (Java) | ★☆☆ |
@@ -29,7 +29,7 @@ Java threading, synchronization, concurrent data structures, executors, virtual 
 | JCC-012 | Thread States | ★★☆ |
 | JCC-013 | synchronized | ★★☆ |
 | JCC-014 | volatile | ★★★ |
-| JCC-015 | wait / notify / notifyAll | ★★★ |
+| JCC-015 | wait notify notifyAll | ★★★ |
 | JCC-016 | ReentrantLock | ★★★ |
 | JCC-017 | ReadWriteLock | ★★★ |
 | JCC-018 | StampedLock | ★★★ |
@@ -107,3 +107,7 @@ Java threading, synchronization, concurrent data structures, executors, virtual 
 | JCC-090 | Thread Safety Annotations (@GuardedBy, @ThreadSafe) | ★★☆ |
 | JCC-091 | synchronized Block vs synchronized Method | ★★☆ |
 | JCC-092 | Java Reactive Programming (RxJava) | ★★★ |
+| JCC-093 | Java Concurrency Interview Preparation Guide | ★☆☆ |
+| JCC-094 | Async Request Handling with Virtual Threads | ★★★ |
+| JCC-095 | JMH Benchmarking for Concurrent Code | ★★★ |
+| JCC-096 | Project Loom Migration Strategy | ★★★ |

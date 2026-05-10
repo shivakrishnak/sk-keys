@@ -11,15 +11,15 @@ permalink: /containers/
 
 Docker images, layers, multi-stage builds, container security, OCI standards, and container runtime internals.
 
-**Keywords:** CTR-001–CTR-054 (54 terms)
+**Keywords:** CTR-001–CTR-059 (59 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
 | CTR-001 | What Is Containerization and Why It Matters | ★☆☆ |
-| CTR-002 | VMs vs Containers -- A Mental Model | ★☆☆ |
+| CTR-002 | VMs vs Containers - A Mental Model | ★☆☆ |
 | CTR-003 | The Container Ecosystem Map | ★☆☆ |
 | CTR-004 | Why Docker Changed Everything | ★☆☆ |
-| CTR-005 | Containers in Production -- What to Expect | ★☆☆ |
+| CTR-005 | Containers in Production - What to Expect | ★☆☆ |
 | CTR-006 | Red Hat OpenShift | ★★★ |
 | CTR-007 | OpenShift vs Kubernetes | ★★★ |
 | CTR-008 | Container | ★☆☆ |
@@ -69,3 +69,8 @@ Docker images, layers, multi-stage builds, container security, OCI standards, an
 | CTR-052 | Container Trade-off Framing | ★★★ |
 | CTR-053 | Containerization Necessity Assessment | ★★★ |
 | CTR-054 | Container Security Mental Model | ★★★ |
+| CTR-055 | Container Interview Preparation Guide | ★☆☆ |
+| CTR-056 | Multi-Stage Docker Builds | ★★☆ |
+| CTR-057 | Container Image Signing and Verification | ★★★ |
+| CTR-058 | Container Runtime Security (gVisor, Kata Containers) | ★★★ |
+| CTR-059 | Container Networking Deep Dive | ★★★ |

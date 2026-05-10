@@ -11,7 +11,7 @@ permalink: /llms/
 
 LLM architectures, prompt engineering, function calling, fine-tuning (LoRA, QLoRA), guardrails, and LLM observability.
 
-**Keywords:** LLM-001–LLM-050 (50 terms)
+**Keywords:** LLM-001–LLM-056 (56 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -65,3 +65,9 @@ LLM architectures, prompt engineering, function calling, fine-tuning (LoRA, QLoR
 | LLM-048 | LLM Trade-off Framing (Capability vs Safety vs Cost) | ★★★ |
 | LLM-049 | Prompt Engineering Mental Model | ★★★ |
 | LLM-050 | LLM Production Reality Thinking | ★★★ |
+| LLM-051 | LLM Interview Preparation Guide | ★☆☆ |
+| LLM-052 | Structured Output Generation | ★★★ |
+| LLM-053 | LLM Evaluation Frameworks | ★★★ |
+| LLM-054 | LLM Fine-Tuning (LoRA, QLoRA, PEFT) | ★★★ |
+| LLM-055 | LLM Observability (LangSmith, Weights and Biases) | ★★★ |
+| LLM-056 | Prompt Injection Defense Strategies | ★★★ |

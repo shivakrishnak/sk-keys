@@ -11,7 +11,7 @@ permalink: /caching/
 
 Cache patterns, eviction policies, stampede prevention, distributed caching, and Redis internals.
 
-**Keywords:** CCH-001–CCH-037 (37 terms)
+**Keywords:** CCH-001–CCH-052 (52 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -62,3 +62,8 @@ Cache patterns, eviction policies, stampede prevention, distributed caching, and
 | CCH-045 | Object vs Fragment Caching | ★★☆ |
 | CCH-046 | Service Worker Cache (Offline-First) | ★★★ |
 | CCH-047 | Cache Observability and Monitoring | ★★★ |
+| CCH-048 | Caching Interview Preparation Guide | ★☆☆ |
+| CCH-049 | Cache Penetration, Breakdown, and Avalanche | ★★★ |
+| CCH-050 | Distributed Cache vs Local Cache Trade-offs | ★★★ |
+| CCH-051 | Read-Through, Write-Through, Write-Behind Strategies | ★★★ |
+| CCH-052 | Cache Sizing and Memory Management | ★★★ |

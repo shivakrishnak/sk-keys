@@ -11,7 +11,7 @@ permalink: /code-quality/
 
 Code standards, static analysis, code smells, refactoring, cyclomatic complexity, and architecture fitness.
 
-**Keywords:** CDQ-001–CDQ-042 (42 terms)
+**Keywords:** CDQ-001–CDQ-047 (46 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -57,3 +57,7 @@ Code standards, static analysis, code smells, refactoring, cyclomatic complexity
 | CDQ-040 | Quality Trade-off Framing | ★★★ |
 | CDQ-041 | Technical Debt Mental Model | ★★★ |
 | CDQ-042 | Code Review Mindset | ★★★ |
+| CDQ-043 | Code Quality Interview Preparation Guide | ★☆☆ |
+| CDQ-044 | Technical Debt Quantification | ★★★ |
+| CDQ-046 | Code Coverage Goals and Anti-Patterns | ★★★ |
+| CDQ-047 | Continuous Code Quality Strategy | ★★★ |

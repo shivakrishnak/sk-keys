@@ -11,7 +11,7 @@ permalink: /nodejs/
 
 Node.js event loop internals, streams, backpressure, worker threads, Express, Fastify, NestJS, and observability.
 
-**Keywords:** NDJ-001–NDJ-045 (45 terms)
+**Keywords:** NDJ-001–NDJ-051 (51 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -60,3 +60,9 @@ Node.js event loop internals, streams, backpressure, worker threads, Express, Fa
 | NDJ-043 | Non-Blocking I/O Mental Model | ★★★ |
 | NDJ-044 | Backend JavaScript Thinking | ★★★ |
 | NDJ-045 | Node.js Performance Intuition | ★★★ |
+| NDJ-046 | Node.js Interview Preparation Guide | ★☆☆ |
+| NDJ-047 | Fastify Framework | ★★☆ |
+| NDJ-048 | Node.js Streams Deep Dive | ★★★ |
+| NDJ-049 | Node.js Child Processes and Clustering | ★★★ |
+| NDJ-050 | Node.js Security Best Practices | ★★★ |
+| NDJ-051 | Node.js Performance Profiling | ★★★ |

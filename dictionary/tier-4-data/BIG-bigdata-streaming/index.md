@@ -11,7 +11,7 @@ permalink: /big-data/
 
 Hadoop, Spark (RDD, DataFrame, Streaming), Flink, Apache Beam, windowing, watermarks, Lambda/Kappa architectures, Databricks, Apache Airflow, dbt, and big data platform design.
 
-**Keywords:** BIG-001--BIG-042 (42 terms)
+**Keywords:** BIG-001–BIG-049 (47 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -57,3 +57,8 @@ Hadoop, Spark (RDD, DataFrame, Streaming), Flink, Apache Beam, windowing, waterm
 | BIG-040 | dbt (Data Build Tool) | ★★☆ |
 | BIG-041 | Streaming Data Pipeline Design Patterns | ★★★ |
 | BIG-042 | Big Data Platform Cost Optimization | ★★★ |
+| BIG-043 | Big Data Interview Preparation Guide | ★☆☆ |
+| BIG-046 | Data Lakehouse Architecture | ★★★ |
+| BIG-047 | Stream Processing Exactly-Once Semantics | ★★★ |
+| BIG-048 | Data Quality in Streaming Pipelines | ★★★ |
+| BIG-049 | Real-Time Analytics Architecture | ★★★ |

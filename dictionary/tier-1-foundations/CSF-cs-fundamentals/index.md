@@ -11,92 +11,97 @@ permalink: /cs-fundamentals/
 
 Programming paradigms, type systems, OOP pillars, functional programming concepts, theoretical foundations, and creator-level formal semantics.
 
-**Keywords:** CSF-001–CSF-085 (85 terms · 30 original + 55 gap-fill)
+**Keywords:** CSF-001–CSF-090 (90 terms)
 
 | ID      | Keyword                                      | Difficulty |
 | ------- | -------------------------------------------- | ---------- |
-| CSF-001 | Imperative Programming                       | ★☆☆        |
-| CSF-002 | Declarative Programming                      | ★☆☆        |
-| CSF-003 | Object-Oriented Programming (OOP)            | ★☆☆        |
-| CSF-004 | Functional Programming                       | ★★☆        |
-| CSF-005 | Procedural Programming                       | ★☆☆        |
-| CSF-006 | Event-Driven Programming                     | ★★☆        |
-| CSF-007 | Reactive Programming                         | ★★☆        |
-| CSF-008 | Aspect-Oriented Programming                  | ★★☆        |
-| CSF-009 | Metaprogramming                              | ★★★        |
-| CSF-010 | Type Systems (Static vs Dynamic)             | ★★☆        |
-| CSF-011 | Strong vs Weak Typing                        | ★☆☆        |
-| CSF-012 | Compiled vs Interpreted Languages            | ★☆☆        |
-| CSF-013 | Memory Management Models                     | ★★☆        |
-| CSF-014 | Concurrency vs Parallelism                   | ★★☆        |
-| CSF-015 | Synchronous vs Asynchronous                  | ★☆☆        |
-| CSF-016 | Abstraction                                  | ★☆☆        |
-| CSF-017 | Encapsulation                                | ★☆☆        |
-| CSF-018 | Polymorphism                                 | ★☆☆        |
-| CSF-019 | Inheritance                                  | ★☆☆        |
-| CSF-020 | Composition over Inheritance                 | ★★☆        |
-| CSF-021 | Recursion                                    | ★★☆        |
-| CSF-022 | Tail Recursion                               | ★★★        |
-| CSF-023 | Turing Completeness                          | ★★★        |
-| CSF-024 | Church-Turing Thesis                         | ★★★        |
-| CSF-025 | Lambda Calculus                              | ★★★        |
-| CSF-026 | First-Class Functions                        | ★★☆        |
-| CSF-027 | Higher-Order Functions                       | ★★☆        |
-| CSF-028 | Side Effects                                 | ★★☆        |
-| CSF-029 | Referential Transparency                     | ★★★        |
-| CSF-030 | Idempotency                                  | ★★☆        |
-| CSF-031 | Programming Paradigm (Meta-Concept)          | ★☆☆        |
-| CSF-032 | Closure                                      | ★☆☆        |
-| CSF-033 | Scope (Lexical vs Dynamic)                   | ★☆☆        |
-| CSF-034 | Pure Function                                | ★☆☆        |
-| CSF-035 | Logic Programming                            | ★☆☆        |
-| CSF-036 | Generic Programming                          | ★☆☆        |
-| CSF-037 | Currying and Partial Application             | ★★☆        |
-| CSF-038 | Immutability                                 | ★★☆        |
-| CSF-039 | Lazy vs Eager Evaluation                     | ★★☆        |
-| CSF-040 | Pattern Matching                             | ★★☆        |
-| CSF-041 | Duck Typing                                  | ★★☆        |
-| CSF-042 | Structural vs Nominal Typing                 | ★★☆        |
-| CSF-043 | Module System / Namespacing                  | ★★☆        |
-| CSF-044 | Continuation-Passing Style (CPS)             | ★★☆        |
-| CSF-045 | Monads (Functional)                          | ★★☆        |
-| CSF-046 | Algebraic Data Types (ADTs)                  | ★★☆        |
-| CSF-047 | Type Inference                               | ★★☆        |
-| CSF-048 | Variance (Covariance / Contravariance)       | ★★☆        |
-| CSF-049 | Effect Systems                               | ★★☆        |
-| CSF-050 | Type-Level Programming                       | ★★★        |
-| CSF-051 | Gradual Typing                               | ★★★        |
-| CSF-052 | Dependent Types                              | ★★★        |
-| CSF-053 | Linear Types / Ownership Model               | ★★★        |
-| CSF-054 | Delimited Continuations                      | ★★★        |
-| CSF-055 | Garbage Collection Algorithms (Conceptual)   | ★★★        |
-| CSF-056 | Type Theory (System F, System Fω)            | 🔬         |
-| CSF-057 | Hindley-Milner Type Inference Algorithm      | 🔬         |
-| CSF-058 | Curry-Howard Correspondence                  | 🔬         |
-| CSF-059 | Denotational Semantics                       | 🔬         |
-| CSF-060 | Operational Semantics                        | 🔬         |
-| CSF-061 | Axiomatic Semantics (Hoare Logic)            | 🔬         |
-| CSF-062 | Category Theory for Programmers              | 🔬         |
-| CSF-063 | Chomsky Hierarchy (Formal Language Theory)   | 🔬         |
-| CSF-064 | Propositions as Types (Curry-Howard)         | 🔬         |
-| CSF-065 | Dependency Hell and Package Management       | ★★★        |
-| CSF-066 | Polyglot Architecture Strategy               | ★★★        |
-| CSF-067 | Language Evaluation Framework                | ★★★        |
-| CSF-068 | Paradigm Migration Strategy (OOP to FP)      | ★★★        |
-| CSF-069 | Type System Design for Large Codebases       | ★★★        |
-| CSF-070 | Compiler/Runtime Selection at Scale          | ★★★        |
-| CSF-071 | Church-Turing Thesis (Deep Dive)             | ★★★        |
-| CSF-072 | Lambda Calculus (Deep Dive)                  | ★★★        |
-| CSF-073 | Curry-Howard Correspondence (Deep Dive)      | ★★★        |
-| CSF-074 | Category Theory for Programmers (Deep Dive)  | ★★★        |
-| CSF-075 | Formal Semantics (Denotational, Operational) | ★★★        |
-| CSF-076 | Type Theory (System F, HM Inference)         | ★★★        |
-| CSF-077 | Language Design Rationale (Rust, Go, Kotlin) | ★★★        |
-| CSF-078 | Paradigm-Agnostic Thinking                   | ★★★        |
-| CSF-079 | Trade-off Framing (Any Language Choice)      | ★★★        |
-| CSF-080 | First-Principles Language Selection          | ★★★        |
-| CSF-081 | Abstraction Levels in Computing                          | ★☆☆        |
-| CSF-082 | Computational Complexity Overview                        | ★★☆        |
-| CSF-083 | Formal Reasoning in Software                             | ★★★        |
-| CSF-084 | Software Correctness and Proof                           | ★★★        |
-| CSF-085 | Cross-Paradigm Design Patterns                           | ★★★        |
+| CSF-001 | What Is Computer Science - A Map | ★☆☆ |
+| CSF-002 | Why Programming Paradigms Exist | ★☆☆ |
+| CSF-003 | The History of Programming Languages | ★☆☆ |
+| CSF-004 | How Code Becomes Execution - Big Picture | ★☆☆ |
+| CSF-005 | The CS Ecosystem Map (Languages, Runtimes, OS) | ★☆☆ |
+| CSF-006 | Imperative Programming | ★☆☆ |
+| CSF-007 | Declarative Programming | ★☆☆ |
+| CSF-008 | Procedural Programming | ★☆☆ |
+| CSF-009 | Object-Oriented Programming (OOP) | ★☆☆ |
+| CSF-010 | Functional Programming | ★★☆ |
+| CSF-011 | Event-Driven Programming | ★★☆ |
+| CSF-012 | Type Systems (Static vs Dynamic) | ★★☆ |
+| CSF-013 | Strong vs Weak Typing | ★☆☆ |
+| CSF-014 | Compiled vs Interpreted Languages | ★☆☆ |
+| CSF-015 | Memory Management Models | ★★☆ |
+| CSF-016 | Abstraction | ★☆☆ |
+| CSF-017 | Synchronous vs Asynchronous | ★☆☆ |
+| CSF-018 | Concurrency vs Parallelism | ★★☆ |
+| CSF-019 | Variables, Types, and Scope | ★☆☆ |
+| CSF-020 | Control Flow (if, loops, switch) | ★☆☆ |
+| CSF-021 | Functions and Procedures | ★☆☆ |
+| CSF-022 | Error vs Exception | ★☆☆ |
+| CSF-023 | Stack vs Heap Memory | ★☆☆ |
+| CSF-024 | Encapsulation | ★☆☆ |
+| CSF-025 | Polymorphism | ★☆☆ |
+| CSF-026 | Inheritance | ★☆☆ |
+| CSF-027 | Composition over Inheritance | ★★☆ |
+| CSF-028 | Recursion | ★★☆ |
+| CSF-029 | First-Class Functions | ★★☆ |
+| CSF-030 | Higher-Order Functions | ★★☆ |
+| CSF-031 | Side Effects | ★★☆ |
+| CSF-032 | Idempotency | ★★☆ |
+| CSF-033 | Closures | ★★☆ |
+| CSF-034 | Immutability | ★★☆ |
+| CSF-035 | Null Safety and Null Anti-Pattern | ★★☆ |
+| CSF-036 | Exception Handling Patterns | ★★☆ |
+| CSF-037 | Modules and Packages | ★★☆ |
+| CSF-038 | Interfaces vs Abstract Classes | ★★☆ |
+| CSF-039 | Generics and Parametric Polymorphism | ★★☆ |
+| CSF-040 | Pattern Matching | ★★☆ |
+| CSF-041 | Reactive Programming | ★★☆ |
+| CSF-042 | Aspect-Oriented Programming | ★★☆ |
+| CSF-043 | Metaprogramming | ★★★ |
+| CSF-044 | Tail Recursion | ★★★ |
+| CSF-045 | Referential Transparency | ★★★ |
+| CSF-046 | Algebraic Data Types (ADTs) | ★★☆ |
+| CSF-047 | Monads and Functors | ★★☆ |
+| CSF-048 | Continuation-Passing Style (CPS) | ★★☆ |
+| CSF-049 | Memory Leak Detection and Tooling | ★★☆ |
+| CSF-050 | Garbage Collection Algorithms Overview | ★★☆ |
+| CSF-051 | Type Inference | ★★☆ |
+| CSF-052 | Structural vs Nominal Typing | ★★☆ |
+| CSF-053 | Concurrency Anti-Patterns (Shared State) | ★★☆ |
+| CSF-054 | Testing Paradigms for CS Concepts | ★★☆ |
+| CSF-055 | Language Performance Trade-offs | ★★☆ |
+| CSF-056 | Turing Completeness | ★★★ |
+| CSF-057 | Memory Safety Vulnerabilities in Lang Design | ★★★ |
+| CSF-058 | JIT vs AOT Compilation Deep Dive | ★★★ |
+| CSF-059 | GC Pause Analysis and Production Impact | ★★★ |
+| CSF-060 | Concurrency Models Compared (Actor, CSP, STM) | ★★★ |
+| CSF-061 | Undefined Behaviour in Language Specs | ★★★ |
+| CSF-062 | Language Runtime Internals | ★★★ |
+| CSF-063 | Therac-25 Incident (1985) - Software Fails | ★★★ |
+| CSF-064 | Ariane 5 Overflow Bug (1996) | ★★★ |
+| CSF-065 | Dependency Hell and Package Management | ★★★ |
+| CSF-066 | Polyglot Architecture Strategy | ★★★ |
+| CSF-067 | Language Evaluation Framework | ★★★ |
+| CSF-068 | Paradigm Migration Strategy (OOP → FP) | ★★★ |
+| CSF-069 | Type System Design for Large Codebases | ★★★ |
+| CSF-070 | Compiler/Runtime Selection at Scale | ★★★ |
+| CSF-071 | Church-Turing Thesis | ★★★ |
+| CSF-072 | Lambda Calculus | ★★★ |
+| CSF-073 | Curry-Howard Correspondence | ★★★ |
+| CSF-074 | Category Theory for Programmers | ★★★ |
+| CSF-075 | Formal Semantics (Denotational, Operational) | ★★★ |
+| CSF-076 | Type Theory (System F, HM Inference) | ★★★ |
+| CSF-077 | Language Design Rationale (Rust, Go, Kotlin) | ★★★ |
+| CSF-078 | Paradigm-Agnostic Thinking | ★★★ |
+| CSF-079 | Trade-off Framing (Any Language Choice) | ★★★ |
+| CSF-080 | First-Principles Language Selection | ★★★ |
+| CSF-081 | Abstraction Levels in Computing | ★☆☆ |
+| CSF-082 | Computational Complexity Overview | ★★☆ |
+| CSF-083 | Formal Reasoning in Software | ★★★ |
+| CSF-084 | Software Correctness and Proof | ★★★ |
+| CSF-085 | Cross-Paradigm Design Patterns | ★★★ |
+| CSF-086 | Logic Programming Paradigm (Prolog, Datalog) | ★★☆ |
+| CSF-087 | Effect Systems and Side Effect Tracking | ★★★ |
+| CSF-088 | Probabilistic Programming | ★★★ |
+| CSF-089 | Type-Driven Development | ★★★ |
+| CSF-090 | CS Fundamentals Interview Preparation Guide | ★☆☆ |

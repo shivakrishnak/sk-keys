@@ -11,7 +11,7 @@ permalink: /data-fundamentals/
 
 Data formats, storage models, data lake/warehouse/lakehouse architectures, modeling, and governance.
 
-**Keywords:** DAT-001–DAT-054 (54 terms)
+**Keywords:** DAT-001–DAT-059 (59 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -69,3 +69,8 @@ Data formats, storage models, data lake/warehouse/lakehouse architectures, model
 | DAT-052 | Data Trade-off Framing | ★★★ |
 | DAT-053 | Data Modeling Mental Model | ★★★ |
 | DAT-054 | Data Platform Selection Framework | ★★★ |
+| DAT-055 | Data Engineering Interview Preparation Guide | ★☆☆ |
+| DAT-056 | Data Lineage and Provenance | ★★★ |
+| DAT-057 | Data Mesh Architecture | ★★★ |
+| DAT-058 | Data Catalog and Data Governance | ★★★ |
+| DAT-059 | Change Data Capture (CDC) | ★★★ |

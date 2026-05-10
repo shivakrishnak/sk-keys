@@ -11,7 +11,7 @@ permalink: /ci-cd/
 
 Continuous integration, delivery, deployment pipelines, GitOps, IaC, DORA metrics, and progressive delivery.
 
-**Keywords:** CCD-001–CCD-083 (83 terms)
+**Keywords:** CCD-001–CCD-087 (87 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -98,3 +98,7 @@ Continuous integration, delivery, deployment pipelines, GitOps, IaC, DORA metric
 | CCD-081 | Deployment Trade-off Framing | ★★★ |
 | CCD-082 | Pipeline Design Mental Model | ★★★ |
 | CCD-083 | Automation Necessity Assessment | ★★★ |
+| CCD-084 | CI/CD Interview Preparation Guide | ★☆☆ |
+| CCD-085 | Pipeline Security (Software Supply Chain Security) | ★★★ |
+| CCD-086 | Feature Flags and Canary Deployment Strategy | ★★★ |
+| CCD-087 | CI/CD Metrics and DORA Framework | ★★★ |

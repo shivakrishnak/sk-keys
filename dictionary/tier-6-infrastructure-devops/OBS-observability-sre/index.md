@@ -11,7 +11,7 @@ permalink: /observability/
 
 Logging, metrics, distributed tracing, OpenTelemetry, Prometheus, Grafana, alerting, and SRE principles.
 
-**Keywords:** OBS-001–OBS-056 (56 terms)
+**Keywords:** OBS-001– (62 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -36,12 +36,6 @@ Logging, metrics, distributed tracing, OpenTelemetry, Prometheus, Grafana, alert
 | OBS-019 | Error Budget | ★★☆ |
 | OBS-020 | Alerting Anti-Patterns (Alert Fatigue) | ★★☆ |
 | OBS-021 | Health Check Patterns | ★★☆ |
-| OBS-022 | AWS CloudWatch Dashboards                                 | ★★★        |
-| OBS-023 | AWS CloudWatch Log Insights                               | ★★★        |
-| OBS-024 | AWS CloudWatch Alarms                                     | ★★★        |
-| OBS-025 | AWS X-Ray (Distributed Tracing)                           | ★★★        |
-| OBS-026 | Actionable Alerting Patterns                              | ★★★        |
-| OBS-027 | AppDynamics -- APM | ★★☆ |
 | OBS-028 | Datadog -- Observability Platform | ★★☆ |
 | OBS-029 | Dynatrace -- Full-Stack Monitoring | ★★☆ |
 | OBS-030 | Incident Management Process | ★★☆ |
@@ -71,3 +65,15 @@ Logging, metrics, distributed tracing, OpenTelemetry, Prometheus, Grafana, alert
 | OBS-054 | Observability-First Thinking | ★★★ |
 | OBS-055 | SLO Trade-off Framing | ★★★ |
 | OBS-056 | Reliability Mental Model | ★★★ |
+| OBS-057 | Observability Interview Preparation Guide | ★☆☆ |
+| OBS-058 | OpenTelemetry | ★★★ |
+| OBS-059 | Service Level Objectives (SLOs) Deep Dive | ★★★ |
+| OBS-060 | Error Budgets | ★★★ |
+| OBS-061 | Chaos Engineering | ★★★ |
+| OBS-062 | Production On-Call Runbook Design | ★★★ |
+|  | AWS CloudWatch Dashboards | ★★★ |
+|  | AWS CloudWatch Log Insights | ★★★ |
+|  | AWS CloudWatch Alarms | ★★★ |
+|  | AWS X-Ray (Distributed Tracing) | ★★★ |
+|  | Actionable Alerting Patterns | ★★★ |
+|  | AppDynamics | ★★★ |

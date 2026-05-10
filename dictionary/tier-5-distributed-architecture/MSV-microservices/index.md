@@ -11,12 +11,12 @@ permalink: /microservices/
 
 Service decomposition, DDD, discovery, resilience patterns, CQRS, event sourcing, and deployment strategies.
 
-**Keywords:** MSV-001–MSV-085 (85 terms)
+**Keywords:** MSV-001–MSV-090 (90 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
 | MSV-001 | What Are Microservices | ★☆☆ |
-| MSV-002 | Monolith vs Microservices -- The Real Trade-off | ★☆☆ |
+| MSV-002 | Monolith vs Microservices - The Real Trade-off | ★★☆ |
 | MSV-003 | Why Microservices Became Popular | ★☆☆ |
 | MSV-004 | The Microservices Ecosystem Map | ★☆☆ |
 | MSV-005 | When NOT to Use Microservices | ★☆☆ |
@@ -92,11 +92,16 @@ Service decomposition, DDD, discovery, resilience patterns, CQRS, event sourcing
 | MSV-075 | Decomposition Trade-off Framing | ★★★ |
 | MSV-076 | Microservices Necessity Assessment | ★★★ |
 | MSV-077 | Service Boundary Mental Model | ★★★ |
-| MSV-078 | Platform Engineering                                    | ★★★ |
-| MSV-079 | Internal Developer Platform (IDP)                       | ★★★ |
-| MSV-080 | GraphQL Federation (Microservices)                      | ★★★ |
-| MSV-081 | Dead Letter Queue Strategy                              | ★★★ |
-| MSV-082 | Progressive Delivery                                    | ★★★ |
-| MSV-083 | Multi-Tenancy in Microservices                          | ★★★ |
-| MSV-084 | FinOps for Microservices                                | ★★★ |
-| MSV-085 | Service Catalog                                         | ★★☆ |
+| MSV-078 | Platform Engineering | ★★★ |
+| MSV-079 | Internal Developer Platform (IDP) | ★★★ |
+| MSV-080 | GraphQL Federation (Microservices) | ★★★ |
+| MSV-081 | Dead Letter Queue Strategy | ★★★ |
+| MSV-082 | Progressive Delivery | ★★★ |
+| MSV-083 | Multi-Tenancy in Microservices | ★★★ |
+| MSV-084 | FinOps for Microservices | ★★★ |
+| MSV-085 | Service Catalog | ★★☆ |
+| MSV-086 | Microservices Interview Preparation Guide | ★☆☆ |
+| MSV-087 | Service Mesh Architecture (Istio, Linkerd) | ★★★ |
+| MSV-088 | Microservices Database Strategy | ★★★ |
+| MSV-089 | Microservices Organizational Design (Team Topologies) | ★★★ |
+| MSV-090 | Microservices Migration (Strangler Fig Pattern) | ★★★ |

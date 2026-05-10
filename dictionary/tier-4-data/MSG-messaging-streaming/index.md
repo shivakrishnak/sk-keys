@@ -11,7 +11,7 @@ permalink: /messaging-streaming/
 
 Message brokers, event streaming, Kafka internals, RabbitMQ, SQS/SNS, Pulsar, messaging patterns (DLQ, outbox, fan-out, ordering), and event-driven architecture.
 
-**Keywords:** MSG-001--MSG-046 (46 terms)
+**Keywords:** MSG-001–MSG-052 (51 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -21,7 +21,7 @@ Message brokers, event streaming, Kafka internals, RabbitMQ, SQS/SNS, Pulsar, me
 | MSG-004 | Delivery Guarantees Mental Model (At-Least-Once, Exactly-Once) | ★☆☆ |
 | MSG-005 | Messaging in Production -- What Engineers Face | ★☆☆ |
 | MSG-006 | Apache Kafka | ★★☆ |
-| MSG-007 | Kafka Topic / Partition / Offset | ★★☆ |
+| MSG-007 | Kafka Topic  Partition  Offset | ★★☆ |
 | MSG-008 | Consumer Group | ★★☆ |
 | MSG-009 | ISR (In-Sync Replicas) | ★★★ |
 | MSG-010 | Log Compaction | ★★★ |
@@ -61,3 +61,8 @@ Message brokers, event streaming, Kafka internals, RabbitMQ, SQS/SNS, Pulsar, me
 | MSG-044 | Consumer Poll Loop and Backpressure | ★★★ |
 | MSG-045 | Kafka Lag Monitoring and Consumer Health | ★★★ |
 | MSG-046 | Messaging Architecture Selection Framework | ★★★ |
+| MSG-047 | Messaging Interview Preparation Guide | ★☆☆ |
+| MSG-048 | Message Deduplication Patterns | ★★★ |
+| MSG-050 | Message Schema Evolution | ★★★ |
+| MSG-051 | Fan-out vs Fan-in Messaging Patterns | ★★★ |
+| MSG-052 | Event Sourcing with Kafka | ★★★ |

@@ -11,7 +11,7 @@ permalink: /jvm/
 
 JVM architecture, bytecode, class loading, garbage collection (Serial, G1, ZGC), memory model (heap, stack, Metaspace), JIT compilation, performance profiling, and GraalVM.
 
-**Keywords:** JVM-001--JVM-076 (76 terms)
+**Keywords:** JVM-001– (81 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -90,4 +90,9 @@ JVM architecture, bytecode, class loading, garbage collection (Serial, G1, ZGC),
 | JVM-073 | Class Loading Delegation Model | ★★★ |
 | JVM-074 | Compressed OOPs | ★★★ |
 | JVM-075 | Class Data Sharing (CDS / AppCDS) | ★★★ |
-| JVM-076 | JVM Architecture (Overview) | ★☆☆ |
+| JVM-077 | GraalVM Truffle Framework | ★★★ |
+| JVM-078 | JVM Bytecode Instrumentation | ★★★ |
+| JVM-079 | JVM Startup Optimization (AppCDS, AOT) | ★★★ |
+| JVM-080 | JVM Flags Reference and Tuning Guide | ★★★ |
+| JVM-081 | JVM Interview Preparation Guide | ★☆☆ |
+|  | JVM Architecture (Overview) | ★☆☆ |
