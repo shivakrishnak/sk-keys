@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Transactional Producer"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 25
-permalink: /big-data-streaming/transactional-producer/
-id: BIG-025
-category: Big Data & Streaming
+nav_order: 16
+permalink: /messaging-streaming/transactional-producer/
+id: MSG-016
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Idempotent Producer, Exactly-Once Semantics, Apache Kafka
 used_by: Kafka Streams, Event-Driven Architecture, Exactly-Once Semantics
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-025 - Transactional Producer
+# MSG-016 - Transactional Producer
 
 ⚡ TL;DR - **Transactional Producer** extends idempotent producer with a **stable `transactionalId`** (survives restarts) and a **2PC protocol** via a **Transaction Coordinator** - `beginTransaction()` → `send()` to multiple partitions → `commitTransaction()` makes all messages atomically visible to `read_committed` consumers; **epoch fencing** (TC bumps epoch on restart) kills zombie producers from prior sessions; provides **cross-partition, cross-session exactly-once** semantics at ~30-50% throughput cost.
 

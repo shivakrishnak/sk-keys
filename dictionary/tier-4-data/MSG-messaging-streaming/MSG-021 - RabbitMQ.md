@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "RabbitMQ"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 38
-permalink: /big-data-streaming/rabbitmq/
-id: BIG-038
-category: Big Data & Streaming
+nav_order: 21
+permalink: /messaging-streaming/rabbitmq/
+id: MSG-021
+category: Messaging & Event Streaming
 difficulty: ★★☆
 depends_on: Message Broker vs Event Bus, Point-to-Point vs Pub-Sub
 used_by: Task Queues, Event Routing, Microservices Messaging
@@ -20,7 +20,7 @@ tags:
   - message-broker
 ---
 
-# BIG-038 - RabbitMQ
+# MSG-021 - RabbitMQ
 
 ⚡ TL;DR - **RabbitMQ** is a message broker based on the **AMQP protocol** (Advanced Message Queuing Protocol); messages flow: **Producer → Exchange → Queue → Consumer**; exchange types: **direct** (routing key exact match), **fanout** (broadcast to all bound queues), **topic** (pattern routing: `logs.*.error`, `events.#`), **headers** (attribute-based); Spring Boot integration: `@RabbitListener`, `RabbitTemplate`; key features: message TTL, dead letter exchange (DLX), durable queues, manual acknowledgements, prefetch count.
 

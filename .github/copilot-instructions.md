@@ -390,6 +390,7 @@ A file is **v4.0** (`version: 4` = `LATEST_VERSION`) if it ALSO has: `### 📶 G
 | CCH  | Caching                        | tier-4-data                     | CCH-caching               |
 | DAT  | Data Fundamentals              | tier-4-data                     | DAT-data-fundamentals     |
 | BIG  | Big Data & Streaming           | tier-4-data                     | BIG-bigdata-streaming     |
+| MSG  | Messaging & Event Streaming    | tier-4-data                     | MSG-messaging-streaming   |
 | DST  | Distributed Systems            | tier-5-distributed-architecture | DST-distributed-systems   |
 | MSV  | Microservices                  | tier-5-distributed-architecture | MSV-microservices         |
 | SYD  | System Design                  | tier-5-distributed-architecture | SYD-system-design         |

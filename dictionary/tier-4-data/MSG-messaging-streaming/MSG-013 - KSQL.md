@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "KSQL"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 22
-permalink: /big-data-streaming/ksql/
-id: BIG-022
-category: Big Data & Streaming
+nav_order: 13
+permalink: /messaging-streaming/ksql/
+id: MSG-013
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Kafka Streams, Apache Kafka
 used_by: Real-Time Stream Analytics, Event Filtering, Streaming ETL
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-022 - KSQL
+# MSG-013 - KSQL
 
 ⚡ TL;DR - **ksqlDB** (formerly KSQL) is a **SQL engine for Apache Kafka** - write standard SQL queries against Kafka topics as if they were database tables or event streams; runs on the Kafka Streams library; provides **STREAM** (append-only, event semantics) and **TABLE** (current state, upsert semantics) abstractions; supports **persistent queries** (continuously running), **pull queries** (point-in-time state lookup), and **materialized views** - no Java required to build streaming pipelines.
 

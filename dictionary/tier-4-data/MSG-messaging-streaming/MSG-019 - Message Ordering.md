@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Message Ordering"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 28
-permalink: /big-data-streaming/message-ordering/
-id: BIG-028
-category: Big Data & Streaming
+nav_order: 19
+permalink: /messaging-streaming/message-ordering/
+id: MSG-019
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Apache Kafka, Kafka Topic / Partition / Offset, Consumer Group
 used_by: Event-Driven Architecture, Financial Systems, State Machines
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-028 - Message Ordering
+# MSG-019 - Message Ordering
 
 ⚡ TL;DR - Kafka guarantees **ordering WITHIN a partition** - all messages with the same **partition key** (e.g., `orderId` or `userId`) go to the same partition and are consumed in order; **global ordering** (across all partitions) requires a single-partition topic (sacrifices parallelism); ordering across partitions is NOT guaranteed; producer-side deordering can occur with retries unless `enable.idempotence=true`; the core design question: "what is the ordering unit?" → choose partition key accordingly.
 

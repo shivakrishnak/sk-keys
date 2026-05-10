@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Consumer Lag"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 23
-permalink: /big-data-streaming/consumer-lag/
-id: BIG-023
-category: Big Data & Streaming
+nav_order: 14
+permalink: /messaging-streaming/consumer-lag/
+id: MSG-014
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Apache Kafka, Consumer Group, Kafka Topic / Partition / Offset
 used_by: Kafka Monitoring, SRE, Observability
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-023 - Consumer Lag
+# MSG-014 - Consumer Lag
 
 ⚡ TL;DR - **Consumer Lag** is the gap between a Kafka partition's latest produced offset and a consumer group's committed offset for that partition - `LAG = LOG-END-OFFSET - COMMITTED-OFFSET`; high lag means consumers are falling behind producers; monitor via `kafka-consumer-groups.sh --describe`, JMX (`kafka.consumer.consumer-fetch-manager-metrics.records-lag`), or Prometheus/Burrow; reduce via more partitions + consumers, faster processing, or autoscaling.
 

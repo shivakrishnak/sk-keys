@@ -11,7 +11,7 @@ permalink: /async-background/
 
 Task queues, message brokers, workers, retry patterns, fan-out/fan-in, Celery, RabbitMQ, Airflow, and async observability.
 
-**Keywords:** ASY-001–ASY-044 (44 terms)
+**Keywords:** ASY-001--ASY-044 (38 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -26,7 +26,6 @@ Task queues, message brokers, workers, retry patterns, fan-out/fan-in, Celery, R
 | ASY-009 | Job Queues and Worker Patterns | ★☆☆ |
 | ASY-010 | RabbitMQ Fundamentals (Exchange, Queue, Binding) | ★☆☆ |
 | ASY-011 | Apache Kafka Fundamentals | ★☆☆ |
-| ASY-012 | AWS SQS and SNS | ★☆☆ |
 | ASY-013 | Dead Letter Queues (DLQ) | ★★☆ |
 | ASY-014 | Message Retry Strategies (Exponential Backoff) | ★★☆ |
 | ASY-015 | Event-Driven Architecture Patterns | ★★☆ |
@@ -37,11 +36,8 @@ Task queues, message brokers, workers, retry patterns, fan-out/fan-in, Celery, R
 | ASY-020 | Outbox Pattern | ★★☆ |
 | ASY-021 | Consumer Group and Partition Strategy (Kafka) | ★★☆ |
 | ASY-022 | Kafka Consumer Lag and Monitoring | ★★☆ |
-| ASY-023 | Message Schema Evolution (Avro, Protobuf) | ★★☆ |
-| ASY-024 | Poison Pill Messages and Circuit Breaker | ★★☆ |
 | ASY-025 | Async API Design (Webhooks, Callbacks, Polling) | ★★☆ |
 | ASY-026 | Priority Queues | ★★☆ |
-| ASY-027 | Message Deduplication | ★★☆ |
 | ASY-028 | Temporal (Workflow Orchestration) | ★★☆ |
 | ASY-029 | AWS Step Functions | ★★☆ |
 | ASY-030 | Kafka Exactly-Once Semantics (EOS) | ★★★ |
@@ -52,8 +48,6 @@ Task queues, message brokers, workers, retry patterns, fan-out/fan-in, Celery, R
 | ASY-035 | Message Broker Selection Strategy | ★★★ |
 | ASY-036 | Async Architecture Pattern Selection (Queue vs Stream vs Choreography) | ★★★ |
 | ASY-037 | Workflow Orchestration Architecture (Temporal vs Step Functions) | ★★★ |
-| ASY-038 | Kafka Internals Deep Dive (Replication, ISR, Log Compaction) | ★★★ |
-| ASY-039 | Message Queue Algorithm Research | ★★★ |
 | ASY-040 | Distributed Consensus in Message Systems | ★★★ |
 | ASY-041 | Async Trade-off Framing (Decoupling vs Complexity) | ★★★ |
 | ASY-042 | Message Delivery Guarantee Mental Model | ★★★ |

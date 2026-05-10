@@ -9,9 +9,9 @@ permalink: /big-data-streaming/
 
 # Big Data & Streaming
 
-Distributed computing, MapReduce, Spark, Kafka, Flink, stream processing patterns, and messaging architectures.
+Distributed computing, MapReduce, Apache Spark, Flink, Hadoop, stream processing patterns, Lambda/Kappa architectures, and big data platform design. (Kafka and messaging topics have moved to Messaging & Event Streaming.)
 
-**Keywords:** BIG-001–BIG-057 (57 terms)
+**Keywords:** BIG-001--BIG-057 (35 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -29,20 +29,6 @@ Distributed computing, MapReduce, Spark, Kafka, Flink, stream processing pattern
 | BIG-012 | Spark DataFrame  Dataset | ★★★ |
 | BIG-013 | Spark Streaming | ★★★ |
 | BIG-014 | Apache Flink | ★★★ |
-| BIG-015 | Apache Kafka | ★★☆ |
-| BIG-016 | Kafka Topic  Partition  Offset | ★★☆ |
-| BIG-017 | Consumer Group | ★★☆ |
-| BIG-018 | ISR (In-Sync Replicas) | ★★★ |
-| BIG-019 | Log Compaction | ★★★ |
-| BIG-020 | Exactly-Once Semantics | ★★★ |
-| BIG-021 | Kafka Streams | ★★★ |
-| BIG-022 | KSQL | ★★★ |
-| BIG-023 | Consumer Lag | ★★★ |
-| BIG-024 | Idempotent Producer | ★★★ |
-| BIG-025 | Transactional Producer | ★★★ |
-| BIG-026 | Dead Letter Queue (DLQ) | ★★☆ |
-| BIG-027 | Fan-Out Pattern | ★★☆ |
-| BIG-028 | Message Ordering | ★★★ |
 | BIG-029 | Windowing (Tumbling, Sliding, Session) | ★★★ |
 | BIG-030 | Watermark | ★★★ |
 | BIG-031 | Event Time vs Processing Time | ★★★ |
@@ -51,14 +37,6 @@ Distributed computing, MapReduce, Spark, Kafka, Flink, stream processing pattern
 | BIG-034 | Batch vs Stream Processing | ★★☆ |
 | BIG-035 | Backpressure (Streaming) | ★★★ |
 | BIG-036 | Apache Beam | ★★★ |
-| BIG-037 | Pulsar | ★★★ |
-| BIG-038 | RabbitMQ | ★★☆ |
-| BIG-039 | Message Broker vs Event Bus | ★★☆ |
-| BIG-040 | Point-to-Point vs Pub-Sub | ★★☆ |
-| BIG-041 | Competing Consumers | ★★☆ |
-| BIG-042 | Outbox Pattern | ★★★ |
-| BIG-043 | Transactional Outbox | ★★★ |
-| BIG-044 | Event-Driven Architecture | ★★★ |
 | BIG-045 | Change Data Capture (CDC) | ★★★ |
 | BIG-046 | Streaming Architecture Design | ★★★ |
 | BIG-047 | Lambda Architecture vs Kappa Architecture Trade-offs | ★★★ |

@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Point-to-Point vs Pub-Sub"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 40
-permalink: /big-data-streaming/point-to-point-vs-pub-sub/
-id: BIG-040
-category: Big Data & Streaming
+nav_order: 23
+permalink: /messaging-streaming/point-to-point-vs-pub-sub/
+id: MSG-023
+category: Messaging & Event Streaming
 difficulty: ★★☆
 depends_on: Message Broker vs Event Bus, RabbitMQ, Apache Kafka
 used_by: Messaging Architecture, Microservices, Event-Driven Systems
@@ -20,7 +20,7 @@ tags:
   - messaging-patterns
 ---
 
-# BIG-040 - Point-to-Point vs Pub-Sub
+# MSG-023 - Point-to-Point vs Pub-Sub
 
 ⚡ TL;DR - **Point-to-Point (Queue)**: message sent to ONE receiver only - competing consumers share the queue, each message consumed exactly once - ideal for task distribution (work queues); **Publish-Subscribe (Topic)**: message broadcast to ALL subscribers - each subscriber gets its own copy - ideal for event broadcasting (fan-out); tools: RabbitMQ queues = P2P; RabbitMQ fanout exchange = Pub-Sub; Kafka topic with ONE consumer group = P2P; Kafka topic with MULTIPLE consumer groups = Pub-Sub.
 

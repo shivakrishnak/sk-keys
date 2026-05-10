@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "ISR (In-Sync Replicas)"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 18
-permalink: /big-data-streaming/isr-in-sync-replicas/
-id: BIG-018
-category: Big Data & Streaming
+nav_order: 9
+permalink: /messaging-streaming/isr-in-sync-replicas/
+id: MSG-009
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Apache Kafka, Kafka Topic / Partition / Offset
 used_by: Kafka Replication, Producer Durability, Leader Election
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-018 - ISR (In-Sync Replicas)
+# MSG-009 - ISR (In-Sync Replicas)
 
 ⚡ TL;DR - **ISR (In-Sync Replicas)** is the set of Kafka partition replicas that are **fully caught up** with the partition leader (within `replica.lag.time.max.ms`, default 30s); producers with `acks=all` wait for ALL ISR members to acknowledge a write - guaranteeing no data loss as long as at least one ISR member survives; replicas falling behind are removed from ISR, and the leader only commits messages that all ISR replicas have acknowledged.
 

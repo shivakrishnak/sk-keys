@@ -1,9 +1,9 @@
 ---
-id: ASY-024
+id: MSG-030
 title: Poison Pill Messages and Circuit Breaker
-category: Async & Background Processing
-tier: tier-9-professional-domain
-folder: ASY-async-background
+category: Messaging & Event Streaming
+tier: tier-4-data
+folder: MSG-messaging-streaming
 difficulty: ★★☆
 depends_on:
 used_by:
@@ -16,12 +16,12 @@ tags:
 status: draft
 version: 0
 layout: default
-parent: "Async & Background Processing"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 24
-permalink: /asy/poison-pill-messages-and-circuit-breaker/
+nav_order: 30
+permalink: /messaging-streaming/poison-pill-messages-and-circuit-breaker/
 ---
 
-# ASY-024 - Poison Pill Messages and Circuit Breaker
+# MSG-030 - Poison Pill Messages and Circuit Breaker
 
 > Entry stub. Generate full content using Master Prompt v3.0.

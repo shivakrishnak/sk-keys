@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Outbox Pattern"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 42
-permalink: /big-data-streaming/outbox-pattern/
-id: BIG-042
-category: Big Data & Streaming
+nav_order: 25
+permalink: /messaging-streaming/outbox-pattern/
+id: MSG-025
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Exactly-Once Semantics, Transactional Producer, Message Broker vs Event Bus
 used_by: Reliable Event Publishing, Transactional Outbox, Event-Driven Architecture
@@ -20,7 +20,7 @@ tags:
   - transactional-integrity
 ---
 
-# BIG-042 - Outbox Pattern
+# MSG-025 - Outbox Pattern
 
 ⚡ TL;DR - **Outbox Pattern** solves the **dual-write problem**: writing to a DB and publishing to Kafka in a single request are NOT atomic (one can succeed, the other can fail → inconsistency); solution: write to both the **business table and an outbox table** in the **SAME DB transaction** → a separate **relay process** polls the outbox table and publishes to Kafka → **at-least-once guarantee**; requires **idempotent consumers** downstream (relay may republish on retry).
 

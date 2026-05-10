@@ -1,9 +1,9 @@
 ---
-id: ASY-012
+id: MSG-028
 title: AWS SQS and SNS
-category: Async & Background Processing
-tier: tier-9-professional-domain
-folder: ASY-async-background
+category: Messaging & Event Streaming
+tier: tier-4-data
+folder: MSG-messaging-streaming
 difficulty: ★☆☆
 depends_on:
 used_by:
@@ -15,12 +15,12 @@ tags:
 status: draft
 version: 0
 layout: default
-parent: "Async & Background Processing"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 12
-permalink: /asy/aws-sqs-and-sns/
+nav_order: 28
+permalink: /messaging-streaming/aws-sqs-and-sns/
 ---
 
-# ASY-012 - AWS SQS and SNS
+# MSG-028 - AWS SQS and SNS
 
 > Entry stub. Generate full content using Master Prompt v3.0.

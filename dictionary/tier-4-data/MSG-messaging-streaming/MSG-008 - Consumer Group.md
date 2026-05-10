@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Consumer Group"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 17
-permalink: /big-data-streaming/consumer-group/
-id: BIG-017
-category: Big Data & Streaming
+nav_order: 8
+permalink: /messaging-streaming/consumer-group/
+id: MSG-008
+category: Messaging & Event Streaming
 difficulty: ★★☆
 depends_on: Kafka Topic / Partition / Offset, Apache Kafka
 used_by: Distributed Event Consumers, Microservices, Stream Processing
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-017 - Consumer Group
+# MSG-008 - Consumer Group
 
 ⚡ TL;DR - A Kafka **consumer group** is a set of consumers that **share the work** of consuming a topic - each partition is assigned to exactly **one consumer** in the group (no duplicate processing), enabling horizontal scalability; when a consumer joins/leaves, a **rebalance** reassigns partitions; different groups read the same topic **independently** (each has its own offset tracking), enabling multiple services to consume the same events.
 

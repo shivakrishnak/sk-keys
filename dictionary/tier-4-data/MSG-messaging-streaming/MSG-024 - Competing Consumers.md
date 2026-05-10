@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Competing Consumers"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 41
-permalink: /big-data-streaming/competing-consumers/
-id: BIG-041
-category: Big Data & Streaming
+nav_order: 24
+permalink: /messaging-streaming/competing-consumers/
+id: MSG-024
+category: Messaging & Event Streaming
 difficulty: ★★☆
 depends_on: Point-to-Point vs Pub-Sub, Consumer Group, Message Ordering
 used_by: Task Parallelism, Load Balancing, Work Queue Scaling
@@ -20,7 +20,7 @@ tags:
   - parallelism
 ---
 
-# BIG-041 - Competing Consumers
+# MSG-024 - Competing Consumers
 
 ⚡ TL;DR - **Competing Consumers** pattern: multiple consumer instances on the **same queue or consumer group** - each message processed by **exactly one consumer** - enables horizontal scale-out (add consumers → more throughput); Kafka: max parallelism = partition count (consumer instances > partitions = idle instances); RabbitMQ: unlimited competing consumers (no partition limit); requires **idempotent consumers** (message may be redelivered on consumer crash before ack); **fair dispatch** (prefetch=1 in RabbitMQ; Kafka: partition count = parallelism ceiling).
 

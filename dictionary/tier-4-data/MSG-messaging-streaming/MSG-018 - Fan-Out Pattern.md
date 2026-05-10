@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Fan-Out Pattern"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 27
-permalink: /big-data-streaming/fan-out-pattern/
-id: BIG-027
-category: Big Data & Streaming
+nav_order: 18
+permalink: /messaging-streaming/fan-out-pattern/
+id: MSG-018
+category: Messaging & Event Streaming
 difficulty: ★★☆
 depends_on: Apache Kafka, Consumer Group, Kafka Topic / Partition / Offset
 used_by: Event-Driven Architecture, Microservices, Distributed Systems
@@ -20,7 +20,7 @@ tags:
   - event-driven
 ---
 
-# BIG-027 - Fan-Out Pattern
+# MSG-018 - Fan-Out Pattern
 
 ⚡ TL;DR - **Fan-Out** distributes a single event to **multiple independent consumers** - in Kafka, achieved by having **multiple consumer groups** on the same topic; each consumer group gets its own independent offset cursor and receives all messages; one `order-placed` event can simultaneously trigger inventory service, notification service, and billing service via separate consumer groups - no duplication in the source, full independence in consumption.
 

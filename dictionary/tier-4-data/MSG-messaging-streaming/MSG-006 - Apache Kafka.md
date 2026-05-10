@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Apache Kafka"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 15
-permalink: /big-data-streaming/apache-kafka/
-id: BIG-015
-category: Big Data & Streaming
+nav_order: 6
+permalink: /messaging-streaming/apache-kafka/
+id: MSG-006
+category: Messaging & Event Streaming
 difficulty: ★★☆
 depends_on: Distributed Computing, Messaging Systems
 used_by: Kafka Topic / Partition / Offset, Consumer Group, ISR, Structured Streaming, Flink
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-015 - Apache Kafka
+# MSG-006 - Apache Kafka
 
 ⚡ TL;DR - Apache Kafka is a **distributed event streaming platform** - a persistent, ordered, replicated **commit log** that producers write events to and consumers read from; originally built at LinkedIn for high-throughput activity feeds (millions of messages/second), it became the backbone of event-driven architectures: stream processing (with Kafka Streams/Flink/Spark), event sourcing, CDC, and microservice decoupling via topics and partitions.
 

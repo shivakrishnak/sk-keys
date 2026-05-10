@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Transactional Outbox"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 43
-permalink: /big-data-streaming/transactional-outbox/
-id: BIG-043
-category: Big Data & Streaming
+nav_order: 26
+permalink: /messaging-streaming/transactional-outbox/
+id: MSG-026
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Outbox Pattern, Change Data Capture (CDC), Apache Kafka
 used_by: Low-Latency Event Publishing, CDC-Based Outbox, Reliable Streaming
@@ -20,7 +20,7 @@ tags:
   - kafka-connect
 ---
 
-# BIG-043 - Transactional Outbox
+# MSG-026 - Transactional Outbox
 
 ⚡ TL;DR - **Transactional Outbox** = Outbox Pattern + **CDC (Change Data Capture)** via **Debezium** - instead of polling the outbox table, Debezium reads the **database transaction log** (PostgreSQL WAL, MySQL binlog) → captures INSERT to `outbox_events` → publishes to Kafka; advantages: **sub-millisecond latency** (no polling), **lower DB load** (reads from replication slot, not tables), **no locking** (no `SELECT FOR UPDATE`); Debezium **Outbox Router SMT** (Single Message Transform) routes events to correct Kafka topics automatically.
 

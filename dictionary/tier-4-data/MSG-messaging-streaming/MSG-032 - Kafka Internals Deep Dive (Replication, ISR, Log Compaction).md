@@ -1,9 +1,9 @@
 ---
-id: ASY-038
+id: MSG-032
 title: Kafka Internals Deep Dive (Replication, ISR, Log Compaction)
-category: Async & Background Processing
-tier: tier-9-professional-domain
-folder: ASY-async-background
+category: Messaging & Event Streaming
+tier: tier-4-data
+folder: MSG-messaging-streaming
 difficulty: ★★★
 depends_on:
 used_by:
@@ -16,12 +16,12 @@ tags:
 status: draft
 version: 0
 layout: default
-parent: "Async & Background Processing"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 38
-permalink: /asy/kafka-internals-deep-dive-replication-isr-log-compaction/
+nav_order: 32
+permalink: /messaging-streaming/kafka-internals-deep-dive/
 ---
 
-# ASY-038 - Kafka Internals Deep Dive (Replication, ISR, Log Compaction)
+# MSG-032 - Kafka Internals Deep Dive (Replication, ISR, Log Compaction)
 
 > Entry stub. Generate full content using Master Prompt v3.0.

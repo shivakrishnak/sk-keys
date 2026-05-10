@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Message Broker vs Event Bus"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 39
-permalink: /big-data-streaming/message-broker-vs-event-bus/
-id: BIG-039
-category: Big Data & Streaming
+nav_order: 22
+permalink: /messaging-streaming/message-broker-vs-event-bus/
+id: MSG-022
+category: Messaging & Event Streaming
 difficulty: ★★☆
 depends_on: Point-to-Point vs Pub-Sub, RabbitMQ, Apache Kafka
 used_by: Microservices Communication, Event-Driven Architecture
@@ -20,7 +20,7 @@ tags:
   - messaging-patterns
 ---
 
-# BIG-039 - Message Broker vs Event Bus
+# MSG-022 - Message Broker vs Event Bus
 
 ⚡ TL;DR - **Message Broker**: external, durable store-and-forward system (Kafka, RabbitMQ) - messages survive service restarts, cross-process, replay possible; **Event Bus**: in-process pub-sub (Spring's `ApplicationEventPublisher`, Guava EventBus) - no durable storage, fire-and-forget, synchronous by default, messages lost if no listener is active at publish time; use **Broker** for: inter-service communication, durability, decoupling across processes; use **Event Bus** for: within a single service (e.g., domain events triggering other components in the same JVM).
 

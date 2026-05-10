@@ -1,9 +1,9 @@
 ---
-id: ASY-039
+id: MSG-033
 title: Message Queue Algorithm Research
-category: Async & Background Processing
-tier: tier-9-professional-domain
-folder: ASY-async-background
+category: Messaging & Event Streaming
+tier: tier-4-data
+folder: MSG-messaging-streaming
 difficulty: ★★★
 depends_on:
 used_by:
@@ -16,12 +16,12 @@ tags:
 status: draft
 version: 0
 layout: default
-parent: "Async & Background Processing"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 39
-permalink: /asy/message-queue-algorithm-research/
+nav_order: 33
+permalink: /messaging-streaming/message-queue-algorithm-research/
 ---
 
-# ASY-039 - Message Queue Algorithm Research
+# MSG-033 - Message Queue Algorithm Research
 
 > Entry stub. Generate full content using Master Prompt v3.0.

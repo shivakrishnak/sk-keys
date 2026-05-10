@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Kafka Topic  Partition  Offset"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 16
-permalink: /big-data-streaming/kafka-topic-partition-offset/
-id: BIG-016
-category: Big Data & Streaming
+nav_order: 7
+permalink: /messaging-streaming/kafka-topic-partition-offset/
+id: MSG-007
+category: Messaging & Event Streaming
 difficulty: ★★☆
 depends_on: Apache Kafka
 used_by: Consumer Group, ISR, Kafka Streams, Producers, Consumers
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-016 - Kafka Topic  Partition  Offset
+# MSG-007 - Kafka Topic  Partition  Offset
 
 ⚡ TL;DR - A Kafka **topic** is a logical event category (like a table); a **partition** is a physical ordered, append-only log segment within a topic (enables parallelism - N partitions = N parallel consumers); an **offset** is the monotonically increasing integer position of a record within a partition - consumers track their position by committing the last-processed offset, enabling replay and exactly-once/at-least-once guarantees.
 

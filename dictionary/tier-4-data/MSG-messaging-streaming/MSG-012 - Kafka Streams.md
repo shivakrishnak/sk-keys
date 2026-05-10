@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Kafka Streams"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 21
-permalink: /big-data-streaming/kafka-streams/
-id: BIG-021
-category: Big Data & Streaming
+nav_order: 12
+permalink: /messaging-streaming/kafka-streams/
+id: MSG-012
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Apache Kafka, Exactly-Once Semantics
 used_by: KTable vs KStream, Event-Driven Architecture, Stream Processing
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-021 - Kafka Streams
+# MSG-012 - Kafka Streams
 
 ⚡ TL;DR - **Kafka Streams** is a **lightweight Java library** (no separate cluster) for building real-time stream processing applications that read from and write to Kafka - provides **KStream** (record stream), **KTable** (changelog/state), **stateful operations** (aggregations, joins) backed by embedded **RocksDB**, **exactly-once semantics** via transactions, and scales by adding partitions; runs as a normal Java app - no Flink/Spark cluster required.
 

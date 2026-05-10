@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Event-Driven Architecture"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 44
-permalink: /big-data-streaming/event-driven-architecture/
-id: BIG-044
-category: Big Data & Streaming
+nav_order: 27
+permalink: /messaging-streaming/event-driven-architecture/
+id: MSG-027
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Message Broker vs Event Bus, Outbox Pattern, Apache Kafka
 used_by: Microservices, Loose Coupling, Event Sourcing
@@ -20,7 +20,7 @@ tags:
   - loose-coupling
 ---
 
-# BIG-044 - Event-Driven Architecture
+# MSG-027 - Event-Driven Architecture
 
 ⚡ TL;DR - **Event-Driven Architecture (EDA)**: services communicate via **events** (immutable facts: "OrderPlaced", "PaymentCharged") through a broker (Kafka/RabbitMQ); producers fire events without knowing who consumes them; consumers react independently; **loose coupling** + **temporal decoupling** (consumer can be offline); **choreography** (services react to events independently, no coordinator) vs **orchestration** (saga coordinator tells each service what to do); challenges: eventual consistency, complex debugging, schema evolution.
 

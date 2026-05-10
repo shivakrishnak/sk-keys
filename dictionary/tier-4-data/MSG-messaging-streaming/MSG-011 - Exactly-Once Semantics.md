@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Exactly-Once Semantics"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 20
-permalink: /big-data-streaming/exactly-once-semantics/
-id: BIG-020
-category: Big Data & Streaming
+nav_order: 11
+permalink: /messaging-streaming/exactly-once-semantics/
+id: MSG-011
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Apache Kafka, ISR (In-Sync Replicas), Idempotent Producer
 used_by: Kafka Transactions, Kafka Streams, Structured Streaming
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-020 - Exactly-Once Semantics
+# MSG-011 - Exactly-Once Semantics
 
 ⚡ TL;DR - **Exactly-Once Semantics (EOS)** guarantees that every message is **processed and produced exactly once** - no duplicates from retries, no data loss from failures; Kafka achieves this via **idempotent producer** (sequence numbers deduplicate retries), **transactions** (atomic multi-partition writes with 2PC coordinator), and **read-process-write atomicity** (Kafka Streams reads offset + writes output in one atomic transaction); end-to-end EOS requires all three components working together.
 

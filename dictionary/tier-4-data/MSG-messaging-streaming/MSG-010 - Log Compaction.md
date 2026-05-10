@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Log Compaction"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 19
-permalink: /big-data-streaming/log-compaction/
-id: BIG-019
-category: Big Data & Streaming
+nav_order: 10
+permalink: /messaging-streaming/log-compaction/
+id: MSG-010
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Apache Kafka, Kafka Topic / Partition / Offset
 used_by: Kafka Streams (KTable), Change Log Topics, State Restoration
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-019 - Log Compaction
+# MSG-010 - Log Compaction
 
 ⚡ TL;DR - Kafka **log compaction** keeps only the **latest value for each key** in a topic partition - old records with the same key are removed (compacted away), keeping the log as a **changelog** of current state rather than full history; a **tombstone** (null value) marks a key as deleted; compacted topics are never time-expired - they retain the latest state indefinitely, making them ideal for KTable state restoration, cache population, and database change-log replication.
 

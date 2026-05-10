@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Pulsar"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 37
-permalink: /big-data-streaming/pulsar/
-id: BIG-037
-category: Big Data & Streaming
+nav_order: 20
+permalink: /messaging-streaming/pulsar/
+id: MSG-020
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Apache Kafka, Topic/Partition, Consumer Lag
 used_by: Multi-Tenant Streaming, Tiered Storage, Geo-Replication
@@ -20,7 +20,7 @@ tags:
   - messaging
 ---
 
-# BIG-037 - Pulsar
+# MSG-020 - Pulsar
 
 ⚡ TL;DR - **Apache Pulsar** is a distributed pub-sub messaging system that separates **compute (brokers) from storage (Apache BookKeeper)** - enabling elastic scaling of each independently; four subscription types: **exclusive** (1 consumer), **shared** (competing consumers), **failover** (active-standby), **key_shared** (ordered per key); native **tiered storage** (hot → BookKeeper, cold → S3/GCS), **multi-tenancy** (tenant/namespace/topic hierarchy), **geo-replication**, and **Pulsar Functions** (lightweight serverless compute); architectural difference from Kafka: Pulsar splits broker and storage layers, enabling faster broker scaling.
 

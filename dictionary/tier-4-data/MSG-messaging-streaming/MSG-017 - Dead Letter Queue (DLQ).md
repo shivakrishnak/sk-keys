@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Dead Letter Queue (DLQ)"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 26
-permalink: /big-data-streaming/dead-letter-queue/
-id: BIG-026
-category: Big Data & Streaming
+nav_order: 17
+permalink: /messaging-streaming/dead-letter-queue-dlq/
+id: MSG-017
+category: Messaging & Event Streaming
 difficulty: ★★☆
 depends_on: Apache Kafka, Consumer Group, Message Ordering
 used_by: Error Handling, Resilient Pipelines, Observability
@@ -20,7 +20,7 @@ tags:
   - resilience
 ---
 
-# BIG-026 - Dead Letter Queue (DLQ)
+# MSG-017 - Dead Letter Queue (DLQ)
 
 ⚡ TL;DR - A **Dead Letter Queue (DLQ)** is a special queue or Kafka topic where messages that **cannot be processed** (invalid format, downstream error, repeated failures) are routed instead of blocking the main pipeline - prevents one bad message ("poison pill") from stopping all processing; Spring Kafka's `@RetryableTopic` automatically creates retry topics (`topic.RETRY-0`, `topic.RETRY-1`) and a DLT (`topic.DLT`) with configurable backoff; messages in DLQ are investigated and replayed or discarded manually.
 

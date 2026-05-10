@@ -2,12 +2,12 @@
 version: 2
 layout: default
 title: "Idempotent Producer"
-parent: "Big Data & Streaming"
+parent: "Messaging & Event Streaming"
 grand_parent: "Technical Dictionary"
-nav_order: 24
-permalink: /big-data-streaming/idempotent-producer/
-id: BIG-024
-category: Big Data & Streaming
+nav_order: 15
+permalink: /messaging-streaming/idempotent-producer/
+id: MSG-015
+category: Messaging & Event Streaming
 difficulty: ★★★
 depends_on: Apache Kafka, Exactly-Once Semantics
 used_by: Transactional Producer, Kafka Streams, Exactly-Once Semantics
@@ -20,7 +20,7 @@ tags:
   - deep-dive
 ---
 
-# BIG-024 - Idempotent Producer
+# MSG-015 - Idempotent Producer
 
 ⚡ TL;DR - **Idempotent Producer** (`enable.idempotence=true`) assigns each producer a unique **PID (Producer ID)** and attaches a **monotonically increasing sequence number** to every message per partition - if the broker receives a duplicate (producer retry after network timeout), it detects the duplicate `(PID, seqNum)` and silently discards it - guaranteeing **exactly-once delivery per session per partition**; requires `acks=all`, `retries=MAX_INT`, `max.in.flight.requests ≤ 5`.
 
