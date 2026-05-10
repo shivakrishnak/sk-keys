@@ -33,7 +33,7 @@ Before doing anything, run the upgrade script in stats-only mode to understand t
 ```powershell
 cd C:\ASK\MyWorkspace\sk-keys
 pwsh -ExecutionPolicy Bypass -File tmp\upgrade_to_v4.ps1 -Category "${input:target}"
-# Or for a tier:
+# --- OR for a tier (mutually exclusive with -Category - use one, not both) ---
 # pwsh -ExecutionPolicy Bypass -File tmp\upgrade_to_v4.ps1 -Tier "${input:target}"
 ```
 
@@ -74,7 +74,7 @@ Read the file to capture its exact frontmatter: `id`, `title`, `nav_order`, `per
 
 ### 2b. Generate complete v4.0 entry
 
-Apply every rule from the loaded `copilot-instructions.md`. Rules are grouped into four categories (Content, Conditional sections, Formatting, YAML) applied in that priority order — if a rule is inapplicable to the concept (e.g. a conditional section whose condition is not met), omit that section rather than forcing it. **All 23 sections are required in order** (conditional sections follow the decision table in `copilot-instructions.md`):
+Apply every rule from the loaded `copilot-instructions.md`. Rules are grouped into four categories (Content, Conditional sections, Formatting, YAML) applied in that priority order — if a rule is inapplicable to the concept (e.g. a conditional section whose condition is not met), omit the entire section including all its subsections rather than forcing it. **All 23 sections are required in order** (conditional sections follow the decision table in `copilot-instructions.md`):
 
 | #    | Section                                         | Notes                                                             |
 | ---- | ----------------------------------------------- | ----------------------------------------------------------------- |
@@ -103,7 +103,9 @@ Apply every rule from the loaded `copilot-instructions.md`. Rules are grouped in
 | 5.22 | `### ✅ Mastery Checklist`                      | 5 indicators: EXPLAIN / DEBUG / DECIDE / BUILD / EXTEND           |
 | 5.23 | `### 🧠 Think About This Before We Continue`    | 3 Qs + Hint each; at least 1 TYPE G                               |
 
-**Critical formatting rules (enforce on every entry):**
+**Critical rules — apply in this sequence for every entry:**
+
+**Step 1 — Formatting rules:**
 
 - Every `###` must be preceded by `---` (blank line before and after both)
 - ASCII diagrams ≤59 chars wide; code lines ≤70 chars
@@ -111,7 +113,7 @@ Apply every rule from the loaded `copilot-instructions.md`. Rules are grouped in
 - No H2 (`##`) headers in body
 - No em dashes — use hyphens
 
-**Critical YAML rules:**
+**Step 2 — YAML rules:**
 
 - Preserve all existing frontmatter fields (`id`, `nav_order`, `permalink`, `tags`)
 - Always set: `status: complete`, `version: LATEST_VERSION` (currently `4`)
