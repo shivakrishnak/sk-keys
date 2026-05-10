@@ -33,7 +33,7 @@ Before doing anything, run the upgrade script in stats-only mode to understand t
 ```powershell
 cd C:\ASK\MyWorkspace\sk-keys
 pwsh -ExecutionPolicy Bypass -File tmp\upgrade_to_v4.ps1 -Category "${input:target}"
-# --- OR for a tier (mutually exclusive with -Category - use one, not both) ---
+# --- OR for a tier ---
 # pwsh -ExecutionPolicy Bypass -File tmp\upgrade_to_v4.ps1 -Tier "${input:target}"
 ```
 
@@ -74,7 +74,7 @@ Read the file to capture its exact frontmatter: `id`, `title`, `nav_order`, `per
 
 ### 2b. Generate complete v4.0 entry
 
-Apply every rule from the loaded `copilot-instructions.md`. Rules are grouped into four categories (Content, Conditional sections, Formatting, YAML) applied in that priority order — if a rule is inapplicable to the concept (e.g. a conditional section whose condition is not met), omit the entire section including all its subsections rather than forcing it. **All 24 sections are required in order** (conditional sections follow the decision table in `copilot-instructions.md`):
+Apply every rule from the loaded `copilot-instructions.md`. Rules are grouped into four categories — Content, Conditional sections, Formatting, YAML — applied in that priority order. **All 24 sections are required in order.** If a conditional section's condition is not met, omit the entire section and all its subsections. For all other rules, apply them as specified without omission. Conditional section decisions follow the decision table in `copilot-instructions.md`:
 
 | #    | Section                                         | Notes                                                             |
 | ---- | ----------------------------------------------- | ----------------------------------------------------------------- |
@@ -165,7 +165,7 @@ The script will:
 5. Set `version: LATEST_VERSION` (currently `4`) in frontmatter
 
 **After the script runs**, search upgraded files for `<!-- TODO LATEST_VERSION_LABEL:` and fill each stub using Copilot,
-reading the entry's existing content for context. Add only the missing content — do not rewrite existing sections.
+reading the entry's existing content for context. Add only the missing content — do not rewrite existing sections. If an existing section partially meets LATEST_VERSION_LABEL requirements, adjust only the non-compliant parts to bring it into full compliance.
 
 ---
 
