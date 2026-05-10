@@ -4,13 +4,27 @@ This workspace is the **sk-keys Technical Dictionary** - a comprehensive softwar
 
 Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. Apply each category independently - rules within a category work together, but do not apply a rule from one category to resolve a conflict in another.
 
+---
+
+> **Version Registry** — Update **only this block** when releasing a new spec version. All prose references below use these constants.
+>
+> | Constant               | Current Value | Meaning                                                   |
+> | ---------------------- | ------------- | --------------------------------------------------------- |
+> | `LATEST_VERSION`       | `4`           | Integer written to `version:` in all complete entries     |
+> | `LATEST_VERSION_LABEL` | `v4.0`        | Human-readable label used in titles, headers, commit msgs |
+> | `STUB_VERSION`         | `0`           | Integer for placeholder stubs with no generated body      |
+>
+> **To release v5:** Set `LATEST_VERSION` = `5`, `LATEST_VERSION_LABEL` = `v5.0`. Then add a `v5.0` row to the Version Detection table, update the Section 8 skeleton in `GENERATOR_PROMPT.md`, rename `upgrade_to_v4.ps1` → `upgrade_to_v5.ps1`, and add a v5 entry to the changelog. Every `LATEST_VERSION` prose reference below automatically inherits the new value — no other edits required.
+
+---
+
 ## Prompt Files
 
-| Prompt                                        | Purpose                                                                 |
-| --------------------------------------------- | ----------------------------------------------------------------------- |
-| `.github/prompts/generate-keywords.prompt.md` | Generate keyword lists for a category/tier, sync index.md, create stubs |
-| `.github/generate-dict-entries.prompt.md`     | Generate full v4.0 dictionary entry content from stubs                  |
-| `.github/prompts/upgrade-batch.prompt.md`     | Upgrade existing entries to v4.0 standard                               |
+| Prompt                                        | Purpose                                                                  |
+| --------------------------------------------- | ------------------------------------------------------------------------ |
+| `.github/prompts/generate-keywords.prompt.md` | Generate keyword lists for a category/tier, sync index.md, create stubs  |
+| `.github/generate-dict-entries.prompt.md`     | Generate full `LATEST_VERSION_LABEL` dictionary entry content from stubs |
+| `.github/prompts/upgrade-batch.prompt.md`     | Upgrade existing entries to `LATEST_VERSION_LABEL` standard              |
 
 **Keyword generation spec:** `KEYWORD_GENERATOR_PROMPT.md` (Category Keyword Generator v3.0) is the master specification for all keyword list generation. Apply it by default when generating keyword lists for any category or tier.
 
@@ -47,14 +61,15 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 
 **5. Version defaults:**
 
-- All fully generated entries must set `version: 4` and `status: complete`. v4.0 is the only acceptable output standard for new content.
-- Stub files (placeholder only, no generated content) use `version: 0` and `status: draft`.
-- The `version` field follows a strict 5-level scale: 0 (stub) | 1 (pre-v2) | 2 (v2/v2.1) | 3 (v3.x) | 4 (v4.0). Never set a version value manually outside this scale.
-- When upgrading an existing entry to v4.0 standard, set `version: 4` only after all required v4 sections are present and non-stub.
+- All fully generated entries must set `version: LATEST_VERSION` (currently `4`) and `status: complete`. `LATEST_VERSION_LABEL` (currently `v4.0`) is the only acceptable output standard for new content.
+- Stub files (placeholder only, no generated content) use `version: STUB_VERSION` (currently `0`) and `status: draft`.
+- The `version` field follows a strict 5-level scale: `0` (stub) | `1` (pre-v2) | `2` (v2/v2.1) | `3` (v3.x) | `4` (v4.0 = `LATEST_VERSION`). Never set a version value manually outside this scale.
+- When upgrading an existing entry to `LATEST_VERSION_LABEL` standard, set `version: LATEST_VERSION` only after all required sections are present and non-stub.
+- See the **Version Registry** at the top of this file for current values of `LATEST_VERSION` and `STUB_VERSION`.
 
 ---
 
-## Technical Dictionary Generator - Master Prompt v4.0
+## Technical Dictionary Generator - Master Prompt `LATEST_VERSION_LABEL` (v4.0)
 
 > **Rules summary:** Four rule categories govern every entry - apply them in order:
 >
@@ -134,7 +149,7 @@ tags:
   - tag2
   - tag3
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "Full Category Name"
 grand_parent: "Technical Dictionary"
@@ -154,7 +169,7 @@ permalink: /category-slug/keyword-slug/
 - `depends_on` / `used_by` / `related`: **full IDs** (`JVM-001, SEC-023`), comma-separated, max 5, no brackets
 - `tags`: YAML array, no `#` prefix, 3–6 tags from approved taxonomy
 - `status`: `draft` · `in-progress` · `complete`
-- `version`: integer, starts at 1
+- `version`: five-level integer — `0` (stub) · `1` (pre-v2) · `2` (v2/v2.1) · `3` (v3.x) · `4` (v4.0). Generated entries always set `LATEST_VERSION` (currently `4`); new stubs always set `STUB_VERSION` (currently `0`)
 - `layout`: always `default` - required for just-the-docs rendering
 - `parent`: must match **exactly** the `title:` in the category's `index.md`, always double-quoted
 - `grand_parent`: always exactly `"Technical Dictionary"` - required for 3-level nav hierarchy
@@ -180,7 +195,7 @@ tags:
   - performance
   - deep-dive
 status: complete
-version: 1
+version: 4
 layout: default
 parent: "Java & JVM Internals"
 grand_parent: "Technical Dictionary"
@@ -206,8 +221,8 @@ tags:
   - html
   - performance
   - advanced
-status: draft
-version: 1
+status: complete
+version: 4
 layout: default
 parent: "HTML"
 grand_parent: "Technical Dictionary"
@@ -350,7 +365,7 @@ A file is **v2.1** (still `version: 2`) if it ALSO has: `### 💎 Transferable W
 
 A file is **v3.x** (`version: 3`) if it ALSO has the new YAML frontmatter with `id:` field (format `CODE-NNN`) and `status:` field, and `depends_on` / `used_by` / `related` use full IDs (`JVM-001`) not keyword names. Set `version: 3` in frontmatter to signal v3.x content.
 
-A file is **v4.0** (`version: 4`) if it ALSO has: `### 📶 Gradual Depth - Five Levels` (5 levels including Level 5 - Mastery) · `### ✅ Mastery Checklist` section with 5 testable indicators · `ANTI-PATTERN` row in Quick Reference Card · `**Industry applications:**` in Transferable Wisdom · At least one TYPE G question in Think About This. Set `version: 4` in frontmatter to signal v4.0 content.
+A file is **v4.0** (`version: 4` = `LATEST_VERSION`) if it ALSO has: `### 📶 Gradual Depth - Five Levels` (5 levels including Level 5 - Mastery) · `### ✅ Mastery Checklist` section with 5 testable indicators · `ANTI-PATTERN` row in Quick Reference Card · `**Industry applications:**` in Transferable Wisdom · At least one TYPE G question in Think About This. Set `version: LATEST_VERSION` (currently `4`) in frontmatter to signal `LATEST_VERSION_LABEL` content.
 
 ---
 
@@ -536,7 +551,7 @@ Generate dictionary entry:
   Folder:     JVM-java-jvm-internals
   Difficulty: ★★★
 
-Follow Master Prompt v4.0 exactly:
+Follow Master Prompt LATEST_VERSION_LABEL exactly:
 - **Structure:** All 23 required sections in order; conditional sections only when applicable.
 - **Formatting:** `---` before every `###`; ASCII diagrams ≤59 chars; code lines ≤70 chars.
 - **YAML:** All required frontmatter fields; double-quote titles with `: `; no em dashes.
@@ -557,7 +572,7 @@ Generate dictionary entries JVM-036 through JVM-040:
   JVM-040 | Deoptimization      | ★★★
 
 Category: Java & JVM Internals | Tier: tier-3-java | Folder: JVM-java-jvm-internals
-Follow Master Prompt v4.0 exactly.
+Follow Master Prompt LATEST_VERSION_LABEL exactly.
 ```
 
 **Continue from last:**
@@ -566,7 +581,7 @@ Follow Master Prompt v4.0 exactly.
 Continue dictionary generation for category: JVM
 Last generated: JVM-035
 Next batch: JVM-036 through JVM-040
-Follow Master Prompt v4.0 exactly.
+Follow Master Prompt LATEST_VERSION_LABEL exactly.
 ```
 
 ---
@@ -640,4 +655,4 @@ git commit -m "feat: add <CODE>-<NNN>-<CODE>-<NNN> <Category> - batch <N>"
 # Do NOT git push
 ```
 
-Upgrade commits: `"upgrade: →v4.0 <CODE>-<NNN>-<CODE>-<NNN> - batch N"`
+Upgrade commits: `"upgrade: →LATEST_VERSION_LABEL <CODE>-<NNN>-<CODE>-<NNN> - batch N"`

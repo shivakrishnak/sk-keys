@@ -5,6 +5,18 @@
 
 ---
 
+> **Version Registry** — Update **only this block** when releasing a new spec version. All prose references below use these constants.
+>
+> | Constant               | Current Value | Meaning                                                   |
+> | ---------------------- | ------------- | --------------------------------------------------------- |
+> | `LATEST_VERSION`       | `4`           | Integer written to `version:` in all complete entries     |
+> | `LATEST_VERSION_LABEL` | `v4.0`        | Human-readable label used in titles, headers, commit msgs |
+> | `STUB_VERSION`         | `0`           | Integer for placeholder stubs with no generated body      |
+>
+> **To release v5:** Set `LATEST_VERSION` = `5`, `LATEST_VERSION_LABEL` = `v5.0`. Then add a `v5.0` row to the Version Detection table, update the Section 8 skeleton `version:` and `status:`, rename `upgrade_to_v4.ps1` → `upgrade_to_v5.ps1`, and add a v5 entry to the changelog. Every `LATEST_VERSION` prose reference automatically inherits the new value.
+
+---
+
 ````
 ═══════════════════════════════════════════════════════════════════════════
 TECHNICAL DICTIONARY GENERATOR - MASTER PROMPT v4.0
@@ -546,7 +558,7 @@ tags:
   - tag2
   - tag3
 status: [draft | in-progress | complete]
-version: 1
+version: 0
 layout: default
 parent: "[Full Category Name]"
 grand_parent: "Technical Dictionary"
@@ -634,9 +646,10 @@ status:
 
 version:
   - Five-level integer scale: 0 (stub) | 1 (pre-v2) | 2 (v2/v2.1) | 3 (v3.x) | 4 (v4.0)
-  - Stub files (placeholder only) always use version: 0
-  - Fully generated entries always set version: 4
-  - When upgrading an existing entry to v4.0, set version: 4 after all v4 sections are present
+  - Stub files (placeholder only) always use STUB_VERSION (currently version: 0)
+  - Fully generated entries always set LATEST_VERSION (currently version: 4)
+  - When upgrading an existing entry, set version: LATEST_VERSION only after all required sections are present
+  - See Version Registry at top of this file for current values
 
 layout:
   - Always exactly: layout: default
@@ -683,7 +696,7 @@ tags:
   - performance
   - deep-dive
 status: complete
-version: 1
+version: 4
 layout: default
 parent: "Java & JVM Internals"
 grand_parent: "Technical Dictionary"
@@ -1306,6 +1319,8 @@ Content rules:
 ├──────────────┼───────────────────────────────────────────┤
 │ AVOID WHEN   │ [specific condition NOT to use this]      │
 ├──────────────┼───────────────────────────────────────────┤
+│ ANTI-PATTERN │ [most dangerous misuse - 1 line]          │
+├──────────────┼───────────────────────────────────────────┤
 │ TRADE-OFF    │ [what you gain] vs [what you sacrifice]   │
 ├──────────────┼───────────────────────────────────────────┤
 │ ONE-LINER    │ "[memorable metaphor insight in quotes]"  │
@@ -1317,8 +1332,8 @@ Content rules:
   - Added "WHAT IT IS" row - explicit concept statement
   - Added "PROBLEM IT SOLVES" row - the WHY
   - Added "KEY INSIGHT" row - the non-obvious truth
+  - Added "ANTI-PATTERN" row - most dangerous misuse (added in LATEST_VERSION_LABEL)
   - Added "TRADE-OFF" row - always show the cost
-  - Added "ANTI-PATTERN" row - most dangerous misuse (v4.0)
   - Total box width: exactly 60 characters (including borders)
   - Total rows: 9
 
@@ -2016,7 +2031,7 @@ SINGLE ENTRY:
     Folder:     [CODE-folder-name]
     Difficulty: [★☆☆ | ★★☆ | ★★★]
 
-  Follow Master Prompt v4.0 exactly.
+  Follow Master Prompt LATEST_VERSION_LABEL exactly.
   Use the complete skeleton from Section 8.
   Do not skip any required section.
   Do not add sections not in the spec.
@@ -2036,7 +2051,7 @@ BATCH OF 5:
   Tier:       [tier-N-name]
   Folder:     [CODE-folder-name]
 
-  Follow Master Prompt v4.0 exactly.
+  Follow Master Prompt LATEST_VERSION_LABEL exactly.
   Each entry is a separate markdown file.
   Sequential IDs - no gaps.
   Each entry fully self-contained.
@@ -2048,7 +2063,7 @@ CONTINUE FROM LAST:
   Next batch: [CODE]-[NNN] through [CODE]-[NNN]
 
   Confirm next ID = last + 1.
-  Follow Master Prompt v4.0 exactly.
+  Follow Master Prompt LATEST_VERSION_LABEL exactly.
 
 CROSS-CATEGORY BATCH:
 
@@ -2060,7 +2075,7 @@ CROSS-CATEGORY BATCH:
 
   Each entry goes in its own category folder.
   Cross-category depends_on uses full IDs: JVM-001, SEC-023.
-  Follow Master Prompt v4.0 exactly.
+  Follow Master Prompt LATEST_VERSION_LABEL exactly.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 10: SELF-VALIDATION CHECKLIST
@@ -2084,7 +2099,7 @@ FRONTMATTER:
   ☐ related: full IDs, not keyword names
   ☐ tags: YAML array format (- tag1), no # prefix, from taxonomy (Section 4)
   ☐ status: one of draft / in-progress / complete
-  ☐ version: 4 for fully generated entries; 0 for stub-only files
+  ☐ version: LATEST_VERSION for fully generated entries; STUB_VERSION for stub-only files
 
 STRUCTURE (24 sections check):
   ☐ 5.1  Title line with keyword name
@@ -2394,7 +2409,7 @@ Front matter rules:
   - used_by: CODE-NNN, CODE-NNN
   - related: CODE-NNN, CODE-NNN
   - status: draft
-  - version: 1
+  - version: 0
   - tags:
     - tag1
     - tag2
@@ -2533,7 +2548,7 @@ Front matter (use exact values for the chosen category):
   used_by: CODE-NNN, CODE-NNN
   related: CODE-NNN, CODE-NNN
   status: draft
-  version: 1
+  version: 0
   tags:
     - tag1
     - tag2
