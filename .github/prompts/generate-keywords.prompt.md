@@ -39,6 +39,7 @@ stub files only when needed.
 Follow exactly one path. Do not combine paths.
 
 **Step 1 — Identify input type:**
+
 - Input is a 3-letter code (e.g. `RCT`, `JVM`, `SEC`) → **Path A: single category**
 - Input is a tier folder (e.g. `tier-3-java`) → **Path B: entire tier**
 - Input matches neither format → stop and return an error showing valid formats
