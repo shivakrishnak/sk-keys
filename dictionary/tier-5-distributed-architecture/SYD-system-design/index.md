@@ -11,7 +11,7 @@ permalink: /system-design/
 
 Scaling, load balancing, rate limiting, distributed locks, sharding, and classic system design problems.
 
-**Keywords:** SYD-001–SYD-062 (62 terms)
+**Keywords:** SYD-001–SYD-077 (77 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -77,3 +77,18 @@ Scaling, load balancing, rate limiting, distributed locks, sharding, and classic
 | SYD-060 | Constraint-First System Design Thinking | ★★★ |
 | SYD-061 | Scale Estimation Mental Model | ★★★ |
 | SYD-062 | Trade-off Navigation Framework | ★★★ |
+| SYD-063 | What is Scalability (Conceptual)                     | ★☆☆ |
+| SYD-064 | What is a Cache (System Design Context)              | ★☆☆ |
+| SYD-065 | What is a Message Queue (Conceptual)                 | ★☆☆ |
+| SYD-066 | What is Database Replication (Basic)                 | ★☆☆ |
+| SYD-067 | CDN Architecture Pattern                             | ★★☆ |
+| SYD-068 | Connection Pooling (System Design)                   | ★★☆ |
+| SYD-069 | Cache Invalidation Strategies                        | ★★★ |
+| SYD-070 | Blob Storage Design                                  | ★★☆ |
+| SYD-071 | Payment System Design                                | ★★★ |
+| SYD-072 | File Storage System Design (Dropbox/S3)              | ★★★ |
+| SYD-073 | Email System Design                                  | ★★★ |
+| SYD-074 | Game Leaderboard Design                              | ★★★ |
+| SYD-075 | Booking and Reservation System Design                | ★★★ |
+| SYD-076 | Real-Time Collaboration System Design                | ★★★ |
+| SYD-077 | Global Key-Value Store Design                        | ★★★ |

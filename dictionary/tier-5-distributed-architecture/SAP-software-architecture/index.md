@@ -11,7 +11,7 @@ permalink: /software-architecture/
 
 Layered, hexagonal, clean, CQRS, event sourcing, DDD patterns, SOLID, and coupling/cohesion principles.
 
-**Keywords:** SAP-001–SAP-076 (76 terms)
+**Keywords:** SAP-001–SAP-086 (86 terms)
 
 | ID      | Keyword                                                    | Difficulty |
 | ------- | ---------------------------------------------------------- | ---------- |
@@ -91,3 +91,13 @@ Layered, hexagonal, clean, CQRS, event sourcing, DDD patterns, SOLID, and coupli
 | SAP-074 | Enterprise Architecture Programme Design                   | ★★★        |
 | SAP-075 | EA Tool Selection and Vendor Landscape                     | ★★★        |
 | SAP-076 | EA Framework Theory and Academic Foundations               | ★★★        |
+| SAP-077 | Conway's Law                                               | ★★☆        |
+| SAP-078 | Inverse Conway Maneuver                                    | ★★★        |
+| SAP-079 | Technical Debt Quantification                              | ★★★        |
+| SAP-080 | Architecture Trade-off Analysis Method (ATAM)              | ★★★        |
+| SAP-081 | Software Architecture Anti-Patterns                        | ★★★        |
+| SAP-082 | Feature Toggle Architecture                                | ★★☆        |
+| SAP-083 | Strangler Fig for Monolith-to-Service Migration            | ★★★        |
+| SAP-084 | Service-Oriented Architecture (SOA)                        | ★★☆        |
+| SAP-085 | API-First Architecture                                     | ★★☆        |
+| SAP-086 | Composable Architecture                                    | ★★★        |

@@ -8,7 +8,7 @@ permalink: /
 
 # Technical Dictionary
 
-A comprehensive software engineering reference - **1,400+ keyword entries** across **50 categories** in **9 tiers**.
+A comprehensive software engineering reference - **1,770+ keyword entries** across **50 categories** in **9 tiers**.
 
 ---
 
@@ -18,18 +18,18 @@ A comprehensive software engineering reference - **1,400+ keyword entries** acro
 
 | #   | Category                                                                  | Count | Range           |
 | --- | ------------------------------------------------------------------------- | ----- | --------------- |
-| 1   | [CS Fundamentals - Paradigms](./tier-1-foundations/CSF-cs-fundamentals/)  | 30    | CSF-001–CSF-030 |
-| 2   | [Data Structures & Algorithms](./tier-1-foundations/DSA-data-structures/) | 61    | DSA-001–DSA-061 |
-| 3   | [Operating Systems](./tier-1-foundations/OSY-operating-systems/)          | 35    | OSY-001–OSY-035 |
-| 4   | [Linux](./tier-1-foundations/LNX-linux/)                                  | 40    | LNX-001–LNX-040 |
+| 1   | [CS Fundamentals - Paradigms](./tier-1-foundations/CSF-cs-fundamentals/)  | 85    | CSF-001–CSF-085 |
+| 2   | [Data Structures & Algorithms](./tier-1-foundations/DSA-data-structures/) | 89    | DSA-001–DSA-089 |
+| 3   | [Operating Systems](./tier-1-foundations/OSY-operating-systems/)          | 75    | OSY-001–OSY-075 |
+| 4   | [Linux](./tier-1-foundations/LNX-linux/)                                  | 73    | LNX-001–LNX-073 |
 
 ### Tier 2 - Networking & Security
 
 | #   | Category                                                   | Count | Range           |
 | --- | ---------------------------------------------------------- | ----- | --------------- |
-| 5   | [Networking](./tier-2-networking-security/NET-networking/) | 40    | NET-001–NET-040 |
-| 6   | [HTTP & APIs](./tier-2-networking-security/API-http-apis/) | 60    | API-001–API-060 |
-| 7   | [Security](./tier-2-networking-security/SEC-security/)     | -     | SEC-001–        |
+| 5   | [Networking](./tier-2-networking-security/NET-networking/) | 78    | NET-001–NET-078 |
+| 6   | [HTTP & APIs](./tier-2-networking-security/API-http-apis/) | 82    | API-001–API-082 |
+| 7   | [Security](./tier-2-networking-security/SEC-security/)     | 156   | SEC-001–SEC-156 |
 
 ### Tier 3 - Java
 
@@ -55,11 +55,11 @@ A comprehensive software engineering reference - **1,400+ keyword entries** acro
 
 | #   | Category                                                                                       | Count | Range           |
 | --- | ---------------------------------------------------------------------------------------------- | ----- | --------------- |
-| 17  | [Distributed Systems](./tier-5-distributed-architecture/DST-distributed-systems/)              | 60    | DST-001–DST-060 |
-| 18  | [Microservices](./tier-5-distributed-architecture/MSV-microservices/)                          | 60    | MSV-001–MSV-060 |
-| 19  | [System Design](./tier-5-distributed-architecture/SYD-system-design/)                          | 45    | SYD-001–SYD-045 |
-| 20  | [Software Architecture Patterns](./tier-5-distributed-architecture/SAP-software-architecture/) | 47    | SAP-001–SAP-047 |
-| 21  | [Design Patterns](./tier-5-distributed-architecture/DPT-design-patterns/)                      | 55    | DPT-001–DPT-055 |
+| 17  | [Distributed Systems](./tier-5-distributed-architecture/DST-distributed-systems/)              | 85    | DST-001–DST-085 |
+| 18  | [Microservices](./tier-5-distributed-architecture/MSV-microservices/)                          | 85    | MSV-001–MSV-085 |
+| 19  | [System Design](./tier-5-distributed-architecture/SYD-system-design/)                          | 77    | SYD-001–SYD-077 |
+| 20  | [Software Architecture Patterns](./tier-5-distributed-architecture/SAP-software-architecture/) | 86    | SAP-001–SAP-086 |
+| 21  | [Design Patterns](./tier-5-distributed-architecture/DPT-design-patterns/)                      | 84    | DPT-001–DPT-084 |
 
 ### Tier 6 - Infrastructure & DevOps
 

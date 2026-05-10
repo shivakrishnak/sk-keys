@@ -11,7 +11,7 @@ permalink: /microservices/
 
 Service decomposition, DDD, discovery, resilience patterns, CQRS, event sourcing, and deployment strategies.
 
-**Keywords:** MSV-001–MSV-077 (77 terms)
+**Keywords:** MSV-001–MSV-085 (85 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
@@ -92,3 +92,11 @@ Service decomposition, DDD, discovery, resilience patterns, CQRS, event sourcing
 | MSV-075 | Decomposition Trade-off Framing | ★★★ |
 | MSV-076 | Microservices Necessity Assessment | ★★★ |
 | MSV-077 | Service Boundary Mental Model | ★★★ |
+| MSV-078 | Platform Engineering                                    | ★★★ |
+| MSV-079 | Internal Developer Platform (IDP)                       | ★★★ |
+| MSV-080 | GraphQL Federation (Microservices)                      | ★★★ |
+| MSV-081 | Dead Letter Queue Strategy                              | ★★★ |
+| MSV-082 | Progressive Delivery                                    | ★★★ |
+| MSV-083 | Multi-Tenancy in Microservices                          | ★★★ |
+| MSV-084 | FinOps for Microservices                                | ★★★ |
+| MSV-085 | Service Catalog                                         | ★★☆ |

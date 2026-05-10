@@ -11,7 +11,7 @@ permalink: /distributed-systems/
 
 CAP theorem, consistency models, consensus algorithms, distributed locking, failure modes, and resilience patterns.
 
-**Keywords:** DST-001–DST-077 (77 terms)
+**Keywords:** DST-001–DST-085 (85 terms)
 
 | ID      | Keyword                                              | Difficulty |
 | ------- | ---------------------------------------------------- | ---------- |
@@ -92,3 +92,11 @@ CAP theorem, consistency models, consensus algorithms, distributed locking, fail
 | DST-075 | Failure-First Thinking                               | ★★★        |
 | DST-076 | Consistency Trade-off Framing                        | ★★★        |
 | DST-077 | Distribution Necessity Assessment                    | ★★★        |
+| DST-078 | Replication Lag                                          | ★★★        |
+| DST-079 | Write-Ahead Log (Distributed)                            | ★★★        |
+| DST-080 | Distributed Rate Limiting                                | ★★★        |
+| DST-081 | Phi Accrual Failure Detector                             | ★★★        |
+| DST-082 | Global Sequence Number                                   | ★★★        |
+| DST-083 | Distributed Cache Coherence                              | ★★★        |
+| DST-084 | Compaction in Distributed Logs                           | ★★★        |
+| DST-085 | Deterministic Simulation Testing                         | ★★★        |
