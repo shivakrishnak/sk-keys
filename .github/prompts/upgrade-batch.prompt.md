@@ -35,7 +35,7 @@ This shows which files in the range are not yet v4.0 complete.
 python tmp/generate_scaffold.py {{CODE}} {{START}} {{END}}
 ```
 
-This writes each file with correct YAML + all 23 section stubs.
+This writes each file with correct YAML + all 24 section stubs.
 Only files that are NOT already v4.0 complete need content filled in.
 
 > ⚠️ **Encoding rule — enforced at every file write:**

@@ -74,7 +74,7 @@ Read the file to capture its exact frontmatter: `id`, `title`, `nav_order`, `per
 
 ### 2b. Generate complete v4.0 entry
 
-Apply every rule from the loaded `copilot-instructions.md`. Rules are grouped into four categories (Content, Conditional sections, Formatting, YAML) applied in that priority order — if a rule is inapplicable to the concept (e.g. a conditional section whose condition is not met), omit the entire section including all its subsections rather than forcing it. **All 23 sections are required in order** (conditional sections follow the decision table in `copilot-instructions.md`):
+Apply every rule from the loaded `copilot-instructions.md`. Rules are grouped into four categories (Content, Conditional sections, Formatting, YAML) applied in that priority order — if a rule is inapplicable to the concept (e.g. a conditional section whose condition is not met), omit the entire section including all its subsections rather than forcing it. **All 24 sections are required in order** (conditional sections follow the decision table in `copilot-instructions.md`):
 
 | #    | Section                                         | Notes                                                             |
 | ---- | ----------------------------------------------- | ----------------------------------------------------------------- |
@@ -102,6 +102,7 @@ Apply every rule from the loaded `copilot-instructions.md`. Rules are grouped in
 | 5.21 | `### 💡 The Surprising Truth`                   | 1 counterintuitive fact                                           |
 | 5.22 | `### ✅ Mastery Checklist`                      | 5 indicators: EXPLAIN / DEBUG / DECIDE / BUILD / EXTEND           |
 | 5.23 | `### 🧠 Think About This Before We Continue`    | 3 Qs + Hint each; at least 1 TYPE G                               |
+| 5.24 | `### 🎯 Interview Deep-Dive`                    | 3-7 Qs scaled by difficulty; scenario-based; tests experience     |
 
 **Critical rules — apply in this sequence for every entry:**
 
@@ -158,9 +159,10 @@ pwsh -ExecutionPolicy Bypass -File tmp\upgrade_to_v4.ps1 `
 The script will:
 
 1. Add `### ✅ Mastery Checklist` section (if absent) — with TODO placeholders
-2. Add `**Industry applications:**` to Transferable Wisdom (if absent) — with TODO placeholders
-3. Add Level 5 stub to Gradual Depth (if only Four Levels found)
-4. Set `version: LATEST_VERSION` (currently `4`) in frontmatter
+2. Add `### 🎯 Interview Deep-Dive` section (if absent) — with TODO placeholders
+3. Add `**Industry applications:**` to Transferable Wisdom (if absent) — with TODO placeholders
+4. Add Level 5 stub to Gradual Depth (if only Four Levels found)
+5. Set `version: LATEST_VERSION` (currently `4`) in frontmatter
 
 **After the script runs**, search upgraded files for `<!-- TODO LATEST_VERSION_LABEL:` and fill each stub using Copilot,
 reading the entry's existing content for context. Add only the missing content — do not rewrite existing sections.

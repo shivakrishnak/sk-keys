@@ -1504,6 +1504,85 @@ Content rules:
     **Q3.** [Question - 2–4 sentences, yet another type]
     *Hint: [Direction - different area than Q1 and Q2 hints.]*
 
+─────────────────────────────────────────────────────────────────────────
+5.24  INTERVIEW DEEP-DIVE  [REQUIRED]
+─────────────────────────────────────────────────────────────────────────
+
+Section header:
+  ### 🎯 Interview Deep-Dive
+
+PURPOSE: Bridge the gap between textbook understanding and
+interview performance. This section provides the exact questions
+interviewers ask about this concept, why they ask them, and
+what a strong answer demonstrates. NOT textbook recall - these
+test production experience, decision-making, and depth.
+
+DISTINCTION FROM OTHER SECTIONS:
+  - 5.19 "Interview one-liner" = 30-second elevator pitch (surface)
+  - 5.23 "Think About This" = research prompts NOT answerable
+    from the entry (deep exploration beyond the entry)
+  - 5.24 "Interview Deep-Dive" = real Q&A pairs that ARE
+    answerable from the entry + working experience (practical prep)
+
+Content rules:
+  - Question count scales with difficulty:
+    * ★☆☆ concepts: exactly 3 questions
+    * ★★☆ concepts: 4–5 questions
+    * ★★★ concepts: 5–7 questions
+  - Questions ordered: foundational → intermediate → senior-level
+  - Each question must be a realistic interview question that
+    tests working experience, not textbook definitions
+  - Questions must probe: debugging, trade-offs, production
+    behaviour, design decisions, failure scenarios
+  - Do NOT duplicate questions from section 5.23
+  - Do NOT ask questions answerable with a single definition
+  - Each question has exactly 3 parts:
+    * The question itself (specific, scenario-based preferred)
+    * Why interviewers ask it (what skill/depth it probes)
+    * What a strong answer includes (2–4 bullet points)
+
+  Quality tests for each question:
+    - Would a senior interviewer actually ask this? If no: cut it.
+    - Does answering require hands-on experience? If no: rewrite.
+    - Could two candidates with different experience levels give
+      meaningfully different answers? If no: too shallow.
+
+  Format:
+
+    **Q1: [Real interview question - specific, scenario-based]**
+    *Why they ask:* [What the interviewer is evaluating -
+     1 sentence.]
+    *Strong answer includes:*
+    - [Key point that demonstrates depth]
+    - [Production insight or trade-off awareness]
+    - [Specific example, metric, or diagnostic approach]
+
+    **Q2: [Next question - different angle, harder]**
+    *Why they ask:* [What skill/depth this probes.]
+    *Strong answer includes:*
+    - [Key point]
+    - [Key point]
+    - [Key point]
+
+    [Continue for Q3–Q7 based on difficulty...]
+
+  Example questions by quality level:
+
+    BAD (too shallow - textbook recall):
+      "What is a mutex?"
+      "Name three types of caching."
+
+    GOOD (tests working experience):
+      "You're debugging a production deadlock involving
+       two services and a shared database row. Walk me
+       through your diagnostic process."
+      "Your team's cache hit ratio dropped from 95% to 60%
+       after a deployment. What are the three most likely
+       causes and how would you verify each?"
+      "When would you choose eventual consistency over
+       strong consistency, and what safeguards would you
+       put in place for the business logic?"
+
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 6: FORMATTING RULES - UNIVERSAL
 ═══════════════════════════════════════════════════════════════════════════
@@ -2030,6 +2109,33 @@ Fix:
 **Q3.** [TYPE Z question - different type than Q1 and Q2.
         2–4 sentences. Yet another angle.]
 *Hint: [Different direction than Q1 and Q2 hints.]*
+
+---
+
+### 🎯 Interview Deep-Dive
+
+**Q1: [Real interview question - foundational, scenario-based]**
+*Why they ask:* [What the interviewer is evaluating.]
+*Strong answer includes:*
+- [Key point demonstrating depth]
+- [Production insight or trade-off awareness]
+- [Specific example, metric, or diagnostic approach]
+
+**Q2: [Harder question - different angle]**
+*Why they ask:* [What skill/depth this probes.]
+*Strong answer includes:*
+- [Key point]
+- [Key point]
+- [Key point]
+
+**Q3: [Senior-level question - design/debugging/scale]**
+*Why they ask:* [What mastery signal this tests.]
+*Strong answer includes:*
+- [Key point]
+- [Key point]
+- [Key point]
+
+[Q4–Q7: add based on difficulty - see section 5.24 rules]
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 9: INVOCATION - HOW TO USE THIS PROMPT

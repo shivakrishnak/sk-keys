@@ -38,7 +38,7 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 
 **1. Content rules:**
 
-- Include all 23 required sections in the exact sequence (5.1-5.23) without any reordering.
+- Include all 24 required sections in the exact sequence (5.1-5.24) without any reordering.
 - Show BAD pattern before GOOD pattern in code examples.
 - Provide min 4 misconception rows and min 3 failure modes.
 
@@ -249,7 +249,7 @@ permalink: /html/web-performance-metrics-cwv-lcp-fid-cls/
 
 ---
 
-### Content Structure - 23 Required Sections (in order)
+### Content Structure - 24 Required Sections (in order)
 
 > **Validation checklist:** After generating, confirm: (1) all Required sections are present, (2) YAML frontmatter has all required fields with correct formats, (3) Conditional sections included where applicable, (4) section spacing rule applied (every `###` preceded by `---`).
 
@@ -278,6 +278,7 @@ permalink: /html/web-performance-metrics-cwv-lcp-fid-cls/
 | 5.21 | `### 💡 The Surprising Truth`                        | Required (1 counterintuitive fact)        |
 | 5.22 | `### ✅ Mastery Checklist`                           | Required (5 testable indicators)          |
 | 5.23 | `### 🧠 Think About This Before We Continue`         | Required (3 Qs + hint + 1 TYPE G)         |
+| 5.24 | `### 🎯 Interview Deep-Dive`                         | Required (3-7 Qs scaled by difficulty)    |
 
 **Section spacing rule:** Every `###` heading MUST be preceded by `---` horizontal rule with one blank line before and after both the `---` and the `###`.
 
@@ -330,6 +331,9 @@ Exactly 5 testable mastery indicators: EXPLAIN · DEBUG · DECIDE · BUILD · EX
 **5.23 Think About This:**
 Exactly 3 questions using different types (A=System Interaction · B=Scale · C=Design Trade-off · D=Root Cause · E=First Principles · F=Comparison · G=Hands-On Challenge). At least ONE must be TYPE G. Each question is followed by a `*Hint:*` line pointing WHERE to look (not the answer). Must NOT be answerable from the entry alone.
 
+**5.24 Interview Deep-Dive:**
+Question count scales with difficulty: ★☆☆ = 3Q, ★★☆ = 4-5Q, ★★★ = 5-7Q. Questions ordered foundational to senior-level. Each question has 3 parts: the question (scenario-based), `*Why they ask:*` (what skill it probes), `*Strong answer includes:*` (2-4 bullet points). Must test working experience, not textbook recall. Must NOT duplicate 5.23 questions.
+
 ---
 
 ### Formatting Rules
@@ -369,7 +373,7 @@ A file is **v2.1** (still `version: 2`) if it ALSO has: `### 💎 Transferable W
 
 A file is **v3.x** (`version: 3`) if it ALSO has the new YAML frontmatter with `id:` field (format `CODE-NNN`) and `status:` field, and `depends_on` / `used_by` / `related` use full IDs (`JVM-001`) not keyword names. Set `version: 3` in frontmatter to signal v3.x content.
 
-A file is **v4.0** (`version: 4` = `LATEST_VERSION`) if it ALSO has: `### 📶 Gradual Depth - Five Levels` (5 levels including Level 5 - Mastery) · `### ✅ Mastery Checklist` section with 5 testable indicators · `ANTI-PATTERN` row in Quick Reference Card · `**Industry applications:**` in Transferable Wisdom · At least one TYPE G question in Think About This. Set `version: LATEST_VERSION` (currently `4`) in frontmatter to signal `LATEST_VERSION_LABEL` content.
+A file is **v4.0** (`version: 4` = `LATEST_VERSION`) if it ALSO has: `### 📶 Gradual Depth - Five Levels` (5 levels including Level 5 - Mastery) · `### ✅ Mastery Checklist` section with 5 testable indicators · `ANTI-PATTERN` row in Quick Reference Card · `**Industry applications:**` in Transferable Wisdom · At least one TYPE G question in Think About This · `### 🎯 Interview Deep-Dive` section with 3-7 Q&A pairs scaled by difficulty. Set `version: LATEST_VERSION` (currently `4`) in frontmatter to signal `LATEST_VERSION_LABEL` content.
 
 ---
 
@@ -561,7 +565,7 @@ Generate dictionary entry:
   Difficulty: ★★★
 
 Follow Master Prompt LATEST_VERSION_LABEL exactly:
-- **Structure:** All 23 required sections in order; conditional sections only when applicable.
+- **Structure:** All 24 required sections in order; conditional sections only when applicable.
 - **Formatting:** `---` before every `###`; ASCII diagrams ≤59 chars; code lines ≤70 chars.
 - **YAML:** All required frontmatter fields; double-quote titles with `: `; no em dashes.
 - **Content:** BAD-before-GOOD examples; min 4 misconception rows; min 3 failure modes.
