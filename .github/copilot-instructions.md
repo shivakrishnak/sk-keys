@@ -2,7 +2,9 @@
 
 This workspace is the **sk-keys Technical Dictionary** - a comprehensive software engineering reference containing 3,638+ keyword entries across 55 categories in 9 tiers.
 
-Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. All four categories must be followed together on every entry. "Apply each category independently" means: when a rule in one category is unclear, do not borrow a rule from a different category to resolve it - resolve it within the same category's own rules. If the categories appear to conflict, apply them in priority order: **Content** first, then **Conditional sections**, then **Formatting**, then **YAML**.
+Rules are grouped into four categories: **Content**, **Conditional sections**, **Formatting**, and **YAML**. All four categories must be followed together on every entry.
+
+**How to apply them:** Each category governs a distinct concern. Resolve ambiguity within a category using only that category's own rules - do not borrow from another category's rules to fill gaps. When two categories produce genuinely conflicting requirements for the same element, the priority order below resolves the conflict: **Content** first, then **Conditional sections**, then **Formatting**, then **YAML**. The priority order applies only to cross-category conflicts; it does not change how rules within a single category are interpreted.
 
 ---
 
@@ -40,7 +42,7 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 
 **2. Conditional sections** - include only when the condition is clearly met; omit entirely otherwise:
 
-> **Quick decision rule:** Default to omitting a conditional section. Include it only if the primary Include condition is unambiguously met. When in doubt, check the Borderline guidance column against the concrete concept you are writing.
+> **Quick decision rule:** Default to omitting a conditional section. Include it only if the Include condition explicitly matches the concept's attributes without requiring interpretation - i.e., you can point to a specific, concrete property of the concept that satisfies the condition. When uncertain, check the Borderline guidance column against the concrete concept you are writing.
 
 | Section                        | Include when…                                                                            | Omit when…                                                          | Borderline guidance                                                                                                                                                                                                                    |
 | :----------------------------- | :--------------------------------------------------------------------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
