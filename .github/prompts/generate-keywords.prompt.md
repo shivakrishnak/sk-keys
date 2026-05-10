@@ -36,16 +36,22 @@ stub files only when needed.
 
 ## Phase 0 - Resolve Target
 
-> **Decision rule:** Resolve the target type first, then follow exactly one path below. Do not combine paths.
+Follow exactly one path. Do not combine paths.
 
-From the input target, determine:
+**Step 1 — Identify input type:**
+- Input is a 3-letter code (e.g. `RCT`, `JVM`, `SEC`) → **Path A: single category**
+- Input is a tier folder (e.g. `tier-3-java`) → **Path B: entire tier**
+- Input matches neither format → stop and return an error showing valid formats
 
-- If a **3-letter category code** (e.g. `RCT`, `JVM`, `SEC`):
-  Process that single category.
-- If a **tier folder** (e.g. `tier-3-java`):
-  Process ALL categories within that tier, one at a time.
+**Path A — Single category:** Look up the code in the Category Code Registry and
+proceed through Phases 1-6 once for that category.
 
-Look up the target in the Category Code Registry (from `copilot-instructions.md`):
+**Path B — Entire tier:** List all category folders under `dictionary/{tier}/`,
+extract the CODE from each folder name prefix, then run Phases 1-6 for each
+category sequentially. Print a tier-level summary at the end.
+
+**Step 2 — Look up registry fields** (for each category being processed)
+from the Category Code Registry in `copilot-instructions.md`:
 
 | Field         | Source                           |
 | ------------- | -------------------------------- |
@@ -123,19 +129,22 @@ Using `KEYWORD_GENERATOR_PROMPT.md` v3.0 specification:
    Include every level that is relevant to this technology domain:
    L0 (Orientation), L1 (Foundational), L2 (Working), L3 (Intermediate),
    L4 (Expert), L4.5 (Architect), L5 (Creator), META (Meta-Skills).
-   Omit a level only if it has no meaningful keywords for this specific category.
+   **Relevance criteria:** Include a level if it has at least 3 meaningful keywords
+   that a practitioner in this domain would need to know. Omit a level only if it
+   produces fewer than 3 meaningful keywords for this specific category.
 3. Apply ALL 22 rules from Section 2
 4. Use ALL 11 output components from Section 3
 5. Run ALL 16 quality checks from Section 4
 
-**CRITICAL**: Do NOT regenerate keywords that already exist (EXISTING_IDS).
-Only generate NEW keywords starting from HIGHEST_ID + 1.
+**CRITICAL - New vs Missing keywords:**
 
-If the category already has substantial coverage, run a **Gap Analysis** instead:
-
-- Identify which levels have gaps
-- Identify which of the 22 rules have violations
-- Generate ONLY the missing keywords
+- **Never create new content for IDs already in EXISTING_IDS.** These entries already
+  exist; do not overwrite, duplicate, or regenerate them.
+- **New keywords** = concepts not yet in EXISTING_IDS. Assign IDs starting from
+  HIGHEST_ID + 1.
+- **Gap Analysis** (when category has substantial coverage): scan by level (L0-META)
+  to find levels with missing keywords. Generate ONLY the missing concepts as new
+  IDs starting from HIGHEST_ID + 1. Do NOT modify existing ID assignments.
 
 ---
 
