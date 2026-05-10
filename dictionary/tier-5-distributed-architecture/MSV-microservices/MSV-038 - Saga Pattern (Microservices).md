@@ -18,7 +18,7 @@ tags:
   - reliability
   - deep-dive
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-038 - Saga Pattern (Microservices)

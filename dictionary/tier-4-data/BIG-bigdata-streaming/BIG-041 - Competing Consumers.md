@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Competing Consumers"
 parent: "Big Data & Streaming"

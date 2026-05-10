@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "OpenAPI / Swagger"
 parent: "HTTP & APIs"
@@ -102,7 +102,7 @@ integration test.
 openapi: 3.1.0
 info:
   title: User API
-  version: 1.0.0
+  version: 2.0.0
   description: API for managing users
 
 servers:
@@ -329,7 +329,7 @@ DESIGN-FIRST COMPLETE WORKFLOW:
      Lint with Spectral (style rules: operationId required, all errors documented)
 
   2. Contract Agreed:
-     Version: 1.0.0 in openapi.yaml
+     version: 2.0.0 in openapi.yaml
      Tag: git tag api-contract-v1.0.0
 
   3. Parallel Development:
@@ -400,7 +400,7 @@ public class UserDto {
 //     path: /swagger-ui.html
 //   info:
 //     title: User API
-//     version: 1.0.0
+//     version: 2.0.0
 ```
 
 ---

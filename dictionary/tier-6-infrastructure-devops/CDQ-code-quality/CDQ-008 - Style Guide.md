@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Style Guide"
 parent: "Code Quality"
@@ -219,7 +219,7 @@ public UserProfileResponseDto getUserProfile(
 **Example 2 - Style guide document structure (Markdown):**
 ```markdown
 # Acme Corp Java Style Guide
-Version: 2.3 | Owner: Platform Engineering
+version: 2.3 | Owner: Platform Engineering
 Last updated: 2026-03-15
 
 ## 1. Naming Conventions

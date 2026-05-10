@@ -18,7 +18,7 @@ tags:
   - deep-dive
   - distributed
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-018 - Anti-Corruption Layer

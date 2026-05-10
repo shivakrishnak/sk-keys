@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Failure Stories (Learning from Mistakes)"
 parent: "Behavioral & Leadership"

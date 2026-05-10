@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "API Versioning"
 parent: "HTTP & APIs"
@@ -115,7 +115,7 @@ STRATEGY 2 - HTTP Header Versioning (Accept/Custom Header)
   GET /users/42
   Accept: application/vnd.api.v2+json
   OR:
-  API-Version: 2
+  API-version: 2
 
   Pros:
   ✅ Cleaner URLs - same path, different representation
@@ -353,7 +353,7 @@ record UserResponseV2(Long id, String name, AddressV2 address) {
 | **URI Path**      | `/v1/users`                           | ✅      | ✅                | ❌        | Very Easy    |
 | **Query Param**   | `/users?v=2`                          | ✅      | ✅ (with varying) | ❌        | Easy         |
 | **Accept Header** | `Accept: application/vnd.api.v2+json` | ❌      | Needs Vary        | ✅        | Harder       |
-| **Custom Header** | `API-Version: 2`                      | ❌      | Needs Vary        | ✅        | Harder       |
+| **Custom Header** | `API-version: 2`                      | ❌      | Needs Vary        | ✅        | Harder       |
 
 ---
 

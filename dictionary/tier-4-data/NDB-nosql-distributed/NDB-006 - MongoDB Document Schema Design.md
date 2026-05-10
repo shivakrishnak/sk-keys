@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "MongoDB Document Schema Design"
 parent: "NoSQL & Distributed Databases"

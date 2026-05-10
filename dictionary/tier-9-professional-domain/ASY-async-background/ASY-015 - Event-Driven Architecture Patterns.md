@@ -13,7 +13,7 @@ tags:
   - intermediate
   - pattern
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "Async & Background Processing"
 grand_parent: "Technical Dictionary"

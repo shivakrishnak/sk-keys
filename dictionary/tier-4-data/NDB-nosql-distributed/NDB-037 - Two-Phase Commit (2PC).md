@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Two-Phase Commit (2PC)"
 parent: "NoSQL & Distributed Databases"

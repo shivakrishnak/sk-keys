@@ -18,7 +18,7 @@ tags:
   - intermediate
   - architecture
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-037 - Fallback Strategy

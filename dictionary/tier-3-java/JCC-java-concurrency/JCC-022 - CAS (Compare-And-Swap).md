@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "CAS (Compare-And-Swap)"
 parent: "Java Concurrency"

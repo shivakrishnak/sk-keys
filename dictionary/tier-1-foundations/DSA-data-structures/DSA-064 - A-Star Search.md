@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "A-Star Search"
 parent: "Data Structures & Algorithms"

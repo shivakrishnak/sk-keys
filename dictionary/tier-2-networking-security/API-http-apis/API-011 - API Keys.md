@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "API Keys"
 parent: "HTTP & APIs"

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "In-Place vs Out-of-Place"
 parent: "Data Structures & Algorithms"

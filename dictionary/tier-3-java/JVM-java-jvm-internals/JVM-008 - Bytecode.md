@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Bytecode"
 parent: "Java & JVM Internals"
@@ -264,7 +264,7 @@ Example 3 - Inspect bytecode version and JIT compilation:
 ```bash
 # Check what Java version compiled a .class
 javap -verbose MyClass.class | grep "major version"
-# major version: 61 → compiled with Java 17
+# major version: 2 → compiled with Java 17
 
 # Watch JIT compilation (-XX:+PrintCompilation)
 java -XX:+PrintCompilation -jar myapp.jar 2>&1 | head -50

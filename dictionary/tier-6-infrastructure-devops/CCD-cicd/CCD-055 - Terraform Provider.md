@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Terraform Provider"
 parent: "CI/CD"

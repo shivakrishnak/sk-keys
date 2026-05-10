@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Snowflake (Cloud Data Warehouse)"
 parent: "NoSQL & Distributed Databases"

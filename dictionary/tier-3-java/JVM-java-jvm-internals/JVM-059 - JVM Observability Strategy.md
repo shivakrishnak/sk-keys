@@ -14,7 +14,7 @@ tags:
   - observability
   - production
 status: complete
-version: 1
+version: 2
 layout: default
 parent: "Java & JVM Internals"
 grand_parent: "Technical Dictionary"

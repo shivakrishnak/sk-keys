@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "WebSocket"
 parent: "HTTP & APIs"
@@ -102,7 +102,7 @@ Host: example.com
 Upgrade: websocket
 Connection: Upgrade
 Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
-Sec-WebSocket-Version: 13
+Sec-WebSocket-version: 2
 
 Server response:
 HTTP/1.1 101 Switching Protocols

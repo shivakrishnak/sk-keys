@@ -19,7 +19,7 @@ tags:
   - microservices
   - mental-model
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-010 - Proof of Concept (POC) in Architecture

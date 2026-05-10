@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Fan-Out Pattern"
 parent: "Big Data & Streaming"

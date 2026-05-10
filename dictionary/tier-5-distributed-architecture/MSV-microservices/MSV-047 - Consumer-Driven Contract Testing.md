@@ -18,7 +18,7 @@ tags:
   - architecture
   - deep-dive
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-047 - Consumer-Driven Contract Testing

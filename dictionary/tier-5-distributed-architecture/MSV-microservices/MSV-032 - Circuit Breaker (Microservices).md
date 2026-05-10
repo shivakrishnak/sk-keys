@@ -18,7 +18,7 @@ tags:
   - deep-dive
   - reliability
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-032 - Circuit Breaker (Microservices)

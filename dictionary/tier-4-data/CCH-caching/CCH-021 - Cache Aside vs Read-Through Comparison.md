@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Cache Aside vs Read-Through Comparison"
 parent: "Caching"

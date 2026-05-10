@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "JRE"
 parent: "Java & JVM Internals"
@@ -283,7 +283,7 @@ How to choose: For development use full JDK. For production containers in Java 1
 ```bash
 # Check class file version
 javap -verbose MyClass.class | grep "major version"
-# major version: 61 = Java 17, 55 = Java 11
+# major version: 2 = Java 17, 55 = Java 11
 
 # Check JRE version
 java -version

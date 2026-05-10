@@ -14,7 +14,7 @@ tags:
   - bestpractice
   - production
 status: complete
-version: 1
+version: 2
 layout: default
 parent: "Java Language"
 grand_parent: "Technical Dictionary"
@@ -348,7 +348,7 @@ java -version
 ```bash
 # Check class file version
 javap -verbose MyClass.class | grep "major version"
-# major version: 61 = Java 17 (correct)
+# major version: 2 = Java 17 (correct)
 # But the code still calls Java 21 APIs
 
 # Recompile with --release to catch the error:

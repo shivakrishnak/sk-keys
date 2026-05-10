@@ -14,7 +14,7 @@ tags:
   - deep-dive
   - advanced
 status: complete
-version: 1
+version: 2
 layout: default
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"
@@ -185,7 +185,7 @@ CQRS's architectural justification is the incompatibility of the write optimizat
 
 **Expert Thinking Cues:**
 
-- "User places order (command succeeds, 202 Accepted) then immediately loads order history (read model returns old state)" → Read-after-write inconsistency. The projection hasn't processed the `OrderPlaced` event yet. Mitigation: (1) After command success: client polls with exponential backoff until order appears in read model. (2) Include version in command response: `{orderId: 123, expectedVersion: 5}`. Query includes `?minVersion=5`. Read API returns 202 if read model version < 5. (3) For non-critical flows: accept eventual consistency (order history is eventually consistent, most users don't reload immediately). (4) Return the created object from the command response (breaks pure CQRS but simplifies client code). Each approach is a different trade-off.
+- "User places order (command succeeds, 202 Accepted) then immediately loads order history (read model returns old state)" → Read-after-write inconsistency. The projection hasn't processed the `OrderPlaced` event yet. Mitigation: (1) After command success: client polls with exponential backoff until order appears in read model. (2) Include version in command response: `{orderId: 123, expectedversion: 2}`. Query includes `?minVersion=5`. Read API returns 202 if read model version < 5. (3) For non-critical flows: accept eventual consistency (order history is eventually consistent, most users don't reload immediately). (4) Return the created object from the command response (breaks pure CQRS but simplifies client code). Each approach is a different trade-off.
 - "Projection is failing — read model is stale for 30 minutes" → Event processing backlog. Check: is the event consumer group lagging? `kafka-consumer-groups.sh --describe --group projection-group`. If lag is high: consumer is too slow, or a poison-pill event is blocking the consumer. Dead letter queue: unconsumable events should go to a DLQ, not block the consumer. Check: does the projection handler throw exceptions that stop processing?
 - "Multiple projections need to be rebuilt after a bug in projection code" → Replay events from the beginning. If using Kafka: reset consumer group offset to beginning. If using Axon Server: replay all events for specific aggregate type. Read store is rebuilt from scratch. This is a key advantage of CQRS + Event Sourcing: read models are disposable and rebuildable. Pure CQRS without Event Sourcing: if the write store only stores current state (not events), replay is impossible → projection bugs corrupt read state permanently.
 
@@ -437,7 +437,7 @@ watch kafka-consumer-groups.sh --bootstrap-server kafka:9092 \
 # Spike: projection falling behind
 ```
 
-**Fix:** Multiple options: (1) **Optimistic UI:** after command success, show the new order in the UI immediately (client-side state) without waiting for read model. Mark it as "pending confirmation." (2) **Version-based polling:** command returns `{orderId: 123, version: 5}`. Client polls `GET /orders/123?minVersion=5` — read API returns 202 until read model has version >= 5. (3) **Hybrid command return:** return the new order object with the command response (breaks pure CQRS but eliminates the inconsistency). Choose based on business tolerance for eventual consistency.
+**Fix:** Multiple options: (1) **Optimistic UI:** after command success, show the new order in the UI immediately (client-side state) without waiting for read model. Mark it as "pending confirmation." (2) **Version-based polling:** command returns `{orderId: 123, version: 2}`. Client polls `GET /orders/123?minVersion=5` — read API returns 202 until read model has version >= 5. (3) **Hybrid command return:** return the new order object with the command response (breaks pure CQRS but eliminates the inconsistency). Choose based on business tolerance for eventual consistency.
 **Prevention:** Explicit consistency contract in API documentation: "read model is eventually consistent; after placing an order, order may not appear in history for up to 2 seconds." Design UX to handle this (loading states, confirmation pages that don't immediately redirect to order history).
 
 **Failure Mode 3: Security - Command Authorization Bypass via Query Side**

@@ -14,7 +14,7 @@ tags:
   - deep-dive
   - tradeoff
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "Observability & SRE"
 grand_parent: "Technical Dictionary"

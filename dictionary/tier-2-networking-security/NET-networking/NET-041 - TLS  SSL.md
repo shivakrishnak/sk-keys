@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "TLS / SSL"
 parent: "Networking"
@@ -82,7 +82,7 @@ TLS provides all three together - inseparable in design.
 Client                                Server
   │                                      │
   │ ── ClientHello ──────────────────→   │
-  │    TLS version: 1.2                  │
+  │    TLS version: 2.2                  │
   │    Random: 32 bytes                  │
   │    Cipher suites: [ECDHE-RSA-AES128-GCM-SHA256, ...]
   │    Extensions: SNI (hostname), ALPN  │

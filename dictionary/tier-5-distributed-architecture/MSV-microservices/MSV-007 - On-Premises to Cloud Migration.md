@@ -19,7 +19,7 @@ tags:
   - devops
   - production
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-007 - On-Premises to Cloud Migration

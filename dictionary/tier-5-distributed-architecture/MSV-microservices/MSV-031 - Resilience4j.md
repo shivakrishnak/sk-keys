@@ -18,7 +18,7 @@ tags:
   - deep-dive
   - pattern
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-031 - Resilience4j

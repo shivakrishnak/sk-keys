@@ -15,7 +15,7 @@ tags:
   - intermediate
   - bestpractice
 status: complete
-version: 1
+version: 3
 layout: default
 parent: "Java Concurrency"
 grand_parent: "Technical Dictionary"

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Divide and Conquer"
 parent: "Data Structures & Algorithms"

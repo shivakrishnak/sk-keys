@@ -14,7 +14,7 @@ tags:
   - deep-dive
   - first-principles
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "npm & Package Management"
 grand_parent: "Technical Dictionary"

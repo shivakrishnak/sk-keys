@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Terraform"
 parent: "CI/CD"
@@ -300,7 +300,7 @@ resource "aws_db_instance" "orders" {
 **Example 4 - Atlantis PR automation (atlantis.yaml):**
 ```yaml
 # atlantis.yaml - Atlantis reads this for PR workflows
-version: 3
+version: 2
 projects:
   - name: prod-infra
     dir: terraform/prod

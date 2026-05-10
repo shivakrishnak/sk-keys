@@ -19,7 +19,7 @@ tags:
   - tradeoff
   - pattern
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-009 - Re-platforming vs Re-architecting

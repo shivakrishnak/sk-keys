@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Change Data Capture (CDC)"
 parent: "NoSQL & Distributed Databases"

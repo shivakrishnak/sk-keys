@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Vision Language Models"
 parent: "AI Foundations"

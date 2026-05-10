@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Deadlock Detection (Java)"
 parent: "Java Concurrency"

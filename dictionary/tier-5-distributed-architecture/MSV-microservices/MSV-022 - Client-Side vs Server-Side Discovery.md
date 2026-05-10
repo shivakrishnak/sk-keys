@@ -18,7 +18,7 @@ tags:
   - deep-dive
   - pattern
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-022 - Client-Side vs Server-Side Discovery

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Java Exception Hierarchy (Checked vs Unchecked)"
 parent: "Java Language"

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Negotiation in Engineering"
 parent: "Behavioral & Leadership"

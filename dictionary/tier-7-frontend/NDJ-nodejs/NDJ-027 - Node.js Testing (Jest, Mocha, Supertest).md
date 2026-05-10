@@ -14,7 +14,7 @@ tags:
   - deep-dive
   - tradeoff
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "Node.js"
 grand_parent: "Technical Dictionary"

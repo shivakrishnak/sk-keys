@@ -18,7 +18,7 @@ tags:
   - performance
   - intermediate
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-034 - Rate Limiting (Microservices)

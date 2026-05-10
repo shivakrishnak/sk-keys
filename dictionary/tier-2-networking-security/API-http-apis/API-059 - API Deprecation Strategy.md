@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "API Deprecation Strategy"
 parent: "HTTP & APIs"
@@ -145,7 +145,7 @@ STRIPE'S APPROACH (extreme backward compatibility):
        immense engineering overhead
 
 ALTERNATIVE: GITHUB's APPROACH (simpler):
-  Uses API-Version header: "X-GitHub-Api-Version: 2022-11-28"
+  Uses API-Version header: "X-GitHub-Api-version: 2-11-28"
   Breaking changes create a new version date
   Old versions deprecated with sunset notice
   Forced migration after sunset

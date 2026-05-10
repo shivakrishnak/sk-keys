@@ -14,7 +14,7 @@ tags:
   - deep-dive
   - first-principles
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "CSS"
 grand_parent: "Technical Dictionary"

@@ -18,7 +18,7 @@ tags:
   - distributed
   - deep-dive
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-044 - Event Sourcing in Microservices

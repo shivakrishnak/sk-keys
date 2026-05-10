@@ -14,7 +14,7 @@ tags:
   - deep-dive
   - first-principles
 status: draft
-version: 1
+version: 2
 layout: default
 parent: "CS Fundamentals - Paradigms"
 grand_parent: "Technical Dictionary"

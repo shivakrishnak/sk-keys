@@ -20,7 +20,7 @@ tags:
   - java
   - bestpractice
 status: complete
-version: 1
+version: 3
 ---
 
 # DPT-008 - Abstract Factory

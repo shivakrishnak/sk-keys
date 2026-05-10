@@ -14,7 +14,7 @@ tags:
   - deep-dive
   - advanced
 status: complete
-version: 1
+version: 2
 layout: default
 parent: "Distributed Systems"
 grand_parent: "Technical Dictionary"

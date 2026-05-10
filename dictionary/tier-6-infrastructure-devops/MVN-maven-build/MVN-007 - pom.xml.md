@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "pom.xml"
 parent: "Maven & Build Tools"

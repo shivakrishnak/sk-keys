@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "MongoDB Schema Evolution"
 parent: "NoSQL & Distributed Databases"
@@ -69,7 +69,7 @@ tags:
 
 **DERIVED DESIGN:**
 
-- Add a `schemaVersion: 1` field to every document from the start; increment on each structural change.
+- Add a `schemaversion: 2` field to every document from the start; increment on each structural change.
 - Application read path: check `schemaVersion`, upgrade to current shape in-memory or in-place, process uniformly.
 - Background backfill: target documents where `schemaVersion < currentVersion` with `updateMany` in rate-limited batches.
 - Add `$jsonSchema` validators for the *minimum* required shape to catch regressions without blocking compatible variations.
@@ -90,10 +90,10 @@ tags:
 You deploy new code that writes `fullName` to new documents. Old documents still have `firstName/lastName`. Queries on `fullName` miss 9.8 million existing users. You add an `if (doc.fullName)` guard, and another, and another. Six months later the codebase has 47 `if (doc.fullName || doc.firstName + ' ' + doc.lastName)` expressions. New engineers are confused. The `fullName` text index is almost useless because only 2% of documents have `fullName`.
 
 **WHAT HAPPENS WITH SCHEMA VERSIONING:**
-1. Deploy application code that handles both `schemaVersion: 1` (firstName/lastName) and `schemaVersion: 2` (fullName). The read path upgrades v1 documents on-the-fly.
+1. Deploy application code that handles both `schemaversion: 2` (firstName/lastName) and `schemaversion: 2` (fullName). The read path upgrades v1 documents on-the-fly.
 2. Optionally: write upgraded version back on read (lazy migration) - each document is upgraded the first time it's accessed.
 3. Run background backfill script to proactively upgrade remaining v1 documents.
-4. After backfill completes and is verified: deploy final code that only handles `schemaVersion: 2`. Remove v1 handling.
+4. After backfill completes and is verified: deploy final code that only handles `schemaversion: 2`. Remove v1 handling.
 
 **THE INSIGHT:** Schema versioning makes migration a *process* not an *event*. Each step is independently deployable, monitorable, and reversible - the same properties that make zero-downtime database releases achievable.
 
@@ -136,7 +136,7 @@ MongoDB deliberately chose to enforce no schema at the storage layer. This was a
 v1 Schema: { firstName, lastName }
           │
           ▼ Feature: unified name for search
-v2 Schema: { fullName, schemaVersion: 2 }
+v2 Schema: { fullName, schemaversion: 2 }
           │
 State during migration:
   Collection has both v1 and v2 documents
@@ -176,7 +176,7 @@ All documents: schemaVersion = 2
 
 ```
 Engineer designs new schema v2
-  adds schemaVersion: 2 to spec
+  adds schemaversion: 2 to spec
           │
           ▼
 Code change: normalise(doc) handles v1 + v2
@@ -243,7 +243,7 @@ function normaliseUser(doc) {
     return {
       ...doc,
       fullName: `${doc.firstName} ${doc.lastName}`.trim(),
-      schemaVersion: 2
+      schemaversion: 2
       // Keep firstName/lastName for backfill detection
     }
   }
@@ -299,7 +299,7 @@ async function backfillSchemaV2() {
         update: {
           $set: {
             fullName: `${doc.firstName} ${doc.lastName}`.trim(),
-            schemaVersion: 2
+            schemaversion: 2
           },
           $unset: { firstName: "", lastName: "" }
         }
@@ -347,7 +347,7 @@ async function backfillSchemaV2() {
 **Failure Mode 1: Premature $jsonSchema Validator Blocks Production Writes**
 
 **Symptom:** Write operations to the `users` collection start failing with `Document failed validation`; error rate spikes in monitoring; existing documents that haven't been migrated cannot be updated.
-**Root Cause:** A `$jsonSchema` validator requiring `schemaVersion: 2` shape was added to the collection before all existing documents were migrated to v2.
+**Root Cause:** A `$jsonSchema` validator requiring `schemaversion: 2` shape was added to the collection before all existing documents were migrated to v2.
 **Diagnostic:**
 ```javascript
 // Count documents that would fail the new validator
@@ -388,7 +388,7 @@ db.currentOp({ "ns": "mydb.users", "op": "update" })
 
 **Failure Mode 3: Permanent Mixed-Version State (Zombie Documents)**
 
-**Symptom:** Months after a schema migration, `countDocuments({ schemaVersion: 1 })` still returns > 0; monitoring shows occasional application errors on null field access for specific user IDs.
+**Symptom:** Months after a schema migration, `countDocuments({ schemaversion: 2 })` still returns > 0; monitoring shows occasional application errors on null field access for specific user IDs.
 **Root Cause:** Cold documents (users who haven't logged in for months) were never accessed (lazy migration didn't reach them) and no backfill script was run. These "zombie" v1 documents cause sporadic application errors when a user eventually returns.
 **Diagnostic:**
 ```javascript

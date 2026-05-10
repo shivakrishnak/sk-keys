@@ -16,7 +16,7 @@ tags:
   - java
   - foundational
 status: complete
-version: 1
+version: 2
 layout: default
 parent: "Software Architecture Patterns"
 grand_parent: "Technical Dictionary"

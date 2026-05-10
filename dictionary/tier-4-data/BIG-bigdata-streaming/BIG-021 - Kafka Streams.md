@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Kafka Streams"
 parent: "Big Data & Streaming"

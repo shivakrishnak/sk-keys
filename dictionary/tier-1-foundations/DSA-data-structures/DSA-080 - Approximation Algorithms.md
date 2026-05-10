@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Approximation Algorithms"
 parent: "Data Structures & Algorithms"

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Top-p  Top-k Sampling"
 parent: "AI Foundations"

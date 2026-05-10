@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Snowflake Architecture (Virtual Warehouse, Storage)"
 parent: "NoSQL & Distributed Databases"

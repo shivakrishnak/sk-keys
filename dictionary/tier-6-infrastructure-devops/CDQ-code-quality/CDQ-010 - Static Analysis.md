@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Static Analysis"
 parent: "Code Quality"

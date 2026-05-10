@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "User Space vs Kernel Space"
 parent: "Operating Systems"

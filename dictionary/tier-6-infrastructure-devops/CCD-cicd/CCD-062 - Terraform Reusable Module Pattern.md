@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Terraform Reusable Module Pattern"
 parent: "CI/CD"

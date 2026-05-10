@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Java EE  J2EE Overview"
 parent: "Java Language"

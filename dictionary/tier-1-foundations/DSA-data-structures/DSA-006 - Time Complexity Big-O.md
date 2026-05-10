@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Time Complexity Big-O"
 parent: "Data Structures & Algorithms"

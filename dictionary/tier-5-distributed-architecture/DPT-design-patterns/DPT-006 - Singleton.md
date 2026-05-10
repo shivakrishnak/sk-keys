@@ -20,7 +20,7 @@ tags:
   - java
   - bestpractice
 status: complete
-version: 1
+version: 2
 ---
 
 # DPT-006 - Singleton

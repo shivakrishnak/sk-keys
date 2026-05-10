@@ -13,7 +13,7 @@ tags:
   - foundational
   - first-principles
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "Document Generation"
 grand_parent: "Technical Dictionary"

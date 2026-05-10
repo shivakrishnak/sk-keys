@@ -14,7 +14,7 @@ tags:
   - architecture
   - bestpractice
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "Data Structures & Algorithms"
 grand_parent: "Technical Dictionary"

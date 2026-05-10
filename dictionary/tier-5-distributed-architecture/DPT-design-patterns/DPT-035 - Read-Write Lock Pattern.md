@@ -18,7 +18,7 @@ tags:
   - java
   - performance
 status: complete
-version: 1
+version: 2
 tier: tier-5-distributed-architecture
 folder: DPT-design-patterns
 ---

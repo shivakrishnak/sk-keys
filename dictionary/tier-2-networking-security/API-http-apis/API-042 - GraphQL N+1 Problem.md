@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "GraphQL N+1 Problem"
 parent: "HTTP & APIs"

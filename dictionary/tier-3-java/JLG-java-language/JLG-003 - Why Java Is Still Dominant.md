@@ -14,7 +14,7 @@ tags:
   - mental-model
   - production
 status: complete
-version: 1
+version: 2
 layout: default
 parent: "Java Language"
 grand_parent: "Technical Dictionary"

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Apache Flink"
 parent: "Big Data & Streaming"

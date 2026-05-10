@@ -15,7 +15,7 @@ tags:
   - pattern
   - microservices
 status: complete
-version: 1
+version: 3
 layout: default
 parent: "Software Architecture Patterns"
 grand_parent: "Technical Dictionary"

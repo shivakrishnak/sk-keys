@@ -14,7 +14,7 @@ tags:
   - mental-model
   - bestpractice
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "Microservices"
 grand_parent: "Technical Dictionary"

@@ -18,7 +18,7 @@ tags:
   - intermediate
   - pattern
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-021 - Service Discovery

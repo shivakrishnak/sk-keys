@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Deadlock Detection (DB)"
 parent: "Database Fundamentals"

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Kappa Architecture"
 parent: "Big Data & Streaming"

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Flyway"
 parent: "Database Fundamentals"
@@ -373,7 +373,7 @@ flyway migrate
 **Diagnostic:**
 ```bash
 flyway info
-# Shows: ERROR - Two resolved migrations have the same version: 7
+# Shows: ERROR - Two resolved migrations have the same version: 2
 ```
 
 **Fix:** Rename one migration to `V8__*.sql`. Update the other branch's reference if dependent. Communicate with the team about version allocation.

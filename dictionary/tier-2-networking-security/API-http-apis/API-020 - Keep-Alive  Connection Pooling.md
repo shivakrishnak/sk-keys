@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Keep-Alive / Connection Pooling"
 parent: "HTTP & APIs"

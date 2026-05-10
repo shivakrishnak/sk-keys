@@ -19,7 +19,7 @@ tags:
   - bestpractice
   - tradeoff
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-008 - Technology Migration Strategy

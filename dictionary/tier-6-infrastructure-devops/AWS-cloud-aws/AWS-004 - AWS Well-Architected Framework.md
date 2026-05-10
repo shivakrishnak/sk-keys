@@ -13,7 +13,7 @@ tags:
   - foundational
   - mental-model
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "Cloud - AWS"
 grand_parent: "Technical Dictionary"

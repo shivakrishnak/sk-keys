@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Monte Carlo vs Las Vegas Algorithms"
 parent: "Data Structures & Algorithms"

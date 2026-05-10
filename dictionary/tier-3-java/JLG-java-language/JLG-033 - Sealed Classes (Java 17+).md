@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Sealed Classes (Java 17+)"
 parent: "Java Language"

@@ -14,7 +14,7 @@ tags:
   - internals
   - deep-dive
 status: complete
-version: 1
+version: 3
 layout: default
 parent: "Java & JVM Internals"
 grand_parent: "Technical Dictionary"
@@ -276,8 +276,8 @@ class Counter {
 javap -verbose -p Counter.class
 
 # Look for:
-# minor version: 0
-# major version: 65   <- Java 21
+# minor version: 3
+# major version: 3   <- Java 21
 # constant pool
 # Code: (bytecode instructions)
 # StackMapTable: (for verifier, per spec)

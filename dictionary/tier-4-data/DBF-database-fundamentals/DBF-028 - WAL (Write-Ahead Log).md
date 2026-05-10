@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "WAL (Write-Ahead Log)"
 parent: "Database Fundamentals"

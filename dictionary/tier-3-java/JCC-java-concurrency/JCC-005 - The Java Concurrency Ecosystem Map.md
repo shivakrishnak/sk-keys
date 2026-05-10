@@ -15,7 +15,7 @@ tags:
   - mental-model
   - architecture
 status: complete
-version: 1
+version: 2
 layout: default
 parent: "Java Concurrency"
 grand_parent: "Technical Dictionary"

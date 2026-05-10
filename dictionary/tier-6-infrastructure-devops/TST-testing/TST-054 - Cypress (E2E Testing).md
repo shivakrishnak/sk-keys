@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Cypress (E2E Testing)"
 parent: "Testing"

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "LinkedList"
 parent: "Data Structures & Algorithms"

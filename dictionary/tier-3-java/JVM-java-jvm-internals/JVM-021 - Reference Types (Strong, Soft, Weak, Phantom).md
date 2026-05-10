@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Reference Types (Strong, Soft, Weak, Phantom)"
 parent: "Java & JVM Internals"

@@ -13,7 +13,7 @@ tags:
   - foundational
   - mental-model
 status: draft
-version: 1
+version: 0
 layout: default
 parent: "Behavioral & Leadership"
 grand_parent: "Technical Dictionary"

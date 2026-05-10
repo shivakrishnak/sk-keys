@@ -14,7 +14,7 @@ tags:
   - tradeoff
   - llm
 status: complete
-version: 1
+version: 3
 layout: default
 parent: "RAG & Agents & LLMOps"
 grand_parent: "Technical Dictionary"

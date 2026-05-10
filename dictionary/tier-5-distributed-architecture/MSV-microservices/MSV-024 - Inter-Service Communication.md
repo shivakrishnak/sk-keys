@@ -18,7 +18,7 @@ tags:
   - intermediate
   - api
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-024 - Inter-Service Communication

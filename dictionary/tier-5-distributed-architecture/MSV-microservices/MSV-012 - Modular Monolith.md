@@ -18,7 +18,7 @@ tags:
   - intermediate
   - distributed
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-012 - Modular Monolith

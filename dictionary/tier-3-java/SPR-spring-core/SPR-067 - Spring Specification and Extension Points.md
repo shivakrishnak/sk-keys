@@ -16,7 +16,7 @@ tags:
   - internals
   - pattern
 status: complete
-version: 1
+version: 2
 layout: default
 parent: "Spring Core"
 grand_parent: "Technical Dictionary"

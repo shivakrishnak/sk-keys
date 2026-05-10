@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 layout: default
 title: "Java 17 Features (Records, Sealed, Pattern Matching)"
 parent: "Java Language"

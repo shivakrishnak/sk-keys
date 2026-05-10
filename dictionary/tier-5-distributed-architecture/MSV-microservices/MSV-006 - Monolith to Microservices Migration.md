@@ -19,7 +19,7 @@ tags:
   - distributed
   - bestpractice
 status: complete
-version: 1
+version: 2
 ---
 
 # MSV-006 - Monolith to Microservices Migration
