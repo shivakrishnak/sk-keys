@@ -633,8 +633,10 @@ status:
   - complete     → entry fully written and reviewed
 
 version:
-  - Integer, starts at 1
-  - Increment when entry is substantially revised
+  - Five-level integer scale: 0 (stub) | 1 (pre-v2) | 2 (v2/v2.1) | 3 (v3.x) | 4 (v4.0)
+  - Stub files (placeholder only) always use version: 0
+  - Fully generated entries always set version: 4
+  - When upgrading an existing entry to v4.0, set version: 4 after all v4 sections are present
 
 layout:
   - Always exactly: layout: default
@@ -705,8 +707,8 @@ tags:
   - html
   - performance
   - advanced
-status: draft
-version: 1
+status: complete
+version: 4
 layout: default
 parent: "HTML"
 grand_parent: "Technical Dictionary"
@@ -1687,8 +1689,8 @@ difficulty: [★☆☆ | ★★☆ | ★★★]
 depends_on: [CODE]-[NNN], [CODE]-[NNN]
 used_by: [CODE]-[NNN], [CODE]-[NNN]
 related: [CODE]-[NNN], [CODE]-[NNN]
-status: draft
-version: 1
+status: complete
+version: 4
 tags:
   - tag1
   - tag2
@@ -2082,7 +2084,7 @@ FRONTMATTER:
   ☐ related: full IDs, not keyword names
   ☐ tags: YAML array format (- tag1), no # prefix, from taxonomy (Section 4)
   ☐ status: one of draft / in-progress / complete
-  ☐ version: integer, starts at 1
+  ☐ version: 4 for fully generated entries; 0 for stub-only files
 
 STRUCTURE (24 sections check):
   ☐ 5.1  Title line with keyword name

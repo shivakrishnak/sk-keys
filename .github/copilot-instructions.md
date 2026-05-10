@@ -45,6 +45,13 @@ When asked to generate, create, upgrade, or edit any keyword entry `.md` file, a
 - Double-quote any title value containing `: `.
 - Never use em dashes anywhere in the file.
 
+**5. Version defaults:**
+
+- All fully generated entries must set `version: 4` and `status: complete`. v4.0 is the only acceptable output standard for new content.
+- Stub files (placeholder only, no generated content) use `version: 0` and `status: draft`.
+- The `version` field follows a strict 5-level scale: 0 (stub) | 1 (pre-v2) | 2 (v2/v2.1) | 3 (v3.x) | 4 (v4.0). Never set a version value manually outside this scale.
+- When upgrading an existing entry to v4.0 standard, set `version: 4` only after all required v4 sections are present and non-stub.
+
 ---
 
 ## Technical Dictionary Generator - Master Prompt v4.0
