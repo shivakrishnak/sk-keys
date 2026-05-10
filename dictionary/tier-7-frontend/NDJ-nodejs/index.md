@@ -2,7 +2,7 @@
 layout: default
 title: "Node.js"
 parent: "Technical Dictionary"
-nav_order: 36
+nav_order: 46
 has_children: true
 permalink: /nodejs/
 ---

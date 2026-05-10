@@ -2,7 +2,7 @@
 layout: default
 title: "TypeScript"
 parent: "Technical Dictionary"
-nav_order: 34
+nav_order: 43
 has_children: true
 permalink: /typescript/
 ---

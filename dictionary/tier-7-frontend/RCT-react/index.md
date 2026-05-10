@@ -2,7 +2,7 @@
 layout: default
 title: "React"
 parent: "Technical Dictionary"
-nav_order: 35
+nav_order: 44
 has_children: true
 permalink: /react/
 ---

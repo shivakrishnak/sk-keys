@@ -2,7 +2,7 @@
 layout: default
 title: "Git & Branching Strategy"
 parent: "Technical Dictionary"
-nav_order: 26
+nav_order: 33
 has_children: true
 permalink: /git/
 ---

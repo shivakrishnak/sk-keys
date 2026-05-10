@@ -2,7 +2,7 @@
 layout: default
 title: "Java Concurrency"
 parent: "Technical Dictionary"
-nav_order: 9
+nav_order: 12
 has_children: true
 permalink: /java-concurrency/
 ---

@@ -2,7 +2,7 @@
 layout: default
 title: "Cloud - GCP"
 parent: "Technical Dictionary"
-nav_order: 26
+nav_order: 31
 has_children: true
 permalink: /cloud-gcp/
 ---

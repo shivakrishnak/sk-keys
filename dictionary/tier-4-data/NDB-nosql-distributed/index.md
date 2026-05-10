@@ -2,7 +2,7 @@
 layout: default
 title: "NoSQL & Distributed Databases"
 parent: "Technical Dictionary"
-nav_order: 12
+nav_order: 16
 has_children: true
 permalink: /nosql/
 ---

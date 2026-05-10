@@ -2,7 +2,7 @@
 layout: default
 title: "Java & JVM Internals"
 parent: "Technical Dictionary"
-nav_order: 8
+nav_order: 10
 has_children: true
 permalink: /jvm/
 ---

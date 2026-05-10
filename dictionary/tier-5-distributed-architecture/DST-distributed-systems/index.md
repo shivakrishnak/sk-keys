@@ -2,7 +2,7 @@
 layout: default
 title: "Distributed Systems"
 parent: "Technical Dictionary"
-nav_order: 16
+nav_order: 21
 has_children: true
 permalink: /distributed-systems/
 ---

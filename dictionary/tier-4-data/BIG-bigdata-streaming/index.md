@@ -2,7 +2,7 @@
 layout: default
 title: "Big Data & Streaming"
 parent: "Technical Dictionary"
-nav_order: 16
+nav_order: 19
 has_children: true
 permalink: /big-data/
 ---

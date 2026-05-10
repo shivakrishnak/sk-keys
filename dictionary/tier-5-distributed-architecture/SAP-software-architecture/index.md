@@ -2,7 +2,7 @@
 layout: default
 title: "Software Architecture Patterns"
 parent: "Technical Dictionary"
-nav_order: 19
+nav_order: 24
 has_children: true
 permalink: /software-architecture/
 ---

@@ -2,7 +2,7 @@
 layout: default
 title: "AI Foundations"
 parent: "Technical Dictionary"
-nav_order: 39
+nav_order: 49
 has_children: true
 permalink: /ai-foundations/
 ---

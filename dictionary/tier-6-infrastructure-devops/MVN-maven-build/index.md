@@ -2,7 +2,7 @@
 layout: default
 title: "Maven & Build Tools"
 parent: "Technical Dictionary"
-nav_order: 27
+nav_order: 34
 has_children: true
 permalink: /maven-build/
 ---

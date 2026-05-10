@@ -2,7 +2,7 @@
 layout: default
 title: "JavaScript"
 parent: "Technical Dictionary"
-nav_order: 33
+nav_order: 42
 has_children: true
 permalink: /javascript/
 ---

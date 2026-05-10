@@ -2,7 +2,7 @@
 layout: default
 title: "Java Language"
 parent: "Technical Dictionary"
-nav_order: 8
+nav_order: 11
 has_children: true
 permalink: /java-language/
 ---

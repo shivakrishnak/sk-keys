@@ -2,7 +2,7 @@
 layout: default
 title: "CI/CD"
 parent: "Technical Dictionary"
-nav_order: 25
+nav_order: 32
 has_children: true
 permalink: /ci-cd/
 ---

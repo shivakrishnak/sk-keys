@@ -2,7 +2,7 @@
 layout: default
 title: "Infrastructure as Code"
 parent: "Technical Dictionary"
-nav_order: 33
+nav_order: 38
 has_children: true
 permalink: /infrastructure-as-code/
 ---

@@ -2,7 +2,7 @@
 layout: default
 title: "Cloud - Azure"
 parent: "Technical Dictionary"
-nav_order: 24
+nav_order: 30
 has_children: true
 permalink: /cloud-azure/
 ---

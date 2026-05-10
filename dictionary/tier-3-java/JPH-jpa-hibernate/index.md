@@ -2,7 +2,7 @@
 layout: default
 title: "JPA & Hibernate"
 parent: "Technical Dictionary"
-nav_order: 11
+nav_order: 14
 has_children: true
 permalink: /jpa-hibernate/
 ---

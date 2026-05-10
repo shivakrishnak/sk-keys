@@ -2,7 +2,7 @@
 layout: default
 title: "Spring Core"
 parent: "Technical Dictionary"
-nav_order: 10
+nav_order: 13
 has_children: true
 permalink: /spring/
 ---

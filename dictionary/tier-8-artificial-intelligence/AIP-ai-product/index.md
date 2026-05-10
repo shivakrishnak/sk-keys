@@ -2,7 +2,7 @@
 layout: default
 title: "AI Product Engineering"
 parent: "Technical Dictionary"
-nav_order: 47
+nav_order: 52
 has_children: true
 permalink: /ai-product/
 ---

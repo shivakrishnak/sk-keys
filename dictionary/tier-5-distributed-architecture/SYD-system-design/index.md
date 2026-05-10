@@ -2,7 +2,7 @@
 layout: default
 title: "System Design"
 parent: "Technical Dictionary"
-nav_order: 18
+nav_order: 23
 has_children: true
 permalink: /system-design/
 ---

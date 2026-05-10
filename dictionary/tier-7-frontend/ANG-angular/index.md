@@ -2,7 +2,7 @@
 layout: default
 title: "Angular"
 parent: "Technical Dictionary"
-nav_order: 48
+nav_order: 45
 has_children: true
 permalink: /angular/
 ---

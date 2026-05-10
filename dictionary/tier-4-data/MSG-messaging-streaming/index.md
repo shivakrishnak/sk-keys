@@ -2,7 +2,7 @@
 layout: default
 title: "Messaging & Event Streaming"
 parent: "Technical Dictionary"
-nav_order: 16
+nav_order: 20
 has_children: true
 permalink: /messaging-streaming/
 ---

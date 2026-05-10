@@ -2,7 +2,7 @@
 layout: default
 title: "npm & Package Management"
 parent: "Technical Dictionary"
-nav_order: 37
+nav_order: 47
 has_children: true
 permalink: /npm/
 ---

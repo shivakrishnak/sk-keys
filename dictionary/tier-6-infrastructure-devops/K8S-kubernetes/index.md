@@ -2,7 +2,7 @@
 layout: default
 title: "Kubernetes"
 parent: "Technical Dictionary"
-nav_order: 22
+nav_order: 28
 has_children: true
 permalink: /kubernetes/
 ---

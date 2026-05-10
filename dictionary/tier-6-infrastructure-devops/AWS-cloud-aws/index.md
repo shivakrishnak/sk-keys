@@ -2,7 +2,7 @@
 layout: default
 title: "Cloud - AWS"
 parent: "Technical Dictionary"
-nav_order: 23
+nav_order: 29
 has_children: true
 permalink: /cloud-aws/
 ---

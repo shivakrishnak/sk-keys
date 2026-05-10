@@ -2,7 +2,7 @@
 layout: default
 title: "Database Fundamentals"
 parent: "Technical Dictionary"
-nav_order: 11
+nav_order: 15
 has_children: true
 permalink: /databases/
 ---

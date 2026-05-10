@@ -2,7 +2,7 @@
 layout: default
 title: "HTML"
 parent: "Technical Dictionary"
-nav_order: 31
+nav_order: 40
 has_children: true
 permalink: /html/
 ---

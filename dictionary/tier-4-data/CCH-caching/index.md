@@ -2,7 +2,7 @@
 layout: default
 title: "Caching"
 parent: "Technical Dictionary"
-nav_order: 13
+nav_order: 17
 has_children: true
 permalink: /caching/
 ---

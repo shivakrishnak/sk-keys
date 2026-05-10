@@ -2,7 +2,7 @@
 layout: default
 title: "Observability & SRE"
 parent: "Technical Dictionary"
-nav_order: 30
+nav_order: 37
 has_children: true
 permalink: /observability/
 ---

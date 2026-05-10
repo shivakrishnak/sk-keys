@@ -423,10 +423,10 @@ A file is **v4.0** (`version: 4` = `LATEST_VERSION`) if it ALSO has: `### 📶 G
 | LLM  | LLMs & Prompt Engineering      | tier-8-artificial-intelligence  | LLM-llms-prompt-eng       |
 | RAG  | RAG & Agents & LLMOps          | tier-8-artificial-intelligence  | RAG-rag-agents-llmops     |
 | AIP  | AI Product Engineering         | tier-8-artificial-intelligence  | AIP-ai-product            |
-| ASY  | Async & Background Processing  | tier-9-professional-domain      | ASY-async-background      |
+| ASY  | Async & Background Processing  | tier-5-distributed-architecture | ASY-async-background      |
 | DGN  | Document Generation            | tier-9-professional-domain      | DGN-document-generation   |
 | FIN  | Financial Services Domain      | tier-9-professional-domain      | FIN-financial-domain      |
-| PLT  | Platform & Modern SWE          | tier-9-professional-domain      | PLT-platform-swe          |
+| PLT  | Platform & Modern SWE          | tier-6-infrastructure-devops    | PLT-platform-swe          |
 | BHV  | Behavioral & Leadership        | tier-9-professional-domain      | BHV-behavioral-leadership |
 
 **To add a new category:** Choose a unique 3-letter code not in this table → add a row → create folder `/tier-N-name/CODE-folder-name/` → first entry is `[CODE]-001`.

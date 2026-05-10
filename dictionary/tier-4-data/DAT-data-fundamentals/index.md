@@ -2,7 +2,7 @@
 layout: default
 title: "Data Fundamentals"
 parent: "Technical Dictionary"
-nav_order: 14
+nav_order: 18
 has_children: true
 permalink: /data-fundamentals/
 ---

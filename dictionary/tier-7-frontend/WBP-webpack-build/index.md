@@ -2,7 +2,7 @@
 layout: default
 title: "Webpack & Build Tools"
 parent: "Technical Dictionary"
-nav_order: 38
+nav_order: 48
 has_children: true
 permalink: /webpack-build/
 ---
