@@ -28,6 +28,7 @@ exclude:
   - Gemfile.lock
   - vendor/
   - tmp/
+  - interview/
 
 # Search — disabled: 1,362 pages produce a ~25MB Lunr index
 # Re-enable once content is stable and index size is acceptable
@@ -40,7 +41,7 @@ search:
   tokenizer_separator: /[\s/]+/
   rel_url: true
   button: true
-  focus_shortcut_key: 'k'
+  focus_shortcut_key: "k"
 
 # Navigation
 heading_anchors: true
