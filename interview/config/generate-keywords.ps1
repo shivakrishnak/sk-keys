@@ -5,13 +5,44 @@
     Generates keyword lists for interview topics, groups them into
     sub-topic files, and creates folder/index/stub structure.
 
-    Supports three flows:
-    1. New topic from scratch (generates keywords via AI prompt)
+    Uses KEYWORD_GENERATOR_PROMPT.md (Category Keyword Generator v3.0)
+    as the master specification for all keyword generation. The prompt
+    file at .github/prompts/generate-keywords.prompt.md orchestrates
+    this process for dictionary categories and tiers.
+
+    Supports four flows:
+    1. New topic from scratch (generates keywords via
+       KEYWORD_GENERATOR_PROMPT.md v3.0 spec)
     2. New topic from existing dictionary category
     3. Add subtopic to existing topic
+    4. Scan existing dictionary category to find new
+       sub-topic opportunities
+
+    DESIGN CONSIDERATIONS:
+    - For new topics without an index.md, use
+      KEYWORD_GENERATOR_PROMPT.md to generate a comprehensive
+      keyword list, then apply folder/file rules and generate
+      file content.
+    - For topics like Angular that do not exist yet, analyse
+      where the topic belongs (which tier/category), generate
+      keywords via KEYWORD_GENERATOR_PROMPT.md, create folders
+      and files, and generate content.
+    - For new subtopics (e.g., React Hooks) where the main
+      topic already exists, create the file in the existing
+      topic folder, apply file rules, generate keywords via
+      KEYWORD_GENERATOR_PROMPT.md, and generate content.
+    - For existing dictionary categories (e.g., JVM, JCC),
+      scan the dictionary index.md, analyse keywords, check
+      for new folder/file opportunities, and generate content.
 
     ALWAYS use pwsh (PowerShell 7+):
       pwsh -ExecutionPolicy Bypass -File interview/config/generate-keywords.ps1
+
+    REFERENCES:
+    - KEYWORD_GENERATOR_PROMPT.md: Master keyword generation spec
+    - .github/prompts/generate-keywords.prompt.md: Prompt file
+      for category/tier keyword processing
+    - interview/config/INTERVIEW_PROMPT.md: Content generation spec
 
 .PARAMETER Topic
     Topic name (e.g., "Java", "Angular", "Kubernetes")
@@ -315,11 +346,16 @@ if ($Subtopic) {
         Write-Host "`nProvide keywords with -Keywords parameter:" -ForegroundColor Yellow
         Write-Host "  -Keywords 'Keyword1,Keyword2,Keyword3'"
         Write-Host "`nOr use AI to generate keywords:" -ForegroundColor Yellow
+        Write-Host "`nSPEC: Apply KEYWORD_GENERATOR_PROMPT.md v3.0"
+        Write-Host "PROMPT: .github/prompts/generate-keywords.prompt.md"
+        Write-Host ""
         Write-Host @"
 
 Generate a keyword list for interview mastery:
   Topic: $Topic
   Subtopic: $Subtopic
+
+Spec reference: KEYWORD_GENERATOR_PROMPT.md v3.0
 
 Requirements:
 - 5-15 keywords covering the subtopic comprehensively
@@ -327,6 +363,9 @@ Requirements:
 - Each keyword should be a distinct, teachable concept
 - Focus on interview-relevant knowledge
 - Include both theoretical and practical concepts
+- Include decision framework keywords (Rule 17)
+- Include deliberate practice keywords (Rule 18)
+- Include interview readiness keywords (Rule 22)
 
 Output format (one keyword per line):
   - Keyword Name
@@ -428,11 +467,27 @@ if (Test-Path $topicPath) {
 # Output AI prompt for keyword generation
 Write-Host "┌─────────────────────────────────────────────┐" -ForegroundColor Green
 Write-Host "│ USE THIS PROMPT TO GENERATE KEYWORDS        │" -ForegroundColor Green
+Write-Host "│ Spec: KEYWORD_GENERATOR_PROMPT.md v3.0      │" -ForegroundColor Green
+Write-Host "│ Prompt: .github/prompts/generate-keywords    │" -ForegroundColor Green
 Write-Host "└─────────────────────────────────────────────┘" -ForegroundColor Green
 Write-Host ""
 
 $kwPrompt = @"
 Generate a comprehensive keyword list for interview mastery on: $Topic
+
+SPEC REFERENCE: Apply KEYWORD_GENERATOR_PROMPT.md (Category
+Keyword Generator v3.0) rules for keyword generation. Use
+.github/prompts/generate-keywords.prompt.md for the full
+generation workflow.
+
+DESIGN CONSIDERATIONS:
+- Analyse where this topic belongs in the tier structure
+  (tier-1 through tier-9) and place it accordingly
+- Generate keywords covering all applicable knowledge levels:
+  L0 (Orientation) through L5 (Creator) + META
+- Apply all 22 rules from KEYWORD_GENERATOR_PROMPT.md Section 2
+- Use all 11 output components from Section 3
+- Run all 16 quality checks from Section 4
 
 Requirements:
 1. Cover the topic from zero to god-level mastery
@@ -443,6 +498,9 @@ Requirements:
 6. Include both theoretical concepts and practical skills
 7. Cover: fundamentals, patterns, internals, debugging,
    performance, architecture, production concerns
+8. Include decision framework keywords per level (Rule 17)
+9. Include deliberate practice keywords per level (Rule 18)
+10. Include interview readiness keywords at every level (Rule 22)
 
 Group keywords into sub-topic files (5-15 keywords each):
 - Group related concepts together

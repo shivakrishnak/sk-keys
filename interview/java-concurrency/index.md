@@ -6,8 +6,8 @@ nav_order: 2
 has_children: true
 permalink: /interview/java-concurrency/
 description: Interview mastery content for Java Concurrency
-keywords_count: 23
-files_count: 4
+keywords_count: 26
+files_count: 5
 ---
 
 # Java Concurrency
@@ -20,3 +20,4 @@ Complete interview mastery for Java concurrency - from threads and synchronizati
 | 2   | Synchronization        | 7        | synchronized, volatile, JMM, ReentrantLock, ReadWriteLock, StampedLock, Atomics/CAS, ThreadLocal       |
 | 3   | Concurrent Collections | 5        | ConcurrentHashMap, CopyOnWriteArrayList, BlockingQueue, CountDownLatch/CyclicBarrier, Semaphore/Phaser |
 | 4   | Virtual Threads        | 5        | Virtual Threads, Structured Concurrency, Scoped Values, Pinning, Migration                             |
+| 5   | Diagnostics            | 3        | Deadlock Detection/Thread Dumps, Testing Concurrent Code, Producer-Consumer Pattern                    |

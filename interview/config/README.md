@@ -13,6 +13,23 @@ How to generate new interview mastery content using the two PowerShell scripts.
 | `generate-keywords.ps1` | Step 1: Create keyword lists, folders, stubs |
 | `generate-content.ps1`  | Step 2: Generate full content from stubs     |
 
+**Spec References:**
+
+| File                                          | Purpose                                     |
+| --------------------------------------------- | ------------------------------------------- |
+| `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v3.0)       |
+| `.github/prompts/generate-keywords.prompt.md` | Prompt for category/tier keyword processing |
+| `interview/config/INTERVIEW_PROMPT.md`        | Master content generation spec (v1.0)       |
+
+---
+
+## Design Considerations
+
+1. **New topic (no index.md):** Use `KEYWORD_GENERATOR_PROMPT.md` v3.0 to generate keywords. Analyse tier placement. Create folders/files. Generate content.
+2. **Brand-new topic (e.g., Angular):** Analyse which tier it belongs to. Generate keywords via `KEYWORD_GENERATOR_PROMPT.md`. Create folders/files. Generate content.
+3. **New subtopic (e.g., React Hooks, topic exists):** Create file in existing folder. Generate keywords via `KEYWORD_GENERATOR_PROMPT.md`. Generate content.
+4. **Existing dictionary category (e.g., JVM, JCC):** Scan dictionary `index.md`. Analyse keywords. Check for new folder/file opportunities. Generate content.
+
 ---
 
 ## Quick Start - End to End
@@ -171,23 +188,25 @@ pwsh -File interview/config/generate-content.ps1 `
 
 **Tier-to-Topic mappings** (built into the script):
 
-| Category Codes     | Interview Topic                |
-| ------------------ | ------------------------------ |
-| JVM, JLG           | Java                           |
-| JCC                | Java Concurrency               |
-| SPR                | Spring                         |
-| JPH                | Hibernate                      |
-| DBF, NDB           | SQL and Databases              |
-| CTR                | Containers                     |
-| K8S                | Kubernetes                     |
-| DST, MSV, SYD, SAP | System Design                  |
-| SEC, IAM, CRY      | Security                       |
-| RCT                | React                          |
-| DSA                | Data Structures and Algorithms |
-| CCH                | Caching                        |
-| MSG                | Messaging                      |
-| CCD, GIT, OBS      | CI/CD and DevOps               |
-| AIF, LLM, RAG      | AI and RAG                     |
+| Category Codes     | Interview Topic                 |
+| ------------------ | ------------------------------- |
+| JVM, JLG           | Java                            |
+| JCC                | Java Concurrency                |
+| SPR                | Spring                          |
+| JPH                | Hibernate                       |
+| DBF, NDB           | SQL and Databases               |
+| CTR                | Containers                      |
+| K8S                | Kubernetes                      |
+| DST, MSV, SYD, SAP | System Design                   |
+| DPT                | Design Patterns                 |
+| ASY                | Async and Background Processing |
+| SEC, IAM, CRY      | Security                        |
+| RCT                | React                           |
+| DSA                | Data Structures and Algorithms  |
+| CCH                | Caching                         |
+| MSG                | Messaging                       |
+| CCD, GIT, OBS      | CI/CD and DevOps                |
+| AIF, LLM, RAG      | AI and RAG                      |
 
 ### Mode 4: `new` - Brand-New Topic
 
@@ -346,5 +365,12 @@ pwsh -File interview/config/generate-content.ps1 `
 | `generate-content.ps1`      | Content generation script (5 modes)                    |
 | `generate-keywords.ps1`     | Keyword generation and folder scaffolding              |
 | `README.md`                 | This file                                              |
+
+**External references (used by both scripts):**
+
+| File                                          | Purpose                                     |
+| --------------------------------------------- | ------------------------------------------- |
+| `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v3.0)       |
+| `.github/prompts/generate-keywords.prompt.md` | Prompt for category/tier keyword processing |
 
 > All files in `interview/config/` are excluded from the Jekyll build via `_config.yml`.

@@ -17,12 +17,26 @@ When asked to generate, create, or edit any file under `/interview/`, apply all 
 
 ## Prompt Files
 
-| Prompt                                   | Purpose                                                  |
-| ---------------------------------------- | -------------------------------------------------------- |
-| `interview/config/INTERVIEW_PROMPT.md`   | Master generation prompt for interview mastery entries   |
-| `interview/config/generate-content.ps1`  | Batch content generation script                          |
-| `interview/config/generate-keywords.ps1` | Keyword generation and folder/file scaffolding           |
-| `interview/config/topic-registry.md`     | Topic-to-folder mapping and dictionary category mappings |
+| Prompt                                        | Purpose                                                  |
+| --------------------------------------------- | -------------------------------------------------------- |
+| `interview/config/INTERVIEW_PROMPT.md`        | Master generation prompt for interview mastery entries   |
+| `interview/config/generate-content.ps1`       | Batch content generation script                          |
+| `interview/config/generate-keywords.ps1`      | Keyword generation and folder/file scaffolding           |
+| `interview/config/topic-registry.md`          | Topic-to-folder mapping and dictionary category mappings |
+| `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v3.0)                    |
+| `.github/prompts/generate-keywords.prompt.md` | Prompt for category/tier keyword processing              |
+
+## Design Considerations
+
+When working with interview content, follow these rules for different scenarios:
+
+1. **New topic (no folder/index.md exists):** Use `KEYWORD_GENERATOR_PROMPT.md` (v3.0) to generate a comprehensive keyword list. Analyse where the topic belongs in the tier structure (tier-1 through tier-9). Create the folder, index.md, and sub-topic files. Apply folder/file rules. Generate content using `INTERVIEW_PROMPT.md`.
+
+2. **Brand-new topic (e.g., Angular, not in dictionary):** Analyse which tier/category the topic belongs to. Use `KEYWORD_GENERATOR_PROMPT.md` to generate keywords covering L0 through L5+META levels. Create the relevant folders and files. Apply all folder/file rules. Generate content.
+
+3. **New subtopic for existing topic (e.g., React Hooks):** Analyse where the subtopic fits within the existing topic structure. Create the file in the existing topic folder. Use `KEYWORD_GENERATOR_PROMPT.md` to generate a focused keyword list for the subtopic. Apply file rules. Generate content.
+
+4. **Existing dictionary category (e.g., JVM, JCC):** Scan the dictionary `index.md` and analyse keywords. Check for new folder/file opportunities (gaps, missing subtopics). Apply folder/file rules. Generate content for uncovered keywords.
 
 ## Folder Structure Rules
 
@@ -100,16 +114,39 @@ This will:
 
 1. Check `topic-registry.md` for existing mappings
 2. Check if dictionary has a matching category (e.g., ANG)
-3. Generate keyword list, group into sub-topic files
-4. Create folder + index.md + content files
+3. Generate keyword list using `KEYWORD_GENERATOR_PROMPT.md` v3.0 spec
+   (via `.github/prompts/generate-keywords.prompt.md`)
+4. Analyse where the topic belongs (tier/category placement)
+5. Create folder + index.md + content files
 
-### Generate from existing dictionary tier
+### Add a new subtopic to an existing topic
+
+```
+Add subtopic: React - Hooks
+```
+
+This will:
+
+1. Verify the parent topic folder exists
+2. Generate keywords using `KEYWORD_GENERATOR_PROMPT.md` v3.0
+3. Create the subtopic file with YAML frontmatter
+4. Generate content using `INTERVIEW_PROMPT.md`
+5. Update the topic `index.md`
+
+### Generate from existing dictionary tier or category
 
 ```
 Generate interview content from: tier-3-java
+Generate interview content from: JVM
 ```
 
-This will scan all dictionary categories in that tier and map them to interview topic folders.
+This will:
+
+1. Scan dictionary `index.md` for the category/tier
+2. Analyse keywords for new folder/file opportunities
+3. Map categories to interview topics via `TierTopicMap`
+4. Create missing folders, stubs, and index files
+5. Generate content for uncovered keywords
 
 ## File Frontmatter Format
 

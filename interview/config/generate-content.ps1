@@ -6,8 +6,35 @@
     Operates in multiple modes: single file, full topic, from dictionary
     tier, new topic creation, and subtopic addition.
 
+    Uses KEYWORD_GENERATOR_PROMPT.md (Category Keyword Generator v3.0)
+    via .github/prompts/generate-keywords.prompt.md for keyword
+    discovery when creating new topics or scanning dictionary categories.
+
+    DESIGN CONSIDERATIONS:
+    - For new topics without an index.md, uses
+      KEYWORD_GENERATOR_PROMPT.md to generate keywords, applies
+      folder/file rules, then generates content.
+    - For topics like Angular that do not exist, analyses where
+      the topic belongs, generates keywords via
+      KEYWORD_GENERATOR_PROMPT.md, creates folders/files, and
+      generates content.
+    - For new subtopics (e.g., React Hooks) where the main topic
+      exists, creates the file in the existing folder, generates
+      keywords via KEYWORD_GENERATOR_PROMPT.md, and generates
+      content.
+    - For existing dictionary categories (e.g., JVM, JCC), scans
+      the dictionary index.md, analyses keywords, checks for new
+      folder/file opportunities, and generates content.
+
     ALWAYS use pwsh (PowerShell 7+) to run this script:
       pwsh -ExecutionPolicy Bypass -File interview/config/generate-content.ps1
+
+    REFERENCES:
+    - KEYWORD_GENERATOR_PROMPT.md: Master keyword generation spec
+    - .github/prompts/generate-keywords.prompt.md: Prompt file
+      for category/tier keyword processing
+    - interview/config/INTERVIEW_PROMPT.md: Content generation spec
+    - interview/config/generate-keywords.ps1: Keyword scaffolding
 
 .PARAMETER Mode
     Operation mode:
@@ -340,6 +367,11 @@ function Build-GenerationPrompt {
     $prompt = @"
 Generate interview mastery content following INTERVIEW_PROMPT.md v1.0 exactly.
 
+SPEC REFERENCES:
+- Content spec: interview/config/INTERVIEW_PROMPT.md
+- Keyword spec: KEYWORD_GENERATOR_PROMPT.md v3.0
+- Keyword prompt: .github/prompts/generate-keywords.prompt.md
+
     Topic:    $TopicName
     Subtopic: $SubtopicName
     File:     $(Get-SubtopicFileName $TopicName $SubtopicName)
@@ -396,6 +428,8 @@ $TierTopicMap = @{
     "AIF" = @{ Topic = "AI and RAG"; Subtopics = @("AI Foundations") }
     "LLM" = @{ Topic = "AI and RAG"; Subtopics = @("LLMs and Prompt Engineering") }
     "RAG" = @{ Topic = "AI and RAG"; Subtopics = @("RAG Fundamentals", "Agents", "LLMOps") }
+    "DPT" = @{ Topic = "Design Patterns"; Subtopics = @("Creational", "Structural", "Behavioral", "SOLID", "Anti-Patterns") }
+    "ASY" = @{ Topic = "Async and Background Processing"; Subtopics = @("Fundamentals", "Message Brokers", "Patterns", "Orchestration", "Observability") }
 }
 
 # ── Mode Handlers ──────────────────────────────────────────
@@ -636,7 +670,9 @@ function Invoke-NewMode {
         Write-Host "  $($entries.Count) keywords found"
     } else {
         Write-Host "No matching dictionary category found." -ForegroundColor Yellow
-        Write-Host "Use generate-keywords.ps1 to create keyword list first."
+        Write-Host "Use generate-keywords.ps1 to create keyword list first." -ForegroundColor Yellow
+        Write-Host "  Spec: KEYWORD_GENERATOR_PROMPT.md v3.0" -ForegroundColor Cyan
+        Write-Host "  Prompt: .github/prompts/generate-keywords.prompt.md" -ForegroundColor Cyan
         Write-Host ""
         Write-Host "Example:" -ForegroundColor Cyan
         Write-Host "  pwsh -File interview/config/generate-keywords.ps1 -Topic '$Topic'"

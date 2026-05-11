@@ -6,6 +6,23 @@
 
 ---
 
+## Spec References
+
+| File                                          | Purpose                                     |
+| --------------------------------------------- | ------------------------------------------- |
+| `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v3.0)       |
+| `.github/prompts/generate-keywords.prompt.md` | Prompt for category/tier keyword processing |
+| `interview/config/INTERVIEW_PROMPT.md`        | Master content generation spec (v1.0)       |
+
+## Design Considerations
+
+1. **New topic (no folder/index.md):** Use `KEYWORD_GENERATOR_PROMPT.md` v3.0 to generate keywords. Analyse tier placement. Create folders/files. Generate content.
+2. **Brand-new topic (e.g., Angular):** Analyse which tier it belongs to. Generate keywords via `KEYWORD_GENERATOR_PROMPT.md`. Create folders/files. Generate content.
+3. **New subtopic (e.g., React Hooks, topic exists):** Create file in existing folder. Generate keywords via `KEYWORD_GENERATOR_PROMPT.md`. Generate content.
+4. **Existing dictionary category (e.g., JVM, JCC):** Scan dictionary `index.md`. Analyse keywords. Check for new folder/file opportunities. Generate content.
+
+---
+
 ## Registry Format
 
 | Topic        | Folder         | Dictionary Sources           | Status                                       |
@@ -16,23 +33,26 @@
 
 ## Active Topics
 
-| Topic                          | Folder             | Dictionary Sources | Status  | Description                                                         |
-| ------------------------------ | ------------------ | ------------------ | ------- | ------------------------------------------------------------------- |
-| Java                           | java/              | JVM, JLG           | planned | Core Java language, OOP, collections, modern Java features          |
-| Java Concurrency               | java-concurrency/  | JCC                | planned | Threading, synchronization, virtual threads, concurrent collections |
-| Spring                         | spring/            | SPR                | planned | Spring Core, Boot, MVC, Security, Data, Cloud                       |
-| Hibernate                      | hibernate/         | JPH                | planned | ORM fundamentals, JPA, entity management, performance tuning        |
-| SQL and Databases              | sql-and-databases/ | DBF, NDB           | planned | SQL queries, joins, indexing, transactions, NoSQL, replication      |
-| Containers                     | containers/        | CTR                | planned | Docker fundamentals, images, networking, compose, security          |
-| Kubernetes                     | kubernetes/        | K8S                | planned | Core resources, networking, storage, security, operations           |
-| System Design                  | system-design/     | DST, MSV, SYD, SAP | planned | Distributed systems, microservices, architecture patterns           |
-| React                          | react/             | RCT                | planned | Components, hooks, state management, performance, testing           |
-| Security                       | security/          | SEC, IAM, CRY      | planned | Web security, authentication, authorization, cryptography           |
-| Data Structures and Algorithms | dsa/               | DSA                | planned | Arrays, trees, graphs, sorting, dynamic programming                 |
-| Caching                        | caching/           | CCH                | planned | Cache patterns, Redis, CDN, invalidation, consistency               |
-| Messaging                      | messaging/         | MSG                | planned | Kafka, RabbitMQ, event-driven architecture, streaming               |
-| CI/CD and DevOps               | cicd-and-devops/   | CCD, GIT, OBS      | planned | Pipelines, Git strategies, observability, SRE practices             |
-| AI and RAG                     | ai-and-rag/        | AIF, LLM, RAG      | planned | LLM fundamentals, prompt engineering, RAG, agents, LLMOps           |
+| Topic                           | Folder             | Dictionary Sources | Status   | Description                                                         |
+| ------------------------------- | ------------------ | ------------------ | -------- | ------------------------------------------------------------------- |
+| Java                            | java/              | JVM, JLG           | planned  | Core Java language, OOP, collections, modern Java features          |
+| Java Concurrency                | java-concurrency/  | JCC                | planned  | Threading, synchronization, virtual threads, concurrent collections |
+| Spring                          | spring/            | SPR                | planned  | Spring Core, Boot, MVC, Security, Data, Cloud                       |
+| Hibernate                       | hibernate/         | JPH                | planned  | ORM fundamentals, JPA, entity management, performance tuning        |
+| SQL and Databases               | sql-and-databases/ | DBF, NDB           | planned  | SQL queries, joins, indexing, transactions, NoSQL, replication      |
+| Containers                      | containers/        | CTR                | planned  | Docker fundamentals, images, networking, compose, security          |
+| Kubernetes                      | kubernetes/        | K8S                | planned  | Core resources, networking, storage, security, operations           |
+| System Design                   | system-design/     | DST, MSV, SYD, SAP | planned  | Distributed systems, microservices, architecture patterns           |
+| React                           | react/             | RCT                | planned  | Components, hooks, state management, performance, testing           |
+| Security                        | security/          | SEC, IAM, CRY      | planned  | Web security, authentication, authorization, cryptography           |
+| Data Structures and Algorithms  | dsa/               | DSA                | planned  | Arrays, trees, graphs, sorting, dynamic programming                 |
+| Caching                         | caching/           | CCH                | planned  | Cache patterns, Redis, CDN, invalidation, consistency               |
+| Messaging                       | messaging/         | MSG                | planned  | Kafka, RabbitMQ, event-driven architecture, streaming               |
+| CI/CD and DevOps                | cicd-and-devops/   | CCD, GIT, OBS      | planned  | Pipelines, Git strategies, observability, SRE practices             |
+| AI and RAG                      | ai-and-rag/        | AIF, LLM, RAG      | planned  | LLM fundamentals, prompt engineering, RAG, agents, LLMOps           |
+| Design Patterns                 | design-patterns/   | DPT                | scaffold | GoF patterns, SOLID, creational, structural, behavioral             |
+| Microservices                   | microservices/     | MSV                | complete | Service decomposition, communication, resilience, deployment        |
+| Async and Background Processing | async-background/  | ASY                | scaffold | Message queues, brokers, event-driven, orchestration, observability |
 
 ---
 
@@ -122,3 +142,38 @@ To add a new topic to this registry:
 | scaffolded | Folder, index.md, and stub files created                       |
 | generating | Content generation in progress                                 |
 | complete   | All files have complete content                                |
+
+### Design Patterns (design-patterns/)
+
+| File                               | Keywords (approximate)                                                                  |
+| ---------------------------------- | --------------------------------------------------------------------------------------- |
+| Design Patterns - Creational.md    | Singleton, Factory Method, Abstract Factory, Builder, Prototype                         |
+| Design Patterns - Structural.md    | Adapter, Decorator, Proxy, Facade, Composite                                            |
+| Design Patterns - Behavioral.md    | Strategy, Observer, Command, Template Method, State, Chain of Responsibility            |
+| Design Patterns - SOLID.md         | SRP, OCP, LSP, ISP, DIP                                                                 |
+| Design Patterns - Anti-Patterns.md | God Object, Spaghetti Code, Premature Optimization, Circular Dependencies, Feature Envy |
+
+### Microservices (microservices/)
+
+| File                                          | Keywords (approximate)                                                               |
+| --------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Microservices - Foundations.md                | What Are Microservices, Monolith vs Microservices, When NOT to Use, Modular Monolith |
+| Microservices - Decomposition and DDD.md      | Service Decomposition, DDD, Bounded Context, Aggregate, Anti-Corruption Layer        |
+| Microservices - Communication.md              | Inter-Service Communication, Sync vs Async, API Gateway, Service Discovery, BFF      |
+| Microservices - Resilience.md                 | Circuit Breaker, Bulkhead, Timeout/Retry/Fallback, Saga, DLQ, Health Checks          |
+| Microservices - Data Management.md            | DB per Service, Shared DB Anti-Pattern, CQRS, Event Sourcing, Eventual Consistency   |
+| Microservices - Deployment and Delivery.md    | Blue-Green, Canary, Zero-Downtime, Feature Flags, Graceful Shutdown                  |
+| Microservices - Observability.md              | Distributed Logging, Correlation ID, OpenTelemetry, Chaos Engineering                |
+| Microservices - Infrastructure.md             | Service Mesh, Sidecar, Istio, Envoy, Platform Engineering, Multi-Tenancy             |
+| Microservices - Migration.md                  | Monolith to Microservices, Strangler Fig, Cloud Migration, Technology Migration      |
+| Microservices - Contracts and Organization.md | Service Contract, API Versioning, Contract Testing, Team Topologies, FinOps          |
+
+### Async and Background Processing (async-background/)
+
+| File                                                 | Keywords (approximate)                                                                   |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Async and Background Processing - Fundamentals.md    | Sync vs Async vs Parallel, Message Queue vs Event Bus, Delivery Guarantees, Idempotency  |
+| Async and Background Processing - Message Brokers.md | RabbitMQ, Apache Kafka, Amazon SQS, Kafka Consumer Groups, Dead Letter Queues            |
+| Async and Background Processing - Patterns.md        | Event-Driven Architecture, Saga Pattern, Outbox Pattern, Backpressure, Async API Design  |
+| Async and Background Processing - Orchestration.md   | Temporal, AWS Step Functions, Cron Jobs, Distributed Scheduler, Celery, Quartz Scheduler |
+| Async and Background Processing - Observability.md   | Async Observability, Consumer Lag, Error Handling, Flow Control, Architecture Selection  |
