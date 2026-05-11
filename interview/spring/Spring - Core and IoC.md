@@ -175,6 +175,13 @@ private UserRepo repo; // hard to mock in tests
 - If still ambiguous: `@Primary` wins, else startup fails
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -252,6 +259,8 @@ void testPayment() {
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -546,6 +555,13 @@ Common implementations:
 The context is hierarchical: child contexts can see parent beans but not vice versa. Used in Spring MVC (root context + servlet context).
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -582,6 +598,8 @@ The context is hierarchical: child contexts can see parent beans but not vice ve
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -878,6 +896,13 @@ public class KafkaConsumer
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -914,6 +939,8 @@ public class KafkaConsumer
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1183,6 +1210,13 @@ The proxy (CGLIB subclass) intercepts method calls and dispatches to the correct
 **Thread safety:** Singletons MUST be thread-safe (shared by all threads). Prototype/request/session beans inherently have less contention (shorter lifecycle or per-thread).
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1219,6 +1253,8 @@ The proxy (CGLIB subclass) intercepts method calls and dispatches to the correct
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1483,6 +1519,13 @@ spring.main.allow-circular-references=true
 This is intentional - circular deps are almost always a design smell.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1519,6 +1562,8 @@ This is intentional - circular deps are almost always a design smell.
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 

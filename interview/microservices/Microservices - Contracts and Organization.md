@@ -177,6 +177,13 @@ public class OrderResponse {
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -215,6 +222,8 @@ public class OrderResponse {
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -461,6 +470,13 @@ Phase 3 - Contract:
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -499,6 +515,8 @@ Phase 3 - Contract:
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -744,6 +762,13 @@ Removed: 410 Gone response
 **External/public APIs:** Version from day 1. You don't control consumers. Breaking changes are expensive (partner integration breaks).
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -782,6 +807,8 @@ Removed: 410 Gone response
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1059,6 +1086,13 @@ public MessagePact orderShippedPact(
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1097,6 +1131,8 @@ public MessagePact orderShippedPact(
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1344,6 +1380,13 @@ Anti-pattern:
 Each team should own what they can understand. If a team owns 15 services, their cognitive load is too high. Split into two teams with clear service boundaries.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1382,6 +1425,8 @@ Each team should own what they can understand. If a team owns 15 services, their
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1645,6 +1690,13 @@ If cost per order increases 10%: investigate
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1683,6 +1735,8 @@ If cost per order increases 10%: investigate
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---

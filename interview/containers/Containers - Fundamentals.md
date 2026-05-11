@@ -114,6 +114,13 @@ Containers use Linux namespaces (PID, NET, MNT, UTS, IPC, USER) for isolation an
 Container security depends on the shared kernel - a kernel exploit escapes ALL containers. Rootless containers (user namespaces) and sandboxed runtimes (gVisor, Kata) add defense layers. In production, container density planning requires understanding cgroup memory accounting (RSS vs cache), CPU throttling (CFS bandwidth), and the OOM killer's container-awareness. The choice between containerd and CRI-O affects cold-start latency and image pull strategies.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -222,6 +229,8 @@ Build image, run container, verify process isolation with `docker exec`, confirm
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -553,6 +562,13 @@ VMs use a hypervisor (Type 1: bare metal like ESXi, or Type 2: hosted like Virtu
 The VM vs container boundary is blurring. Kata Containers and Firecracker run each container in a lightweight microVM (100ms boot, 5MB overhead) - giving container ergonomics with VM isolation. gVisor intercepts syscalls in userspace, providing a middle ground. In practice, the decision is about threat model: same-trust workloads use containers; different-trust workloads use VMs or microVMs.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -640,6 +656,8 @@ docker stats --no-stream
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -854,6 +872,13 @@ Each Dockerfile instruction creates a layer. Layers use overlay2 filesystem - lo
 Image supply chain security requires: content trust (Notary/cosign for signing), SBOM generation (Syft), vulnerability scanning in CI (Trivy/Grype), and base image pinning (digest-based references, not tags). At scale, image pull is the biggest cold-start contributor - solutions include pre-pulling on nodes, lazy-loading (Stargz/Nydus), and image streaming. Layer design affects CI speed: isolate dependency layers from code layers for maximum cache hits.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -929,6 +954,8 @@ trivy image myapp:1.0
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1154,6 +1181,13 @@ Use multi-stage builds to separate build (SDK, tests, tools) from runtime (JRE o
 Optimize for CI cache hit rate: use `COPY --link` (BuildKit) to make layer independent of previous layers. Use heredoc syntax for multi-line scripts without shell escaping. Design base images as a hierarchy: `company-base -> language-base -> app-image`. Monitor layer sizes with `dive`. Implement image-as-code: Dockerfiles in version control, reviewed like application code, with CI enforcing best practices (hadolint linting).
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1242,6 +1276,8 @@ ENTRYPOINT ["node", "src/server.js"]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1477,6 +1513,13 @@ Use profiles for optional services, health checks for startup ordering (not just
 Design Compose files as development contracts: they define the service topology that mirrors production. Use Compose in CI for integration testing (spin up full stack, run tests, tear down). Separate concerns with `include` (Compose v2.20+) for modular stacks. Understand limitations: no rolling updates, no self-healing, no distributed scheduling - these are why production uses Kubernetes.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1578,6 +1621,8 @@ docker compose down -v
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1824,6 +1869,13 @@ The control plane (API server, scheduler, controller manager, etcd) stores desir
 Orchestration choice is an architecture decision: Kubernetes for complex microservices, ECS/Fargate for simpler workloads, Cloud Run/Lambda for stateless functions. The hidden costs of K8s: operational team, networking expertise (CNI, service mesh), storage complexity (CSI, StatefulSets), and upgrade management. Platform engineering exists because raw K8s is too complex for most developers - the platform team builds golden paths on top.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1910,6 +1962,8 @@ spec:
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 

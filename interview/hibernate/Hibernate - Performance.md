@@ -182,6 +182,13 @@ Rule: Only cache queries on tables that rarely change (reference data).
 - Multi-node deployments without distributed cache (stale data)
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -218,6 +225,8 @@ Rule: Only cache queries on tables that rarely change (reference data).
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -497,6 +506,13 @@ log.info("L2C hits: {}",
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -533,6 +549,8 @@ log.info("L2C hits: {}",
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -813,6 +831,13 @@ public JdbcBatchItemWriter<Product> writer(
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -849,6 +874,8 @@ public JdbcBatchItemWriter<Product> writer(
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1115,6 +1142,13 @@ List<Order> findByStatus(OrderStatus status);
 Complex reporting queries with CTEs, window functions, and entity views often exceed JPQL capabilities. Use native queries or Blaze-Persistence for these cases rather than fighting JPQL limitations.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1151,6 +1185,8 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1437,6 +1473,13 @@ public DataSource dataSource(DataSource actual) {
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1473,6 +1516,8 @@ public DataSource dataSource(DataSource actual) {
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 

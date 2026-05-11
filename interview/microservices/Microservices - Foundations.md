@@ -150,6 +150,13 @@ Microservices:
 - Organization has mature DevOps culture (CI/CD, monitoring, containerization)
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -186,6 +193,8 @@ Microservices:
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -463,6 +472,13 @@ This gives you network latency, partial failures, and complex debugging - with N
 | Fault isolation                     | No            | Yes                |
 | Organizational scaling              | No            | Yes                |
 
+
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
@@ -760,6 +776,13 @@ All Yes -> Microservices might be right
 
 The lesson: Microservices is not a destination. It's a tool. If the tool doesn't fit, change tools.
 
+
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
@@ -1088,6 +1111,13 @@ public class OrderService {
 3. The module needs a different tech stack (ML in Python)
 4. Compliance requires isolation (PCI DSS for payments)
 
+
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.

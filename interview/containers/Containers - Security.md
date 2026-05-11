@@ -114,6 +114,13 @@ Drop all Linux capabilities and add back only what's needed. Apply seccomp profi
 Design a container security architecture: image provenance chain (cosign signing, SBOM, Sigstore), admission control pipeline (deny unsigned images, deny privileged, deny host networking), runtime security monitoring (Falco for syscall anomalies, network flow analysis), and incident response (forensic image capture, audit trails). Understand the container escape attack chain: container -> kernel exploit -> host -> other containers/orchestrator. Mitigations: gVisor (syscall interception), Kata (microVM isolation), user namespaces (UID remapping).
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -222,6 +229,8 @@ Run `kubectl auth can-i --as=system:serviceaccount:ns:sa` to verify RBAC. Deploy
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -519,6 +528,13 @@ Created with `clone(2)` or `unshare(2)`. Each process has `/proc/<pid>/ns/` syml
 User namespaces are the key to rootless containers: PID 1 inside the container can be UID 0 (root) in the user namespace, while mapping to UID 100000 on the host. This means even a container escape lands you as an unprivileged user. The complexity: some operations (binding to port < 1024, loading kernel modules) check capabilities in the INITIAL user namespace, not the container's namespace - this is by design. Understanding this explains why some apps "need root" in containers.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -596,6 +612,8 @@ ip addr   # Shows only loopback (no host network)
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -828,6 +846,13 @@ CPU: uses CFS bandwidth control. `--cpus=1.5` means 150ms of CPU time per 100ms 
 cgroups v2 unifies the hierarchy (v1 had separate hierarchies per controller). Key implications: v2 enables PSI (Pressure Stall Information) for proactive resource management, memory.high as a soft limit with throttling before OOM, and proper nested cgroup delegation for rootless containers. Understanding CPU throttling: a container with `limits.cpu: 1` can be throttled even when the host has idle CPUs - this is by design (isolation guarantee) but surprises many teams. The fix: use requests (scheduling) without limits (burstable), or use limits only for memory.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -925,6 +950,8 @@ kubectl describe pod myapp | grep -A5 "Last State"
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1166,6 +1193,13 @@ Scanners: (1) extract image filesystem layers, (2) identify installed packages (
 Build a vulnerability management program: triage based on exploitability (EPSS score, not just CVSS), set SLAs (Critical: 24h, High: 7d, Medium: 30d), use VEX (Vulnerability Exploitability eXchange) to mark CVEs as "not affected" when the code path isn't reachable. Continuous scanning in registries catches new CVEs in deployed images. SBOM generation (Syft) enables rapid impact assessment when a new CVE like Log4Shell is announced - "which of our 500 images contain log4j?"
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1253,6 +1287,8 @@ grype sbom:./sbom.json
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1477,6 +1513,13 @@ Three key mechanisms: (1) User namespace maps container UID 0 to host UID 100000
 Rootless has been production-ready since 2022 but adoption is slow due to: port binding limitations (use `net.ipv4.ip_unprivileged_port_start=0`), storage performance (native overlay requires kernel 5.11+), and Kubernetes rootless still being complex to configure. The future: Kubernetes will default to rootless (containerd in user namespace). The current gap: stateful workloads needing specific file ownership are tricky with UID remapping.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1551,6 +1594,8 @@ ps aux | grep myapp
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1783,6 +1828,13 @@ Kubernetes Secrets are base64-encoded in etcd (not encrypted by default - enable
 Design a secrets architecture: HashiCorp Vault as source of truth (dynamic secrets with TTL, automatic rotation), external-secrets operator to sync to K8s, CSI secrets driver for direct pod mount from Vault. Enable audit logging on all secret access. For build-time secrets, use BuildKit `--secret` flag (not in any layer). Rotate secrets without downtime: application reads secret file on each use (not cached at startup).
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1878,6 +1930,8 @@ String password = Files.readString(
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 

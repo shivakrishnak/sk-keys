@@ -157,6 +157,13 @@ Records are the foundation for algebraic data types in Java when combined with s
 Records work naturally with serialization (they use the canonical constructor for deserialization, avoiding the security issues of traditional Java serialization). They are ideal for DTOs, events, messages, and any immutable value object. However, records with mutable component types (e.g., `record Container(List<String> items)`) are not truly immutable - the list can be modified. Use `List.copyOf()` in the compact constructor for defensive copying.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 Records represent the JVM's first step toward value semantics - the idea that some objects are defined entirely by their data, not their identity. This same concept appears in Kotlin data classes, Scala case classes, C# records, and Haskell algebraic data types. The cross-domain insight: whenever you see boilerplate code that mechanically derives behavior from data (equals, hashCode, toString, accessors), the language is missing a first-class abstraction for value types. Records fill that gap by making the compiler generate canonical implementations. At extreme scale, records compose with sealed classes to form algebraic data types (ADTs), enabling exhaustive pattern matching that the compiler can verify. If redesigning today, you would combine records with value types (Project Valhalla) to eliminate the identity/reference overhead entirely, making records as efficient as primitives.
 
@@ -264,6 +271,8 @@ record Email(String address) {
 **TRADE-OFF:** Simplicity and safety vs flexibility - no inheritance, no mutable fields, no custom storage
 **ONE-LINER:** "Records are transparent, immutable data carriers where the class IS its data"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -749,6 +758,13 @@ String msg = switch (result) {
 This pattern eliminates the need for checked exceptions in many cases and is superior to Optional when you need to carry error information. It is the foundation for functional error handling in Java.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 Sealed classes implement closed-world subtyping - the ability to define a type whose subtypes are known at compile time. This is the OOP equivalent of algebraic data types in functional languages (Haskell, Rust, Scala). The same closed-world principle appears in protocol buffers (oneof), database schemas (enum columns), and state machines (finite state sets). The expert insight: sealed classes solve the expression problem's 'data side' - you can add operations (methods) without modifying existing code, because the compiler guarantees all subtypes are handled. Combined with pattern matching (JDK 21), sealed hierarchies enable the visitor pattern without the visitor boilerplate. If redesigning today, you would make sealed the default for non-final classes, requiring explicit `open` for extensibility.
 
@@ -834,6 +850,8 @@ String processResult(PaymentResult result) {
 **TRADE-OFF:** Exhaustiveness checking and type safety vs extensibility - sealed hierarchies can't be extended by consumers
 **ONE-LINER:** "Sealed classes tell the compiler: these are ALL the subtypes, check my switches"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1227,6 +1245,13 @@ int eval(Expr expr) {
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 Text blocks solve the universal string literal readability problem: embedding multi-line text (JSON, SQL, HTML, XML) in source code without escape character noise. This same problem was solved by Python triple-quotes, JavaScript template literals, Kotlin raw strings, and C# raw string literals. The cross-domain insight: code that constructs other code (SQL queries, API payloads, config files) should look as close to the output as possible - this reduces cognitive load and prevents escaping bugs. Text blocks use a sophisticated indentation stripping algorithm (common leading whitespace removal) that preserves relative indentation while allowing code-level formatting. If redesigning today, you would add string interpolation (like Kotlin's `${}` or JavaScript template literals) directly in text blocks instead of requiring `.formatted()` or `String.format()`.
 
@@ -1301,6 +1326,8 @@ double area(Shape shape) {
 **TRADE-OFF:** Readability vs precision - indentation stripping is implicit and may surprise if not understood
 **ONE-LINER:** "Text blocks make embedded SQL, JSON, and HTML look like actual SQL, JSON, and HTML"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1660,6 +1687,13 @@ String sql = """
 For security-sensitive use (SQL, HTML), text blocks should be used with parameterized queries or template engines, not string interpolation, to prevent injection attacks. The readability of text blocks can mask the danger of string interpolation with user input.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 Switch expressions transform Java's switch from a statement (control flow) to an expression (value producer), enabling functional-style pattern matching. This evolution mirrors Kotlin's `when`, Rust's `match`, Scala's `match`, and C#'s switch expressions. The cross-domain insight: the shift from statements to expressions is part of a broader language evolution toward expression-oriented programming, where every construct produces a value. This eliminates an entire class of bugs: uninitialized variables from missed branches, fall-through errors, and incomplete case coverage. Combined with sealed classes (JDK 17) and pattern matching (JDK 21), switch expressions become the foundation for algebraic data type deconstruction. If redesigning today, arrow-form switch expressions would be the only syntax, and the classic fall-through switch statement would never have existed.
 
@@ -1726,6 +1760,8 @@ String query = """
 **TRADE-OFF:** Safety (no fall-through) vs flexibility (intentional fall-through requires colon form)
 **ONE-LINER:** "Switch expressions turn 'do something for each case' into 'what is the value for each case'"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -2118,6 +2154,13 @@ int eval(Expr e) {
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -2188,6 +2231,8 @@ int days = switch (month) {
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 

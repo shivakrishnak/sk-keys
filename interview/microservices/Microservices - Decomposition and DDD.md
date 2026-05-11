@@ -176,6 +176,13 @@ Step 5: Define interfaces
 4. Never split in the middle of a transaction boundary
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -214,6 +221,8 @@ Step 5: Define interfaces
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -473,6 +482,13 @@ Anti-Corruption   ->   API adapter/translator
 4. **No event storming:** Jumping to service boundaries without understanding domain events leads to wrong boundaries.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -511,6 +527,8 @@ Anti-Corruption   ->   API adapter/translator
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -738,6 +756,13 @@ in different contexts.
 4. **Team boundaries:** Conway's Law - teams that communicate heavily should share a context.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -776,6 +801,8 @@ in different contexts.
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1049,6 +1076,13 @@ public class Order {
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1087,6 +1121,8 @@ public class Order {
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1362,6 +1398,8 @@ class LoanApplication {
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1639,6 +1677,13 @@ As migration progresses:
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1677,6 +1722,8 @@ As migration progresses:
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---

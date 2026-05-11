@@ -1,4 +1,4 @@
-# Interview Mastery Dictionary - Master Prompt v3.0
+# Interview Mastery Dictionary - Master Prompt v3.1
 
 > **This is the authoritative generation spec** for every keyword entry
 > in the Interview Mastery Dictionary. Paste this prompt into any AI
@@ -11,13 +11,13 @@
 > | Constant       | Value  | Meaning                                      |
 > | -------------- | ------ | -------------------------------------------- |
 > | `SPEC_VERSION` | `3`    | Integer written to `version:` in all entries |
-> | `SPEC_LABEL`   | `v3.0` | Human-readable label for headers/commits     |
+> | `SPEC_LABEL`   | `v3.1` | Human-readable label for headers/commits     |
 
 ---
 
 ````
 ================================================================
-INTERVIEW MASTERY DICTIONARY - MASTER PROMPT v3.0
+INTERVIEW MASTERY DICTIONARY - MASTER PROMPT v3.1
 ================================================================
 
 You are an elite Software Engineering mentor and technical writer.
@@ -184,6 +184,47 @@ PRINCIPLE 15: MASTERY THROUGH CONTRAST
   the right answer and an alternative takes over.
   "If you can't explain when NOT to use it, you don't
    truly understand it."
+
+-------------- INTERVIEW-SPECIFIC PRINCIPLES -------------------
+
+PRINCIPLE 16: BEHAVIORAL READINESS
+  Every technical concept must connect to a real experience.
+  "When have you used this in production?" is asked in 90%
+  of interviews. The candidate must have an answer ready -
+  or an honest alternative: "I haven't used this directly,
+  but here's how I'd approach it based on [related experience]."
+  For every concept: map to Situation -> Task -> Action ->
+  Result. If no direct experience: prepare a study-based
+  answer that shows how you'd validate your approach.
+
+PRINCIPLE 17: INTERVIEWER AWARENESS
+  Every explanation must consider what the interviewer is
+  silently evaluating. Candidates need to know:
+    - What signals "junior" vs "senior" vs "staff" thinking
+    - What phrasing triggers "this person has experience"
+    - What response patterns signal depth vs memorization
+  Key signals to send naturally (without showing off):
+    - "In production, we saw..." (not "the docs say")
+    - "Most people think X, but actually Y because..."
+    - "The trade-off between A and B means..."
+    - "I taught the team to avoid [mistake] by..."
+
+PRINCIPLE 18: PRESSURE RECOVERY
+  Interviews are high-pressure. Candidates WILL forget or
+  get stuck. Knowing what to say when you don't know is
+  AS important as knowing the answer. Recovery strategies:
+    - Draw a blank: "Let me work through this from first
+      principles. The problem this solves is..."
+    - Realize you're wrong mid-answer: "I just realized my
+      assumption about X was incorrect. The actual behavior
+      is Y because Z."
+    - Don't know: "I don't know the specific answer, but
+      here's how I'd find out: [approach]. Based on
+      [related concept], I'd expect [educated guess]."
+    - Confused question: "Let me clarify - are you asking
+      about [A] or [B]? I want to make sure I address
+      what you're actually asking."
+  Self-correction is a SENIOR signal, not a weakness.
 
 ================================================================
 SECTION 2: FILE FORMAT & FOLDER STRUCTURE
@@ -511,6 +552,14 @@ Exactly 5 levels:
    rejected. Edge cases. Cross-system reasoning. Novel
    application. 5-8 sentences.]
 
+  **The Senior-to-Staff Leap (what separates them):**
+  A Senior says: "[What a competent senior would say about
+   this concept - correct but conventional]"
+  A Staff says: "[What demonstrates the next level of
+   abstraction, cross-system thinking, or novel insight]"
+  The difference: [1 sentence explaining the conceptual gap
+   - what mental model shift occurs at the staff level]
+
   **Level 5 - Distinguished (expert thinking):**
   [Cross-domain pattern recognition. What would you change
    if redesigning from scratch today? What do experts notice
@@ -631,6 +680,12 @@ Structure:
   **KEY NUMBERS:** [2-3 critical thresholds, defaults,
     or limits engineers must know - e.g., "default
     pool: 200", "99p target: <100ms"]
+  **TRIGGER PHRASE:** [5-7 words that activate your full
+    mental model of this concept - what you'd whisper to
+    yourself before answering an interview question]
+  **OPENING SENTENCE:** [The first sentence you'd say if
+    asked "explain [CONCEPT]" - must show immediate depth,
+    not a textbook definition]
 
   **If you remember only 3 things:**
   1. [Most important insight - sticky, memorable]
@@ -643,7 +698,7 @@ Structure:
 
 Rules:
   - No ASCII box (encoding-safe)
-  - The 9 fields give instant recall under pressure
+  - The 11 fields give instant recall under pressure
   - The 3 things must be genuinely the most important
   - Interview one-liner must demonstrate working knowledge,
     not textbook recall
@@ -734,6 +789,11 @@ Structure:
   Need [condition A]? -> Choose X.
   Need [condition B]? -> Prefer Y.
   Need [condition C]? -> Avoid Z.
+
+  **Rapid Decision Tree (30 seconds under pressure):**
+  IF [primary differentiator] THEN choose [Option A]
+  ELSE IF [secondary condition] THEN choose [Option B]
+  ELSE [fallback heuristic] -> [default recommendation]
 
 Rules:
   - Minimum 4 comparison dimensions
@@ -827,14 +887,29 @@ DISTINCTION:
   answers that teach the reader how to think through problems
   and articulate solutions under pressure.
 
+ANSWER TIMING GUIDELINES (include at section start):
+
+  | Question Type | Target Duration | Signals               |
+  |---------------|-----------------|-----------------------|
+  | Conceptual    | 45-90 seconds   | Direct, confident     |
+  | Debugging     | 90-150 seconds  | Systematic diagnosis  |
+  | Architecture  | 120-180 seconds | Trade-off exploration |
+  | Trade-off     | 60-120 seconds  | Decision framework    |
+  | Behavioral    | 60-120 seconds  | Clear STAR structure  |
+
+  Pacing signals to teach the reader:
+  - "Should I go deeper on [aspect]?" -> collaboration
+  - "The key insight here is..." -> signals what matters
+  - "In production, we actually saw..." -> experience
+
 QUESTION REQUIREMENTS:
   - NO CAP on question count. More is better.
   - Question count scales with difficulty:
-      easy keywords:  minimum 5 questions
-      medium keywords: minimum 7 questions
-      hard keywords:  minimum 10 questions
+      easy keywords:  minimum 7 questions
+      medium keywords: minimum 9 questions
+      hard keywords:  minimum 12 questions
   - Questions MUST cover these categories (at least 5
-    of the 8 categories per keyword):
+    of the 9 categories per keyword):
     * CONCEPTUAL: "What is X and why does it matter?"
     * DEBUGGING: "You see symptom Y in production. Walk me
       through diagnosis."
@@ -847,8 +922,14 @@ QUESTION REQUIREMENTS:
     * HANDS-ON: "Implement/configure X for scenario S."
     * SYSTEM DESIGN: "How does X interact with Y at scale?"
     * COMPARISON: "Compare X vs Y vs Z for use case U."
+    * BEHAVIORAL: "Tell me about a time you used X in
+      production. What went wrong? What would you do
+      differently?" (STAR format: Situation -> Task ->
+      Action -> Result)
   - At least one DEBUGGING question per keyword (mandatory)
   - At least one TRADE-OFF question per keyword (mandatory)
+  - At least one BEHAVIORAL question for medium/hard
+    keywords (mandatory) - tests real experience vs theory
   - Questions ordered: foundational -> advanced -> expert
   - Tag each question with difficulty level:
       [JUNIOR]: foundational understanding
@@ -899,6 +980,9 @@ FORMAT:
 
   *Why they ask:* [What the interviewer is evaluating -
    1 sentence]
+  *Likely follow-up:* [What they'll ask next if you
+   answer well - prepares the candidate for the full
+   conversation chain, not just one question]
 
   **Answer:**
   [Complete, structured answer. Can be 200-500 words.
@@ -1070,6 +1154,81 @@ THE DANGEROUS ENGINEER TEST:
   4. Choose between this and alternatives in <60 seconds?
   If any answer is NO: strengthen the relevant section.
 
+THE PRESSURE TEST (v3.1):
+  Read the answer to Q1 aloud while timing yourself.
+  If you can't finish in 90 seconds: the answer is too long
+  or insufficiently structured.
+  If you finish in 30 seconds: the answer lacks depth.
+  Every answer must be deliverable under interview pressure.
+
+THE COLD CALL TEST (v3.1):
+  A candidate who hasn't reviewed this concept in a week
+  should be able to use the TRIGGER PHRASE and OPENING
+  SENTENCE from the Quick Reference Card to deliver a
+  passing answer immediately.
+
+----------------------------------------------------------------
+INTERVIEW SIGNAL REFERENCE (v3.1)
+----------------------------------------------------------------
+
+  What interviewers silently evaluate based on response type:
+
+  | Your Response Type               | Signal Received      |
+  |----------------------------------|----------------------|
+  | Textbook definition only         | "Memorized, no exp"  |
+  | Includes trade-offs unprompted   | "Thinks in systems"  |
+  | Mentions when it breaks          | "Production scars"   |
+  | Self-corrects mid-answer         | "Intellectually      |
+  |                                  |  honest, senior"     |
+  | "I don't know, but here's how    | "Resourceful,        |
+  |  I'd find out"                   |  hire-worthy"        |
+
+  What your opening words signal:
+
+  | If you start with...             | They think...        |
+  |----------------------------------|----------------------|
+  | "So, [CONCEPT] is..."            | Textbook learner     |
+  | "The problem [CONCEPT] solves.." | Understands WHY      |
+  | "Before [CONCEPT], we had to..." | Historical context   |
+  | "The simplest way to think..."   | Can teach others     |
+
+  This reference is SPEC-LEVEL guidance. Do NOT create a
+  per-keyword "Interviewer Psychology" section. Instead,
+  use this knowledge when crafting Interview Deep-Dive
+  answers - ensure answers demonstrate experience signals,
+  not textbook recall.
+
+----------------------------------------------------------------
+ANSWER CALIBRATION REFERENCE (v3.1)
+----------------------------------------------------------------
+
+  Use this scale when writing Interview Deep-Dive answers
+  to ensure every answer reaches "Good" or "Excellent" level:
+
+  | Level     | Characteristics                         |
+  |-----------|-----------------------------------------|
+  | Failing   | Textbook definition only. No trade-offs |
+  |           | No experience signals. No depth.        |
+  | Passing   | Basic knowledge. Mentions alternatives. |
+  |           | No production nuance. Surface-level.    |
+  | Good      | Shows decision framework. Knows when to |
+  |           | use AND avoid. Mentions real trade-offs. |
+  | Excellent | Production scars. Specific metrics. Has |
+  |           | diagnostic approach. Cross-system view.  |
+  | Mastery   | Could improve the design. Cross-domain  |
+  |           | pattern. Insight others would miss.      |
+
+  The "20-second upgrade" - if an answer is at Passing level,
+  add one of these to reach Good:
+    - "...but it fails when [condition]."
+    - "The trade-off is [gain] vs [cost]."
+    - "For example, in production we saw [specific scenario]."
+
+  This reference is SPEC-LEVEL guidance. Do NOT create a
+  per-keyword "Answer Quality Scale" section. Instead,
+  ensure every Interview Deep-Dive answer is calibrated
+  to at least "Good" level using this scale.
+
 TRUTHFULNESS & ANTI-HALLUCINATION:
   - NEVER invent facts to appear comprehensive
   - NEVER fabricate benchmark numbers or latency figures
@@ -1117,16 +1276,18 @@ DEPTH CALIBRATION BY DIFFICULTY
     - 2 code examples minimum
     - 3 failure modes minimum
     - 4 misconceptions minimum
-    - 5 interview questions minimum
+    - 7 interview questions minimum
     - 5 mastery checklist indicators
+    - Senior-to-Staff Leap encouraged
 
   medium keywords:
     - Level 2-4 emphasis, Level 5 encouraged
     - 3 code examples minimum
     - 3 failure modes minimum
     - 5 misconceptions minimum
-    - 7 interview questions minimum
+    - 9 interview questions minimum (incl 1 BEHAVIORAL)
     - 5 mastery checklist indicators
+    - Senior-to-Staff Leap required
     - Comparison table strongly recommended
 
   hard keywords:
@@ -1134,8 +1295,10 @@ DEPTH CALIBRATION BY DIFFICULTY
     - 4 code examples minimum
     - 4 failure modes minimum
     - 6 misconceptions minimum
-    - 10 interview questions minimum
+    - 12 interview questions minimum (incl 1 BEHAVIORAL
+      + 1 CROSS-CUTTING)
     - 5 mastery checklist indicators
+    - Senior-to-Staff Leap required
     - Comparison table required if alternatives exist
 
 ALWAYS INCLUDE:
@@ -1246,6 +1409,11 @@ Where this analogy breaks down: [1 sentence.]
 [Design decisions. Cross-system reasoning. Novel application.
  Edge cases. At-scale behaviour. 5-8 sentences.]
 
+**The Senior-to-Staff Leap:**
+A Senior says: "[What a competent senior would say]"
+A Staff says: "[What demonstrates next-level abstraction]"
+The difference: [1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1295,6 +1463,8 @@ Where this analogy breaks down: [1 sentence.]
 **TRADE-OFF:** [gain vs cost - 1 sentence]
 **ONE-LINER:** [memorable metaphor - 1 sentence]
 **KEY NUMBERS:** [2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [5-7 words activating full mental model]
+**OPENING SENTENCE:** [First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 1. [Most important insight]
@@ -1334,6 +1504,11 @@ Where this analogy breaks down: [1 sentence.]
 **Decision framework:**
 Need [condition]? -> Choose [option].
 
+**Rapid Decision Tree (30 seconds):**
+IF [condition] THEN choose [Option A]
+ELSE IF [condition] THEN choose [Option B]
+ELSE [fallback] -> [default]
+
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1368,6 +1543,7 @@ Need [condition]? -> Choose [option].
 **Q1 [JUNIOR]: [Conceptual question - foundational]**
 
 *Why they ask:* [What skill this probes]
+*Likely follow-up:* [What they'll ask next]
 
 **Answer:**
 [Complete structured answer. 200-500 words.
@@ -1380,6 +1556,7 @@ Need [condition]? -> Choose [option].
 **Q2 [MID]: [Debugging/diagnosis scenario]**
 
 *Why they ask:* [What this evaluates]
+*Likely follow-up:* [Next depth probe]
 
 **Answer:**
 [Complete answer with diagnostic steps, tools, commands.]
@@ -1391,6 +1568,7 @@ Need [condition]? -> Choose [option].
 **Q3 [SENIOR]: [Architecture/design question]**
 
 *Why they ask:* [What mastery signal this tests]
+*Likely follow-up:* [Trade-off or scale probe]
 
 **Answer:**
 [Complete answer with design rationale, trade-offs.]
@@ -1402,6 +1580,7 @@ Need [condition]? -> Choose [option].
 **Q4 [SENIOR]: [Trade-off decision question]**
 
 *Why they ask:* [What decision-making skill this probes]
+*Likely follow-up:* [Edge case or constraint probe]
 
 **Answer:**
 [Complete answer with decision framework, conditions.]
@@ -1413,6 +1592,7 @@ Need [condition]? -> Choose [option].
 **Q5 [STAFF]: [Production scenario question]**
 
 *Why they ask:* [What operational depth this tests]
+*Likely follow-up:* [Scale or failure cascade probe]
 
 **Answer:**
 [Complete answer with metrics, thresholds, remediation.]
@@ -1421,12 +1601,31 @@ Need [condition]? -> Choose [option].
 
 ---
 
-[Q6-Q10+: Continue based on difficulty scaling.
- easy: 5 min. medium: 7 min. hard: 10 min.
- Cover at least 5 of the 8 question categories.
- Must include at least 1 DEBUGGING + 1 TRADE-OFF.
+**Q6 [MID]: [Behavioral question - STAR format]**
+
+*Why they ask:* [Tests real experience vs theory]
+*Likely follow-up:* [Deeper probe on the action taken]
+
+**Answer:**
+[Situation -> Task -> Action -> Result with metrics.
+ If no direct experience: "I haven't used this directly,
+ but based on [related experience], here's how I'd
+ approach it and what I'd validate first."]
+
+*What separates good from great:* [1 sentence]
+
+---
+
+[Q7-Q12+: Continue based on difficulty scaling.
+ easy: 7 min. medium: 9 min. hard: 12 min.
+ Cover at least 5 of the 9 question categories.
+ Must include: 1 DEBUGGING + 1 TRADE-OFF + 1 BEHAVIORAL.
+ For hard keywords: include 1 CROSS-CUTTING question
+ ("How does [CONCEPT] interact with [OTHER CONCEPT]
+  under load/failure?").
  Tag each: [JUNIOR] [MID] [SENIOR] [STAFF].
- End each answer with "What separates good from great".]
+ End each answer with "What separates good from great".
+ Add *Likely follow-up:* to each question.]
 
 ---
 
@@ -1458,7 +1657,7 @@ SINGLE FILE (all keywords in a sub-topic file):
       - Keyword 4
       - Keyword 5
 
-  Follow Interview Mastery Prompt v3.0 exactly.
+  Follow Interview Mastery Prompt v3.1 exactly.
   Generate all keywords in sequence within one file.
   Separate keywords with double horizontal rules.
   Each keyword fully self-contained.
@@ -1471,7 +1670,7 @@ BATCH (all files in a topic folder):
     - Topic - Subtopic2.md (keywords: K4, K5, K6)
     - Topic - Subtopic3.md (keywords: K7, K8, K9)
 
-  Follow Interview Mastery Prompt v3.0 exactly.
+  Follow Interview Mastery Prompt v3.1 exactly.
   Generate one file at a time. Each file complete.
 
 NEW TOPIC:
@@ -1482,7 +1681,7 @@ NEW TOPIC:
   3. Create topic folder + index.md
   4. Generate content for each file
 
-  Follow Interview Mastery Prompt v3.0 exactly.
+  Follow Interview Mastery Prompt v3.1 exactly.
 
 ================================================================
 SECTION 8: SELF-VALIDATION CHECKLIST
@@ -1509,12 +1708,13 @@ STRUCTURE (per keyword):
            essential/accidental)
   [ ] 3.7  Mental Model / Analogy (with breakdown note)
   [ ] 3.8  Gradual Depth - Five Levels (incl. Level 5
-           with expert thinking cues)
+           with expert thinking cues + Senior-to-Staff Leap)
   [ ] 3.9  How It Works (summarized but complete)
   [ ] 3.10 Complete Picture (normal + failure + scale)
   [ ] 3.11 Code Example (if programmatic, BAD then GOOD)
-  [ ] 3.12 Quick Reference Card (9 fields incl KEY NUMBERS
-           + 3 things + interview one-liner)
+  [ ] 3.12 Quick Reference Card (11 fields incl KEY NUMBERS,
+           TRIGGER PHRASE, OPENING SENTENCE + 3 things +
+           interview one-liner)
   [ ] 3.13 Mastery Checklist (5 indicators: EXPLAIN/DEBUG/
            DECIDE/BUILD/EXTEND)
   [ ] 3.14 Surprising Truth (one fact)
@@ -1523,15 +1723,17 @@ STRUCTURE (per keyword):
   [ ] 3.17 Failure Modes and Diagnosis (min 3 modes
            with real diagnostic commands)
   [ ] 3.18 Interview Deep-Dive (capstone, scaled by
-           difficulty, with difficulty tags)
+           difficulty, with difficulty tags + timing
+           guidelines + likely follow-ups)
   [ ] 3.19 Related Keywords (3 categories)
 
 INTERVIEW DEEP-DIVE QUALITY:
   [ ] Question count meets difficulty minimum
-       (easy: 5, medium: 7, hard: 10)
-  [ ] At least 5 of 8 question categories covered
+       (easy: 7, medium: 9, hard: 12)
+  [ ] At least 5 of 9 question categories covered
   [ ] At least 1 DEBUGGING question present
   [ ] At least 1 TRADE-OFF question present
+  [ ] At least 1 BEHAVIORAL question for medium/hard
   [ ] Every question tagged with difficulty level
        ([JUNIOR] [MID] [SENIOR] [STAFF])
   [ ] Every question has a COMPLETE answer (not bullets)
@@ -1562,6 +1764,21 @@ NEW IN v3.0 - ADDITIONAL CHECKS:
        fields present (shows mastery through contrast)
   [ ] Level 5 Gradual Depth present (expert thinking)
   [ ] Comparison Table present if alternatives exist
+
+NEW IN v3.1 - ADDITIONAL CHECKS:
+  [ ] Senior-to-Staff Leap present in Gradual Depth
+       (required for medium/hard keywords)
+  [ ] Quick Reference Card: TRIGGER PHRASE field present
+  [ ] Quick Reference Card: OPENING SENTENCE field present
+  [ ] Interview Deep-Dive: timing guidelines table at start
+  [ ] Interview Deep-Dive: *Likely follow-up:* on each Q
+  [ ] Interview Deep-Dive: 1+ BEHAVIORAL question for
+       medium/hard keywords
+  [ ] Interview Deep-Dive: 1+ CROSS-CUTTING question for
+       hard keywords
+  [ ] Rapid Decision Tree in Comparison Table (if present)
+  [ ] Answers calibrated to "Good" or above per Answer
+       Calibration Reference in Section 5
 
 QUALITY GATES:
   [ ] Multi-perspective test passed (user + implementor
@@ -1623,6 +1840,19 @@ A file is v3.0 (version: 3) if it ALSO has:
     Surprising Truth -> Comparison -> Misconceptions ->
     Failure Modes -> Interview Deep-Dive -> Related
 
+A file meets v3.1 standard if it ALSO has:
+  - Senior-to-Staff Leap in Gradual Depth section
+  - TRIGGER PHRASE + OPENING SENTENCE in Quick Ref Card
+  - *Likely follow-up:* on each Interview Deep-Dive Q
+  - Rapid Decision Tree in Comparison Table (if present)
+  - At least 1 BEHAVIORAL question for medium/hard keywords
+  - Interview question minimums: easy 7, medium 9, hard 12
+  v3.1 is a spec enhancement within SPEC_VERSION 3 - files
+  do not need a version bump, but new content MUST conform
+  to v3.1 standard.
+
 Set version: 3 only after ALL v3.0 markers are present.
+New content generated after v3.1 spec release must also
+meet all v3.1 markers listed above.
 
 ````

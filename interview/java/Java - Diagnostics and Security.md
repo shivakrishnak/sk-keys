@@ -216,6 +216,13 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **Level 4 - Production mastery (senior/staff engineer):**
 [TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
 ---
@@ -250,6 +257,8 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **TRADE-OFF:** Diagnostic depth vs overhead and data volume. JFR is always-on; heap dump freezes the JVM
 **ONE-LINER:** "async-profiler for CPU, JFR for everything, jmap for OOM, jstack for deadlocks"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -602,6 +611,13 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **Level 4 - Production mastery (senior/staff engineer):**
 [TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
 ---
@@ -636,6 +652,8 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **TRADE-OFF:** Security controls vs development speed and user experience friction
 **ONE-LINER:** "Never trust input, never deserialize untrusted data, always update dependencies"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -951,6 +969,13 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **Level 4 - Production mastery (senior/staff engineer):**
 [TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
 ---
@@ -1009,6 +1034,8 @@ java -Xms16g -Xmx16g \
 **TRADE-OFF:** Low pause times (ZGC) vs maximum throughput (Parallel) vs balanced (G1)
 **ONE-LINER:** "Start with G1 defaults, measure, switch to ZGC for latency or Parallel for batch"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 

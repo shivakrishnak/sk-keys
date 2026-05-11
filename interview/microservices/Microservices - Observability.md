@@ -176,6 +176,13 @@ Rule: Production runs at INFO level.
 3. **Tiered retention:** Hot (7 days, fast search) -> Warm (30 days, slow search) -> Cold (1 year, S3 archive)
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -214,6 +221,8 @@ Rule: Production runs at INFO level.
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -473,6 +482,13 @@ MDC.put("userId", "42");
 Best practice: Use both. Correlation ID for business tracing. Trace ID for performance analysis.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -511,6 +527,8 @@ Best practice: Use both. Correlation ID for business tracing. Trace ID for perfo
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -808,6 +826,13 @@ exporters:
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -846,6 +871,8 @@ exporters:
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1114,6 +1141,8 @@ Break things on purpose (in a controlled way) to find weaknesses before real fai
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1326,6 +1355,13 @@ Things every service needs but that aren't part of the service's core business. 
 3. **Platform abstraction:** Build a thin SDK per language that wraps the same API (OTel SDK exists for every major language).
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1364,6 +1400,8 @@ Things every service needs but that aren't part of the service's core business. 
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1609,6 +1647,13 @@ If error budget consumed:
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1647,6 +1692,8 @@ If error budget consumed:
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---

@@ -112,6 +112,13 @@ Exception creation captures the call stack via `fillInStackTrace()`, which is th
 Stack trace creation is the hidden performance cost. In hot paths, pre-allocating exception instances or overriding `fillInStackTrace()` to return `this` (skipping stack capture) can improve throughput dramatically. Libraries like Netty do this for flow control exceptions. The checked exception debate is largely settled in practice: modern Java APIs (Stream, CompletableFuture) avoid checked exceptions because they don't compose with lambdas. In architectures with global error handlers (Spring `@ControllerAdvice`), checked exceptions add ceremony without value - everything propagates to the handler anyway.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 Java's exception hierarchy embodies a universal error classification pattern found in every robust system: recoverable errors (checked exceptions, like HTTP 4xx), programming bugs (RuntimeException, like assertion failures), and system failures (Error, like hardware faults). The same taxonomy appears in Go (error vs panic), Rust (Result vs panic!), and operating systems (signals vs traps). The expert insight: `Throwable` was designed as a class hierarchy so that catch blocks could match at any granularity - catch `IOException` for file errors, `Exception` for all recoverable errors, or `Throwable` for everything including `OutOfMemoryError`. At extreme scale, exception cost matters: creating an exception captures the entire stack trace (expensive), so high-throughput systems override `fillInStackTrace()` to return `this` without walking the stack, or use pre-allocated singleton exceptions. If redesigning today, you would use sealed types (like Kotlin's sealed classes or Rust's Result enum) to make exception handling exhaustive and verifiable at compile time.
 
@@ -260,6 +267,8 @@ Use `assertThrows()` in JUnit to verify the correct exception type is thrown, ch
 **TRADE-OFF:** Type-safe error handling vs class proliferation and hierarchy complexity
 **ONE-LINER:** "Error = JVM dying, RuntimeException = your bug, checked Exception = expected failure"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -723,6 +732,13 @@ The compiler checks every method call against the target's `throws` clause. If a
 The checked exception experiment has produced clear patterns of misuse: swallowed exceptions (`catch (Exception e) {}`), throws clause pollution where `throws IOException` propagates through 10 layers, and exception wrapping hell. Modern best practice: use checked exceptions only at system boundaries (I/O layer, external integrations) and convert to unchecked at the boundary. Domain exceptions should be unchecked with rich context. Spring's entire data access layer follows this pattern - `SQLException` (checked) becomes `DataAccessException` (unchecked).
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 The checked vs unchecked debate is Java's version of the fundamental error handling design choice that every language makes: forced handling (checked) vs optional handling (unchecked). Rust chose forced (Result<T,E>), Go chose forced (multiple return values), Python/JS chose optional (all exceptions are unchecked), and Kotlin chose optional (no checked exceptions). The expert insight: checked exceptions compose poorly - they leak implementation details up the call stack, make lambda/stream code verbose, and create artificial coupling. Modern Java practice: use checked exceptions only at system boundaries (IO, network, DB) where recovery is plausible, and unchecked for everything else. Spring, Hibernate, and JDBC-template all wrap checked exceptions in unchecked for this reason. If redesigning today, you would use a Result type (like Kotlin's Result or Vavr's Either) that works with generics and lambdas without the compositional problems.
 
@@ -864,6 +880,8 @@ Test that checked exceptions are properly wrapped at boundaries (not swallowed),
 **TRADE-OFF:** Compile-time safety vs leaking implementation details and lambda incompatibility
 **ONE-LINER:** "Checked = must handle or declare. Unchecked = handle if you can. Modern: unchecked by default."
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1297,6 +1315,13 @@ The compiler desugars try-with-resources into a try-finally with null checks and
 Java 9 allows effectively-final variables in try-with-resources: `try (conn)` instead of redeclaring. Custom `AutoCloseable` implementations should be idempotent - `close()` should be safe to call multiple times. In resource hierarchies (BufferedReader wrapping FileReader), closing the outer resource closes the inner one - don't close both explicitly or you risk double-close issues. For pooled resources (connection pools), `close()` returns to pool rather than destroying - this is why `DataSource.getConnection()` works with try-with-resources even though you're not destroying the connection.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 Try-with-resources is Java's implementation of the RAII (Resource Acquisition Is Initialization) pattern from C++ - the same concept as Python's `with`, C#'s `using`, Go's `defer`, and Rust's `Drop` trait. The universal principle: tie resource lifetime to a lexical scope so cleanup happens deterministically. The expert insight: try-with-resources handles the subtle suppressed exception problem - if both the try block and close() throw, the original exception is primary and the close exception is added as suppressed (`Throwable.getSuppressed()`). Before Java 7, this required 25+ lines of nested try-finally with manual null checks. At extreme scale, resource leaks are the #1 production issue: leaked connections exhaust pools, leaked file handles hit OS limits (ulimit), leaked memory causes GC pressure. If redesigning today, you would make `AutoCloseable` the default for any type holding native resources, with compiler warnings for non-try-with-resources usage.
 
@@ -1445,6 +1470,8 @@ Create a mock `AutoCloseable` that records `close()` calls. Verify it's called e
 **TRADE-OFF:** Automatic cleanup vs resource must implement AutoCloseable and scope must be lexical
 **ONE-LINER:** "Declare resources in try() - guaranteed close in reverse order, even on exception"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1900,6 +1927,13 @@ For reading text files, use `Files.readString(path)` (small files) or `Files.lin
 The classic IO model is blocking and thread-per-connection. For high-connection-count servers (10K+ connections), NIO with `Selector` multiplexes many connections on few threads. However, for most file IO and moderate-connection-count applications, blocking IO with virtual threads (Java 21+) is simpler and performs comparably. `Files.lines()` returns a lazy Stream that reads on demand - process a 100GB file with constant memory. `MappedByteBuffer` via `FileChannel.map()` memory-maps files for random access at near-memory speed.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 Java's IO Streams implement the decorator pattern over byte/character sequences - the same concept as Unix pipes, Node.js readable/writable streams, and .NET System.IO.Stream. The expert insight: the stream decorator stack (e.g., FileInputStream -> BufferedInputStream -> DataInputStream) is both powerful and problematic. Powerful because you compose behaviors without modifying classes. Problematic because each layer adds a `read()` method call, and modern CPUs pay more for method dispatch overhead than for the actual IO (when using SSDs). At extreme scale, `BufferedReader.readLine()` allocates a new String per line (GC pressure for GB files), while NIO's `FileChannel` with `MappedByteBuffer` enables zero-copy reads. If redesigning today, you would unify InputStream/Reader into a single type parameterized by element type (byte vs char), eliminate the synchronization in FilterInputStream, and default to buffered IO.
 
@@ -2026,6 +2060,8 @@ Use `ByteArrayInputStream`/`ByteArrayOutputStream` for unit tests - no real file
 **TRADE-OFF:** Flexible composition via decoration vs wrapper overhead and synchronization cost
 **ONE-LINER:** "Wrap to compose: FileIn -> BufferedIn -> DataIn. Always buffer, always close."
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -2430,6 +2466,13 @@ NIO `Selector` uses OS-level epoll (Linux) or kqueue (macOS) to efficiently moni
 NIO's event-driven model underpins all high-performance Java servers: Netty, Tomcat NIO connector, Vert.x, gRPC. The Reactor pattern wraps Selector with a thread pool: one selector thread accepts connections, worker threads handle ready channels. With Java 21 virtual threads, the NIO complexity becomes optional for most workloads - `Thread.ofVirtual()` with blocking IO achieves similar scalability with simpler code. However, NIO still wins for true zero-copy scenarios (`FileChannel.transferTo()`) and memory-mapped I/O. `WatchService` provides filesystem event monitoring but has platform-specific reliability issues - on macOS it falls back to polling.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 NIO represents the evolution from blocking-thread-per-connection IO to non-blocking event-driven IO - the same paradigm shift as Node.js (libuv event loop), Nginx (epoll/kqueue), Go (goroutines on netpoller), and Rust (tokio/async-std). The expert insight: NIO's Selector is Java's abstraction over OS-level IO multiplexing (epoll on Linux, kqueue on macOS, IOCP on Windows). One thread can monitor thousands of channels because the OS kernel does the waiting. NIO.2 added the Path/Files API and `AsynchronousFileChannel` (true async file IO via OS completion ports). At extreme scale, raw NIO Selectors are complex and error-prone - this is why Netty, Vert.x, and Project Reactor exist as higher-level abstractions. If redesigning today, you would build virtual threads (Project Loom) from the start, making blocking IO efficient without NIO's complexity - which is exactly what Java 21 delivers.
 
@@ -2567,6 +2610,8 @@ Test NIO.2 operations with `jimfs` (in-memory filesystem). Test buffer operation
 **TRADE-OFF:** Scalability to 10K+ connections vs complex state machines and buffer management
 **ONE-LINER:** "Channel + Buffer + Selector = scalable IO. But prefer virtual threads (Java 21+) for simplicity"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 

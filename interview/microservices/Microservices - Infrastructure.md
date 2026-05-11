@@ -163,6 +163,13 @@ Pod:
 Instead of sidecar per pod, use a shared proxy per node. Reduces resource overhead from O(pods) to O(nodes). Trade-off: less isolation per service.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -201,6 +208,8 @@ Instead of sidecar per pod, use a shared proxy per node. Reduces resource overhe
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -457,6 +466,13 @@ spec:
 Before native sidecar support, the ordering problem was real: main container might start before Envoy is ready, causing initial requests to fail.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -495,6 +511,8 @@ Before native sidecar support, the ordering problem was real: main container mig
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -781,6 +799,13 @@ spec:
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -819,6 +844,8 @@ spec:
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1073,6 +1100,13 @@ static_resources:
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1111,6 +1145,8 @@ static_resources:
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1338,6 +1374,13 @@ With platform:
 - Roadmap: prioritize based on developer pain points
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1376,6 +1419,8 @@ With platform:
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1629,6 +1674,13 @@ One tenant generates 10x more load than others. They consume all database connec
 4. **Shard by tenant:** High-volume tenants get their own database shard
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1667,6 +1719,8 @@ One tenant generates 10x more load than others. They consume all database connec
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---

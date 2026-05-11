@@ -172,6 +172,13 @@ When circuit opens for an instance, remove it from the load balancer rotation. W
 - Recovery time (OPEN duration)
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -210,6 +217,8 @@ When circuit opens for an instance, remove it from the load balancer rotation. W
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -448,6 +457,13 @@ Request -> Bulkhead (limit concurrency)
 Order matters: Bulkhead first (protect resources), then Circuit Breaker (protect from failures), then Timeout (protect from slow calls).
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -486,6 +502,8 @@ Order matters: Bulkhead first (protect resources), then Circuit Breaker (protect
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -749,6 +767,13 @@ If Inventory takes 1.5s (timeout),
 Each service subtracts elapsed time from the budget and passes the remaining budget downstream in a header (`X-Request-Timeout-Ms`).
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -787,6 +812,8 @@ Each service subtracts elapsed time from the budget and passes the remaining bud
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1051,6 +1078,13 @@ a failure, and Retry decides whether to retry.
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1089,6 +1123,8 @@ a failure, and Retry decides whether to retry.
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1348,6 +1384,13 @@ it resumes from last state on restart.
 **Semantic lock pattern:** Reserve resources with a "pending" flag. Only commit (remove flag) when saga completes. If saga fails, compensation removes the pending reservation.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1386,6 +1429,8 @@ it resumes from last state on restart.
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1621,6 +1666,13 @@ public DefaultErrorHandler errorHandler(
 5. Fix serialization errors in producer, replay messages
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1659,6 +1711,8 @@ public DefaultErrorHandler errorHandler(
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---
@@ -1953,6 +2007,13 @@ public class ReadinessHealthIndicator
 ```
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1991,6 +2052,8 @@ public class ReadinessHealthIndicator
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
 | KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
+| TRIGGER   | [TODO: 5-7 word mental model]  |
+| OPENING   | [TODO: First sentence depth]   |
 +-------------------------------------------+
 ```
 ---

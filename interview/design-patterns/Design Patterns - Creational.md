@@ -117,6 +117,13 @@ Thread safety is the critical concern. Naive implementations break under concurr
 Singleton is the most misused pattern. The real question isn't "how to implement it" but "should you use it at all?" In modern applications, dependency injection containers manage object lifecycles. Spring's `@Scope("singleton")` is the default bean scope - it provides Singleton semantics without the testability problems. The pattern becomes an anti-pattern when: (1) it's used to avoid passing dependencies, (2) it holds mutable business state, (3) it makes unit testing require complex workarounds. In distributed systems, "singleton per JVM" is meaningless - you need distributed locks or leader election for true system-wide singletons. The enum approach in Java survives serialization, reflection, and cloning attacks - all of which break naive implementations.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -263,6 +270,8 @@ Use a concurrent test with `CountDownLatch` to have N threads call `getInstance(
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -568,6 +577,13 @@ Factory Method is the intersection of inheritance and polymorphism applied to ob
 The classic GoF Factory Method using subclasses is now relatively rare in modern code. What survived and thrived are three variations: (1) Static factory methods (`List.of()`, `Optional.of()`) that control construction without subclassing, (2) Parameterized factories that use a discriminator parameter instead of subclasses, (3) Functional factories using `Supplier<T>` or lambdas. The core principle - decouple creation from usage - remains universally applicable. In framework design, Factory Method is everywhere: Spring's `BeanFactory`, JPA's `EntityManagerFactory`, JDBC's `DriverManager.getConnection()`. The pattern is most valuable when you're designing a framework or library where users extend your code by providing their own types.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -717,6 +733,8 @@ Test each factory subclass returns the correct product type. Test the template m
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1032,6 +1050,13 @@ Abstract Factory is an aggregation of Factory Methods. Each method in the factor
 Abstract Factory shines in exactly one scenario: when you have multiple product types that must be used together consistently, and you have multiple families (variants) of those products. If you only have one product type, use Factory Method. If families don't need consistency guarantees, use individual factories. The pattern's weakness - adding a new product type forces changes across all factories - makes it best suited for stable product interfaces with varying implementations. In modern practice, DI containers and configuration profiles often replace explicit Abstract Factories. Spring's `@Profile` mechanism achieves the same family-switching behavior without the pattern's boilerplate.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1160,6 +1185,8 @@ Create a `TestUIFactory` that returns mock products. Verify that `Dialog` calls 
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1411,6 +1438,13 @@ The Bloch Builder pattern uses a static inner class that mirrors the product's f
 Advanced Builder patterns include: (1) **Step Builder** - compile-time enforcement of required fields using interfaces for each step (`UserBuilder.name("x")` returns `WithName` interface that has `email()`, preventing calling `build()` before email is set). (2) **Generic self-referencing builder** for inheritance hierarchies using `T extends Builder<T>`. (3) **DSL-style builders** for configuration objects where the builder creates a domain-specific language. In practice, I evaluate Builder vs other options: Kotlin named parameters + default values eliminate most Builder use cases; Java records with Wither methods offer an alternative for simple cases; and for DTOs, Jackson's `@JsonDeserialize(builder=...)` integrates Builder with deserialization.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1559,6 +1593,8 @@ Test that `build()` throws on invalid combinations. Test that default values wor
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1817,6 +1853,13 @@ The critical decision is shallow vs deep copy. Shallow copy copies field values 
 Prototype is most powerful in systems where you don't know concrete types at compile time. A document editor stores a palette of shapes (circle, rectangle, custom). The user drags a shape onto the canvas - the system calls `shape.clone()` without knowing if it's a `Circle` or `CustomShape`. This is polymorphic creation without factories. In JavaScript, the entire object system is prototype-based (`Object.create(proto)`), which shows the pattern elevated to a language feature. In production systems, I've used prototype registries for: configuring complex request objects (clone a baseline config, modify per-request), game entities (clone base enemy, vary attributes), and test data builders (clone a valid baseline, break one field per test).
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1956,6 +1999,8 @@ Test that modifying a clone does not affect the original (deep copy verification
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 

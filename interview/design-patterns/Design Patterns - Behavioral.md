@@ -113,6 +113,13 @@ Strategy eliminates conditional logic by replacing branches with polymorphism. I
 Strategy is the most common pattern in enterprise Java, often hidden behind frameworks. Spring's `AuthenticationManager` delegates to `AuthenticationProvider` strategies. Jackson's `SerializationFeature` selects serialization strategies. `java.util.Comparator` is a Strategy. The pattern's evolution: GoF (interface + classes) -> Java 8 (functional interfaces + lambdas) -> modern (strategy registry with auto-discovery). The decision framework: if you have 2-3 stable algorithms, if-else is fine. 4+ or frequently changing algorithms warrant Strategy. If the algorithm selection itself is complex, combine with Factory.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -223,6 +230,8 @@ Test each strategy in isolation. Test the context with a mock strategy. Test str
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -447,6 +456,13 @@ Two notification models: **Push** (subject sends data in the notification - obse
 Observer at scale becomes event-driven architecture. In-process Observer (subject calling listeners) has limitations: synchronous by default, single JVM, no persistence, no replay. Distributed Observer (Kafka, RabbitMQ) adds: async delivery, persistence, replay, multiple consumers, backpressure. The pattern evolves from `subject.notify()` to `broker.publish(topic, event)`. Reactive Streams (Project Reactor, RxJava) formalize Observer with backpressure: the observer can signal how many events it can handle. This solves the "fast producer, slow consumer" problem that crashes naive Observer implementations.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -567,6 +583,8 @@ Test the subject publishes events on state change. Test each observer independen
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -782,6 +800,13 @@ Command is the bridge between UI and business logic. In CQRS, "commands" (write 
 Command + Event Sourcing is one of the most powerful architectural combinations. Every state change is a command that produces an event. The event log is the source of truth. You can replay events to reconstruct any past state, build new read models, or audit every action. The trade-off: eventual consistency and complex event versioning. In practice, I use Command for: (1) operations that need undo/redo, (2) operations that need audit logging, (3) operations that need queuing (background jobs), (4) CQRS write sides. For simple CRUD without these needs, Command adds unnecessary ceremony.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -898,6 +923,8 @@ Test that `execute()` produces the expected state change. Test that `undo()` res
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1110,6 +1137,13 @@ Template Method uses two types of extension points: **Abstract methods** (must o
 Template Method vs Strategy is the inheritance vs composition debate in pattern form. Template Method is better when: the algorithm is complex, the step sequence is critical, and you want to enforce it. Strategy is better when: you need runtime flexibility, multiple algorithms per object, or you want to avoid deep inheritance hierarchies. In modern Java, I often replace Template Method with a "Template Method as Strategy" approach: pass function callbacks for the variable steps instead of requiring subclassing.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1220,6 +1254,8 @@ Test the template method calls steps in order (use a spy/mock). Test each subcla
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1415,6 +1451,13 @@ State pattern is a finite state machine (FSM) implemented with OOP. Each state c
 For complex workflows, manual State pattern implementation is error-prone. Use Spring State Machine or a DSL-based approach where states and transitions are declared, not coded. The pattern becomes critical in order processing (created -> paid -> shipped -> delivered -> returned), document workflows (draft -> review -> approved -> published), and connection management (connecting -> connected -> disconnecting -> disconnected). Guard conditions on transitions add another dimension: "transition from REVIEW to PUBLISHED only if all reviewers approved."
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1536,6 +1579,8 @@ Test each state class independently: verify allowed operations succeed and inval
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1727,6 +1772,13 @@ Spring Security uses Chain of Responsibility extensively. The `SecurityFilterCha
 The key architectural decision is pure chain vs pipeline. Pure chain (first handler wins) is for routing/dispatching. Pipeline (all handlers run) is for middleware/cross-cutting concerns. In microservices, API Gateway filter chains are pipelines: authentication, rate limiting, request transformation, routing - each runs in sequence. The pattern's weakness at scale: long chains add latency linearly. 20 filters at 1ms each = 20ms overhead per request. Monitor filter execution time and short-circuit when possible.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1835,6 +1887,8 @@ Test each handler independently with requests it should and should not handle. T
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 

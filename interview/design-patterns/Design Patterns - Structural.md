@@ -111,6 +111,13 @@ Two forms exist: **Object Adapter** (composition - holds a reference to the adap
 Adapter is the pattern of pragmatic integration. In microservices, anti-corruption layers are essentially Adapters between bounded contexts. When integrating legacy systems, the Adapter layer isolates your domain model from the legacy data model. In API versioning, a v2-to-v1 adapter allows old clients to work with a new API. The key design decision is where to place the Adapter: at the boundary of your system (clean architecture ports), not deep inside. Over-adapting (adapting adapters) is a code smell indicating you should redesign the interfaces instead.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -236,6 +243,8 @@ Unit test the adapter by mocking the adaptee, verifying parameter translation. I
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -492,6 +501,13 @@ Java I/O is the textbook example. `InputStream` is the component interface. `Fil
 Decorator is the foundational pattern behind middleware, interceptors, and aspect-oriented programming. Spring's `@Transactional` generates a proxy that decorates your bean with transaction management. Servlet filters are decorators on the request/response pipeline. In functional programming, function composition (`f(g(x))`) is Decorator without the object-oriented ceremony. The key architectural insight: Decorator enforces the Single Responsibility Principle for cross-cutting concerns (logging, caching, retry, metrics) without polluting business logic. In production, I've used it for: circuit breaker wrappers around HTTP clients, audit logging decorators on repository interfaces, and rate-limiting decorators on API handlers.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -648,6 +664,8 @@ Test each decorator independently with a mock component. Test decorator stacking
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -900,6 +918,13 @@ Java provides two proxy mechanisms: (1) **Static proxy** - you write a class tha
 In Spring, every `@Transactional` bean is a proxy. This has critical implications: (1) **Self-invocation doesn't trigger the proxy** - calling `this.method()` bypasses the proxy, so `@Transactional` on the called method is ignored. (2) **Private methods can't be proxied** (CGLIB limitation). (3) **Final classes can't be proxied** (CGLIB can't subclass them). Understanding proxy mechanics is essential for debugging "why isn't my @Transactional working?" issues. In distributed systems, service mesh sidecars (Envoy, Istio) are network-level proxies: they intercept traffic, add mTLS, retry, and circuit breaking without modifying application code.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1030,6 +1055,8 @@ Verify that the real subject is not created until first access. Verify that subs
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1264,6 +1291,13 @@ Facade is the simplest structural pattern. It has no special mechanisms - it's j
 The danger of Facade is becoming a god object. If your `OrderFacade` has 30 methods touching 15 subsystems, it's no longer simplifying - it's centralizing. The fix: one facade per use case or bounded context. In microservices, the API Gateway is a system-level facade: it presents a unified API to external clients while routing to internal services. BFF (Backend for Frontend) is a client-specific facade. The key architectural decision: facade should be thin (orchestration only, no business logic) or it becomes a maintenance bottleneck.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1392,6 +1426,8 @@ Mock all subsystems and verify the facade calls them in the correct order. Test 
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1603,6 +1639,13 @@ The pattern has a design tension: should `add(child)` / `remove(child)` be in th
 Composite is the foundation of the Interpreter pattern (ASTs), the Visitor pattern (traversing composite structures), and recursive descent parsers. In React, the entire virtual DOM is a Composite tree. In Spring Security, `AuthenticationManager` uses Composite: `ProviderManager` holds a list of `AuthenticationProvider`s and tries each one. The pattern is most powerful when combined with Visitor (separate operations from structure) or Iterator (standardize traversal). Watch for performance: naive recursive operations on deep trees can overflow the stack. Use iterative traversal with an explicit stack for production trees deeper than ~1000 levels.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1751,6 +1794,8 @@ Test leaf nodes return their value directly. Test composites with one level of c
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 

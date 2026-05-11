@@ -57,17 +57,17 @@ Each keyword within a file has 19 sections (see `INTERVIEW_PROMPT.md` v3.0 for f
 5. Understand It in 30 Seconds (One line / One analogy / One insight)
 6. First Principles (Invariants / Trade-offs / Essential vs Accidental)
 7. Mental Model / Analogy (blockquote + mapping + breakdown)
-8. Gradual Depth - Five Levels (Anyone / Junior / Mid / Senior / Distinguished)
+8. Gradual Depth - Five Levels (Anyone / Junior / Mid / Senior / Distinguished + Senior-to-Staff Leap)
 9. How It Works (summarized but complete mechanism)
 10. Complete Picture - End-to-End Flow (normal + failure + scale)
 11. Code Example (CONDITIONAL - real-world, BAD then GOOD, production-grade)
-12. Quick Reference Card (9 fields incl KEY NUMBERS + 3 things + interview one-liner)
+12. Quick Reference Card (11 fields incl KEY NUMBERS, TRIGGER PHRASE, OPENING SENTENCE + 3 things + interview one-liner)
 13. Mastery Checklist (5 indicators: EXPLAIN/DEBUG/DECIDE/BUILD/EXTEND)
 14. The Surprising Truth (one counterintuitive fact)
-15. Comparison Table (CONDITIONAL - when 2+ alternatives exist)
+15. Comparison Table (CONDITIONAL - when 2+ alternatives exist + Rapid Decision Tree)
 16. Common Misconceptions (min 4 rows, danger-ordered)
 17. Failure Modes and Diagnosis (min 3 modes with real diagnostic commands)
-18. Interview Deep-Dive (CAPSTONE - scaled by difficulty: easy=5, medium=7, hard=10)
+18. Interview Deep-Dive (CAPSTONE - scaled by difficulty: easy=7, medium=9, hard=12 + timing + likely follow-ups)
 19. Related Keywords (prerequisites / builds-on / alternatives)
 
 ## Interview Deep-Dive Rules (Critical)
@@ -75,15 +75,18 @@ Each keyword within a file has 19 sections (see `INTERVIEW_PROMPT.md` v3.0 for f
 This is the most important section. Rules:
 
 - **No cap on question count** - more is better
-- **Minimum scales by difficulty:** easy=5, medium=7, hard=10
+- **Minimum scales by difficulty:** easy=7, medium=9, hard=12
 - Every question MUST have a **complete, detailed answer** (not bullet hints)
 - **Tag each question** with difficulty: `[JUNIOR]` `[MID]` `[SENIOR]` `[STAFF]`
 - **End every answer** with `*What separates good from great:*` insight line
+- **Add `*Likely follow-up:*`** after each question's `*Why they ask:*` line
+- **Include timing guidelines table** at the start of each Interview Deep-Dive
 - Answers should demonstrate natural depth ("low-key impress the interviewer")
 - Answers can be long but must have clear structure and learning progression
-- **Must cover at least 5 of 8 question categories** per keyword
-- Required question types: conceptual, debugging, architecture, trade-off, production, hands-on, system design, comparison
+- **Must cover at least 5 of 9 question categories** per keyword
+- Required question types: conceptual, debugging, architecture, trade-off, production, hands-on, system design, comparison, **behavioral**
 - **At least 1 DEBUGGING + 1 TRADE-OFF question per keyword** (mandatory)
+- **At least 1 BEHAVIORAL question for medium/hard keywords** (mandatory)
 - Questions must be scenario-based, practical, and test real experience
 - No duplicate questions across keywords in the same file
 

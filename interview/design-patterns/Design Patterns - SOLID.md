@@ -103,6 +103,13 @@ The test for SRP: identify the actors. Who requests changes to this class? If th
 SRP at the macro level is the single most important factor in maintainable codebases. It applies not just to classes but to modules, services, and teams. In microservices, SRP means each service owns one business capability. The anti-pattern: a "user service" that handles authentication, profiles, preferences, and notifications. The fix: auth service, profile service, notification service. The judgment call: SRP is a spectrum. Too few responsibilities per class = God objects. Too many = class explosion. The right granularity matches your team's change frequency.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -192,6 +199,8 @@ public class EmployeeReportGenerator {
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -405,6 +414,13 @@ OCP is achieved through: (1) Strategy pattern - new algorithm = new strategy cla
 OCP is the most misapplied SOLID principle. Over-eager OCP creates "speculative generality" - abstractions for extension points that never materialize. The pragmatic approach: don't abstract preemptively. When the second implementation appears, refactor to OCP. When the third appears, you're glad you did. In large codebases, OCP's real value is organizational: team A can add features without team B's code review or risk. In microservices, OCP maps to the "open for extension" nature of event-driven architectures: new consumers can subscribe to existing events without modifying producers.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -482,6 +498,8 @@ public record Triangle(double base, double height)
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -669,6 +687,13 @@ LSP violations manifest as: (1) subclass methods throwing exceptions the parent 
 LSP is the formal statement of "design by contract." In practice, I use LSP as a code review check: for every method override, verify the three rules (preconditions, postconditions, invariants). Modern Java features help: `sealed` interfaces limit who can subtype, reducing the surface area for LSP violations. `record` classes are immutable, eliminating the Square/Rectangle mutation problem entirely. The ultimate LSP strategy: prefer composition over inheritance, and use inheritance only for genuine behavioral subtypes, not taxonomic classifications.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -758,6 +783,8 @@ public record Square(int side) implements Shape {
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -944,6 +971,13 @@ ISP aligns with the Dependency Inversion Principle: clients define the interface
 ISP's deepest impact is on compile-time dependencies and deployment. In a monolithic codebase with fat interfaces, changing one method recompiles everything that depends on the interface. With segregated interfaces, only the clients of that specific interface recompile. In microservices, ISP maps to API contracts: don't give every consumer the same API. BFF (Backend for Frontend) is ISP at the service level - mobile gets a different interface than web.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1045,6 +1079,8 @@ public class PrintService {
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -1236,6 +1272,13 @@ DIP has two halves: (1) Depend on abstractions - use interfaces. (2) Abstraction
 DIP is the architectural principle that enables clean architecture, hexagonal architecture, and microservice independence. It's not just about classes - it applies to modules, services, and teams. In a microservice, the domain service defines the events it publishes (abstraction). Consumers subscribe to those events. The producer doesn't know about consumers. At the module level, DIP through interfaces enables parallel team development: team A builds the domain, team B builds the infrastructure, both agree on the interface contract. The pragmatic limit: don't apply DIP to stable, unlikely-to-change dependencies. `String`, `List`, `BigDecimal` are low-level details you should depend on directly - abstracting them adds no value.
 
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
@@ -1337,6 +1380,8 @@ class OrderServiceTest {
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 

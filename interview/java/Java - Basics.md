@@ -116,6 +116,13 @@ Primitives live on the stack frame of the executing method - allocated on method
 **Level 4 - Mastery (senior/staff+ engineer):**
 The primitive/reference split is Java's original sin and its greatest performance advantage. Project Valhalla (value types) will finally allow user-defined types with primitive semantics - stack-allocated, no identity, no null, flat memory layout in arrays. This eliminates the need for wrapper classes and enables "codes like a class, works like an int." Understanding the JVM's memory model at this level means knowing that `volatile` on a primitive guarantees visibility across threads via memory barriers, but `volatile` on a reference only makes the pointer visible - the object's fields have no such guarantee without additional synchronization. Experts choose between `int[]` and `Integer[]` based on cache line utilization: a contiguous `int[1000]` fits in ~4KB and is cache-friendly, while `Integer[1000]` scatters 1000 objects across the heap, destroying L1 cache performance.
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 The primitive/object duality in Java is an instance of a universal tension in language design: value semantics vs reference semantics. This same trade-off appears in C++ (stack vs heap), Rust (Copy vs Clone), and even database design (inline columns vs foreign key references). If redesigning Java today, you would likely adopt Valhalla's value types from day one - eliminating wrapper classes entirely, allowing user-defined inline types, and making arrays of value types contiguous in memory (like C structs). The expert heuristic: when a data type has no identity (you never ask "is this the same instance?"), it should be a value type. This principle applies to 80%+ of domain objects (Money, Point, Color, Timestamp) that are currently forced into heap allocation. At extreme scale (millions of events/sec), the choice between `int[]` and `Integer[]` is not a micro-optimization - it is the difference between fitting your working set in L2 cache or thrashing main memory, a 10-100x performance gap.
 
@@ -248,6 +255,8 @@ Use `System.identityHashCode()` to verify whether two references point to the sa
 **TRADE-OFF:** Type safety and performance (primitives) vs flexibility and nullability (objects)
 **ONE-LINER:** "8 primitives on the stack, everything else on the heap - know which is which"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
@@ -789,6 +798,13 @@ At the bytecode level, method invocation pushes argument values onto the operand
 **Level 4 - Mastery (senior/staff+ engineer):**
 Understanding Java's parameter model is essential for designing APIs. Defensive copying, immutable parameters, and value objects all stem from this model. The lack of true pass-by-reference is why the Builder pattern, Optional returns, and Record types are preferred over out-parameters. In concurrent code, passing a mutable object to another thread via a method call means both threads share the same heap object - the "copy" of the reference provides zero protection against data races on the object's fields. This is why concurrent APIs prefer immutable messages or deep copies.
 
+
+
+**The Senior-to-Staff Leap:**
+A Senior says: "[TODO: What a competent senior would say]"
+A Staff says: "[TODO: What demonstrates next-level abstraction]"
+The difference: [TODO: 1 sentence - the mental model shift]
+
 **Level 5 - Distinguished (expert thinking):**
 Java's pass-by-value-of-reference model is a specific instance of the ownership vs sharing tension found across all systems. Rust solved this with the borrow checker (compile-time enforcement of single-writer-or-multiple-readers). Erlang solved it by copying everything (no shared heap). Go chose shared memory with goroutine channels. Java chose the most permissive model - shared mutable state with optional synchronization - which maximizes flexibility but pushes all correctness burden onto the developer. If redesigning today, you would likely adopt Rust-style ownership annotations or Kotlin-style immutable-by-default parameters. At extreme scale, the practical implication is that every cross-thread method call passing a mutable object is a potential data race, which is why reactive frameworks (Project Reactor, RxJava), actor models (Akka), and structured concurrency (JEP 453) all converge on message-passing with immutable payloads - effectively simulating pass-by-value semantics at the architecture level.
 
@@ -911,6 +927,8 @@ Use `System.identityHashCode(obj)` before and after method calls to verify wheth
 **TRADE-OFF:** Safety (no variable aliasing) vs convenience (no multi-return without wrappers)
 **ONE-LINER:** "Copy the pointer, share the object, can't swap the caller's variables"
 **KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
 
 **If you remember only 3 things:**
 
