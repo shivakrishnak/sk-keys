@@ -112,11 +112,14 @@ Primitives live on the stack frame of the executing method - allocated on method
 **Level 4 - Mastery (senior/staff+ engineer):**
 The primitive/reference split is Java's original sin and its greatest performance advantage. Project Valhalla (value types) will finally allow user-defined types with primitive semantics - stack-allocated, no identity, no null, flat memory layout in arrays. This eliminates the need for wrapper classes and enables "codes like a class, works like an int." Understanding the JVM's memory model at this level means knowing that `volatile` on a primitive guarantees visibility across threads via memory barriers, but `volatile` on a reference only makes the pointer visible - the object's fields have no such guarantee without additional synchronization. Experts choose between `int[]` and `Integer[]` based on cache line utilization: a contiguous `int[1000]` fits in ~4KB and is cache-friendly, while `Integer[1000]` scatters 1000 objects across the heap, destroying L1 cache performance.
 
-
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+The primitive/object duality in Java is an instance of a universal tension in language design: value semantics vs reference semantics. This same trade-off appears in C++ (stack vs heap), Rust (Copy vs Clone), and even database design (inline columns vs foreign key references). If redesigning Java today, you would likely adopt Valhalla's value types from day one - eliminating wrapper classes entirely, allowing user-defined inline types, and making arrays of value types contiguous in memory (like C structs). The expert heuristic: when a data type has no identity (you never ask "is this the same instance?"), it should be a value type. This principle applies to 80%+ of domain objects (Money, Point, Color, Timestamp) that are currently forced into heap allocation. At extreme scale (millions of events/sec), the choice between `int[]` and `Integer[]` is not a micro-optimization - it is the difference between fitting your working set in L2 cache or thrashing main memory, a 10-100x performance gap.
+
+**Expert thinking cues:**
+
+- "Does this type have identity?" If no, it should be a value type
+- "Will this allocation survive the nursery?" If no, the JIT may scalar-replace it - but don't count on it in complex call graphs
+- "Is my array layout cache-friendly?" Primitive arrays yes, object arrays almost never
 
 ---
 
@@ -236,14 +239,14 @@ Use `System.identityHashCode()` to verify whether two references point to the sa
 
 ### Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
+**WHAT IT IS:** 8 primitive value types + reference types forming Java's static type system
+**PROBLEM IT SOLVES:** Prevents type errors at compile time, not in production
+**KEY INSIGHT:** Primitives live on stack (fast, no GC); objects live on heap (flexible, GC-managed)
+**USE WHEN:** Every Java program - the type system is non-optional
+**AVOID WHEN:** `Integer`/`Long` in tight loops - use primitives instead
+**ANTI-PATTERN:** Using `==` to compare objects instead of `.equals()`
+**TRADE-OFF:** Type safety and performance (primitives) vs flexibility and nullability (objects)
+**ONE-LINER:** "8 primitives on the stack, everything else on the heap - know which is which"
 
 **If you remember only 3 things:**
 
@@ -584,12 +587,12 @@ try {
 
 ### Common Misconceptions
 
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| #   | Misconception | Reality |
+| --- | ------------- | ------- |
+| 1   | [TODO]        | [TODO]  |
+| 2   | [TODO]        | [TODO]  |
+| 3   | [TODO]        | [TODO]  |
+| 4   | [TODO]        | [TODO]  |
 
 ---
 
@@ -599,9 +602,11 @@ try {
 **Symptom:** [TODO]
 **Root Cause:** [TODO]
 **Diagnostic:**
+
 ```
 [TODO: real diagnostic command]
 ```
+
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
 
@@ -609,9 +614,11 @@ try {
 **Symptom:** [TODO]
 **Root Cause:** [TODO]
 **Diagnostic:**
+
 ```
 [TODO: real diagnostic command]
 ```
+
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
 
@@ -619,9 +626,11 @@ try {
 **Symptom:** [TODO]
 **Root Cause:** [TODO]
 **Diagnostic:**
+
 ```
 [TODO: real diagnostic command]
 ```
+
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
 
@@ -630,14 +639,17 @@ try {
 ### Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [TODO] - [why needed]
 - [TODO] - [why needed]
 
 **Builds on this (learn these next):**
+
 - [TODO] - [what it adds]
 - [TODO] - [what it adds]
 
 **Alternatives / Comparisons:**
+
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
@@ -736,11 +748,10 @@ At the bytecode level, method invocation pushes argument values onto the operand
 **Level 4 - Mastery (senior/staff+ engineer):**
 Understanding Java's parameter model is essential for designing APIs. Defensive copying, immutable parameters, and value objects all stem from this model. The lack of true pass-by-reference is why the Builder pattern, Optional returns, and Record types are preferred over out-parameters. In concurrent code, passing a mutable object to another thread via a method call means both threads share the same heap object - the "copy" of the reference provides zero protection against data races on the object's fields. This is why concurrent APIs prefer immutable messages or deep copies.
 
-
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+What would you change if redesigning today?
+How does this compose at extreme scale?]
 
 ---
 
@@ -1018,12 +1029,12 @@ When you pass a mutable object to another thread, both threads hold references t
 
 ### Common Misconceptions
 
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| #   | Misconception | Reality |
+| --- | ------------- | ------- |
+| 1   | [TODO]        | [TODO]  |
+| 2   | [TODO]        | [TODO]  |
+| 3   | [TODO]        | [TODO]  |
+| 4   | [TODO]        | [TODO]  |
 
 ---
 
@@ -1033,9 +1044,11 @@ When you pass a mutable object to another thread, both threads hold references t
 **Symptom:** [TODO]
 **Root Cause:** [TODO]
 **Diagnostic:**
+
 ```
 [TODO: real diagnostic command]
 ```
+
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
 
@@ -1043,9 +1056,11 @@ When you pass a mutable object to another thread, both threads hold references t
 **Symptom:** [TODO]
 **Root Cause:** [TODO]
 **Diagnostic:**
+
 ```
 [TODO: real diagnostic command]
 ```
+
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
 
@@ -1053,9 +1068,11 @@ When you pass a mutable object to another thread, both threads hold references t
 **Symptom:** [TODO]
 **Root Cause:** [TODO]
 **Diagnostic:**
+
 ```
 [TODO: real diagnostic command]
 ```
+
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
 
@@ -1064,13 +1081,16 @@ When you pass a mutable object to another thread, both threads hold references t
 ### Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [TODO] - [why needed]
 - [TODO] - [why needed]
 
 **Builds on this (learn these next):**
+
 - [TODO] - [what it adds]
 - [TODO] - [what it adds]
 
 **Alternatives / Comparisons:**
+
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]

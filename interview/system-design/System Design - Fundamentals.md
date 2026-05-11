@@ -14,7 +14,7 @@ keywords:
   - Distributed Transactions
   - Consistent Hashing
   - Back-of-Envelope Estimation
-difficulty_range: ★★☆ to ★★★
+difficulty_range: medium to hard
 status: in-progress
 version: 2
 ---

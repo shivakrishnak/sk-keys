@@ -152,7 +152,7 @@ This will:
 
 1. Scan dictionary `index.md` for the category/tier
 2. Analyse keywords for new folder/file opportunities
-4. Map categories to interview topics via `topic-registry.md`
+3. Map categories to interview topics via `topic-registry.md`
 4. Create missing folders, stubs, and index files
 5. Generate content for uncovered keywords
 

@@ -14,7 +14,7 @@ keywords:
   - Cloud Migration
   - Technology Migration Strategy
   - POC Strategy
-difficulty_range: ★★★
+difficulty_range: hard
 status: in-progress
 version: 2
 ---

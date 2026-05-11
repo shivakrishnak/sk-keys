@@ -13,7 +13,7 @@ keywords:
   - News Feed and Timeline
   - Chat System
   - Notification System
-difficulty_range: ★★☆ to ★★★
+difficulty_range: medium to hard
 status: in-progress
 version: 2
 ---

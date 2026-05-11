@@ -14,7 +14,7 @@ keywords:
   - API Gateway and Service Discovery
   - Resilience Patterns
   - Event-Driven Architecture and CQRS
-difficulty_range: ★★☆ to ★★★
+difficulty_range: medium to hard
 status: in-progress
 version: 2
 ---

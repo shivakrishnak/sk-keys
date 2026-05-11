@@ -13,7 +13,7 @@ keywords:
   - Properties and Profiles
   - Actuator
   - Embedded Server
-difficulty_range: ★☆☆ to ★★☆
+difficulty_range: easy to medium
 status: in-progress
 version: 2
 ---

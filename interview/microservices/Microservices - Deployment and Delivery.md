@@ -14,7 +14,7 @@ keywords:
   - Feature Flags
   - Progressive Delivery
   - Graceful Shutdown
-difficulty_range: ★★☆ to ★★★
+difficulty_range: medium to hard
 status: in-progress
 version: 2
 ---

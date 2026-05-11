@@ -13,7 +13,7 @@ keywords:
   - Transactional Annotation
   - N+1 Problem
   - Connection Pooling
-difficulty_range: ★★☆ to ★★★
+difficulty_range: medium to hard
 status: in-progress
 version: 2
 ---

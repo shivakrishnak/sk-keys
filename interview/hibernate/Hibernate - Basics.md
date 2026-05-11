@@ -13,7 +13,7 @@ keywords:
   - Entity Mapping
   - Primary Key Strategies
   - Dirty Checking and Flushing
-difficulty_range: ★☆☆ to ★★☆
+difficulty_range: easy to medium
 status: in-progress
 version: 2
 ---

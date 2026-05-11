@@ -13,7 +13,7 @@ keywords:
   - Fetch Types
   - Cascade Types
   - Bidirectional Relationships
-difficulty_range: ★★☆ to ★★★
+difficulty_range: medium to hard
 status: in-progress
 version: 2
 ---

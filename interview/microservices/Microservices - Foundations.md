@@ -14,7 +14,7 @@ keywords:
   - Modular Monolith
   - Twelve-Factor App
   - Microservices Ecosystem Map
-difficulty_range: ★☆☆ to ★★☆
+difficulty_range: easy to medium
 status: in-progress
 version: 2
 ---

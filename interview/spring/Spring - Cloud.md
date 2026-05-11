@@ -12,7 +12,7 @@ keywords:
   - Service Discovery
   - Config Server
   - Distributed Tracing
-difficulty_range: ★★☆ to ★★★
+difficulty_range: medium to hard
 status: in-progress
 version: 2
 ---

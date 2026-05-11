@@ -13,7 +13,7 @@ keywords:
   - Exception Handling
   - Validation
   - Filters and Interceptors
-difficulty_range: ★☆☆ to ★★☆
+difficulty_range: easy to medium
 status: in-progress
 version: 2
 ---

@@ -14,7 +14,7 @@ keywords:
   - Event Sourcing
   - Strangler Fig Pattern
   - Sidecar and Service Mesh
-difficulty_range: ★★☆ to ★★★
+difficulty_range: medium to hard
 status: in-progress
 version: 2
 ---

@@ -14,7 +14,7 @@ keywords:
   - Chaos Engineering
   - Cross-Cutting Concerns
   - Observability Architecture
-difficulty_range: ★★☆ to ★★★
+difficulty_range: medium to hard
 status: in-progress
 version: 2
 ---

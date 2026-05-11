@@ -13,7 +13,7 @@ keywords:
   - Configuration and Bean
   - Conditional Annotations
   - Profile
-difficulty_range: ★☆☆ to ★★☆
+difficulty_range: easy to medium
 status: in-progress
 version: 2
 ---

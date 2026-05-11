@@ -14,7 +14,7 @@ keywords:
   - Envoy Proxy
   - Platform Engineering
   - Multi-Tenancy
-difficulty_range: ★★★
+difficulty_range: hard
 status: in-progress
 version: 2
 ---

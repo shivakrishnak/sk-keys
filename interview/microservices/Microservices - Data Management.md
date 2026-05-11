@@ -15,7 +15,7 @@ keywords:
   - Event Sourcing
   - Event-Driven Microservices
   - Eventual Consistency
-difficulty_range: ★★★
+difficulty_range: hard
 status: in-progress
 version: 2
 ---

@@ -14,7 +14,7 @@ keywords:
   - Service Discovery and Registry
   - Backend for Frontend (BFF)
   - GraphQL Federation
-difficulty_range: ★★☆ to ★★★
+difficulty_range: medium to hard
 status: in-progress
 version: 2
 ---
