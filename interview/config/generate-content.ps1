@@ -192,7 +192,8 @@ function New-StubFile {
         [string]$TopicName,
         [string]$SubtopicName,
         [string[]]$Keywords,
-        [string]$DifficultyRange = "mixed"
+        [string]$DifficultyRange = "mixed",
+        [int]$NavOrder = 0
     )
     $topicPath = Get-TopicPath $TopicName
     $fileName = Get-SubtopicFileName $TopicName $SubtopicName
@@ -203,10 +204,25 @@ function New-StubFile {
         return $filePath
     }
 
+    # Calculate nav_order from existing files if not specified
+    if ($NavOrder -eq 0) {
+        $existingFiles = Get-ChildItem -Path $topicPath -Filter "*.md" -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -ne "index.md" }
+        $NavOrder = $existingFiles.Count + 1
+    }
+
+    $topicSlug = Get-TopicFolder $TopicName
+    $subtopicSlug = $SubtopicName.ToLower() -replace '\s+', '-' -replace '[^a-z0-9\-]', ''
+
     $kwYaml = ($Keywords | ForEach-Object { "  - $_" }) -join "`n"
     $stub = @"
 ---
-title: $TopicName - $SubtopicName
+layout: default
+title: "$TopicName - $SubtopicName"
+parent: "$TopicName"
+grand_parent: "Interview Mastery"
+nav_order: $NavOrder
+permalink: /interview/$topicSlug/$subtopicSlug/
 topic: $TopicName
 subtopic: $SubtopicName
 keywords:
@@ -267,9 +283,28 @@ function Update-TopicIndex {
         $rows += "| $($f.Name) | $kwCount | $desc |"
     }
 
+    # Calculate nav_order for this topic index
+    $existingTopics = Get-ChildItem -Path $InterviewRoot -Directory |
+        Where-Object { $_.Name -ne "config" } |
+        Sort-Object Name
+    $topicNavOrder = 1
+    for ($idx = 0; $idx -lt $existingTopics.Count; $idx++) {
+        if ($existingTopics[$idx].Name -eq (Get-TopicFolder $TopicName)) {
+            $topicNavOrder = $idx + 1
+            break
+        }
+    }
+
+    $topicSlug = Get-TopicFolder $TopicName
+
     $indexContent = @"
 ---
-title: $TopicName
+layout: default
+title: "$TopicName"
+parent: "Interview Mastery"
+nav_order: $topicNavOrder
+has_children: true
+permalink: /interview/$topicSlug/
 description: Interview mastery content for $TopicName
 keywords_count: $totalKeywords
 files_count: $($files.Count)
@@ -547,12 +582,23 @@ function Invoke-TierMode {
                 Write-Host "    CREATED folder: $topicPath" -ForegroundColor Green
             }
 
-            foreach ($st in ($info.Subtopics | Select-Object -Unique)) {
-                # Group relevant keywords for this subtopic
-                $stKeywords = $info.Keywords |
-                    Select-Object -ExpandProperty Title |
-                    Select-Object -First 8  # Rough grouping
-                New-StubFile -TopicName $t -SubtopicName $st -Keywords $stKeywords
+            $uniqueSubtopics = $info.Subtopics | Select-Object -Unique
+            $allKeywords = $info.Keywords | Select-Object -ExpandProperty Title
+            $chunkSize = [Math]::Ceiling($allKeywords.Count / [Math]::Max(1, $uniqueSubtopics.Count))
+            $kwIndex = 0
+            $navOrd = 0
+
+            foreach ($st in $uniqueSubtopics) {
+                $navOrd++
+                # Distribute keywords evenly across subtopics
+                $end = [Math]::Min($kwIndex + $chunkSize - 1, $allKeywords.Count - 1)
+                if ($kwIndex -le $end) {
+                    $stKeywords = $allKeywords[$kwIndex..$end]
+                } else {
+                    $stKeywords = @("(Add keywords here)")
+                }
+                $kwIndex = $end + 1
+                New-StubFile -TopicName $t -SubtopicName $st -Keywords $stKeywords -NavOrder $navOrd
             }
 
             Update-TopicIndex -TopicName $t
@@ -602,9 +648,19 @@ function Invoke-NewMode {
         Write-Host "CREATED folder: $topicPath" -ForegroundColor Green
 
         # Create minimal index
+        $topicSlug = Get-TopicFolder $Topic
+        $existingTopics = Get-ChildItem -Path $InterviewRoot -Directory |
+            Where-Object { $_.Name -ne "config" }
+        $navOrder = $existingTopics.Count + 1
+
         $indexContent = @"
 ---
-title: $Topic
+layout: default
+title: "$Topic"
+parent: "Interview Mastery"
+nav_order: $navOrder
+has_children: true
+permalink: /interview/$topicSlug/
 description: Interview mastery content for $Topic
 keywords_count: 0
 files_count: 0

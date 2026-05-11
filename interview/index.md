@@ -10,6 +10,9 @@ permalink: /interview/
 
 A condensed, interview-focused technical reference with deep Q&A for every concept. Complete knowledge on each topic - zero to mastery - without needing other sources.
 
-| Topic                    | Files | Keywords | Status      |
-| ------------------------ | ----- | -------- | ----------- |
-| [Java](/interview/java/) | 8     | 42       | in-progress |
+| Topic                                            | Files | Keywords | Status   |
+| ------------------------------------------------ | ----- | -------- | -------- |
+| [Java](/interview/java/)                         | 8     | 42       | complete |
+| [Java Concurrency](/interview/java-concurrency/) | 4     | 23       | complete |
+| [Spring](/interview/spring/)                     | 7     | 34       | complete |
+| [Hibernate](/interview/hibernate/)               | 3     | 15       | complete |
