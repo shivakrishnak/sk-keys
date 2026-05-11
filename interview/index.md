@@ -20,3 +20,10 @@ A condensed, interview-focused technical reference with deep Q&A for every conce
 | [Design Patterns](/interview/design-patterns/)     | 6     | 30       | complete |
 | [Microservices](/interview/microservices/)         | 10    | 62       | complete |
 | [Async & Background](/interview/async-background/) | 5     | 35       | complete |
+| [Containers](/interview/containers/)               | 5     | 30       | complete |
+| [Kubernetes](/interview/kubernetes/)               | 6     | 36       | complete |
+| [CI/CD](/interview/cicd/)                          | 4     | 24       | complete |
+| [Observability](/interview/observability/)         | 3     | 18       | complete |
+| [Cloud AWS](/interview/cloud-aws/)                 | 5     | 30       | complete |
+| [AI and RAG](/interview/ai-and-rag/)               | 5     | 30       | complete |
+| [Messaging](/interview/messaging/)                 | 4     | 24       | complete |
