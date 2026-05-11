@@ -36,7 +36,7 @@ DLQ flow:
     Attempt 2: Fails again
     Attempt 3: Fails again (max retries exhausted)
     -> Message moved to Dead Letter Queue (DLQ)
-  
+
   Main queue continues processing next messages!
   DLQ holds failed messages for investigation.
 
@@ -79,6 +79,7 @@ Best practices:
 ### Quick Recall
 
 **If you remember only 3 things:**
+
 1. DLQ isolates poison messages: after N failures, move to DLQ so main queue keeps flowing. Without DLQ, one bad message blocks everything (head-of-line blocking).
 2. Always monitor DLQ depth. DLQ messages > 0 = something is wrong (bug, schema change, dependency down). Alert immediately and investigate.
 3. Build replay capability: after fixing the bug, replay DLQ messages back to main queue for reprocessing. Don't just delete them - they represent unfinished work.
@@ -111,7 +112,7 @@ Idempotent vs Non-idempotent operations:
     SET balance = 100 (same result every time)
     PUT /users/123 {name: "Alice"} (upsert)
     DELETE /items/456 (already deleted = no-op)
-  
+
   NOT IDEMPOTENT (dangerous to repeat):
     balance += 10 (adds 10 each time!)
     POST /orders (creates new order each time!)
@@ -122,7 +123,7 @@ Making operations idempotent:
 1. DEDUPLICATION KEY (most common):
    Each message has unique ID (messageId, eventId)
    Before processing: "Have I seen this ID?"
-   
+
    BEGIN TRANSACTION;
      SELECT 1 FROM processed_messages
        WHERE message_id = 'msg-123';
@@ -134,7 +135,7 @@ Making operations idempotent:
    Instead of: "Add $10 to account"
    Use: "Set account balance to $110 (from $100)"
         (includes expected before-state)
-   
+
    Or: "Process payment for order-123"
        + ON CONFLICT (order_id) DO NOTHING
 
@@ -168,6 +169,7 @@ Deduplication window:
 ### Quick Recall
 
 **If you remember only 3 things:**
+
 1. Every message consumer MUST be idempotent when using at-least-once delivery (which is standard). Duplicates are not a possibility - they're a certainty in production.
 2. Simplest pattern: store message_id in same transaction as business logic. Use INSERT ... ON CONFLICT DO NOTHING or check-then-process with unique constraint.
 3. Design operations to be naturally idempotent: "set X to Y" (repeatable) instead of "add Z to X" (accumulates). Include expected-state or version to detect stale operations.
@@ -223,7 +225,7 @@ Saga orchestration approaches:
    -> Inventory Service reacts: reserves, publishes "InventoryReserved"
    -> Payment Service reacts: charges, publishes "PaymentCharged"
    -> Order Service reacts: confirms order
-   
+
    Pros: Simple, loosely coupled, no single point of failure
    Cons: Hard to track overall state, complex flow logic
    Use when: Simple sagas (3-4 steps), loose coupling priority
@@ -234,7 +236,7 @@ Saga orchestration approaches:
      -> "Charge Payment" -> waits for response
      -> "Confirm Order" -> done
    On failure: Orchestrator sends compensation commands
-   
+
    Pros: Clear flow, easy to track state, centralized logic
    Cons: Orchestrator is single point (must be resilient)
    Use when: Complex sagas (5+ steps), need visibility
@@ -252,6 +254,7 @@ Saga challenges:
 ### Quick Recall
 
 **If you remember only 3 things:**
+
 1. Saga = sequence of local transactions, each with a compensating action (undo). If step N fails, execute compensations for steps N-1 through 1. Replaces distributed transactions.
 2. Choreography (events, decentralized) for simple sagas. Orchestration (coordinator, centralized) for complex sagas. Orchestration is easier to reason about and debug.
 3. Sagas provide eventual consistency, not immediate. Intermediate states are visible (order in PENDING during processing). Design for this: show appropriate status to users, handle race conditions.
@@ -293,7 +296,7 @@ Outbox pattern solution:
         VALUES (uuid, 'order-events', 'order-123',
                 '{"event":"confirmed",...}', now());
     COMMIT;
-  
+
   Then: Separate process reads outbox -> publishes to Kafka
   After publish: Mark outbox row as published (or delete)
 
@@ -306,7 +309,7 @@ Outbox publishing approaches:
    SELECT * FROM outbox WHERE published = false
      ORDER BY created_at LIMIT 100;
    For each: publish to Kafka, mark published=true
-   
+
    Pros: Simple, works with any database
    Cons: Polling delay (100ms-1s), database load
 
@@ -314,7 +317,7 @@ Outbox publishing approaches:
    Debezium reads database WAL/binlog
    Detects INSERT into outbox table
    Automatically publishes to Kafka topic
-   
+
    Pros: Real-time (ms latency), no polling, no extra load
    Cons: Requires CDC infrastructure (Debezium + Kafka Connect)
 
@@ -341,6 +344,7 @@ Important: Consumer must still be idempotent!
 ### Quick Recall
 
 **If you remember only 3 things:**
+
 1. Outbox solves the dual-write problem: write business data + event in ONE database transaction. Publish event asynchronously from outbox table. Guarantees consistency.
 2. Debezium CDC > polling: reads database WAL in real-time, no polling delay, no extra DB load. Debezium + outbox table is the production-standard pattern.
 3. Outbox provides at-least-once event publishing (may publish duplicates on failure/restart). Consumers still must be idempotent. Use outbox row ID as deduplication key.
@@ -379,7 +383,7 @@ Event Sourced:
     3. MoneyWithdrawn {amount: 300}
     4. MoneyDeposited {amount: 200}
     5. MoneyWithdrawn {amount: 400}
-  
+
   Current state: Replay all events -> balance = $500
   State at event 3: Replay events 1-3 -> balance = $700
   Full audit trail: Every change is recorded forever
@@ -408,7 +412,7 @@ When to use event sourcing:
        Complex domain with rich business events
        CQRS already planned (natural fit)
        Need to rebuild read models (new projections)
-  
+
   NO:  Simple CRUD (massive overkill)
       Don't need history (just current state)
       Team unfamiliar (steep learning curve)
@@ -428,6 +432,7 @@ Challenges:
 ### Quick Recall
 
 **If you remember only 3 things:**
+
 1. Event Sourcing = store events (immutable facts), derive state by replaying. Enables: full audit trail, temporal queries, replay for debugging, rebuild read models from scratch.
 2. Natural fit with CQRS: write side appends events (optimized for consistency), read side builds projections (optimized for queries). Different models for different concerns.
 3. NOT for everything: massive complexity increase. Use for domains where audit trail, temporal queries, or event replay justify the cost (finance, compliance, complex domains). CRUD apps don't need it.
@@ -488,11 +493,11 @@ Unsafe schema changes (breaking):
 
 Schema Registry (Confluent, AWS Glue):
   Registry stores schemas + enforces compatibility
-  
+
   Producer: Register schema -> get schema ID
   Message: [schema_id (4 bytes) + serialized data]
   Consumer: Read schema_id -> fetch schema -> deserialize
-  
+
   Registry rejects incompatible schema changes!
   Prevents breaking changes from reaching production.
 
@@ -503,7 +508,7 @@ Serialization formats:
   | Avro     | Required| Built-in  | Fast, compact|
   | Protobuf | Required| Built-in  | Fast, compact|
   | Thrift   | Required| Built-in  | Fast, compact|
-  
+
   Avro: Schema in registry, compact binary, best for Kafka
   Protobuf: Strong typing, generated code, gRPC native
   JSON: Human-readable, flexible, but no evolution guarantees
@@ -514,6 +519,7 @@ Serialization formats:
 ### Quick Recall
 
 **If you remember only 3 things:**
+
 1. Backward compatibility (new consumers read old messages) is the minimum requirement. Full compatibility (both directions) is ideal but restricts changes to adding optional fields with defaults.
 2. Schema Registry enforces compatibility rules automatically: rejects breaking changes before they reach production. Use with Avro or Protobuf for Kafka messaging.
 3. Safe changes: add optional fields with defaults. Unsafe changes: remove fields, rename fields, change types. For breaking changes: create a new topic/version (never modify in-place).

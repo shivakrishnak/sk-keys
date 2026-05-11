@@ -78,6 +78,7 @@ RabbitMQ features:
 ### Quick Recall
 
 **If you remember only 3 things:**
+
 1. RabbitMQ = smart broker (complex routing, messages deleted after consumption). Kafka = dumb broker (simple topics, messages persist for replay). Choose based on pattern needs.
 2. RabbitMQ shines at: complex routing (exchange types), priority queues, delayed messages, request/reply (RPC), and task distribution with fair dispatch.
 3. RabbitMQ push model (broker pushes to consumer) vs Kafka pull model (consumer pulls from broker). Push = lower latency, Pull = better back-pressure and batch control.
@@ -106,14 +107,14 @@ Every message broker has its own proprietary protocol. Switching from one broker
 
 ```
 AMQP 0-9-1 model (RabbitMQ implements this):
-  
+
   Connection: TCP connection to broker
   Channel: Lightweight virtual connection (multiplexed)
     (Multiple channels share one TCP connection)
-  
+
   Message flow:
     Producer -> Exchange -> Binding Rule -> Queue -> Consumer
-    
+
   Exchange types (routing logic):
     Direct:  Route by exact routing key match
     Topic:   Route by pattern matching (*.error, order.#)
@@ -148,8 +149,9 @@ AMQP vs other protocols:
 ### Quick Recall
 
 **If you remember only 3 things:**
+
 1. AMQP is a protocol standard (like HTTP for web). RabbitMQ is the most popular AMQP broker. The protocol defines exchanges, queues, bindings, and message properties.
-2. Exchange types: Direct (exact key match), Topic (pattern matching with * and #), Fanout (broadcast to all), Headers (match on headers). This is AMQP's flexible routing power.
+2. Exchange types: Direct (exact key match), Topic (pattern matching with \* and #), Fanout (broadcast to all), Headers (match on headers). This is AMQP's flexible routing power.
 3. Channels multiplex over a single TCP connection (lightweight). Use one channel per thread. One connection per application (with many channels).
 
 **Interview one-liner:**
@@ -180,7 +182,7 @@ Exchange types with examples:
 1. DIRECT EXCHANGE (exact routing key match):
    Binding: queue="email-queue" routingKey="email"
    Binding: queue="sms-queue" routingKey="sms"
-   
+
    Publish(routingKey="email", msg) -> email-queue only
    Publish(routingKey="sms", msg) -> sms-queue only
    Use for: Task routing by type
@@ -188,10 +190,10 @@ Exchange types with examples:
 2. TOPIC EXCHANGE (pattern matching):
    Binding: queue="all-orders" pattern="order.#"
    Binding: queue="eu-errors" pattern="*.eu.error"
-   
+
    Publish(routingKey="order.eu.placed") -> all-orders
    Publish(routingKey="order.eu.error") -> both queues!
-   
+
    * = exactly one word
    # = zero or more words
    Use for: Hierarchical routing, selective subscription
@@ -200,14 +202,14 @@ Exchange types with examples:
    Binding: queue="analytics" (no key needed)
    Binding: queue="audit-log" (no key needed)
    Binding: queue="notifications" (no key needed)
-   
+
    Publish(msg) -> ALL three queues receive the message
    Use for: Event broadcasting, pub/sub
 
 4. HEADERS EXCHANGE (attribute matching):
    Binding: queue="pdf-queue" headers={format: "pdf"}
    Binding: queue="urgent" headers={priority: "high"}
-   
+
    Publish(headers={format:"pdf", priority:"high"}, msg)
      -> Both queues (matches headers of each)
    Use for: Complex multi-attribute routing
@@ -229,12 +231,13 @@ Retry pattern with DLX:
 ### Quick Recall
 
 **If you remember only 3 things:**
-1. Four exchange types: Direct (exact key), Topic (pattern with * and #), Fanout (broadcast all), Headers (match attributes). Choose based on routing complexity needed.
-2. Topic exchange is the most versatile: "order.eu.placed" matches both "order.#" (all orders) and "*.eu.*" (all EU events). Use dotted hierarchical routing keys.
+
+1. Four exchange types: Direct (exact key), Topic (pattern with \* and #), Fanout (broadcast all), Headers (match attributes). Choose based on routing complexity needed.
+2. Topic exchange is the most versatile: "order.eu.placed" matches both "order.#" (all orders) and "_.eu._" (all EU events). Use dotted hierarchical routing keys.
 3. Dead Letter Exchange (DLX) handles failed/expired messages automatically. Configure with retry queues (TTL-based delay) for automatic retry before permanent dead-lettering.
 
 **Interview one-liner:**
-"I use topic exchanges for hierarchical event routing (dotted keys with * and # patterns), fanout for event broadcasting, direct for task distribution, and DLX with TTL-based retry queues for automatic message retry before dead-lettering - choosing exchange type based on the routing flexibility each consumer topology requires."
+"I use topic exchanges for hierarchical event routing (dotted keys with \* and # patterns), fanout for event broadcasting, direct for task distribution, and DLX with TTL-based retry queues for automatic message retry before dead-lettering - choosing exchange type based on the routing flexibility each consumer topology requires."
 
 ---
 
@@ -299,6 +302,7 @@ Spring Boot integration:
 ### Quick Recall
 
 **If you remember only 3 things:**
+
 1. ActiveMQ = JMS-compliant broker for Java enterprise. If you need JMS API or Java EE integration, ActiveMQ (Artemis) is the natural choice.
 2. ActiveMQ Artemis is the modern version (high-performance rewrite). Classic is in maintenance mode. New projects should use Artemis.
 3. Multi-protocol support (AMQP, MQTT, STOMP, OpenWire) makes ActiveMQ suitable when different clients need different protocols (IoT devices via MQTT + backend via JMS).
@@ -328,7 +332,7 @@ Need to broadcast real-time updates to connected WebSocket clients. Kafka/Rabbit
 ```
 Redis Pub/Sub model:
   PUBLISH channel message -> All current subscribers
-  
+
   Key characteristic: FIRE AND FORGET
   - No persistence (message gone after delivery)
   - No acknowledgment (no retry if subscriber misses)
@@ -376,6 +380,7 @@ Redis Streams (better alternative for most cases):
 ### Quick Recall
 
 **If you remember only 3 things:**
+
 1. Redis Pub/Sub = fire-and-forget, zero persistence. If subscriber is offline, message is lost forever. Only use when message loss is acceptable.
 2. Use cases: WebSocket broadcast, cache invalidation, real-time presence. NOT for: business events, payment processing, or anything requiring delivery guarantee.
 3. Redis Streams > Redis Pub/Sub for most cases: persistent, replayable, consumer groups. Choose Streams unless you specifically need ephemeral broadcast with minimum latency.
@@ -406,7 +411,7 @@ Kafka is too complex for simple service communication. RabbitMQ requires exchang
 NATS core concepts:
   Subjects: Named channels (hierarchical, dot-separated)
     "orders.placed", "orders.shipped", "orders.*.failed"
-  
+
   Patterns:
     Pub/Sub: Publish to subject, all subscribers receive
     Queue Groups: Load balance across subscribers in a group
@@ -426,7 +431,7 @@ NATS JetStream (persistence layer):
   - Consumers: Durable with acknowledgment
   - Key-Value Store: Built-in KV (for config, state)
   - Object Store: Store large objects
-  
+
   JetStream makes NATS competitive with Kafka for
   streaming use cases (simpler ops, slightly less throughput)
 
@@ -455,6 +460,7 @@ When to use NATS:
 ### Quick Recall
 
 **If you remember only 3 things:**
+
 1. NATS = simplest messaging for cloud-native apps. Single binary, minimal config, sub-millisecond latency. When you need messaging without the operational burden of Kafka/RabbitMQ.
 2. Core NATS = at-most-once (fire-and-forget like Redis Pub/Sub). JetStream adds persistence, replay, exactly-once (makes it competitive with Kafka for streaming, simpler ops).
 3. Queue Groups provide built-in load balancing: multiple subscribers in same group, each message goes to only one (like Kafka consumer groups, but simpler).
