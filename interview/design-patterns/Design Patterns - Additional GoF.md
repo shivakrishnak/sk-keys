@@ -13,8 +13,8 @@ keywords:
   - Mediator
   - Memento
 difficulty_range: mixed
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Iterator
@@ -26,6 +26,76 @@ version: 1
 ### The Problem This Solves
 
 You have an `ArrayList`, a `HashSet`, a `TreeMap`, and a custom graph. Each has a different internal structure. Without Iterator, you'd need different traversal code for each: index-based loops for lists, bucket-walking for sets, tree-walking for maps. Adding a new collection type means new traversal code everywhere.
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
 
 ---
 
@@ -41,6 +111,20 @@ WITH ITERATOR:
 for (Element e : anyCollection)  // works for ALL
   // Same code regardless of underlying structure
 ```
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -117,7 +201,16 @@ tree.stream().filter(v -> v > 10).toList();
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -127,6 +220,128 @@ tree.stream().filter(v -> v > 10).toList();
 
 **Interview one-liner:**
 "Iterator decouples traversal from collection structure - in Java, implementing Iterable gives you enhanced for-loops and Stream API for free, while Spliterator enables parallel processing."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
+---
+
+### Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Iterator. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -141,6 +356,76 @@ tree.stream().filter(v -> v > 10).toList();
 ### The Problem This Solves
 
 You have a document AST: `Paragraph`, `Heading`, `Image`, `Table`. You need operations: export to HTML, export to PDF, word count, spell check. Adding each operation to each class creates an explosion of methods. Adding a new operation means modifying all 4 classes. In a sealed hierarchy, you may not be able to modify the classes at all.
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
 
 ---
 
@@ -161,6 +446,20 @@ CountVisitor.visit(Paragraph) visit(Heading)
   -> Adding export-to-Markdown: add 1 new visitor
   -> Zero changes to element classes
 ```
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -259,7 +558,16 @@ String toHTML(DocElement el) {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -269,6 +577,128 @@ String toHTML(DocElement el) {
 
 **Interview one-liner:**
 "Visitor separates operations from element hierarchies using double dispatch - I use it for stable class hierarchies that need frequent new operations, though in Java 21+ I prefer sealed types with pattern matching as a cleaner alternative."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
+---
+
+### Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Visitor. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -288,6 +718,76 @@ With a Mediator (the chat room): User A sends a message to the chat room. The ch
 
 ---
 
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
+
+---
+
 ### How It Works
 
 ```
@@ -301,6 +801,20 @@ WITH MEDIATOR:
                     <--> [C]
   N objects = N connections
 ```
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -344,7 +858,16 @@ public class NotificationListener {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -354,6 +877,128 @@ public class NotificationListener {
 
 **Interview one-liner:**
 "Mediator centralizes complex inter-object communication through a single coordination point - Spring's ApplicationEventPublisher is a natural Mediator that lets me decouple services without direct dependencies."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
+---
+
+### Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Mediator. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -371,6 +1016,76 @@ Your text editor needs undo/redo. You need to save the document's state at each 
 
 ---
 
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
+
+---
+
 ### How It Works
 
 ```
@@ -385,6 +1100,20 @@ Your text editor needs undo/redo. You need to save the document's state at each 
     |                       |
   (state restored)
 ```
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -469,7 +1198,16 @@ public class UndoManager {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -479,3 +1217,125 @@ public class UndoManager {
 
 **Interview one-liner:**
 "Memento captures object state for undo/redo without breaking encapsulation - the originator creates immutable snapshots, and the caretaker manages the undo/redo stacks, as seen in text editors, game saves, and database savepoints."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
+---
+
+### Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Memento. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+

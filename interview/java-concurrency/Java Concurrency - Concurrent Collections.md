@@ -14,8 +14,8 @@ keywords:
   - CountDownLatch and CyclicBarrier
   - Semaphore and Phaser
 difficulty_range: mixed
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # ConcurrentHashMap
@@ -46,7 +46,52 @@ Hashtable (Java 1.0) -> Collections.synchronizedMap (Java 2) -> ConcurrentHashMa
 
 ---
 
-### Gradual Depth - Four Levels
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A dictionary that multiple threads can safely read from and write to simultaneously without corrupting data or blocking each other.
@@ -138,6 +183,33 @@ int sum = map.reduceValues(1000,
 
 **Size estimation:** `size()` is an estimate under concurrent modification. `mappingCount()` returns a long for maps that might exceed Integer.MAX_VALUE.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
 ---
 
 ### Code Example
@@ -169,7 +241,16 @@ cache.computeIfAbsent(key,
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -179,6 +260,13 @@ cache.computeIfAbsent(key,
 
 **Interview one-liner:**
 "ConcurrentHashMap uses per-bin CAS and synchronization for high concurrent throughput, but correct usage requires atomic compound operations - never separate check-then-act sequences."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
 
 ---
 
@@ -278,6 +366,74 @@ Map<K,V> snapshot = new HashMap<>(map);
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for ConcurrentHashMap. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # CopyOnWriteArrayList
@@ -296,7 +452,58 @@ An event listener list is read on every event (thousands of times per second) bu
 
 ---
 
-### Gradual Depth - Four Levels
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Every time someone writes, a complete copy of the list is made. Readers always see a consistent snapshot without any locking.
@@ -361,9 +568,45 @@ Alternatives for write-heavy concurrent lists:
 - `Collections.synchronizedList()` (synchronized, random access)
 - `ConcurrentSkipListSet` (sorted, concurrent)
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
 ---
 
-### Quick Recall
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -373,6 +616,13 @@ Alternatives for write-heavy concurrent lists:
 
 **Interview one-liner:**
 "CopyOnWriteArrayList trades O(n) write cost for zero-overhead reads, ideal for small listener/observer lists where reads vastly outnumber writes."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
 
 ---
 
@@ -415,6 +665,74 @@ For a list of 10,000 elements: each write allocates a 10,000-element array. With
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for CopyOnWriteArrayList. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # BlockingQueue
@@ -433,7 +751,58 @@ Producer thread generates work items. Consumer thread processes them. Without a 
 
 ---
 
-### Gradual Depth - Four Levels
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A queue where putting blocks when the queue is full (backpressure) and taking blocks when empty (wait for work). Producers and consumers automatically coordinate without custom signaling.
@@ -515,6 +884,33 @@ if (batch.isEmpty()) {
 processBatch(batch);
 ```
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
 ---
 
 ### Code Example
@@ -568,7 +964,16 @@ executor.submit(() -> {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -578,6 +983,13 @@ executor.submit(() -> {
 
 **Interview one-liner:**
 "BlockingQueue provides built-in producer-consumer coordination via blocking put/take, with bounded capacity as natural backpressure against producer overwhelming consumer."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
 
 ---
 
@@ -630,6 +1042,74 @@ The problem: under load spike, unlimited thread creation -> OOM. That's why Cach
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for BlockingQueue. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # CountDownLatch and CyclicBarrier
@@ -648,7 +1128,58 @@ Starting a concurrent test requires all threads to begin simultaneously. Without
 
 ---
 
-### Gradual Depth - Four Levels
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 CountDownLatch: "Everyone wait until N things happen, then go." (One-time.)
@@ -736,9 +1267,45 @@ When the barrier breaks, ALL waiting threads receive `BrokenBarrierException`. Y
 
 **Phaser** (Java 7): Generalized barrier that supports dynamic participant count and multiple phases.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
 ---
 
-### Quick Recall
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -748,6 +1315,13 @@ When the barrier breaks, ALL waiting threads receive `BrokenBarrierException`. Y
 
 **Interview one-liner:**
 "CountDownLatch is a one-shot gate (count to zero), CyclicBarrier is a reusable rendezvous point (all threads arrive together), and Phaser generalizes both with dynamic registration."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
 
 ---
 
@@ -825,6 +1399,74 @@ if (!latch.await(30, SECONDS)) {
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for CountDownLatch and CyclicBarrier. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # Semaphore and Phaser
@@ -843,7 +1485,58 @@ A database connection pool has 10 connections. 50 threads want connections. With
 
 ---
 
-### Gradual Depth - Four Levels
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Semaphore: A bouncer at a club with N-person capacity. When full, newcomers wait outside. When someone leaves, the next person enters.
@@ -926,9 +1619,45 @@ for (Task t : tasks) {
 phaser.arriveAndAwaitAdvance(); // wait for all
 ```
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
 ---
 
-### Quick Recall
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -938,6 +1667,13 @@ phaser.arriveAndAwaitAdvance(); // wait for all
 
 **Interview one-liner:**
 "Semaphore bounds concurrent access to a counted resource, Phaser provides dynamic multi-phase synchronization where participants can register and deregister between phases."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
 
 ---
 
@@ -1000,3 +1736,71 @@ sem.acquire(5); // succeeds
 This is useful for signaling patterns (producer creates permits, consumer acquires them) but dangerous if misused - permit count can grow unboundedly.
 
 Contrast with ReentrantLock: you can only unlock if you hold the lock. Semaphore has no such restriction.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Semaphore and Phaser. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+

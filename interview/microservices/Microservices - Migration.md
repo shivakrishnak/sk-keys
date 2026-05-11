@@ -15,8 +15,8 @@ keywords:
   - Technology Migration Strategy
   - POC Strategy
 difficulty_range: ★★★
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Monolith to Microservices Migration
@@ -32,7 +32,58 @@ The monolith is 500K lines. Deployments take 4 hours. One team's change breaks a
 
 ---
 
-### Gradual Depth - Four Levels
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Extract pieces from the monolith one at a time, like removing Jenga blocks carefully. The monolith keeps running while you build new services alongside it. Eventually, the monolith shrinks to nothing.
@@ -91,6 +142,57 @@ Phase 4: Eventually
 3. **Distributed monolith:** Services still share a database. Still deploy together. Added network latency with no independence.
 4. **Ignoring organizational change:** Microservices need autonomous teams. Without team restructuring, you just have a distributed monolith.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
 ---
 
 ### Interview Deep-Dive
@@ -143,6 +245,74 @@ class OrderServiceClient {
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Monolith to Microservices Migration. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # Strangler Fig Pattern
@@ -151,7 +321,74 @@ class OrderServiceClient {
 
 ---
 
-### Gradual Depth - Four Levels
+### The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Strangler Fig Pattern was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Build the new system alongside the old one. Route some requests to the new system. Over time, more and more requests go to the new system until the old one handles nothing and can be turned off.
@@ -240,6 +477,57 @@ Both systems need access to the same data during transition:
 2. **CDC (Change Data Capture):** Monolith writes to old DB -> Debezium streams changes -> New service's DB. Eventual consistency.
 3. **Dual writes:** New service writes to both old and new DB. Risky (consistency issues) but simple.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
 ---
 
 ### Interview Deep-Dive
@@ -264,6 +552,74 @@ _Strong answer:_
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Strangler Fig Pattern. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # Re-platforming vs Re-architecting
@@ -272,7 +628,74 @@ _Strong answer:_
 
 ---
 
-### Gradual Depth - Four Levels
+### The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Re-platforming vs Re-architecting was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Re-platforming: Move your furniture to a new house (same furniture, new location). Re-architecting: Renovate while you move (new layout, new furniture).
@@ -318,6 +741,57 @@ Don't choose one strategy for everything. Different parts of the system deserve 
 - Commodity functionality -> Repurchase (SaaS: email, auth, payments)
 - Unused features -> Retire
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
 ---
 
 ### Interview Deep-Dive
@@ -341,6 +815,74 @@ _Strong answer:_
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Re-platforming vs Re-architecting. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # Cloud Migration
@@ -349,7 +891,74 @@ _Strong answer:_
 
 ---
 
-### Gradual Depth - Four Levels
+### The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Cloud Migration was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Moving your IT from your own servers to rented servers in the cloud. Like moving from owning a house to renting an apartment - less maintenance responsibility, more flexibility, different cost model.
@@ -376,6 +985,51 @@ Moving your IT from your own servers to rented servers in the cloud. Like moving
 
 ---
 
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
+---
+
 ### Interview Deep-Dive
 
 **Q1: Your database is 5TB and must migrate to the cloud with minimal downtime. How?**
@@ -396,6 +1050,74 @@ _Strong answer:_
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Cloud Migration. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # Technology Migration Strategy
@@ -404,7 +1126,74 @@ _Strong answer:_
 
 ---
 
-### Gradual Depth - Four Levels
+### The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Technology Migration Strategy was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Changing from one technology to another (Java 8 to Java 21, MySQL to PostgreSQL, Spring MVC to WebFlux) without breaking things.
@@ -459,6 +1248,57 @@ Phase 4: Decommission
   Remove MySQL after 30-day cooling period
 ```
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
 ---
 
 ### Interview Deep-Dive
@@ -479,6 +1319,74 @@ _Strong answer:_
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Technology Migration Strategy. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # POC Strategy
@@ -487,7 +1395,74 @@ _Strong answer:_
 
 ---
 
-### Gradual Depth - Four Levels
+### The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why POC Strategy was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A small experiment to answer: "Can this technology actually solve our problem?" Build just enough to prove it works (or doesn't), then decide to invest fully or abandon.
@@ -536,6 +1511,57 @@ A small experiment to answer: "Can this technology actually solve our problem?" 
 
 **POC deliverable:** A document with: hypothesis, test setup, results, recommendation. Code is secondary - the decision is the product.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
 ---
 
 ### Interview Deep-Dive
@@ -574,3 +1600,71 @@ _Strong answer:_
 - All 4 success criteria met -> Recommend adoption
 - 3 of 4 met -> Conditional adoption with caveats
 - < 3 met -> Don't adopt (use traditional CRUD + audit table)
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for POC Strategy. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+

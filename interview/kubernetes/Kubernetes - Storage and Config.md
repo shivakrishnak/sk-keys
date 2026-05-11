@@ -10,8 +10,8 @@ keywords:
   - CSI
   - Volume Snapshots
 difficulty_range: medium-hard
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Persistent Volumes
@@ -33,6 +33,70 @@ Container filesystems are ephemeral - data disappears on restart. Mounting host 
 ### Textbook Definition
 
 A PersistentVolume (PV) is a cluster resource representing a piece of storage provisioned by an administrator or dynamically by a StorageClass. A PersistentVolumeClaim (PVC) is a user's request for storage that binds to a PV. Pods reference PVCs to mount storage.
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
 
 ---
 
@@ -90,7 +154,30 @@ Access Modes:
 
 ---
 
-### Quick Recall
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -100,6 +187,128 @@ Access Modes:
 
 **Interview one-liner:**
 "PersistentVolumes decouple storage lifecycle from pod lifecycle - developers request storage via PVCs, StorageClasses dynamically provision the backing storage (EBS, EFS, GCE PD), and data persists across pod restarts with configurable reclaim policies controlling cleanup."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
+---
+
+### Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Persistent Volumes. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -121,6 +330,70 @@ Configuration baked into images. Different environments (dev/staging/prod) need 
 ### Textbook Definition
 
 A ConfigMap is a Kubernetes API object that stores non-confidential configuration data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
 
 ---
 
@@ -179,7 +452,30 @@ Hot reload:
 
 ---
 
-### Quick Recall
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -189,6 +485,128 @@ Hot reload:
 
 **Interview one-liner:**
 "ConfigMaps externalize configuration from images - I mount them as volumes for hot-reload capability (nginx configs, feature flags) or inject as env vars for static config, keeping images environment-agnostic and enabling promotion through dev/staging/prod without rebuilds."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
+---
+
+### Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for ConfigMap. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -213,6 +631,70 @@ Passwords in YAML manifests checked into Git. Database credentials in ConfigMaps
 ### Textbook Definition
 
 A Kubernetes Secret is an object that stores sensitive data (passwords, OAuth tokens, SSH keys) with a type system for different secret kinds. Secrets are base64-encoded (NOT encrypted by default) and can be mounted as files or injected as environment variables.
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
 
 ---
 
@@ -275,7 +757,30 @@ Best practice: External Secrets Operator
 
 ---
 
-### Quick Recall
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -285,6 +790,128 @@ Best practice: External Secrets Operator
 
 **Interview one-liner:**
 "K8s Secrets provide a type-safe way to store sensitive data separate from manifests, but they're only base64-encoded by default - in production I enable etcd encryption at rest and use External Secrets Operator to sync from Vault or AWS Secrets Manager, with strict RBAC limiting secret access."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
+---
+
+### Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Kubernetes Secrets. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -306,6 +933,70 @@ Administrators manually create PVs before developers can use storage. 50 develop
 ### Textbook Definition
 
 A StorageClass provides a way for administrators to describe classes of storage they offer. Different classes may map to quality-of-service levels, backup policies, or arbitrary policies. When a PVC references a StorageClass, the provisioner dynamically creates a PV matching the specification.
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
 
 ---
 
@@ -344,7 +1035,30 @@ spec:
 
 ---
 
-### Quick Recall
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -354,6 +1068,128 @@ spec:
 
 **Interview one-liner:**
 "StorageClasses enable dynamic volume provisioning - I define classes for different tiers (fast-ssd, standard-hdd, shared-nfs) with appropriate provisioners, always using WaitForFirstConsumer binding mode to ensure volumes are created in the same AZ as the consuming pod."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
+---
+
+### Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for StorageClass. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -375,6 +1211,70 @@ Storage drivers were compiled into Kubernetes core. Adding new storage required 
 ### Textbook Definition
 
 CSI is an industry-standard interface for container orchestrators to expose arbitrary storage systems to their containerized workloads. In Kubernetes, CSI drivers run as pods (DaemonSet on nodes + Deployment for controller) and implement volume lifecycle operations (create, attach, mount, snapshot, resize).
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
 
 ---
 
@@ -407,7 +1307,30 @@ Flow: PVC created
 
 ---
 
-### Quick Recall
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -417,6 +1340,128 @@ Flow: PVC created
 
 **Interview one-liner:**
 "CSI decouples storage providers from Kubernetes core - storage vendors ship CSI drivers as pods (controller for provisioning + node DaemonSet for mounting) implementing a standard interface, enabling any storage system to integrate without modifying Kubernetes source code."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
+---
+
+### Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for CSI. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -438,6 +1483,70 @@ Database backup requires application-level dump tools (pg_dump). No consistent b
 ### Textbook Definition
 
 Kubernetes Volume Snapshots provide a standardized way to create point-in-time snapshots of PersistentVolumes using CSI drivers. VolumeSnapshotClass defines the snapshot provisioner, VolumeSnapshot requests a snapshot, and VolumeSnapshotContent represents the actual snapshot.
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
 
 ---
 
@@ -483,7 +1592,30 @@ spec:
 
 ---
 
-### Quick Recall
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -493,3 +1625,125 @@ spec:
 
 **Interview one-liner:**
 "Volume Snapshots provide Kubernetes-native point-in-time backup through CSI drivers - I use them for automated database backups (CronJob triggering VolumeSnapshot), disaster recovery (restore PVC from snapshot), and test environment provisioning (clone production data safely)."
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
+---
+
+### Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Volume Snapshots. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+

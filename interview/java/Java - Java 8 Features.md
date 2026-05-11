@@ -15,8 +15,8 @@ keywords:
   - Method References
   - Default Methods
 difficulty_range: mixed
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Lambda Expressions
@@ -96,7 +96,7 @@ Where this analogy breaks down: Unlike recipe cards, lambdas can capture values 
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A lambda is a short way to write a small piece of code that you want to pass to another method. Instead of creating a whole class just to define one action, you write the action directly.
@@ -130,6 +130,12 @@ Lambdas capture variables from their enclosing scope, but only if they are effec
 The design team (led by Brian Goetz) chose to retrofit lambdas onto existing functional interfaces rather than adding function types for backward compatibility. This means `Runnable`, `Callable`, `Comparator` all became lambda targets without any code changes. The `invokedynamic` approach was chosen over inner class generation because it gives the JVM freedom to optimize: today it generates a class via `Unsafe.defineAnonymousClass`, but future JVMs could inline the lambda body directly.
 
 The effectively-final restriction is a deliberate design choice, not a JVM limitation. Mutable closures (as in JavaScript) lead to subtle concurrency bugs. By requiring effective finality, Java pushes developers toward functional purity and makes lambdas safe for parallel streams.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -190,6 +196,7 @@ Runtime: Generated class delegates to
 **WHAT CHANGES AT SCALE:**
 In high-throughput systems, non-capturing lambdas are preferred because they are singletons (zero allocation). Capturing lambdas create a new object per invocation. In tight loops processing millions of events, this difference matters for GC pressure. Profile with `-XX:+PrintCompilation` to verify lambda inlining.
 
+
 ---
 
 ### Code Example
@@ -249,7 +256,16 @@ void lambdaCapturesEffectivelyFinal() {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 1. Lambdas target functional interfaces (one abstract method)
@@ -572,6 +588,73 @@ class Outer {
 
 The practical implication: in Android or UI frameworks where listeners are registered, lambda-based listeners that don't reference `this` are lighter weight than anonymous class listeners, reducing the risk of memory leaks.
 
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Lambda Expressions. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -654,7 +737,7 @@ Where this analogy breaks down: Unlike water, stream elements can be transformed
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Streams let you describe what you want to do with a list of things (filter the red ones, count them) without writing step-by-step loop instructions.
@@ -687,6 +770,12 @@ Stateless operations (filter, map, flatMap) process each element independently. 
 The `Spliterator` interface is the key abstraction enabling parallelism. It supports `trySplit()` which divides the data source in half recursively, allowing the ForkJoinPool to process each half independently. The `characteristics()` method (ORDERED, SIZED, SORTED, DISTINCT) lets the pipeline skip unnecessary work - for example, calling `.sorted()` on an already-sorted source is a no-op if the spliterator declares SORTED.
 
 The Collector API (`Collector<T,A,R>`) is deliberately designed for parallel reduction: `supplier()` creates a mutable container, `accumulator()` adds elements, `combiner()` merges partial results from parallel sub-tasks. This three-method pattern mirrors the MapReduce paradigm.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -751,6 +840,7 @@ Key operations categorized:
 
 **WHAT CHANGES AT SCALE:**
 Parallel streams use the common ForkJoinPool (default threads = CPU cores - 1). If your parallel stream does I/O, it blocks a ForkJoinPool thread, starving other parallel operations across the entire JVM. For I/O-bound work, use a custom ForkJoinPool or CompletableFuture instead of parallel streams.
+
 
 ---
 
@@ -820,7 +910,16 @@ void streamProducesCorrectResult() {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 1. Streams are lazy - nothing executes until terminal operation
@@ -1108,6 +1207,73 @@ List<URL> successes = attempts.stream()
 
 The anti-pattern is catching the exception inside the lambda and silently swallowing it. Always make failure handling explicit.
 
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Streams API. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -1189,7 +1355,7 @@ Where this analogy breaks down: Unlike a physical box, Optional is immutable - y
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Optional is a wrapper that says "this value might not exist." Instead of getting a surprise error when you try to use a missing value, Optional makes you handle that possibility upfront.
@@ -1248,6 +1414,12 @@ Optional was deliberately designed with restrictions:
 
 The Java team (Brian Goetz) explicitly stated Optional is meant for return types only. Using it as a method parameter forces callers to wrap values unnecessarily. Using it as a field wastes 16 bytes of object header per field.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
 ---
 
 ### How It Works (Mechanism)
@@ -1300,6 +1472,7 @@ The Java team (Brian Goetz) explicitly stated Optional is meant for return types
 
 **WHAT CHANGES AT SCALE:**
 In hot paths processing millions of values, Optional creates an extra object allocation per call. For performance-critical inner loops, consider returning null with `@Nullable` annotation instead. For API boundaries and service layers, Optional is the right choice - clarity outweighs micro-optimization.
+
 
 ---
 
@@ -1372,7 +1545,16 @@ List<String> names = userIds.stream()
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 1. Optional is for return types only - never fields, parameters, or serialization
@@ -1571,6 +1753,73 @@ However, primitive Optionals are limited: they don't have `map`, `flatMap`, or `
 
 This is another area where Java's type system shows its age. Kotlin's `Int?` handles nullable primitives without any of this ceremony, and Project Valhalla's value types will eventually allow `Optional<int>` in Java.
 
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Optional. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -1652,7 +1901,7 @@ Where this analogy breaks down: A job description can change. A functional inter
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A functional interface is a special kind of interface that defines exactly one action. Because there is only one thing to do, Java can figure out what your lambda is supposed to implement.
@@ -1717,6 +1966,12 @@ The SAM type approach was chosen over true function types for backward compatibi
 
 The alternative (adding function types like `(String) -> int`) would have required new syntax, new type system rules, and would not have been compatible with existing APIs. The tradeoff is verbosity: `Function<String, Integer>` vs `String -> int`. Kotlin made the other choice and has true function types.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
 ---
 
 ### How It Works (Mechanism)
@@ -1771,6 +2026,7 @@ The alternative (adding function types like `(String) -> int`) would have requir
 **WHAT CHANGES AT SCALE:**
 In library design, functional interfaces are the public API for behavior injection. Choose standard `java.util.function` types whenever possible. Custom functional interfaces add API surface that users must learn. Only create custom ones when the standard 43 don't fit or when you need a more descriptive name (e.g., `Validator<T>` is clearer than `Predicate<T>` in a validation context).
 
+
 ---
 
 ### Code Example
@@ -1813,7 +2069,16 @@ interface RetryPolicy {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 1. Exactly one abstract method (SAM) - default/static methods don't count
@@ -1959,6 +2224,73 @@ Consumer<User> process = validate
     .andThen(notify);
 ```
 
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Functional Interfaces. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -2039,7 +2371,7 @@ Where this analogy breaks down: Method references can be unbound (not attached t
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of writing a mini-function that just calls another function, you point directly to the function you want to call using `::`.
@@ -2089,6 +2421,12 @@ BiFunction<String, String, Boolean> eq =
 Method references are compiled to the exact same `invokedynamic` bytecode as their equivalent lambdas. There is zero performance difference. The value is purely readability and intent communication.
 
 The unbound instance reference is the most powerful kind: it enables point-free programming in Java. `stream.map(String::trim).map(String::toLowerCase)` reads as a sequence of transformations without any mention of variables. This style is common in functional languages and is one of the key readability improvements Java 8 brought.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -2141,6 +2479,7 @@ The unbound instance reference is the most powerful kind: it enables point-free 
 **WHAT CHANGES AT SCALE:**
 Method references are preferred in codebases with style guides that emphasize readability. In complex pipelines, mixing method references and lambdas strategically improves clarity: use method references for simple delegation, lambdas for inline logic.
 
+
 ---
 
 ### Code Example
@@ -2167,7 +2506,16 @@ list.stream()
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 1. Four kinds: static, bound instance, unbound instance, constructor
@@ -2251,6 +2599,73 @@ Prefer lambdas when:
 
 The general rule: if the method reference reads naturally (like `Employee::getName`, `Objects::nonNull`), use it. If you have to pause to understand what it does, use a lambda.
 
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Method References. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -2331,7 +2746,7 @@ Where this analogy breaks down: In real contracts, conflicting clauses void the 
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Default methods let interfaces include pre-written methods so that classes don't have to write them if the default behavior is fine.
@@ -2395,6 +2810,12 @@ Default methods are the pragmatic solution to the "interface evolution problem."
 
 The key design constraint: default methods must be expressible purely in terms of the interface's other methods. They cannot access instance state (no fields in interfaces). This keeps them fundamentally different from abstract class methods and prevents them from becoming a back door to multiple state inheritance.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
 ---
 
 ### How It Works (Mechanism)
@@ -2446,6 +2867,7 @@ The key design constraint: default methods must be expressible purely in terms o
 
 **WHAT CHANGES AT SCALE:**
 In large codebases, default methods can create "action at a distance" bugs. A library updates an interface with a new default method. Your class inherits it silently. If the default behavior doesn't match your class's invariants, you have a bug that no compiler warning catches. This is why `@implSpec` Javadoc tag exists: document what assumptions a default method makes.
+
 
 ---
 
@@ -2509,7 +2931,16 @@ class E implements A, D {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 1. Default methods solve interface evolution - add methods without breaking implementors
@@ -2624,3 +3055,71 @@ abstract class AbstractRepository<T> {
 ```
 
 The general guidance: prefer interfaces with default methods for mix-in behavior, abstract classes for shared state and template patterns.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Default Methods. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+

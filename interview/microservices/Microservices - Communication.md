@@ -15,8 +15,8 @@ keywords:
   - Backend for Frontend (BFF)
   - GraphQL Federation
 difficulty_range: ★★☆ to ★★★
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Inter-Service Communication
@@ -25,7 +25,74 @@ version: 1
 
 ---
 
-### Gradual Depth - Four Levels
+### The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Inter-Service Communication was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Sync = phone call (wait for answer). Async = email (send and continue working).
@@ -93,6 +160,57 @@ Client -> API -> Order Saga Orchestrator
   Saga tracks completion
 ```
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
 ---
 
 ### Interview Deep-Dive
@@ -123,6 +241,74 @@ Why hybrid: User needs immediate yes/no for inventory and payment (sync). User d
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Inter-Service Communication. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # Synchronous vs Async Communication
@@ -131,7 +317,74 @@ Why hybrid: User needs immediate yes/no for inventory and payment (sync). User d
 
 ---
 
-### Gradual Depth - Four Levels
+### The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Synchronous vs Async Communication was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Sync: "I call you and wait on the line until you answer." Async: "I leave you a voicemail and go do other things."
@@ -191,6 +444,57 @@ kafkaTemplate.send("report-requests",
 3. **Poison messages:** Messages that always fail processing. Use Dead Letter Queue after N retries.
 4. **Schema evolution:** Events change over time. Use Avro/Protobuf with schema registry for backward compatibility.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
 ---
 
 ### Interview Deep-Dive
@@ -219,6 +523,74 @@ _Strong answer:_
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Synchronous vs Async Communication. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # API Gateway
@@ -227,7 +599,74 @@ _Strong answer:_
 
 ---
 
-### Gradual Depth - Four Levels
+### The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why API Gateway was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 One front door for all external traffic. Instead of clients knowing about 20 internal services, they talk to one gateway that routes requests internally.
@@ -280,6 +719,57 @@ With Gateway:
 3. **No rate limiting:** Every public API needs rate limiting. Default deny.
 4. **Gateway as bottleneck:** Must scale horizontally. Multiple instances behind load balancer.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
 ---
 
 ### Interview Deep-Dive
@@ -318,6 +808,74 @@ Why split: Gateway handles expensive crypto once. Services own their business ru
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for API Gateway. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # Service Discovery and Registry
@@ -326,7 +884,74 @@ Why split: Gateway handles expensive crypto once. Services own their business ru
 
 ---
 
-### Gradual Depth - Four Levels
+### The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Service Discovery and Registry was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A phone book for services. Service A asks "Where is Service B?" and gets back a list of healthy instances.
@@ -404,6 +1029,57 @@ spec:
 
 In Kubernetes: **don't use Eureka.** K8s Services provide discovery natively. Using Eureka in K8s is redundant complexity.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
 ---
 
 ### Interview Deep-Dive
@@ -426,6 +1102,74 @@ _Strong answer:_
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Service Discovery and Registry. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # Backend for Frontend (BFF)
@@ -434,7 +1178,74 @@ _Strong answer:_
 
 ---
 
-### Gradual Depth - Four Levels
+### The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Backend for Frontend (BFF) was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Mobile apps need small payloads and fewer fields. Web apps need rich data. Partner APIs need stable contracts. Instead of one API trying to serve everyone, each client type gets its own custom backend.
@@ -500,6 +1311,57 @@ public WebOrderResponse getOrder(
 
 Each team controls their BFF's release cycle, data shaping, and caching strategy independently.
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
 ---
 
 ### Interview Deep-Dive
@@ -523,6 +1385,74 @@ BFF is overkill when: one React SPA is the only client.
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Backend for Frontend (BFF). Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
 ---
 
 # GraphQL Federation
@@ -531,7 +1461,74 @@ BFF is overkill when: one React SPA is the only client.
 
 ---
 
-### Gradual Depth - Four Levels
+### The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why GraphQL Federation was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+
+---
+
+### Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+
+---
+
+### Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+
+---
+
+### First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+
+---
+
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of calling 3 REST APIs to get order + product + user data, send one GraphQL query. The gateway splits the query, sends each part to the right service, and merges the results.
@@ -617,6 +1614,57 @@ type User @key(fields: "id") {
 - High-throughput, low-latency (REST is simpler and faster)
 - Team doesn't have GraphQL expertise
 
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+
+---
+
+### Quick Reference Card
+
+```
++-------------------------------------------+
+| WHAT IT IS  | [TODO: 1-line definition]   |
+| PROBLEM     | [TODO: What pain it solves]  |
+| KEY INSIGHT | [TODO: Core principle]       |
+| USE WHEN    | [TODO: Primary use case]     |
+| AVOID WHEN  | [TODO: When not to use]      |
+| ANTI-PATTERN| [TODO: Common misuse]        |
+| TRADE-OFF   | [TODO: What you give up]     |
+| ONE-LINER   | [TODO: Interview summary]    |
++-------------------------------------------+
+```
+
+---
+
+### The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
+
 ---
 
 ### Interview Deep-Dive
@@ -659,3 +1707,71 @@ resolve: (lineItem) => productLoader.load(lineItem.productId);
 ```
 
 At the federation level, Apollo Router batches entity references automatically: if 20 orders reference products, the router sends one `_entities` query with 20 IDs to the Product subgraph instead of 20 separate queries.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for GraphQL Federation. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+

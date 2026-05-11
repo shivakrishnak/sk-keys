@@ -15,8 +15,8 @@ keywords:
   - State
   - Chain of Responsibility
 difficulty_range: mixed
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Strategy
@@ -95,7 +95,7 @@ Where this analogy breaks down: A taxi driver adapts dynamically; a Strategy obj
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Strategy lets you change how something is done without changing what is done. Like choosing different payment methods at checkout - the purchase is the same, the payment mechanism differs.
@@ -108,6 +108,12 @@ Strategy eliminates conditional logic by replacing branches with polymorphism. I
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Strategy is the most common pattern in enterprise Java, often hidden behind frameworks. Spring's `AuthenticationManager` delegates to `AuthenticationProvider` strategies. Jackson's `SerializationFeature` selects serialization strategies. `java.util.Comparator` is a Strategy. The pattern's evolution: GoF (interface + classes) -> Java 8 (functional interfaces + lambdas) -> modern (strategy registry with auto-discovery). The decision framework: if you have 2-3 stable algorithms, if-else is fine. 4+ or frequently changing algorithms warrant Strategy. If the algorithm selection itself is complex, combine with Factory.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -125,6 +131,20 @@ Strategy is the most common pattern in enterprise Java, often hidden behind fram
     +-- context.execute()
          -> strategy.calculate(data)
 ```
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -193,7 +213,16 @@ Test each strategy in isolation. Test the context with a mock strategy. Test str
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -257,6 +286,74 @@ Strategy is better when:
 5. **Testing requires isolation** of each algorithm
 
 The smell: if your if-else chain is in a `switch` that you've modified 3+ times to add new cases, it's time for Strategy.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Strategy. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -338,7 +435,7 @@ Where this analogy breaks down: In a group chat, members can respond to each oth
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Observer is like following someone on social media. When they post, you see it in your feed automatically. You don't need to check their profile every minute.
@@ -351,6 +448,12 @@ Two notification models: **Push** (subject sends data in the notification - obse
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Observer at scale becomes event-driven architecture. In-process Observer (subject calling listeners) has limitations: synchronous by default, single JVM, no persistence, no replay. Distributed Observer (Kafka, RabbitMQ) adds: async delivery, persistence, replay, multiple consumers, backpressure. The pattern evolves from `subject.notify()` to `broker.publish(topic, event)`. Reactive Streams (Project Reactor, RxJava) formalize Observer with backpressure: the observer can signal how many events it can handle. This solves the "fast producer, slow consumer" problem that crashes naive Observer implementations.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -374,6 +477,20 @@ Observer at scale becomes event-driven architecture. In-process Observer (subjec
 [Observer B] <-- update(state) --/
 [Observer C] <-- update(state) -/
 ```
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -446,7 +563,16 @@ Test the subject publishes events on state change. Test each observer independen
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -501,6 +627,74 @@ Prevention strategies:
 3. **Subscription tokens:** `subscribe()` returns a `Subscription` object with a `cancel()` method. Callers must hold and cancel it.
 4. **Reactive dispose:** In RxJava/Reactor, `Disposable d = flux.subscribe(...)` returns a disposable. Call `d.dispose()` in cleanup.
 5. **Audit logging:** Log subscribe/unsubscribe events. Monitor observer count over time - it should be stable, not growing.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Observer. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -582,7 +776,7 @@ Where this analogy breaks down: A to-do item doesn't contain all execution detai
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Command turns an action into an object. Instead of immediately doing something, you create a "do this" object that can be stored, passed around, and executed later. Like writing a check instead of handing over cash directly.
@@ -595,6 +789,12 @@ Command is the bridge between UI and business logic. In CQRS, "commands" (write 
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Command + Event Sourcing is one of the most powerful architectural combinations. Every state change is a command that produces an event. The event log is the source of truth. You can replay events to reconstruct any past state, build new read models, or audit every action. The trade-off: eventual consistency and complex event versioning. In practice, I use Command for: (1) operations that need undo/redo, (2) operations that need audit logging, (3) operations that need queuing (background jobs), (4) CQRS write sides. For simple CRUD without these needs, Command adds unnecessary ceremony.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -613,6 +813,20 @@ Undo stack:
               undo() -> reverse Cmd3
           [Cmd1] [Cmd2] <- new top
 ```
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -686,7 +900,16 @@ Test that `execute()` produces the expected state change. Test that `undo()` res
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -739,6 +962,74 @@ Command is overkill when:
 4. **Small team, simple domain:** The organizational benefit of Command (different teams own different commands) doesn't apply to a 3-person team.
 
 Use Command when: operations need undo/redo, audit logging, queuing, scheduling, or when CQRS is warranted by scale requirements.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Command. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -807,7 +1098,19 @@ The template method is a concrete method that calls a sequence of abstract/hook 
 
 ---
 
-### Gradual Depth - Four Levels
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 The parent class defines the recipe steps. Subclasses fill in the details. The steps always run in the same order.
@@ -820,6 +1123,33 @@ Template Method uses two types of extension points: **Abstract methods** (must o
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Template Method vs Strategy is the inheritance vs composition debate in pattern form. Template Method is better when: the algorithm is complex, the step sequence is critical, and you want to enforce it. Strategy is better when: you need runtime flexibility, multiple algorithms per object, or you want to avoid deep inheritance hierarchies. In modern Java, I often replace Template Method with a "Template Method as Strategy" approach: pass function callbacks for the variable steps instead of requiring subclassing.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -898,7 +1228,16 @@ Test the template method calls steps in order (use a spy/mock). Test each subcla
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -934,6 +1273,74 @@ _Why they ask:_ Tests understanding of composition vs inheritance trade-offs.
 | Java limitation | Single inheritance only | No limit |
 
 My rule: If the algorithm has a fixed skeleton with 1-2 variable steps, Template Method is clean. If I need runtime flexibility, multiple variable behaviors, or I'm already using injection, Strategy is better. In modern Java, I often combine both: a template method that delegates to injected strategies.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Template Method. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -1002,7 +1409,19 @@ The context holds a reference to the current state object. All behavior methods 
 
 ---
 
-### Gradual Depth - Four Levels
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 An object acts differently depending on its current situation. Like a vending machine: when it has coins, pressing the button dispenses a drink. When empty, pressing the button shows "Insert coins."
@@ -1015,6 +1434,33 @@ State pattern is a finite state machine (FSM) implemented with OOP. Each state c
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 For complex workflows, manual State pattern implementation is error-prone. Use Spring State Machine or a DSL-based approach where states and transitions are declared, not coded. The pattern becomes critical in order processing (created -> paid -> shipped -> delivered -> returned), document workflows (draft -> review -> approved -> published), and connection management (connecting -> connected -> disconnecting -> disconnected). Guard conditions on transitions add another dimension: "transition from REVIEW to PUBLISHED only if all reviewers approved."
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -1104,7 +1550,16 @@ Test each state class independently: verify allowed operations succeed and inval
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1136,6 +1591,74 @@ The UML is identical. The distinction:
 - **State:** The current state determines behavior AND triggers transitions to other states. The client doesn't choose the state directly - it results from operations. `document.publish()` transitions from ReviewState to PublishedState internally.
 
 The test: If the "strategy" changes itself based on the operation's outcome, it's State. If the client explicitly sets it, it's Strategy.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for State. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -1204,7 +1727,19 @@ Handlers implement a common interface with `handle(request)` and `setNext(handle
 
 ---
 
-### Gradual Depth - Four Levels
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Chain of Responsibility is like passing a ball in a relay. Each person can either catch it (handle the request) or pass it to the next person. If nobody catches it, it falls on the ground (unhandled).
@@ -1217,6 +1752,33 @@ Spring Security uses Chain of Responsibility extensively. The `SecurityFilterCha
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 The key architectural decision is pure chain vs pipeline. Pure chain (first handler wins) is for routing/dispatching. Pipeline (all handlers run) is for middleware/cross-cutting concerns. In microservices, API Gateway filter chains are pipelines: authentication, rate limiting, request transformation, routing - each runs in sequence. The pattern's weakness at scale: long chains add latency linearly. 20 filters at 1ms each = 20ms overhead per request. Monitor filter execution time and short-circuit when possible.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -1293,7 +1855,16 @@ Test each handler independently with requests it should and should not handle. T
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1351,3 +1922,71 @@ public class CustomAuditFilter
 ```
 
 Critical: calling `chain.doFilter()` passes to the next filter. Forgetting it silently kills the request. The filter order matters - authentication must happen before authorization.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Chain of Responsibility. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+

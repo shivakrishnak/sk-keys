@@ -10,8 +10,8 @@ keywords:
   - Docker Compose
   - Container Orchestration
 difficulty_range: easy
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Containerization
@@ -91,7 +91,7 @@ Where this analogy breaks down: apartments can't be instantly replicated and mov
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A container is a way to package software so it runs the same everywhere. It's like a sealed lunch box - everything the app needs is inside, and it doesn't leak into or depend on what's outside.
@@ -104,6 +104,12 @@ Containers use Linux namespaces (PID, NET, MNT, UTS, IPC, USER) for isolation an
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Container security depends on the shared kernel - a kernel exploit escapes ALL containers. Rootless containers (user namespaces) and sandboxed runtimes (gVisor, Kata) add defense layers. In production, container density planning requires understanding cgroup memory accounting (RSS vs cache), CPU throttling (CFS bandwidth), and the OOM killer's container-awareness. The choice between containerd and CRI-O affects cold-start latency and image pull strategies.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -201,7 +207,16 @@ Build image, run container, verify process isolation with `docker exec`, confirm
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -373,6 +388,73 @@ The biggest wins are usually: (1) fixing .dockerignore (reduces context transfer
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Containerization. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Docker vs VM
@@ -453,7 +535,7 @@ Where this analogy breaks down: containers can be created in milliseconds; you c
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A VM is a complete simulated computer running inside another computer. A container is a lightweight isolated environment that shares the main computer's core system. VMs are heavier but more isolated; containers are lighter but share more.
@@ -466,6 +548,12 @@ VMs use a hypervisor (Type 1: bare metal like ESXi, or Type 2: hosted like Virtu
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 The VM vs container boundary is blurring. Kata Containers and Firecracker run each container in a lightweight microVM (100ms boot, 5MB overhead) - giving container ergonomics with VM isolation. gVisor intercepts syscalls in userspace, providing a middle ground. In practice, the decision is about threat model: same-trust workloads use containers; different-trust workloads use VMs or microVMs.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -542,7 +630,16 @@ docker stats --no-stream
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -595,6 +692,73 @@ Containers are wrong when:
 6. **Compliance mandates** - some regulated industries require VM-level isolation documentation
 
 The "when NOT to use" signal of mastery: containers introduce complexity (networking, storage, orchestration). If you have a monolith with 3 developers, a simple VM with Ansible might be the better choice. Containers shine at scale with many services.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Docker vs VM. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
 
 ---
 
@@ -677,7 +841,7 @@ Where this analogy breaks down: layers can delete files from lower layers (white
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A Docker image is like a template for creating containers. It contains your app plus everything it needs. You build it once and can create many identical containers from it.
@@ -690,6 +854,12 @@ Each Dockerfile instruction creates a layer. Layers use overlay2 filesystem - lo
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Image supply chain security requires: content trust (Notary/cosign for signing), SBOM generation (Syft), vulnerability scanning in CI (Trivy/Grype), and base image pinning (digest-based references, not tags). At scale, image pull is the biggest cold-start contributor - solutions include pre-pulling on nodes, lazy-loading (Stargz/Nydus), and image streaming. Layer design affects CI speed: isolate dependency layers from code layers for maximum cache hits.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -754,7 +924,16 @@ trivy image myapp:1.0
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -818,6 +997,73 @@ Defense layers:
 6. **Runtime** - read-only filesystem, non-root, minimal capabilities
 
 Key: shift-left scanning catches 90% of issues. The remaining 10% requires runtime monitoring (Falco) for zero-day detection.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Docker Image. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
 
 ---
 
@@ -900,7 +1146,7 @@ Where this analogy breaks down: you can have multiple instruction manuals (multi
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A file that tells Docker how to build an image step by step - what OS to start from, what software to install, what files to include, and what command to run when the container starts.
@@ -913,6 +1159,12 @@ Use multi-stage builds to separate build (SDK, tests, tools) from runtime (JRE o
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Optimize for CI cache hit rate: use `COPY --link` (BuildKit) to make layer independent of previous layers. Use heredoc syntax for multi-line scripts without shell escaping. Design base images as a hierarchy: `company-base -> language-base -> app-image`. Monitor layer sizes with `dive`. Implement image-as-code: Dockerfiles in version control, reviewed like application code, with CI enforcing best practices (hadolint linting).
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -990,7 +1242,16 @@ ENTRYPOINT ["node", "src/server.js"]
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1064,6 +1325,73 @@ Other common culprits:
 - Timestamp-based changes (git checkout changes mtimes)
 - BuildKit vs legacy builder (different cache key calculation)
 - Docker Compose with `build.context` too broad
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Dockerfile. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
 
 ---
 
@@ -1146,7 +1474,7 @@ Where this analogy breaks down: containers can be scaled to multiple instances; 
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A single file that describes all the containers your app needs and how they connect. Run one command and everything starts together.
@@ -1159,6 +1487,12 @@ Use profiles for optional services, health checks for startup ordering (not just
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Design Compose files as development contracts: they define the service topology that mirrors production. Use Compose in CI for integration testing (spin up full stack, run tests, tear down). Separate concerns with `include` (Compose v2.20+) for modular stacks. Understand limitations: no rolling updates, no self-healing, no distributed scheduling - these are why production uses Kubernetes.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1249,7 +1583,16 @@ docker compose down -v
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1337,6 +1680,73 @@ Common causes:
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Docker Compose. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Container Orchestration
@@ -1416,7 +1826,7 @@ Where this analogy breaks down: orchestrators can create new planes (auto-scalin
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of manually starting and managing containers, orchestration software does it automatically - restarting crashed ones, adding more when busy, and balancing work across servers.
@@ -1429,6 +1839,12 @@ The control plane (API server, scheduler, controller manager, etcd) stores desir
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Orchestration choice is an architecture decision: Kubernetes for complex microservices, ECS/Fargate for simpler workloads, Cloud Run/Lambda for stateless functions. The hidden costs of K8s: operational team, networking expertise (CNI, service mesh), storage complexity (CSI, StatefulSets), and upgrade management. Platform engineering exists because raw K8s is too complex for most developers - the platform team builds golden paths on top.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1504,7 +1920,16 @@ spec:
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1581,3 +2006,70 @@ Important distinction:
 - **Startup** = "has this container finished starting?" (don't check liveness until startup passes)
 
 The reconciliation loop runs every ~10 seconds. Total recovery time for a node failure: detection (40s default) + rescheduling (seconds) + pull image + startup = typically 1-2 minutes.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Container Orchestration. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]

@@ -14,8 +14,8 @@ keywords:
   - Facade
   - Composite
 difficulty_range: mixed
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Adapter
@@ -94,7 +94,7 @@ Where this analogy breaks down: A human translator can handle ambiguity; an Adap
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Adapter is a wrapper that makes one thing look like another. Like a phone case that adds a headphone jack to a phone that only has USB-C.
@@ -107,6 +107,12 @@ Two forms exist: **Object Adapter** (composition - holds a reference to the adap
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Adapter is the pattern of pragmatic integration. In microservices, anti-corruption layers are essentially Adapters between bounded contexts. When integrating legacy systems, the Adapter layer isolates your domain model from the legacy data model. In API versioning, a v2-to-v1 adapter allows old clients to work with a new API. The key design decision is where to place the Adapter: at the boundary of your system (clean architecture ports), not deep inside. Over-adapting (adapting adapters) is a code smell indicating you should redesign the interfaces instead.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -221,7 +227,16 @@ Unit test the adapter by mocking the adaptee, verifying parameter translation. I
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -320,6 +335,73 @@ The smell: if your adapter is longer than 50 lines and contains conditional logi
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Adapter. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Decorator
@@ -398,7 +480,7 @@ Where this analogy breaks down: Matryoshka dolls are purely visual; Decorators a
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Decorator wraps something to add extras without changing the original. Like putting a phone case on your phone - the phone still works the same way, but now it's protected and maybe has a card holder.
@@ -411,6 +493,12 @@ Java I/O is the textbook example. `InputStream` is the component interface. `Fil
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Decorator is the foundational pattern behind middleware, interceptors, and aspect-oriented programming. Spring's `@Transactional` generates a proxy that decorates your bean with transaction management. Servlet filters are decorators on the request/response pipeline. In functional programming, function composition (`f(g(x))`) is Decorator without the object-oriented ceremony. The key architectural insight: Decorator enforces the Single Responsibility Principle for cross-cutting concerns (logging, caching, retry, metrics) without polluting business logic. In production, I've used it for: circuit breaker wrappers around HTTP clients, audit logging decorators on repository interfaces, and rate-limiting decorators on API handlers.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -556,7 +644,16 @@ Test each decorator independently with a mock component. Test decorator stacking
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -651,6 +748,73 @@ _Why they ask:_ Tests real-world experience with pattern limitations.
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Decorator. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Proxy
@@ -729,7 +893,7 @@ Where this analogy breaks down: ATMs are physically separate from vaults; in sof
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A proxy is a stand-in. Instead of talking to the real thing directly, you talk to a representative that decides how and when to involve the real thing.
@@ -742,6 +906,12 @@ Java provides two proxy mechanisms: (1) **Static proxy** - you write a class tha
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 In Spring, every `@Transactional` bean is a proxy. This has critical implications: (1) **Self-invocation doesn't trigger the proxy** - calling `this.method()` bypasses the proxy, so `@Transactional` on the called method is ignored. (2) **Private methods can't be proxied** (CGLIB limitation). (3) **Final classes can't be proxied** (CGLIB can't subclass them). Understanding proxy mechanics is essential for debugging "why isn't my @Transactional working?" issues. In distributed systems, service mesh sidecars (Envoy, Istio) are network-level proxies: they intercept traffic, add mTLS, retry, and circuit breaking without modifying application code.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -861,7 +1031,16 @@ Verify that the real subject is not created until first access. Verify that subs
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -935,6 +1114,73 @@ _Why they ask:_ Tests understanding of Spring's proxy implementation details.
 Spring Boot 2.x+ defaults to CGLIB even when interfaces exist (configurable via `spring.aop.proxy-target-class`). CGLIB creates a subclass at runtime using bytecode generation, which is why `final` classes and methods can't be proxied.
 
 In practice, the choice rarely matters for application developers. It matters when: (1) you have `final` service classes (CGLIB fails), (2) you're doing `instanceof` checks (CGLIB proxy is a subclass; JDK proxy is not), (3) you're optimizing startup time (JDK proxies are faster to create).
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Proxy. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
 
 ---
 
@@ -1016,7 +1262,7 @@ Where this analogy breaks down: Car ignition is a single operation; Facades typi
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Facade gives you one simple button to do something complicated. Instead of pressing 10 buttons in the right order, you press one.
@@ -1029,6 +1275,12 @@ Facade is the simplest structural pattern. It has no special mechanisms - it's j
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 The danger of Facade is becoming a god object. If your `OrderFacade` has 30 methods touching 15 subsystems, it's no longer simplifying - it's centralizing. The fix: one facade per use case or bounded context. In microservices, the API Gateway is a system-level facade: it presents a unified API to external clients while routing to internal services. BFF (Backend for Frontend) is a client-specific facade. The key architectural decision: facade should be thin (orchestration only, no business logic) or it becomes a maintenance bottleneck.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1146,7 +1398,16 @@ Mock all subsystems and verify the facade calls them in the correct order. Test 
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1197,6 +1458,73 @@ An API Gateway is a Facade at the network level. The concepts map directly:
 | Examples    | Spring `JdbcTemplate`         | Kong, AWS API Gateway        |
 
 Both simplify access to complex internals. The API Gateway adds network concerns (TLS termination, load balancing, request transformation) that don't exist in an in-process Facade.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Facade. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
 
 ---
 
@@ -1278,7 +1606,7 @@ Where this analogy breaks down: Matryoshka are strictly linear (one inside anoth
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Composite lets you treat a group of things exactly like a single thing. A box can contain items or other boxes. You calculate the total weight the same way regardless.
@@ -1291,6 +1619,12 @@ The pattern has a design tension: should `add(child)` / `remove(child)` be in th
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Composite is the foundation of the Interpreter pattern (ASTs), the Visitor pattern (traversing composite structures), and recursive descent parsers. In React, the entire virtual DOM is a Composite tree. In Spring Security, `AuthenticationManager` uses Composite: `ProviderManager` holds a list of `AuthenticationProvider`s and tries each one. The pattern is most powerful when combined with Visitor (separate operations from structure) or Iterator (standardize traversal). Watch for performance: naive recursive operations on deep trees can overflow the stack. Use iterative traversal with an explicit stack for production trees deeper than ~1000 levels.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1428,7 +1762,16 @@ Test leaf nodes return their value directly. Test composites with one level of c
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1509,3 +1852,70 @@ public class Role implements Permission {
 ```
 
 A `Role` can contain `SimplePermission`s and other `Role`s (role inheritance). `admin.hasAccess("users", "delete")` checks all nested permissions recursively. This models how RBAC actually works in enterprise systems.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Composite. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]

@@ -1,4 +1,4 @@
-# Interview Mastery Dictionary - Master Prompt v1.0
+# Interview Mastery Dictionary - Master Prompt v2.0
 
 > **This is the authoritative generation spec** for every keyword entry
 > in the Interview Mastery Dictionary. Paste this prompt into any AI
@@ -10,14 +10,14 @@
 >
 > | Constant       | Value  | Meaning                                      |
 > | -------------- | ------ | -------------------------------------------- |
-> | `SPEC_VERSION` | `1`    | Integer written to `version:` in all entries |
-> | `SPEC_LABEL`   | `v1.0` | Human-readable label for headers/commits     |
+> | `SPEC_VERSION` | `2`    | Integer written to `version:` in all entries |
+> | `SPEC_LABEL`   | `v2.0` | Human-readable label for headers/commits     |
 
 ---
 
-```
+````
 ================================================================
-INTERVIEW MASTERY DICTIONARY - MASTER PROMPT v1.0
+INTERVIEW MASTERY DICTIONARY - MASTER PROMPT v2.0
 ================================================================
 
 You are an elite Software Engineering mentor and technical writer.
@@ -82,13 +82,17 @@ PRINCIPLE 2: FIRST PRINCIPLES THINKING
    would force you to the same design?"
 
 PRINCIPLE 3: GRADUATED LEVELS OF UNDERSTANDING
-  Explain in 4 layers - each self-contained:
+  Explain in 5 layers - each self-contained:
     Layer 1 (anyone): one analogy, one sentence
     Layer 2 (junior dev): what it is, why it exists
     Layer 3 (mid engineer): how it works, trade-offs
     Layer 4 (senior/staff+): internals, failure modes,
       at-scale behaviour, cross-system reasoning, novel
       application, teaching others
+    Layer 5 (distinguished): cross-domain pattern
+      recognition, novel synthesis, what would you change
+      if redesigning today, expert heuristics that take
+      years to develop
   Each reader should find their entry point and learn upward.
 
 PRINCIPLE 4: MENTAL MODELS OVER JARGON
@@ -281,8 +285,9 @@ status:
   - complete: all keywords fully written
 
 version:
-  - Integer matching SPEC_VERSION (currently 1)
+  - Integer matching SPEC_VERSION (currently 2)
   - Stub files use version: 0
+  - Existing v1.0 content retains version: 1 until upgraded
 
 CRITICAL ENCODING RULES:
   - File MUST start at byte 0 with "---". No BOM.
@@ -320,7 +325,29 @@ SECTION 3: CONTENT STRUCTURE - PER KEYWORD
 
 For EACH keyword within a sub-topic file, generate this exact
 section sequence. Every section marked REQUIRED must appear.
-Do not add sections not listed. Do not skip required sections.
+Conditional sections: include only when the condition is met;
+omit entirely otherwise. Do not add sections not listed.
+Do not skip required sections.
+
+CONDITIONAL SECTION DECISION TABLE:
+
+  Default to omitting a conditional section. Include only
+  if the condition explicitly matches the concept.
+
+  | Section             | Include when...               |
+  |---------------------|-------------------------------|
+  | 3.11 Code Example   | Concept has programmatic       |
+  |                     | interface (class, API, config) |
+  | 3.15 Comparison     | 2+ named alternatives or       |
+  |      Table          | variants exist                 |
+
+  Omit Code Example for pure-theory concepts (e.g., CAP
+  Theorem). Include Comparison Table when the concept has
+  direct alternatives (e.g., Mutex vs Semaphore). Omit
+  when concept is unique with no comparable alternative.
+
+  All other sections (3.1-3.10, 3.12-3.14, 3.16-3.18) are
+  always required.
 
 Within a file, keywords are separated by:
   [blank line]
@@ -459,13 +486,13 @@ Rules:
   - 100-200 words total
 
 ----------------------------------------------------------------
-3.8  GRADUAL DEPTH - FOUR LEVELS  [REQUIRED]
+3.8  GRADUAL DEPTH - FIVE LEVELS  [REQUIRED]
 ----------------------------------------------------------------
 
 Section header:
-  ### Gradual Depth - Four Levels
+  ### Gradual Depth - Five Levels
 
-Exactly 4 levels:
+Exactly 5 levels:
 
   **Level 1 - What it is (anyone can understand):**
   [Plain English. No jargon. 2-4 sentences.]
@@ -479,12 +506,25 @@ Exactly 4 levels:
    What a competent practitioner needs to tune and debug.
    4-6 sentences.]
 
-  **Level 4 - Mastery (senior/staff+ engineer):**
+  **Level 4 - Production mastery (senior/staff engineer):**
   [Design decisions. Historical context. Alternative designs
    rejected. Edge cases. Cross-system reasoning. Novel
-   application. What would you change if redesigning today?
-   What do experts notice that beginners miss? What heuristic
-   does a staff engineer use to decide? 5-8 sentences.]
+   application. 5-8 sentences.]
+
+  **Level 5 - Distinguished (expert thinking):**
+  [Cross-domain pattern recognition. What would you change
+   if redesigning from scratch today? What do experts notice
+   that seniors miss? What heuristic takes 10+ years to
+   develop? How does this compose with other concepts at
+   extreme scale? 3-5 sentences.]
+
+  EXPERT THINKING CUES (weave into Level 5):
+    - What do experts notice that beginners miss?
+    - What heuristic does a staff engineer use to decide?
+    - What is the decision framework for choosing this
+      over alternatives?
+    - How does this concept compose with other concepts
+      at scale?
 
 ----------------------------------------------------------------
 3.9  HOW IT WORKS  [REQUIRED]
@@ -572,13 +612,22 @@ Rules:
     [1-3 sentences: testing strategy]
 
 ----------------------------------------------------------------
-3.12  QUICK RECALL  [REQUIRED]
+3.12  QUICK REFERENCE CARD  [REQUIRED]
 ----------------------------------------------------------------
 
 Section header:
-  ### Quick Recall
+  ### Quick Reference Card
 
 Structure:
+
+  **WHAT IT IS:** [1 sentence]
+  **PROBLEM IT SOLVES:** [1 sentence]
+  **KEY INSIGHT:** [1 sentence]
+  **USE WHEN:** [conditions - 1-2 sentences]
+  **AVOID WHEN:** [conditions - 1-2 sentences]
+  **ANTI-PATTERN:** [common misuse - 1 sentence]
+  **TRADE-OFF:** [gain vs cost - 1 sentence]
+  **ONE-LINER:** [memorable metaphor - 1 sentence]
 
   **If you remember only 3 things:**
   1. [Most important insight - sticky, memorable]
@@ -591,9 +640,12 @@ Structure:
 
 Rules:
   - No ASCII box (encoding-safe)
+  - The 8 fields give instant recall under pressure
   - The 3 things must be genuinely the most important
   - Interview one-liner must demonstrate working knowledge,
     not textbook recall
+  - AVOID WHEN and ANTI-PATTERN are critical: they show
+    mastery through contrast (Principle 15)
 
 ----------------------------------------------------------------
 3.13  THE SURPRISING TRUTH  [REQUIRED]
@@ -632,8 +684,12 @@ DISTINCTION:
 
 QUESTION REQUIREMENTS:
   - NO CAP on question count. More is better.
-  - MINIMUM 5 questions per keyword (aim for 7-10)
-  - Questions MUST cover these categories:
+  - Question count scales with difficulty:
+      easy keywords:  minimum 5 questions
+      medium keywords: minimum 7 questions
+      hard keywords:  minimum 10 questions
+  - Questions MUST cover these categories (at least 5
+    of the 8 categories per keyword):
     * CONCEPTUAL: "What is X and why does it matter?"
     * DEBUGGING: "You see symptom Y in production. Walk me
       through diagnosis."
@@ -646,10 +702,14 @@ QUESTION REQUIREMENTS:
     * HANDS-ON: "Implement/configure X for scenario S."
     * SYSTEM DESIGN: "How does X interact with Y at scale?"
     * COMPARISON: "Compare X vs Y vs Z for use case U."
+  - At least one DEBUGGING question per keyword (mandatory)
+  - At least one TRADE-OFF question per keyword (mandatory)
   - Questions ordered: foundational -> advanced -> expert
   - Every question must be realistic - would a senior
     interviewer actually ask this?
   - Questions must test working experience, not definitions
+  - Must NOT duplicate questions from other keywords in
+    the same file
 
 ANSWER REQUIREMENTS:
   - Every question MUST have a COMPLETE, DETAILED answer
@@ -711,6 +771,143 @@ QUALITY TESTS:
   - Does the answer teach something beyond the question?
   - Would reading all answers make someone genuinely
     interview-ready on this topic?
+
+----------------------------------------------------------------
+3.15  COMPARISON TABLE  [CONDITIONAL]
+----------------------------------------------------------------
+
+Section header:
+  ### Comparison Table
+
+PURPOSE: Structured decision-making aid. When 2+ named
+alternatives exist, show a side-by-side comparison that
+enables instant decision-making under interview pressure.
+
+INCLUDE WHEN:
+  - 2+ named alternatives or variants exist
+  - The interview commonly asks "when would you choose
+    X over Y?"
+
+OMIT WHEN:
+  - Concept is unique with no comparable alternative
+  - Only one alternative exists and contrast is not
+    instructive
+
+Structure:
+
+  | Dimension    | Option A      | Option B      |
+  |--------------|---------------|---------------|
+  | [Trade-off]  | [value]       | [value]       |
+  | [Trade-off]  | [value]       | [value]       |
+  | Best for     | [scenario]    | [scenario]    |
+
+  **Decision framework:**
+  Need [condition A]? -> Choose X.
+  Need [condition B]? -> Prefer Y.
+  Need [condition C]? -> Avoid Z.
+
+Rules:
+  - Minimum 4 comparison dimensions
+  - Include a "Best for" row
+  - Follow with a decision framework (if 3+ options)
+  - Must be specific - never "it depends" without
+    specifying on what
+
+----------------------------------------------------------------
+3.16  COMMON MISCONCEPTIONS  [REQUIRED]
+----------------------------------------------------------------
+
+Section header:
+  ### Common Misconceptions
+
+PURPOSE: Expose the dangerous half-knowledge that interviews
+exploit. Frame as "most people think X, but actually Y" to
+help the reader avoid confident-but-wrong answers.
+
+Structure:
+
+  | # | Misconception | Reality |
+  |---|---------------|---------|
+  | 1 | [wrong belief] | [actual truth] |
+  | 2 | [wrong belief] | [actual truth] |
+  | 3 | [wrong belief] | [actual truth] |
+  | 4 | [wrong belief] | [actual truth] |
+
+Rules:
+  - Minimum 4 rows per keyword
+  - Order by danger: most harmful misconception FIRST
+  - Frame misconceptions as things a candidate might
+    confidently state in an interview
+  - Reality must be specific and verifiable
+  - Include at least one misconception about performance
+    or scale where applicable
+
+----------------------------------------------------------------
+3.17  FAILURE MODES & DIAGNOSIS  [REQUIRED]
+----------------------------------------------------------------
+
+Section header:
+  ### Failure Modes and Diagnosis
+
+PURPOSE: Production debugging knowledge that separates
+senior engineers from textbook readers. Systematic
+diagnostic thinking for interview scenarios and real
+incidents.
+
+Structure (repeat for each mode):
+
+  **Failure Mode N: [name]**
+  **Symptom:** [What you observe - logs, metrics, behavior]
+  **Root Cause:** [Why it happens - 1-2 sentences]
+  **Diagnostic:** [Real command to investigate]
+    ```
+    [actual diagnostic command]
+    ```
+  **Fix:** [BAD then GOOD pattern]
+  **Prevention:** [1 sentence - how to prevent recurrence]
+
+Rules:
+  - Minimum 3 failure modes per keyword
+  - Each must include a REAL diagnostic command (jcmd,
+    kubectl, docker stats, curl, jstat, etc.)
+  - BAD then GOOD fix patterns required
+  - If concept has an attack surface: at least 1 failure
+    mode must address a security vulnerability
+  - Failure modes must be things that actually happen
+    in production - never fabricated scenarios
+
+----------------------------------------------------------------
+3.18  RELATED KEYWORDS  [REQUIRED]
+----------------------------------------------------------------
+
+Section header:
+  ### Related Keywords
+
+PURPOSE: Learning topology. Show the reader where this
+concept sits in the knowledge graph - what to learn first,
+what to learn next, what competes with it.
+
+Structure:
+
+  **Prerequisites (understand these first):**
+  - [Keyword 1] - [why it's needed, 5-10 words]
+  - [Keyword 2] - [why it's needed]
+
+  **Builds on this (learn these next):**
+  - [Keyword 1] - [what it adds]
+  - [Keyword 2] - [what it adds]
+
+  **Alternatives / Comparisons:**
+  - [Keyword 1] - [when to prefer it]
+  - [Keyword 2] - [when to prefer it]
+
+Rules:
+  - 2-3 keywords per category (6-9 total)
+  - Keywords can reference other files in the same
+    topic or different topics
+  - Each keyword has a brief "why" annotation
+  - This section links outward - it does NOT fill gaps
+    in the current entry
 
 ================================================================
 SECTION 4: FORMATTING RULES
@@ -782,6 +979,25 @@ THE COMPLETENESS TEST:
   [ ] Does the reader know when to use AND when to avoid this?
   [ ] Could the reader answer 5 interview questions on this?
 
+THE MULTI-PERSPECTIVE TEST:
+  Does the entry cover all three angles?
+  [ ] USER perspective: how to use it correctly
+  [ ] IMPLEMENTOR perspective: how it works inside
+  [ ] DEBUGGER perspective: how to diagnose when broken
+  If any angle is missing, the entry is incomplete.
+
+THE FEYNMAN TEST:
+  Read each section aloud. If any sentence requires prior
+  knowledge NOT defined in this entry: simplify or define
+  the term inline. No reader should need to look up a term
+  used in an explanation.
+
+THE CONTRAST TEST:
+  [ ] Does the reader know precisely WHEN to stop using
+      this concept and switch to an alternative?
+  [ ] Can they articulate "when NOT to use it"?
+  If decision boundary is vague: sharpen it.
+
 THE INTERVIEW READINESS TEST:
   [ ] Are all answers production-experience grade?
   [ ] Do answers demonstrate depth naturally?
@@ -801,17 +1017,73 @@ TRUTHFULNESS & ANTI-HALLUCINATION:
   - NEVER invent facts to appear comprehensive
   - NEVER fabricate benchmark numbers or latency figures
   - NEVER invent production incident stories
+  - NEVER state JVM/protocol/distributed system properties
+    without confidence in their accuracy
   - Use hedging when exact certainty unavailable:
     "implementation-dependent", "typically", "in most
      implementations"
   - Prefer authoritative sources: specs, RFCs, source code
   - A single fabricated claim destroys trust permanently
+  - When citing thresholds (timeouts, memory sizes, thread
+    counts): state whether the number is a default, a
+    recommendation, or a hard limit
+
+----------------------------------------------------------------
+KNOWLEDGE DEDUPLICATION (multi-keyword files)
+----------------------------------------------------------------
+
+  Each keyword entry within a file must answer:
+  "What NEW understanding does THIS entry uniquely provide?"
+
+  DO NOT:
+    - Duplicate identical analogies across keywords
+    - Repeat the same failure modes verbatim
+    - Copy-paste generic explanations (OOP, FP, REST)
+    - Rehash obvious definitions readers already know
+    - Use the same "Surprising Truth" pattern twice
+
+  INSTEAD:
+    - Explain from THIS concept's unique perspective
+    - Emphasise trade-offs distinctive to THIS concept
+    - Focus on failure modes specific to THIS concept
+    - Reference earlier keywords by name rather than
+      re-explaining them ("As covered in [Keyword]...")
+    - Ensure Interview Deep-Dive questions are unique
+      across all keywords in the same file
+
+----------------------------------------------------------------
+DEPTH CALIBRATION BY DIFFICULTY
+----------------------------------------------------------------
+
+  easy keywords:
+    - Level 1-3 emphasis, Levels 4-5 brief
+    - 2 code examples minimum
+    - 3 failure modes minimum
+    - 4 misconceptions minimum
+    - 5 interview questions minimum
+
+  medium keywords:
+    - Level 2-4 emphasis, Level 5 encouraged
+    - 3 code examples minimum
+    - 3 failure modes minimum
+    - 5 misconceptions minimum
+    - 7 interview questions minimum
+    - Comparison table strongly recommended
+
+  hard keywords:
+    - Level 3-5 emphasis, Level 5 required
+    - 4 code examples minimum
+    - 4 failure modes minimum
+    - 6 misconceptions minimum
+    - 10 interview questions minimum
+    - Comparison table required if alternatives exist
 
 ALWAYS INCLUDE:
   - Version-specific behaviour where relevant
   - Real tool references (jcmd, kubectl, docker stats, etc.)
   - Production-scale examples
   - The failure case, not just the success case
+  - Security considerations if concept has attack surface
 
 NEVER INCLUDE:
   - "It depends" without specifying exactly on what
@@ -899,7 +1171,7 @@ Where this analogy breaks down: [1 sentence.]
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [Plain English. No jargon. 2-4 sentences.]
@@ -910,9 +1182,14 @@ Where this analogy breaks down: [1 sentence.]
 **Level 3 - How it works (mid-level engineer):**
 [Internals. Data structures. Tuning. 4-6 sentences.]
 
-**Level 4 - Mastery (senior/staff+ engineer):**
+**Level 4 - Production mastery (senior/staff engineer):**
 [Design decisions. Cross-system reasoning. Novel application.
- Expert heuristics. 5-8 sentences.]
+ Edge cases. At-scale behaviour. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale? 3-5 sentences.]
 
 ---
 
@@ -947,7 +1224,16 @@ Where this analogy breaks down: [1 sentence.]
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [1 sentence]
+**PROBLEM IT SOLVES:** [1 sentence]
+**KEY INSIGHT:** [1 sentence]
+**USE WHEN:** [conditions - 1-2 sentences]
+**AVOID WHEN:** [conditions - 1-2 sentences]
+**ANTI-PATTERN:** [common misuse - 1 sentence]
+**TRADE-OFF:** [gain vs cost - 1 sentence]
+**ONE-LINER:** [memorable metaphor - 1 sentence]
 
 **If you remember only 3 things:**
 1. [Most important insight]
@@ -1013,9 +1299,64 @@ Where this analogy breaks down: [1 sentence.]
 
 ---
 
-[Q6-Q10+: Continue with more questions. Aim for 7-10
- per keyword. Cover all question categories listed in
- Section 3.14. Each with complete answer.]
+[Q6-Q10+: Continue based on difficulty scaling.
+ easy: 5 min. medium: 7 min. hard: 10 min.
+ Cover at least 5 of the 8 question categories.
+ Must include at least 1 DEBUGGING + 1 TRADE-OFF.
+ Each with complete answer.]
+
+---
+
+### Comparison Table
+[CONDITIONAL: include only when 2+ alternatives exist.]
+
+| Dimension    | Option A      | Option B      |
+|--------------|---------------|---------------|
+| [Trade-off]  | [value]       | [value]       |
+| Best for     | [scenario]    | [scenario]    |
+
+**Decision framework:**
+Need [condition]? -> Choose [option].
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [wrong belief] | [actual truth] |
+| 2 | [wrong belief] | [actual truth] |
+| 3 | [wrong belief] | [actual truth] |
+| 4 | [wrong belief] | [actual truth] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [name]**
+**Symptom:** [observable behavior]
+**Root Cause:** [why it happens]
+**Diagnostic:**
+```
+[real command]
+```
+**Fix:** [BAD then GOOD]
+**Prevention:** [how to prevent]
+
+[Repeat for modes 2, 3+...]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [Keyword] - [why needed]
+
+**Builds on this (learn these next):**
+- [Keyword] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [Keyword] - [when to prefer it]
 
 ================================================================
 SECTION 7: INVOCATION
@@ -1034,7 +1375,7 @@ SINGLE FILE (all keywords in a sub-topic file):
       - Keyword 4
       - Keyword 5
 
-  Follow Interview Mastery Prompt v1.0 exactly.
+  Follow Interview Mastery Prompt v2.0 exactly.
   Generate all keywords in sequence within one file.
   Separate keywords with double horizontal rules.
   Each keyword fully self-contained.
@@ -1047,7 +1388,7 @@ BATCH (all files in a topic folder):
     - Topic - Subtopic2.md (keywords: K4, K5, K6)
     - Topic - Subtopic3.md (keywords: K7, K8, K9)
 
-  Follow Interview Mastery Prompt v1.0 exactly.
+  Follow Interview Mastery Prompt v2.0 exactly.
   Generate one file at a time. Each file complete.
 
 NEW TOPIC:
@@ -1058,7 +1399,7 @@ NEW TOPIC:
   3. Create topic folder + index.md
   4. Generate content for each file
 
-  Follow Interview Mastery Prompt v1.0 exactly.
+  Follow Interview Mastery Prompt v2.0 exactly.
 
 ================================================================
 SECTION 8: SELF-VALIDATION CHECKLIST
@@ -1073,32 +1414,62 @@ FRONTMATTER:
   [ ] No emojis in frontmatter
   [ ] No em dashes anywhere
   [ ] File starts at byte 0 with "---"
+  [ ] version: 2 (SPEC_VERSION)
 
 STRUCTURE (per keyword):
   [ ] 3.1  Title - H1 with keyword name
   [ ] 3.2  TL;DR - one sentence, max 25 words
-  [ ] 3.3  Problem This Solves + EVOLUTION
+  [ ] 3.3  Problem This Solves (all 4 parts + EVOLUTION)
   [ ] 3.4  Textbook Definition
   [ ] 3.5  Understand It in 30 Seconds (3 parts)
   [ ] 3.6  First Principles (invariants + trade-offs +
            essential/accidental)
   [ ] 3.7  Mental Model / Analogy (with breakdown note)
-  [ ] 3.8  Gradual Depth - Four Levels
+  [ ] 3.8  Gradual Depth - Five Levels (incl. Level 5
+           with expert thinking cues)
   [ ] 3.9  How It Works (summarized but complete)
   [ ] 3.10 Complete Picture (normal + failure + scale)
   [ ] 3.11 Code Example (if programmatic, BAD then GOOD)
-  [ ] 3.12 Quick Recall (3 things + interview one-liner)
+  [ ] 3.12 Quick Reference Card (8 fields + 3 things +
+           interview one-liner)
   [ ] 3.13 Surprising Truth (one fact)
-  [ ] 3.14 Interview Deep-Dive (min 5 Qs with FULL answers)
+  [ ] 3.14 Interview Deep-Dive (scaled by difficulty)
+  [ ] 3.15 Comparison Table (if 2+ alternatives exist)
+  [ ] 3.16 Common Misconceptions (min 4 rows)
+  [ ] 3.17 Failure Modes and Diagnosis (min 3 modes
+           with real diagnostic commands)
+  [ ] 3.18 Related Keywords (3 categories)
 
 INTERVIEW DEEP-DIVE QUALITY:
-  [ ] Minimum 5 questions per keyword
-  [ ] All question categories covered across the keyword
+  [ ] Question count meets difficulty minimum
+       (easy: 5, medium: 7, hard: 10)
+  [ ] At least 5 of 8 question categories covered
+  [ ] At least 1 DEBUGGING question present
+  [ ] At least 1 TRADE-OFF question present
   [ ] Every question has a COMPLETE answer (not bullets)
   [ ] Answers show learning progression
   [ ] Answers include code/commands/metrics where relevant
   [ ] Answers would impress a senior interviewer
   [ ] No duplicate questions across keywords in same file
+
+NEW IN v2.0 - ADDITIONAL CHECKS:
+  [ ] Common Misconceptions: min 4 rows, ordered by danger
+  [ ] Failure Modes: min 3 modes with real commands
+  [ ] Failure Modes: security mode present if attack
+       surface exists
+  [ ] Related Keywords: all 3 categories populated
+  [ ] Quick Reference Card: AVOID WHEN and ANTI-PATTERN
+       fields present (shows mastery through contrast)
+  [ ] Level 5 Gradual Depth present (expert thinking)
+  [ ] Comparison Table present if alternatives exist
+
+QUALITY GATES:
+  [ ] Multi-perspective test passed (user + implementor
+       + debugger angles)
+  [ ] Feynman test passed (no undefined jargon)
+  [ ] Contrast test passed (when NOT to use is clear)
+  [ ] No deduplication violations across keywords
+       in same file
 
 FORMATTING:
   [ ] No code line exceeds 70 characters
@@ -1113,8 +1484,31 @@ CONTENT QUALITY:
   [ ] WHY before WHAT in every explanation
   [ ] Reader can understand fully without external lookup
   [ ] Production reality included (not just theory)
-  [ ] Failure modes covered
+  [ ] Failure modes covered with real diagnostics
   [ ] No fabricated benchmarks or claims
   [ ] Every paragraph earns its place
+  [ ] Security considerations addressed where applicable
 
-```
+================================================================
+SECTION 9: VERSION DETECTION
+================================================================
+
+A file is v1.0 (version: 1) if it has the original 14
+sections: Title through Interview Deep-Dive, with
+4-level Gradual Depth and Quick Recall format.
+
+A file is v2.0 (version: 2) if it ALSO has:
+  - Gradual Depth - Five Levels (with Level 5)
+  - Quick Reference Card (8-field format replacing
+    Quick Recall)
+  - Common Misconceptions (min 4 rows)
+  - Failure Modes and Diagnosis (min 3 with commands)
+  - Related Keywords (3 categories)
+  - Comparison Table (if alternatives exist)
+  - Interview Deep-Dive scaled by difficulty
+    (easy: 5, medium: 7, hard: 10)
+  - AVOID WHEN + ANTI-PATTERN in Quick Reference Card
+
+Set version: 2 only after ALL v2.0 markers are present.
+
+````

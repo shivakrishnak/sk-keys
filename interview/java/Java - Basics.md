@@ -16,8 +16,8 @@ keywords:
   - String and Immutability
   - Pass by Value vs Pass by Reference
 difficulty_range: mixed
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Variables and Data Types
@@ -98,7 +98,7 @@ Where this analogy breaks down: Cash can be split (you can break a $20 into two 
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Every piece of data in Java has a type - like labeling boxes in a warehouse. Small simple values (numbers, true/false, single characters) are "primitives" and live right where you use them. Larger complex data (text, lists, custom objects) are "objects" that live in a shared storage area and you access them through a reference, like a tracking number.
@@ -111,6 +111,12 @@ Primitives live on the stack frame of the executing method - allocated on method
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 The primitive/reference split is Java's original sin and its greatest performance advantage. Project Valhalla (value types) will finally allow user-defined types with primitive semantics - stack-allocated, no identity, no null, flat memory layout in arrays. This eliminates the need for wrapper classes and enables "codes like a class, works like an int." Understanding the JVM's memory model at this level means knowing that `volatile` on a primitive guarantees visibility across threads via memory barriers, but `volatile` on a reference only makes the pointer visible - the object's fields have no such guarantee without additional synchronization. Experts choose between `int[]` and `Integer[]` based on cache line utilization: a contiguous `int[1000]` fits in ~4KB and is cache-friendly, while `Integer[1000]` scatters 1000 objects across the heap, destroying L1 cache performance.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -228,7 +234,16 @@ Use `System.identityHashCode()` to verify whether two references point to the sa
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -561,6 +576,73 @@ try {
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Variables and Data Types. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Pass by Value vs Pass by Reference
@@ -640,7 +722,7 @@ Where this analogy breaks down: A real photocopy of a remote would not work at a
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 When you call a method in Java and pass it a variable, the method gets its own copy. For simple numbers, it is a copy of the number. For objects, it is a copy of the address that says where the object lives. The method can use the address to change the object's contents, but it cannot change your original address.
@@ -653,6 +735,12 @@ At the bytecode level, method invocation pushes argument values onto the operand
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Understanding Java's parameter model is essential for designing APIs. Defensive copying, immutable parameters, and value objects all stem from this model. The lack of true pass-by-reference is why the Builder pattern, Optional returns, and Record types are preferred over out-parameters. In concurrent code, passing a mutable object to another thread via a method call means both threads share the same heap object - the "copy" of the reference provides zero protection against data races on the object's fields. This is why concurrent APIs prefer immutable messages or deep copies.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -760,7 +848,16 @@ Use `System.identityHashCode(obj)` before and after method calls to verify wheth
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -910,3 +1007,70 @@ When you pass a mutable object to another thread, both threads hold references t
 5. **Message passing:** Use `BlockingQueue` to transfer ownership of objects between threads rather than sharing them.
 
 **Key insight:** The safest concurrent code shares nothing. Java's parameter model makes sharing easy but safe sharing hard - which is why modern Java increasingly favors immutable records, functional streams, and message-based architectures.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Pass by Value vs Pass by Reference. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]

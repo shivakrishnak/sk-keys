@@ -14,8 +14,8 @@ keywords:
   - IO Streams
   - NIO and NIO.2
 difficulty_range: mixed
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Exception Hierarchy
@@ -95,7 +95,7 @@ Where this analogy breaks down: In real buildings, you can't prevent structural 
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 When something goes wrong in a Java program, it throws an exception. Exceptions come in types organized in a family tree. Some types the compiler forces you to handle; others it doesn't. This hierarchy keeps programs from silently failing.
@@ -108,6 +108,12 @@ Exception creation captures the call stack via `fillInStackTrace()`, which is th
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Stack trace creation is the hidden performance cost. In hot paths, pre-allocating exception instances or overriding `fillInStackTrace()` to return `this` (skipping stack capture) can improve throughput dramatically. Libraries like Netty do this for flow control exceptions. The checked exception debate is largely settled in practice: modern Java APIs (Stream, CompletableFuture) avoid checked exceptions because they don't compose with lambdas. In architectures with global error handlers (Spring `@ControllerAdvice`), checked exceptions add ceremony without value - everything propagates to the handler anyway.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -242,7 +248,16 @@ Use `assertThrows()` in JUnit to verify the correct exception type is thrown, ch
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -494,6 +509,73 @@ Multi-catch reduces code duplication when the handling logic is identical for di
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Exception Hierarchy. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Checked vs Unchecked Exceptions
@@ -574,7 +656,7 @@ Where this analogy breaks down: In software, unchecked exceptions happen far mor
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Java has two kinds of errors. Some (checked) the compiler forces you to handle - like mandatory insurance. Others (unchecked) are your own fault - like tripping over your own feet.
@@ -587,6 +669,12 @@ The compiler checks every method call against the target's `throws` clause. If a
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 The checked exception experiment has produced clear patterns of misuse: swallowed exceptions (`catch (Exception e) {}`), throws clause pollution where `throws IOException` propagates through 10 layers, and exception wrapping hell. Modern best practice: use checked exceptions only at system boundaries (I/O layer, external integrations) and convert to unchecked at the boundary. Domain exceptions should be unchecked with rich context. Spring's entire data access layer follows this pattern - `SQLException` (checked) becomes `DataAccessException` (unchecked).
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -714,7 +802,16 @@ Test that checked exceptions are properly wrapped at boundaries (not swallowed),
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -921,6 +1018,73 @@ Key insight: the instinct to "catch everything" comes from fear of crashes. The 
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Checked vs Unchecked Exceptions. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Try-with-Resources
@@ -1001,7 +1165,7 @@ Where this analogy breaks down: Doors don't suppress their own errors when you'r
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A special try statement where you declare resources (files, connections, etc.) that Java automatically closes when you're done, even if something goes wrong.
@@ -1014,6 +1178,12 @@ The compiler desugars try-with-resources into a try-finally with null checks and
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Java 9 allows effectively-final variables in try-with-resources: `try (conn)` instead of redeclaring. Custom `AutoCloseable` implementations should be idempotent - `close()` should be safe to call multiple times. In resource hierarchies (BufferedReader wrapping FileReader), closing the outer resource closes the inner one - don't close both explicitly or you risk double-close issues. For pooled resources (connection pools), `close()` returns to pool rather than destroying - this is why `DataSource.getConnection()` works with try-with-resources even though you're not destroying the connection.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1148,7 +1318,16 @@ Create a mock `AutoCloseable` that records `close()` calls. Verify it's called e
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1380,6 +1559,73 @@ Key design decisions:
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Try-with-Resources. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # IO Streams
@@ -1459,7 +1705,7 @@ Where this analogy breaks down: Assembly lines process items in parallel; Java I
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Java IO streams are pipes that move data from one place to another. Byte streams handle raw data. Character streams handle text. You can chain multiple streams together to add features like buffering or encoding.
@@ -1472,6 +1718,12 @@ For reading text files, use `Files.readString(path)` (small files) or `Files.lin
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 The classic IO model is blocking and thread-per-connection. For high-connection-count servers (10K+ connections), NIO with `Selector` multiplexes many connections on few threads. However, for most file IO and moderate-connection-count applications, blocking IO with virtual threads (Java 21+) is simpler and performs comparably. `Files.lines()` returns a lazy Stream that reads on demand - process a 100GB file with constant memory. `MappedByteBuffer` via `FileChannel.map()` memory-maps files for random access at near-memory speed.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1584,7 +1836,16 @@ Use `ByteArrayInputStream`/`ByteArrayOutputStream` for unit tests - no real file
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1778,6 +2039,73 @@ For truly massive cardinality (billions of unique IPs), use a streaming approxim
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for IO Streams. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # NIO and NIO.2
@@ -1858,7 +2186,7 @@ Where this analogy breaks down: Modern phone switchboards are automated, while N
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 NIO lets a server handle many connections without needing one thread per connection. NIO.2 is Java's modern way to work with files and directories - much better than the old `File` class.
@@ -1871,6 +2199,12 @@ NIO `Selector` uses OS-level epoll (Linux) or kqueue (macOS) to efficiently moni
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 NIO's event-driven model underpins all high-performance Java servers: Netty, Tomcat NIO connector, Vert.x, gRPC. The Reactor pattern wraps Selector with a thread pool: one selector thread accepts connections, worker threads handle ready channels. With Java 21 virtual threads, the NIO complexity becomes optional for most workloads - `Thread.ofVirtual()` with blocking IO achieves similar scalability with simpler code. However, NIO still wins for true zero-copy scenarios (`FileChannel.transferTo()`) and memory-mapped I/O. `WatchService` provides filesystem event monitoring but has platform-specific reliability issues - on macOS it falls back to polling.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1994,7 +2328,16 @@ Test NIO.2 operations with `jimfs` (in-memory filesystem). Test buffer operation
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -2212,3 +2555,70 @@ Virtual threads park on blocking IO calls and release the carrier thread - achie
 4. **Ultra-low latency:** NIO with busy-polling avoids the virtual thread scheduling overhead
 
 For new projects: start with virtual threads + blocking IO. Only drop to NIO if profiling shows it's needed.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for NIO and NIO.2. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]

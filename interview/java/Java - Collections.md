@@ -15,8 +15,8 @@ keywords:
   - Queue and Deque
   - Iterator and Iterable
 difficulty_range: mixed
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # ArrayList
@@ -97,7 +97,7 @@ Where this analogy breaks down: Real parking lots don't automatically build bigg
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 ArrayList is a list that grows automatically when you add items. You can access any item by its position number instantly. It's the most commonly used list in Java.
@@ -110,6 +110,12 @@ Internally it's an `Object[] elementData` with a `size` counter. When `size == e
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 ArrayList's 1.5x growth factor is a compromise - 2x (used in some C++ vectors) wastes more memory but resizes less often. The default capacity of 10 was chosen in JDK 1.2 and is often too small for real workloads, wasting 3-4 resize cycles. Experts pre-size aggressively. `subList()` returns a view, not a copy - modifications to the sublist mutate the original, a common source of bugs. `trimToSize()` reclaims wasted capacity after bulk loading. For primitive-heavy workloads, `int[]` or Eclipse Collections' `IntArrayList` avoids boxing overhead entirely. In high-throughput systems, ArrayList's non-thread-safe design is actually an advantage - you avoid `Vector`'s lock overhead and add explicit synchronization only where needed.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -228,7 +234,16 @@ Write a unit test that adds elements beyond initial capacity, verifies `size()` 
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -477,6 +492,73 @@ Additional consideration: at 50M elements, even iterating has cache implications
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for ArrayList. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # HashMap
@@ -557,7 +639,7 @@ Where this analogy breaks down: P.O. boxes don't automatically reorganize themse
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 HashMap is a container that stores pairs of things: a key and a value. You give it a key, and it instantly gives back the associated value. Like a real dictionary where you look up a word (key) and get the definition (value).
@@ -570,6 +652,12 @@ Internally it's a `Node<K,V>[] table` (bucket array). `put(key, value)` computes
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 HashMap's `hash()` function XORs `h ^ (h >>> 16)` to spread high bits into the low bits that determine bucket index - this matters because `table.length` is always a power of 2, so only the lowest bits of the hash are used for indexing. The treeification threshold of 8 was chosen based on Poisson distribution: with a good hash function and load factor 0.75, the probability of 8+ collisions in one bucket is less than 1 in 10 million. `resize()` is O(n) but happens infrequently enough that amortized cost is O(1). In Java 8+, when the table is resized, each node either stays in the same bucket or moves to `oldIndex + oldCapacity` - no hash recomputation needed, just check one bit.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -694,7 +782,16 @@ Test that your key class's `hashCode()` and `equals()` satisfy the contract: equ
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -882,6 +979,73 @@ Key insight: under normal conditions with a good hash function, treeification al
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for HashMap. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # TreeMap
@@ -961,7 +1125,7 @@ Where this analogy breaks down: Filing cabinets don't automatically rebalance th
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 TreeMap is a map that keeps its keys sorted automatically. When you iterate over it, entries come out in order. It's slower than HashMap but lets you do things like "find all entries between two values."
@@ -974,6 +1138,12 @@ Internally a red-black tree: each node has key, value, left/right children, pare
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 TreeMap is the right choice when you need SortedMap/NavigableMap operations. In practice, the O(log n) vs O(1) difference matters less than people think for small-to-medium maps (< 10K entries) because TreeMap has better cache behavior than HashMap for ordered scans. For high-frequency trading or order books, `ConcurrentSkipListMap` provides the same sorted semantics with better concurrency. TreeMap's `subMap()` returns a view, not a copy - modifications to the submap modify the original tree, which is powerful for windowed processing.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1089,7 +1259,16 @@ Verify that `subMap()` boundaries work correctly (inclusive vs exclusive), that 
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1239,6 +1418,73 @@ For concurrent access, replace TreeMap with `ConcurrentSkipListMap` which provid
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for TreeMap. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # HashSet
@@ -1318,7 +1564,7 @@ Where this analogy breaks down: Real jars don't organize contents by hash - find
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 HashSet is a collection that stores unique items. If you try to add something that's already there, it silently ignores the duplicate. You can quickly check if any item exists in the set.
@@ -1331,6 +1577,12 @@ Internally it's `private transient HashMap<E, Object> map` with `private static 
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 The "HashMap with dummy values" design is memory-inefficient - each element wastes ~16 bytes on the PRESENT value and map entry overhead. For memory-critical workloads, Eclipse Collections' `UnifiedSet` or Koloboke's `HashObjSet` are 2-3x more memory-efficient. When you need a concurrent set, `ConcurrentHashMap.newKeySet()` (Java 8+) is preferred over `Collections.synchronizedSet(new HashSet<>())` because it provides per-bucket locking. For enum sets, `EnumSet` is drastically more efficient - it uses a bit vector internally.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1430,7 +1682,16 @@ Verify that `add()` returns false for duplicates, that `size()` reflects unique 
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1638,6 +1899,73 @@ This is a memory leak. The object is referenced by the set (preventing GC) but c
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for HashSet. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Queue and Deque
@@ -1717,7 +2045,7 @@ Where this analogy breaks down: PriorityQueue doesn't follow conveyor order - it
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A Queue is a line - first in, first out. A Deque (pronounced "deck") lets you add or remove from either end. Java gives you several implementations optimized for different scenarios.
@@ -1730,6 +2058,12 @@ Use `ArrayDeque` as your default Queue and Stack implementation. `offer(e)` to a
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 ArrayDeque outperforms LinkedList for all queue/stack operations because of cache locality - the circular array fits in CPU cache lines while LinkedList nodes are scattered across the heap. The only remaining use case for LinkedList as a Deque is when you need to remove elements from the middle during iteration (ListIterator.remove()). For concurrent producer-consumer patterns, `LinkedBlockingQueue` (separate locks for head and tail) outperforms `ArrayBlockingQueue` (single lock) when producers and consumers operate at similar rates. For single-producer/single-consumer, `Disruptor` or `JCTools` SPSCQueue achieve 100M+ ops/sec by eliminating locks entirely.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1852,7 +2186,16 @@ Verify FIFO order with sequential offer/poll, test empty queue returns null from
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -2052,6 +2395,73 @@ Decision: "Can my producer afford to spin or skip when the queue is full?" If ye
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Queue and Deque. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Iterator and Iterable
@@ -2132,7 +2542,7 @@ Where this analogy breaks down: TV remotes can go backward; standard Java Iterat
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Iterable is a promise: "you can go through my items one by one." Iterator is the mechanism that actually steps through them. Together, they let Java's for-each loop work on any collection.
@@ -2145,6 +2555,12 @@ For-each is compiler sugar: `for (T x : iterable)` becomes `Iterator<T> it = ite
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Iterable is a functional interface (`@FunctionalInterface`), meaning you can use lambdas: `Iterable<String> lines = () -> scanner;` wraps any Iterator in an Iterable. `Spliterator` (Java 8) extends the concept for parallel traversal - it can `trySplit()` to divide work across threads. Custom Iterators over I/O sources (database cursors, file lines, network streams) enable lazy evaluation that processes billions of records without loading them all into memory. The key architectural pattern: write methods that accept `Iterable<T>` instead of `List<T>` to keep APIs collection-agnostic.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -2276,7 +2692,16 @@ Test that your custom Iterable supports multiple independent iterations, that `h
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -2504,3 +2929,70 @@ process(List.of(arr));  // works
 ```
 
 Key insight: this is a language-level special case, not a type system relationship. It's one of the few places where Java's grammar treats arrays differently from objects.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Iterator and Iterable. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]

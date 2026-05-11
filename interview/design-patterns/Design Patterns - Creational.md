@@ -14,8 +14,8 @@ keywords:
   - Builder
   - Prototype
 difficulty_range: mixed
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Singleton
@@ -94,7 +94,7 @@ Where this analogy breaks down: Unlike a government office, Singleton doesn't qu
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Singleton is a rule that says: "There can be only one." When your program needs a shared resource like a printer manager, Singleton ensures everyone uses the same manager instead of creating their own separate ones.
@@ -113,6 +113,12 @@ Thread safety is the critical concern. Naive implementations break under concurr
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Singleton is the most misused pattern. The real question isn't "how to implement it" but "should you use it at all?" In modern applications, dependency injection containers manage object lifecycles. Spring's `@Scope("singleton")` is the default bean scope - it provides Singleton semantics without the testability problems. The pattern becomes an anti-pattern when: (1) it's used to avoid passing dependencies, (2) it holds mutable business state, (3) it makes unit testing require complex workarounds. In distributed systems, "singleton per JVM" is meaningless - you need distributed locks or leader election for true system-wide singletons. The enum approach in Java survives serialization, reflection, and cloning attacks - all of which break naive implementations.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -248,7 +254,16 @@ Use a concurrent test with `CountDownLatch` to have N threads call `getInstance(
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -396,6 +411,73 @@ The goal isn't zero Singletons - it's zero hand-coded Singletons. Let the framew
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Singleton. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Factory Method
@@ -474,7 +556,7 @@ Where this analogy breaks down: In the pattern, the subclass relationship is fix
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of writing `new SpecificThing()` everywhere, you call a method that creates the right thing for you. Different situations return different things, but your code doesn't need to know which one.
@@ -487,6 +569,12 @@ Factory Method is the intersection of inheritance and polymorphism applied to ob
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 The classic GoF Factory Method using subclasses is now relatively rare in modern code. What survived and thrived are three variations: (1) Static factory methods (`List.of()`, `Optional.of()`) that control construction without subclassing, (2) Parameterized factories that use a discriminator parameter instead of subclasses, (3) Functional factories using `Supplier<T>` or lambdas. The core principle - decouple creation from usage - remains universally applicable. In framework design, Factory Method is everywhere: Spring's `BeanFactory`, JPA's `EntityManagerFactory`, JDBC's `DriverManager.getConnection()`. The pattern is most valuable when you're designing a framework or library where users extend your code by providing their own types.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -625,7 +713,16 @@ Test each factory subclass returns the correct product type. Test the template m
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -783,6 +880,73 @@ Mitigation: In modern Java, use functional factories (`Supplier<T>`, `Function<C
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Factory Method. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Abstract Factory
@@ -861,7 +1025,7 @@ Where this analogy breaks down: In software, switching families is instant (swap
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Abstract Factory is like choosing a theme for your entire room. When you pick "Modern," everything - furniture, lighting, decor - comes in the modern style. You can't accidentally mix vintage with modern.
@@ -874,6 +1038,12 @@ Abstract Factory is an aggregation of Factory Methods. Each method in the factor
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Abstract Factory shines in exactly one scenario: when you have multiple product types that must be used together consistently, and you have multiple families (variants) of those products. If you only have one product type, use Factory Method. If families don't need consistency guarantees, use individual factories. The pattern's weakness - adding a new product type forces changes across all factories - makes it best suited for stable product interfaces with varying implementations. In modern practice, DI containers and configuration profiles often replace explicit Abstract Factories. Spring's `@Profile` mechanism achieves the same family-switching behavior without the pattern's boilerplate.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -991,7 +1161,16 @@ Create a `TestUIFactory` that returns mock products. Verify that `Dialog` calls 
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1085,6 +1264,73 @@ In my experience, if you're adding product types frequently, Abstract Factory is
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Abstract Factory. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Builder
@@ -1163,7 +1409,7 @@ Where this analogy breaks down: A kiosk allows changing your mind before submitt
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of cramming 15 settings into one confusing line, Builder lets you set each option by name, one at a time, in any order. When you're done, it creates the final object.
@@ -1176,6 +1422,12 @@ The Bloch Builder pattern uses a static inner class that mirrors the product's f
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Advanced Builder patterns include: (1) **Step Builder** - compile-time enforcement of required fields using interfaces for each step (`UserBuilder.name("x")` returns `WithName` interface that has `email()`, preventing calling `build()` before email is set). (2) **Generic self-referencing builder** for inheritance hierarchies using `T extends Builder<T>`. (3) **DSL-style builders** for configuration objects where the builder creates a domain-specific language. In practice, I evaluate Builder vs other options: Kotlin named parameters + default values eliminate most Builder use cases; Java records with Wither methods offer an alternative for simple cases; and for DTOs, Jackson's `@JsonDeserialize(builder=...)` integrates Builder with deserialization.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1313,7 +1565,16 @@ Test that `build()` throws on invalid combinations. Test that default values wor
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1414,6 +1675,73 @@ The general rule: use Builder when the construction API would otherwise be confu
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Builder. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Prototype
@@ -1492,7 +1820,7 @@ Where this analogy breaks down: Biological cells share no memory after division;
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of making something from scratch, you copy an existing one and change what's different. Like using a template instead of starting from a blank page.
@@ -1505,6 +1833,12 @@ The critical decision is shallow vs deep copy. Shallow copy copies field values 
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Prototype is most powerful in systems where you don't know concrete types at compile time. A document editor stores a palette of shapes (circle, rectangle, custom). The user drags a shape onto the canvas - the system calls `shape.clone()` without knowing if it's a `Circle` or `CustomShape`. This is polymorphic creation without factories. In JavaScript, the entire object system is prototype-based (`Object.create(proto)`), which shows the pattern elevated to a language feature. In production systems, I've used prototype registries for: configuring complex request objects (clone a baseline config, modify per-request), game entities (clone base enemy, vary attributes), and test data builders (clone a valid baseline, break one field per test).
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1633,7 +1967,16 @@ Test that modifying a clone does not affect the original (deep copy verification
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1734,3 +2077,70 @@ Three production scenarios where Prototype proved valuable:
 3. **Kubernetes manifest generation:** Base YAML manifests stored as prototypes. For each microservice deployment, clone the base and modify the image, replicas, and environment variables. This ensures all services share the same resource limits, health checks, and security contexts unless explicitly overridden.
 
 The common thread: Prototype shines when objects are "mostly the same" with small variations, and the base configuration is expensive or error-prone to recreate.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Prototype. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]

@@ -14,8 +14,8 @@ keywords:
   - Interface Segregation Principle (ISP)
   - Dependency Inversion Principle (DIP)
 difficulty_range: mixed
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Single Responsibility Principle (SRP)
@@ -86,7 +86,7 @@ Where this analogy breaks down: Departments communicate through meetings; classe
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Each class should do one thing well. Like a toaster just toasts bread - it doesn't also brew coffee.
@@ -99,6 +99,33 @@ The test for SRP: identify the actors. Who requests changes to this class? If th
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 SRP at the macro level is the single most important factor in maintainable codebases. It applies not just to classes but to modules, services, and teams. In microservices, SRP means each service owns one business capability. The anti-pattern: a "user service" that handles authentication, profiles, preferences, and notifications. The fix: auth service, profile service, notification service. The judgment call: SRP is a spectrum. Too few responsibilities per class = God objects. Too many = class explosion. The right granularity matches your team's change frequency.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -156,7 +183,16 @@ public class EmployeeReportGenerator {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -213,6 +249,74 @@ UserValidationOrchestrator.java
 All six classes change when user validation rules change (same actor). A single `UserValidator` with multiple methods is better. The separate-class approach adds 6 files, 6 constructor injections, and 6 test files for something that's logically one concern.
 
 My rule: if two classes always change together, they should be one class. SRP is about isolating independent change axes, not maximizing class count.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Single Responsibility Principle (SRP). Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -278,7 +382,19 @@ OCP doesn't mean you never modify code. It means the most common change scenario
 
 ---
 
-### Gradual Depth - Four Levels
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Add a new feature by plugging in a new piece, not by rewriting what already works.
@@ -291,6 +407,33 @@ OCP is achieved through: (1) Strategy pattern - new algorithm = new strategy cla
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 OCP is the most misapplied SOLID principle. Over-eager OCP creates "speculative generality" - abstractions for extension points that never materialize. The pragmatic approach: don't abstract preemptively. When the second implementation appears, refactor to OCP. When the third appears, you're glad you did. In large codebases, OCP's real value is organizational: team A can add features without team B's code review or risk. In microservices, OCP maps to the "open for extension" nature of event-driven architectures: new consumers can subscribe to existing events without modifying producers.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -336,7 +479,16 @@ public record Triangle(double base, double height)
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -371,6 +523,74 @@ The "Rule of Three":
 Premature OCP creates: interfaces with one implementation, factories that return one type, plugins with one plugin. These are overhead with no benefit.
 
 Signs you need OCP now: (1) you've modified the same switch/if-else 3+ times, (2) different teams add different cases to the same class, (3) the modification risk is higher than the abstraction cost.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Open-Closed Principle (OCP). Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -432,7 +652,19 @@ LSP is not about inheritance syntax - it's about behavioral contracts. If a meth
 
 ---
 
-### Gradual Depth - Four Levels
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 If you promise something works a certain way, every version of it must work that way. A substitute teacher must still teach the class, not show movies all day.
@@ -445,6 +677,33 @@ LSP violations manifest as: (1) subclass methods throwing exceptions the parent 
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 LSP is the formal statement of "design by contract." In practice, I use LSP as a code review check: for every method override, verify the three rules (preconditions, postconditions, invariants). Modern Java features help: `sealed` interfaces limit who can subtype, reducing the surface area for LSP violations. `record` classes are immutable, eliminating the Square/Rectangle mutation problem entirely. The ultimate LSP strategy: prefer composition over inheritance, and use inheritance only for genuine behavioral subtypes, not taxonomic classifications.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -502,7 +761,16 @@ public record Square(int side) implements Shape {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -536,6 +804,74 @@ _Why they ask:_ Tests deep knowledge of real-world trade-offs.
 3. **`Collections.unmodifiableList()`:** Returns a `List` that throws on `add()`, `remove()`, `set()`. The `List` contract implies mutability; the returned list violates that contract.
 
 All three exist because the Java designers prioritized reuse over correctness. Today, composition would be preferred: `Stack` would hold a `Deque`, `Properties` would hold a `Map<String,String>`, and `UnmodifiableList` would be a separate type.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Liskov Substitution Principle (LSP). Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -597,7 +933,19 @@ ISP is about coupling. A client that depends on 15 methods is coupled to 15 chan
 
 ---
 
-### Gradual Depth - Four Levels
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Don't force people to carry a toolbox when they need one screwdriver. Give them just the screwdriver.
@@ -610,6 +958,33 @@ ISP aligns with the Dependency Inversion Principle: clients define the interface
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 ISP's deepest impact is on compile-time dependencies and deployment. In a monolithic codebase with fat interfaces, changing one method recompiles everything that depends on the interface. With segregated interfaces, only the clients of that specific interface recompile. In microservices, ISP maps to API contracts: don't give every consumer the same API. BFF (Backend for Frontend) is ISP at the service level - mobile gets a different interface than web.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -679,7 +1054,16 @@ public class PrintService {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -714,6 +1098,74 @@ ISP at the microservice level means: don't expose a single REST API to all consu
 Solution: BFF pattern (Backend for Frontend). Each consumer gets a tailored API. The internal service stays rich, but the interface is segregated by consumer type.
 
 This is ISP: the "fat interface" is the monolithic REST API. The "segregated interfaces" are consumer-specific BFFs. Each client depends only on the data it actually uses, reducing coupling and allowing independent evolution.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Interface Segregation Principle (ISP). Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
 
 ---
 
@@ -779,7 +1231,19 @@ The word "inversion" is key. Normally, `OrderService` (high-level) depends on `M
 
 ---
 
-### Gradual Depth - Four Levels
+### Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+
+---
+
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Don't hardcode dependencies. Use interchangeable parts. Like a USB port that works with any USB device - you don't build the device into the computer.
@@ -792,6 +1256,33 @@ DIP has two halves: (1) Depend on abstractions - use interfaces. (2) Abstraction
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 DIP is the architectural principle that enables clean architecture, hexagonal architecture, and microservice independence. It's not just about classes - it applies to modules, services, and teams. In a microservice, the domain service defines the events it publishes (abstraction). Consumers subscribe to those events. The producer doesn't know about consumers. At the module level, DIP through interfaces enables parallel team development: team A builds the domain, team B builds the infrastructure, both agree on the interface contract. The pragmatic limit: don't apply DIP to stable, unlikely-to-change dependencies. `String`, `List`, `BigDecimal` are low-level details you should depend on directly - abstracting them adds no value.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+
+---
+
+### Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
 
 ---
 
@@ -861,7 +1352,16 @@ class OrderServiceTest {
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -917,3 +1417,71 @@ DIP at the service level means services communicate through contracts (abstracti
 3. **Consumer-driven contracts:** The consuming service defines the contract it needs (DIP: high-level defines the abstraction). The provider confirms it can satisfy that contract. This is pure DIP at the system level.
 
 The anti-pattern: Service A directly calls Service B's internal API, coupled to B's database schema. Change B's schema -> A breaks. DIP says: define an interface (API contract) that both depend on.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Dependency Inversion Principle (DIP). Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+

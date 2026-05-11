@@ -48,7 +48,7 @@ When working with interview content, follow these rules for different scenarios:
 
 ## Content Rules Summary
 
-Each keyword within a file has 14 required sections (see `INTERVIEW_PROMPT.md` for full spec):
+Each keyword within a file has 18 sections (see `INTERVIEW_PROMPT.md` v2.0 for full spec):
 
 1. Title (`# KEYWORD NAME`)
 2. TL;DR (one sentence, 25 words max)
@@ -57,24 +57,32 @@ Each keyword within a file has 14 required sections (see `INTERVIEW_PROMPT.md` f
 5. Understand It in 30 Seconds (One line / One analogy / One insight)
 6. First Principles (Invariants / Trade-offs / Essential vs Accidental)
 7. Mental Model / Analogy (blockquote + mapping + breakdown)
-8. Gradual Depth - Four Levels (Anyone / Junior / Mid / Senior+)
+8. Gradual Depth - Five Levels (Anyone / Junior / Mid / Senior / Distinguished)
 9. How It Works (summarized but complete mechanism)
 10. Complete Picture - End-to-End Flow (normal + failure + scale)
-11. Code Example (real-world, BAD then GOOD, production-grade)
-12. Quick Recall (3 things + interview one-liner)
+11. Code Example (CONDITIONAL - real-world, BAD then GOOD, production-grade)
+12. Quick Reference Card (8 fields + 3 things + interview one-liner)
 13. The Surprising Truth (one counterintuitive fact)
-14. Interview Deep-Dive (min 5 Qs with COMPLETE answers - the star section)
+14. Interview Deep-Dive (scaled by difficulty: easy=5, medium=7, hard=10)
+15. Comparison Table (CONDITIONAL - when 2+ alternatives exist)
+16. Common Misconceptions (min 4 rows, danger-ordered)
+17. Failure Modes and Diagnosis (min 3 modes with real diagnostic commands)
+18. Related Keywords (prerequisites / builds-on / alternatives)
 
 ## Interview Deep-Dive Rules (Critical)
 
 This is the most important section. Rules:
 
-- **No cap on question count** - more is better (minimum 5, aim for 7-10)
+- **No cap on question count** - more is better
+- **Minimum scales by difficulty:** easy=5, medium=7, hard=10
 - Every question MUST have a **complete, detailed answer** (not bullet hints)
 - Answers should demonstrate natural depth ("low-key impress the interviewer")
 - Answers can be long but must have clear structure and learning progression
+- **Must cover at least 5 of 8 question categories** per keyword
 - Required question types: conceptual, debugging, architecture, trade-off, production, hands-on, system design, comparison
+- **At least 1 DEBUGGING + 1 TRADE-OFF question per keyword** (mandatory)
 - Questions must be scenario-based, practical, and test real experience
+- No duplicate questions across keywords in the same file
 
 ## Encoding Rules
 
@@ -144,7 +152,7 @@ This will:
 
 1. Scan dictionary `index.md` for the category/tier
 2. Analyse keywords for new folder/file opportunities
-3. Map categories to interview topics via `TierTopicMap`
+4. Map categories to interview topics via `topic-registry.md`
 4. Create missing folders, stubs, and index files
 5. Generate content for uncovered keywords
 
@@ -160,8 +168,10 @@ keywords:
   - Keyword Two
 difficulty_range: easy | medium | hard | mixed
 status: draft | in-progress | complete
-version: 1
+version: 2
 ---
 ```
+
+Version field: `2` for v2.0 content (18 sections), `1` for legacy v1.0 content (14 sections), `0` for stubs.
 
 No emojis. No Unicode stars. No special characters. Plain text only in YAML.

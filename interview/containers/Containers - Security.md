@@ -10,8 +10,8 @@ keywords:
   - Rootless Containers
   - Docker Secrets
 difficulty_range: hard
-status: complete
-version: 1
+status: in-progress
+version: 2
 ---
 
 # Container Security
@@ -91,7 +91,7 @@ Where this analogy breaks down: unlike onion layers, security layers work simult
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Making sure containers can't do more than they should - they can't access other containers' data, can't break out to the host machine, and don't contain known vulnerabilities.
@@ -104,6 +104,12 @@ Drop all Linux capabilities and add back only what's needed. Apply seccomp profi
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Design a container security architecture: image provenance chain (cosign signing, SBOM, Sigstore), admission control pipeline (deny unsigned images, deny privileged, deny host networking), runtime security monitoring (Falco for syscall anomalies, network flow analysis), and incident response (forensic image capture, audit trails). Understand the container escape attack chain: container -> kernel exploit -> host -> other containers/orchestrator. Mitigations: gVisor (syscall interception), Kata (microVM isolation), user namespaces (UID remapping).
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -201,7 +207,16 @@ Run `kubectl auth can-i --as=system:serviceaccount:ns:sa` to verify RBAC. Deploy
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -328,6 +343,73 @@ Success metric: 0% root containers in 3 months, with no production incidents fro
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Container Security. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Linux Namespaces
@@ -406,7 +488,7 @@ Where this analogy breaks down: AR glasses don't prevent the wearer from affecti
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A way to give each program its own private view of the system - its own list of running programs, its own network, its own file system - while actually sharing one computer.
@@ -432,6 +514,12 @@ Created with `clone(2)` or `unshare(2)`. Each process has `/proc/<pid>/ns/` syml
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 User namespaces are the key to rootless containers: PID 1 inside the container can be UID 0 (root) in the user namespace, while mapping to UID 100000 on the host. This means even a container escape lands you as an unprivileged user. The complexity: some operations (binding to port < 1024, loading kernel modules) check capabilities in the INITIAL user namespace, not the container's namespace - this is by design. Understanding this explains why some apps "need root" in containers.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -498,7 +586,16 @@ ip addr   # Shows only loopback (no host network)
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -570,6 +667,73 @@ Limitations:
 - Performance: slight overhead for UID translation on every file access
 
 This is why rootless Podman became popular - it uses user namespaces by default, making container runtime itself unprivileged.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Linux Namespaces. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
 
 ---
 
@@ -651,7 +815,7 @@ Where this analogy breaks down: you can't request a plan upgrade mid-call, but K
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Cgroups are the system that limits how much computer resources (memory, CPU) each container can use, so one greedy container can't ruin things for others.
@@ -664,6 +828,12 @@ CPU: uses CFS bandwidth control. `--cpus=1.5` means 150ms of CPU time per 100ms 
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 cgroups v2 unifies the hierarchy (v1 had separate hierarchies per controller). Key implications: v2 enables PSI (Pressure Stall Information) for proactive resource management, memory.high as a soft limit with throttling before OOM, and proper nested cgroup delegation for rootless containers. Understanding CPU throttling: a container with `limits.cpu: 1` can be throttled even when the host has idle CPUs - this is by design (isolation guarantee) but surprises many teams. The fix: use requests (scheduling) without limits (burstable), or use limits only for memory.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -750,7 +920,16 @@ kubectl describe pod myapp | grep -A5 "Last State"
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -834,6 +1013,73 @@ Recommendation: Set memory limits always (OOM is worse than throttling). For CPU
 
 ---
 
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Cgroups. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+---
+
 ---
 
 # Image Scanning
@@ -912,7 +1158,7 @@ Where this analogy breaks down: not all "allergens" (CVEs) actually affect your 
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A tool that checks your container for known security problems before you deploy it, like a spell-checker for vulnerabilities.
@@ -925,6 +1171,12 @@ Scanners: (1) extract image filesystem layers, (2) identify installed packages (
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Build a vulnerability management program: triage based on exploitability (EPSS score, not just CVSS), set SLAs (Critical: 24h, High: 7d, Medium: 30d), use VEX (Vulnerability Exploitability eXchange) to mark CVEs as "not affected" when the code path isn't reachable. Continuous scanning in registries catches new CVEs in deployed images. SBOM generation (Syft) enables rapid impact assessment when a new CVE like Log4Shell is announced - "which of our 500 images contain log4j?"
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1001,7 +1253,16 @@ grype sbom:./sbom.json
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1065,6 +1326,73 @@ _Why they ask:_ Tests ability to balance security with development velocity.
 5. **Prevention:** Monthly base image update cadence (not yearly). Automated testing against new base images. The longer between updates, the more breakage accumulates.
 
 The principle: security is a risk trade-off. "Can't update" usually means "haven't invested in update automation." The cost of being breached almost always exceeds the cost of fixing compatibility.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Image Scanning. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
 
 ---
 
@@ -1146,7 +1474,7 @@ Where this analogy breaks down: containers need to communicate (networking), whi
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Normal Docker needs admin access to run. Rootless containers don't - even if someone breaks out of the container, they can't take over the computer.
@@ -1159,6 +1487,12 @@ Three key mechanisms: (1) User namespace maps container UID 0 to host UID 100000
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Rootless has been production-ready since 2022 but adoption is slow due to: port binding limitations (use `net.ipv4.ip_unprivileged_port_start=0`), storage performance (native overlay requires kernel 5.11+), and Kubernetes rootless still being complex to configure. The future: Kubernetes will default to rootless (containerd in user namespace). The current gap: stateful workloads needing specific file ownership are tricky with UID remapping.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1222,7 +1556,16 @@ ps aux | grep myapp
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1294,6 +1637,73 @@ Phased migration:
 - Pod security standards enforce: `runAsNonRoot: true`
 
 Key: the main blocker is usually volume permissions (UID mapping), not the runtime itself. Test early with real workloads.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Rootless Containers. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
 
 ---
 
@@ -1375,7 +1785,7 @@ Where this analogy breaks down: secrets can be read multiple times during the co
 
 ---
 
-### Gradual Depth - Four Levels
+### Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A safe way to give containers passwords and keys without putting them in plain text where others can see them.
@@ -1388,6 +1798,12 @@ Kubernetes Secrets are base64-encoded in etcd (not encrypted by default - enable
 
 **Level 4 - Mastery (senior/staff+ engineer):**
 Design a secrets architecture: HashiCorp Vault as source of truth (dynamic secrets with TTL, automatic rotation), external-secrets operator to sync to K8s, CSI secrets driver for direct pod mount from Vault. Enable audit logging on all secret access. For build-time secrets, use BuildKit `--secret` flag (not in any layer). Rotate secrets without downtime: application reads secret file on each use (not cached at startup).
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
 
 ---
 
@@ -1472,7 +1888,16 @@ String password = Files.readString(
 
 ---
 
-### Quick Recall
+### Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
 
 **If you remember only 3 things:**
 
@@ -1556,3 +1981,70 @@ Prevention:
 - Education: never put secrets in code, use env injection
 
 Key principle: rotation is the fix, not git history rewriting. Once pushed, assume it's compromised regardless of cleanup.
+
+---
+
+### Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Docker Secrets. Otherwise remove this section.]
+
+---
+
+### Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+
+---
+
+### Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+---
+
+### Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
