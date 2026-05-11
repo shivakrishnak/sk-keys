@@ -33,26 +33,26 @@
 
 ## Active Topics
 
-| Topic                           | Folder             | Dictionary Sources | Status   | Description                                                         |
-| ------------------------------- | ------------------ | ------------------ | -------- | ------------------------------------------------------------------- |
-| Java                            | java/              | JVM, JLG           | complete | Core Java language, OOP, collections, modern Java features          |
-| Java Concurrency                | java-concurrency/  | JCC                | complete | Threading, synchronization, virtual threads, concurrent collections |
-| Spring                          | spring/            | SPR                | complete | Spring Core, Boot, MVC, Security, Data, Cloud, AOP, Testing         |
-| Hibernate                       | hibernate/         | JPH                | complete | ORM fundamentals, JPA, entity management, performance, locking      |
-| SQL and Databases               | sql-and-databases/ | DBF, NDB           | planned  | SQL queries, joins, indexing, transactions, NoSQL, replication      |
-| Containers                      | containers/        | CTR                | planned  | Docker fundamentals, images, networking, compose, security          |
-| Kubernetes                      | kubernetes/        | K8S                | planned  | Core resources, networking, storage, security, operations           |
-| System Design                   | system-design/     | DST, MSV, SYD, SAP | complete | Distributed systems, microservices, architecture, infrastructure    |
-| React                           | react/             | RCT                | planned  | Components, hooks, state management, performance, testing           |
-| Security                        | security/          | SEC, IAM, CRY      | planned  | Web security, authentication, authorization, cryptography           |
-| Data Structures and Algorithms  | dsa/               | DSA                | planned  | Arrays, trees, graphs, sorting, dynamic programming                 |
-| Caching                         | caching/           | CCH                | planned  | Cache patterns, Redis, CDN, invalidation, consistency               |
-| Messaging                       | messaging/         | MSG                | planned  | Kafka, RabbitMQ, event-driven architecture, streaming               |
-| CI/CD and DevOps                | cicd-and-devops/   | CCD, GIT, OBS      | planned  | Pipelines, Git strategies, observability, SRE practices             |
-| AI and RAG                      | ai-and-rag/        | AIF, LLM, RAG      | planned  | LLM fundamentals, prompt engineering, RAG, agents, LLMOps           |
-| Design Patterns                 | design-patterns/   | DPT                | complete | GoF patterns, SOLID, creational, structural, behavioral, additional |
-| Microservices                   | microservices/     | MSV                | complete | Service decomposition, communication, resilience, deployment        |
-| Async and Background Processing | async-background/  | ASY                | complete | Message queues, brokers, event-driven, orchestration, observability |
+| Topic                           | Folder             | Dictionary Sources | Status     | Description                                                         |
+| ------------------------------- | ------------------ | ------------------ | ---------- | ------------------------------------------------------------------- |
+| Java                            | java/              | JVM, JLG           | complete   | Core Java language, OOP, collections, modern Java features          |
+| Java Concurrency                | java-concurrency/  | JCC                | complete   | Threading, synchronization, virtual threads, concurrent collections |
+| Spring                          | spring/            | SPR                | complete   | Spring Core, Boot, MVC, Security, Data, Cloud, AOP, Testing         |
+| Hibernate                       | hibernate/         | JPH                | complete   | ORM fundamentals, JPA, entity management, performance, locking      |
+| SQL and Databases               | sql-and-databases/ | DBF, NDB           | planned    | SQL queries, joins, indexing, transactions, NoSQL, replication      |
+| Containers                      | containers/        | CTR                | planned    | Docker fundamentals, images, networking, compose, security          |
+| Kubernetes                      | kubernetes/        | K8S                | planned    | Core resources, networking, storage, security, operations           |
+| System Design                   | system-design/     | DST, MSV, SYD, SAP | complete   | Distributed systems, microservices, architecture, infrastructure    |
+| React                           | react/             | RCT                | scaffolded | Components, hooks, state management, performance, testing           |
+| Security                        | security/          | SEC, IAM, CRY      | planned    | Web security, authentication, authorization, cryptography           |
+| Data Structures and Algorithms  | dsa/               | DSA                | planned    | Arrays, trees, graphs, sorting, dynamic programming                 |
+| Caching                         | caching/           | CCH                | planned    | Cache patterns, Redis, CDN, invalidation, consistency               |
+| Messaging                       | messaging/         | MSG                | planned    | Kafka, RabbitMQ, event-driven architecture, streaming               |
+| CI/CD and DevOps                | cicd-and-devops/   | CCD, GIT, OBS      | planned    | Pipelines, Git strategies, observability, SRE practices             |
+| AI and RAG                      | ai-and-rag/        | AIF, LLM, RAG      | planned    | LLM fundamentals, prompt engineering, RAG, agents, LLMOps           |
+| Design Patterns                 | design-patterns/   | DPT                | complete   | GoF patterns, SOLID, creational, structural, behavioral, additional |
+| Microservices                   | microservices/     | MSV                | complete   | Service decomposition, communication, resilience, deployment        |
+| Async and Background Processing | async-background/  | ASY                | complete   | Message queues, brokers, event-driven, orchestration, observability |
 
 ---
 
@@ -200,3 +200,19 @@ To add a new topic to this registry:
 | Async and Background Processing - Patterns.md        | Event-Driven Architecture, Saga Pattern, Outbox Pattern, Backpressure, Async API Design  |
 | Async and Background Processing - Orchestration.md   | Temporal, AWS Step Functions, Cron Jobs, Distributed Scheduler, Celery, Quartz Scheduler |
 | Async and Background Processing - Observability.md   | Async Observability, Consumer Lag, Error Handling, Flow Control, Architecture Selection  |
+
+### React (react/)
+
+| File                                   | Keywords (approximate)                                                                        |
+| -------------------------------------- | --------------------------------------------------------------------------------------------- |
+| React - Fundamentals.md                | Component Model, Mental Model, JSX, Functional Components, Props, Events, Conditional, Keys   |
+| React - Hooks.md                       | useState, useEffect, useRef, useReducer, useMemo, useCallback, Custom Hooks, React 19         |
+| React - State Management.md            | Lifting State, Context API, Redux Toolkit, Zustand, React Query, Prop Drilling Anti-Pattern   |
+| React - Component Patterns.md          | Composition, Children/Render Props, HOC, Compound Components, TypeScript Patterns, Forms      |
+| React - Performance.md                 | React.memo, Code Splitting, Profiling, Optimization Patterns, Concurrent Mode, Suspense       |
+| React - Testing.md                     | React Testing Library, Test Strategies, Storybook, a11y Testing, Mocking (MSW)                |
+| React - Routing and Styling.md         | React Router v6, Next.js App Router, CSS-in-JS, Tailwind, Accessibility, i18n                 |
+| React - Server-Side and Next.js.md     | Next.js SSR/SSG/ISR, Server Components, Hydration, GraphQL, Apollo Client                     |
+| React - Architecture and Production.md | Architecture Strategy, Micro-Frontends, Security (XSS/CSP), Trade-offs, Environment Variables |
+| React - Internals and Advanced.md      | Fiber Architecture, Reconciliation, React Compiler, Class to Hooks Migration, Ecosystem Map   |
+| React - Tooling.md                     | Project Setup (Vite/CRA), DevTools, ESLint, Prettier, Vite Build Config                       |

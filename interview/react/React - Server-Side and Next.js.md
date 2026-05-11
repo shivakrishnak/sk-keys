@@ -1,0 +1,19 @@
+---
+title: "React - Server-Side and Next.js"
+topic: React
+subtopic: Server-Side and Next.js
+keywords:
+  - Next.js Fundamentals (SSR, SSG, ISR)
+  - React Server Components
+  - Hydration and Server-Side Rendering Internals
+  - React Server Components Strategy
+  - GraphQL with React
+  - Apollo Client
+difficulty_range: mixed
+status: draft
+version: 0
+---
+
+# React - Server-Side and Next.js
+
+> Content generation pending. Use INTERVIEW_PROMPT.md v3.0 to populate.

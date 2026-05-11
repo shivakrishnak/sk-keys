@@ -1,0 +1,21 @@
+---
+title: "React - Performance"
+topic: React
+subtopic: Performance
+keywords:
+  - React.memo and PureComponent
+  - Lazy Loading and Code Splitting
+  - React Performance Profiling (Browser DevTools)
+  - React Performance Optimization Patterns
+  - React Performance Architecture
+  - Unnecessary Re-render Anti-Pattern
+  - React Concurrent Mode and Scheduler
+  - React Suspense and Concurrent Features
+difficulty_range: mixed
+status: draft
+version: 0
+---
+
+# React - Performance
+
+> Content generation pending. Use INTERVIEW_PROMPT.md v3.0 to populate.
