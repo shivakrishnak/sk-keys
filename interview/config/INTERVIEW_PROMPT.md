@@ -1,4 +1,4 @@
-# Interview Mastery Dictionary - Master Prompt v3.1
+# Interview Mastery Dictionary - Master Prompt v3
 
 > **This is the authoritative generation spec** for every keyword entry
 > in the Interview Mastery Dictionary. Paste this prompt into any AI
@@ -11,13 +11,13 @@
 > | Constant       | Value  | Meaning                                      |
 > | -------------- | ------ | -------------------------------------------- |
 > | `SPEC_VERSION` | `3`    | Integer written to `version:` in all entries |
-> | `SPEC_LABEL`   | `v3.1` | Human-readable label for headers/commits     |
+> | `SPEC_LABEL`   | `v3`   | Human-readable label for headers/commits     |
 
 ---
 
 ````
 ================================================================
-INTERVIEW MASTERY DICTIONARY - MASTER PROMPT v3.1
+INTERVIEW MASTERY DICTIONARY - MASTER PROMPT v3
 ================================================================
 
 You are an elite Software Engineering mentor and technical writer.
@@ -1154,21 +1154,21 @@ THE DANGEROUS ENGINEER TEST:
   4. Choose between this and alternatives in <60 seconds?
   If any answer is NO: strengthen the relevant section.
 
-THE PRESSURE TEST (v3.1):
+THE PRESSURE TEST:
   Read the answer to Q1 aloud while timing yourself.
   If you can't finish in 90 seconds: the answer is too long
   or insufficiently structured.
   If you finish in 30 seconds: the answer lacks depth.
   Every answer must be deliverable under interview pressure.
 
-THE COLD CALL TEST (v3.1):
+THE COLD CALL TEST:
   A candidate who hasn't reviewed this concept in a week
   should be able to use the TRIGGER PHRASE and OPENING
   SENTENCE from the Quick Reference Card to deliver a
   passing answer immediately.
 
 ----------------------------------------------------------------
-INTERVIEW SIGNAL REFERENCE (v3.1)
+INTERVIEW SIGNAL REFERENCE
 ----------------------------------------------------------------
 
   What interviewers silently evaluate based on response type:
@@ -1199,7 +1199,7 @@ INTERVIEW SIGNAL REFERENCE (v3.1)
   not textbook recall.
 
 ----------------------------------------------------------------
-ANSWER CALIBRATION REFERENCE (v3.1)
+ANSWER CALIBRATION REFERENCE
 ----------------------------------------------------------------
 
   Use this scale when writing Interview Deep-Dive answers
@@ -1657,7 +1657,7 @@ SINGLE FILE (all keywords in a sub-topic file):
       - Keyword 4
       - Keyword 5
 
-  Follow Interview Mastery Prompt v3.1 exactly.
+  Follow Interview Mastery Prompt v3 exactly.
   Generate all keywords in sequence within one file.
   Separate keywords with double horizontal rules.
   Each keyword fully self-contained.
@@ -1670,7 +1670,7 @@ BATCH (all files in a topic folder):
     - Topic - Subtopic2.md (keywords: K4, K5, K6)
     - Topic - Subtopic3.md (keywords: K7, K8, K9)
 
-  Follow Interview Mastery Prompt v3.1 exactly.
+  Follow Interview Mastery Prompt v3 exactly.
   Generate one file at a time. Each file complete.
 
 NEW TOPIC:
@@ -1681,7 +1681,7 @@ NEW TOPIC:
   3. Create topic folder + index.md
   4. Generate content for each file
 
-  Follow Interview Mastery Prompt v3.1 exactly.
+  Follow Interview Mastery Prompt v3 exactly.
 
 ================================================================
 SECTION 8: SELF-VALIDATION CHECKLIST
@@ -1744,38 +1744,36 @@ INTERVIEW DEEP-DIVE QUALITY:
   [ ] Answers would impress a senior interviewer
   [ ] No duplicate questions across keywords in same file
 
-NEW IN v3.0 - ADDITIONAL CHECKS:
+NEW IN v3 - ADDITIONAL CHECKS:
   [ ] Mastery Checklist: 5 indicators in EXPLAIN/DEBUG/
        DECIDE/BUILD/EXTEND order, each concept-specific
   [ ] Quick Reference Card: KEY NUMBERS field present
        with 2-3 real thresholds/defaults
+  [ ] Quick Reference Card: TRIGGER PHRASE field present
+  [ ] Quick Reference Card: OPENING SENTENCE field present
+  [ ] Quick Reference Card: AVOID WHEN and ANTI-PATTERN
+       fields present (shows mastery through contrast)
   [ ] Interview Deep-Dive positioned as capstone (after
        Failure Modes, before Related Keywords)
+  [ ] Interview Deep-Dive: timing guidelines table at start
+  [ ] Interview Deep-Dive: *Likely follow-up:* on each Q
   [ ] Each interview question tagged [JUNIOR]/[MID]/
        [SENIOR]/[STAFF]
   [ ] Each answer ends with "What separates good from
        great" insight line
+  [ ] Interview Deep-Dive: 1+ BEHAVIORAL question for
+       medium/hard keywords
+  [ ] Interview Deep-Dive: 1+ CROSS-CUTTING question for
+       hard keywords
   [ ] Common Misconceptions: min 4 rows, ordered by danger
   [ ] Failure Modes: min 3 modes with real commands
   [ ] Failure Modes: security mode present if attack
        surface exists
   [ ] Related Keywords: all 3 categories populated
-  [ ] Quick Reference Card: AVOID WHEN and ANTI-PATTERN
-       fields present (shows mastery through contrast)
   [ ] Level 5 Gradual Depth present (expert thinking)
-  [ ] Comparison Table present if alternatives exist
-
-NEW IN v3.1 - ADDITIONAL CHECKS:
   [ ] Senior-to-Staff Leap present in Gradual Depth
        (required for medium/hard keywords)
-  [ ] Quick Reference Card: TRIGGER PHRASE field present
-  [ ] Quick Reference Card: OPENING SENTENCE field present
-  [ ] Interview Deep-Dive: timing guidelines table at start
-  [ ] Interview Deep-Dive: *Likely follow-up:* on each Q
-  [ ] Interview Deep-Dive: 1+ BEHAVIORAL question for
-       medium/hard keywords
-  [ ] Interview Deep-Dive: 1+ CROSS-CUTTING question for
-       hard keywords
+  [ ] Comparison Table present if alternatives exist
   [ ] Rapid Decision Tree in Comparison Table (if present)
   [ ] Answers calibrated to "Good" or above per Answer
        Calibration Reference in Section 5
@@ -1826,33 +1824,26 @@ A file is v2.0 (version: 2) if it ALSO has:
     (easy: 5, medium: 7, hard: 10)
   - AVOID WHEN + ANTI-PATTERN in Quick Reference Card
 
-A file is v3.0 (version: 3) if it ALSO has:
+A file is v3 (version: 3) if it ALSO has:
   - Mastery Checklist section with 5 indicators
     (EXPLAIN/DEBUG/DECIDE/BUILD/EXTEND)
   - KEY NUMBERS field in Quick Reference Card
+  - TRIGGER PHRASE + OPENING SENTENCE in Quick Ref Card
   - Interview Deep-Dive in capstone position (after
     Failure Modes, before Related Keywords)
   - Difficulty tags on each interview question
     ([JUNIOR] [MID] [SENIOR] [STAFF])
   - "What separates good from great" line after each
     interview answer
+  - *Likely follow-up:* on each Interview Deep-Dive Q
+  - Senior-to-Staff Leap in Gradual Depth section
+  - At least 1 BEHAVIORAL question for medium/hard keywords
+  - Rapid Decision Tree in Comparison Table (if present)
+  - Interview question minimums: easy 7, medium 9, hard 12
   - Section order: Quick Ref -> Mastery Checklist ->
     Surprising Truth -> Comparison -> Misconceptions ->
     Failure Modes -> Interview Deep-Dive -> Related
 
-A file meets v3.1 standard if it ALSO has:
-  - Senior-to-Staff Leap in Gradual Depth section
-  - TRIGGER PHRASE + OPENING SENTENCE in Quick Ref Card
-  - *Likely follow-up:* on each Interview Deep-Dive Q
-  - Rapid Decision Tree in Comparison Table (if present)
-  - At least 1 BEHAVIORAL question for medium/hard keywords
-  - Interview question minimums: easy 7, medium 9, hard 12
-  v3.1 is a spec enhancement within SPEC_VERSION 3 - files
-  do not need a version bump, but new content MUST conform
-  to v3.1 standard.
-
-Set version: 3 only after ALL v3.0 markers are present.
-New content generated after v3.1 spec release must also
-meet all v3.1 markers listed above.
+Set version: 3 only after ALL v3 markers are present.
 
 ````
