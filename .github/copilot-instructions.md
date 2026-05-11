@@ -28,7 +28,7 @@ Rules are grouped into four categories: **Content** (which sections to write and
 | `.github/generate-dict-entries.prompt.md`     | Generate full `LATEST_VERSION_LABEL` dictionary entry content from stubs |
 | `.github/prompts/upgrade-batch.prompt.md`     | Upgrade existing entries to `LATEST_VERSION_LABEL` standard              |
 
-**Keyword generation spec:** `KEYWORD_GENERATOR_PROMPT.md` (Category Keyword Generator v3.0) is the master specification for all keyword list generation. Apply it by default when generating keyword lists for any category or tier.
+**Keyword generation spec:** `KEYWORD_GENERATOR_PROMPT.md` (Category Keyword Generator v4.0) is the master specification for all keyword list generation. Apply it by default when generating keyword lists for any category or tier.
 
 ## Default Behaviour
 

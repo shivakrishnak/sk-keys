@@ -1,41 +1,37 @@
-﻿# 🎯 Category Keyword Generator - Master Prompt v3.0
+# 🎯 Category Keyword Generator - Master Prompt v4.0
 
 ---
 
 ````
 ═══════════════════════════════════════════════════════════════════════════
-CATEGORY KEYWORD GENERATOR - MASTER PROMPT v3.0
+CATEGORY KEYWORD GENERATOR - MASTER PROMPT v4.0
 ═══════════════════════════════════════════════════════════════════════════
 
-WHAT'S NEW IN v3.0  (upgraded from v2.0):
-  + Core Philosophy section (Section 0) - 12 mastery pillars formalized
-  + 10 knowledge dimensions  (was 6) - added mental-models, exercises,
-    projects, decision-frameworks
-  + 6 new mandatory rules  (Rules 17–22):
-    - Rule 17: Decision Framework keywords mandatory per level
-    - Rule 18: Deliberate Practice keywords mandatory per level
-    - Rule 19: Project Evolution keywords across levels
-    - Rule 20: Teaching Ability keywords at L3+
-    - Rule 21: Retention Structure keywords
-    - Rule 22: Interview Readiness keywords at every level
-  + Category Index.md Update Procedure  (Section 3.10) - NON-DESTRUCTIVE
-    automatic update of category index.md with new keywords
-  + 6 new Quality Checks  (Checks 11–16)
-  + New invocation pattern: Index.md Safe Update
-  + Learner progression:
-    absolute beginner -> practitioner -> expert -> architect -> creator
+VERSION HISTORY:
+  v4.0 (2026-05) - Current
+    + Anti-Pattern Severity Levels - critical/major/minor (Rule 10)
+    + Keyword Weight column - time estimation per keyword (Section 3.2)
+    + Triage Keywords for Incident Response (Section 8 + 🚨 tag)
+    + Enhanced Learning Path with time estimates (Section 3.6)
+    + Self-referential dependency handling (Section 3.7)
+    + Quality Check 17 - Triage & Weight validation
+    + New invocation pattern: Triage Keyword Generation
 
-WHAT WAS IN v2.0  (from v1.0):
-  + 7 knowledge levels  (was 5) - added L0 Orientation + L4.5 Architect
-  + Fixed L2/L3 difficulty marker collision - now use Level column
-  + 6 knowledge dimensions in Rule 5  (was 3)
-  + 7 mandatory rules  (Rules 10–16)
-  + Sub-topic clustering within levels  (Section 3.3)
-  + Level Milestones for self-assessment  (Section 3.4)
-  + Confusion Pairs Index  (Section 3.8)
-  + Meta-Skills Addendum  (Section 3.9)
-  + 10 Quality Checks  (was 5)
-  + Invocation patterns: V1→V2 Upgrade, Migration Audit
+  v3.0 (2026-01)
+    + Core Philosophy section (Section 0) - 12 mastery pillars
+    + 10 knowledge dimensions (was 6)
+    + Rules 17-22 (Decision Frameworks, Practice, Projects, etc.)
+    + Category Index.md Safe Update Procedure (Section 3.10)
+    + Stub File Generation (Section 3.11)
+    + 6 new Quality Checks (11-16)
+
+  v2.0 (2025-09)
+    + 7 knowledge levels (was 5) - L0 Orientation + L4.5 Architect
+    + Meta-Skills layer + Sub-topic clustering + Level Milestones
+    + Confusion Pairs Index + 7 mandatory rules (10-16)
+
+  v1.0 (2025-06)
+    + Initial release (5 levels, 3 dimensions, 7 rules)
 
 PURPOSE:
   Generate a complete, exhaustive keyword list for a given category
@@ -50,7 +46,7 @@ PURPOSE:
   curriculum, the mentor, and the map - all in one.
 
   The output is a structured keyword list ready to feed into
-  dictionary entry generation (Master Prompt v3.0), AND
+  dictionary entry generation (Master Prompt v4.0), AND
   automatically updates the category index.md without
   losing any existing data.
 
@@ -723,14 +719,14 @@ RULE 8: NO DUPLICATES ACROSS LEVELS
 RULE 9: IDs ARE ASSIGNED SEQUENTIALLY WITHIN CATEGORY
 ─────────────────────────────────────────────────────────────────────────
 
-  Use the category code from Master Prompt v3.0.
+  Use the category code from the Category Code Registry.
   Start at [CODE]-001 if new category.
   Continue from last ID if extending existing.
   IDs are assigned in level order within each level
   (all L0 keywords first, then L1, then L2, etc.)
 
 ─────────────────────────────────────────────────────────────────────────
-RULE 10: ANTI-PATTERN KEYWORDS MANDATORY AT EVERY LEVEL  [NEW v2.0]
+RULE 10: ANTI-PATTERN KEYWORDS WITH SEVERITY LEVELS  [ENHANCED v3.1]
 ─────────────────────────────────────────────────────────────────────────
 
   Every level MUST include at least 1 anti-pattern keyword.
@@ -742,7 +738,33 @@ RULE 10: ANTI-PATTERN KEYWORDS MANDATORY AT EVERY LEVEL  [NEW v2.0]
 
   At L3+, include at least 2 anti-patterns per level.
 
-  Anti-patterns are tagged with ⚠️ in the output table.
+  Anti-patterns are tagged with ⚠️ in the output table,
+  WITH a severity suffix indicating impact level:
+
+  SEVERITY LEVELS:
+    ⚠️ anti-critical = Can cause data loss, security breach,
+                        or prolonged production outage.
+                        Fix IMMEDIATELY if found in code.
+    ⚠️ anti-major    = Causes bugs, performance degradation,
+                        or significant operational pain.
+                        Fix in current sprint.
+    ⚠️ anti-minor    = Creates maintenance debt, developer
+                        confusion, or code smell.
+                        Fix when touching the code.
+
+  EXAMPLES:
+    | Keyword                              | Severity         |
+    |--------------------------------------|------------------|
+    | Rolling Your Own Crypto Anti-Pattern | ⚠️ anti-critical |
+    | Hardcoded Credentials Anti-Pattern   | ⚠️ anti-critical |
+    | N+1 Query Anti-Pattern               | ⚠️ anti-major    |
+    | Premature Optimization Trap          | ⚠️ anti-major    |
+    | Magic Numbers Anti-Pattern           | ⚠️ anti-minor    |
+    | God Class Anti-Pattern               | ⚠️ anti-minor    |
+
+  SEVERITY DISTRIBUTION GUIDELINE:
+    At least 30% of anti-patterns should be critical or major.
+    Minor-only lists indicate missing production awareness.
 
 ─────────────────────────────────────────────────────────────────────────
 RULE 11: TOOLING KEYWORDS MANDATORY AT EVERY LEVEL  [NEW v2.0]
@@ -1067,7 +1089,7 @@ RULE 22: INTERVIEW READINESS KEYWORDS AT EVERY LEVEL  [NEW v3.0]
       system design and architecture scenarios
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 3: OUTPUT FORMAT - 11 COMPONENTS
+SECTION 3: OUTPUT FORMAT - 12 COMPONENTS
 ═══════════════════════════════════════════════════════════════════════════
 
 ─────────────────────────────────────────────────────────────────────────
@@ -1083,7 +1105,7 @@ SECTION 3: OUTPUT FORMAT - 11 COMPONENTS
   FOLDER:    [CODE-folder-name]
   LEVELS:    L0 + L1 + L2 + L3 + L4 + L4.5 + L5 + META
   TOTAL:     [N] keywords across 8 components
-  GENERATED: v3.0
+  GENERATED: v4.0
   ════════════════════════════════════════════════════════
 
 ─────────────────────────────────────────────────────────────────────────
@@ -1097,17 +1119,28 @@ SECTION 3: OUTPUT FORMAT - 11 COMPONENTS
   [N] keywords
   ────────────────────────────────────────────────────
 
-  | ID        | Keyword                    | Lv   | Diff  | Tags  |
-  |-----------|----------------------------|------|-------|-------|
-  | [CODE]-001| [Keyword Name]             | L0   | 🌱    |       |
-  | [CODE]-002| [Keyword Name]             | L1   | ★☆☆   | 🎯    |
-  | [CODE]-003| [Keyword Name]             | L2   | ★★☆   | 🔧    |
-  | [CODE]-004| [Keyword Name]             | L3   | ★★☆   | ⚠️    |
-  | [CODE]-005| [Keyword Name]             | L4   | ★★★   | 🔴    |
+  | ID        | Keyword                    | Lv   | Diff  | Weight | Tags  |
+  |-----------|----------------------------|------|-------|--------|-------|
+  | [CODE]-001| [Keyword Name]             | L0   | 🌱    | 🟢 15m |       |
+  | [CODE]-002| [Keyword Name]             | L1   | ★☆☆   | 🟢 30m | 🎯    |
+  | [CODE]-003| [Keyword Name]             | L2   | ★★☆   | 🟡 2h  | 🔧    |
+  | [CODE]-004| [Keyword Name]             | L3   | ★★☆   | 🟠 1d  | ⚠️    |
+  | [CODE]-005| [Keyword Name]             | L4   | ★★★   | 🔴 1w  | 🔴    |
+
+  WEIGHT COLUMN (RECOMMENDED - may be omitted for narrow categories):
+    🟢  < 1 hour    (concept, definition, simple tool introduction)
+    🟡  1-8 hours   (tutorial, exercise, design pattern)
+    🟠  1-3 days    (project phase, deep dive, hands-on lab)
+    🔴  1-2 weeks   (major project, research, production experience)
+    ⚫  1+ month    (continuous practice, mastery, ongoing skill)
+
+  Default by level if unsure:
+    L0: 🟢  |  L1: 🟢  |  L2: 🟡  |  L3: 🟡  |  L4: 🟠  |  L4.5: 🔴  |  L5: 🔴
 
   TAGS COLUMN - use one or more symbols per row:
     🎯  ivw   = High-frequency interview topic
-    ⚠️  anti  = Anti-pattern keyword (Rule 10)
+    ⚠️  anti  = Anti-pattern keyword (Rule 10) - append severity:
+                   anti-critical / anti-major / anti-minor
     🔧  tool  = Tooling keyword (Rule 11)
     🔴  inc   = Landmark incident (Rule 12)
     🔄  mig   = Migration/evolution keyword (Rule 13)
@@ -1120,6 +1153,7 @@ SECTION 3: OUTPUT FORMAT - 11 COMPONENTS
     🔨  proj  = Project evolution keyword (Rule 19)
     🎓  teach = Teaching ability keyword (Rule 20)
     🔁  ret   = Retention structure keyword (Rule 21)
+    🚨  triage = Triage keyword for incident response (Section 8)
 
 ─────────────────────────────────────────────────────────────────────────
 3.3 SUB-TOPIC CLUSTERING  (NEW in v2.0)
@@ -1223,6 +1257,17 @@ SECTION 3: OUTPUT FORMAT - 11 COMPONENTS
   | 🔨proj |  N    |    N%      |
   | 🎓teach|  N    |    N%      |
   | 🔁 ret |  N    |    N%      |
+  | 🚨triage| N    |    N%      |
+
+  WEIGHT DISTRIBUTION (include when Weight column is used):
+  | Weight | Count | % of Total | Approx Hours |
+  |--------|-------|------------|--------------|
+  | 🟢 <1h |  N    |    N%      |  [N*0.5]h    |
+  | 🟡 1-8h|  N    |    N%      |  [N*4]h      |
+  | 🟠 1-3d|  N    |    N%      |  [N*16]h     |
+  | 🔴 1-2w|  N    |    N%      |  [N*60]h     |
+  | ⚫ 1m+ |  N    |    N%      |  [N*160]h    |
+  | TOTAL ESTIMATED TIME: [sum]h ([weeks] weeks @ 10h/week) |
 
 ─────────────────────────────────────────────────────────────────────────
 3.6 LEARNING PATH NOTE
@@ -1250,6 +1295,22 @@ SECTION 3: OUTPUT FORMAT - 11 COMPONENTS
   FAST TRACK FOR EXPERTS:
   Start at [CODE]-[NNN] - [First L4 Keyword Name]
 
+  TRIAGE TRACK (on-call engineers):
+  🚨 keywords only - [N] keywords, ~[X] hours
+
+  ESTIMATED TIME BY TRACK:
+  | Track                        | Keywords | Est. Time         |
+  |------------------------------|----------|-------------------|
+  | Full journey (L0-L5 + META)  |   N      | [X] weeks @ 10h/w |
+  | Practitioner (L2-L4)         |   N      | [Y] weeks @ 10h/w |
+  | Expert fast-track (L3-L5)    |   N      | [Z] weeks @ 10h/w |
+  | Triage/Incident (🚨 only)    |   N      | [W] hours          |
+
+  SPECIFIC PREREQUISITE KEYWORDS FROM OTHER CATEGORIES:
+  | This Keyword    | Prerequisite         | From Category |
+  |-----------------|----------------------|---------------|
+  | [CODE]-NNN      | [CAT]-NNN (Name)     | [Category]    |
+
 ─────────────────────────────────────────────────────────────────────────
 3.7 CROSS-CATEGORY DEPENDENCIES
 ─────────────────────────────────────────────────────────────────────────
@@ -1265,6 +1326,15 @@ SECTION 3: OUTPUT FORMAT - 11 COMPONENTS
   |-----------------|---------------------|----------|
   | [CODE]-036      | DSA-048 (B-Tree)    | DSA      |
   | [CODE]-028      | OSY-012 (Threading) | OSY      |
+
+  For dependencies WITHIN the same category, mark as:
+
+  | This Keyword    | Depends On          | Category      |
+  |-----------------|---------------------|---------------|
+  | [CODE]-050      | [CODE]-028 (Name)   | Same Category |
+
+  Self-referential dependencies help identify keywords
+  that cannot be studied out of order within one level.
 
 ─────────────────────────────────────────────────────────────────────────
 3.8 CONFUSION PAIRS INDEX  (NEW in v2.0)
@@ -1547,17 +1617,17 @@ permalink: /category-slug/keyword-slug/
 
 # CODE-NNN - Keyword Name
 
-> Entry stub. Generate full content using Master Prompt v3.0.
+> Entry stub. Generate full content using Master Prompt v4.0.
 ```
 
 Stub file naming: CODE-NNN - Keyword Name.md
 Place in: dictionary/[tier]/[FOLDER]/
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 4: QUALITY CHECKS - 16 CHECKS
+SECTION 4: QUALITY CHECKS - 17 CHECKS
 ═══════════════════════════════════════════════════════════════════════════
 
-Before finalising output, run ALL 16 checks:
+Before finalising output, run ALL 17 checks:
 
 CHECK 1 - COMPLETENESS:
 ☐ L0: Does list give a newcomer domain context
@@ -1695,6 +1765,17 @@ CHECK 16 - INDEX.MD INTEGRITY: [NEW v3.0]
 ☐ YAML frontmatter is unchanged
 ☐ title: matches what entries use as parent:
 
+CHECK 17 - TRIAGE & WEIGHT: [NEW v4.0]
+☐ At least 5 🚨 triage keywords exist per category
+☐ Each 🚨 keyword is at L3 or L4
+☐ Triage keywords are formatted as questions,
+diagnostic commands, or checklists
+☐ Triage section output is present after level tables
+☐ Weight column present if category has 50+ keywords
+(recommended for all categories)
+☐ At least 30% of anti-patterns have severity
+critical or major (not all minor)
+
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 5: INVOCATION - HOW TO USE THIS PROMPT
 ═══════════════════════════════════════════════════════════════════════════
@@ -1721,10 +1802,8 @@ L4.5 - Architect (🔥)
 L5 - Creator (🔬)
 META - Meta-Skills (🧠)
 
-Follow Category Keyword Generator v3.0 exactly.
-Apply all 22 rules from Section 2.
-Use all 11 output components from Section 3.
-Run all 16 quality checks from Section 4.
+Follow Category Keyword Generator v4.0 exactly.
+Apply all 22 rules from Section 2.`nUse all 12 output components from Section 3.`nRun all 17 quality checks from Section 4.
 Update category index.md per Section 3.10.
 
 ─────────────────────────────────────────────────────────────────────────
@@ -1742,7 +1821,7 @@ Already covered: [list existing levels]
 Generate ONLY: [list missing levels]
 
 Continue sequential IDs from [CODE]-NNN.
-Follow Category Keyword Generator v3.0 exactly.
+Follow Category Keyword Generator v4.0 exactly.
 Update category index.md per Section 3.10.
 
 ─────────────────────────────────────────────────────────────────────────
@@ -1758,7 +1837,7 @@ Generate [Level Name] keywords only for:
 
 Generate ONLY [level] keywords.
 Continue sequential IDs from [CODE]-NNN.
-Follow Category Keyword Generator v3.0 exactly.
+Follow Category Keyword Generator v4.0 exactly.
 Update category index.md per Section 3.10.
 
 ─────────────────────────────────────────────────────────────────────────
@@ -1827,7 +1906,7 @@ Generate complete keyword list for category:
 Cover ALL levels.
 Include domain-specific sub-sections within
 each level using Section 3.3 clustering.
-Follow Category Keyword Generator v3.0 exactly.
+Follow Category Keyword Generator v4.0 exactly.
 Update category index.md per Section 3.10.
 
 ─────────────────────────────────────────────────────────────────────────
@@ -1875,6 +1954,32 @@ At least 1 per level 8. Retrofit new Rule tags to all keywords:
 
 Continue sequential IDs from [CODE]-NNN.
 Output: full upgraded v3.0 keyword list + index.md update per Section 3.10.
+
+─────────────────────────────────────────────────────────────────────────
+TRIAGE KEYWORD GENERATION - INCIDENT RESPONSE: [NEW v4.0 INVOCATION]
+─────────────────────────────────────────────────────────────────────────
+
+Generate ONLY triage keywords (🚨) for an existing category:
+
+    Category:     [Category Name] ([CODE])
+    Existing IDs: [CODE]-001 to [CODE]-NNN
+    Next ID:      [CODE]-[NNN+1]
+
+Generate 5-10 triage keywords (tagged 🚨) that answer:
+
+- "What do I check first when X breaks?"
+- "How do I diagnose Y in production?"
+- "What are the top 5 failure modes of Z?"
+
+Triage keywords MUST be:
+
+- At L3 or L4 difficulty
+- Formatted as questions or diagnostic commands
+- Focused on DIAGNOSIS, not theory
+- Actionable within 15 minutes of incident start
+
+Output: triage keyword table + index.md update per Section 3.10.
+Follow Category Keyword Generator v4.0 exactly.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 6: LEVEL DISTRIBUTION GUIDELINES
@@ -1945,7 +2050,7 @@ All levels roughly equal; L4.5 is the largest
 (security governance is uniquely organisational)
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 7: EXAMPLE OUTPUT (v3.0 Format, abbreviated)
+SECTION 7: EXAMPLE OUTPUT (v4.0 Format, abbreviated)
 ═══════════════════════════════════════════════════════════════════════════
 
 Input:
@@ -1954,7 +2059,7 @@ Code: SEC
 Tier: tier-2-networking-security
 Folder: SEC-security
 Start ID: SEC-001
-Version: v3.0
+Version: v4.0
 
 ─────────────────────────────────────────────────────────────────────────
 EXAMPLE OUTPUT (L0 full, L1 partial, L3 partial cluster, Confusion Pairs,
@@ -1968,7 +2073,7 @@ TIER: tier-2-networking-security
 FOLDER: SEC-security
 LEVELS: L0 + L1 + L2 + L3 + L4 + L4.5 + L5 + META
 TOTAL: ~148 keywords across 8 components
-GENERATED: v2.0
+GENERATED: v4.0
 ════════════════════════════════════════════════════════
 
 ────────────────────────────────────────────────────────
@@ -2139,7 +2244,100 @@ FAST TRACK FOR EXPERTS:
 Start at SEC-084 - [First L4 Keyword Name]
 
 ═══════════════════════════════════════════════════════════════════════════
-END OF CATEGORY KEYWORD GENERATOR PROMPT v3.0
+SECTION 8: TRIAGE KEYWORDS - PRODUCTION INCIDENT RESPONSE [NEW v4.0]
+═══════════════════════════════════════════════════════════════════════════
+
+For each category, the generator MUST output 5-10 keywords
+specifically designed for on-call engineers who need to
+debug a production issue NOW.
+
+These keywords answer: "Something is broken at 3am - what do I check?"
+
+TRIAGE KEYWORDS are:
+
+- Tagged with 🚨 in the output table
+- Placed at L3 or L4 levels (where production issues manifest)
+- Focused on DIAGNOSIS, not theory or design
+- Formatted as questions, diagnostic commands, or checklists
+- Actionable within 15 minutes of incident start
+
+─────────────────────────────────────────────────────────────────────────
+TRIAGE KEYWORD FORMATS:
+─────────────────────────────────────────────────────────────────────────
+
+FORMAT A - Diagnostic Question:
+"Why is [component] returning [error code]?"
+"How to tell if [failure mode] is happening?"
+"Is it [cause A] or [cause B]? Quick check"
+
+FORMAT B - Command / Action:
+"[Tool] command to check [metric]"
+"Steps to diagnose [failure scenario]"
+"Emergency [operation] procedure"
+
+FORMAT C - Decision Tree:
+"Top 5 things to check when [X] breaks"
+"[Component] not responding - triage flowchart"
+"[Error] vs [Error] - which is which?"
+
+─────────────────────────────────────────────────────────────────────────
+EXAMPLES BY DOMAIN:
+─────────────────────────────────────────────────────────────────────────
+
+Security:
+| ID | Keyword | Lv | Tags |
+|---------|---------------------------------------------|----|-----------|
+| SEC-149 | 403 Forbidden - Diagnosing Auth Failures | L3 | 🚨 🎯 |
+| SEC-150 | Why Is My JWT Invalid? Debug Steps | L3 | 🚨 🔧 |
+| SEC-151 | Certificate Expired - Emergency Rotation | L4 | 🚨 🔴 |
+
+Database:
+| ID | Keyword | Lv | Tags |
+|---------|---------------------------------------------|----|-----------|
+| DBF-080 | Query Slow? EXPLAIN ANALYZE Checklist | L3 | 🚨 ⚡ |
+| DBF-081 | Connection Pool Exhausted - What to Check | L3 | 🚨 📊 |
+| DBF-082 | Deadlock Victim - Find and Fix | L4 | 🚨 🔧 |
+
+Kubernetes:
+| ID | Keyword | Lv | Tags |
+|---------|---------------------------------------------|----|-----------|
+| K8S-090 | Pod CrashLoopBackOff - Debug Steps | L3 | 🚨 |
+| K8S-091 | Service Unreachable - Network Policy Check | L3 | 🚨 🔧 |
+| K8S-092 | Node NotReady - Diagnostic Checklist | L4 | 🚨 |
+
+─────────────────────────────────────────────────────────────────────────
+RULES FOR TRIAGE KEYWORDS:
+─────────────────────────────────────────────────────────────────────────
+
+1. MUST be at L3 or L4 (L4.5/L5 are too strategic for triage)
+2. MUST NOT require reading documentation to understand
+3. MUST be scannable in under 30 seconds
+4. Each triage keyword SHOULD reference 1-2 lower-level keywords
+   it depends on (for deeper understanding after the incident)
+5. The 🚨 tag is IN ADDITION to other relevant tags (🎯, 🔧, etc.)
+6. At least 5 triage keywords per category (minimum for on-call utility)
+7. Triage keywords are placed in the normal level tables (L3/L4)
+   AND summarized in a dedicated triage section after the level tables
+
+─────────────────────────────────────────────────────────────────────────
+TRIAGE SECTION IN OUTPUT (after level tables, before Summary):
+─────────────────────────────────────────────────────────────────────────
+
+════════════════════════════════════════════════════════
+TRIAGE KEYWORDS - PRODUCTION INCIDENT RESPONSE 🚨
+════════════════════════════════════════════════════════
+
+| ID         | Triage Keyword          | Level | Related Keywords   |
+| ---------- | ----------------------- | ----- | ------------------ |
+| [CODE]-NNN | "[Symptom] - Diagnosis" | L3    | CODE-NNN, CODE-NNN |
+
+QUICK REFERENCE FOR ON-CALL:
+When you see [symptom A], check [CODE]-NNN first.
+When you see [symptom B], check [CODE]-NNN first.
+When you see [symptom C], check [CODE]-NNN first.
+
+═══════════════════════════════════════════════════════════════════════════
+END OF CATEGORY KEYWORD GENERATOR PROMPT v4.0
 ═══════════════════════════════════════════════════════════════════════════
 
 ```
@@ -2160,9 +2358,9 @@ Folder: JVM-java-jvm-internals
 Starting ID: JVM-001
 
 Cover ALL levels: L0, L1, L2, L3, L4, L4.5, L5, META.
-Follow Category Keyword Generator v3.0 exactly.
-Apply all 22 rules. Use all 11 output components.
-Run all 16 quality checks.
+Follow Category Keyword Generator v4.0 exactly.
+Apply all 22 rules. Use all 12 output components.
+Run all 17 quality checks.
 Update category index.md per Section 3.10.
 
 ```
@@ -2179,7 +2377,7 @@ Index file: dictionary/tier-7-frontend/RCT-react/index.md
 
 Generate missing keywords for all levels.
 Continue sequential IDs from RCT-025.
-Follow Category Keyword Generator v3.0 exactly.
+Follow Category Keyword Generator v4.0 exactly.
 Update category index.md per Section 3.10.
 DO NOT modify existing keywords RCT-001 through RCT-024.
 
@@ -2200,7 +2398,7 @@ Project Evolution, Teaching keywords,
 Retention Structures, Interview Readiness.
 Retrofit new Rule tags (🧭 🏋️ 🔨 🎓 🔁).
 Continue sequential IDs from SEC-149.
-Follow Category Keyword Generator v3.0 exactly.
+Follow Category Keyword Generator v4.0 exactly.
 Update category index.md per Section 3.10.
 
 ```

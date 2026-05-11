@@ -23,14 +23,14 @@ When asked to generate, create, or edit any file under `/interview/`, apply all 
 | `interview/config/generate-content.ps1`       | Batch content generation script                          |
 | `interview/config/generate-keywords.ps1`      | Keyword generation and folder/file scaffolding           |
 | `interview/config/topic-registry.md`          | Topic-to-folder mapping and dictionary category mappings |
-| `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v3.0)                      |
+| `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v4.0)                    |
 | `.github/prompts/generate-keywords.prompt.md` | Prompt for category/tier keyword processing              |
 
 ## Design Considerations
 
 When working with interview content, follow these rules for different scenarios:
 
-1. **New topic (no folder/index.md exists):** Use `KEYWORD_GENERATOR_PROMPT.md` (v3.0) to generate a comprehensive keyword list. Analyse where the topic belongs in the tier structure (tier-1 through tier-9). Create the folder, index.md, and sub-topic files. Apply folder/file rules. Generate content using `INTERVIEW_PROMPT.md`.
+1. **New topic (no folder/index.md exists):** Use `KEYWORD_GENERATOR_PROMPT.md` (v4.0) to generate a comprehensive keyword list. Analyse where the topic belongs in the tier structure (tier-1 through tier-9). Create the folder, index.md, and sub-topic files. Apply folder/file rules. Generate content using `INTERVIEW_PROMPT.md`.
 
 2. **Brand-new topic (e.g., Angular, not in dictionary):** Analyse which tier/category the topic belongs to. Use `KEYWORD_GENERATOR_PROMPT.md` to generate keywords covering L0 through L5+META levels. Create the relevant folders and files. Apply all folder/file rules. Generate content.
 
@@ -128,7 +128,7 @@ This will:
 
 1. Check `topic-registry.md` for existing mappings
 2. Check if dictionary has a matching category (e.g., ANG)
-3. Generate keyword list using `KEYWORD_GENERATOR_PROMPT.md` v3.0 spec
+3. Generate keyword list using `KEYWORD_GENERATOR_PROMPT.md` v4.0 spec
    (via `.github/prompts/generate-keywords.prompt.md`)
 4. Analyse where the topic belongs (tier/category placement)
 5. Create folder + index.md + content files
@@ -142,7 +142,7 @@ Add subtopic: React - Hooks
 This will:
 
 1. Verify the parent topic folder exists
-2. Generate keywords using `KEYWORD_GENERATOR_PROMPT.md` v3.0
+2. Generate keywords using `KEYWORD_GENERATOR_PROMPT.md` v4.0
 3. Create the subtopic file with YAML frontmatter
 4. Generate content using `INTERVIEW_PROMPT.md`
 5. Update the topic `index.md`

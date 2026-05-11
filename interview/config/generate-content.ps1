@@ -6,7 +6,7 @@
     Operates in multiple modes: single file, full topic, from dictionary
     tier, new topic creation, and subtopic addition.
 
-    Uses KEYWORD_GENERATOR_PROMPT.md (Category Keyword Generator v3.0)
+    Uses KEYWORD_GENERATOR_PROMPT.md (Category Keyword Generator v4.0)
     via .github/prompts/generate-keywords.prompt.md for keyword
     discovery when creating new topics or scanning dictionary categories.
 
@@ -369,7 +369,7 @@ Generate interview mastery content following INTERVIEW_PROMPT.md v1.0 exactly.
 
 SPEC REFERENCES:
 - Content spec: interview/config/INTERVIEW_PROMPT.md
-- Keyword spec: KEYWORD_GENERATOR_PROMPT.md v3.0
+- Keyword spec: KEYWORD_GENERATOR_PROMPT.md v4.0
 - Keyword prompt: .github/prompts/generate-keywords.prompt.md
 
     Topic:    $TopicName
@@ -671,7 +671,7 @@ function Invoke-NewMode {
     } else {
         Write-Host "No matching dictionary category found." -ForegroundColor Yellow
         Write-Host "Use generate-keywords.ps1 to create keyword list first." -ForegroundColor Yellow
-        Write-Host "  Spec: KEYWORD_GENERATOR_PROMPT.md v3.0" -ForegroundColor Cyan
+        Write-Host "  Spec: KEYWORD_GENERATOR_PROMPT.md v4.0" -ForegroundColor Cyan
         Write-Host "  Prompt: .github/prompts/generate-keywords.prompt.md" -ForegroundColor Cyan
         Write-Host ""
         Write-Host "Example:" -ForegroundColor Cyan

@@ -1,6 +1,6 @@
 ---
 agent: agent
-description: "Generate keyword entries for a category or tier using Keyword Generator v3.0"
+description: "Generate keyword entries for a category or tier using Keyword Generator v4.0"
 tools:
   - run_in_terminal
   - read_file
@@ -26,7 +26,7 @@ stop and return an error that shows the valid formats.
 ## MASTER SPEC
 
 The full keyword generation specification is in `KEYWORD_GENERATOR_PROMPT.md`
-(Category Keyword Generator - Master Prompt v3.0). Apply it exactly.
+(Category Keyword Generator - Master Prompt v4.0). Apply it exactly.
 
 Keep the workflow linear and scoped: validate the target, scan the current
 category state, generate only missing keywords, sync `index.md`, and create
@@ -115,7 +115,7 @@ Report all sync issues before proceeding.
 
 ## Phase 2 - Generate Keywords
 
-Using `KEYWORD_GENERATOR_PROMPT.md` v3.0 specification:
+Using `KEYWORD_GENERATOR_PROMPT.md` v4.0 specification:
 
 1. Set `Starting ID = CODE-{HIGHEST_ID + 1}` (or CODE-001 if new category)
 
@@ -134,8 +134,8 @@ Using `KEYWORD_GENERATOR_PROMPT.md` v3.0 specification:
    that a practitioner in this domain would need to know. Omit a level only if it
    produces fewer than 3 meaningful keywords for this specific category.
 3. Apply ALL 22 rules from Section 2
-4. Use ALL 11 output components from Section 3
-5. Run ALL 16 quality checks from Section 4
+4. Use ALL 12 output components from Section 3
+5. Run ALL 17 quality checks from Section 4
 
 **CRITICAL - New vs Missing keywords:**
 
@@ -151,7 +151,7 @@ Using `KEYWORD_GENERATOR_PROMPT.md` v3.0 specification:
 
 ## Phase 3 - Sync Index.md (NON-DESTRUCTIVE)
 
-> **NON-NEGOTIABLE SAFETY RULES** (from Section 3.10 of v3.0 spec).
+> **NON-NEGOTIABLE SAFETY RULES** (from Section 3.10 of v4.0 spec).
 > Apply these as a checklist - verify each before writing the file:
 >
 > - [ ] **NEVER** delete an existing keyword row from index.md
@@ -265,7 +265,7 @@ permalink: /category-slug/keyword-slug/
 
 # CODE-NNN - Keyword Name
 
-> Entry stub. Generate full content using Master Prompt v3.0.
+> Entry stub. Generate full content using Master Prompt v4.0.
 ```
 
 Rules for stub files:

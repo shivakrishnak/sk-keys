@@ -17,15 +17,15 @@ How to generate new interview mastery content using the two PowerShell scripts.
 
 | File                                          | Purpose                                     |
 | --------------------------------------------- | ------------------------------------------- |
-| `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v3.0)         |
+| `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v4.0)       |
 | `.github/prompts/generate-keywords.prompt.md` | Prompt for category/tier keyword processing |
-| `interview/config/INTERVIEW_PROMPT.md`        | Master content generation spec (v3.0)         |
+| `interview/config/INTERVIEW_PROMPT.md`        | Master content generation spec (v3.0)       |
 
 ---
 
 ## Design Considerations
 
-1. **New topic (no index.md):** Use `KEYWORD_GENERATOR_PROMPT.md` v3.0 to generate keywords. Analyse tier placement. Create folders/files. Generate content.
+1. **New topic (no index.md):** Use `KEYWORD_GENERATOR_PROMPT.md` v4.0 to generate keywords. Analyse tier placement. Create folders/files. Generate content.
 2. **Brand-new topic (e.g., Angular):** Analyse which tier it belongs to. Generate keywords via `KEYWORD_GENERATOR_PROMPT.md`. Create folders/files. Generate content.
 3. **New subtopic (e.g., React Hooks, topic exists):** Create file in existing folder. Generate keywords via `KEYWORD_GENERATOR_PROMPT.md`. Generate content.
 4. **Existing dictionary category (e.g., JVM, JCC):** Scan dictionary `index.md`. Analyse keywords. Check for new folder/file opportunities. Generate content.
@@ -370,7 +370,7 @@ pwsh -File interview/config/generate-content.ps1 `
 
 | File                                          | Purpose                                     |
 | --------------------------------------------- | ------------------------------------------- |
-| `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v3.0)         |
+| `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v4.0)       |
 | `.github/prompts/generate-keywords.prompt.md` | Prompt for category/tier keyword processing |
 
 > All files in `interview/config/` are excluded from the Jekyll build via `_config.yml`.

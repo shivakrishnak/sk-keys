@@ -5,14 +5,14 @@
     Generates keyword lists for interview topics, groups them into
     sub-topic files, and creates folder/index/stub structure.
 
-    Uses KEYWORD_GENERATOR_PROMPT.md (Category Keyword Generator v3.0)
+    Uses KEYWORD_GENERATOR_PROMPT.md (Category Keyword Generator v4.0)
     as the master specification for all keyword generation. The prompt
     file at .github/prompts/generate-keywords.prompt.md orchestrates
     this process for dictionary categories and tiers.
 
     Supports four flows:
     1. New topic from scratch (generates keywords via
-       KEYWORD_GENERATOR_PROMPT.md v3.0 spec)
+       KEYWORD_GENERATOR_PROMPT.md v4.0 spec)
     2. New topic from existing dictionary category
     3. Add subtopic to existing topic
     4. Scan existing dictionary category to find new
@@ -346,7 +346,7 @@ if ($Subtopic) {
         Write-Host "`nProvide keywords with -Keywords parameter:" -ForegroundColor Yellow
         Write-Host "  -Keywords 'Keyword1,Keyword2,Keyword3'"
         Write-Host "`nOr use AI to generate keywords:" -ForegroundColor Yellow
-        Write-Host "`nSPEC: Apply KEYWORD_GENERATOR_PROMPT.md v3.0"
+        Write-Host "`nSPEC: Apply KEYWORD_GENERATOR_PROMPT.md v4.0"
         Write-Host "PROMPT: .github/prompts/generate-keywords.prompt.md"
         Write-Host ""
         Write-Host @"
@@ -355,7 +355,7 @@ Generate a keyword list for interview mastery:
   Topic: $Topic
   Subtopic: $Subtopic
 
-Spec reference: KEYWORD_GENERATOR_PROMPT.md v3.0
+Spec reference: KEYWORD_GENERATOR_PROMPT.md v4.0
 
 Requirements:
 - 5-15 keywords covering the subtopic comprehensively
@@ -467,7 +467,7 @@ if (Test-Path $topicPath) {
 # Output AI prompt for keyword generation
 Write-Host "┌─────────────────────────────────────────────┐" -ForegroundColor Green
 Write-Host "│ USE THIS PROMPT TO GENERATE KEYWORDS        │" -ForegroundColor Green
-Write-Host "│ Spec: KEYWORD_GENERATOR_PROMPT.md v3.0      │" -ForegroundColor Green
+Write-Host "│ Spec: KEYWORD_GENERATOR_PROMPT.md v4.0      │" -ForegroundColor Green
 Write-Host "│ Prompt: .github/prompts/generate-keywords    │" -ForegroundColor Green
 Write-Host "└─────────────────────────────────────────────┘" -ForegroundColor Green
 Write-Host ""
@@ -476,7 +476,7 @@ $kwPrompt = @"
 Generate a comprehensive keyword list for interview mastery on: $Topic
 
 SPEC REFERENCE: Apply KEYWORD_GENERATOR_PROMPT.md (Category
-Keyword Generator v3.0) rules for keyword generation. Use
+Keyword Generator v4.0) rules for keyword generation. Use
 .github/prompts/generate-keywords.prompt.md for the full
 generation workflow.
 
@@ -486,8 +486,8 @@ DESIGN CONSIDERATIONS:
 - Generate keywords covering all applicable knowledge levels:
   L0 (Orientation) through L5 (Creator) + META
 - Apply all 22 rules from KEYWORD_GENERATOR_PROMPT.md Section 2
-- Use all 11 output components from Section 3
-- Run all 16 quality checks from Section 4
+- Use all 12 output components from Section 3
+- Run all 17 quality checks from Section 4
 
 Requirements:
 1. Cover the topic from zero to god-level mastery
