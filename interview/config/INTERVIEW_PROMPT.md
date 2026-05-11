@@ -1,4 +1,4 @@
-# Interview Mastery Dictionary - Master Prompt v3
+# Interview Mastery Dictionary - Master Prompt v3.0
 
 > **This is the authoritative generation spec** for every keyword entry
 > in the Interview Mastery Dictionary. Paste this prompt into any AI
@@ -11,13 +11,13 @@
 > | Constant       | Value  | Meaning                                      |
 > | -------------- | ------ | -------------------------------------------- |
 > | `SPEC_VERSION` | `3`    | Integer written to `version:` in all entries |
-> | `SPEC_LABEL`   | `v3`   | Human-readable label for headers/commits     |
+> | `SPEC_LABEL`   | `v3.0`   | Human-readable label for headers/commits     |
 
 ---
 
 ````
 ================================================================
-INTERVIEW MASTERY DICTIONARY - MASTER PROMPT v3
+INTERVIEW MASTERY DICTIONARY - MASTER PROMPT v3.0
 ================================================================
 
 You are an elite Software Engineering mentor and technical writer.
@@ -1657,7 +1657,7 @@ SINGLE FILE (all keywords in a sub-topic file):
       - Keyword 4
       - Keyword 5
 
-  Follow Interview Mastery Prompt v3 exactly.
+  Follow Interview Mastery Prompt v3.0 exactly.
   Generate all keywords in sequence within one file.
   Separate keywords with double horizontal rules.
   Each keyword fully self-contained.
@@ -1670,7 +1670,7 @@ BATCH (all files in a topic folder):
     - Topic - Subtopic2.md (keywords: K4, K5, K6)
     - Topic - Subtopic3.md (keywords: K7, K8, K9)
 
-  Follow Interview Mastery Prompt v3 exactly.
+  Follow Interview Mastery Prompt v3.0 exactly.
   Generate one file at a time. Each file complete.
 
 NEW TOPIC:
@@ -1681,7 +1681,7 @@ NEW TOPIC:
   3. Create topic folder + index.md
   4. Generate content for each file
 
-  Follow Interview Mastery Prompt v3 exactly.
+  Follow Interview Mastery Prompt v3.0 exactly.
 
 ================================================================
 SECTION 8: SELF-VALIDATION CHECKLIST
@@ -1744,7 +1744,7 @@ INTERVIEW DEEP-DIVE QUALITY:
   [ ] Answers would impress a senior interviewer
   [ ] No duplicate questions across keywords in same file
 
-NEW IN v3 - ADDITIONAL CHECKS:
+NEW IN v3.0 - ADDITIONAL CHECKS:
   [ ] Mastery Checklist: 5 indicators in EXPLAIN/DEBUG/
        DECIDE/BUILD/EXTEND order, each concept-specific
   [ ] Quick Reference Card: KEY NUMBERS field present
@@ -1824,7 +1824,7 @@ A file is v2.0 (version: 2) if it ALSO has:
     (easy: 5, medium: 7, hard: 10)
   - AVOID WHEN + ANTI-PATTERN in Quick Reference Card
 
-A file is v3 (version: 3) if it ALSO has:
+A file is v3.0 (version: 3) if it ALSO has:
   - Mastery Checklist section with 5 indicators
     (EXPLAIN/DEBUG/DECIDE/BUILD/EXTEND)
   - KEY NUMBERS field in Quick Reference Card
@@ -1844,6 +1844,6 @@ A file is v3 (version: 3) if it ALSO has:
     Surprising Truth -> Comparison -> Misconceptions ->
     Failure Modes -> Interview Deep-Dive -> Related
 
-Set version: 3 only after ALL v3 markers are present.
+Set version: 3 only after ALL v3.0 markers are present.
 
 ````
