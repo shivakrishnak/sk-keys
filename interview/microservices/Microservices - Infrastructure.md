@@ -16,7 +16,7 @@ keywords:
   - Multi-Tenancy
 difficulty_range: hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,20 +31,17 @@ version: 2
 # Service Mesh
 
 **TL;DR** - A Service Mesh is a dedicated infrastructure layer that handles service-to-service communication transparently. It provides mTLS, traffic management, observability, and resilience (retries, circuit breaking) without application code changes. The mesh uses sidecar proxies (typically Envoy) injected alongside each service pod.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every service team must implement: mTLS between services, retry logic, circuit breaking, traffic splitting for canary, distributed tracing, mutual authentication. 30 services in 3 languages = 90 implementations of the same concerns. Some teams skip security. Some retry logic has bugs. No consistency.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -57,7 +54,6 @@ Every service team must implement: mTLS between services, retry logic, circuit b
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -77,7 +73,6 @@ Every service team must implement: mTLS between services, retry logic, circuit b
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -89,7 +84,6 @@ Every service team must implement: mTLS between services, retry logic, circuit b
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -173,14 +167,12 @@ Instead of sidecar per pod, use a shared proxy per node. Reduces resource overhe
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -194,7 +186,6 @@ Instead of sidecar per pod, use a shared proxy per node. Reduces resource overhe
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -209,55 +200,29 @@ Instead of sidecar per pod, use a shared proxy per node. Reduces resource overhe
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: You're evaluating whether to adopt a service mesh. What criteria do you use to decide?**
-
-_Why they ask:_ Tests architecture decision-making.
-
-_Strong answer:_
-
-**Adopt if:**
-
-- 20+ services, especially polyglot (Java + Node.js + Go)
-- Security requirement: mTLS everywhere (compliance, zero-trust)
-- Need traffic management: canary deployments, A/B testing
-- Teams waste time implementing retry/circuit-breaking inconsistently
-- Observability gaps: can't trace requests across services
-
-**Don't adopt if:**
-
-- < 10 services (library-based approach works)
-- Team has no K8s operational expertise (mesh adds complexity)
-- Latency-critical (1-3ms per hop overhead matters)
-- All services in one language with good shared libraries
-
-**Evaluation checklist:**
-
-1. Install in staging, measure latency overhead
-2. Test mTLS between all services
-3. Test canary deployment via mesh traffic splitting
-4. Evaluate operational complexity (upgrades, debugging)
-5. Team training: Can the team debug mesh issues?
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Service Mesh. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -268,7 +233,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -302,7 +266,38 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: You're evaluating whether to adopt a service mesh. What criteria do you use to decide?**
+
+_Why they ask:_ Tests architecture decision-making.
+
+_Strong answer:_
+
+**Adopt if:**
+
+- 20+ services, especially polyglot (Java + Node.js + Go)
+- Security requirement: mTLS everywhere (compliance, zero-trust)
+- Need traffic management: canary deployments, A/B testing
+- Teams waste time implementing retry/circuit-breaking inconsistently
+- Observability gaps: can't trace requests across services
+
+**Don't adopt if:**
+
+- < 10 services (library-based approach works)
+- Team has no K8s operational expertise (mesh adds complexity)
+- Latency-critical (1-3ms per hop overhead matters)
+- All services in one language with good shared libraries
+
+**Evaluation checklist:**
+
+1. Install in staging, measure latency overhead
+2. Test mTLS between all services
+3. Test canary deployment via mesh traffic splitting
+4. Evaluate operational complexity (upgrades, debugging)
+5. Team training: Can the team debug mesh issues?
 ---
 
 ### 🔗 Related Keywords
@@ -327,7 +322,6 @@ _Strong answer:_
 # Sidecar Pattern
 
 **TL;DR** - A Sidecar is a helper container deployed alongside your application container in the same pod. It extends the application's functionality (logging, proxy, monitoring) without changing application code. The main container and sidecar share network namespace and can communicate via localhost.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -343,13 +337,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -362,7 +354,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -382,7 +373,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -394,7 +384,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -472,14 +461,12 @@ Before native sidecar support, the ordering problem was real: main container mig
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -493,7 +480,6 @@ Before native sidecar support, the ordering problem was real: main container mig
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -508,40 +494,29 @@ Before native sidecar support, the ordering problem was real: main container mig
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: What are the downsides of the sidecar pattern?**
-
-_Why they ask:_ Tests awareness of trade-offs.
-
-_Strong answer:_
-
-1. **Resource overhead:** Each pod has an extra container consuming CPU and memory. 1000 pods \* 100MB sidecar = 100GB extra memory.
-2. **Latency:** localhost hop adds ~1ms per request. For internal gRPC at 0.5ms, that's a 200% increase.
-3. **Startup ordering:** Main container might start before sidecar is ready. Need init containers or readiness gates.
-4. **Debugging complexity:** Is the problem in the app or the sidecar? Adds another layer to diagnose.
-5. **Upgrade coordination:** Sidecar version must be compatible with control plane. Mass upgrade across 1000 pods.
-
-**Mitigations:** Native sidecar containers (K8s 1.28+), ambient mesh (shared proxy per node instead of per pod), right-sizing sidecar resources.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Sidecar Pattern. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -552,7 +527,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -586,7 +560,23 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: What are the downsides of the sidecar pattern?**
+
+_Why they ask:_ Tests awareness of trade-offs.
+
+_Strong answer:_
+
+1. **Resource overhead:** Each pod has an extra container consuming CPU and memory. 1000 pods \* 100MB sidecar = 100GB extra memory.
+2. **Latency:** localhost hop adds ~1ms per request. For internal gRPC at 0.5ms, that's a 200% increase.
+3. **Startup ordering:** Main container might start before sidecar is ready. Need init containers or readiness gates.
+4. **Debugging complexity:** Is the problem in the app or the sidecar? Adds another layer to diagnose.
+5. **Upgrade coordination:** Sidecar version must be compatible with control plane. Mass upgrade across 1000 pods.
+
+**Mitigations:** Native sidecar containers (K8s 1.28+), ambient mesh (shared proxy per node instead of per pod), right-sizing sidecar resources.
 ---
 
 ### 🔗 Related Keywords
@@ -611,7 +601,6 @@ _Strong answer:_
 # Istio
 
 **TL;DR** - Istio is the most feature-rich service mesh for Kubernetes. It provides mTLS, traffic management (canary, A/B, fault injection), observability (metrics, traces, access logs), and security policies. It uses Envoy as its data plane proxy and Istiod as the control plane.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -627,13 +616,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -646,7 +633,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -666,7 +652,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -678,7 +663,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -801,14 +785,12 @@ spec:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -822,7 +804,6 @@ spec:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -837,42 +818,29 @@ spec:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: What's the operational overhead of running Istio in production?**
-
-_Why they ask:_ Tests real-world experience.
-
-_Strong answer:_
-
-**Overhead areas:**
-
-1. **Resource:** Istiod control plane (~1 CPU, 2GB RAM). Envoy sidecar per pod (~100MB RAM, 50m CPU). 500 pods = 50GB extra RAM.
-2. **Latency:** ~2-3ms added per hop (Envoy proxy processing). Acceptable for most services, problematic for sub-millisecond requirements.
-3. **Upgrades:** Istio releases every ~3 months. Upgrade requires rolling restart of all sidecars. Plan for maintenance windows.
-4. **Debugging:** When something breaks, is it the app, Envoy, or Istio config? Need istioctl, envoy admin API, and deep K8s knowledge.
-5. **Configuration complexity:** VirtualService, DestinationRule, PeerAuthentication, AuthorizationPolicy, EnvoyFilter - steep learning curve.
-
-**Mitigation:** Start with core features only (mTLS + observability). Add traffic management when needed. Don't enable everything at once.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Istio. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -883,7 +851,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -917,7 +884,25 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: What's the operational overhead of running Istio in production?**
+
+_Why they ask:_ Tests real-world experience.
+
+_Strong answer:_
+
+**Overhead areas:**
+
+1. **Resource:** Istiod control plane (~1 CPU, 2GB RAM). Envoy sidecar per pod (~100MB RAM, 50m CPU). 500 pods = 50GB extra RAM.
+2. **Latency:** ~2-3ms added per hop (Envoy proxy processing). Acceptable for most services, problematic for sub-millisecond requirements.
+3. **Upgrades:** Istio releases every ~3 months. Upgrade requires rolling restart of all sidecars. Plan for maintenance windows.
+4. **Debugging:** When something breaks, is it the app, Envoy, or Istio config? Need istioctl, envoy admin API, and deep K8s knowledge.
+5. **Configuration complexity:** VirtualService, DestinationRule, PeerAuthentication, AuthorizationPolicy, EnvoyFilter - steep learning curve.
+
+**Mitigation:** Start with core features only (mTLS + observability). Add traffic management when needed. Don't enable everything at once.
 ---
 
 ### 🔗 Related Keywords
@@ -942,7 +927,6 @@ _Strong answer:_
 # Envoy Proxy
 
 **TL;DR** - Envoy is a high-performance, programmable L7 proxy designed for microservices. It's the data plane for Istio, AWS App Mesh, and many API gateways. It handles load balancing, circuit breaking, rate limiting, observability, and TLS termination at the network level.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -958,13 +942,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -977,7 +959,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -997,7 +978,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1009,7 +989,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1098,14 +1077,12 @@ static_resources:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1119,7 +1096,6 @@ static_resources:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1134,43 +1110,29 @@ static_resources:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Why is Envoy preferred over Nginx for service mesh use cases?**
-
-_Why they ask:_ Tests understanding of proxy architecture.
-
-_Strong answer:_
-
-| Aspect            | Envoy                                    | Nginx                              |
-| ----------------- | ---------------------------------------- | ---------------------------------- |
-| Configuration     | Dynamic (xDS API, no restart)            | Static (config file, needs reload) |
-| L7 protocols      | HTTP/1.1, HTTP/2, gRPC, WebSocket native | HTTP/1.1, HTTP/2 (gRPC via module) |
-| Observability     | Built-in metrics, tracing, access logs   | Basic access logs, needs modules   |
-| Service discovery | Native (EDS API)                         | Needs commercial Plus or scripting |
-| Programmability   | Filter chains, WASM extensions           | Lua scripting, OpenResty           |
-| Designed for      | Microservices, service mesh              | Web serving, reverse proxy         |
-
-Envoy was designed from the ground up for dynamic, API-driven microservices. Nginx was designed for static web serving and adapted for dynamic use cases.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Envoy Proxy. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1181,7 +1143,6 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1215,7 +1176,26 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Why is Envoy preferred over Nginx for service mesh use cases?**
+
+_Why they ask:_ Tests understanding of proxy architecture.
+
+_Strong answer:_
+
+| Aspect            | Envoy                                    | Nginx                              |
+| ----------------- | ---------------------------------------- | ---------------------------------- |
+| Configuration     | Dynamic (xDS API, no restart)            | Static (config file, needs reload) |
+| L7 protocols      | HTTP/1.1, HTTP/2, gRPC, WebSocket native | HTTP/1.1, HTTP/2 (gRPC via module) |
+| Observability     | Built-in metrics, tracing, access logs   | Basic access logs, needs modules   |
+| Service discovery | Native (EDS API)                         | Needs commercial Plus or scripting |
+| Programmability   | Filter chains, WASM extensions           | Lua scripting, OpenResty           |
+| Designed for      | Microservices, service mesh              | Web serving, reverse proxy         |
+
+Envoy was designed from the ground up for dynamic, API-driven microservices. Nginx was designed for static web serving and adapted for dynamic use cases.
 ---
 
 ### 🔗 Related Keywords
@@ -1240,7 +1220,6 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 # Platform Engineering
 
 **TL;DR** - Platform Engineering builds an Internal Developer Platform (IDP) that provides self-service infrastructure to product teams. Instead of every team configuring Kubernetes, CI/CD, observability, and security individually, the platform team provides golden paths: opinionated, automated workflows that make doing the right thing the easy thing.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1256,13 +1235,11 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1275,7 +1252,6 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1295,7 +1271,6 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1307,7 +1282,6 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1368,14 +1342,12 @@ With platform:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1389,7 +1361,6 @@ With platform:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1404,41 +1375,29 @@ With platform:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How do you measure the success of a platform engineering initiative?**
-
-_Why they ask:_ Tests product thinking applied to infrastructure.
-
-_Strong answer:_
-
-**Metrics:**
-
-1. **Time-to-first-deploy:** How long from "new service idea" to first production deployment? Target: < 1 day.
-2. **DORA metrics improvement:** Deployment frequency, lead time, change failure rate, MTTR - should all improve.
-3. **Self-service ratio:** What percentage of infrastructure requests are handled without a ticket? Target: > 80%.
-4. **Developer satisfaction (NPS):** Survey quarterly. "Would you recommend the platform to a colleague?"
-5. **Cognitive load:** How many tools/systems must a developer understand to deploy? Should decrease over time.
-6. **Onboarding time:** How long for a new engineer to deploy their first change? Target: < 1 day.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Platform Engineering. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1449,7 +1408,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1483,7 +1441,24 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How do you measure the success of a platform engineering initiative?**
+
+_Why they ask:_ Tests product thinking applied to infrastructure.
+
+_Strong answer:_
+
+**Metrics:**
+
+1. **Time-to-first-deploy:** How long from "new service idea" to first production deployment? Target: < 1 day.
+2. **DORA metrics improvement:** Deployment frequency, lead time, change failure rate, MTTR - should all improve.
+3. **Self-service ratio:** What percentage of infrastructure requests are handled without a ticket? Target: > 80%.
+4. **Developer satisfaction (NPS):** Survey quarterly. "Would you recommend the platform to a colleague?"
+5. **Cognitive load:** How many tools/systems must a developer understand to deploy? Should decrease over time.
+6. **Onboarding time:** How long for a new engineer to deploy their first change? Target: < 1 day.
 ---
 
 ### 🔗 Related Keywords
@@ -1508,7 +1483,6 @@ _Strong answer:_
 # Multi-Tenancy
 
 **TL;DR** - Multi-tenancy is serving multiple customers (tenants) from a single deployment of the application. Tenant data is isolated (logically or physically), but infrastructure is shared to reduce costs. Three models: shared everything, shared app/separate DB, and separate everything.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1524,13 +1498,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1543,7 +1515,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1563,7 +1534,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1575,7 +1545,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1664,14 +1633,12 @@ One tenant generates 10x more load than others. They consume all database connec
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1685,7 +1652,6 @@ One tenant generates 10x more load than others. They consume all database connec
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1700,51 +1666,29 @@ One tenant generates 10x more load than others. They consume all database connec
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: A bug in your multi-tenant application exposed Tenant A's data to Tenant B. How do you prevent this?**
-
-_Why they ask:_ Tests security awareness.
-
-_Strong answer:_
-
-**Prevention layers (defense in depth):**
-
-1. **Automatic query filtering:** Use Hibernate filters or PostgreSQL Row-Level Security (RLS) so every query automatically includes `WHERE tenant_id = ?`. Developers can't forget.
-
-2. **Row-Level Security (database level):**
-
-```sql
-CREATE POLICY tenant_isolation ON orders
-  USING (tenant_id = current_setting(
-    'app.current_tenant'));
--- Database enforces isolation even if app has bugs
-```
-
-3. **Integration tests:** Test that Tenant A's API calls never return Tenant B's data. Run for every endpoint.
-
-4. **Audit logging:** Log every data access with tenant context. Alert if a request accesses data for a tenant different from the authenticated tenant.
-
-5. **Separate schemas or databases:** For highest-security tenants (enterprise, regulated industries), use separate schemas. Physical isolation eliminates cross-tenant bugs.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Multi-Tenancy. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1755,7 +1699,6 @@ CREATE POLICY tenant_isolation ON orders
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1789,7 +1732,34 @@ CREATE POLICY tenant_isolation ON orders
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: A bug in your multi-tenant application exposed Tenant A's data to Tenant B. How do you prevent this?**
+
+_Why they ask:_ Tests security awareness.
+
+_Strong answer:_
+
+**Prevention layers (defense in depth):**
+
+1. **Automatic query filtering:** Use Hibernate filters or PostgreSQL Row-Level Security (RLS) so every query automatically includes `WHERE tenant_id = ?`. Developers can't forget.
+
+2. **Row-Level Security (database level):**
+
+```sql
+CREATE POLICY tenant_isolation ON orders
+  USING (tenant_id = current_setting(
+    'app.current_tenant'));
+-- Database enforces isolation even if app has bugs
+```
+
+3. **Integration tests:** Test that Tenant A's API calls never return Tenant B's data. Run for every endpoint.
+
+4. **Audit logging:** Log every data access with tenant context. Alert if a request accesses data for a tenant different from the authenticated tenant.
+
+5. **Separate schemas or databases:** For highest-security tenants (enterprise, regulated industries), use separate schemas. Physical isolation eliminates cross-tenant bugs.
 ---
 
 ### 🔗 Related Keywords
@@ -1805,4 +1775,3 @@ CREATE POLICY tenant_isolation ON orders
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

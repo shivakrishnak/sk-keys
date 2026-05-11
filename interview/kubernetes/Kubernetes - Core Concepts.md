@@ -16,7 +16,7 @@ keywords:
   - API Server
 difficulty_range: medium-hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Kubernetes Architecture
 
 **TL;DR** - Kubernetes is a distributed system with a control plane (brain) that manages worker nodes (muscle), using a declarative desired-state model with continuous reconciliation to orchestrate containers at scale.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -44,13 +43,11 @@ You have 200 containers across 50 servers. One server dies - 20 containers vanis
 
 **EVOLUTION:**
 Manual ops + scripts -> Google Borg (internal, 2003) -> Mesos/Marathon (2013) -> Docker Swarm (2014) -> Kubernetes open-sourced (2014) -> CNCF graduation (2018) -> Managed K8s dominates (EKS, GKE, AKS) -> K8s becomes "the operating system of the cloud."
-
 ---
 
 ### 📘 Textbook Definition
 
 Kubernetes is a portable, extensible platform for managing containerized workloads and services that facilitates both declarative configuration and automation. Its architecture consists of a control plane (API server, scheduler, controller manager, etcd) and worker nodes (kubelet, kube-proxy, container runtime), communicating via the API server as the single source of truth.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -64,7 +61,6 @@ Kubernetes is an autopilot for containers - you declare what you want, it makes 
 
 **One insight:**
 The fundamental paradigm is "desired state reconciliation." You never say "start a container." You say "ensure 3 replicas exist." The system continuously compares desired vs actual state and takes corrective action. This is what makes it self-healing.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -82,7 +78,6 @@ Because state is centralized (etcd), any component can fail and recover by re-re
 **THE TRADE-OFFS:**
 **Gain:** Self-healing, auto-scaling, rolling updates, service discovery, declarative management
 **Cost:** Complexity (networking, storage, RBAC), operational overhead, learning curve, resource overhead (~1GB for control plane)
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -90,7 +85,6 @@ Because state is centralized (etcd), any component can fail and recover by re-re
 > K8s is like a thermostat. You set the desired temperature (desired state). The thermostat (controller) continuously measures actual temperature and turns heating/cooling on/off to maintain the target. You don't say "turn on the heater for 10 minutes" - you say "maintain 72F."
 
 Where this analogy breaks down: K8s has dozens of controllers (thermostats) for different resources, not just one.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -109,7 +103,6 @@ Where this analogy breaks down: K8s has dozens of controllers (thermostats) for 
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -149,7 +142,6 @@ Kubernetes Architecture:
 - **Controller Manager**: Runs reconciliation loops (Deployment controller, ReplicaSet controller, etc.)
 - **kubelet**: Agent on each node. Ensures containers described in PodSpecs are running.
 - **kube-proxy**: Manages network rules for Service access (iptables/IPVS).
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -159,7 +151,6 @@ User applies Deployment YAML -> API server validates, stores in etcd -> Deployme
 
 **FAILURE PATH:**
 Node dies -> controller detects pods missing (heartbeat timeout: 40s) -> creates replacement pods -> scheduler places on healthy nodes -> kubelet starts containers -> service endpoints update -> traffic reroutes (total: ~1-2 min)
-
 ---
 
 ### 📌 Quick Reference Card
@@ -172,6 +163,7 @@ Node dies -> controller detects pods missing (heartbeat timeout: 40s) -> creates
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -181,13 +173,68 @@ Node dies -> controller detects pods missing (heartbeat timeout: 40s) -> creates
 
 **Interview one-liner:**
 "Kubernetes architecture separates the control plane (API server as front door, etcd as persistent state, scheduler for placement, controllers for reconciliation) from worker nodes (kubelet running pods, kube-proxy for networking) - all driven by the desired-state model where you declare intent and controllers continuously reconcile reality."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Kubernetes doesn't actually restart crashed containers - kubelet does. And kubelet doesn't watch for crashes - it's the container runtime (containerd) that detects PID 1 exit. The reconciliation chain is: container exits -> containerd notifies kubelet -> kubelet applies restart policy -> containerd starts new container. Three different systems coordinate, each with their own failure modes.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Kubernetes Architecture. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -241,58 +288,6 @@ What breaks:
 Recovery: When control plane comes back, it reads state from etcd and reconciles. If etcd is lost, the cluster state is gone - this is why etcd backups are critical.
 
 Key insight: K8s is designed so that worker node operation is independent of control plane availability. This is the "split-brain" design - the data plane and control plane are separate.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Kubernetes Architecture. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -317,20 +312,17 @@ Key insight: K8s is designed so that worker node operation is independent of con
 # Control Plane
 
 **TL;DR** - The control plane is Kubernetes' brain - API server, scheduler, controller manager, and etcd working together to maintain desired state across the cluster.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Someone must decide where to run containers, restart them when they fail, and coordinate everything. Without a control plane, you're back to manual ops.
-
 ---
 
 ### 📘 Textbook Definition
 
 The Kubernetes control plane is the set of components that make global decisions about the cluster (scheduling, detecting and responding to events, starting new pods when replica counts are unmet) consisting of: kube-apiserver, etcd, kube-scheduler, and kube-controller-manager.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -344,7 +336,6 @@ The control plane decides WHAT runs WHERE and keeps it that way.
 
 **One insight:**
 The control plane is stateless except for etcd. API server, scheduler, and controller manager can be restarted at any time - they just re-read state from etcd and resume. This is why etcd backup is the single most critical operational task.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -364,7 +355,6 @@ The control plane is stateless except for etcd. API server, scheduler, and contr
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -376,7 +366,6 @@ The control plane is stateless except for etcd. API server, scheduler, and contr
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -395,7 +384,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -427,7 +415,6 @@ etcd:
   - Only persistent state in the entire cluster
   - Critical path: lose etcd = lose cluster
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -441,7 +428,6 @@ etcd:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -454,6 +440,7 @@ etcd:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -463,40 +450,26 @@ etcd:
 
 **Interview one-liner:**
 "The control plane consists of the API server (authenticated REST front door), etcd (distributed persistent state via RAFT), scheduler (pod-to-node placement), and controller manager (reconciliation loops for every resource type) - only etcd is stateful, making the rest trivially restartable."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How would you make the control plane highly available?**
-
-_Why they ask:_ Tests production architecture knowledge.
-
-**Answer:**
-HA control plane design:
-
-1. **etcd**: 3 or 5 node cluster (RAFT needs quorum: 2/3 or 3/5). Spread across availability zones. Regular backups (etcdctl snapshot save).
-2. **API server**: Multiple replicas behind load balancer. Stateless - any can serve any request.
-3. **Scheduler/Controller Manager**: Multiple replicas with leader election. Only leader acts; followers are standby.
-4. **Load balancer**: L4 (TCP) in front of API servers for kubectl and kubelet traffic.
-
-Managed K8s (EKS/GKE/AKS) handles all of this. For self-managed: use kubeadm with stacked etcd (simpler) or external etcd (more resilient, harder to operate).
-
-Key: test control plane failure regularly. Kill one etcd node and verify cluster continues. Simulate API server restart and confirm recovery.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Control Plane. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -507,7 +480,6 @@ Key: test control plane failure regularly. Kill one etcd node and verify cluster
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -541,7 +513,25 @@ Key: test control plane failure regularly. Kill one etcd node and verify cluster
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How would you make the control plane highly available?**
+
+_Why they ask:_ Tests production architecture knowledge.
+
+**Answer:**
+HA control plane design:
+
+1. **etcd**: 3 or 5 node cluster (RAFT needs quorum: 2/3 or 3/5). Spread across availability zones. Regular backups (etcdctl snapshot save).
+2. **API server**: Multiple replicas behind load balancer. Stateless - any can serve any request.
+3. **Scheduler/Controller Manager**: Multiple replicas with leader election. Only leader acts; followers are standby.
+4. **Load balancer**: L4 (TCP) in front of API servers for kubectl and kubelet traffic.
+
+Managed K8s (EKS/GKE/AKS) handles all of this. For self-managed: use kubeadm with stacked etcd (simpler) or external etcd (more resilient, harder to operate).
+
+Key: test control plane failure regularly. Kill one etcd node and verify cluster continues. Simulate API server restart and confirm recovery.
 ---
 
 ### 🔗 Related Keywords
@@ -566,20 +556,17 @@ Key: test control plane failure regularly. Kill one etcd node and verify cluster
 # etcd
 
 **TL;DR** - etcd is the distributed key-value store that serves as Kubernetes' single source of truth, storing all cluster state with strong consistency via RAFT consensus.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Cluster state (what should run where, what's actually running) needs to survive component restarts, node failures, and network partitions. Without a distributed consistent store, you lose state on failure.
-
 ---
 
 ### 📘 Textbook Definition
 
 etcd is a strongly consistent, distributed key-value store that uses the RAFT consensus algorithm to replicate data across cluster members. In Kubernetes, it stores all cluster state (objects, configs, secrets) and is the only stateful component in the control plane.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -593,7 +580,6 @@ etcd is Kubernetes' database - lose it and you lose the cluster.
 
 **One insight:**
 etcd is on the critical path for EVERY Kubernetes operation. A slow etcd means slow API responses, slow scheduling, slow everything. This is why etcd performance (SSD storage, low-latency network) is critical and why the recommendation is dedicated nodes for etcd in production.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -613,7 +599,6 @@ etcd is on the critical path for EVERY Kubernetes operation. A slow etcd means s
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -625,7 +610,6 @@ etcd is on the critical path for EVERY Kubernetes operation. A slow etcd means s
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -644,7 +628,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -672,7 +655,6 @@ etcd Cluster (RAFT consensus):
     /registry/pods/default/myapp-abc12 -> {JSON spec}
     /registry/secrets/default/db-creds -> {encrypted}
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -686,7 +668,6 @@ etcd Cluster (RAFT consensus):
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -699,6 +680,7 @@ etcd Cluster (RAFT consensus):
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -708,13 +690,68 @@ etcd Cluster (RAFT consensus):
 
 **Interview one-liner:**
 "etcd is a RAFT-based distributed key-value store serving as Kubernetes' single source of truth - I ensure HA with 3-5 nodes across AZs, regular backups via etcdctl snapshot, SSD storage for the WAL, and monitoring of fsync latency and leader elections."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 etcd has a hard limit of 1.5 million key-value pairs (configurable but rarely changed). Large Kubernetes clusters (5000+ nodes) can hit this limit with just Pod objects. This is one reason why very large organizations run multiple smaller clusters rather than one massive cluster, and why Kubernetes has object count limits per namespace.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for etcd. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -749,13 +786,185 @@ Common causes:
 5. **Compaction lag**: Old revisions not cleaned up, DB size grows. Fix: enable auto-compaction (`--auto-compaction-retention=1h`).
 
 Prevention: dedicated nodes for etcd, SSD storage, monitor fsync_duration_seconds, set alerts on leader changes.
+---
 
+### 🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
+---
+
+# kubelet
+
+**TL;DR** - kubelet is the agent on every worker node that ensures containers described in PodSpecs are running and healthy, serving as the bridge between the control plane and the container runtime.
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+The control plane decides where pods should run, but something must actually start and monitor them on each node. Without kubelet, desired state remains just words in etcd.
+---
+
+### 📘 Textbook Definition
+
+kubelet is the primary node agent in Kubernetes that runs on every worker node, receiving PodSpecs from the API server and ensuring the described containers are running and healthy using the container runtime (containerd/CRI-O) via the Container Runtime Interface.
+---
+
+### ⏱️ Understand It in 30 Seconds
+
+**One line:**
+kubelet is the per-node manager that turns PodSpecs into running containers.
+
+**One analogy:**
+
+> kubelet is like a hotel housekeeper. The front desk (API server) assigns rooms (pods) to floors (nodes). The housekeeper (kubelet) ensures rooms are clean and ready (containers running), reports problems (status updates), and cleans up after guests leave (garbage collection).
+
+**One insight:**
+kubelet doesn't just start containers - it continuously monitors them via probes (liveness, readiness, startup). This monitoring data flows back to the API server, which updates Service endpoints (only healthy pods get traffic) and triggers restarts for unhealthy containers.
+---
+
+### 🔩 First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+---
+
+### 🧠 Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+---
+
+### 📶 Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
+---
+
+### ⚙️ How It Works
+
+```
+kubelet operation cycle:
+
+API Server                       Node
++----------+                     +------------------+
+| PodSpec: |  watch/sync every   | kubelet:         |
+| image:X  | -----10s------->   | 1. Pull image    |
+| ports:Y  |                     | 2. Create sandbox|
+| probes:Z |                     | 3. Start container|
++----------+                     | 4. Run probes    |
+                                 | 5. Report status |
+     <--------- status --------- | 6. GC old containers|
+                                 +------------------+
+                                        |
+                                 +------+------+
+                                 | containerd  |
+                                 | (via CRI)   |
+                                 +-------------+
+
+Probe types:
+  Startup:  "Is the container initialized?"
+  Liveness: "Is the container alive?" (restart if no)
+  Readiness:"Can it serve traffic?" (remove from svc)
+```
+---
+
+### 🔄 Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+---
+
+### 📌 Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+
+**If you remember only 3 things:**
+
+1. kubelet runs on EVERY node and is responsible for the actual container lifecycle (start, stop, monitor)
+2. It uses probes (startup, liveness, readiness) to determine container health and reports status to API server
+3. kubelet continues operating even if the control plane is down (existing containers keep running, local restart policy works)
+
+**Interview one-liner:**
+"kubelet is the per-node agent that receives PodSpecs from the API server, manages container lifecycle via CRI (containerd), runs health probes (startup/liveness/readiness), reports status back, and continues operating independently during control plane outages."
+---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
+
+### 💡 The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
 ---
 
 ### ⚖️ Comparison Table
 
-[TODO: Include if 2+ named alternatives exist for etcd. Otherwise remove this section.]
-
+[TODO: Include if 2+ named alternatives exist for kubelet. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
@@ -766,7 +975,6 @@ Prevention: dedicated nodes for etcd, SSD storage, monitor fsync_duration_second
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -800,182 +1008,6 @@ Prevention: dedicated nodes for etcd, SSD storage, monitor fsync_duration_second
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
-
----
-
-### 🔗 Related Keywords
-
-**Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
-
-**Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
-
-**Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
-
----
-
----
-
-# kubelet
-
-**TL;DR** - kubelet is the agent on every worker node that ensures containers described in PodSpecs are running and healthy, serving as the bridge between the control plane and the container runtime.
-
----
-
-### 🔥 The Problem This Solves
-
-**WORLD WITHOUT IT:**
-The control plane decides where pods should run, but something must actually start and monitor them on each node. Without kubelet, desired state remains just words in etcd.
-
----
-
-### 📘 Textbook Definition
-
-kubelet is the primary node agent in Kubernetes that runs on every worker node, receiving PodSpecs from the API server and ensuring the described containers are running and healthy using the container runtime (containerd/CRI-O) via the Container Runtime Interface.
-
----
-
-### ⏱️ Understand It in 30 Seconds
-
-**One line:**
-kubelet is the per-node manager that turns PodSpecs into running containers.
-
-**One analogy:**
-
-> kubelet is like a hotel housekeeper. The front desk (API server) assigns rooms (pods) to floors (nodes). The housekeeper (kubelet) ensures rooms are clean and ready (containers running), reports problems (status updates), and cleans up after guests leave (garbage collection).
-
-**One insight:**
-kubelet doesn't just start containers - it continuously monitors them via probes (liveness, readiness, startup). This monitoring data flows back to the API server, which updates Service endpoints (only healthy pods get traffic) and triggers restarts for unhealthy containers.
-
----
-
-### 🔩 First Principles Explanation
-
-**CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
-
-**DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
-
-**THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
-
-**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
-
----
-
-### 🧠 Mental Model / Analogy
-
-> [TODO: Primary analogy in blockquote.]
-
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-
-Where this analogy breaks down: [TODO: 1 sentence.]
-
----
-
-### 📶 Gradual Depth - Five Levels
-
-**Level 1 - What it is (anyone can understand):**
-[TODO: Plain English. No jargon. 2-4 sentences.]
-
-**Level 2 - How to use it (junior developer):**
-[TODO: Basic usage. Common patterns. 3-5 sentences.]
-
-**Level 3 - How it works (mid-level engineer):**
-[TODO: Internals. Data structures. 4-6 sentences.]
-
-**Level 4 - Production mastery (senior/staff engineer):**
-[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
-
-**Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
----
-
-### ⚙️ How It Works
-
-```
-kubelet operation cycle:
-
-API Server                       Node
-+----------+                     +------------------+
-| PodSpec: |  watch/sync every   | kubelet:         |
-| image:X  | -----10s------->   | 1. Pull image    |
-| ports:Y  |                     | 2. Create sandbox|
-| probes:Z |                     | 3. Start container|
-+----------+                     | 4. Run probes    |
-                                 | 5. Report status |
-     <--------- status --------- | 6. GC old containers|
-                                 +------------------+
-                                        |
-                                 +------+------+
-                                 | containerd  |
-                                 | (via CRI)   |
-                                 +-------------+
-
-Probe types:
-  Startup:  "Is the container initialized?"
-  Liveness: "Is the container alive?" (restart if no)
-  Readiness:"Can it serve traffic?" (remove from svc)
-```
-
----
-
-### 🔄 Complete Picture - End-to-End Flow
-
-**NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
-
-**FAILURE PATH:**
-[TODO: cascade -> observable symptom]
-
-**WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
----
-
-### 📌 Quick Reference Card
-
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-
-**If you remember only 3 things:**
-
-1. kubelet runs on EVERY node and is responsible for the actual container lifecycle (start, stop, monitor)
-2. It uses probes (startup, liveness, readiness) to determine container health and reports status to API server
-3. kubelet continues operating even if the control plane is down (existing containers keep running, local restart policy works)
-
-**Interview one-liner:**
-"kubelet is the per-node agent that receives PodSpecs from the API server, manages container lifecycle via CRI (containerd), runs health probes (startup/liveness/readiness), reports status back, and continues operating independently during control plane outages."
-
----
-
-### 💡 The Surprising Truth
-
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
-
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1022,58 +1054,6 @@ Probe types:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for kubelet. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1098,20 +1078,17 @@ Probe types:
 # kube-proxy
 
 **TL;DR** - kube-proxy maintains network rules on each node that enable Service abstraction - translating virtual ClusterIP addresses into actual pod IPs for load-balanced traffic routing.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Pod IPs are ephemeral (change on restart). A Service needs a stable IP (ClusterIP) that routes to whichever pods are currently healthy. Something must translate that virtual IP into actual pod IPs on every node.
-
 ---
 
 ### 📘 Textbook Definition
 
 kube-proxy is a network proxy running on each node that implements Kubernetes Service concepts by maintaining network rules (iptables or IPVS) that route traffic destined for Service ClusterIPs/NodePorts to the appropriate backend pods.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1124,7 +1101,6 @@ kube-proxy is a network proxy running on each node that implements Kubernetes Se
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1144,7 +1120,6 @@ kube-proxy is a network proxy running on each node that implements Kubernetes Se
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1156,7 +1131,6 @@ kube-proxy is a network proxy running on each node that implements Kubernetes Se
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1175,7 +1149,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1207,7 +1180,6 @@ EndpointSlice flow:
       -> Updates iptables/IPVS rules on ALL nodes
         -> Traffic routed to new pod immediately
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1221,7 +1193,6 @@ EndpointSlice flow:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1234,6 +1205,7 @@ EndpointSlice flow:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1243,14 +1215,69 @@ EndpointSlice flow:
 
 **Interview one-liner:**
 "kube-proxy runs on every node implementing Service networking by maintaining iptables or IPVS rules that DNAT ClusterIP traffic to healthy pod endpoints, updated via EndpointSlice watches - with IPVS mode for O(1) performance at scale and eBPF (Cilium) for eliminating kube-proxy entirely."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for kube-proxy. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1297,13 +1324,181 @@ EndpointSlice flow:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
+---
 
+### 🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
+---
+
+# API Server
+
+**TL;DR** - The kube-apiserver is Kubernetes' central hub - the only component that reads/writes etcd, serving as the authenticated, authorized, admission-controlled front door for all cluster operations.
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Every component (scheduler, controllers, kubelet, kubectl) would need to talk to etcd directly. No access control, no validation, no audit trail. Chaos.
+---
+
+### 📘 Textbook Definition
+
+The kube-apiserver is the front-end for the Kubernetes control plane, exposing the Kubernetes API via REST. It validates and configures data for API objects (pods, services, deployments), handles authentication, authorization (RBAC), admission control, and is the only component that communicates with etcd.
+---
+
+### ⏱️ Understand It in 30 Seconds
+
+**One line:**
+API server is the single front door - every K8s operation goes through it.
+
+**One analogy:**
+
+> The API server is like a bank teller. Every transaction (operation) must go through the teller (API server). The teller checks your ID (authentication), verifies you have permission (authorization), validates the transaction (admission control), and then records it in the ledger (etcd).
+
+**One insight:**
+The API server is stateless - it just validates and proxies to etcd. This means you can run multiple API server replicas behind a load balancer for HA without any coordination between them.
+---
+
+### 🔩 First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+---
+
+### 🧠 Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+---
+
+### 📶 Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
+---
+
+### ⚙️ How It Works
+
+```
+Request flow through API Server:
+
+kubectl apply -f deployment.yaml
+       |
+  [Authentication]  <- Who are you?
+       |             (certificates, tokens, OIDC)
+  [Authorization]   <- Are you allowed?
+       |             (RBAC: can user X verb Y resource Z?)
+  [Admission]       <- Should we allow/modify?
+       |             (Mutating: inject sidecar)
+       |             (Validating: deny privileged)
+  [Validation]      <- Is the object well-formed?
+       |             (schema check, required fields)
+  [etcd Write]      <- Store the object
+       |
+  [Watch Notify]    <- Tell controllers about change
+       |
+  [Response]        <- 201 Created
+```
+---
+
+### 🔄 Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+---
+
+### 📌 Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+
+**If you remember only 3 things:**
+
+1. ONLY component that talks to etcd - all other components go through API server
+2. Request pipeline: Authentication -> Authorization (RBAC) -> Admission (mutating/validating) -> etcd
+3. Stateless and horizontally scalable - multiple replicas behind a load balancer for HA
+
+**Interview one-liner:**
+"The API server is Kubernetes' stateless REST front door implementing the full security pipeline - authentication (who), RBAC authorization (can they), admission control (should we allow/mutate), and validation (is it correct) - before persisting to etcd and notifying watchers."
+---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
+
+### 💡 The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
 ---
 
 ### ⚖️ Comparison Table
 
-[TODO: Include if 2+ named alternatives exist for kube-proxy. Otherwise remove this section.]
-
+[TODO: Include if 2+ named alternatives exist for API Server. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1314,7 +1509,6 @@ EndpointSlice flow:
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1348,178 +1542,6 @@ EndpointSlice flow:
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
-
----
-
-### 🔗 Related Keywords
-
-**Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
-
-**Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
-
-**Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
-
----
-
----
-
-# API Server
-
-**TL;DR** - The kube-apiserver is Kubernetes' central hub - the only component that reads/writes etcd, serving as the authenticated, authorized, admission-controlled front door for all cluster operations.
-
----
-
-### 🔥 The Problem This Solves
-
-**WORLD WITHOUT IT:**
-Every component (scheduler, controllers, kubelet, kubectl) would need to talk to etcd directly. No access control, no validation, no audit trail. Chaos.
-
----
-
-### 📘 Textbook Definition
-
-The kube-apiserver is the front-end for the Kubernetes control plane, exposing the Kubernetes API via REST. It validates and configures data for API objects (pods, services, deployments), handles authentication, authorization (RBAC), admission control, and is the only component that communicates with etcd.
-
----
-
-### ⏱️ Understand It in 30 Seconds
-
-**One line:**
-API server is the single front door - every K8s operation goes through it.
-
-**One analogy:**
-
-> The API server is like a bank teller. Every transaction (operation) must go through the teller (API server). The teller checks your ID (authentication), verifies you have permission (authorization), validates the transaction (admission control), and then records it in the ledger (etcd).
-
-**One insight:**
-The API server is stateless - it just validates and proxies to etcd. This means you can run multiple API server replicas behind a load balancer for HA without any coordination between them.
-
----
-
-### 🔩 First Principles Explanation
-
-**CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
-
-**DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
-
-**THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
-
-**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
-
----
-
-### 🧠 Mental Model / Analogy
-
-> [TODO: Primary analogy in blockquote.]
-
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-
-Where this analogy breaks down: [TODO: 1 sentence.]
-
----
-
-### 📶 Gradual Depth - Five Levels
-
-**Level 1 - What it is (anyone can understand):**
-[TODO: Plain English. No jargon. 2-4 sentences.]
-
-**Level 2 - How to use it (junior developer):**
-[TODO: Basic usage. Common patterns. 3-5 sentences.]
-
-**Level 3 - How it works (mid-level engineer):**
-[TODO: Internals. Data structures. 4-6 sentences.]
-
-**Level 4 - Production mastery (senior/staff engineer):**
-[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
-
-**Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
----
-
-### ⚙️ How It Works
-
-```
-Request flow through API Server:
-
-kubectl apply -f deployment.yaml
-       |
-  [Authentication]  <- Who are you?
-       |             (certificates, tokens, OIDC)
-  [Authorization]   <- Are you allowed?
-       |             (RBAC: can user X verb Y resource Z?)
-  [Admission]       <- Should we allow/modify?
-       |             (Mutating: inject sidecar)
-       |             (Validating: deny privileged)
-  [Validation]      <- Is the object well-formed?
-       |             (schema check, required fields)
-  [etcd Write]      <- Store the object
-       |
-  [Watch Notify]    <- Tell controllers about change
-       |
-  [Response]        <- 201 Created
-```
-
----
-
-### 🔄 Complete Picture - End-to-End Flow
-
-**NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
-
-**FAILURE PATH:**
-[TODO: cascade -> observable symptom]
-
-**WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
----
-
-### 📌 Quick Reference Card
-
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-
-**If you remember only 3 things:**
-
-1. ONLY component that talks to etcd - all other components go through API server
-2. Request pipeline: Authentication -> Authorization (RBAC) -> Admission (mutating/validating) -> etcd
-3. Stateless and horizontally scalable - multiple replicas behind a load balancer for HA
-
-**Interview one-liner:**
-"The API server is Kubernetes' stateless REST front door implementing the full security pipeline - authentication (who), RBAC authorization (can they), admission control (should we allow/mutate), and validation (is it correct) - before persisting to etcd and notifying watchers."
-
----
-
-### 💡 The Surprising Truth
-
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
-
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1561,58 +1583,6 @@ webhooks:
 ```
 
 Use custom webhooks when: enforcing org policies (no `latest` tags, require labels, security context requirements). Tools like OPA/Gatekeeper and Kyverno simplify this with policy-as-code.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for API Server. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1628,4 +1598,3 @@ Use custom webhooks when: enforcing org policies (no `latest` tags, require labe
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

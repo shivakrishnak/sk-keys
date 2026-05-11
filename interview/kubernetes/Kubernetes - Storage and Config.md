@@ -16,7 +16,7 @@ keywords:
   - Volume Snapshots
 difficulty_range: medium-hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Persistent Volumes
 
 **TL;DR** - Persistent Volumes (PV) and Persistent Volume Claims (PVC) decouple storage provisioning from pod lifecycle - administrators provision storage (PV), developers request it (PVC), and pods mount it, with data surviving pod restarts and rescheduling.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -41,13 +40,11 @@ Container filesystems are ephemeral - data disappears on restart. Mounting host 
 
 **THE INVENTION MOMENT:**
 "This is exactly why PV/PVC abstraction was created."
-
 ---
 
 ### 📘 Textbook Definition
 
 A PersistentVolume (PV) is a cluster resource representing a piece of storage provisioned by an administrator or dynamically by a StorageClass. A PersistentVolumeClaim (PVC) is a user's request for storage that binds to a PV. Pods reference PVCs to mount storage.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -60,7 +57,6 @@ A PersistentVolume (PV) is a cluster resource representing a piece of storage pr
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -80,7 +76,6 @@ A PersistentVolume (PV) is a cluster resource representing a piece of storage pr
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -92,7 +87,6 @@ A PersistentVolume (PV) is a cluster resource representing a piece of storage pr
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -111,7 +105,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -165,7 +158,6 @@ Access Modes:
   ReadOnlyMany (ROX):   Many nodes read-only
   ReadWriteMany (RWX):  Many nodes read/write (NFS/EFS)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -179,7 +171,6 @@ Access Modes:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -192,6 +183,7 @@ Access Modes:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -201,14 +193,69 @@ Access Modes:
 
 **Interview one-liner:**
 "PersistentVolumes decouple storage lifecycle from pod lifecycle - developers request storage via PVCs, StorageClasses dynamically provision the backing storage (EBS, EFS, GCE PD), and data persists across pod restarts with configurable reclaim policies controlling cleanup."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Persistent Volumes. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -255,58 +302,6 @@ Access Modes:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Persistent Volumes. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -331,20 +326,17 @@ Access Modes:
 # ConfigMap
 
 **TL;DR** - ConfigMaps store non-sensitive configuration data as key-value pairs, injected into pods as environment variables or mounted as files, separating configuration from container images.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Configuration baked into images. Different environments (dev/staging/prod) need different images or complex entrypoint scripts parsing environment variables. Configuration changes require image rebuilds and redeployments.
-
 ---
 
 ### 📘 Textbook Definition
 
 A ConfigMap is a Kubernetes API object that stores non-confidential configuration data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -357,7 +349,6 @@ A ConfigMap is a Kubernetes API object that stores non-confidential configuratio
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -377,7 +368,6 @@ A ConfigMap is a Kubernetes API object that stores non-confidential configuratio
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -389,7 +379,6 @@ A ConfigMap is a Kubernetes API object that stores non-confidential configuratio
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -408,7 +397,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -463,7 +451,6 @@ Hot reload:
   Volume-mounted: auto-updates (~60s delay)
   Environment vars: NOT updated (requires pod restart)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -477,7 +464,6 @@ Hot reload:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -490,6 +476,7 @@ Hot reload:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -499,14 +486,69 @@ Hot reload:
 
 **Interview one-liner:**
 "ConfigMaps externalize configuration from images - I mount them as volumes for hot-reload capability (nginx configs, feature flags) or inject as env vars for static config, keeping images environment-agnostic and enabling promotion through dev/staging/prod without rebuilds."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for ConfigMap. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -553,58 +595,6 @@ Hot reload:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for ConfigMap. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -629,7 +619,6 @@ Hot reload:
 # Kubernetes Secrets
 
 **TL;DR** - Secrets store sensitive data (passwords, tokens, TLS certs) separately from pod specs, with base64 encoding and optional encryption-at-rest, though external secret managers (Vault, AWS Secrets Manager) are recommended for production.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -639,13 +628,11 @@ Passwords in YAML manifests checked into Git. Database credentials in ConfigMaps
 
 **THE INVENTION MOMENT:**
 "This is exactly why Kubernetes Secrets were created."
-
 ---
 
 ### 📘 Textbook Definition
 
 A Kubernetes Secret is an object that stores sensitive data (passwords, OAuth tokens, SSH keys) with a type system for different secret kinds. Secrets are base64-encoded (NOT encrypted by default) and can be mounted as files or injected as environment variables.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -658,7 +645,6 @@ A Kubernetes Secret is an object that stores sensitive data (passwords, OAuth to
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -678,7 +664,6 @@ A Kubernetes Secret is an object that stores sensitive data (passwords, OAuth to
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -690,7 +675,6 @@ A Kubernetes Secret is an object that stores sensitive data (passwords, OAuth to
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -709,7 +693,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -768,7 +751,6 @@ Best practice: External Secrets Operator
   AWS Secrets Manager -> ExternalSecret CR
     -> K8s Secret (auto-synced) -> Pod
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -782,7 +764,6 @@ Best practice: External Secrets Operator
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -795,6 +776,7 @@ Best practice: External Secrets Operator
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -804,14 +786,69 @@ Best practice: External Secrets Operator
 
 **Interview one-liner:**
 "K8s Secrets provide a type-safe way to store sensitive data separate from manifests, but they're only base64-encoded by default - in production I enable etcd encryption at rest and use External Secrets Operator to sync from Vault or AWS Secrets Manager, with strict RBAC limiting secret access."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Kubernetes Secrets. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -858,58 +895,6 @@ Best practice: External Secrets Operator
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Kubernetes Secrets. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -934,20 +919,17 @@ Best practice: External Secrets Operator
 # StorageClass
 
 **TL;DR** - StorageClass defines storage provisioning profiles (SSD vs HDD, replication, encryption) that dynamically create Persistent Volumes when PVCs request them, eliminating manual PV creation.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Administrators manually create PVs before developers can use storage. 50 developers need 50 volumes? 50 manual creation operations. Different performance tiers (SSD, HDD)? Multiple manual configurations.
-
 ---
 
 ### 📘 Textbook Definition
 
 A StorageClass provides a way for administrators to describe classes of storage they offer. Different classes may map to quality-of-service levels, backup policies, or arbitrary policies. When a PVC references a StorageClass, the provisioner dynamically creates a PV matching the specification.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -960,7 +942,6 @@ A StorageClass provides a way for administrators to describe classes of storage 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -980,7 +961,6 @@ A StorageClass provides a way for administrators to describe classes of storage 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -992,7 +972,6 @@ A StorageClass provides a way for administrators to describe classes of storage 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1011,7 +990,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1046,7 +1024,6 @@ spec:
       storage: 100Gi
 # PV is auto-created by the provisioner!
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1060,7 +1037,6 @@ spec:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1073,6 +1049,7 @@ spec:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1082,14 +1059,69 @@ spec:
 
 **Interview one-liner:**
 "StorageClasses enable dynamic volume provisioning - I define classes for different tiers (fast-ssd, standard-hdd, shared-nfs) with appropriate provisioners, always using WaitForFirstConsumer binding mode to ensure volumes are created in the same AZ as the consuming pod."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for StorageClass. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1136,58 +1168,6 @@ spec:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for StorageClass. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1212,20 +1192,17 @@ spec:
 # CSI
 
 **TL;DR** - Container Storage Interface (CSI) is the standard plugin interface between Kubernetes and storage providers, enabling any storage system (AWS EBS, Azure Disk, Ceph, NetApp) to work with K8s without modifying core code.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Storage drivers were compiled into Kubernetes core. Adding new storage required modifying Kubernetes source code, matching release cycles, and getting changes merged upstream. Innovation was bottlenecked.
-
 ---
 
 ### 📘 Textbook Definition
 
 CSI is an industry-standard interface for container orchestrators to expose arbitrary storage systems to their containerized workloads. In Kubernetes, CSI drivers run as pods (DaemonSet on nodes + Deployment for controller) and implement volume lifecycle operations (create, attach, mount, snapshot, resize).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1238,7 +1215,6 @@ CSI is an industry-standard interface for container orchestrators to expose arbi
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1258,7 +1234,6 @@ CSI is an industry-standard interface for container orchestrators to expose arbi
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1270,7 +1245,6 @@ CSI is an industry-standard interface for container orchestrators to expose arbi
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1289,7 +1263,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1318,7 +1291,6 @@ Flow: PVC created
   -> Controller attaches volume to node
   -> Node plugin mounts into pod
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1332,7 +1304,6 @@ Flow: PVC created
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1345,6 +1316,7 @@ Flow: PVC created
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1354,14 +1326,69 @@ Flow: PVC created
 
 **Interview one-liner:**
 "CSI decouples storage providers from Kubernetes core - storage vendors ship CSI drivers as pods (controller for provisioning + node DaemonSet for mounting) implementing a standard interface, enabling any storage system to integrate without modifying Kubernetes source code."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for CSI. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1408,58 +1435,6 @@ Flow: PVC created
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for CSI. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1484,20 +1459,17 @@ Flow: PVC created
 # Volume Snapshots
 
 **TL;DR** - Volume Snapshots create point-in-time copies of persistent volumes for backup, disaster recovery, and cloning - managed as Kubernetes resources (VolumeSnapshot, VolumeSnapshotClass) through CSI drivers.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Database backup requires application-level dump tools (pg_dump). No consistent backup mechanism across storage types. Cloning a volume for testing requires creating a new volume and manually copying data.
-
 ---
 
 ### 📘 Textbook Definition
 
 Kubernetes Volume Snapshots provide a standardized way to create point-in-time snapshots of PersistentVolumes using CSI drivers. VolumeSnapshotClass defines the snapshot provisioner, VolumeSnapshot requests a snapshot, and VolumeSnapshotContent represents the actual snapshot.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1510,7 +1482,6 @@ Kubernetes Volume Snapshots provide a standardized way to create point-in-time s
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1530,7 +1501,6 @@ Kubernetes Volume Snapshots provide a standardized way to create point-in-time s
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1542,7 +1512,6 @@ Kubernetes Volume Snapshots provide a standardized way to create point-in-time s
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1561,7 +1530,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1603,7 +1571,6 @@ spec:
     requests:
       storage: 100Gi
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1617,7 +1584,6 @@ spec:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1630,6 +1596,7 @@ spec:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1639,14 +1606,69 @@ spec:
 
 **Interview one-liner:**
 "Volume Snapshots provide Kubernetes-native point-in-time backup through CSI drivers - I use them for automated database backups (CronJob triggering VolumeSnapshot), disaster recovery (restore PVC from snapshot), and test environment provisioning (clone production data safely)."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Volume Snapshots. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1693,58 +1715,6 @@ spec:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Volume Snapshots. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1760,4 +1730,3 @@ spec:
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

@@ -16,7 +16,7 @@ keywords:
   - Capacity Planning
 difficulty_range: hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,20 +31,17 @@ version: 2
 # Incident Management
 
 **TL;DR** - Incident management is the structured process of detecting, responding to, and resolving production incidents - with defined roles (incident commander, communications), severity levels, runbooks, and post-resolution analysis to minimize user impact and recovery time.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 System goes down. Everyone panics. Three people SSH into the same server making conflicting changes. Nobody communicates status to stakeholders. Nobody knows who's in charge. Recovery takes 4x longer than it should because effort is uncoordinated.
-
 ---
 
 ### 📘 Textbook Definition
 
 Incident management is a structured framework for responding to unplanned service disruptions, encompassing detection (alerting), response (coordinated team actions with defined roles), resolution (restoring service), and follow-up (postmortem and prevention), designed to minimize Mean Time to Recovery (MTTR).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -57,7 +54,6 @@ Incident management is a structured framework for responding to unplanned servic
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -77,7 +73,6 @@ Incident management is a structured framework for responding to unplanned servic
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -89,7 +84,6 @@ Incident management is a structured framework for responding to unplanned servic
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -108,7 +102,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -148,7 +141,6 @@ Incident workflow:
   7. Resolve: Service restored
   8. Postmortem scheduled within 48 hours
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -162,7 +154,6 @@ Incident workflow:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -175,6 +166,7 @@ Incident workflow:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -184,14 +176,69 @@ Incident workflow:
 
 **Interview one-liner:**
 "I follow structured incident management: on-call acknowledges within 5 minutes, triages severity, declares incident with clear IC/Tech Lead/Comms roles, prioritizes service restoration over root cause, communicates via status page on cadence, and conducts blameless postmortem within 48 hours."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Incident Management. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -235,58 +282,6 @@ Post-resolution:
 - Update status page "Resolved"
 - Schedule postmortem within 48h
 - Document timeline while memory is fresh
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Incident Management. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -311,7 +306,6 @@ Post-resolution:
 # Error Budget
 
 **TL;DR** - An error budget is the allowed amount of unreliability (100% minus SLO) that a service can "spend" before requiring reliability investment - when budget is available ship features fast, when exhausted freeze features and fix reliability.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -321,13 +315,11 @@ Eternal tension: Product wants features shipped faster. SRE wants more stability
 
 **THE INVENTION MOMENT:**
 "This is exactly why error budgets were created - a shared objective framework."
-
 ---
 
 ### 📘 Textbook Definition
 
 An error budget is the maximum allowable threshold for errors and service unavailability, derived from the SLO (error budget = 100% - SLO). It provides a quantitative measure for balancing service reliability against feature velocity: when budget remains, teams prioritize features; when budget is depleted, teams prioritize reliability.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -340,7 +332,6 @@ An error budget is the maximum allowable threshold for errors and service unavai
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -360,7 +351,6 @@ An error budget is the maximum allowable threshold for errors and service unavai
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -372,7 +362,6 @@ An error budget is the maximum allowable threshold for errors and service unavai
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -391,7 +380,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -430,7 +418,6 @@ Error budget burn rate alerting:
   "Burning budget at 1x rate" = consuming normally
   Alert when sustained high burn rate detected
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -444,7 +431,6 @@ Error budget burn rate alerting:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -457,6 +443,7 @@ Error budget burn rate alerting:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -466,14 +453,69 @@ Error budget burn rate alerting:
 
 **Interview one-liner:**
 "Error budgets (100% - SLO) quantify allowed unreliability - I use them to balance feature velocity and reliability: when budget is healthy we ship fast and experiment, when depleted we freeze features and invest in reliability, with burn-rate alerting for early warning of budget depletion."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Error Budget. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -520,58 +562,6 @@ Error budget burn rate alerting:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Error Budget. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -596,7 +586,6 @@ Error budget burn rate alerting:
 # Chaos Engineering
 
 **TL;DR** - Chaos engineering proactively injects controlled failures into production systems (kill pods, add latency, corrupt data, partition networks) to discover weaknesses BEFORE they cause real outages - building confidence in system resilience.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -606,13 +595,11 @@ Error budget burn rate alerting:
 
 **THE INVENTION MOMENT:**
 "This is exactly why Netflix created Chaos Monkey and chaos engineering."
-
 ---
 
 ### 📘 Textbook Definition
 
 Chaos engineering is the discipline of experimenting on a distributed system to build confidence in the system's capability to withstand turbulent conditions in production. It follows a scientific method: hypothesize steady state, introduce variables (failures), observe impact, and identify weaknesses.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -625,7 +612,6 @@ Chaos engineering is the discipline of experimenting on a distributed system to 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -645,7 +631,6 @@ Chaos engineering is the discipline of experimenting on a distributed system to 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -657,7 +642,6 @@ Chaos engineering is the discipline of experimenting on a distributed system to 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -676,7 +660,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -719,7 +702,6 @@ Tools:
   AWS FIS:                AWS Fault Injection Simulator
   Chaos Mesh:             K8s chaos experiments (CNCF)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -733,7 +715,6 @@ Tools:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -746,6 +727,7 @@ Tools:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -755,14 +737,69 @@ Tools:
 
 **Interview one-liner:**
 "Chaos engineering proactively discovers resilience weaknesses by injecting controlled failures (pod kills, network latency, AZ failures) and verifying steady-state hypotheses hold - I run experiments starting small in production during business hours with kill switches, using Litmus/Chaos Mesh, gated by error budget availability."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Chaos Engineering. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -809,58 +846,6 @@ Tools:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Chaos Engineering. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -885,20 +870,17 @@ Tools:
 # On-Call Best Practices
 
 **TL;DR** - Effective on-call requires actionable alerts (no noise), clear escalation paths, runbooks for every alert, sustainable rotation (no burnout), and organizational support (compensation, follow-the-sun, postmortem learning) - on-call should not be suffering.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 On-call engineers paged 20 times per shift. Most alerts are noise. No runbooks - they're expected to "just know." No handoff process. Same person on-call for weeks. Burnout, attrition, and slow incident response.
-
 ---
 
 ### 📘 Textbook Definition
 
 On-call best practices encompass the policies, tools, and cultural norms that make incident response sustainable and effective: actionable alerting (signal over noise), runbook documentation, healthy rotation schedules, fair compensation, escalation procedures, and continuous improvement through postmortems.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -911,7 +893,6 @@ On-call best practices encompass the policies, tools, and cultural norms that ma
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -931,7 +912,6 @@ On-call best practices encompass the policies, tools, and cultural norms that ma
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -943,7 +923,6 @@ On-call best practices encompass the policies, tools, and cultural norms that ma
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -962,7 +941,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1004,7 +982,6 @@ Anti-patterns:
   - No postmortem improvement loop
   - Blaming on-call for outages
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1018,7 +995,6 @@ Anti-patterns:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1031,6 +1007,7 @@ Anti-patterns:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1040,14 +1017,69 @@ Anti-patterns:
 
 **Interview one-liner:**
 "Healthy on-call requires actionable alerts with runbooks (max 2 pages/shift), sustainable rotation with compensation, clear escalation paths, and a feedback loop where every incident's postmortem action items reduce future pages - on-call should improve the system, not just maintain it."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for On-Call Best Practices. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1094,58 +1126,6 @@ Anti-patterns:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for On-Call Best Practices. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1170,20 +1150,17 @@ Anti-patterns:
 # Postmortem Culture
 
 **TL;DR** - Blameless postmortems analyze incidents to identify systemic causes and prevent recurrence - focusing on system improvements (automation, guardrails, monitoring) rather than individual blame, creating a learning organization that gets more reliable over time.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Incident happens. Manager asks "who did this?" Engineer gets blamed. Engineers start hiding mistakes, avoiding risky but necessary changes, and not reporting near-misses. Organization learns nothing. Same incidents repeat.
-
 ---
 
 ### 📘 Textbook Definition
 
 A blameless postmortem is a structured review of an incident that assumes people made the best decisions they could with available information, focusing on identifying systemic factors (tooling gaps, process failures, missing guardrails) that contributed to the incident, and generating action items that prevent recurrence.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1196,7 +1173,6 @@ A blameless postmortem is a structured review of an incident that assumes people
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1216,7 +1192,6 @@ A blameless postmortem is a structured review of an incident that assumes people
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1228,7 +1203,6 @@ A blameless postmortem is a structured review of an incident that assumes people
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1247,7 +1221,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1285,7 +1258,6 @@ Blameless principles:
   Why no load test? -> Not in deployment checklist
   ACTION: Add memory limits + load test to pipeline
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1299,7 +1271,6 @@ Blameless principles:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1312,6 +1283,7 @@ Blameless principles:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1321,14 +1293,69 @@ Blameless principles:
 
 **Interview one-liner:**
 "I lead blameless postmortems focusing on systemic causes (missing guardrails, automation, tests) not individual blame - with specific assigned action items that improve the system, shared broadly for organizational learning, and tracked to completion to ensure recurrence prevention."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Postmortem Culture. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1375,58 +1402,6 @@ Blameless principles:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Postmortem Culture. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1451,20 +1426,17 @@ Blameless principles:
 # Capacity Planning
 
 **TL;DR** - Capacity planning predicts future resource needs based on growth trends, performance baselines, and business projections - ensuring systems have enough headroom to handle anticipated load without over-provisioning (wasting money) or under-provisioning (causing outages).
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Black Friday: 10x normal traffic. Systems collapse because nobody planned for it. Or: over-provisioned all year "just in case" - spending 5x more than needed 11 months of the year.
-
 ---
 
 ### 📘 Textbook Definition
 
 Capacity planning is the process of determining the compute, storage, and network resources required to meet future demand, based on current utilization trends, known growth rates, seasonal patterns, and planned business events, balancing reliability (headroom) against cost efficiency.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1477,7 +1449,6 @@ Capacity planning is the process of determining the compute, storage, and networ
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1497,7 +1468,6 @@ Capacity planning is the process of determining the compute, storage, and networ
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1509,7 +1479,6 @@ Capacity planning is the process of determining the compute, storage, and networ
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1528,7 +1497,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1567,7 +1535,6 @@ Key metrics to track:
   - Database connections (hard limits!)
   - Network bandwidth (often forgotten until saturated)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1581,7 +1548,6 @@ Key metrics to track:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1594,6 +1560,7 @@ Key metrics to track:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1603,14 +1570,69 @@ Key metrics to track:
 
 **Interview one-liner:**
 "I approach capacity planning by baselining current utilization, projecting growth (organic + planned events), maintaining 30% headroom, pre-scaling for known peaks (auto-scaling has lag), and monitoring non-scalable resources (DB connections, disk) that become hard ceilings before compute does."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Capacity Planning. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1657,58 +1679,6 @@ Key metrics to track:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Capacity Planning. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1724,4 +1694,3 @@ Key metrics to track:
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

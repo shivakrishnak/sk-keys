@@ -16,7 +16,7 @@ keywords:
   - NATS
 difficulty_range: medium
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,20 +31,17 @@ version: 2
 # RabbitMQ
 
 **TL;DR** - RabbitMQ is a traditional message broker implementing AMQP protocol, providing flexible routing (exchanges + bindings), message acknowledgment, dead letter queues, and priority queuing - best for complex routing patterns and traditional request/reply messaging where messages are consumed and deleted.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You need flexible message routing: some messages go to one consumer, others fan out, others route based on content patterns. You need priority queuing, message TTL, delayed delivery. Kafka's topic-based model is too simple for these routing needs.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -57,7 +54,6 @@ You need flexible message routing: some messages go to one consumer, others fan 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -77,7 +73,6 @@ You need flexible message routing: some messages go to one consumer, others fan 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -89,7 +84,6 @@ You need flexible message routing: some messages go to one consumer, others fan 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -108,7 +102,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -156,7 +149,6 @@ RabbitMQ features:
   - Quorum queues (replicated for HA)
   - Streams (Kafka-like append-only, RabbitMQ 3.9+)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -170,7 +162,6 @@ RabbitMQ features:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -183,6 +174,7 @@ RabbitMQ features:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -192,14 +184,69 @@ RabbitMQ features:
 
 **Interview one-liner:**
 "RabbitMQ for complex routing patterns (topic/header exchanges), traditional work queues with fair dispatch, and request/reply messaging - Kafka for event streaming, replay, high throughput, and multiple consumer groups. I choose RabbitMQ when routing flexibility and message-level features (TTL, priority, DLX) matter more than throughput."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for RabbitMQ. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -246,58 +293,6 @@ RabbitMQ features:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for RabbitMQ. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -322,20 +317,17 @@ RabbitMQ features:
 # AMQP
 
 **TL;DR** - AMQP (Advanced Message Queuing Protocol) is an open standard wire-level protocol for message-oriented middleware - defining how messages are formatted, routed, queued, and delivered, enabling interoperability between different message brokers and client libraries.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every message broker has its own proprietary protocol. Switching from one broker to another requires rewriting all client code. No interoperability between different vendors. Vendor lock-in at the protocol level.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -348,7 +340,6 @@ Every message broker has its own proprietary protocol. Switching from one broker
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -368,7 +359,6 @@ Every message broker has its own proprietary protocol. Switching from one broker
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -380,7 +370,6 @@ Every message broker has its own proprietary protocol. Switching from one broker
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -399,7 +388,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -442,7 +430,6 @@ AMQP vs other protocols:
   | STOMP    | Simple text     | ActiveMQ, RabbitMQ |
   | Kafka Protocol | Streaming | Kafka only        |
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -456,7 +443,6 @@ AMQP vs other protocols:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -469,6 +455,7 @@ AMQP vs other protocols:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -478,14 +465,69 @@ AMQP vs other protocols:
 
 **Interview one-liner:**
 "AMQP provides standardized message routing via exchanges (direct, topic, fanout, headers) with publisher confirms and consumer acknowledgments - I use channels for per-thread communication over shared connections, persistent delivery mode for critical messages, and manual ack for at-least-once processing guarantees."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for AMQP. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -532,58 +574,6 @@ AMQP vs other protocols:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for AMQP. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -608,20 +598,17 @@ AMQP vs other protocols:
 # Exchanges and Bindings
 
 **TL;DR** - Exchanges receive messages from producers and route them to queues based on exchange type and binding rules - direct (exact key match), topic (pattern matching), fanout (broadcast), and headers (attribute matching) - providing the flexible routing that distinguishes RabbitMQ from simpler brokers.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without routing logic: every message goes to every queue (wasteful) or you need a separate queue per producer-consumer pair (explosion of queues). You need to route messages to the RIGHT consumers based on message properties.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -634,7 +621,6 @@ Without routing logic: every message goes to every queue (wasteful) or you need 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -654,7 +640,6 @@ Without routing logic: every message goes to every queue (wasteful) or you need 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -666,7 +651,6 @@ Without routing logic: every message goes to every queue (wasteful) or you need 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -685,7 +669,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -739,7 +722,6 @@ Retry pattern with DLX:
     -> (TTL expires) -> Main Queue (retry)
   After max retries: route to Dead Letter Queue (permanent)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -753,7 +735,6 @@ Retry pattern with DLX:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -766,6 +747,7 @@ Retry pattern with DLX:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -775,14 +757,69 @@ Retry pattern with DLX:
 
 **Interview one-liner:**
 "I use topic exchanges for hierarchical event routing (dotted keys with \* and # patterns), fanout for event broadcasting, direct for task distribution, and DLX with TTL-based retry queues for automatic message retry before dead-lettering - choosing exchange type based on the routing flexibility each consumer topology requires."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Exchanges and Bindings. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -829,58 +866,6 @@ Retry pattern with DLX:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Exchanges and Bindings. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -905,20 +890,17 @@ Retry pattern with DLX:
 # ActiveMQ
 
 **TL;DR** - Apache ActiveMQ is a mature Java-based message broker supporting multiple protocols (AMQP, STOMP, MQTT, OpenWire) and the JMS API - widely used in enterprise Java applications, with ActiveMQ Artemis as its modern high-performance successor.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Java enterprise applications need a JMS-compliant broker that integrates with Java EE/Jakarta EE containers, supports multiple protocols for different clients, and provides enterprise features (XA transactions, cluster, persistence).
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -931,7 +913,6 @@ Java enterprise applications need a JMS-compliant broker that integrates with Ja
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -951,7 +932,6 @@ Java enterprise applications need a JMS-compliant broker that integrates with Ja
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -963,7 +943,6 @@ Java enterprise applications need a JMS-compliant broker that integrates with Ja
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -982,7 +961,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1025,7 +1003,6 @@ Spring Boot integration:
     // Process message
   }
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1039,7 +1016,6 @@ Spring Boot integration:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1052,6 +1028,7 @@ Spring Boot integration:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1061,14 +1038,69 @@ Spring Boot integration:
 
 **Interview one-liner:**
 "ActiveMQ Artemis for Java EE/Spring environments needing JMS compliance, XA transactions, and multi-protocol support (AMQP+MQTT+STOMP) - though for new greenfield projects without JMS requirements, I typically prefer RabbitMQ (better routing) or Kafka (streaming) based on the messaging pattern needed."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for ActiveMQ. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1115,58 +1147,6 @@ Spring Boot integration:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for ActiveMQ. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1191,20 +1171,17 @@ Spring Boot integration:
 # Redis Pub/Sub
 
 **TL;DR** - Redis Pub/Sub provides ultra-low-latency ephemeral messaging (messages are NOT persisted) - subscribers must be connected when messages are published, making it ideal for real-time notifications, chat, and live updates where message loss is acceptable.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Need to broadcast real-time updates to connected WebSocket clients. Kafka/RabbitMQ add unnecessary complexity and latency for ephemeral notifications where message persistence doesn't matter and sub-millisecond latency is critical.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1217,7 +1194,6 @@ Need to broadcast real-time updates to connected WebSocket clients. Kafka/Rabbit
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1237,7 +1213,6 @@ Need to broadcast real-time updates to connected WebSocket clients. Kafka/Rabbit
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1249,7 +1224,6 @@ Need to broadcast real-time updates to connected WebSocket clients. Kafka/Rabbit
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1268,7 +1242,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1318,7 +1291,6 @@ Redis Streams (better alternative for most cases):
   - Recommended over Pub/Sub for new projects
     (unless you truly need fire-and-forget broadcast)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1332,7 +1304,6 @@ Redis Streams (better alternative for most cases):
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1345,6 +1316,7 @@ Redis Streams (better alternative for most cases):
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1354,14 +1326,69 @@ Redis Streams (better alternative for most cases):
 
 **Interview one-liner:**
 "Redis Pub/Sub for sub-millisecond ephemeral broadcasting (WebSocket notifications, cache invalidation) where message loss is acceptable - for anything requiring durability or replay, I use Redis Streams (same low latency, adds persistence and consumer groups) or Kafka for full streaming capabilities."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Redis Pub/Sub. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1408,58 +1435,6 @@ Redis Streams (better alternative for most cases):
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Redis Pub/Sub. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1484,20 +1459,17 @@ Redis Streams (better alternative for most cases):
 # NATS
 
 **TL;DR** - NATS is a lightweight, high-performance messaging system designed for cloud-native architectures - providing pub/sub, request/reply, and queue groups with minimal operational complexity, and JetStream for persistence. Optimized for simplicity and low latency.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Kafka is too complex for simple service communication. RabbitMQ requires exchange/binding configuration. You need a messaging system that "just works" with minimal setup - lightweight pub/sub for microservice communication without operational burden.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1510,7 +1482,6 @@ Kafka is too complex for simple service communication. RabbitMQ requires exchang
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1530,7 +1501,6 @@ Kafka is too complex for simple service communication. RabbitMQ requires exchang
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1542,7 +1512,6 @@ Kafka is too complex for simple service communication. RabbitMQ requires exchang
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1561,7 +1530,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1613,7 +1581,6 @@ When to use NATS:
   - When operational simplicity is priority #1
   - Cloud-native, Kubernetes-native workloads
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1627,7 +1594,6 @@ When to use NATS:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1640,6 +1606,7 @@ When to use NATS:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1649,14 +1616,69 @@ When to use NATS:
 
 **Interview one-liner:**
 "NATS for lightweight cloud-native messaging with minimal operational complexity - core NATS for fire-and-forget microservice communication, JetStream when I need persistence and replay without Kafka's operational weight, and queue groups for built-in load balancing across service instances."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for NATS. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1703,58 +1725,6 @@ When to use NATS:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for NATS. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1770,4 +1740,3 @@ When to use NATS:
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

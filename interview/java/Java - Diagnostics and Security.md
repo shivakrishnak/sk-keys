@@ -13,7 +13,7 @@ keywords:
   - GC Algorithm Selection Framework
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -25,13 +25,11 @@ version: 2
 # JVM Profiling and Diagnostic Tools
 
 **TL;DR** - JVM diagnostic tools (`jcmd`, `jfr`, `jmap`, `jstack`, `jstat`) let you diagnose memory leaks, CPU hotspots, thread issues, and GC problems in running production JVMs without restarting.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Your production application is slow. Is it CPU-bound? Memory-bound? GC thrashing? Thread contention? A blocked database connection? Without diagnostic tools, you're guessing. With them, you see exactly what the JVM is doing.
-
 ---
 
 ### Tool Map
@@ -56,7 +54,6 @@ GC problem        jstat           GC statistics live
 Class loading     jcmd            Loaded classes
                   -verbose:class  Class load/unload events
 ```
-
 ---
 
 ### Essential Commands
@@ -95,7 +92,6 @@ jcmd <pid> JFR.start duration=60s \
   filename=/tmp/recording.jfr
 # Low-overhead (<2%) production profiling
 ```
-
 ---
 
 ### Diagnostic Workflows
@@ -129,7 +125,6 @@ jcmd <pid> JFR.start duration=60s \
    -> Or: convert to flame graph with
       async-profiler
 ```
-
 ---
 
 ### JFR (Java Flight Recorder) - Deep Dive
@@ -158,13 +153,11 @@ jcmd <pid> JFR.start duration=60s \
 // - Class loading
 // - Lock contention
 ```
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -177,7 +170,6 @@ jcmd <pid> JFR.start duration=60s \
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -197,7 +189,6 @@ jcmd <pid> JFR.start duration=60s \
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -209,7 +200,6 @@ jcmd <pid> JFR.start duration=60s \
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -228,14 +218,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -249,7 +237,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -262,6 +249,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **ANTI-PATTERN:** Profiling only in dev environment with synthetic data - production workloads are different
 **TRADE-OFF:** Diagnostic depth vs overhead and data volume. JFR is always-on; heap dump freezes the JVM
 **ONE-LINER:** "async-profiler for CPU, JFR for everything, jmap for OOM, jstack for deadlocks"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -271,48 +259,21 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Interview one-liner:**
 "For production JVM diagnostics, I use jcmd as my primary tool - thread dumps for contention, heap dumps analyzed in Eclipse MAT for memory leaks, and JFR recordings for CPU profiling with under 2% overhead."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your Java application is consuming 8GB of heap and keeps growing. How do you find the memory leak?**
-
-_Why they ask:_ The most common production Java question.
-
-**Answer:**
-
-1. **Confirm it's a leak, not just high usage.** Run `jstat -gcutil <pid> 1000` and watch the Old generation (O column). If it trends upward and Full GC doesn't reclaim it, it's a leak.
-
-2. **Take a heap dump.** `jcmd <pid> GC.heap_dump /tmp/heap.hprof`. Take two dumps 10 minutes apart for comparison.
-
-3. **Analyze in Eclipse MAT.** Open the dump, run "Leak Suspects" report. Check the "Dominator Tree" - the objects retaining the most memory. Typically it's a `HashMap`, `ArrayList`, or cache that grows without eviction.
-
-4. **Trace the GC root path.** In MAT, right-click the suspect -> "Path to GC Roots" -> "exclude weak/soft references." This shows why the object can't be collected - usually a static field, a ThreadLocal not cleaned up, or a listener not deregistered.
-
-5. **Common leak sources:** (a) Static collections that only grow, never shrink. (b) ThreadLocal not removed after use (especially in thread pools). (c) Unclosed streams, connections, or ResultSets. (d) Event listeners not deregistered. (e) Classloader leaks in web applications.
-
-**Q2: How do you differentiate between a CPU-bound and I/O-bound performance problem?**
-
-_Why they ask:_ Tests systematic diagnosis approach.
-
-**Answer:**
-
-1. **Check CPU utilization.** `top -H -p <pid>` shows per-thread CPU. If CPU is near 100% per core, it's CPU-bound. If CPU is low but latency is high, it's I/O-bound.
-
-2. **Thread dump analysis.** CPU-bound: threads are RUNNABLE, actively executing compute-heavy code. I/O-bound: threads are BLOCKED/WAITING/TIMED_WAITING, stuck on socket reads, database queries, or file I/O.
-
-3. **JFR recording.** Method profiling shows CPU hotspots. I/O tab shows time spent in file/network I/O. Thread sleep/wait time vs compute time ratio reveals the bottleneck.
-
-4. **Fix:** CPU-bound -> optimize algorithm, cache results, parallelize. I/O-bound -> async I/O, connection pooling, batching, caching.
-
 ---
 
 ### ⚖️ Comparison Table
@@ -325,7 +286,6 @@ _Why they ask:_ Tests systematic diagnosis approach.
 | jmap -histo | Object histogram | Brief pause | Caution |
 | jmap -dump | Full heap dump | Full GC pause | Emergency only |
 | VisualVM | GUI profiler | 10-50% | No (dev only) |
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -336,7 +296,6 @@ _Why they ask:_ Tests systematic diagnosis approach.
 | 2 | Heap dumps crash the application | Heap dumps cause a full GC pause (seconds to minutes for large heaps) but don't crash the JVM. Schedule during maintenance windows for production. |
 | 3 | JFR has significant overhead | JFR was designed for always-on production use with <1% overhead. It's integrated into the JVM and uses thread-local buffers to minimize contention. |
 | 4 | Profiling in dev is sufficient | Dev environments have different data sizes, connection pools, thread counts, and GC behavior. Production profiling with JFR/async-profiler is essential. |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -412,7 +371,39 @@ httpClient.newBuilder()
     .build();
 ```
 **Prevention:** Set timeouts on ALL external calls. Monitor connection pool usage. Take 3-5 thread dumps 5 seconds apart to see patterns.
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your Java application is consuming 8GB of heap and keeps growing. How do you find the memory leak?**
+
+_Why they ask:_ The most common production Java question.
+
+**Answer:**
+
+1. **Confirm it's a leak, not just high usage.** Run `jstat -gcutil <pid> 1000` and watch the Old generation (O column). If it trends upward and Full GC doesn't reclaim it, it's a leak.
+
+2. **Take a heap dump.** `jcmd <pid> GC.heap_dump /tmp/heap.hprof`. Take two dumps 10 minutes apart for comparison.
+
+3. **Analyze in Eclipse MAT.** Open the dump, run "Leak Suspects" report. Check the "Dominator Tree" - the objects retaining the most memory. Typically it's a `HashMap`, `ArrayList`, or cache that grows without eviction.
+
+4. **Trace the GC root path.** In MAT, right-click the suspect -> "Path to GC Roots" -> "exclude weak/soft references." This shows why the object can't be collected - usually a static field, a ThreadLocal not cleaned up, or a listener not deregistered.
+
+5. **Common leak sources:** (a) Static collections that only grow, never shrink. (b) ThreadLocal not removed after use (especially in thread pools). (c) Unclosed streams, connections, or ResultSets. (d) Event listeners not deregistered. (e) Classloader leaks in web applications.
+
+**Q2: How do you differentiate between a CPU-bound and I/O-bound performance problem?**
+
+_Why they ask:_ Tests systematic diagnosis approach.
+
+**Answer:**
+
+1. **Check CPU utilization.** `top -H -p <pid>` shows per-thread CPU. If CPU is near 100% per core, it's CPU-bound. If CPU is low but latency is high, it's I/O-bound.
+
+2. **Thread dump analysis.** CPU-bound: threads are RUNNABLE, actively executing compute-heavy code. I/O-bound: threads are BLOCKED/WAITING/TIMED_WAITING, stuck on socket reads, database queries, or file I/O.
+
+3. **JFR recording.** Method profiling shows CPU hotspots. I/O tab shows time spent in file/network I/O. Thread sleep/wait time vs compute time ratio reveals the bottleneck.
+
+4. **Fix:** CPU-bound -> optimize algorithm, cache results, parallelize. I/O-bound -> async I/O, connection pooling, batching, caching.
 ---
 
 ### 🔗 Related Keywords
@@ -440,7 +431,6 @@ httpClient.newBuilder()
 # Java Security Vulnerabilities
 
 **TL;DR** - Java applications are vulnerable to deserialization attacks, injection flaws, and dependency vulnerabilities (like Log4Shell) - understanding these attack vectors is essential for building secure software.
-
 ---
 
 ### Log4Shell (CVE-2021-44228) - The Landmark Vulnerability
@@ -464,7 +454,6 @@ log.info("User-Agent: {}", request.getHeader("User-Agent"));
 2. Dependency scanning (Dependabot, Snyk, OWASP Dependency-Check) catches known CVEs
 3. SBOM (Software Bill of Materials) lets you quickly identify affected systems
 4. WAF rules and egress filtering limit blast radius
-
 ---
 
 ### Java Deserialization Attacks
@@ -493,7 +482,6 @@ ois.setObjectInputFilter(filter);
 // 2. Never expose deserialization endpoints publicly
 // 3. Use look-ahead deserialization (Apache Commons)
 ```
-
 ---
 
 ### Common Java Security Issues
@@ -506,7 +494,6 @@ ois.setObjectInputFilter(filter);
 | XXE (XML External Entity) | XML parsing with DTD             | Disable DTD, use JSON           |
 | Path Traversal            | `../../etc/passwd` in file paths | Validate, canonicalize paths    |
 | Dependency CVEs           | Transitive vulnerable deps       | Dependabot, OWASP DC            |
-
 ---
 
 ### Secure Coding Checklist
@@ -537,7 +524,6 @@ spring.datasource.password=${DB_PASSWORD}
 // CI: run `mvn dependency-check:check`
 // GitHub: enable Dependabot alerts
 ```
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -553,13 +539,11 @@ spring.datasource.password=${DB_PASSWORD}
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -572,7 +556,6 @@ spring.datasource.password=${DB_PASSWORD}
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -592,7 +575,6 @@ spring.datasource.password=${DB_PASSWORD}
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -604,7 +586,6 @@ spring.datasource.password=${DB_PASSWORD}
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -623,14 +604,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -644,7 +623,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -657,6 +635,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **ANTI-PATTERN:** Using `ObjectInputStream` on untrusted data - arbitrary code execution via gadget chains
 **TRADE-OFF:** Security controls vs development speed and user experience friction
 **ONE-LINER:** "Never trust input, never deserialize untrusted data, always update dependencies"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -666,43 +645,21 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Interview one-liner:**
 "I protect Java applications through parameterized queries for injection prevention, JSON over Java serialization for safe data exchange, dependency scanning with OWASP Dependency-Check for transitive CVEs like Log4Shell, and input validation at every system boundary."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: You discover one of your production services is vulnerable to Log4Shell. Walk through your response.**
-
-_Why they ask:_ Tests incident response and practical security thinking.
-
-**Answer:**
-
-1. **Immediate mitigation (minutes):** Set `log4j2.formatMsgNoLookups=true` JVM flag or environment variable `LOG4J_FORMAT_MSG_NO_LOOKUPS=true`. This disables message lookups without code changes.
-
-2. **WAF/egress rules (hours):** Block outbound LDAP/RMI/DNS to unknown hosts. Add WAF rules to detect `${jndi:` patterns in headers and request bodies.
-
-3. **Identify blast radius (hours):** Use SBOM or `mvn dependency:tree | grep log4j` across all services to find affected applications. Transitive dependencies often pull in Log4j without your knowledge.
-
-4. **Patch (days):** Upgrade Log4j to 2.17.1+. Rebuild and deploy all affected services. For services that can't be immediately patched, remove the JndiLookup class from the classpath.
-
-5. **Post-mortem:** Run forensics to check if the vulnerability was exploited (search logs for `${jndi:` patterns). Check for unexpected outbound connections. Review and strengthen dependency scanning in CI/CD.
-
-**Q2: How do you prevent deserialization attacks in a Java application?**
-
-_Why they ask:_ Tests understanding of a critical Java-specific vulnerability.
-
-**Answer:**
-The best defense is to never use Java's native serialization for external input. Use JSON (Jackson) or Protocol Buffers instead.
-
-If Java serialization is unavoidable: (1) Use `ObjectInputFilter` (Java 9+) to whitelist allowed classes. (2) Never accept serialized objects from untrusted sources (public APIs). (3) Remove known gadget chain libraries (Apache Commons Collections < 3.2.2) or upgrade them. (4) Use serialization proxies (Effective Java Item 90) for classes that must be serializable. (5) Consider using SerialKiller or notsoserial libraries that add deserialization firewalls.
-
 ---
 
 ### ⚖️ Comparison Table
@@ -714,7 +671,6 @@ If Java serialization is unavoidable: (1) Use `ObjectInputFilter` (Java 9+) to w
 | XXE | XML parser with DTD | File read, SSRF | Disable DTD processing |
 | Log4Shell | JNDI lookup in log message | RCE | Update Log4j, disable JNDI |
 | Dependency exploit | Transitive vulnerable lib | Varies | Scan with OWASP, Snyk |
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -725,7 +681,6 @@ If Java serialization is unavoidable: (1) Use `ObjectInputFilter` (Java 9+) to w
 | 2 | SQL injection is a solved problem | Parameterized queries prevent injection, but dynamic table/column names, native queries, and string-built criteria are still vulnerable. |
 | 3 | HTTPS encrypts everything | HTTPS encrypts transport but not the data at rest, in logs, or in error messages. Sensitive data can leak through logs, stack traces, and debug endpoints. |
 | 4 | Updating dependencies is optional | Log4Shell (CVE-2021-44228) affected millions of applications through a transitive dependency. Regular dependency scanning is a critical security practice. |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -810,7 +765,34 @@ dbf.setFeature(
     XMLConstants.FEATURE_SECURE_PROCESSING, true);
 ```
 **Prevention:** Disable DTD processing in all XML parsers. Use JAXB or JSON where possible.
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: You discover one of your production services is vulnerable to Log4Shell. Walk through your response.**
+
+_Why they ask:_ Tests incident response and practical security thinking.
+
+**Answer:**
+
+1. **Immediate mitigation (minutes):** Set `log4j2.formatMsgNoLookups=true` JVM flag or environment variable `LOG4J_FORMAT_MSG_NO_LOOKUPS=true`. This disables message lookups without code changes.
+
+2. **WAF/egress rules (hours):** Block outbound LDAP/RMI/DNS to unknown hosts. Add WAF rules to detect `${jndi:` patterns in headers and request bodies.
+
+3. **Identify blast radius (hours):** Use SBOM or `mvn dependency:tree | grep log4j` across all services to find affected applications. Transitive dependencies often pull in Log4j without your knowledge.
+
+4. **Patch (days):** Upgrade Log4j to 2.17.1+. Rebuild and deploy all affected services. For services that can't be immediately patched, remove the JndiLookup class from the classpath.
+
+5. **Post-mortem:** Run forensics to check if the vulnerability was exploited (search logs for `${jndi:` patterns). Check for unexpected outbound connections. Review and strengthen dependency scanning in CI/CD.
+
+**Q2: How do you prevent deserialization attacks in a Java application?**
+
+_Why they ask:_ Tests understanding of a critical Java-specific vulnerability.
+
+**Answer:**
+The best defense is to never use Java's native serialization for external input. Use JSON (Jackson) or Protocol Buffers instead.
+
+If Java serialization is unavoidable: (1) Use `ObjectInputFilter` (Java 9+) to whitelist allowed classes. (2) Never accept serialized objects from untrusted sources (public APIs). (3) Remove known gadget chain libraries (Apache Commons Collections < 3.2.2) or upgrade them. (4) Use serialization proxies (Effective Java Item 90) for classes that must be serializable. (5) Consider using SerialKiller or notsoserial libraries that add deserialization firewalls.
 ---
 
 ### 🔗 Related Keywords
@@ -838,7 +820,6 @@ dbf.setFeature(
 # GC Algorithm Selection Framework
 
 **TL;DR** - Choose your GC algorithm based on the application's latency requirements, throughput needs, and heap size - G1 is the default, ZGC for ultra-low latency, Parallel GC for batch throughput.
-
 ---
 
 ### Decision Matrix
@@ -860,7 +841,6 @@ WHAT MATTERS MOST?
   |-- Don't know / general purpose?
         -> G1GC (default since Java 9)
 ```
-
 ---
 
 ### Comparison
@@ -872,7 +852,6 @@ WHAT MATTERS MOST?
 | G1         | 10-200ms  | Good       | 4-64GB     | General purpose      |
 | ZGC        | < 1ms     | Good       | 8GB-16TB   | Low-latency services |
 | Shenandoah | < 10ms    | Good       | 4GB-1TB    | Low-latency (RedHat) |
-
 ---
 
 ### When to Tune vs When to Switch
@@ -894,7 +873,6 @@ STEP 4: Only tune AFTER choosing the right GC
   -> Heap: -Xms and -Xmx same value (avoid resize)
   -> New gen: usually don't touch (GC auto-sizes)
 ```
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -910,13 +888,11 @@ STEP 4: Only tune AFTER choosing the right GC
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -929,7 +905,6 @@ STEP 4: Only tune AFTER choosing the right GC
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -949,7 +924,6 @@ STEP 4: Only tune AFTER choosing the right GC
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -961,7 +935,6 @@ STEP 4: Only tune AFTER choosing the right GC
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -980,14 +953,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1001,7 +972,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### Code Example (JVM Flags)
@@ -1026,7 +996,6 @@ java -Xms16g -Xmx16g \
   -XX:ParallelGCThreads=8 \
   -jar app.jar
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1039,6 +1008,7 @@ java -Xms16g -Xmx16g \
 **ANTI-PATTERN:** Tuning 50+ GC flags without understanding the workload - makes GC behavior fragile and non-portable
 **TRADE-OFF:** Low pause times (ZGC) vs maximum throughput (Parallel) vs balanced (G1)
 **ONE-LINER:** "Start with G1 defaults, measure, switch to ZGC for latency or Parallel for batch"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1048,61 +1018,21 @@ java -Xms16g -Xmx16g \
 
 **Interview one-liner:**
 "I start with G1GC as the default, measure p99 latency and throughput, then switch to ZGC if I need sub-millisecond pauses for latency-sensitive services, or Parallel GC if I need maximum throughput for batch processing - I set -Xms equal to -Xmx and let the GC auto-tune before manual intervention."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: [TODO: Conceptual question - foundational]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete structured answer. 200-500 words.]
-
----
-
-**Q2: [TODO: Debugging/diagnosis scenario]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with diagnostic steps.]
-
----
-
-**Q3: [TODO: Architecture/design question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with design rationale.]
-
----
-
-**Q4: [TODO: Trade-off decision question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with decision framework.]
-
----
-
-**Q5: [TODO: Production scenario question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with metrics/remediation.]
-
 ---
 
 ### ⚖️ Comparison Table
@@ -1115,7 +1045,6 @@ java -Xms16g -Xmx16g \
 | CPU overhead | Medium | Higher | Lowest | Higher |
 | Default since | JDK 9 | No | JDK 1-8 | No |
 | Best for | General purpose | Latency-critical | Batch | OpenJDK latency |
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1126,7 +1055,6 @@ java -Xms16g -Xmx16g \
 | 2 | ZGC has lower throughput than G1 | Since JDK 21, ZGC (generational mode) achieves throughput within 5% of G1 for most workloads while maintaining sub-ms pauses. |
 | 3 | More GC tuning flags means better performance | Over-tuning creates fragile configurations that break when workload changes. Start with defaults, measure, and tune only the 2-3 most impactful parameters. |
 | 4 | GC pause time = total application impact | GC impact includes: pause time + CPU stolen for concurrent work + allocation stalls + reference processing. Total GC overhead is more than pause time. |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1204,7 +1132,52 @@ asprof -e alloc -d 30 -f alloc.html <pid>
 // 3. If heap is full, increase -Xmx
 ```
 **Prevention:** Profile allocation rate with async-profiler. Set allocation rate alerts. Size young gen to survive between GC cycles.
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
 ---
 
 ### 🔗 Related Keywords
@@ -1223,4 +1196,3 @@ asprof -e alloc -d 30 -f alloc.html <pid>
 
 - Manual memory management (Rust, C++) - no GC overhead but developer burden
 - Off-heap storage (Chronicle, Memcached) - bypass GC for large data sets
-

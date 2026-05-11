@@ -16,7 +16,7 @@ keywords:
   - Anti-Corruption Layer
 difficulty_range: medium to hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,20 +31,17 @@ version: 2
 # Service Decomposition
 
 **TL;DR** - Service decomposition determines how to split a system into microservices. The primary heuristic is business capability alignment using DDD's Bounded Contexts, not technical layers or entity-per-service. Getting boundaries wrong is the #1 reason microservices projects fail.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Teams split services by technical layer (UI service, business logic service, data service) or by entity (UserService, OrderService, ProductService). Every feature touches every service. No team can ship independently. You built a distributed monolith.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -57,7 +54,6 @@ Teams split services by technical layer (UI service, business logic service, dat
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -77,7 +73,6 @@ Teams split services by technical layer (UI service, business logic service, dat
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -89,7 +84,6 @@ Teams split services by technical layer (UI service, business logic service, dat
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -186,14 +180,12 @@ Step 5: Define interfaces
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -207,7 +199,6 @@ Step 5: Define interfaces
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -222,16 +213,72 @@ Step 5: Define interfaces
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Service Decomposition. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -271,58 +318,6 @@ _Strong answer:_
 5. Strangler Fig: route traffic gradually (5% -> 100%)
 6. Monitor error rates during cutover
 7. Remove dead code from monolith after full migration
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Service Decomposition. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -347,7 +342,6 @@ _Strong answer:_
 # Domain-Driven Design (DDD)
 
 **TL;DR** - DDD is a software design approach that models complex business domains by aligning code structure with business language. It provides two levels: Strategic DDD (bounded contexts, context maps - for service boundaries) and Tactical DDD (entities, value objects, aggregates - for internal design). In microservices, Strategic DDD is the primary tool for decomposition.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -363,13 +357,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -382,7 +374,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -402,7 +393,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -414,7 +404,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -488,14 +477,12 @@ Anti-Corruption   ->   API adapter/translator
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -509,7 +496,6 @@ Anti-Corruption   ->   API adapter/translator
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -524,46 +510,29 @@ Anti-Corruption   ->   API adapter/translator
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How does DDD help prevent a distributed monolith?**
-
-_Why they ask:_ Tests understanding of DDD's strategic value for microservices.
-
-_Strong answer:_
-
-DDD prevents distributed monoliths in three ways:
-
-1. **Bounded Contexts define true independence:** Each context has its own model, language, and data. If two contexts share a model, they're not truly bounded - they'll need coordinated changes (= distributed monolith).
-
-2. **Context Maps make coupling explicit:** Instead of discovering hidden dependencies in production, you map them upfront:
-   - Customer-Supplier: clear direction, upstream provides API
-   - Anti-Corruption Layer: translator prevents model leakage
-   - Shared Kernel: explicitly shared code (kept small)
-   - Separate Ways: no integration (truly independent)
-
-3. **Ubiquitous Language detects wrong boundaries:** If the same word means different things across teams ("Order" in fulfillment vs "Order" in billing), those should be separate bounded contexts. If a term's definition spans two services, the boundary is wrong.
-
-**Red flag:** If changing a feature requires updating multiple services' domain models, your bounded contexts are wrong. Go back to event storming.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Domain-Driven Design (DDD). Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -574,7 +543,6 @@ DDD prevents distributed monoliths in three ways:
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -608,7 +576,29 @@ DDD prevents distributed monoliths in three ways:
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How does DDD help prevent a distributed monolith?**
+
+_Why they ask:_ Tests understanding of DDD's strategic value for microservices.
+
+_Strong answer:_
+
+DDD prevents distributed monoliths in three ways:
+
+1. **Bounded Contexts define true independence:** Each context has its own model, language, and data. If two contexts share a model, they're not truly bounded - they'll need coordinated changes (= distributed monolith).
+
+2. **Context Maps make coupling explicit:** Instead of discovering hidden dependencies in production, you map them upfront:
+   - Customer-Supplier: clear direction, upstream provides API
+   - Anti-Corruption Layer: translator prevents model leakage
+   - Shared Kernel: explicitly shared code (kept small)
+   - Separate Ways: no integration (truly independent)
+
+3. **Ubiquitous Language detects wrong boundaries:** If the same word means different things across teams ("Order" in fulfillment vs "Order" in billing), those should be separate bounded contexts. If a term's definition spans two services, the boundary is wrong.
+
+**Red flag:** If changing a feature requires updating multiple services' domain models, your bounded contexts are wrong. Go back to event storming.
 ---
 
 ### 🔗 Related Keywords
@@ -633,7 +623,6 @@ DDD prevents distributed monoliths in three ways:
 # Bounded Context
 
 **TL;DR** - A Bounded Context is a boundary within which a domain model is consistent and terms have unambiguous meaning. In microservices, each Bounded Context typically maps to one service. It's the #1 tool for finding correct service boundaries.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -649,13 +638,11 @@ DDD prevents distributed monoliths in three ways:
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -668,7 +655,6 @@ DDD prevents distributed monoliths in three ways:
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -688,7 +674,6 @@ DDD prevents distributed monoliths in three ways:
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -700,7 +685,6 @@ DDD prevents distributed monoliths in three ways:
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -758,14 +742,12 @@ in different contexts.
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -779,7 +761,6 @@ in different contexts.
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -794,16 +775,72 @@ in different contexts.
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Bounded Context. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -838,58 +875,6 @@ Billing Context (owns payment info):
 2. **Copies are eventually consistent:** Sales publishes `CustomerUpdated` events. Others update their cached copies.
 3. **Copies may have different shapes:** Support doesn't need `lifetime_value`. Billing doesn't need `acquisition_channel`.
 4. **Never reach into another context's data:** Support never queries Sales' database. It subscribes to events or calls Sales' API.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Bounded Context. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -914,7 +899,6 @@ Billing Context (owns payment info):
 # Aggregate
 
 **TL;DR** - An Aggregate is a cluster of domain objects (entities + value objects) treated as a single unit for data changes. The Aggregate Root is the entry point - all external access goes through it. In microservices, one aggregate = one transactional boundary. Never span a transaction across aggregates.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -930,13 +914,11 @@ Billing Context (owns payment info):
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -949,7 +931,6 @@ Billing Context (owns payment info):
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -969,7 +950,6 @@ Billing Context (owns payment info):
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -981,7 +961,6 @@ Billing Context (owns payment info):
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1074,14 +1053,12 @@ public class Order {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1095,7 +1072,6 @@ public class Order {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1110,16 +1086,72 @@ public class Order {
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Aggregate. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1168,58 +1200,6 @@ public void onOrderPlaced(OrderPlacedEvent event) {
 ```
 
 Trade-off: Eventual consistency between aggregates. If inventory reservation fails, need a compensating action (cancel order or notify user). This is the price of correct aggregate boundaries.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Aggregate. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1244,7 +1224,6 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 # Ubiquitous Language
 
 **TL;DR** - Ubiquitous Language is a shared vocabulary between developers and domain experts within a Bounded Context. The same words appear in code, database schemas, API names, and business conversations. It eliminates the "translation layer" where bugs hide.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1260,13 +1239,11 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1279,7 +1256,6 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1299,7 +1275,6 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1311,7 +1286,6 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1354,14 +1328,12 @@ class LoanApplication {
 - Developers say "we need to update the user record" but business says "customer changes their profile"
 - Same word means different things: "Account" in banking vs "Account" in identity
 - Code comments translate between developer and business language
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1375,7 +1347,6 @@ class LoanApplication {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1390,16 +1361,72 @@ class LoanApplication {
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Ubiquitous Language. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1434,58 +1461,6 @@ event: "InventoryReserved"
 ```
 
 The API becomes the contract of the Bounded Context. When another team reads your API, they should understand your domain without reading your code.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Ubiquitous Language. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1510,7 +1485,6 @@ The API becomes the contract of the Bounded Context. When another team reads you
 # Anti-Corruption Layer
 
 **TL;DR** - An Anti-Corruption Layer (ACL) is a translation layer between two Bounded Contexts that prevents one model from "corrupting" another. It translates between different domain languages, typically used when integrating with legacy systems, third-party APIs, or contexts with incompatible models.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1526,13 +1500,11 @@ The API becomes the contract of the Bounded Context. When another team reads you
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1545,7 +1517,6 @@ The API becomes the contract of the Bounded Context. When another team reads you
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1565,7 +1536,6 @@ The API becomes the contract of the Bounded Context. When another team reads you
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1577,7 +1547,6 @@ The API becomes the contract of the Bounded Context. When another team reads you
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1674,14 +1643,12 @@ As migration progresses:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1695,7 +1662,6 @@ As migration progresses:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1710,16 +1676,72 @@ As migration progresses:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Anti-Corruption Layer. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1772,58 +1794,6 @@ public class LegacyOrderAdapter implements OrderPort {
 3. Map unknown values to safe defaults (log + UNKNOWN)
 4. When legacy system changes field names, only ACL changes - domain is protected
 5. Unit test the ACL with sample legacy responses
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Anti-Corruption Layer. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1839,4 +1809,3 @@ public class LegacyOrderAdapter implements OrderPort {
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

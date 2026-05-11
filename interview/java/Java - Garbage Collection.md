@@ -14,7 +14,7 @@ keywords:
   - GC Tuning
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -27,7 +27,6 @@ version: 2
 # GC Algorithms
 
 **TL;DR** - Garbage collection algorithms automatically reclaim unused heap memory by identifying and collecting objects that are no longer reachable, using strategies ranging from simple mark-sweep to generational and concurrent approaches, each with different throughput/latency trade-offs.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -43,13 +42,11 @@ A C server leaks 50KB per request. After 100K requests, it crashes with out-of-m
 
 **EVOLUTION:**
 Manual memory management (C/C++) -> reference counting (COM, Objective-C, Python) -> tracing GC with mark-sweep (Lisp, Java) -> generational hypothesis (Java 1.2+) -> concurrent collectors (CMS, G1, ZGC, Shenandoah).
-
 ---
 
 ### 📘 Textbook Definition
 
 Garbage collection (GC) is the automatic process of identifying objects in the heap that are no longer reachable from GC roots (thread stacks, static fields, JNI references) and reclaiming their memory. The fundamental algorithm is mark-sweep: (1) mark all reachable objects by traversing from roots, (2) sweep unmarked objects. Modern collectors add compaction (defragmentation), generational partitioning (young/old), and concurrent operation (collect while application runs).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -63,7 +60,6 @@ GC automatically finds and removes unused objects from memory so developers neve
 
 **One insight:**
 The generational hypothesis is the key insight behind modern GC: "most objects die young." In a typical Java application, 95% of objects become garbage within milliseconds of creation (temporary strings, iterators, boxed primitives). By collecting the young generation frequently and the old generation rarely, GC optimizes for the common case.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -81,7 +77,6 @@ Because most objects die young (generational hypothesis), the heap is divided in
 **THE TRADE-OFFS:**
 **Throughput vs Latency:** High throughput (Parallel GC) means longer pauses. Low latency (ZGC) means lower throughput.
 **Memory vs Speed:** More heap means less frequent GC but longer pauses when it runs.
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -93,7 +88,6 @@ Because most objects die young (generational hypothesis), the heap is divided in
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -177,7 +171,6 @@ GC algorithm design embodies a universal engineering trade-off triangle: through
 - "What's the pause time budget?" - this determines the algorithm family
 - "Is the generational hypothesis holding?" - if not (long-lived caches), generational GC hurts
 - "What percentage of CPU can GC consume?" - concurrent collectors trade CPU for lower pauses
-
 ---
 
 ### How It Works (Mechanism)
@@ -201,7 +194,6 @@ GC algorithm design embodies a universal engineering trade-off triangle: through
   move A,B,C,F,G together
   to eliminate memory gaps
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -215,7 +207,6 @@ GC algorithm design embodies a universal engineering trade-off triangle: through
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -280,7 +271,6 @@ for (int i = 0; i < 1000000; i++) {
     map.put(sb.toString(), compute(i));
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -293,6 +283,7 @@ for (int i = 0; i < 1000000; i++) {
 **ANTI-PATTERN:** Calling `System.gc()` to force collection - undermines GC heuristics and causes full STW pauses
 **TRADE-OFF:** Throughput (Parallel) vs latency (ZGC) vs memory footprint (Serial) - pick two
 **ONE-LINER:** "GC trades CPU cycles for memory safety, and the algorithm choice determines the cost distribution"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -302,13 +293,115 @@ for (int i = 0; i < 1000000; i++) {
 
 **Interview one-liner:**
 "Garbage collection traces reachable objects from GC roots, reclaims unreachable memory, and uses generational partitioning because most objects die young, with different collectors optimizing for throughput or latency."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Garbage collection can be FASTER than manual memory management. In a generational collector, allocating an object is just bumping a pointer (O(1)). In C's `malloc()`, finding a suitable free block requires searching a free list (O(n) worst case). And minor GC copies only live objects (typically 5% of young gen) - the 95% garbage costs zero to "free." The per-object cost of GC is often lower than the per-object cost of `malloc`/`free`.
+---
 
+### ⚖️ Comparison Table
+
+| Algorithm | Type | Pause Model | Best For |
+|-----------|------|-------------|---------|
+| Serial | Copying + Mark-Compact | Full STW | Small heaps, single-core |
+| Parallel | Copying + Mark-Compact | Full STW | Max throughput, batch |
+| G1 | Region + Concurrent | Partial STW | General purpose, balanced |
+| ZGC | Concurrent + Load barriers | Sub-ms STW | Ultra-low latency |
+| Shenandoah | Concurrent + Brooks ptrs | Sub-ms STW | Low latency (OpenJDK) |
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | GC eliminates all memory leaks | GC only collects unreachable objects. If code holds references to objects no longer needed (listeners, caches, static collections), they are reachable and never collected - this is a memory leak. |
+| 2 | More heap always improves GC performance | Larger heap means more live data to scan during full GC. Doubling heap can double full GC pause time. Right-size the heap to 2-4x live data set. |
+| 3 | Concurrent GC means no pauses | All JVM GCs have SOME stop-the-world pauses (root scanning, final marking). Concurrent collectors minimize pause duration but never eliminate it entirely. |
+| 4 | GC overhead is always significant | Modern GC typically consumes 1-5% of CPU. For most applications, GC overhead is negligible compared to IO, network, and business logic. |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Premature promotion (premature tenuring)**
+**Symptom:** Old generation fills rapidly. Frequent mixed or full GC cycles. High promotion rate in GC logs.
+**Root Cause:** Survivor spaces too small, causing objects to be promoted to old gen before they die. Survivor age threshold too low.
+**Diagnostic:**
+
+```
+# Check promotion rate and tenuring threshold
+jstat -gcutil <pid> 1000
+# Look at S0/S1 utilization and O (old gen)
+# GC log: -Xlog:gc*,gc+age=debug
+```
+
+**Fix:**
+```java
+// BAD: default survivor sizing may be wrong
+// Objects promoted after 1-2 GC cycles
+
+// GOOD: increase survivor space and threshold
+// -XX:SurvivorRatio=6 (larger survivors)
+// -XX:MaxTenuringThreshold=15
+// -XX:+PrintTenuringDistribution (to verify)
+```
+**Prevention:** Monitor tenuring distribution in GC logs. Size survivors to hold objects that die within 2-5 GC cycles.
+
+**Failure Mode 2: Full GC caused by Metaspace exhaustion**
+**Symptom:** Full GC triggered despite heap having free space. GC log shows "Metadata GC Threshold" as cause.
+**Root Cause:** Metaspace (class metadata) fills up, triggering full GC to attempt class unloading. Common with heavy reflection, dynamic proxies, or classloader leaks.
+**Diagnostic:**
+
+```
+jstat -gcmetacapacity <pid>
+# Check MCMX (Metaspace max) vs MCMN (used)
+jcmd <pid> VM.classloader_stats
+```
+
+**Fix:**
+```java
+// BAD: default MetaspaceSize is too small
+// for applications with many classes
+
+// GOOD: size Metaspace appropriately
+// -XX:MetaspaceSize=256m
+// -XX:MaxMetaspaceSize=512m
+// Monitor with JMX: java.lang:type=MemoryPool,
+// name=Metaspace
+```
+**Prevention:** Set `-XX:MetaspaceSize` and `-XX:MaxMetaspaceSize` explicitly. Monitor classloader count for leaks.
+
+**Failure Mode 3: GC thrashing (continuous full GC)**
+**Symptom:** Application nearly stops. GC consumes >90% of CPU. `GCTimeRatio` or `GCOverheadLimit` exceeded.
+**Root Cause:** Heap is nearly full of live data. GC runs continuously but can barely reclaim any memory.
+**Diagnostic:**
+
+```
+jstat -gcutil <pid> 1000
+# O (old gen) consistently >95%
+# GCT (GC time) growing rapidly
+# Application: OutOfMemoryError: GC overhead limit
+```
+
+**Fix:**
+```java
+// 1. Immediate: increase heap
+// -Xmx (double current value)
+// 2. Root cause: find memory leak
+// jmap -histo:live <pid> | head -20
+// jmap -dump:live,format=b,file=heap.hprof <pid>
+// 3. Analyze with Eclipse MAT or VisualVM
+```
+**Prevention:** Monitor old gen utilization. Alert at 80%. Set `-XX:+HeapDumpOnOutOfMemoryError`. Profile memory usage in staging.
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -389,105 +482,6 @@ Not entirely, but it can be minimized:
 The remaining STW phases (root scanning) cannot be fully eliminated because you need a consistent snapshot of thread stacks at a safe point. Some experimental collectors use checkpoint-based approaches to reduce even this, but all production collectors have some minimal STW.
 
 The key insight: it's not about eliminating pauses but making them O(1) with respect to heap size. ZGC achieves <1ms pauses whether the heap is 1GB or 16TB.
-
----
-
-### ⚖️ Comparison Table
-
-| Algorithm | Type | Pause Model | Best For |
-|-----------|------|-------------|---------|
-| Serial | Copying + Mark-Compact | Full STW | Small heaps, single-core |
-| Parallel | Copying + Mark-Compact | Full STW | Max throughput, batch |
-| G1 | Region + Concurrent | Partial STW | General purpose, balanced |
-| ZGC | Concurrent + Load barriers | Sub-ms STW | Ultra-low latency |
-| Shenandoah | Concurrent + Brooks ptrs | Sub-ms STW | Low latency (OpenJDK) |
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | GC eliminates all memory leaks | GC only collects unreachable objects. If code holds references to objects no longer needed (listeners, caches, static collections), they are reachable and never collected - this is a memory leak. |
-| 2 | More heap always improves GC performance | Larger heap means more live data to scan during full GC. Doubling heap can double full GC pause time. Right-size the heap to 2-4x live data set. |
-| 3 | Concurrent GC means no pauses | All JVM GCs have SOME stop-the-world pauses (root scanning, final marking). Concurrent collectors minimize pause duration but never eliminate it entirely. |
-| 4 | GC overhead is always significant | Modern GC typically consumes 1-5% of CPU. For most applications, GC overhead is negligible compared to IO, network, and business logic. |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: Premature promotion (premature tenuring)**
-**Symptom:** Old generation fills rapidly. Frequent mixed or full GC cycles. High promotion rate in GC logs.
-**Root Cause:** Survivor spaces too small, causing objects to be promoted to old gen before they die. Survivor age threshold too low.
-**Diagnostic:**
-
-```
-# Check promotion rate and tenuring threshold
-jstat -gcutil <pid> 1000
-# Look at S0/S1 utilization and O (old gen)
-# GC log: -Xlog:gc*,gc+age=debug
-```
-
-**Fix:**
-```java
-// BAD: default survivor sizing may be wrong
-// Objects promoted after 1-2 GC cycles
-
-// GOOD: increase survivor space and threshold
-// -XX:SurvivorRatio=6 (larger survivors)
-// -XX:MaxTenuringThreshold=15
-// -XX:+PrintTenuringDistribution (to verify)
-```
-**Prevention:** Monitor tenuring distribution in GC logs. Size survivors to hold objects that die within 2-5 GC cycles.
-
-**Failure Mode 2: Full GC caused by Metaspace exhaustion**
-**Symptom:** Full GC triggered despite heap having free space. GC log shows "Metadata GC Threshold" as cause.
-**Root Cause:** Metaspace (class metadata) fills up, triggering full GC to attempt class unloading. Common with heavy reflection, dynamic proxies, or classloader leaks.
-**Diagnostic:**
-
-```
-jstat -gcmetacapacity <pid>
-# Check MCMX (Metaspace max) vs MCMN (used)
-jcmd <pid> VM.classloader_stats
-```
-
-**Fix:**
-```java
-// BAD: default MetaspaceSize is too small
-// for applications with many classes
-
-// GOOD: size Metaspace appropriately
-// -XX:MetaspaceSize=256m
-// -XX:MaxMetaspaceSize=512m
-// Monitor with JMX: java.lang:type=MemoryPool,
-// name=Metaspace
-```
-**Prevention:** Set `-XX:MetaspaceSize` and `-XX:MaxMetaspaceSize` explicitly. Monitor classloader count for leaks.
-
-**Failure Mode 3: GC thrashing (continuous full GC)**
-**Symptom:** Application nearly stops. GC consumes >90% of CPU. `GCTimeRatio` or `GCOverheadLimit` exceeded.
-**Root Cause:** Heap is nearly full of live data. GC runs continuously but can barely reclaim any memory.
-**Diagnostic:**
-
-```
-jstat -gcutil <pid> 1000
-# O (old gen) consistently >95%
-# GCT (GC time) growing rapidly
-# Application: OutOfMemoryError: GC overhead limit
-```
-
-**Fix:**
-```java
-// 1. Immediate: increase heap
-// -Xmx (double current value)
-// 2. Root cause: find memory leak
-// jmap -histo:live <pid> | head -20
-// jmap -dump:live,format=b,file=heap.hprof <pid>
-// 3. Analyze with Eclipse MAT or VisualVM
-```
-**Prevention:** Monitor old gen utilization. Alert at 80%. Set `-XX:+HeapDumpOnOutOfMemoryError`. Profile memory usage in staging.
-
 ---
 
 ### 🔗 Related Keywords
@@ -515,7 +509,6 @@ jstat -gcutil <pid> 1000
 # G1 Garbage Collector
 
 **TL;DR** - G1 (Garbage First) is Java's default garbage collector since Java 9, dividing the heap into regions and prioritizing collection of regions with the most garbage, achieving predictable pause times with good throughput.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -531,13 +524,11 @@ A CMS-collected application runs smoothly for hours, then hits a fragmentation-i
 
 **EVOLUTION:**
 Mark-Sweep-Compact -> Parallel GC (throughput-first) -> CMS (low-pause attempt, fragmentation) -> G1 (region-based, predictable pauses, Java 9 default) -> ZGC/Shenandoah (sub-ms pauses).
-
 ---
 
 ### 📘 Textbook Definition
 
 G1 (Garbage First) is a region-based, generational, concurrent garbage collector. It divides the heap into equal-sized regions (1-32MB each) that can be Eden, Survivor, Old, or Humongous. G1 tracks the amount of garbage per region and collects the regions with the most garbage first (hence "Garbage First"), optimizing for a user-specified maximum pause time target.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -551,7 +542,6 @@ G1 divides the heap into regions, collects the most garbage-filled regions first
 
 **One insight:**
 G1's key innovation is the pause time target (`-XX:MaxGCPauseMillis=200`). Instead of collecting everything (unpredictable pause), G1 selects just enough regions to fit within the target pause time. If 200ms allows collecting 50 regions, it picks the 50 with the most garbage. This makes pause times proportional to the target, not the heap size.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -571,7 +561,6 @@ G1's key innovation is the pause time target (`-XX:MaxGCPauseMillis=200`). Inste
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -583,7 +572,6 @@ G1's key innovation is the pause time target (`-XX:MaxGCPauseMillis=200`). Inste
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -656,14 +644,12 @@ G1's region-based design is the JVM equivalent of database sharding: instead of 
 - "How many regions are in the collection set?" - more regions = longer pause but more space reclaimed
 - "Is the RSet overhead acceptable?" - >20% of heap in RSets signals too many cross-region references
 - "Are mixed collections keeping up?" - if old gen grows continuously, collection can't keep pace
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -677,7 +663,6 @@ G1's region-based design is the JVM equivalent of database sharding: instead of 
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -718,7 +703,6 @@ for (GarbageCollectorMXBean gc :
     }
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -731,6 +715,7 @@ for (GarbageCollectorMXBean gc :
 **ANTI-PATTERN:** Setting `-XX:MaxGCPauseMillis` to unrealistically low values - G1 can't meet them and thrashes
 **TRADE-OFF:** Remembered sets consume 5-20% of heap memory for cross-region reference tracking
 **ONE-LINER:** "G1 breaks the heap into regions and always collects the most garbage-filled regions first"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -740,90 +725,20 @@ for (GarbageCollectorMXBean gc :
 
 **Interview one-liner:**
 "G1 partitions the heap into regions, tracks garbage per region, and during mixed GC selects the most garbage-dense regions to collect within a configurable pause time target, making pauses predictable rather than proportional to heap size."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 G1's region-based design means increasing heap size can actually DECREASE pause times. In traditional collectors, more heap = more to scan = longer pauses. In G1, more heap = more regions = G1 can be more selective, choosing only the most garbage-dense regions to meet its pause target. This breaks the conventional wisdom that "bigger heap = bigger pauses."
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Walk through what happens during a G1 GC cycle.**
-
-_Why they ask:_ Tests understanding of G1's multi-phase operation.
-
-_Strong answer:_
-
-**Phase 1: Young GC (STW, ~10-50ms)**
-
-- Triggered when Eden regions fill up
-- Copies live objects from Eden -> Survivor or Old
-- All Eden regions reclaimed (most objects are dead)
-- Adjusts Eden size to meet pause target
-
-**Phase 2: Concurrent Marking (mostly concurrent)**
-
-- Triggered when heap occupancy exceeds IHOP (default 45%)
-- Initial mark (STW, piggybacks on young GC): mark objects directly referenced from roots
-- Root region scanning (concurrent): scan survivor regions for references to old gen
-- Concurrent mark (concurrent): trace all live objects from marked roots
-- Remark (STW): process SATB buffers, finalize marking
-- Cleanup (partly STW): count live objects per region, sort by garbage density, free empty regions
-
-**Phase 3: Mixed GC (STW, ~50-200ms)**
-
-- Collects young regions + selected old regions with most garbage
-- G1 selects N old regions that can be collected within pause target
-- Multiple mixed GC cycles may run before all eligible old regions are collected
-
-**Emergency: Full GC (STW, seconds)**
-
-- Triggered when mixed GC can't reclaim fast enough
-- Single-threaded mark-sweep-compact of entire heap
-- Indicates tuning is needed (lower IHOP, more heap, or less allocation pressure)
-
----
-
-**Q2: How would you diagnose and fix G1 GC performance problems?**
-
-_Why they ask:_ Tests practical tuning and debugging skills.
-
-_Strong answer:_
-
-**Symptom 1: Frequent young GCs**
-
-- Cause: High allocation rate, small Eden
-- Diagnostic: `jstat -gcutil <pid> 1s` - check YGC frequency
-- Fix: Increase heap or reduce allocation rate (object pooling for hot paths)
-
-**Symptom 2: Long mixed GC pauses**
-
-- Cause: Too many old regions selected per cycle
-- Diagnostic: GC log shows mixed GC exceeding target
-- Fix: Lower `-XX:G1MixedGCCountTarget` (spread across more cycles)
-
-**Symptom 3: Full GC occurring**
-
-- Cause: Concurrent marking starts too late, can't keep up with promotion rate
-- Diagnostic: GC log shows "Pause Full" events
-- Fix: Lower `-XX:InitiatingHeapOccupancyPercent` (start marking earlier)
-
-**Symptom 4: Humongous allocation**
-
-- Cause: Objects > 50% region size (large byte arrays, strings)
-- Diagnostic: GC log shows "Humongous" allocation
-- Fix: Increase region size (`-XX:G1HeapRegionSize`), reduce object size, use off-heap buffers
-
-**General approach:**
-
-1. Enable GC logging: `-Xlog:gc*:file=gc.log`
-2. Analyze with GCViewer or GCEasy
-3. Check pause time distribution, throughput percentage
-4. Adjust one parameter at a time, measure impact
-
 ---
 
 ### ⚖️ Comparison Table
@@ -836,7 +751,6 @@ _Strong answer:_
 | Max pause target | Configurable | No | <1ms |
 | Memory overhead | RSets (5-20%) | Minimal | No compressed oops |
 | Best heap size | 4GB-64GB | Any | Any (up to 16TB) |
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -847,7 +761,6 @@ _Strong answer:_
 | 2 | G1 doesn't do full GC | G1 can fall back to a full, single-threaded STW collection if concurrent marking can't keep up with allocation rate. Full GCs in G1 are a serious performance problem. |
 | 3 | Region size doesn't matter | Region size (1-32MB, auto-calculated) determines the humongous object threshold (>50% of region). Wrong region size causes excessive humongous allocations that bypass normal collection. |
 | 4 | G1 is always better than Parallel GC | For pure throughput workloads (batch processing, offline analytics), Parallel GC can deliver 5-15% higher throughput because it has lower per-object overhead (no RSets, no barriers). |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -925,7 +838,82 @@ jcmd <pid> GC.heap_info
 // ZGC uses load barriers instead of RSets
 ```
 **Prevention:** Profile object graph connectivity. Choose G1HeapRegionSize to minimize cross-region references. Consider ZGC for highly connected graphs.
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Walk through what happens during a G1 GC cycle.**
+
+_Why they ask:_ Tests understanding of G1's multi-phase operation.
+
+_Strong answer:_
+
+**Phase 1: Young GC (STW, ~10-50ms)**
+
+- Triggered when Eden regions fill up
+- Copies live objects from Eden -> Survivor or Old
+- All Eden regions reclaimed (most objects are dead)
+- Adjusts Eden size to meet pause target
+
+**Phase 2: Concurrent Marking (mostly concurrent)**
+
+- Triggered when heap occupancy exceeds IHOP (default 45%)
+- Initial mark (STW, piggybacks on young GC): mark objects directly referenced from roots
+- Root region scanning (concurrent): scan survivor regions for references to old gen
+- Concurrent mark (concurrent): trace all live objects from marked roots
+- Remark (STW): process SATB buffers, finalize marking
+- Cleanup (partly STW): count live objects per region, sort by garbage density, free empty regions
+
+**Phase 3: Mixed GC (STW, ~50-200ms)**
+
+- Collects young regions + selected old regions with most garbage
+- G1 selects N old regions that can be collected within pause target
+- Multiple mixed GC cycles may run before all eligible old regions are collected
+
+**Emergency: Full GC (STW, seconds)**
+
+- Triggered when mixed GC can't reclaim fast enough
+- Single-threaded mark-sweep-compact of entire heap
+- Indicates tuning is needed (lower IHOP, more heap, or less allocation pressure)
+
+---
+
+**Q2: How would you diagnose and fix G1 GC performance problems?**
+
+_Why they ask:_ Tests practical tuning and debugging skills.
+
+_Strong answer:_
+
+**Symptom 1: Frequent young GCs**
+
+- Cause: High allocation rate, small Eden
+- Diagnostic: `jstat -gcutil <pid> 1s` - check YGC frequency
+- Fix: Increase heap or reduce allocation rate (object pooling for hot paths)
+
+**Symptom 2: Long mixed GC pauses**
+
+- Cause: Too many old regions selected per cycle
+- Diagnostic: GC log shows mixed GC exceeding target
+- Fix: Lower `-XX:G1MixedGCCountTarget` (spread across more cycles)
+
+**Symptom 3: Full GC occurring**
+
+- Cause: Concurrent marking starts too late, can't keep up with promotion rate
+- Diagnostic: GC log shows "Pause Full" events
+- Fix: Lower `-XX:InitiatingHeapOccupancyPercent` (start marking earlier)
+
+**Symptom 4: Humongous allocation**
+
+- Cause: Objects > 50% region size (large byte arrays, strings)
+- Diagnostic: GC log shows "Humongous" allocation
+- Fix: Increase region size (`-XX:G1HeapRegionSize`), reduce object size, use off-heap buffers
+
+**General approach:**
+
+1. Enable GC logging: `-Xlog:gc*:file=gc.log`
+2. Analyze with GCViewer or GCEasy
+3. Check pause time distribution, throughput percentage
+4. Adjust one parameter at a time, measure impact
 ---
 
 ### 🔗 Related Keywords
@@ -953,7 +941,6 @@ jcmd <pid> GC.heap_info
 # ZGC
 
 **TL;DR** - ZGC (Z Garbage Collector) is a scalable, low-latency garbage collector that keeps pause times under 1 millisecond regardless of heap size, from megabytes to multi-terabytes.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -969,13 +956,11 @@ An ad-bidding platform must respond within 10ms. A 100ms G1 GC pause means misse
 
 **EVOLUTION:**
 G1 (200ms target) -> Shenandoah (concurrent compaction, <10ms) -> ZGC (concurrent everything, <1ms). ZGC became production-ready in Java 15.
-
 ---
 
 ### 📘 Textbook Definition
 
 ZGC is a concurrent, region-based, compacting garbage collector designed for sub-millisecond pause times. It performs almost all GC work concurrently with the application, using colored pointers (metadata embedded in object references) and load barriers (checks when loading a reference) to achieve pauseless operation. ZGC pause times are independent of heap size, live set size, and root set size.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -989,7 +974,6 @@ ZGC achieves <1ms GC pauses at any heap size by doing all heavy work concurrentl
 
 **One insight:**
 ZGC's breakthrough is colored pointers. Every object reference in the heap carries metadata bits that tell the GC the state of the referenced object (marked, relocated, remapped). Load barriers check these bits on every pointer load and fix up references as needed. This eliminates the need for stop-the-world phases during marking and compaction.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1009,7 +993,6 @@ ZGC's breakthrough is colored pointers. Every object reference in the heap carri
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1021,7 +1004,6 @@ ZGC's breakthrough is colored pointers. Every object reference in the heap carri
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1112,14 +1094,12 @@ ZGC represents the theoretical endpoint of concurrent GC design: sub-millisecond
 - "Is heap size the bottleneck?" - ZGC lets you use huge heaps without pause penalty
 - "Are we on JDK 21+?" - Generational ZGC closes the throughput gap with G1
 - "What's the pointer width?" - ZGC uses 64-bit pointers only, no compressed oops on <32GB heaps
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1133,7 +1113,6 @@ ZGC represents the theoretical endpoint of concurrent GC design: sub-millisecond
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1166,7 +1145,6 @@ String gcName = ManagementFactory
     .orElse("Not ZGC");
 System.out.println("GC: " + gcName);
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1179,6 +1157,7 @@ System.out.println("GC: " + gcName);
 **ANTI-PATTERN:** Using ZGC on JDK 11-14 in production - it was experimental and lacked key optimizations
 **TRADE-OFF:** No compressed oops = 1.5x memory for references on heaps <32GB. Higher CPU for load barriers
 **ONE-LINER:** "ZGC achieves O(1) pause times by doing all heavy lifting concurrently with application threads"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1188,84 +1167,20 @@ System.out.println("GC: " + gcName);
 
 **Interview one-liner:**
 "ZGC uses colored pointers with metadata in reference bits and load barriers to perform marking, compaction, and reference updates concurrently, achieving sub-millisecond pauses independent of heap size."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 ZGC can handle heaps up to 16 terabytes with the same sub-millisecond pause times as a 1GB heap. The pause time is determined only by the number of GC roots (thread stacks and static fields), not by the heap size or the number of live objects. This means ZGC's pause time is O(roots), not O(heap) or O(live_set).
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How do colored pointers and load barriers work together in ZGC?**
-
-_Why they ask:_ Tests understanding of ZGC's core innovation.
-
-_Strong answer:_
-
-**Colored pointers** embed GC metadata in the unused high bits of 64-bit pointers. Each reference carries its own GC state:
-
-- Which marking cycle it belongs to
-- Whether it has been relocated
-- Whether it needs finalization
-
-**Load barriers** are checks inserted by the JIT compiler at every reference load. When application code loads a reference:
-
-1. Check the color bits against the "good color" for the current phase
-2. If good: use the reference directly (fast path, most common)
-3. If bad: the reference is stale. Execute the slow path:
-   - If during marking: mark the object and fix the color
-   - If during relocation: look up the forwarding table, redirect to new location, fix the reference in place
-
-```
-// Application code:
-Object obj = array[i];
-
-// What JIT generates:
-Object obj = array[i];
-if (obj.colorBits != currentGoodColor) {
-    obj = slowPath_fixReference(obj);
-    array[i] = obj; // self-healing
-}
-```
-
-The self-healing property is key: once a bad reference is fixed, it's good for all future accesses. This means the barrier overhead decreases over time as references are healed.
-
----
-
-**Q2: When would you choose ZGC over G1? What are the trade-offs?**
-
-_Why they ask:_ Tests practical decision-making.
-
-_Strong answer:_
-
-| Factor               | G1               | ZGC                      |
-| -------------------- | ---------------- | ------------------------ |
-| Pause times          | 10-200ms typical | <1ms guaranteed          |
-| Throughput           | Higher (~95%)    | Lower (~90-93%)          |
-| Memory overhead      | ~10-20%          | ~15-25%                  |
-| Heap size sweet spot | 4-32GB           | 8GB-16TB                 |
-| CPU overhead         | Lower            | Higher (barriers)        |
-| Maturity             | Very mature      | Production since Java 15 |
-
-**Choose ZGC when:**
-
-- Latency SLAs: p99 < 10ms response time
-- Large heaps: >32GB where G1 pauses become noticeable
-- Real-time applications: trading, gaming, ad bidding
-- User-facing services where GC pauses = user-visible lag
-
-**Stick with G1 when:**
-
-- Throughput is priority (batch processing, analytics)
-- Small heaps (<4GB): G1 overhead is lower
-- CPU is constrained: ZGC barriers consume more CPU
-- Running Java < 15
-
-**Compromise:** Use Generational ZGC (Java 21+) which improves throughput over classic ZGC while maintaining sub-ms pauses.
-
 ---
 
 ### ⚖️ Comparison Table
@@ -1278,7 +1193,6 @@ _Strong answer:_
 | Generational (JDK 21+) | Yes | Yes | No |
 | Max tested heap | 16TB | ~256GB | ~2TB |
 | JDK production-ready | JDK 15+ | JDK 9+ | JDK 15+ |
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1289,7 +1203,6 @@ _Strong answer:_
 | 2 | ZGC is only for huge heaps | ZGC works on any heap size. Since JDK 21 with generational mode, it's competitive with G1 even on 2-4GB heaps. |
 | 3 | ZGC always uses more memory than G1 | ZGC lacks compressed oops, using 8 bytes per reference vs 4 bytes. But it doesn't need remembered sets (5-20% of heap in G1). Net overhead depends on workload. |
 | 4 | ZGC can't match G1 throughput | Generational ZGC (JDK 21+) achieves throughput within 5% of G1 for most workloads. The throughput gap that existed in early ZGC versions is largely closed. |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1370,7 +1283,76 @@ java -version
 // (generational mode for better throughput)
 ```
 **Prevention:** Use ZGC only on JDK 15+ in production. Prefer JDK 21+ for Generational ZGC. Test thoroughly before production deployment.
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How do colored pointers and load barriers work together in ZGC?**
+
+_Why they ask:_ Tests understanding of ZGC's core innovation.
+
+_Strong answer:_
+
+**Colored pointers** embed GC metadata in the unused high bits of 64-bit pointers. Each reference carries its own GC state:
+
+- Which marking cycle it belongs to
+- Whether it has been relocated
+- Whether it needs finalization
+
+**Load barriers** are checks inserted by the JIT compiler at every reference load. When application code loads a reference:
+
+1. Check the color bits against the "good color" for the current phase
+2. If good: use the reference directly (fast path, most common)
+3. If bad: the reference is stale. Execute the slow path:
+   - If during marking: mark the object and fix the color
+   - If during relocation: look up the forwarding table, redirect to new location, fix the reference in place
+
+```
+// Application code:
+Object obj = array[i];
+
+// What JIT generates:
+Object obj = array[i];
+if (obj.colorBits != currentGoodColor) {
+    obj = slowPath_fixReference(obj);
+    array[i] = obj; // self-healing
+}
+```
+
+The self-healing property is key: once a bad reference is fixed, it's good for all future accesses. This means the barrier overhead decreases over time as references are healed.
+
+---
+
+**Q2: When would you choose ZGC over G1? What are the trade-offs?**
+
+_Why they ask:_ Tests practical decision-making.
+
+_Strong answer:_
+
+| Factor               | G1               | ZGC                      |
+| -------------------- | ---------------- | ------------------------ |
+| Pause times          | 10-200ms typical | <1ms guaranteed          |
+| Throughput           | Higher (~95%)    | Lower (~90-93%)          |
+| Memory overhead      | ~10-20%          | ~15-25%                  |
+| Heap size sweet spot | 4-32GB           | 8GB-16TB                 |
+| CPU overhead         | Lower            | Higher (barriers)        |
+| Maturity             | Very mature      | Production since Java 15 |
+
+**Choose ZGC when:**
+
+- Latency SLAs: p99 < 10ms response time
+- Large heaps: >32GB where G1 pauses become noticeable
+- Real-time applications: trading, gaming, ad bidding
+- User-facing services where GC pauses = user-visible lag
+
+**Stick with G1 when:**
+
+- Throughput is priority (batch processing, analytics)
+- Small heaps (<4GB): G1 overhead is lower
+- CPU is constrained: ZGC barriers consume more CPU
+- Running Java < 15
+
+**Compromise:** Use Generational ZGC (Java 21+) which improves throughput over classic ZGC while maintaining sub-ms pauses.
 ---
 
 ### 🔗 Related Keywords
@@ -1398,7 +1380,6 @@ java -version
 # GC Tuning
 
 **TL;DR** - GC tuning is the process of configuring garbage collection parameters to optimize for your application's specific throughput and latency requirements, starting with the right collector choice and heap sizing.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1414,13 +1395,11 @@ A REST API server with 4GB heap and default G1 settings has p99 latency spikes o
 
 **EVOLUTION:**
 Manual tuning of 100+ flags (pre-Java 9) -> ergonomic defaults (JVM auto-tunes based on machine) -> simpler tuning (fewer flags needed with G1/ZGC) -> near-zero tuning with ZGC.
-
 ---
 
 ### 📘 Textbook Definition
 
 GC tuning is the systematic process of selecting the appropriate garbage collector, sizing the heap and generations, and adjusting collector-specific parameters to meet application performance requirements. Modern tuning follows the principle: choose the right collector, size the heap correctly, and avoid over-tuning.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1434,7 +1413,6 @@ GC tuning = right collector + right heap size + don't over-tune.
 
 **One insight:**
 The #1 GC tuning mistake is over-tuning. Modern collectors (G1, ZGC) are designed to auto-adapt. Setting 20 flags usually makes things worse because the ergonomics can no longer adapt. Start with collector choice + heap size + pause target, and only add flags if measurement shows a specific problem.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1454,7 +1432,6 @@ The #1 GC tuning mistake is over-tuning. Modern collectors (G1, ZGC) are designe
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1466,7 +1443,6 @@ The #1 GC tuning mistake is over-tuning. Modern collectors (G1, ZGC) are designe
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1582,14 +1558,12 @@ GC tuning follows the universal performance optimization principle: measure firs
 - "What did the GC logs say before tuning?" - never tune without baseline data
 - "How many flags were changed?" - >5 GC flags is a code smell for over-tuning
 - "Is the workload stable?" - tuning for a specific load pattern breaks when load changes
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1603,7 +1577,6 @@ GC tuning follows the universal performance optimization principle: measure firs
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1659,7 +1632,6 @@ for (GarbageCollectorMXBean gc :
         }, null, null);
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1672,6 +1644,7 @@ for (GarbageCollectorMXBean gc :
 **ANTI-PATTERN:** Tuning 50+ GC flags without understanding workload - creates non-portable, fragile configurations
 **TRADE-OFF:** More tuning = better fit for current workload but fragile to workload changes
 **ONE-LINER:** "Measure with GC logs, choose the right collector, size the heap, then stop tuning"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1681,13 +1654,120 @@ for (GarbageCollectorMXBean gc :
 
 **Interview one-liner:**
 "GC tuning starts with choosing the right collector for your throughput/latency trade-off, sizing the heap to 3-4x live data, and making measured, incremental changes with GC logging always enabled."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 The most effective GC tuning is often not changing GC flags at all - it's reducing allocation rate in your application code. Reusing objects, using primitive types instead of boxed types, avoiding unnecessary string concatenation in hot loops, and using off-heap buffers for large data can reduce GC pressure by 10-100x, which no amount of flag tuning can match.
+---
 
+### ⚖️ Comparison Table
+
+| Approach | Flags Changed | Effort | Risk |
+|----------|--------------|--------|------|
+| Default settings | 0 | None | None |
+| Collector + heap sizing | 2-3 | Low | Low |
+| Generation sizing | 3-5 | Medium | Medium |
+| Full flag tuning | 10-50 | High | High (fragile) |
+| Auto-tuning (G1 ergonomics) | 1 target | Low | Low |
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | More GC flags = better performance | Over-tuning creates configurations that are optimal for one specific load pattern but break when load changes. 2-3 flags is usually sufficient. |
+| 2 | GC tuning should come first in optimization | GC tuning should come LAST. First: fix algorithmic issues, reduce allocation rate, fix memory leaks. GC tuning can't compensate for application problems. |
+| 3 | -Xmx and -Xms should be different | For production services, set -Xmx = -Xms. Different values cause heap resizing pauses and make GC behavior less predictable. |
+| 4 | System.gc() is a valid tuning technique | System.gc() triggers an uncontrolled full GC that ignores all tuning flags. It bypasses GC ergonomics and should almost never be used. |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Over-tuned configuration breaks under workload change**
+**Symptom:** Application performs well under normal load but has severe GC pauses during traffic spikes or changed request patterns.
+**Root Cause:** GC flags were tuned for a specific load profile. Fixed-size generation splits, explicit GC timing, and disabled ergonomics prevent adaptation.
+**Diagnostic:**
+
+```
+# Count GC-related flags
+java -XX:+PrintFlagsFinal | grep -c "gc\|GC"
+# If many were manually set (non-default), over-tuned
+jcmd <pid> VM.flags | grep -v "default"
+```
+
+**Fix:**
+```java
+// BAD: 20+ manually set GC flags
+// -XX:NewSize=2g -XX:MaxNewSize=2g
+// -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=5
+// ... (fragile, non-adaptive)
+
+// GOOD: minimal flags, let GC adapt
+// -XX:+UseG1GC -Xmx8g -Xms8g
+// -XX:MaxGCPauseMillis=100
+// (3 flags, G1 adapts everything else)
+```
+**Prevention:** Use adaptive GC ergonomics. Set goals (MaxGCPauseMillis) not mechanisms (generation sizes). Test under variable load.
+
+**Failure Mode 2: Heap sized too small for live data set**
+**Symptom:** Constant GC activity. Old gen always >90% full. Frequent full GCs. Eventual OOM.
+**Root Cause:** -Xmx is less than 2x the live data set. GC runs continuously trying to reclaim the thin sliver of dead objects.
+**Diagnostic:**
+
+```
+# After full GC, check old gen occupancy
+# If post-GC old gen > 60% of -Xmx, heap is too small
+jstat -gcold <pid> 1000
+# Or from GC log: post-full-GC heap usage
+grep "Full" gc.log | tail -5
+```
+
+**Fix:**
+```java
+// BAD: live data set is 3GB, heap is 4GB
+// Only 1GB free after full GC = constant GC
+
+// GOOD: set heap to 3-4x live data set
+// -Xmx12g -Xms12g
+// Post-GC old gen should be 30-40% of -Xmx
+```
+**Prevention:** Measure live data set after full GC. Set -Xmx to 3-4x live data. Monitor post-GC occupancy.
+
+**Failure Mode 3: GC logs not enabled in production**
+**Symptom:** GC problems occur but there's no data to diagnose. Troubleshooting requires reproducing the issue with logging enabled.
+**Root Cause:** GC logging was disabled or not configured. Without logs, root cause analysis is guesswork.
+**Diagnostic:**
+
+```
+# Check if GC logging is enabled
+jcmd <pid> VM.flags | grep "Xlog\|PrintGC"
+# If empty, no GC logging
+```
+
+**Fix:**
+```java
+// BAD: no GC logging
+// java -Xmx8g -jar app.jar
+
+// GOOD: always enable GC logging
+// JDK 9+:
+// -Xlog:gc*:file=gc.log:time,level,tags:
+//   filecount=5,filesize=100m
+// JDK 8:
+// -XX:+PrintGCDetails -XX:+PrintGCDateStamps
+// -Xloggc:gc.log -XX:+UseGCLogFileRotation
+```
+**Prevention:** Enable GC logging in ALL environments including production. Overhead is negligible (<0.1%). Rotate log files to manage disk.
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1784,110 +1864,6 @@ _Strong answer:_
 4. **Avoids RSS growth surprises:** The OS may overcommit memory if initial heap is small but max is large.
 
 Exception: development/testing where memory is limited - use smaller `-Xms` for lower memory footprint.
-
----
-
-### ⚖️ Comparison Table
-
-| Approach | Flags Changed | Effort | Risk |
-|----------|--------------|--------|------|
-| Default settings | 0 | None | None |
-| Collector + heap sizing | 2-3 | Low | Low |
-| Generation sizing | 3-5 | Medium | Medium |
-| Full flag tuning | 10-50 | High | High (fragile) |
-| Auto-tuning (G1 ergonomics) | 1 target | Low | Low |
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | More GC flags = better performance | Over-tuning creates configurations that are optimal for one specific load pattern but break when load changes. 2-3 flags is usually sufficient. |
-| 2 | GC tuning should come first in optimization | GC tuning should come LAST. First: fix algorithmic issues, reduce allocation rate, fix memory leaks. GC tuning can't compensate for application problems. |
-| 3 | -Xmx and -Xms should be different | For production services, set -Xmx = -Xms. Different values cause heap resizing pauses and make GC behavior less predictable. |
-| 4 | System.gc() is a valid tuning technique | System.gc() triggers an uncontrolled full GC that ignores all tuning flags. It bypasses GC ergonomics and should almost never be used. |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: Over-tuned configuration breaks under workload change**
-**Symptom:** Application performs well under normal load but has severe GC pauses during traffic spikes or changed request patterns.
-**Root Cause:** GC flags were tuned for a specific load profile. Fixed-size generation splits, explicit GC timing, and disabled ergonomics prevent adaptation.
-**Diagnostic:**
-
-```
-# Count GC-related flags
-java -XX:+PrintFlagsFinal | grep -c "gc\|GC"
-# If many were manually set (non-default), over-tuned
-jcmd <pid> VM.flags | grep -v "default"
-```
-
-**Fix:**
-```java
-// BAD: 20+ manually set GC flags
-// -XX:NewSize=2g -XX:MaxNewSize=2g
-// -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=5
-// ... (fragile, non-adaptive)
-
-// GOOD: minimal flags, let GC adapt
-// -XX:+UseG1GC -Xmx8g -Xms8g
-// -XX:MaxGCPauseMillis=100
-// (3 flags, G1 adapts everything else)
-```
-**Prevention:** Use adaptive GC ergonomics. Set goals (MaxGCPauseMillis) not mechanisms (generation sizes). Test under variable load.
-
-**Failure Mode 2: Heap sized too small for live data set**
-**Symptom:** Constant GC activity. Old gen always >90% full. Frequent full GCs. Eventual OOM.
-**Root Cause:** -Xmx is less than 2x the live data set. GC runs continuously trying to reclaim the thin sliver of dead objects.
-**Diagnostic:**
-
-```
-# After full GC, check old gen occupancy
-# If post-GC old gen > 60% of -Xmx, heap is too small
-jstat -gcold <pid> 1000
-# Or from GC log: post-full-GC heap usage
-grep "Full" gc.log | tail -5
-```
-
-**Fix:**
-```java
-// BAD: live data set is 3GB, heap is 4GB
-// Only 1GB free after full GC = constant GC
-
-// GOOD: set heap to 3-4x live data set
-// -Xmx12g -Xms12g
-// Post-GC old gen should be 30-40% of -Xmx
-```
-**Prevention:** Measure live data set after full GC. Set -Xmx to 3-4x live data. Monitor post-GC occupancy.
-
-**Failure Mode 3: GC logs not enabled in production**
-**Symptom:** GC problems occur but there's no data to diagnose. Troubleshooting requires reproducing the issue with logging enabled.
-**Root Cause:** GC logging was disabled or not configured. Without logs, root cause analysis is guesswork.
-**Diagnostic:**
-
-```
-# Check if GC logging is enabled
-jcmd <pid> VM.flags | grep "Xlog\|PrintGC"
-# If empty, no GC logging
-```
-
-**Fix:**
-```java
-// BAD: no GC logging
-// java -Xmx8g -jar app.jar
-
-// GOOD: always enable GC logging
-// JDK 9+:
-// -Xlog:gc*:file=gc.log:time,level,tags:
-//   filecount=5,filesize=100m
-// JDK 8:
-// -XX:+PrintGCDetails -XX:+PrintGCDateStamps
-// -Xloggc:gc.log -XX:+UseGCLogFileRotation
-```
-**Prevention:** Enable GC logging in ALL environments including production. Overhead is negligible (<0.1%). Rotate log files to manage disk.
-
 ---
 
 ### 🔗 Related Keywords
@@ -1906,4 +1882,3 @@ jcmd <pid> VM.flags | grep "Xlog\|PrintGC"
 
 - Application-level optimization - reducing allocation rate is often more effective than GC tuning
 - Off-heap memory (DirectByteBuffer, Unsafe) - bypass GC entirely for large data sets
-

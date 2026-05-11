@@ -16,7 +16,7 @@ keywords:
   - Container Orchestration
 difficulty_range: easy
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Containerization
 
 **TL;DR** - Containerization packages an application with all its dependencies into an isolated, portable unit that runs consistently across any environment.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -47,13 +46,11 @@ A single dependency mismatch causes a production outage at 2 AM. The fix takes 6
 
 **EVOLUTION:**
 chroot (1979) gave process isolation. FreeBSD jails (2000) added networking isolation. LXC (2008) combined namespaces and cgroups. Docker (2013) made containers developer-friendly with images and registries. OCI standardized the format (2015+). Today containers are the default deployment unit.
-
 ---
 
 ### 📘 Textbook Definition
 
 Containerization is an OS-level virtualization method that packages application code, runtime, system tools, libraries, and settings into a standalone executable unit called a container. Containers share the host kernel but run in isolated user spaces using Linux namespaces and cgroups for resource isolation and limitation.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -67,7 +64,6 @@ A container is a lightweight, isolated box for running an app with everything it
 
 **One insight:**
 The key insight is that containers share the host OS kernel. They're NOT separate operating systems. This is why they start in milliseconds (vs minutes for VMs) and why a single server can run hundreds of containers (vs dozens of VMs).
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -88,7 +84,6 @@ Because containers share the kernel, they're lightweight (MBs not GBs). Because 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Some isolation mechanism is needed to prevent processes from interfering with each other
 **Accidental:** Docker's daemon requirement, image layer complexity, networking setup
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -102,7 +97,6 @@ Because containers share the kernel, they're lightweight (MBs not GBs). Because 
 - "Building address" -> shared network stack
 
 Where this analogy breaks down: apartments can't be instantly replicated and moved to another building, but containers can.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -124,7 +118,6 @@ Container security depends on the shared kernel - a kernel exploit escapes ALL c
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -150,7 +143,6 @@ Container security depends on the shared kernel - a kernel exploit escapes ALL c
 | Cgroups          | Cgroups               |
 +------------------+-----------------------+
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -163,7 +155,6 @@ Container OOM killed -> orchestrator restarts it -> if crash loop, marked unheal
 
 **WHAT CHANGES AT SCALE:**
 At 100+ containers, you need orchestration (Kubernetes). At 1000+, image pull becomes a bottleneck (use pre-pulling, registry mirrors). At 10,000+, kernel resource limits and network namespace overhead become factors.
-
 ---
 
 ### 💻 Code Example
@@ -218,7 +209,6 @@ docker inspect --format \
 
 **How to test / verify correctness:**
 Build image, run container, verify process isolation with `docker exec`, confirm resource limits with `docker stats`, test networking with `curl localhost:8080`.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -231,6 +221,7 @@ Build image, run container, verify process isolation with `docker exec`, confirm
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -240,13 +231,68 @@ Build image, run container, verify process isolation with `docker exec`, confirm
 
 **Interview one-liner:**
 "A container is a process running in isolated Linux namespaces with cgroup resource limits, sharing the host kernel but seeing its own filesystem, network, and PID space - giving VM-like isolation at process-level speed and density."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Most container "security breaches" aren't container escapes - they're misconfiguration: running as root, mounting the Docker socket, using `--privileged` mode, or exposing the Docker API without TLS. The container boundary itself is rarely the weak point; the human decisions around it are.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Containerization. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -399,58 +445,6 @@ Common fixes:
 8. **Parallel builds** - BuildKit builds independent stages concurrently
 
 The biggest wins are usually: (1) fixing .dockerignore (reduces context transfer), (2) dependency caching (skip re-downloading), (3) BuildKit parallelism.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Containerization. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -467,6 +461,7 @@ The biggest wins are usually: (1) fixing .dockerignore (reduces context transfer
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -474,7 +469,6 @@ The biggest wins are usually: (1) fixing .dockerignore (reduces context transfer
 # Docker vs VM
 
 **TL;DR** - Docker containers share the host kernel for process-level isolation with millisecond startup, while VMs virtualize hardware with separate kernels for stronger isolation but higher overhead.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -490,13 +484,11 @@ VMs solved isolation but introduced massive overhead - minutes to boot, GBs of m
 
 **EVOLUTION:**
 Bare metal (1960s-1990s) -> Hardware virtualization/VMware (1999) -> Paravirtualization/Xen (2003) -> Cloud VMs/EC2 (2006) -> Containers/Docker (2013) -> Serverless (2014+). Today most workloads use containers-inside-VMs in cloud environments.
-
 ---
 
 ### 📘 Textbook Definition
 
 A virtual machine emulates a complete hardware environment including CPU, memory, and I/O devices, running a full guest operating system on a hypervisor. A container provides OS-level process isolation using kernel namespaces and cgroups, sharing the host kernel while presenting an isolated userspace to applications.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -510,7 +502,6 @@ VMs virtualize hardware; containers virtualize the OS.
 
 **One insight:**
 The shared kernel is the fundamental trade-off. It gives containers their speed (no boot) and density (no OS overhead) but limits their isolation - a kernel vulnerability affects all containers on the host.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -531,7 +522,6 @@ VMs pay the cost of a full OS (500MB-2GB RAM) for each instance. Containers pay 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Some form of isolation is needed to run untrusted workloads
 **Accidental:** Docker's daemon architecture, networking complexity, storage driver quirks
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -546,7 +536,6 @@ VMs pay the cost of a full OS (500MB-2GB RAM) for each instance. Containers pay 
 - "Apartment walls" -> namespace isolation (thinner barrier)
 
 Where this analogy breaks down: containers can be created in milliseconds; you can't build a house that fast.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -568,7 +557,6 @@ The VM vs container boundary is blurring. Kata Containers and Firecracker run ea
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -604,7 +592,6 @@ Container Architecture:
 |    Hardware                         |
 +------------------------------------+
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -617,7 +604,6 @@ Container kernel exploit -> all containers on host compromised -> VM boundary st
 
 **WHAT CHANGES AT SCALE:**
 At small scale (< 10 services), the choice barely matters. At 50+ services, container startup speed and density become critical. At 1000+ pods, even the overhead of Kubernetes control plane on VMs matters for cost.
-
 ---
 
 ### 💻 Code Example
@@ -641,7 +627,6 @@ docker stats --no-stream
 # (Vagrant/VirtualBox equivalent consumes
 #  512MB RAM before your app even starts)
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -654,6 +639,7 @@ docker stats --no-stream
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -663,13 +649,68 @@ docker stats --no-stream
 
 **Interview one-liner:**
 "VMs virtualize hardware with separate kernels giving strong isolation at higher cost; containers virtualize the OS namespace giving process isolation at near-zero overhead - in practice we use both, with containers running inside cloud VMs for defense in depth."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 AWS Lambda, the poster child of "serverless," actually runs each function invocation inside a Firecracker microVM - a tiny VM that boots in 125ms with 5MB memory overhead. The industry is converging on "container ergonomics with VM isolation" rather than choosing one over the other.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Docker vs VM. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -706,13 +747,216 @@ Containers are wrong when:
 6. **Compliance mandates** - some regulated industries require VM-level isolation documentation
 
 The "when NOT to use" signal of mastery: containers introduce complexity (networking, storage, orchestration). If you have a monolith with 3 developers, a simple VM with Ansible might be the better choice. Containers shine at scale with many services.
+---
 
+### 🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
+---
+
+# Docker Image
+
+**TL;DR** - A Docker image is an immutable, layered filesystem template containing everything needed to run an application - built once, run identically anywhere.
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Deploying means SSHing into a server, running install scripts, hoping nothing changed since last time. Each server drifts from the others. "It worked in staging" is a daily occurrence because staging doesn't match production.
+
+**THE BREAKING POINT:**
+A production server was patched but staging wasn't. The configuration drift caused a deployment failure that took hours to diagnose.
+
+**THE INVENTION MOMENT:**
+"This is exactly why Docker images were created."
+
+**EVOLUTION:**
+Tarball archives -> VM images (AMIs, VMDKs) -> Docker images with layers (2013) -> OCI Image Spec standardization (2017) -> Multi-arch images, image signing, and SBOM (2022+).
+---
+
+### 📘 Textbook Definition
+
+A Docker image is a read-only, ordered collection of filesystem layers and metadata that together form a complete filesystem for running a container. Each layer represents a set of filesystem changes, layers are content-addressed by their SHA256 digest, and they're assembled at runtime using union mount (overlay2) to present a unified view.
+---
+
+### ⏱️ Understand It in 30 Seconds
+
+**One line:**
+An image is a frozen, layered snapshot of everything your app needs to run.
+
+**One analogy:**
+
+> An image is like a recipe that has already been cooked and vacuum-sealed. You don't need to gather ingredients or follow steps - just open and serve. You can serve the same meal to 100 tables simultaneously from the same sealed package.
+
+**One insight:**
+Images are immutable. When a container writes files, those writes go to a thin writable layer on top - the image layers below never change. This is why the same image always produces identical behavior regardless of what a previous container did.
+---
+
+### 🔩 First Principles Explanation
+
+**CORE INVARIANTS:**
+
+1. Image layers are immutable and content-addressed (SHA256)
+2. Layers are stacked in order using union filesystem (overlay2)
+3. Identical layers are shared across images (deduplication)
+
+**DERIVED DESIGN:**
+Immutability enables caching (rebuild only changed layers), sharing (common base layers stored once), and reproducibility (same hash = same content forever).
+
+**THE TRADE-OFFS:**
+**Gain:** Reproducibility, fast distribution (only pull changed layers), deduplication
+**Cost:** Larger than just the application binary, layer ordering affects build cache efficiency
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** You must bundle dependencies somehow for portability
+**Accidental:** Layer ordering optimization, multi-platform image manifests, storage driver differences
+---
+
+### 🧠 Mental Model / Analogy
+
+> An image is like a stack of transparent sheets (overhead projector slides). Each sheet adds something new on top of the ones below. You can't modify a sheet once it's printed - only add a new one on top.
+
+- "Bottom sheet" -> base OS layer (alpine, ubuntu)
+- "Middle sheets" -> dependency installation layers
+- "Top sheet" -> application code layer
+- "Stack of all sheets" -> complete image
+- "Viewing the stack" -> union mount presenting unified FS
+
+Where this analogy breaks down: layers can delete files from lower layers (whiteout files), which transparent sheets can't do.
+---
+
+### 📶 Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+A Docker image is like a template for creating containers. It contains your app plus everything it needs. You build it once and can create many identical containers from it.
+
+**Level 2 - How to use it (junior developer):**
+Build with `docker build -t myapp:1.0 .`. Push to a registry with `docker push`. Pull on target with `docker pull`. Tag properly for versioning. Use `.dockerignore` to exclude unnecessary files.
+
+**Level 3 - How it works (mid-level engineer):**
+Each Dockerfile instruction creates a layer. Layers use overlay2 filesystem - lowerdir (read-only image layers) + upperdir (container writes). Image manifests contain the ordered list of layer digests. Multi-platform manifests (manifest lists) point to architecture-specific images. Layer caching uses input hashing - if the instruction and context haven't changed, the cached layer is reused.
+
+**Level 4 - Mastery (senior/staff+ engineer):**
+Image supply chain security requires: content trust (Notary/cosign for signing), SBOM generation (Syft), vulnerability scanning in CI (Trivy/Grype), and base image pinning (digest-based references, not tags). At scale, image pull is the biggest cold-start contributor - solutions include pre-pulling on nodes, lazy-loading (Stargz/Nydus), and image streaming. Layer design affects CI speed: isolate dependency layers from code layers for maximum cache hits.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+---
+
+### ⚙️ How It Works
+
+```
+Image Layer Stack (overlay2):
++----------------------------------+
+| Writable Layer (container only)  | <- upperdir
++----------------------------------+
+| Layer 4: COPY app.jar            | <- image
+| Layer 3: RUN mvn package         | <- image
+| Layer 2: COPY pom.xml            | <- image
+| Layer 1: FROM eclipse-temurin:17 | <- image
++----------------------------------+
+
+Registry stores each layer as a blob:
+  sha256:a1b2c3... -> Layer 1 (50MB)
+  sha256:d4e5f6... -> Layer 2 (2KB)
+  sha256:g7h8i9... -> Layer 3 (80MB)
+  sha256:j0k1l2... -> Layer 4 (30MB)
+
+Image Manifest (JSON):
+  { layers: [sha256:a1.., sha256:d4..],
+    config: sha256:xyz... }
+```
+---
+
+### 🔄 Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+Dockerfile -> `docker build` -> layers created <- YOU ARE HERE -> image tagged -> pushed to registry -> pulled by runtime -> container created with writable layer on top
+
+**FAILURE PATH:**
+Base image has CVE -> scanner detects in CI -> build blocked -> fix: update base image, rebuild, re-push
+
+**WHAT CHANGES AT SCALE:**
+At 100+ images, registry storage and network bandwidth matter. Deduplication of shared base layers saves 60-80% storage. At 1000+ nodes pulling simultaneously, you need registry mirrors and image pre-pulling strategies.
+---
+
+### 💻 Code Example
+
+```bash
+# Inspect image layers
+docker history myapp:1.0 --no-trunc
+
+# Check image size breakdown
+docker image inspect myapp:1.0 \
+  --format '{{.Size}}'
+
+# Dive into layers (using dive tool)
+dive myapp:1.0
+
+# Pin to digest (immutable reference)
+docker pull myapp@sha256:abc123...
+
+# Check image for vulnerabilities
+trivy image myapp:1.0
+```
+---
+
+### 📌 Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+
+**If you remember only 3 things:**
+
+1. Layers are immutable, content-addressed, and shared - this enables caching, deduplication, and reproducibility
+2. Order Dockerfile instructions: rarely-changing (base, deps) first, frequently-changing (code) last for cache efficiency
+3. Tag images with versions (never rely on `:latest` in production) and pin critical base images by digest
+
+**Interview one-liner:**
+"A Docker image is an ordered stack of immutable, content-addressed filesystem layers assembled via union mount - enabling reproducible builds, efficient layer sharing across images, and guaranteed identical behavior from dev through production."
+---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
+
+### 💡 The Surprising Truth
+
+A `:latest` tag is NOT special in Docker - it's just a convention. It doesn't auto-update, it doesn't mean "newest," and it's not immutable. If someone pushes a different image to the same tag, your `docker pull` gets completely different code. This is why production deployments must use version tags or SHA digests.
 ---
 
 ### ⚖️ Comparison Table
 
-[TODO: Include if 2+ named alternatives exist for Docker vs VM. Otherwise remove this section.]
-
+[TODO: Include if 2+ named alternatives exist for Docker Image. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
@@ -723,7 +967,6 @@ The "when NOT to use" signal of mastery: containers introduce complexity (networ
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -757,213 +1000,6 @@ The "when NOT to use" signal of mastery: containers introduce complexity (networ
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
-
----
-
-### 🔗 Related Keywords
-
-**Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
-
-**Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
-
-**Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
----
-
----
-
-# Docker Image
-
-**TL;DR** - A Docker image is an immutable, layered filesystem template containing everything needed to run an application - built once, run identically anywhere.
-
----
-
-### 🔥 The Problem This Solves
-
-**WORLD WITHOUT IT:**
-Deploying means SSHing into a server, running install scripts, hoping nothing changed since last time. Each server drifts from the others. "It worked in staging" is a daily occurrence because staging doesn't match production.
-
-**THE BREAKING POINT:**
-A production server was patched but staging wasn't. The configuration drift caused a deployment failure that took hours to diagnose.
-
-**THE INVENTION MOMENT:**
-"This is exactly why Docker images were created."
-
-**EVOLUTION:**
-Tarball archives -> VM images (AMIs, VMDKs) -> Docker images with layers (2013) -> OCI Image Spec standardization (2017) -> Multi-arch images, image signing, and SBOM (2022+).
-
----
-
-### 📘 Textbook Definition
-
-A Docker image is a read-only, ordered collection of filesystem layers and metadata that together form a complete filesystem for running a container. Each layer represents a set of filesystem changes, layers are content-addressed by their SHA256 digest, and they're assembled at runtime using union mount (overlay2) to present a unified view.
-
----
-
-### ⏱️ Understand It in 30 Seconds
-
-**One line:**
-An image is a frozen, layered snapshot of everything your app needs to run.
-
-**One analogy:**
-
-> An image is like a recipe that has already been cooked and vacuum-sealed. You don't need to gather ingredients or follow steps - just open and serve. You can serve the same meal to 100 tables simultaneously from the same sealed package.
-
-**One insight:**
-Images are immutable. When a container writes files, those writes go to a thin writable layer on top - the image layers below never change. This is why the same image always produces identical behavior regardless of what a previous container did.
-
----
-
-### 🔩 First Principles Explanation
-
-**CORE INVARIANTS:**
-
-1. Image layers are immutable and content-addressed (SHA256)
-2. Layers are stacked in order using union filesystem (overlay2)
-3. Identical layers are shared across images (deduplication)
-
-**DERIVED DESIGN:**
-Immutability enables caching (rebuild only changed layers), sharing (common base layers stored once), and reproducibility (same hash = same content forever).
-
-**THE TRADE-OFFS:**
-**Gain:** Reproducibility, fast distribution (only pull changed layers), deduplication
-**Cost:** Larger than just the application binary, layer ordering affects build cache efficiency
-
-**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** You must bundle dependencies somehow for portability
-**Accidental:** Layer ordering optimization, multi-platform image manifests, storage driver differences
-
----
-
-### 🧠 Mental Model / Analogy
-
-> An image is like a stack of transparent sheets (overhead projector slides). Each sheet adds something new on top of the ones below. You can't modify a sheet once it's printed - only add a new one on top.
-
-- "Bottom sheet" -> base OS layer (alpine, ubuntu)
-- "Middle sheets" -> dependency installation layers
-- "Top sheet" -> application code layer
-- "Stack of all sheets" -> complete image
-- "Viewing the stack" -> union mount presenting unified FS
-
-Where this analogy breaks down: layers can delete files from lower layers (whiteout files), which transparent sheets can't do.
-
----
-
-### 📶 Gradual Depth - Five Levels
-
-**Level 1 - What it is (anyone can understand):**
-A Docker image is like a template for creating containers. It contains your app plus everything it needs. You build it once and can create many identical containers from it.
-
-**Level 2 - How to use it (junior developer):**
-Build with `docker build -t myapp:1.0 .`. Push to a registry with `docker push`. Pull on target with `docker pull`. Tag properly for versioning. Use `.dockerignore` to exclude unnecessary files.
-
-**Level 3 - How it works (mid-level engineer):**
-Each Dockerfile instruction creates a layer. Layers use overlay2 filesystem - lowerdir (read-only image layers) + upperdir (container writes). Image manifests contain the ordered list of layer digests. Multi-platform manifests (manifest lists) point to architecture-specific images. Layer caching uses input hashing - if the instruction and context haven't changed, the cached layer is reused.
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-Image supply chain security requires: content trust (Notary/cosign for signing), SBOM generation (Syft), vulnerability scanning in CI (Trivy/Grype), and base image pinning (digest-based references, not tags). At scale, image pull is the biggest cold-start contributor - solutions include pre-pulling on nodes, lazy-loading (Stargz/Nydus), and image streaming. Layer design affects CI speed: isolate dependency layers from code layers for maximum cache hits.
-
-
-**Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
-
----
-
-### ⚙️ How It Works
-
-```
-Image Layer Stack (overlay2):
-+----------------------------------+
-| Writable Layer (container only)  | <- upperdir
-+----------------------------------+
-| Layer 4: COPY app.jar            | <- image
-| Layer 3: RUN mvn package         | <- image
-| Layer 2: COPY pom.xml            | <- image
-| Layer 1: FROM eclipse-temurin:17 | <- image
-+----------------------------------+
-
-Registry stores each layer as a blob:
-  sha256:a1b2c3... -> Layer 1 (50MB)
-  sha256:d4e5f6... -> Layer 2 (2KB)
-  sha256:g7h8i9... -> Layer 3 (80MB)
-  sha256:j0k1l2... -> Layer 4 (30MB)
-
-Image Manifest (JSON):
-  { layers: [sha256:a1.., sha256:d4..],
-    config: sha256:xyz... }
-```
-
----
-
-### 🔄 Complete Picture - End-to-End Flow
-
-**NORMAL FLOW:**
-Dockerfile -> `docker build` -> layers created <- YOU ARE HERE -> image tagged -> pushed to registry -> pulled by runtime -> container created with writable layer on top
-
-**FAILURE PATH:**
-Base image has CVE -> scanner detects in CI -> build blocked -> fix: update base image, rebuild, re-push
-
-**WHAT CHANGES AT SCALE:**
-At 100+ images, registry storage and network bandwidth matter. Deduplication of shared base layers saves 60-80% storage. At 1000+ nodes pulling simultaneously, you need registry mirrors and image pre-pulling strategies.
-
----
-
-### 💻 Code Example
-
-```bash
-# Inspect image layers
-docker history myapp:1.0 --no-trunc
-
-# Check image size breakdown
-docker image inspect myapp:1.0 \
-  --format '{{.Size}}'
-
-# Dive into layers (using dive tool)
-dive myapp:1.0
-
-# Pin to digest (immutable reference)
-docker pull myapp@sha256:abc123...
-
-# Check image for vulnerabilities
-trivy image myapp:1.0
-```
-
----
-
-### 📌 Quick Reference Card
-
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-
-**If you remember only 3 things:**
-
-1. Layers are immutable, content-addressed, and shared - this enables caching, deduplication, and reproducibility
-2. Order Dockerfile instructions: rarely-changing (base, deps) first, frequently-changing (code) last for cache efficiency
-3. Tag images with versions (never rely on `:latest` in production) and pin critical base images by digest
-
-**Interview one-liner:**
-"A Docker image is an ordered stack of immutable, content-addressed filesystem layers assembled via union mount - enabling reproducible builds, efficient layer sharing across images, and guaranteed identical behavior from dev through production."
-
----
-
-### 💡 The Surprising Truth
-
-A `:latest` tag is NOT special in Docker - it's just a convention. It doesn't auto-update, it doesn't mean "newest," and it's not immutable. If someone pushes a different image to the same tag, your `docker pull` gets completely different code. This is why production deployments must use version tags or SHA digests.
-
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1011,58 +1047,6 @@ Defense layers:
 6. **Runtime** - read-only filesystem, non-root, minimal capabilities
 
 Key: shift-left scanning catches 90% of issues. The remaining 10% requires runtime monitoring (Falco) for zero-day detection.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Docker Image. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1079,6 +1063,7 @@ Key: shift-left scanning catches 90% of issues. The remaining 10% requires runti
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -1086,7 +1071,6 @@ Key: shift-left scanning catches 90% of issues. The remaining 10% requires runti
 # Dockerfile
 
 **TL;DR** - A Dockerfile is a declarative script defining step-by-step how to build a Docker image from a base, installing dependencies and configuring the application environment.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1102,13 +1086,11 @@ A new team member can't build the image because the setup steps were in someone'
 
 **EVOLUTION:**
 Manual image creation -> Dockerfiles (2013) -> Multi-stage builds (2017) -> BuildKit with advanced features (2018+) -> Heredocs, cache mounts, secret mounts (2021+).
-
 ---
 
 ### 📘 Textbook Definition
 
 A Dockerfile is a text file containing an ordered sequence of instructions that Docker uses to automatically build an image. Each instruction creates a layer in the image, and the complete file describes the transformation from a base image to a fully configured application environment.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1122,7 +1104,6 @@ A Dockerfile is the recipe for building a container image.
 
 **One insight:**
 Every instruction creates a layer that's cached. If you change line 5, lines 1-4 use cache but 5+ are rebuilt. This is why instruction ordering is critical for build speed.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1143,7 +1124,6 @@ The caching model means: put stable things (apt install) early, volatile things 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** You must describe how to assemble your environment
 **Accidental:** Platform-specific quirks, cache invalidation subtleties, build context confusion
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1157,7 +1137,6 @@ The caching model means: put stable things (apt install) early, volatile things 
 - "Final setup" -> CMD/ENTRYPOINT
 
 Where this analogy breaks down: you can have multiple instruction manuals (multi-stage) and copy specific parts from one build to another.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1179,7 +1158,6 @@ Optimize for CI cache hit rate: use `COPY --link` (BuildKit) to make layer indep
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -1206,7 +1184,6 @@ ENTRYPOINT ["java", \
   "-XX:MaxRAMPercentage=75", \
   "-jar", "app.jar"]
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1219,7 +1196,6 @@ Write Dockerfile -> `docker build .` <- YOU ARE HERE -> BuildKit parses instruct
 
 **WHAT CHANGES AT SCALE:**
 At team scale: standardize base images, lint Dockerfiles (hadolint), enforce non-root. At org scale: internal base image registry, automated CVE patching of base images, build reproducibility guarantees.
-
 ---
 
 ### 💻 Code Example
@@ -1253,7 +1229,6 @@ HEALTHCHECK --interval=30s --timeout=3s \
   http://localhost:3000/health || exit 1
 ENTRYPOINT ["node", "src/server.js"]
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1266,6 +1241,7 @@ ENTRYPOINT ["node", "src/server.js"]
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1275,13 +1251,68 @@ ENTRYPOINT ["node", "src/server.js"]
 
 **Interview one-liner:**
 "A Dockerfile is a versioned build script where each instruction creates a cached, immutable layer - I optimize by ordering stable layers first for cache hits, using multi-stage builds to separate build dependencies from runtime, and following security best practices like non-root execution and pinned base images."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 `COPY` and `ADD` are NOT the same. `ADD` can extract tarballs and fetch URLs - which makes builds non-reproducible (URL content can change). Docker's own best practices now recommend NEVER using `ADD` unless you specifically need tar extraction. Yet it remains in 90% of tutorial Dockerfiles.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Dockerfile. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1339,58 +1370,6 @@ Other common culprits:
 - Timestamp-based changes (git checkout changes mtimes)
 - BuildKit vs legacy builder (different cache key calculation)
 - Docker Compose with `build.context` too broad
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Dockerfile. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1407,6 +1386,7 @@ Other common culprits:
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -1414,7 +1394,6 @@ Other common culprits:
 # Docker Compose
 
 **TL;DR** - Docker Compose defines and runs multi-container applications from a single YAML file, managing networking, volumes, and dependencies between services.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1430,13 +1409,11 @@ A developer joins the team and takes 2 days to get the local environment working
 
 **EVOLUTION:**
 Shell scripts with docker commands -> Fig (2013, acquired by Docker) -> Docker Compose v1 (Python, `docker-compose` CLI) -> Docker Compose v2 (Go, `docker compose` subcommand, 2022) -> Compose with watch, build profiles, and includes (2023+).
-
 ---
 
 ### 📘 Textbook Definition
 
 Docker Compose is a tool for defining and managing multi-container Docker applications using a declarative YAML file (docker-compose.yml). It handles container lifecycle, networking (auto-creates a default network), volume management, and service dependencies from a single configuration.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1450,7 +1427,6 @@ Compose lets you define your entire multi-container application stack in one fil
 
 **One insight:**
 Compose isn't for production orchestration - it's for local development and CI. For production, Kubernetes handles the same problem with vastly more features. Compose's value is simplicity: one command (`docker compose up`) to replicate a production-like environment locally.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1471,7 +1447,6 @@ By creating a shared network automatically, Compose eliminates manual `--network
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Multi-container apps need configuration for networking and ordering
 **Accidental:** YAML syntax quirks, version confusion (v1 vs v2 vs v3), Compose CLI version differences
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1485,7 +1460,6 @@ By creating a shared network automatically, Compose eliminates manual `--network
 - "Setting up the layout" -> `docker compose up`
 
 Where this analogy breaks down: containers can be scaled to multiple instances; model trains can't be duplicated instantly.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1507,7 +1481,6 @@ Design Compose files as development contracts: they define the service topology 
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -1554,7 +1527,6 @@ services:
 volumes:
   pgdata:
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1567,7 +1539,6 @@ Service crashes -> `docker compose ps` shows unhealthy -> `docker compose logs <
 
 **WHAT CHANGES AT SCALE:**
 Compose doesn't scale. Beyond local dev and CI, you need Kubernetes (distributed scheduling, self-healing, rolling updates, service mesh). Compose's value ceiling is ~20 services on one machine for development.
-
 ---
 
 ### 💻 Code Example
@@ -1594,7 +1565,6 @@ docker compose up -d --scale api=3
 # Full teardown including volumes
 docker compose down -v
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1607,6 +1577,7 @@ docker compose down -v
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1616,13 +1587,68 @@ docker compose down -v
 
 **Interview one-liner:**
 "Docker Compose declaratively defines multi-container stacks in YAML - I use it for reproducible local development environments and CI integration tests, with service health checks ensuring proper startup ordering, while production uses Kubernetes for the scaling and resilience features Compose lacks."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 `depends_on` without health checks is almost useless. It only waits for the container to START (PID 1 running), not for the application inside to be READY. Your database container starts in 200ms but takes 5 seconds to accept connections. Without `condition: service_healthy`, your app will crash-loop trying to connect to a not-yet-ready database.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Docker Compose. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1691,58 +1717,6 @@ Common causes:
 - Wrong service name in connection string (must match YAML service key)
 - Port confusion: use container port (5432), not mapped host port
 - Network isolation: services in different Compose files need explicit shared network
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Docker Compose. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1759,6 +1733,7 @@ Common causes:
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -1766,7 +1741,6 @@ Common causes:
 # Container Orchestration
 
 **TL;DR** - Container orchestration automates deployment, scaling, networking, and lifecycle management of containers across a cluster of machines, with Kubernetes as the dominant solution.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1782,13 +1756,11 @@ Manual container management becomes impossible beyond ~10 containers. You need a
 
 **EVOLUTION:**
 Manual + scripts -> Mesos/Marathon (2013) -> Docker Swarm (2014) -> Kubernetes (2014, from Google's Borg) -> K8s wins (2018+) -> Managed K8s (EKS, GKE, AKS) becomes default -> Serverless containers (Fargate, Cloud Run) for simple workloads.
-
 ---
 
 ### 📘 Textbook Definition
 
 Container orchestration is the automated management of containerized application lifecycles across distributed infrastructure, handling scheduling (placing containers on appropriate nodes), scaling (adjusting replica counts), networking (service discovery and load balancing), and self-healing (restarting failed containers and rescheduling from failed nodes).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1802,7 +1774,6 @@ Orchestration is the autopilot for running containers at scale.
 
 **One insight:**
 The fundamental abstraction is "desired state." You declare "I want 3 replicas of service X" and the orchestrator continuously reconciles reality to match. You never say "start a container" - you say "ensure 3 are running."
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1823,7 +1794,6 @@ Because you declare desired state, the system can self-heal (restart failed cont
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Distributed systems need coordination (scheduling, failure detection, load balancing)
 **Accidental:** Kubernetes YAML verbosity, networking plugin choices, storage driver configuration
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1837,7 +1807,6 @@ Because you declare desired state, the system can self-heal (restart failed cont
 - "Radar" -> monitoring/health checks
 
 Where this analogy breaks down: orchestrators can create new planes (auto-scaling), which air traffic controllers definitely cannot do.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1859,7 +1828,6 @@ Orchestration choice is an architecture decision: Kubernetes for complex microse
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -1884,7 +1852,6 @@ Kubernetes Architecture:
 | Pod D |   | Pod E |   | Pod F |
 +-------+   +-------+   +-------+
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1897,7 +1864,6 @@ Node dies -> controller detects missing pods -> schedules replacements on health
 
 **WHAT CHANGES AT SCALE:**
 At 10 services, orchestration may be overkill (Docker Compose suffices). At 50+, orchestration is essential. At 1000+ pods, etcd performance, scheduler throughput, and network policy complexity require dedicated platform teams.
-
 ---
 
 ### 💻 Code Example
@@ -1931,7 +1897,6 @@ spec:
               port: 8080
             initialDelaySeconds: 5
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1944,6 +1909,7 @@ spec:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1953,13 +1919,68 @@ spec:
 
 **Interview one-liner:**
 "Container orchestration automates the full lifecycle - scheduling, scaling, networking, and self-healing - through desired-state declaration and continuous reconciliation, with Kubernetes as the dominant but operationally complex choice, and managed alternatives like Fargate for simpler workloads."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Google ran Borg (Kubernetes' predecessor) for 15 years before open-sourcing Kubernetes in 2014. But Kubernetes is NOT Borg - it's a clean-room reimplementation of Borg's concepts. Borg handles millions of containers at Google; most K8s clusters struggle past 5,000 nodes without significant tuning. The gap between Google's internal system and what the industry runs is still enormous.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Container Orchestration. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -2020,58 +2041,6 @@ Important distinction:
 - **Startup** = "has this container finished starting?" (don't check liveness until startup passes)
 
 The reconciliation loop runs every ~10 seconds. Total recovery time for a node failure: detection (40s default) + rescheduling (seconds) + pull image + startup = typically 1-2 minutes.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Container Orchestration. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords

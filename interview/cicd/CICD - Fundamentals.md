@@ -16,7 +16,7 @@ keywords:
   - Trunk-Based Development
 difficulty_range: medium
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Continuous Integration
 
 **TL;DR** - CI is the practice of developers merging code to a shared mainline frequently (at least daily), with each merge triggering automated build and test - catching integration bugs within minutes instead of days.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -47,13 +46,11 @@ The longer branches live in isolation, the more painful and risky merging become
 
 **EVOLUTION:**
 CI started as "merge daily" (XP practice, 1999). Added automated builds (CruiseControl). Added automated tests. Now: merge to trunk multiple times daily with full pipeline validation in minutes.
-
 ---
 
 ### 📘 Textbook Definition
 
 Continuous Integration is a software development practice where developers integrate code into a shared repository frequently (ideally multiple times per day), each integration verified by automated build and automated tests to detect integration errors as quickly as possible.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -67,7 +64,6 @@ Merge small changes often, test automatically, fix failures immediately.
 
 **One insight:**
 CI is a PRACTICE, not a tool. Jenkins/GitHub Actions enable CI, but you don't "have CI" just because you have a build server. You have CI when EVERY developer merges to mainline at least daily and broken builds are fixed within 10 minutes.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -87,7 +83,6 @@ CI is a PRACTICE, not a tool. Jenkins/GitHub Actions enable CI, but you don't "h
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -99,7 +94,6 @@ CI is a PRACTICE, not a tool. Jenkins/GitHub Actions enable CI, but you don't "h
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -118,7 +112,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -146,7 +139,6 @@ CI workflow:
     Success rate: > 95%
     Fix time: < 10 minutes after detection
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -160,7 +152,6 @@ CI workflow:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -173,6 +164,7 @@ CI workflow:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -182,14 +174,69 @@ CI workflow:
 
 **Interview one-liner:**
 "CI means developers merge to mainline multiple times daily, each commit triggering automated build and test within 10 minutes - the key metric isn't build existence but build speed, success rate, and how fast failures are fixed."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Continuous Integration. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -215,13 +262,183 @@ Maturity indicators:
 - How fast does the build run? (< 10 min = healthy)
 - How often is the build red? (> 5% = problem)
 - How fast is red fixed? (> 10 min = not practicing CI)
+---
 
+### 🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
+---
+
+# Continuous Delivery
+
+**TL;DR** - Continuous Delivery ensures software is always in a releasable state by extending CI with automated deployment pipeline stages (integration testing, staging, approval gates), so releasing to production is a business decision, not a technical challenge.
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Code passes CI but releasing takes a week of manual steps: build release candidate, run manual regression tests, create change request, schedule maintenance window, SSH to servers, deploy, verify. Releases are rare, risky, and stressful.
+
+**THE INVENTION MOMENT:**
+"This is exactly why Continuous Delivery was created."
+---
+
+### 📘 Textbook Definition
+
+Continuous Delivery is a software engineering approach where teams keep software in a deployable state throughout its lifecycle, enabling deployment to production at any time through a series of automated stages (build, test, staging, approval) with one-click or scheduled releases.
+---
+
+### ⏱️ Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+---
+
+### 🔩 First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+---
+
+### 🧠 Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+---
+
+### 📶 Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
+---
+
+### ⚙️ How It Works
+
+```
+Continuous Delivery pipeline:
+  Commit -> Build -> Unit Tests -> Integration Tests
+    -> Deploy to Staging -> Acceptance Tests
+      -> [Manual Approval Gate]
+        -> Deploy to Production
+
+Key difference from Continuous Deployment:
+  CD (Delivery):    Every commit CAN go to prod
+                    (human clicks "deploy")
+  CD (Deployment):  Every commit DOES go to prod
+                    (no human gate)
+
+Pipeline requirements:
+  1. Everything in version control (code + infra + config)
+  2. Automated testing at every stage
+  3. Deployment is one-click (or one-command)
+  4. Same artifact moves through all environments
+  5. Environment parity (staging mirrors production)
+```
+---
+
+### 🔄 Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+---
+
+### 📌 Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+
+**If you remember only 3 things:**
+
+1. Continuous Delivery = always releasable + one-click deploy. The deploy button exists and works - it just requires human decision to press it.
+2. Same artifact (Docker image, JAR) moves through ALL environments - never rebuild for production (ensures what you tested is what you deploy)
+3. Key enabler: comprehensive automated testing. If you can't trust green build = releasable, you don't have CD.
+
+**Interview one-liner:**
+"Continuous Delivery means every commit passes through automated build, test, and staging validation, producing a production-ready artifact that can be deployed with one click - the release is a business decision, not a technical hurdle, enabled by environment parity and comprehensive automated testing."
+---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
+
+### 💡 The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
 ---
 
 ### ⚖️ Comparison Table
 
-[TODO: Include if 2+ named alternatives exist for Continuous Integration. Otherwise remove this section.]
-
+[TODO: Include if 2+ named alternatives exist for Continuous Delivery. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
@@ -232,7 +449,6 @@ Maturity indicators:
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -266,180 +482,6 @@ Maturity indicators:
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
-
----
-
-### 🔗 Related Keywords
-
-**Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
-
-**Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
-
-**Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
-
----
-
----
-
-# Continuous Delivery
-
-**TL;DR** - Continuous Delivery ensures software is always in a releasable state by extending CI with automated deployment pipeline stages (integration testing, staging, approval gates), so releasing to production is a business decision, not a technical challenge.
-
----
-
-### 🔥 The Problem This Solves
-
-**WORLD WITHOUT IT:**
-Code passes CI but releasing takes a week of manual steps: build release candidate, run manual regression tests, create change request, schedule maintenance window, SSH to servers, deploy, verify. Releases are rare, risky, and stressful.
-
-**THE INVENTION MOMENT:**
-"This is exactly why Continuous Delivery was created."
-
----
-
-### 📘 Textbook Definition
-
-Continuous Delivery is a software engineering approach where teams keep software in a deployable state throughout its lifecycle, enabling deployment to production at any time through a series of automated stages (build, test, staging, approval) with one-click or scheduled releases.
-
----
-
-### ⏱️ Understand It in 30 Seconds
-
-**One line:**
-[TODO: 15 words max. Zero jargon.]
-
-**One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
-
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
-
----
-
-### 🔩 First Principles Explanation
-
-**CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
-
-**DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
-
-**THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
-
-**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
-
----
-
-### 🧠 Mental Model / Analogy
-
-> [TODO: Primary analogy in blockquote.]
-
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-
-Where this analogy breaks down: [TODO: 1 sentence.]
-
----
-
-### 📶 Gradual Depth - Five Levels
-
-**Level 1 - What it is (anyone can understand):**
-[TODO: Plain English. No jargon. 2-4 sentences.]
-
-**Level 2 - How to use it (junior developer):**
-[TODO: Basic usage. Common patterns. 3-5 sentences.]
-
-**Level 3 - How it works (mid-level engineer):**
-[TODO: Internals. Data structures. 4-6 sentences.]
-
-**Level 4 - Production mastery (senior/staff engineer):**
-[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
-
-**Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
----
-
-### ⚙️ How It Works
-
-```
-Continuous Delivery pipeline:
-  Commit -> Build -> Unit Tests -> Integration Tests
-    -> Deploy to Staging -> Acceptance Tests
-      -> [Manual Approval Gate]
-        -> Deploy to Production
-
-Key difference from Continuous Deployment:
-  CD (Delivery):    Every commit CAN go to prod
-                    (human clicks "deploy")
-  CD (Deployment):  Every commit DOES go to prod
-                    (no human gate)
-
-Pipeline requirements:
-  1. Everything in version control (code + infra + config)
-  2. Automated testing at every stage
-  3. Deployment is one-click (or one-command)
-  4. Same artifact moves through all environments
-  5. Environment parity (staging mirrors production)
-```
-
----
-
-### 🔄 Complete Picture - End-to-End Flow
-
-**NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
-
-**FAILURE PATH:**
-[TODO: cascade -> observable symptom]
-
-**WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
----
-
-### 📌 Quick Reference Card
-
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-
-**If you remember only 3 things:**
-
-1. Continuous Delivery = always releasable + one-click deploy. The deploy button exists and works - it just requires human decision to press it.
-2. Same artifact (Docker image, JAR) moves through ALL environments - never rebuild for production (ensures what you tested is what you deploy)
-3. Key enabler: comprehensive automated testing. If you can't trust green build = releasable, you don't have CD.
-
-**Interview one-liner:**
-"Continuous Delivery means every commit passes through automated build, test, and staging validation, producing a production-ready artifact that can be deployed with one click - the release is a business decision, not a technical hurdle, enabled by environment parity and comprehensive automated testing."
-
----
-
-### 💡 The Surprising Truth
-
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
-
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -486,58 +528,6 @@ Pipeline requirements:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Continuous Delivery. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -562,20 +552,17 @@ Pipeline requirements:
 # Continuous Deployment
 
 **TL;DR** - Continuous Deployment automatically deploys every code change that passes the full pipeline to production without human intervention - requiring exceptional test coverage, feature flags, and observability to be safe.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT (given you already have Continuous Delivery):**
 The manual approval gate becomes a bottleneck. Changes batch up waiting for approval. The person approving doesn't actually verify anything meaningful - it's just ceremony. Releases are "safe" but slow.
-
 ---
 
 ### 📘 Textbook Definition
 
 Continuous Deployment is the practice of automatically releasing every code change to production after it passes all stages of the automated deployment pipeline, without requiring manual approval. It requires high confidence in automated testing, observability, and rapid rollback capabilities.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -588,7 +575,6 @@ Continuous Deployment is the practice of automatically releasing every code chan
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -608,7 +594,6 @@ Continuous Deployment is the practice of automatically releasing every code chan
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -620,7 +605,6 @@ Continuous Deployment is the practice of automatically releasing every code chan
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -639,7 +623,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -665,7 +648,6 @@ Who does this:
   Amazon deploys every 11.7 seconds
   Netflix: 1000s of deployments per day
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -679,7 +661,6 @@ Who does this:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -692,6 +673,7 @@ Who does this:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -701,14 +683,69 @@ Who does this:
 
 **Interview one-liner:**
 "Continuous Deployment removes the human approval gate - every commit that passes automated testing is deployed to production automatically via progressive rollout with automated rollback on metric degradation, made safe by feature flags (deploy != release), comprehensive testing, and observability."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Continuous Deployment. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -755,58 +792,6 @@ Who does this:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Continuous Deployment. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -831,20 +816,17 @@ Who does this:
 # Pipeline Stages
 
 **TL;DR** - A CI/CD pipeline consists of sequential/parallel stages (build, test, scan, deploy) that progressively increase confidence through faster-then-slower feedback loops, failing fast on cheap checks before expensive ones.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 All checks run sequentially in random order. E2E tests run before unit tests (wasting 20 minutes before catching a typo). Security scans happen after deployment. No structure means slow feedback and missed issues.
-
 ---
 
 ### 📘 Textbook Definition
 
 Pipeline stages are ordered phases of a CI/CD pipeline that a code change must pass through, designed with progressive confidence: fast/cheap checks first (lint, compile), then unit tests, integration tests, security scans, and finally deployment with verification.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -857,7 +839,6 @@ Pipeline stages are ordered phases of a CI/CD pipeline that a code change must p
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -877,7 +858,6 @@ Pipeline stages are ordered phases of a CI/CD pipeline that a code change must p
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -889,7 +869,6 @@ Pipeline stages are ordered phases of a CI/CD pipeline that a code change must p
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -908,7 +887,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -946,7 +924,6 @@ Fail fast principle:
   Lint fails in 30 seconds -> don't run 15-min tests
   Unit test fails in 2 min -> don't deploy to staging
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -960,7 +937,6 @@ Fail fast principle:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -973,6 +949,7 @@ Fail fast principle:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -982,14 +959,69 @@ Fail fast principle:
 
 **Interview one-liner:**
 "I design pipelines with progressive confidence - fast checks first (lint, compile, unit tests under 5 min), then integration and security scans, then staging deployment with acceptance tests - parallelizing independent stages and failing fast before expensive operations."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Pipeline Stages. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1036,58 +1068,6 @@ Fail fast principle:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Pipeline Stages. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1112,20 +1092,17 @@ Fail fast principle:
 # Branching Strategy
 
 **TL;DR** - Branching strategies (Git Flow, GitHub Flow, Trunk-Based) define how teams use branches to manage parallel development, releases, and hotfixes - with simpler strategies (trunk-based) enabling faster delivery and less merge pain.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Everyone commits to main directly with no coordination. Or everyone creates long-lived branches with complex merge ceremonies. No shared convention means merge conflicts, broken builds, and release confusion.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1138,7 +1115,6 @@ Everyone commits to main directly with no coordination. Or everyone creates long
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1158,7 +1134,6 @@ Everyone commits to main directly with no coordination. Or everyone creates long
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1170,7 +1145,6 @@ Everyone commits to main directly with no coordination. Or everyone creates long
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1189,7 +1163,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1228,7 +1201,6 @@ Comparison:
   | GitHub Flow | Days        | Medium     | Fast         |
   | Trunk-Based | Hours       | Low        | Fastest      |
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1242,7 +1214,6 @@ Comparison:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1255,6 +1226,7 @@ Comparison:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1264,14 +1236,69 @@ Comparison:
 
 **Interview one-liner:**
 "I prefer trunk-based development for SaaS products - short-lived branches (< 1 day), feature flags for incomplete work, and continuous deployment from main. Git Flow is appropriate only when maintaining multiple release versions simultaneously."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Branching Strategy. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1318,58 +1345,6 @@ Comparison:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Branching Strategy. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1394,7 +1369,6 @@ Comparison:
 # Trunk-Based Development
 
 **TL;DR** - Trunk-Based Development is a branching model where all developers commit to a single shared branch (trunk/main) multiple times per day, using feature flags to hide incomplete work - enabling the fastest CI/CD flow.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1404,13 +1378,11 @@ Feature branches live for weeks. Merging becomes a multi-day event. Integration 
 
 **THE INVENTION MOMENT:**
 "This is exactly why Trunk-Based Development was created."
-
 ---
 
 ### 📘 Textbook Definition
 
 Trunk-Based Development is a source-control branching model where developers merge small, frequent updates to a core trunk (main). Optional short-lived feature branches (< 1 day) are used only for code review, with feature flags controlling visibility of incomplete features in production.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1423,7 +1395,6 @@ Trunk-Based Development is a source-control branching model where developers mer
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1443,7 +1414,6 @@ Trunk-Based Development is a source-control branching model where developers mer
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1455,7 +1425,6 @@ Trunk-Based Development is a source-control branching model where developers mer
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1474,7 +1443,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1507,7 +1475,6 @@ Prerequisites:
   4. Team discipline (small commits, never break trunk)
   5. Code review on short-lived PRs (same day merge)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1521,7 +1488,6 @@ Prerequisites:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1534,6 +1500,7 @@ Prerequisites:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1543,48 +1510,26 @@ Prerequisites:
 
 **Interview one-liner:**
 "Trunk-based development maximizes CI/CD flow - all developers commit to main multiple times daily, incomplete features hidden behind flags, with short-lived branches only for code review. This requires fast CI (< 10 min), comprehensive tests, and disciplined small commits."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How do you handle a feature that takes 3 weeks to build with trunk-based development?**
-
-_Why they ask:_ Tests practical application of the model.
-
-**Answer:**
-Techniques for large features:
-
-1. **Feature flags**: Deploy code incrementally behind a flag. Each small commit adds a piece. Flag stays off until feature is complete.
-2. **Branch by abstraction**: Create abstraction layer, implement new version behind it, switch over when ready. Old and new coexist.
-3. **Dark launching**: Deploy the new code path, route a copy of traffic to it (shadow mode), verify correctness without user impact.
-4. **Incremental delivery**: Break 3-week feature into 10 independently-shippable pieces that each add value.
-
-Example: Rebuilding checkout flow (3 weeks)
-
-- Day 1-3: New checkout service behind flag (empty shell)
-- Day 4-7: Add payment processing to new service
-- Day 8-10: Add address validation
-- Day 11-14: Shadow mode (real traffic, compare results)
-- Day 15: Enable flag for 1% of users (canary)
-- Day 16-18: Ramp to 100%
-- Day 19-21: Remove old checkout code and flag
-
-Key: at no point does main become undeployable. Every commit is production-safe.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Trunk-Based Development. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1595,7 +1540,6 @@ Key: at no point does main become undeployable. Every commit is production-safe.
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1629,7 +1573,33 @@ Key: at no point does main become undeployable. Every commit is production-safe.
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How do you handle a feature that takes 3 weeks to build with trunk-based development?**
+
+_Why they ask:_ Tests practical application of the model.
+
+**Answer:**
+Techniques for large features:
+
+1. **Feature flags**: Deploy code incrementally behind a flag. Each small commit adds a piece. Flag stays off until feature is complete.
+2. **Branch by abstraction**: Create abstraction layer, implement new version behind it, switch over when ready. Old and new coexist.
+3. **Dark launching**: Deploy the new code path, route a copy of traffic to it (shadow mode), verify correctness without user impact.
+4. **Incremental delivery**: Break 3-week feature into 10 independently-shippable pieces that each add value.
+
+Example: Rebuilding checkout flow (3 weeks)
+
+- Day 1-3: New checkout service behind flag (empty shell)
+- Day 4-7: Add payment processing to new service
+- Day 8-10: Add address validation
+- Day 11-14: Shadow mode (real traffic, compare results)
+- Day 15: Enable flag for 1% of users (canary)
+- Day 16-18: Ramp to 100%
+- Day 19-21: Remove old checkout code and flag
+
+Key: at no point does main become undeployable. Every commit is production-safe.
 ---
 
 ### 🔗 Related Keywords
@@ -1645,4 +1615,3 @@ Key: at no point does main become undeployable. Every commit is production-safe.
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

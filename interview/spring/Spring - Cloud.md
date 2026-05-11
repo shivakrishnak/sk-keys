@@ -14,7 +14,7 @@ keywords:
   - Distributed Tracing
 difficulty_range: medium to hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -27,20 +27,17 @@ version: 2
 # Circuit Breaker
 
 **TL;DR** - A circuit breaker prevents cascading failures by detecting when a downstream service is failing and short-circuiting requests (returning fallback immediately) instead of waiting for timeouts - protecting system resources and enabling graceful degradation.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Service A calls Service B. Service B is slow/down. Service A's threads block waiting for timeouts (30s each). Thread pool exhausted. Service A becomes unresponsive. Services C, D, E that depend on A also fail. One slow service takes down the entire system.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -53,7 +50,6 @@ Service A calls Service B. Service B is slow/down. Service A's threads block wai
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -73,7 +69,6 @@ Service A calls Service B. Service B is slow/down. Service A's threads block wai
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -85,7 +80,6 @@ Service A calls Service B. Service B is slow/down. Service A's threads block wai
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -196,14 +190,12 @@ resilience4j:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -217,7 +209,6 @@ resilience4j:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -230,20 +221,76 @@ resilience4j:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. Three states: CLOSED (normal) -> OPEN (failing fast) -> HALF-OPEN (testing recovery)
 2. Prevents cascading failures by failing fast instead of waiting for timeouts
 3. Always provide a fallback: cached data, default response, or queued retry
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Circuit Breaker. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -279,58 +326,6 @@ Request -> [Timeout 2s] -> [Retry 3x]
                               |
                     fallback response
 ```
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Circuit Breaker. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -355,20 +350,17 @@ Request -> [Timeout 2s] -> [Retry 3x]
 # Service Discovery
 
 **TL;DR** - Service discovery (Eureka, Consul, Kubernetes) eliminates hardcoded service URLs by allowing services to register themselves and discover others dynamically, enabling horizontal scaling and blue-green deployments.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Service A needs to call Service B at `http://service-b:8080`. But Service B has 5 instances with different IPs. IPs change on every deployment. Adding instances requires updating every caller's configuration.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -381,7 +373,6 @@ Service A needs to call Service B at `http://service-b:8080`. But Service B has 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -401,7 +392,6 @@ Service A needs to call Service B at `http://service-b:8080`. But Service B has 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -413,7 +403,6 @@ Service A needs to call Service B at `http://service-b:8080`. But Service B has 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -518,14 +507,12 @@ public ServiceInstanceListSupplier
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -539,7 +526,6 @@ public ServiceInstanceListSupplier
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -552,46 +538,33 @@ public ServiceInstanceListSupplier
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. Services register on startup, deregister on shutdown, heartbeat while alive
 2. Kubernetes: DNS-based discovery built in (no Eureka needed)
 3. `@LoadBalanced RestTemplate` resolves service names to instances
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: In a Kubernetes environment, why might you still use Spring Cloud LoadBalancer instead of just K8s services?**
-
-_Why they ask:_ Tests practical architecture decisions.
-
-_Strong answer:_
-
-Kubernetes kube-proxy provides L4 (TCP) round-robin load balancing. Spring Cloud LoadBalancer (client-side) adds:
-
-1. **Health-aware routing:** Skip instances failing health checks before K8s removes them
-2. **Weighted routing:** Canary deployments (10% to new version)
-3. **Instance-specific metrics:** Track per-instance latency, route away from slow instances
-4. **Retry awareness:** Don't retry to same failed instance
-5. **Custom algorithms:** Consistent hashing for cache locality
-
-When NOT to use it: Simple services without special routing needs. Default K8s service is simpler and sufficient.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Service Discovery. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -602,7 +575,6 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -636,7 +608,25 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: In a Kubernetes environment, why might you still use Spring Cloud LoadBalancer instead of just K8s services?**
+
+_Why they ask:_ Tests practical architecture decisions.
+
+_Strong answer:_
+
+Kubernetes kube-proxy provides L4 (TCP) round-robin load balancing. Spring Cloud LoadBalancer (client-side) adds:
+
+1. **Health-aware routing:** Skip instances failing health checks before K8s removes them
+2. **Weighted routing:** Canary deployments (10% to new version)
+3. **Instance-specific metrics:** Track per-instance latency, route away from slow instances
+4. **Retry awareness:** Don't retry to same failed instance
+5. **Custom algorithms:** Consistent hashing for cache locality
+
+When NOT to use it: Simple services without special routing needs. Default K8s service is simpler and sufficient.
 ---
 
 ### 🔗 Related Keywords
@@ -661,20 +651,17 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 # Config Server
 
 **TL;DR** - Spring Cloud Config Server provides centralized, versioned, environment-specific configuration for all microservices, with features like encryption, refresh without restart, and Git-backed change history.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 50 microservices each have their own `application.yml`. Changing a shared database URL requires updating 30 files across 30 repos and redeploying. No audit trail. Secrets scattered in plain text across repositories.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -687,7 +674,6 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -707,7 +693,6 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -719,7 +704,6 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -813,14 +797,12 @@ curl -X POST \
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -834,7 +816,6 @@ curl -X POST \
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -847,20 +828,76 @@ curl -X POST \
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. Centralized Git-backed config with environment-specific overrides
 2. `@RefreshScope` enables runtime config updates without restart
 3. In K8s-only environments, consider ConfigMaps as a simpler alternative
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Config Server. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -907,58 +944,6 @@ curl -X POST \
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Config Server. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -983,20 +968,17 @@ curl -X POST \
 # Distributed Tracing
 
 **TL;DR** - Distributed tracing (Micrometer Tracing / OpenTelemetry) propagates trace IDs across service boundaries, enabling end-to-end request visualization in tools like Jaeger/Zipkin - essential for debugging latency and failures in microservices.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 User reports "checkout is slow." Request crosses 8 services. Each has its own logs. No way to correlate logs across services or find which service added 2 seconds of latency. Debugging takes hours of log grepping.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1009,7 +991,6 @@ User reports "checkout is slow." Request crosses 8 services. Each has its own lo
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1029,7 +1010,6 @@ User reports "checkout is slow." Request crosses 8 services. Each has its own lo
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1041,7 +1021,6 @@ User reports "checkout is slow." Request crosses 8 services. Each has its own lo
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1143,14 +1122,12 @@ try (Tracer.SpanInScope ws =
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1164,7 +1141,6 @@ try (Tracer.SpanInScope ws =
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1177,54 +1153,33 @@ try (Tracer.SpanInScope ws =
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. Add Micrometer Tracing dependency + Zipkin exporter = auto-instrumented
 2. Trace ID propagated via `traceparent` header across all services
 3. In production: sample 1-10% to control costs, 100% for errors
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: A user reports checkout takes 8 seconds. How do you use distributed tracing to diagnose it?**
-
-_Why they ask:_ Tests practical observability skills.
-
-_Strong answer:_
-
-1. Get the trace ID (from response header `X-Trace-Id` or from logs)
-2. Open Jaeger/Zipkin, search by trace ID
-3. View the trace waterfall: see all spans and their durations
-4. Identify the bottleneck: which span took the most time?
-
-Common findings:
-
-- One service has high latency (DB query, external API)
-- Sequential calls that could be parallel
-- Retry loops amplifying latency
-- Connection pool wait time (not in the span itself but visible as gaps)
-
-Follow-up actions:
-
-- Add custom spans around suspected slow operations
-- Set alerts on P99 span duration per service
-- Use exemplars to link high-latency metrics to specific traces
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Distributed Tracing. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1235,7 +1190,6 @@ Follow-up actions:
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1269,7 +1223,33 @@ Follow-up actions:
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: A user reports checkout takes 8 seconds. How do you use distributed tracing to diagnose it?**
+
+_Why they ask:_ Tests practical observability skills.
+
+_Strong answer:_
+
+1. Get the trace ID (from response header `X-Trace-Id` or from logs)
+2. Open Jaeger/Zipkin, search by trace ID
+3. View the trace waterfall: see all spans and their durations
+4. Identify the bottleneck: which span took the most time?
+
+Common findings:
+
+- One service has high latency (DB query, external API)
+- Sequential calls that could be parallel
+- Retry loops amplifying latency
+- Connection pool wait time (not in the span itself but visible as gaps)
+
+Follow-up actions:
+
+- Add custom spans around suspected slow operations
+- Set alerts on P99 span duration per service
+- Use exemplars to link high-latency metrics to specific traces
 ---
 
 ### 🔗 Related Keywords
@@ -1285,4 +1265,3 @@ Follow-up actions:
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

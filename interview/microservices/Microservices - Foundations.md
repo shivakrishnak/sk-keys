@@ -16,7 +16,7 @@ keywords:
   - Microservices Ecosystem Map
 difficulty_range: easy to medium
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # What Are Microservices
 
 **TL;DR** - Microservices is an architectural style where a system is composed of small, independently deployable services, each owning its data and running its own process. They communicate over the network and are organized around business capabilities, not technical layers.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -41,13 +40,11 @@ A single monolithic application handles all features: user management, orders, p
 
 **THE REAL DRIVER:**
 Microservices solve **organizational scaling**, not primarily technical scaling. Conway's Law states that your system architecture mirrors your organizational structure. Independent teams need independently deployable services to move at their own pace.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -60,7 +57,6 @@ Microservices solve **organizational scaling**, not primarily technical scaling.
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -80,7 +76,6 @@ Microservices solve **organizational scaling**, not primarily technical scaling.
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -92,7 +87,6 @@ Microservices solve **organizational scaling**, not primarily technical scaling.
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -160,14 +154,12 @@ Microservices:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -181,7 +173,6 @@ Microservices:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -194,6 +185,7 @@ Microservices:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -203,14 +195,69 @@ Microservices:
 
 **Interview one-liner:**
 "Microservices are independently deployable services organized around business capabilities, each owning its data. They solve team scaling by enabling independent release cycles, but trade that for distributed systems complexity."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for What Are Microservices. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -264,58 +311,6 @@ Strong recommendation: Start with a **modular monolith**.
 - Fundamentally different tech stacks (ML pipeline in Python + API in Java)
 - Strict compliance isolation (payment processing with PCI DSS)
 - Wildly different scaling profiles from day 1 (video processing vs REST API)
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for What Are Microservices. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -340,7 +335,6 @@ Strong recommendation: Start with a **modular monolith**.
 # Monolith vs Microservices
 
 **TL;DR** - A monolith is a single deployable unit where all business logic shares one process and database. Microservices are independently deployable services that own their data. The choice is primarily about team size and organizational structure, not technical capability.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -356,13 +350,11 @@ Strong recommendation: Start with a **modular monolith**.
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -375,7 +367,6 @@ Strong recommendation: Start with a **modular monolith**.
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -395,7 +386,6 @@ Strong recommendation: Start with a **modular monolith**.
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -407,7 +397,6 @@ Strong recommendation: Start with a **modular monolith**.
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -479,14 +468,12 @@ This gives you network latency, partial failures, and complex debugging - with N
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -500,7 +487,6 @@ This gives you network latency, partial failures, and complex debugging - with N
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -517,51 +503,26 @@ This gives you network latency, partial failures, and complex debugging - with N
 | ONE-LINER   | [TODO: Interview summary]    |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How do you identify a Distributed Monolith? What are the warning signs?**
-
-_Why they ask:_ Tests real-world experience with failed microservices adoptions.
-
-_Strong answer:_
-
-**Detection criteria (if 3+ are true, it's a distributed monolith):**
-
-1. **Lockstep deployment:** "We always deploy services A, B, and C at the same time" - if you can't deploy one without the others, they're not independent.
-
-2. **Shared database:** Multiple services read/write the same tables. Changing a column requires coordinating across teams.
-
-3. **Synchronous chains:** A single user request flows through A -> B -> C -> D synchronously. If D is slow, A is slow. If C is down, A fails.
-
-4. **Shared libraries with business logic:** A common library contains domain models. Updating the library forces all services to redeploy.
-
-5. **Integration tests require all services running:** Can't test Service A without Services B, C, and D running in a test environment.
-
-6. **Shared deployment pipeline:** All services built and deployed in one CI/CD pipeline.
-
-**How to fix:**
-
-- Define clear ownership boundaries (1 team = 1-3 services = own database)
-- Replace synchronous chains with async events where possible
-- Extract shared database into per-service databases with eventual consistency
-- Use consumer-driven contracts instead of shared libraries
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Monolith vs Microservices. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -572,7 +533,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -606,7 +566,36 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How do you identify a Distributed Monolith? What are the warning signs?**
+
+_Why they ask:_ Tests real-world experience with failed microservices adoptions.
+
+_Strong answer:_
+
+**Detection criteria (if 3+ are true, it's a distributed monolith):**
+
+1. **Lockstep deployment:** "We always deploy services A, B, and C at the same time" - if you can't deploy one without the others, they're not independent.
+
+2. **Shared database:** Multiple services read/write the same tables. Changing a column requires coordinating across teams.
+
+3. **Synchronous chains:** A single user request flows through A -> B -> C -> D synchronously. If D is slow, A is slow. If C is down, A fails.
+
+4. **Shared libraries with business logic:** A common library contains domain models. Updating the library forces all services to redeploy.
+
+5. **Integration tests require all services running:** Can't test Service A without Services B, C, and D running in a test environment.
+
+6. **Shared deployment pipeline:** All services built and deployed in one CI/CD pipeline.
+
+**How to fix:**
+
+- Define clear ownership boundaries (1 team = 1-3 services = own database)
+- Replace synchronous chains with async events where possible
+- Extract shared database into per-service databases with eventual consistency
+- Use consumer-driven contracts instead of shared libraries
 ---
 
 ### 🔗 Related Keywords
@@ -631,7 +620,6 @@ _Strong answer:_
 # When NOT to Use Microservices
 
 **TL;DR** - Avoid microservices when: team is small (< 15 devs), domain is unclear, DevOps maturity is low, or the system doesn't need independent scaling. Most systems that adopted microservices prematurely ended up with distributed monoliths - all the complexity, none of the benefits.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -647,13 +635,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -666,7 +652,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -686,7 +671,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -698,7 +682,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -782,14 +765,12 @@ The lesson: Microservices is not a destination. It's a tool. If the tool doesn't
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -803,7 +784,6 @@ The lesson: Microservices is not a destination. It's a tool. If the tool doesn't
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -820,14 +800,69 @@ The lesson: Microservices is not a destination. It's a tool. If the tool doesn't
 | ONE-LINER   | [TODO: Interview summary]    |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for When NOT to Use Microservices. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -865,58 +900,6 @@ _Strong answer:_
 - A module has fundamentally different tech requirements
 
 Timeline for first extraction: 6-12 months, not 90 days.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for When NOT to Use Microservices. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -941,7 +924,6 @@ Timeline for first extraction: 6-12 months, not 90 days.
 # Modular Monolith
 
 **TL;DR** - A modular monolith is a single deployable application with strictly enforced module boundaries, where each module owns its data and communicates through well-defined interfaces. It provides most benefits of microservices (team independence, clear boundaries) without the distributed systems complexity.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -957,13 +939,11 @@ Timeline for first extraction: 6-12 months, not 90 days.
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -976,7 +956,6 @@ Timeline for first extraction: 6-12 months, not 90 days.
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -996,7 +975,6 @@ Timeline for first extraction: 6-12 months, not 90 days.
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1008,7 +986,6 @@ Timeline for first extraction: 6-12 months, not 90 days.
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1116,14 +1093,12 @@ public class OrderService {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1137,7 +1112,6 @@ public class OrderService {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1154,14 +1128,69 @@ public class OrderService {
 | ONE-LINER   | [TODO: Interview summary]    |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Modular Monolith. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1210,58 +1239,6 @@ Boundaries erode through: developer shortcuts, deadline pressure, new team membe
 5. **PR reviews with automated checks:**
    - CI label if a PR touches multiple modules
    - Require approval from both module owners
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Modular Monolith. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1286,7 +1263,6 @@ Boundaries erode through: developer shortcuts, deadline pressure, new team membe
 # Twelve-Factor App
 
 **TL;DR** - The Twelve-Factor App is a methodology for building cloud-native applications that are portable, scalable, and maintainable. Originally from Heroku (2011), it defines 12 best practices that align perfectly with microservices: externalized config, stateless processes, disposable instances, dev/prod parity, and treating logs as streams.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1302,13 +1278,11 @@ Boundaries erode through: developer shortcuts, deadline pressure, new team membe
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1321,7 +1295,6 @@ Boundaries erode through: developer shortcuts, deadline pressure, new team membe
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1341,7 +1314,6 @@ Boundaries erode through: developer shortcuts, deadline pressure, new team membe
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1353,7 +1325,6 @@ Boundaries erode through: developer shortcuts, deadline pressure, new team membe
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1429,14 +1400,12 @@ public void shutdown() {
 }
 // In K8s: preStop hook + terminationGracePeriodSeconds
 ```
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1450,7 +1419,6 @@ public void shutdown() {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1467,43 +1435,26 @@ public void shutdown() {
 | ONE-LINER   | [TODO: Interview summary]    |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Which twelve-factor principles are most critical for microservices? Which are sometimes relaxed?**
-
-_Why they ask:_ Tests practical understanding vs rote memorization.
-
-_Strong answer:_
-
-**Most critical (never compromise):**
-
-- **Factor 3 (Config):** Microservices must be environment-agnostic. Same artifact in dev/staging/prod.
-- **Factor 6 (Stateless):** Services must scale horizontally. Any instance handles any request.
-- **Factor 9 (Disposability):** Containers start/stop constantly. Fast startup + graceful shutdown is essential.
-- **Factor 11 (Logs):** With 50 services, you MUST stream logs to a central aggregator (ELK/Loki).
-
-**Sometimes relaxed (with good reason):**
-
-- **Factor 1 (One codebase):** Monorepos (all services in one repo) work well for some orgs (Google, Meta). The spirit (version-controlled, CI/CD per service) matters more than "one repo per service."
-- **Factor 10 (Dev/prod parity):** Using Testcontainers and Docker Compose gets you close, but perfect parity is expensive. The gap should be minimized, not eliminated at all costs.
-- **Factor 12 (Admin processes):** In Kubernetes, you use Jobs/CronJobs. The principle (don't SSH into prod) holds, but the mechanism is different from the original Heroku model.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Twelve-Factor App. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1514,7 +1465,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1548,7 +1498,28 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Which twelve-factor principles are most critical for microservices? Which are sometimes relaxed?**
+
+_Why they ask:_ Tests practical understanding vs rote memorization.
+
+_Strong answer:_
+
+**Most critical (never compromise):**
+
+- **Factor 3 (Config):** Microservices must be environment-agnostic. Same artifact in dev/staging/prod.
+- **Factor 6 (Stateless):** Services must scale horizontally. Any instance handles any request.
+- **Factor 9 (Disposability):** Containers start/stop constantly. Fast startup + graceful shutdown is essential.
+- **Factor 11 (Logs):** With 50 services, you MUST stream logs to a central aggregator (ELK/Loki).
+
+**Sometimes relaxed (with good reason):**
+
+- **Factor 1 (One codebase):** Monorepos (all services in one repo) work well for some orgs (Google, Meta). The spirit (version-controlled, CI/CD per service) matters more than "one repo per service."
+- **Factor 10 (Dev/prod parity):** Using Testcontainers and Docker Compose gets you close, but perfect parity is expensive. The gap should be minimized, not eliminated at all costs.
+- **Factor 12 (Admin processes):** In Kubernetes, you use Jobs/CronJobs. The principle (don't SSH into prod) holds, but the mechanism is different from the original Heroku model.
 ---
 
 ### 🔗 Related Keywords
@@ -1573,7 +1544,6 @@ _Strong answer:_
 # Microservices Ecosystem Map
 
 **TL;DR** - The microservices ecosystem is a web of interconnected concerns: service communication, data management, resilience, observability, deployment, and security. Understanding the ecosystem map prevents teams from adopting microservices without the necessary supporting infrastructure.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1589,13 +1559,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1608,7 +1576,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1628,7 +1595,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1640,7 +1606,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1687,14 +1652,12 @@ DEPLOYMENT             SECURITY
 | Observability | Centralized logs       | Distributed tracing    | Custom metrics       |
 | Deployment    | Docker, CI/CD          | K8s, blue-green        | Progressive delivery |
 | Security      | HTTPS, auth at gateway | mTLS                   | Zero-trust mesh      |
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1708,7 +1671,6 @@ DEPLOYMENT             SECURITY
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1725,47 +1687,26 @@ DEPLOYMENT             SECURITY
 | ONE-LINER   | [TODO: Interview summary]    |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: If you're starting a new microservices project, what's the minimum infrastructure you'd set up before writing the first service?**
-
-_Why they ask:_ Tests practical readiness assessment.
-
-_Strong answer:_
-
-**Before the first service (non-negotiable):**
-
-1. **Container registry + CI/CD pipeline** - Every service must be buildable and deployable automatically
-2. **API Gateway** - Single entry point, handles auth/routing/rate limiting
-3. **Centralized logging** (ELK or Loki) - You'll need to debug across services from day 1
-4. **Service discovery** - Services need to find each other (K8s Services or Consul)
-5. **Health check endpoint standard** - `/health` or `/actuator/health` on every service
-6. **Shared authentication** - JWT validation at gateway, user context propagation
-
-**First week after first service:** 7. **Distributed tracing** (Jaeger/Zipkin) - Correlation IDs from day 1 8. **Metrics collection** (Prometheus/Grafana) - Response times, error rates 9. **Standardized error responses** - Consistent error format across services
-
-**What can wait:**
-
-- Service mesh (adds complexity, not needed until 20+ services)
-- Event sourcing (start with simple events/messaging)
-- Chaos engineering (need stable baseline first)
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Microservices Ecosystem Map. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1776,7 +1717,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1810,7 +1750,32 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: If you're starting a new microservices project, what's the minimum infrastructure you'd set up before writing the first service?**
+
+_Why they ask:_ Tests practical readiness assessment.
+
+_Strong answer:_
+
+**Before the first service (non-negotiable):**
+
+1. **Container registry + CI/CD pipeline** - Every service must be buildable and deployable automatically
+2. **API Gateway** - Single entry point, handles auth/routing/rate limiting
+3. **Centralized logging** (ELK or Loki) - You'll need to debug across services from day 1
+4. **Service discovery** - Services need to find each other (K8s Services or Consul)
+5. **Health check endpoint standard** - `/health` or `/actuator/health` on every service
+6. **Shared authentication** - JWT validation at gateway, user context propagation
+
+**First week after first service:** 7. **Distributed tracing** (Jaeger/Zipkin) - Correlation IDs from day 1 8. **Metrics collection** (Prometheus/Grafana) - Response times, error rates 9. **Standardized error responses** - Consistent error format across services
+
+**What can wait:**
+
+- Service mesh (adds complexity, not needed until 20+ services)
+- Event sourcing (start with simple events/messaging)
+- Chaos engineering (need stable baseline first)
 ---
 
 ### 🔗 Related Keywords
@@ -1826,4 +1791,3 @@ _Strong answer:_
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

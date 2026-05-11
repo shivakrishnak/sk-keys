@@ -12,7 +12,7 @@
 | --------------------------------------------- | ------------------------------------------- |
 | `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v3.0)       |
 | `.github/prompts/generate-keywords.prompt.md` | Prompt for category/tier keyword processing |
-| `interview/config/INTERVIEW_PROMPT.md`        | Master content generation spec (v1.0)       |
+| `interview/config/INTERVIEW_PROMPT.md`        | Master content generation spec (v3.0)       |
 
 ## Design Considerations
 

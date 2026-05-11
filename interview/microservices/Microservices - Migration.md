@@ -16,7 +16,7 @@ keywords:
   - POC Strategy
 difficulty_range: hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,20 +31,17 @@ version: 2
 # Monolith to Microservices Migration
 
 **TL;DR** - Migrating from monolith to microservices is a multi-year journey, not a rewrite. Extract services incrementally using the Strangler Fig pattern. Start with the service that has the clearest boundary and lowest risk. Most migrations fail because teams try to rewrite everything at once instead of incrementally extracting.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 The monolith is 500K lines. Deployments take 4 hours. One team's change breaks another team's feature. Scaling means scaling the entire application even if only one module needs it. But a big-bang rewrite would take 2 years and likely fail.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -57,7 +54,6 @@ The monolith is 500K lines. Deployments take 4 hours. One team's change breaks a
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -77,7 +73,6 @@ The monolith is 500K lines. Deployments take 4 hours. One team's change breaks a
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -89,7 +84,6 @@ The monolith is 500K lines. Deployments take 4 hours. One team's change breaks a
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -156,14 +150,12 @@ Phase 4: Eventually
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -177,7 +169,6 @@ Phase 4: Eventually
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -192,16 +183,72 @@ Phase 4: Eventually
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Monolith to Microservices Migration. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -251,58 +298,6 @@ class OrderServiceClient {
    - Payment subscribes and charges
 
 6. **Traffic migration:** Shadow test (run both, compare results) -> canary (5% to new service) -> full migration
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Monolith to Microservices Migration. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -327,7 +322,6 @@ class OrderServiceClient {
 # Strangler Fig Pattern
 
 **TL;DR** - The Strangler Fig pattern incrementally replaces a legacy system by building new functionality alongside it, routing traffic to the new system piece by piece, and eventually decommissioning the old system. Named after the strangler fig tree that grows around and eventually replaces its host tree.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -343,13 +337,11 @@ class OrderServiceClient {
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -362,7 +354,6 @@ class OrderServiceClient {
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -382,7 +373,6 @@ class OrderServiceClient {
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -394,7 +384,6 @@ class OrderServiceClient {
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -491,14 +480,12 @@ Both systems need access to the same data during transition:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -512,7 +499,6 @@ Both systems need access to the same data during transition:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -527,44 +513,29 @@ Both systems need access to the same data during transition:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: You're 60% through a Strangler Fig migration. The remaining 40% of the monolith is the most complex and tightly coupled. What do you do?**
-
-_Why they ask:_ Tests pragmatic judgment.
-
-_Strong answer:_
-
-**The last 40% is always the hardest.** Options:
-
-1. **Keep the monolith for the last 40%.** If it works, is stable, and doesn't need scaling, leave it. Not everything needs to be a microservice. This is the pragmatic choice.
-
-2. **Modular monolith the remainder.** Refactor the last 40% into well-structured modules within the monolith. Clear interfaces, separate packages, but one deployment. Gets 80% of the benefit with 20% of the effort.
-
-3. **Continue extraction but slower.** The last 40% takes 60% of the time. Budget accordingly. Use event storming to find the remaining bounded contexts.
-
-4. **Hybrid permanently.** Some companies run a "core monolith" alongside microservices for years. The monolith handles tightly coupled legacy logic. New features are microservices.
-
-**The worst option:** Force-extracting tightly coupled code into separate services. You'll create a distributed monolith with all the downsides of both.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Strangler Fig Pattern. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -575,7 +546,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -609,7 +579,27 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: You're 60% through a Strangler Fig migration. The remaining 40% of the monolith is the most complex and tightly coupled. What do you do?**
+
+_Why they ask:_ Tests pragmatic judgment.
+
+_Strong answer:_
+
+**The last 40% is always the hardest.** Options:
+
+1. **Keep the monolith for the last 40%.** If it works, is stable, and doesn't need scaling, leave it. Not everything needs to be a microservice. This is the pragmatic choice.
+
+2. **Modular monolith the remainder.** Refactor the last 40% into well-structured modules within the monolith. Clear interfaces, separate packages, but one deployment. Gets 80% of the benefit with 20% of the effort.
+
+3. **Continue extraction but slower.** The last 40% takes 60% of the time. Budget accordingly. Use event storming to find the remaining bounded contexts.
+
+4. **Hybrid permanently.** Some companies run a "core monolith" alongside microservices for years. The monolith handles tightly coupled legacy logic. New features are microservices.
+
+**The worst option:** Force-extracting tightly coupled code into separate services. You'll create a distributed monolith with all the downsides of both.
 ---
 
 ### 🔗 Related Keywords
@@ -634,7 +624,6 @@ _Strong answer:_
 # Re-platforming vs Re-architecting
 
 **TL;DR** - Re-platforming (lift-and-shift) moves the application to a new platform (e.g., cloud) with minimal code changes. Re-architecting restructures the application (e.g., monolith to microservices). Re-platforming is faster and lower risk; re-architecting delivers more value but takes longer.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -650,13 +639,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -669,7 +656,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -689,7 +675,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -701,7 +686,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -755,14 +739,12 @@ Don't choose one strategy for everything. Different parts of the system deserve 
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -776,7 +758,6 @@ Don't choose one strategy for everything. Different parts of the system deserve 
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -791,43 +772,29 @@ Don't choose one strategy for everything. Different parts of the system deserve 
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Management wants to re-architect the entire platform to microservices. How do you respond?**
-
-_Why they ask:_ Tests stakeholder management and technical judgment.
-
-_Strong answer:_
-
-**Don't say "no," say "here's a better path":**
-
-1. **Agree with the goal:** "Yes, microservices can solve our scaling and velocity problems."
-2. **Present the risk:** "A full rewrite typically takes 2-3x longer than estimated. 70% of big-bang rewrites fail."
-3. **Propose incremental approach:**
-   - Month 1-3: Re-platform to cloud (lift-and-shift). Quick win, reduces operational burden.
-   - Month 3-6: Extract first 2-3 services (clear boundaries, low risk). Prove the approach.
-   - Month 6-18: Continue extraction. Each quarter = 2-3 more services.
-4. **Measure and report:** After each extraction, show deployment frequency improvement, scaling capabilities, team velocity.
-5. **Stop when good enough:** Not everything needs to be a microservice. The modular monolith remainder might be fine.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Re-platforming vs Re-architecting. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -838,7 +805,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -872,7 +838,26 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Management wants to re-architect the entire platform to microservices. How do you respond?**
+
+_Why they ask:_ Tests stakeholder management and technical judgment.
+
+_Strong answer:_
+
+**Don't say "no," say "here's a better path":**
+
+1. **Agree with the goal:** "Yes, microservices can solve our scaling and velocity problems."
+2. **Present the risk:** "A full rewrite typically takes 2-3x longer than estimated. 70% of big-bang rewrites fail."
+3. **Propose incremental approach:**
+   - Month 1-3: Re-platform to cloud (lift-and-shift). Quick win, reduces operational burden.
+   - Month 3-6: Extract first 2-3 services (clear boundaries, low risk). Prove the approach.
+   - Month 6-18: Continue extraction. Each quarter = 2-3 more services.
+4. **Measure and report:** After each extraction, show deployment frequency improvement, scaling capabilities, team velocity.
+5. **Stop when good enough:** Not everything needs to be a microservice. The modular monolith remainder might be fine.
 ---
 
 ### 🔗 Related Keywords
@@ -897,7 +882,6 @@ _Strong answer:_
 # Cloud Migration
 
 **TL;DR** - Cloud migration moves applications, data, and infrastructure from on-premises to cloud providers (AWS, Azure, GCP). Success requires understanding the 6 R's (Rehost through Retire), planning for data migration, security, and cost management. Most teams underestimate data gravity and network latency changes.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -913,13 +897,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -932,7 +914,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -952,7 +933,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -964,7 +944,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -991,14 +970,12 @@ Moving your IT from your own servers to rented servers in the cloud. Like moving
 3. **Network latency:** On-prem services talking to cloud services across the WAN. Co-locate or decouple.
 4. **Cost surprise:** Cloud is not automatically cheaper. Lift-and-shift often costs MORE than on-prem.
 5. **Security gaps:** On-prem firewall rules don't translate to cloud security groups 1:1.
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1012,7 +989,6 @@ Moving your IT from your own servers to rented servers in the cloud. Like moving
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1027,42 +1003,29 @@ Moving your IT from your own servers to rented servers in the cloud. Like moving
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your database is 5TB and must migrate to the cloud with minimal downtime. How?**
-
-_Why they ask:_ Tests practical migration planning.
-
-_Strong answer:_
-
-**Approach: Online migration with cutover window**
-
-1. **Initial bulk copy:** Use AWS DMS, Azure Database Migration Service, or pg_dump/restore. Takes hours/days for 5TB.
-2. **Enable CDC (Change Data Capture):** Stream ongoing changes from source to target during bulk copy.
-3. **Catch-up phase:** After bulk copy, CDC replays changes that happened during copy. Minutes to catch up.
-4. **Validation:** Compare row counts, checksums between source and target.
-5. **Cutover (brief downtime):** Stop writes to source, wait for CDC to finish, switch application connection string to target. Downtime: 5-30 minutes.
-6. **Verify:** Run smoke tests against new database. Monitor for errors.
-7. **Rollback plan:** Keep source database running for 48 hours. If issues, switch connection string back.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Cloud Migration. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1073,7 +1036,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1107,7 +1069,25 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your database is 5TB and must migrate to the cloud with minimal downtime. How?**
+
+_Why they ask:_ Tests practical migration planning.
+
+_Strong answer:_
+
+**Approach: Online migration with cutover window**
+
+1. **Initial bulk copy:** Use AWS DMS, Azure Database Migration Service, or pg_dump/restore. Takes hours/days for 5TB.
+2. **Enable CDC (Change Data Capture):** Stream ongoing changes from source to target during bulk copy.
+3. **Catch-up phase:** After bulk copy, CDC replays changes that happened during copy. Minutes to catch up.
+4. **Validation:** Compare row counts, checksums between source and target.
+5. **Cutover (brief downtime):** Stop writes to source, wait for CDC to finish, switch application connection string to target. Downtime: 5-30 minutes.
+6. **Verify:** Run smoke tests against new database. Monitor for errors.
+7. **Rollback plan:** Keep source database running for 48 hours. If issues, switch connection string back.
 ---
 
 ### 🔗 Related Keywords
@@ -1132,7 +1112,6 @@ _Strong answer:_
 # Technology Migration Strategy
 
 **TL;DR** - Technology migration (changing languages, frameworks, or databases) should be incremental, not big-bang. Use the Strangler Fig pattern, run old and new in parallel, and measure before fully committing. Never migrate technology without a clear business justification.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1148,13 +1127,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1167,7 +1144,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1187,7 +1163,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1199,7 +1174,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1262,14 +1236,12 @@ Phase 4: Decommission
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1283,7 +1255,6 @@ Phase 4: Decommission
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1298,40 +1269,29 @@ Phase 4: Decommission
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your team wants to migrate from Java to Go for "better performance." How do you evaluate this?**
-
-_Why they ask:_ Tests critical thinking about technology decisions.
-
-_Strong answer:_
-
-**Questions before approving:**
-
-1. **What's the actual performance bottleneck?** Profile the Java service. Is it CPU-bound, I/O-bound, or memory-bound? Go helps with CPU-bound concurrent workloads but not with I/O-bound (Java async is comparable).
-2. **Have you optimized the Java code first?** JVM tuning, connection pooling, caching, query optimization often give 10x improvement without rewriting.
-3. **What's the team's Go expertise?** Learning a new language in production is risky. First Go service will be written like Java-in-Go (poor idiomatic Go).
-4. **What's the migration cost?** Rewriting 50K LOC Java -> Go takes 6-12 months. What features don't ship during that time?
-5. **One service first:** If the case is strong, migrate ONE service. Measure real production performance. Compare objectively. Then decide on wider migration.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Technology Migration Strategy. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1342,7 +1302,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1376,7 +1335,23 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your team wants to migrate from Java to Go for "better performance." How do you evaluate this?**
+
+_Why they ask:_ Tests critical thinking about technology decisions.
+
+_Strong answer:_
+
+**Questions before approving:**
+
+1. **What's the actual performance bottleneck?** Profile the Java service. Is it CPU-bound, I/O-bound, or memory-bound? Go helps with CPU-bound concurrent workloads but not with I/O-bound (Java async is comparable).
+2. **Have you optimized the Java code first?** JVM tuning, connection pooling, caching, query optimization often give 10x improvement without rewriting.
+3. **What's the team's Go expertise?** Learning a new language in production is risky. First Go service will be written like Java-in-Go (poor idiomatic Go).
+4. **What's the migration cost?** Rewriting 50K LOC Java -> Go takes 6-12 months. What features don't ship during that time?
+5. **One service first:** If the case is strong, migrate ONE service. Measure real production performance. Compare objectively. Then decide on wider migration.
 ---
 
 ### 🔗 Related Keywords
@@ -1401,7 +1376,6 @@ _Strong answer:_
 # POC Strategy
 
 **TL;DR** - A Proof of Concept (POC) validates that a technology or architecture approach works for your specific use case before committing to full implementation. A good POC has clear success criteria, a time limit (2-4 weeks), and tests the riskiest assumptions first.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1417,13 +1391,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1436,7 +1408,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1456,7 +1427,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1468,7 +1438,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1525,14 +1494,12 @@ A small experiment to answer: "Can this technology actually solve our problem?" 
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1546,7 +1513,6 @@ A small experiment to answer: "Can this technology actually solve our problem?" 
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1561,16 +1527,72 @@ A small experiment to answer: "Can this technology actually solve our problem?" 
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for POC Strategy. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1609,58 +1631,6 @@ _Strong answer:_
 - All 4 success criteria met -> Recommend adoption
 - 3 of 4 met -> Conditional adoption with caveats
 - < 3 met -> Don't adopt (use traditional CRUD + audit table)
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for POC Strategy. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1676,4 +1646,3 @@ _Strong answer:_
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

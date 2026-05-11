@@ -16,7 +16,7 @@ keywords:
   - Docker Compose Networking
 difficulty_range: medium-hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Container Networking
 
 **TL;DR** - Container networking connects isolated containers to each other and the outside world using virtual network interfaces, bridges, and network namespaces - providing connectivity while maintaining isolation.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -44,13 +43,11 @@ Containers have isolated network namespaces (by design). Without networking, the
 
 **EVOLUTION:**
 Host networking (no isolation) -> Docker bridge networks (2013) -> Overlay networks for Swarm (2015) -> CNI standard for Kubernetes (2016) -> Service mesh (Istio/Linkerd, 2017+) -> eBPF-based networking (Cilium, 2020+).
-
 ---
 
 ### 📘 Textbook Definition
 
 Container networking provides connectivity between containers using virtual networking constructs - virtual ethernet pairs (veth), bridges, NAT rules, and overlay networks - while preserving the isolation benefits of network namespaces.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -64,7 +61,6 @@ Container networking creates virtual networks so isolated containers can communi
 
 **One insight:**
 Every container gets its own network namespace with its own IP address, routing table, and port space. Two containers can both listen on port 8080 without conflict because they're in different namespaces. The bridge network or port mapping determines how traffic reaches them.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -82,7 +78,6 @@ Isolation provides security (containers can't sniff each other's traffic by defa
 **THE TRADE-OFFS:**
 **Gain:** Network isolation, port space independence, software-defined networking
 **Cost:** Overhead (veth + bridge + NAT), complexity (debugging requires understanding virtual networking), performance (vs host networking)
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -94,7 +89,6 @@ Isolation provides security (containers can't sniff each other's traffic by defa
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -113,7 +107,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -151,7 +144,6 @@ Traffic flow (External -> A via port mapping):
   -> through docker0 bridge to veth-a
   -> arrives at A's eth0:8080
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -164,7 +156,6 @@ Container can't reach external network -> check iptables NAT rules (`iptables -t
 
 **WHAT CHANGES AT SCALE:**
 Single-host bridge works for Docker Compose. Multi-host requires overlay networks (VXLAN) or CNI plugins. At 1000+ pods in K8s, eBPF (Cilium) replaces iptables for performance (O(1) vs O(n) rule lookup). Service mesh adds L7 observability and mTLS.
-
 ---
 
 ### 💻 Code Example
@@ -189,7 +180,6 @@ docker exec api ip addr    # Container's IP
 docker exec api ip route   # Container's routes
 docker exec api nslookup db # DNS resolution
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -202,6 +192,7 @@ docker exec api nslookup db # DNS resolution
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -211,13 +202,68 @@ docker exec api nslookup db # DNS resolution
 
 **Interview one-liner:**
 "Container networking uses network namespaces for isolation, virtual ethernet pairs connected via a bridge for L2 connectivity, and iptables NAT for external access - with custom networks enabling DNS-based service discovery between containers."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Docker's default bridge network does NOT support DNS-based container discovery - you must use `--link` (deprecated) or IP addresses. Only custom/user-defined bridge networks get automatic DNS. This catches many beginners who expect `docker run --name db` to be resolvable by name on the default network.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Container Networking. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -264,58 +310,6 @@ Systematic approach:
    ```
 
 Common causes: different networks, default bridge (no DNS), app bound to localhost (not 0.0.0.0), firewall rules, port mismatch.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Container Networking. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -340,7 +334,6 @@ Common causes: different networks, default bridge (no DNS), app bound to localho
 # Volume Mounts
 
 **TL;DR** - Volumes provide persistent storage for containers, surviving container restarts and removal by mounting host or managed storage into the container filesystem.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -353,13 +346,11 @@ Container filesystem is ephemeral - when the container is removed, all data is l
 
 **EVOLUTION:**
 Data in container layer (lost on removal) -> Bind mounts from host (fragile, host-dependent) -> Named volumes (Docker-managed, portable) -> Volume plugins (network storage, cloud EBS/EFS) -> CSI drivers in Kubernetes (2018+).
-
 ---
 
 ### 📘 Textbook Definition
 
 A Docker volume is a mechanism for persisting data generated by and used by Docker containers. Volumes are stored outside the container's union filesystem layer, either managed by Docker (named volumes) or mapped directly from the host filesystem (bind mounts).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -373,7 +364,6 @@ Volumes are persistent storage that outlives the container.
 
 **One insight:**
 There are three types: (1) Named volumes (Docker-managed, `docker volume create`), (2) Bind mounts (host path directly), (3) tmpfs mounts (RAM-only, for secrets). Named volumes are preferred because they're portable and Docker manages the lifecycle.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -393,7 +383,6 @@ There are three types: (1) Named volumes (Docker-managed, `docker volume create`
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -405,7 +394,6 @@ There are three types: (1) Named volumes (Docker-managed, `docker volume create`
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -424,7 +412,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -461,7 +448,6 @@ Container filesystem:
   /data       /app/src      /secrets
   (persistent) (host sync)  (memory)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -475,7 +461,6 @@ Container filesystem:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -518,7 +503,6 @@ services:
 volumes:
   pgdata: # Named volume
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -531,6 +515,7 @@ volumes:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -540,13 +525,68 @@ volumes:
 
 **Interview one-liner:**
 "I use named volumes for persistent data like databases (Docker-managed, portable, survives container removal), bind mounts for development (host code synced into container for live reload), and tmpfs for sensitive data that should never touch disk."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 `docker rm` does NOT remove volumes. `docker system prune` does NOT remove volumes either. Volumes accumulate silently, potentially consuming hundreds of GBs. Only `docker volume prune` or explicit `docker volume rm` cleans them up. This is by design (safety), but it catches teams by surprise when disk fills up.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Volume Mounts. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -582,58 +622,6 @@ Additionally:
 - For production: use managed database services (RDS) instead of containerized databases
 - Document that `docker-compose down -v` is destructive
 - Use `external: true` for volumes that should never be auto-removed
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Volume Mounts. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -658,7 +646,6 @@ Additionally:
 # Docker Networking Modes
 
 **TL;DR** - Docker provides four networking modes - bridge (default, isolated), host (no isolation), none (no networking), and overlay (multi-host) - each with different isolation, performance, and use case trade-offs.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -668,13 +655,11 @@ One-size-fits-all networking can't satisfy all needs: some containers need isola
 
 **THE INVENTION MOMENT:**
 "This is exactly why Docker offers multiple networking modes."
-
 ---
 
 ### 📘 Textbook Definition
 
 Docker networking modes define how a container's network namespace is configured: bridge (virtual switch with isolated subnet), host (shares host network namespace directly), none (no network interfaces), and overlay (VXLAN-based multi-host networking for Docker Swarm/K8s).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -688,7 +673,6 @@ Four modes: bridge (isolated), host (fast, no isolation), none (disconnected), o
 
 **One insight:**
 Bridge mode adds ~5% network overhead from NAT/bridge traversal. Host mode eliminates this but sacrifices port isolation (if the host already uses port 8080, the container can't). The right choice depends on whether you value isolation or performance.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -708,7 +692,6 @@ Bridge mode adds ~5% network overhead from NAT/bridge traversal. Host mode elimi
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -720,7 +703,6 @@ Bridge mode adds ~5% network overhead from NAT/bridge traversal. Host mode elimi
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -739,7 +721,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -770,7 +751,6 @@ none:
 overlay (VXLAN):
   container A (host 1) -> VXLAN tunnel -> container B (host 2)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -784,7 +764,6 @@ overlay (VXLAN):
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -807,7 +786,6 @@ docker run -d --network mynet --name api myapp
 docker run -d --network mynet --name db postgres
 # api can reach db by name on custom network
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -820,6 +798,7 @@ docker run -d --network mynet --name db postgres
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -829,44 +808,26 @@ docker run -d --network mynet --name db postgres
 
 **Interview one-liner:**
 "Bridge mode provides isolated networking with virtual bridges and NAT at ~5% overhead; host mode eliminates the overhead for high-throughput workloads but sacrifices isolation; overlay mode extends networking across multiple hosts via VXLAN encapsulation for orchestrated clusters."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: When would you use host networking instead of bridge?**
-
-_Why they ask:_ Tests decision-making about performance vs isolation.
-
-**Answer:**
-Host networking makes sense when:
-
-1. **High-throughput networking** (>10Gbps): bridge NAT overhead is measurable
-2. **Monitoring agents** (Prometheus node exporter): needs access to host network metrics
-3. **Service mesh sidecars**: sometimes need host network for iptables manipulation
-4. **Legacy apps**: requiring specific network interfaces or multicast
-
-NOT recommended when:
-
-- Port conflicts possible (multiple containers needing same port)
-- Security isolation required (container sees all host traffic)
-- Portability needed (host networking is Linux-specific)
-
-The trade-off: ~5% better throughput vs complete loss of network isolation. For most microservices, bridge is the right choice. For infrastructure daemons, host is appropriate.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Docker Networking Modes. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -877,7 +838,6 @@ The trade-off: ~5% better throughput vs complete loss of network isolation. For 
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -911,7 +871,29 @@ The trade-off: ~5% better throughput vs complete loss of network isolation. For 
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: When would you use host networking instead of bridge?**
+
+_Why they ask:_ Tests decision-making about performance vs isolation.
+
+**Answer:**
+Host networking makes sense when:
+
+1. **High-throughput networking** (>10Gbps): bridge NAT overhead is measurable
+2. **Monitoring agents** (Prometheus node exporter): needs access to host network metrics
+3. **Service mesh sidecars**: sometimes need host network for iptables manipulation
+4. **Legacy apps**: requiring specific network interfaces or multicast
+
+NOT recommended when:
+
+- Port conflicts possible (multiple containers needing same port)
+- Security isolation required (container sees all host traffic)
+- Portability needed (host networking is Linux-specific)
+
+The trade-off: ~5% better throughput vs complete loss of network isolation. For most microservices, bridge is the right choice. For infrastructure daemons, host is appropriate.
 ---
 
 ### 🔗 Related Keywords
@@ -936,7 +918,6 @@ The trade-off: ~5% better throughput vs complete loss of network isolation. For 
 # Port Mapping
 
 **TL;DR** - Port mapping exposes container ports to the host using NAT (iptables DNAT rules), translating `host_port:container_port` to enable external access to containerized services.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -946,13 +927,11 @@ Containers have their own network namespace. A service listening on port 8080 in
 
 **THE INVENTION MOMENT:**
 "This is exactly why port mapping was created."
-
 ---
 
 ### 📘 Textbook Definition
 
 Port mapping (publishing) creates a NAT rule that forwards traffic arriving at a specific host port to a container's port, bridging the network namespace boundary and enabling external access to containerized services.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -965,7 +944,6 @@ Port mapping (publishing) creates a NAT rule that forwards traffic arriving at a
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -985,7 +963,6 @@ Port mapping (publishing) creates a NAT rule that forwards traffic arriving at a
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -997,7 +974,6 @@ Port mapping (publishing) creates a NAT rule that forwards traffic arriving at a
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1016,7 +992,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1046,7 +1021,6 @@ NAT flow:
       -> 172.17.0.2:8080 (container)
         -> response follows reverse path
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1060,7 +1034,6 @@ NAT flow:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1073,6 +1046,7 @@ NAT flow:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1082,14 +1056,69 @@ NAT flow:
 
 **Interview one-liner:**
 "Port mapping creates iptables DNAT rules to forward host-port traffic into the container's network namespace - I always bind to specific interfaces in production and use Kubernetes Services rather than Docker port mapping for orchestrated deployments."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Port Mapping. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1136,58 +1165,6 @@ NAT flow:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Port Mapping. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1212,7 +1189,6 @@ NAT flow:
 # DNS in Containers
 
 **TL;DR** - Docker provides automatic DNS resolution for containers on custom networks, enabling service discovery by container/service name instead of hardcoded IP addresses.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1222,13 +1198,11 @@ Container IPs are dynamic - they change on every restart. Hardcoding `172.17.0.3
 
 **THE INVENTION MOMENT:**
 "This is exactly why DNS-based container discovery was created."
-
 ---
 
 ### 📘 Textbook Definition
 
 Docker's embedded DNS server (127.0.0.11) resolves container names and service aliases to their current IP addresses on user-defined networks, providing dynamic service discovery without external DNS infrastructure.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1241,7 +1215,6 @@ Docker's embedded DNS server (127.0.0.11) resolves container names and service a
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1261,7 +1234,6 @@ Docker's embedded DNS server (127.0.0.11) resolves container names and service a
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1273,7 +1245,6 @@ Docker's embedded DNS server (127.0.0.11) resolves container names and service a
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1292,7 +1263,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1321,7 +1291,6 @@ Default bridge network:
   NO automatic DNS! Must use --link (deprecated)
   or IP addresses directly.
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1335,7 +1304,6 @@ Default bridge network:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1370,7 +1338,6 @@ docker exec api cat /etc/resolv.conf
 # nameserver 127.0.0.11
 # ndots: 0
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1383,6 +1350,7 @@ docker exec api cat /etc/resolv.conf
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1392,14 +1360,69 @@ docker exec api cat /etc/resolv.conf
 
 **Interview one-liner:**
 "Docker's embedded DNS server automatically resolves container names to IPs on user-defined networks, enabling dynamic service discovery - in Compose, the service name IS the hostname, so connection strings use service names that automatically resolve even when container IPs change on restart."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for DNS in Containers. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1446,58 +1469,6 @@ docker exec api cat /etc/resolv.conf
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for DNS in Containers. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1522,7 +1493,6 @@ docker exec api cat /etc/resolv.conf
 # Docker Compose Networking
 
 **TL;DR** - Docker Compose automatically creates an isolated network for each project where services discover each other by name, with optional custom networks for multi-project or advanced topology control.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1532,13 +1502,11 @@ Running `docker-compose up` for 5 services requires manually creating networks, 
 
 **THE INVENTION MOMENT:**
 "This is exactly why Compose's automatic networking was created."
-
 ---
 
 ### 📘 Textbook Definition
 
 Docker Compose networking automatically creates a default bridge network named `<project>_default` for each Compose project, connects all services to it, and provides DNS-based service discovery using service names defined in the YAML file.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1551,7 +1519,6 @@ Docker Compose networking automatically creates a default bridge network named `
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1571,7 +1538,6 @@ Docker Compose networking automatically creates a default bridge network named `
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1583,7 +1549,6 @@ Docker Compose networking automatically creates a default bridge network named `
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1602,7 +1567,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1663,7 +1627,6 @@ Network topology:
   api can reach db (both on backend)
   nginx CANNOT reach db (different networks)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1677,7 +1640,6 @@ Network topology:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1702,7 +1664,6 @@ networks:
     external: true
     name: shared-network
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1715,6 +1676,7 @@ networks:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1724,14 +1686,69 @@ networks:
 
 **Interview one-liner:**
 "Compose automatically creates an isolated bridge network per project with DNS-based service discovery - I use custom networks to segment frontend from backend services and external named networks for cross-project communication."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Docker Compose Networking. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1766,58 +1783,6 @@ Design principles:
 4. **Defense in depth**: even if frontend is compromised, attacker can't reach DB directly
 
 This mirrors production network architecture where DMZ (public), application tier, and data tier have firewall rules between them.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Docker Compose Networking. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1833,4 +1798,3 @@ This mirrors production network architecture where DMZ (public), application tie
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

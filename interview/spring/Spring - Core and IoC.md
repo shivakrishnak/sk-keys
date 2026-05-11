@@ -15,7 +15,7 @@ keywords:
   - Circular Dependencies
 difficulty_range: easy to medium
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -29,7 +29,6 @@ version: 2
 # IoC Container and Dependency Injection
 
 **TL;DR** - Inversion of Control means the framework creates and wires objects (beans) instead of your code creating them. Dependency Injection is the mechanism: Spring provides dependencies to objects rather than objects fetching their own dependencies.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -45,7 +44,6 @@ Switching from MySQL to PostgreSQL requires changing 47 files that construct `My
 
 **EVOLUTION:**
 Direct construction (new) -> Factory Pattern -> Service Locator -> Dependency Injection (Spring 2003) -> CDI (Java EE 6) -> Spring Boot auto-configuration.
-
 ---
 
 ### 📘 Textbook Definition
@@ -53,7 +51,6 @@ Direct construction (new) -> Factory Pattern -> Service Locator -> Dependency In
 **Inversion of Control (IoC):** The principle where the framework controls object creation and lifecycle, inverting the traditional flow where application code controls everything.
 
 **Dependency Injection (DI):** The pattern where dependencies are provided to an object from the outside (constructor, setter, or field) rather than created internally. The container resolves and injects all dependencies automatically.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -67,7 +64,6 @@ You declare what you need; Spring figures out how to create and provide it.
 
 **One insight:**
 DI doesn't eliminate dependencies - it makes them explicit and externally configurable. The class still NEEDS a repository; it just doesn't know HOW it's created.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -87,7 +83,6 @@ DI doesn't eliminate dependencies - it makes them explicit and externally config
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -99,7 +94,6 @@ DI doesn't eliminate dependencies - it makes them explicit and externally config
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -185,14 +179,12 @@ private UserRepo repo; // hard to mock in tests
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -206,7 +198,6 @@ private UserRepo repo; // hard to mock in tests
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -248,7 +239,6 @@ void testPayment() {
     // test directly
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -261,6 +251,7 @@ void testPayment() {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -270,14 +261,69 @@ void testPayment() {
 
 **Interview one-liner:**
 "IoC inverts who creates objects (framework, not you), DI is the mechanism (constructor injection preferred), making code loosely coupled, testable, and configurable without modification."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for IoC Container and Dependency Injection. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -369,58 +415,6 @@ _Strong answer:_
 - Eager initialization (all singletons at startup)
 
 In practice, you always use ApplicationContext. BeanFactory is an internal abstraction you never interact with directly. The split exists for modularity in the framework's design.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for IoC Container and Dependency Injection. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -445,20 +439,17 @@ In practice, you always use ApplicationContext. BeanFactory is an internal abstr
 # ApplicationContext
 
 **TL;DR** - ApplicationContext is the central interface of the Spring IoC container, responsible for instantiating, configuring, and managing all beans and providing application-level services like events, resources, and environment properties.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without a central container, there's no single place that knows about all objects, their configurations, their lifecycle, and their relationships. Each component bootstraps itself, leading to scattered initialization and no unified way to configure the application.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -471,7 +462,6 @@ Without a central container, there's no single place that knows about all object
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -491,7 +481,6 @@ Without a central container, there's no single place that knows about all object
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -503,7 +492,6 @@ Without a central container, there's no single place that knows about all object
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -562,14 +550,12 @@ The context is hierarchical: child contexts can see parent beans but not vice ve
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -583,7 +569,6 @@ The context is hierarchical: child contexts can see parent beans but not vice ve
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -596,20 +581,76 @@ The context is hierarchical: child contexts can see parent beans but not vice ve
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. ApplicationContext = Spring's IoC container holding all beans and services
 2. Startup: scan -> definitions -> post-process definitions -> instantiate -> post-process beans
 3. BeanPostProcessors create proxies for @Transactional, @Async, etc.
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for ApplicationContext. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -669,58 +710,6 @@ Semantic differences (why they exist):
 - **Future framework hooks:** Spring can add behavior to specific stereotypes
 
 The ONLY functional difference today: `@Repository` enables persistence exception translation.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for ApplicationContext. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -745,20 +734,17 @@ The ONLY functional difference today: `@Repository` enables persistence exceptio
 # Bean Lifecycle
 
 **TL;DR** - Spring beans go through a defined lifecycle: instantiation -> property population -> initialization callbacks -> ready for use -> destruction callbacks. Understanding this enables proper resource management and initialization logic.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without lifecycle hooks, you can't run initialization logic after all dependencies are injected (constructor runs before injection), can't validate configuration, and can't clean up resources (close connections, stop schedulers) on shutdown.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -771,7 +757,6 @@ Without lifecycle hooks, you can't run initialization logic after all dependenci
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -791,7 +776,6 @@ Without lifecycle hooks, you can't run initialization logic after all dependenci
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -803,7 +787,6 @@ Without lifecycle hooks, you can't run initialization logic after all dependenci
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -899,14 +882,12 @@ public class KafkaConsumer
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -920,7 +901,6 @@ public class KafkaConsumer
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -933,20 +913,76 @@ public class KafkaConsumer
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. `@PostConstruct` runs after injection; `@PreDestroy` on shutdown
 2. AOP proxies are created AFTER @PostConstruct (self-invocation won't have AOP)
 3. Use `ApplicationReadyEvent` for logic that needs full proxy/transaction support
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Bean Lifecycle. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -985,58 +1021,6 @@ The bean lifecycle: Construction -> Injection -> @PostConstruct -> BeanPostProce
 At `@PostConstruct` time, the AOP proxy doesn't exist yet. The method runs on the raw object. `@Transactional` requires the proxy to intercept the call and manage the transaction.
 
 Fix: Use `ApplicationReadyEvent` (fires after all beans and proxies are created) or `SmartInitializingSingleton` (fires after all singletons are instantiated and proxied).
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Bean Lifecycle. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1061,20 +1045,17 @@ Fix: Use `ApplicationReadyEvent` (fires after all beans and proxies are created)
 # Bean Scopes
 
 **TL;DR** - Bean scope controls how many instances Spring creates and how long they live. Singleton (one per container, default) vs Prototype (new instance per injection) vs Request/Session (web-scoped).
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Some objects should exist once (database connection pool), some should be created fresh each time (form builder with state), and some should live per HTTP request (user context). Without scopes, you'd manually manage all these lifecycles.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1087,7 +1068,6 @@ Some objects should exist once (database connection pool), some should be create
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1107,7 +1087,6 @@ Some objects should exist once (database connection pool), some should be create
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1119,7 +1098,6 @@ Some objects should exist once (database connection pool), some should be create
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1209,14 +1187,12 @@ The proxy (CGLIB subclass) intercepts method calls and dispatches to the correct
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1230,7 +1206,6 @@ The proxy (CGLIB subclass) intercepts method calls and dispatches to the correct
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1243,56 +1218,33 @@ The proxy (CGLIB subclass) intercepts method calls and dispatches to the correct
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. Default is singleton (one instance, shared, MUST be thread-safe)
 2. Prototype creates a new instance per injection/lookup (Spring doesn't manage destruction)
 3. Injecting short-lived scope into singleton needs a proxy or ObjectFactory
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: What happens when a singleton bean depends on a prototype bean?**
-
-_Why they ask:_ Tests understanding of scope interaction.
-
-_Strong answer:_
-
-The singleton is created once at startup. Its prototype dependency is injected once (also at startup). The singleton holds the same prototype instance forever - defeating the purpose of prototype scope.
-
-```java
-@Component // singleton, created once
-class Service {
-    @Autowired
-    PrototypeBean bean; // injected ONCE
-    // Same instance for all calls!
-}
-```
-
-Solutions:
-
-1. **ObjectFactory/Provider:** `Provider<PrototypeBean>` - call `.get()` each time
-2. **Scoped proxy:** `@Scope(proxyMode = TARGET_CLASS)` - proxy delegates to fresh instance
-3. **@Lookup method:** Spring overrides the method to return new instance
-4. **ApplicationContext.getBean():** Direct container call (couples code to Spring)
-
-Best practice: `ObjectFactory<T>` or `Provider<T>` - explicit, testable, no proxy magic.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Bean Scopes. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1303,7 +1255,6 @@ Best practice: `ObjectFactory<T>` or `Provider<T>` - explicit, testable, no prox
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1337,7 +1288,35 @@ Best practice: `ObjectFactory<T>` or `Provider<T>` - explicit, testable, no prox
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: What happens when a singleton bean depends on a prototype bean?**
+
+_Why they ask:_ Tests understanding of scope interaction.
+
+_Strong answer:_
+
+The singleton is created once at startup. Its prototype dependency is injected once (also at startup). The singleton holds the same prototype instance forever - defeating the purpose of prototype scope.
+
+```java
+@Component // singleton, created once
+class Service {
+    @Autowired
+    PrototypeBean bean; // injected ONCE
+    // Same instance for all calls!
+}
+```
+
+Solutions:
+
+1. **ObjectFactory/Provider:** `Provider<PrototypeBean>` - call `.get()` each time
+2. **Scoped proxy:** `@Scope(proxyMode = TARGET_CLASS)` - proxy delegates to fresh instance
+3. **@Lookup method:** Spring overrides the method to return new instance
+4. **ApplicationContext.getBean():** Direct container call (couples code to Spring)
+
+Best practice: `ObjectFactory<T>` or `Provider<T>` - explicit, testable, no proxy magic.
 ---
 
 ### 🔗 Related Keywords
@@ -1362,20 +1341,17 @@ Best practice: `ObjectFactory<T>` or `Provider<T>` - explicit, testable, no prox
 # Circular Dependencies
 
 **TL;DR** - Circular dependencies occur when Bean A depends on Bean B which depends on Bean A. Spring can resolve field/setter injection cycles (via early reference exposure) but fails fast on constructor injection cycles.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT (understanding):**
 Without understanding circular dependencies, you get cryptic startup errors (`BeanCurrentlyInCreationException`) and may "fix" them by switching to field injection - which hides the design problem rather than solving it.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1388,7 +1364,6 @@ Without understanding circular dependencies, you get cryptic startup errors (`Be
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1408,7 +1383,6 @@ Without understanding circular dependencies, you get cryptic startup errors (`Be
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1420,7 +1394,6 @@ Without understanding circular dependencies, you get cryptic startup errors (`Be
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1514,14 +1487,12 @@ This is intentional - circular deps are almost always a design smell.
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1535,7 +1506,6 @@ This is intentional - circular deps are almost always a design smell.
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1548,6 +1518,7 @@ This is intentional - circular deps are almost always a design smell.
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1557,51 +1528,26 @@ This is intentional - circular deps are almost always a design smell.
 
 **Interview one-liner:**
 "Circular dependencies are a design smell resolved by extracting shared logic or using events, not by switching to field injection which just hides the coupling problem."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How would you fix a circular dependency in production code?**
-
-_Why they ask:_ Tests design skills and practical problem-solving.
-
-_Strong answer:_
-
-1. **Identify the cycle:** What do A and B need from each other?
-2. **Common patterns:**
-   - **Extract interface/mediator:** Move shared logic to a third bean
-   - **Event-driven:** A publishes an event, B listens (async decoupling)
-   - **Lazy injection:** `@Lazy` on one dependency (proxy injected, resolved on first use)
-
-```java
-// Quick fix: @Lazy breaks the cycle
-@Service
-public class OrderService {
-    public OrderService(
-            @Lazy PaymentService payment) {
-        this.payment = payment;
-        // Proxy injected, actual bean resolved
-        // on first method call
-    }
-}
-```
-
-`@Lazy` is a workaround, not a solution. The proper fix restructures the dependency graph.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Circular Dependencies. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1612,7 +1558,6 @@ public class OrderService {
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1646,7 +1591,36 @@ public class OrderService {
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How would you fix a circular dependency in production code?**
+
+_Why they ask:_ Tests design skills and practical problem-solving.
+
+_Strong answer:_
+
+1. **Identify the cycle:** What do A and B need from each other?
+2. **Common patterns:**
+   - **Extract interface/mediator:** Move shared logic to a third bean
+   - **Event-driven:** A publishes an event, B listens (async decoupling)
+   - **Lazy injection:** `@Lazy` on one dependency (proxy injected, resolved on first use)
+
+```java
+// Quick fix: @Lazy breaks the cycle
+@Service
+public class OrderService {
+    public OrderService(
+            @Lazy PaymentService payment) {
+        this.payment = payment;
+        // Proxy injected, actual bean resolved
+        // on first method call
+    }
+}
+```
+
+`@Lazy` is a workaround, not a solution. The proper fix restructures the dependency graph.
 ---
 
 ### 🔗 Related Keywords
@@ -1662,4 +1636,3 @@ public class OrderService {
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

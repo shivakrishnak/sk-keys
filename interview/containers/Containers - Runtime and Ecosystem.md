@@ -16,7 +16,7 @@ keywords:
   - Sidecar Containers
 difficulty_range: hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # containerd
 
 **TL;DR** - containerd is the industry-standard container runtime that manages the complete container lifecycle (image pull, container creation, execution, storage, networking) and serves as the runtime beneath Docker and Kubernetes.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -44,13 +43,11 @@ Docker was a monolith - one binary doing image building, container running, netw
 
 **EVOLUTION:**
 Docker (monolithic, 2013) -> containerd extracted (2016) -> donated to CNCF (2017) -> Kubernetes deprecates dockershim (1.20, 2020) -> containerd becomes default K8s runtime (1.24, 2022) -> Docker itself runs containerd underneath.
-
 ---
 
 ### 📘 Textbook Definition
 
 containerd is an industry-standard, CNCF-graduated container runtime that manages the complete container lifecycle on a host system - pulling and storing images, executing containers via OCI-compliant runtimes (runc), managing storage and networking, and providing a gRPC API for orchestrators like Kubernetes.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -64,7 +61,6 @@ containerd is the engine under Docker and Kubernetes that actually runs containe
 
 **One insight:**
 When Kubernetes "deprecated Docker," it didn't deprecate containers. It deprecated the Docker daemon as the intermediary. K8s now talks to containerd directly (via CRI), removing one layer of abstraction and reducing overhead.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -84,7 +80,6 @@ When Kubernetes "deprecated Docker," it didn't deprecate containers. It deprecat
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -96,7 +91,6 @@ When Kubernetes "deprecated Docker," it didn't deprecate containers. It deprecat
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -115,7 +109,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -142,7 +135,6 @@ containerd responsibilities:
   - Event system
   - Namespace isolation (containerd namespaces)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -152,7 +144,6 @@ kubelet receives pod spec -> calls containerd via CRI gRPC <- YOU ARE HERE -> co
 
 **FAILURE PATH:**
 Container crashes -> containerd detects exit -> reports to kubelet via CRI events -> kubelet applies restart policy -> containerd starts new container from same image snapshot
-
 ---
 
 ### 📌 Quick Reference Card
@@ -165,6 +156,7 @@ Container crashes -> containerd detects exit -> reports to kubelet via CRI event
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -174,39 +166,25 @@ Container crashes -> containerd detects exit -> reports to kubelet via CRI event
 
 **Interview one-liner:**
 "containerd is the CNCF-graduated container runtime that manages the full lifecycle - image pull, snapshot creation, and process execution via runc - serving as the runtime under both Docker and Kubernetes, which is why 'Docker deprecation in K8s' just meant removing the Docker daemon middleman."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Docker still uses containerd internally. When you run `docker run`, the call chain is: Docker CLI -> Docker daemon -> containerd -> runc. Kubernetes removed Docker to talk to containerd directly. The irony: Docker helped build containerd, donated it to CNCF, and then Kubernetes used it to bypass Docker.
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: "Kubernetes deprecated Docker." What actually happened and what does it mean for developers?**
-
-_Why they ask:_ Tests ability to separate hype from reality.
-
-**Answer:**
-What actually happened:
-
-- Kubernetes removed `dockershim` - a translation layer between kubelet and Docker daemon
-- Previously: kubelet -> dockershim -> Docker daemon -> containerd -> runc
-- Now: kubelet -> containerd (via CRI) -> runc
-- Removed one layer of indirection
-
-What it means for developers: **Nothing**. Docker images are OCI-compliant. They work on containerd, CRI-O, or any OCI runtime. `docker build` still works. Images built with Docker run on Kubernetes. The deprecation affected only the Kubernetes node runtime, not developer tooling.
-
-What it means for operations: Node configuration changed from Docker to containerd. Docker-specific features (docker.sock mounting, Docker-in-Docker for CI) needed migration. Monitoring tools that used Docker API needed updating to containerd/CRI API.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for containerd. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -217,7 +195,6 @@ What it means for operations: Node configuration changed from Docker to containe
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -251,7 +228,25 @@ What it means for operations: Node configuration changed from Docker to containe
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: "Kubernetes deprecated Docker." What actually happened and what does it mean for developers?**
+
+_Why they ask:_ Tests ability to separate hype from reality.
+
+**Answer:**
+What actually happened:
+
+- Kubernetes removed `dockershim` - a translation layer between kubelet and Docker daemon
+- Previously: kubelet -> dockershim -> Docker daemon -> containerd -> runc
+- Now: kubelet -> containerd (via CRI) -> runc
+- Removed one layer of indirection
+
+What it means for developers: **Nothing**. Docker images are OCI-compliant. They work on containerd, CRI-O, or any OCI runtime. `docker build` still works. Images built with Docker run on Kubernetes. The deprecation affected only the Kubernetes node runtime, not developer tooling.
+
+What it means for operations: Node configuration changed from Docker to containerd. Docker-specific features (docker.sock mounting, Docker-in-Docker for CI) needed migration. Monitoring tools that used Docker API needed updating to containerd/CRI API.
 ---
 
 ### 🔗 Related Keywords
@@ -276,7 +271,6 @@ What it means for operations: Node configuration changed from Docker to containe
 # OCI Standard
 
 **TL;DR** - The Open Container Initiative (OCI) defines industry standards for container image format, runtime behavior, and distribution, ensuring images built with any tool run on any compliant runtime.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -289,13 +283,11 @@ Docker was the only way to build and run containers. Vendor lock-in: if Docker c
 
 **EVOLUTION:**
 Docker-only format (2013-2015) -> OCI founded (2015, by Docker, CoreOS, Google, Red Hat) -> OCI Image Spec v1.0 (2017) -> OCI Runtime Spec v1.0 (2017) -> OCI Distribution Spec v1.0 (2021) -> Artifacts (Helm charts, WASM, SBOMs stored as OCI artifacts).
-
 ---
 
 ### 📘 Textbook Definition
 
 The Open Container Initiative (OCI) is a Linux Foundation project that defines three specifications: Image Spec (format for container images), Runtime Spec (how to run a container from an image), and Distribution Spec (how to push/pull images from registries). Compliance ensures portability across tools and runtimes.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -309,7 +301,6 @@ OCI standards ensure containers are interoperable - build with any tool, run on 
 
 **One insight:**
 OCI didn't just standardize containers - it enabled an ecosystem. Podman, Buildah, Skopeo, and kaniko all exist because of OCI standards. Without them, Docker would be the only tool in the container space.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -329,7 +320,6 @@ OCI didn't just standardize containers - it enabled an ecosystem. Podman, Builda
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -341,7 +331,6 @@ OCI didn't just standardize containers - it enabled an ecosystem. Podman, Builda
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -360,7 +349,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -389,7 +377,6 @@ Key principle: build anywhere, run anywhere
   buildah bud  -> OCI image -> cri-o runs
   kaniko build -> OCI image -> podman runs
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -403,7 +390,6 @@ Key principle: build anywhere, run anywhere
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -416,6 +402,7 @@ Key principle: build anywhere, run anywhere
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -425,13 +412,68 @@ Key principle: build anywhere, run anywhere
 
 **Interview one-liner:**
 "OCI defines three standards - image format, runtime behavior, and distribution protocol - ensuring container portability across tools and runtimes. I build with any OCI-compliant tool (Docker, Buildah, kaniko) knowing images run on any compliant runtime (containerd, CRI-O, Podman)."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 OCI registries can store ANY artifact, not just container images. Helm charts, WASM modules, machine learning models, and SBOMs are increasingly stored as OCI artifacts in container registries. The registry is becoming a universal artifact store, not just a container image store.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for OCI Standard. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -478,58 +520,6 @@ OCI registries can store ANY artifact, not just container images. Helm charts, W
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for OCI Standard. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -554,7 +544,6 @@ OCI registries can store ANY artifact, not just container images. Helm charts, W
 # Podman
 
 **TL;DR** - Podman is a daemonless, rootless container engine CLI-compatible with Docker that runs containers as regular user processes without requiring a root-level background daemon.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -567,13 +556,11 @@ Docker requires a root daemon (dockerd) running permanently. This daemon is a si
 
 **EVOLUTION:**
 Docker (daemon required, root required, 2013) -> Podman 1.0 (daemonless, rootless, 2019) -> Podman Desktop (Docker Desktop alternative, 2022) -> Podman with Compose support (podman-compose, native compose, 2023+).
-
 ---
 
 ### 📘 Textbook Definition
 
 Podman is an OCI-compliant container engine that manages containers and pods directly as child processes of the Podman command, requiring no background daemon and running rootless by default using user namespaces.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -587,7 +574,6 @@ Podman = Docker without the daemon, rootless by default.
 
 **One insight:**
 `alias docker=podman` works for most use cases. Same CLI, same image format (OCI), same registries. The key difference is architecture: Podman forks containers directly (like systemd starts services), while Docker routes everything through a persistent daemon.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -607,7 +593,6 @@ Podman = Docker without the daemon, rootless by default.
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -619,7 +604,6 @@ Podman = Docker without the daemon, rootless by default.
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -638,7 +622,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -665,7 +648,6 @@ Key differences:
 | Pod support    | No (Compose)    | Yes (K8s-like) |
 | CLI compat     | -               | docker alias   |
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -679,7 +661,6 @@ Key differences:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -702,7 +683,6 @@ podman generate kube myapp > myapp.yaml
 # Run a Kubernetes pod YAML
 podman play kube myapp.yaml
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -715,6 +695,7 @@ podman play kube myapp.yaml
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -724,13 +705,68 @@ podman play kube myapp.yaml
 
 **Interview one-liner:**
 "Podman is Docker-compatible but architecturally superior for security - daemonless (no root background process, no docker.sock attack surface) and rootless by default (user namespaces remap container root to unprivileged host UID), making it the secure-by-default choice for container runtimes."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Podman can generate Kubernetes YAML from running containers (`podman generate kube`) and run Kubernetes pod YAML directly (`podman play kube`). This means you can prototype K8s deployments locally with Podman without installing Kubernetes - bridging local development and cluster deployment with the same tool.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Podman. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -777,58 +813,6 @@ Podman can generate Kubernetes YAML from running containers (`podman generate ku
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Podman. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -853,7 +837,6 @@ Podman can generate Kubernetes YAML from running containers (`podman generate ku
 # Container Runtime Interface
 
 **TL;DR** - CRI is the standard API between Kubernetes kubelet and container runtimes (containerd, CRI-O), enabling Kubernetes to work with any compliant runtime without runtime-specific code.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -866,13 +849,11 @@ Kubernetes had Docker-specific code (dockershim) baked into kubelet. Supporting 
 
 **EVOLUTION:**
 Docker-only in K8s (2014-2016) -> CRI introduced (K8s 1.5, 2016) -> dockershim created as CRI adapter for Docker -> CRI-O created for pure CRI runtime (2017) -> dockershim deprecated (K8s 1.20, 2020) -> dockershim removed (K8s 1.24, 2022) -> containerd and CRI-O as standard runtimes.
-
 ---
 
 ### 📘 Textbook Definition
 
 The Container Runtime Interface (CRI) is a gRPC-based plugin API that enables the Kubernetes kubelet to interact with any container runtime that implements the interface, decoupling Kubernetes from specific runtime implementations.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -885,7 +866,6 @@ The Container Runtime Interface (CRI) is a gRPC-based plugin API that enables th
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -905,7 +885,6 @@ The Container Runtime Interface (CRI) is a gRPC-based plugin API that enables th
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -917,7 +896,6 @@ The Container Runtime Interface (CRI) is a gRPC-based plugin API that enables th
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -936,7 +914,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -967,7 +944,6 @@ CRI API services:
     - PullImage / ListImages / RemoveImage
     - ImageStatus / ImageFsInfo
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -981,7 +957,6 @@ CRI API services:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -994,6 +969,7 @@ CRI API services:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1003,14 +979,69 @@ CRI API services:
 
 **Interview one-liner:**
 "CRI is the gRPC API that decouples Kubernetes from container runtimes - kubelet calls CRI methods like RunPodSandbox and CreateContainer, and any compliant runtime (containerd, CRI-O) implements them, which is how Kubernetes removed Docker dependency without affecting users."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Container Runtime Interface. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1057,58 +1088,6 @@ CRI API services:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Container Runtime Interface. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1133,7 +1112,6 @@ CRI API services:
 # Init Containers
 
 **TL;DR** - Init containers are special containers that run to completion before app containers start, used for setup tasks like database migration, config downloading, or dependency waiting.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1146,13 +1124,11 @@ Your app container starts before the database is ready. It crash-loops until the
 
 **EVOLUTION:**
 Entrypoint scripts (fragile, bloated images) -> Docker health checks + depends_on (limited) -> Kubernetes init containers (1.6, 2017) -> Sidecar containers (K8s 1.28, 2023, for persistent helpers).
-
 ---
 
 ### 📘 Textbook Definition
 
 Init containers are specialized containers in a Kubernetes pod that run sequentially and must complete successfully before any app containers start. They share the pod's volumes and network but can use different images and have different security contexts.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1166,7 +1142,6 @@ Init containers run setup tasks before your app starts.
 
 **One insight:**
 Init containers can use different images than the app. Need `curl` to download config? Use a `curl` image for init, keep your app image distroless. Need database migration? Use a `flyway` image for init, keep your app image clean.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1186,7 +1161,6 @@ Init containers can use different images than the app. Need `curl` to download c
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1198,7 +1172,6 @@ Init containers can use different images than the app. Need `curl` to download c
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1217,7 +1190,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1279,7 +1251,6 @@ Execution flow:
     pod restarts from first init container
     app container NEVER starts until all pass
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1293,7 +1264,6 @@ Execution flow:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1306,6 +1276,7 @@ Execution flow:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1315,45 +1286,25 @@ Execution flow:
 
 **Interview one-liner:**
 "Init containers run specialized setup tasks sequentially before the app container starts - I use them for dependency readiness checks, database migrations, and secret fetching so the app image stays minimal and distroless while init containers bring the tools needed only at startup."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Init containers re-run on pod restart. If your pod is evicted and rescheduled, ALL init containers run again - including database migrations. This means init containers must be idempotent. A migration that runs twice must produce the same result. Flyway and Liquibase handle this with version tracking, but custom scripts often don't, causing production data corruption.
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: When should you use init containers vs startup probes vs entrypoint scripts?**
-
-_Why they ask:_ Tests understanding of Kubernetes startup patterns.
-
-**Answer:**
-
-| Approach          | Use When                                              | Limitation                                    |
-| ----------------- | ----------------------------------------------------- | --------------------------------------------- |
-| Init container    | Need different image or security context for setup    | Sequential only, delays startup               |
-| Startup probe     | App itself needs warm-up time (JVM, ML model loading) | Only delays liveness check, doesn't run tasks |
-| Entrypoint script | Simple single-command setup within same image         | Bloats image, mixes concerns                  |
-
-Decision framework:
-
-- **Need curl/wget but app is distroless?** -> Init container (different image)
-- **Need to wait for DB?** -> Init container (with retry logic)
-- **App takes 60s to start?** -> Startup probe (protects from premature liveness kills)
-- **Need to set file permissions?** -> Init container (different security context)
-- **Simple env var setup?** -> Entrypoint script (simplest option)
-
-Key principle: init containers for cross-cutting setup concerns, startup probes for application warm-up, entrypoint scripts only for trivial in-image operations.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Init Containers. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1364,7 +1315,6 @@ Key principle: init containers for cross-cutting setup concerns, startup probes 
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1398,7 +1348,31 @@ Key principle: init containers for cross-cutting setup concerns, startup probes 
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: When should you use init containers vs startup probes vs entrypoint scripts?**
+
+_Why they ask:_ Tests understanding of Kubernetes startup patterns.
+
+**Answer:**
+
+| Approach          | Use When                                              | Limitation                                    |
+| ----------------- | ----------------------------------------------------- | --------------------------------------------- |
+| Init container    | Need different image or security context for setup    | Sequential only, delays startup               |
+| Startup probe     | App itself needs warm-up time (JVM, ML model loading) | Only delays liveness check, doesn't run tasks |
+| Entrypoint script | Simple single-command setup within same image         | Bloats image, mixes concerns                  |
+
+Decision framework:
+
+- **Need curl/wget but app is distroless?** -> Init container (different image)
+- **Need to wait for DB?** -> Init container (with retry logic)
+- **App takes 60s to start?** -> Startup probe (protects from premature liveness kills)
+- **Need to set file permissions?** -> Init container (different security context)
+- **Simple env var setup?** -> Entrypoint script (simplest option)
+
+Key principle: init containers for cross-cutting setup concerns, startup probes for application warm-up, entrypoint scripts only for trivial in-image operations.
 ---
 
 ### 🔗 Related Keywords
@@ -1423,7 +1397,6 @@ Key principle: init containers for cross-cutting setup concerns, startup probes 
 # Sidecar Containers
 
 **TL;DR** - Sidecar containers run alongside the main app container in the same pod, sharing network and storage, providing cross-cutting capabilities like logging, proxying, monitoring, or security without modifying the app.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1436,13 +1409,11 @@ Every microservice must implement its own logging agent, metrics collector, TLS 
 
 **EVOLUTION:**
 Libraries embedded in each service -> Ambassador pattern (2016) -> Sidecar pattern (Kubernetes pods, 2017) -> Envoy as standard sidecar proxy (Istio, 2017) -> Native sidecar containers (K8s 1.28, 2023, with proper lifecycle ordering).
-
 ---
 
 ### 📘 Textbook Definition
 
 A sidecar container is a secondary container within a Kubernetes pod that provides supplementary functionality (logging, proxying, monitoring, security) to the main application container. Sidecars share the pod's network namespace (localhost communication) and can share volumes.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1456,7 +1427,6 @@ A sidecar is a helper container that adds capabilities without changing the main
 
 **One insight:**
 Because containers in a pod share the network namespace, the sidecar can listen on localhost. The app sends logs to `localhost:9200`, the sidecar forwards to Elasticsearch. The app doesn't know or care about the log shipping details.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1476,7 +1446,6 @@ Because containers in a pod share the network namespace, the sidecar can listen 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1488,7 +1457,6 @@ Because containers in a pod share the network namespace, the sidecar can listen 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1507,7 +1475,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1561,7 +1528,6 @@ Pod internal communication:
 | +----------+                  |
 +-------------------------------+
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1574,7 +1540,6 @@ Sidecar crashes -> kubelet restarts sidecar -> app continues running (traffic te
 
 **WHAT CHANGES AT SCALE:**
 At 1000+ pods, sidecar overhead (memory per Envoy: ~50MB) adds up: 50GB just for proxies. Ambient mesh (Istio, 2023) moves proxy to node-level, eliminating per-pod overhead.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1587,6 +1552,7 @@ At 1000+ pods, sidecar overhead (memory per Envoy: ~50MB) adds up: 50GB just for
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1596,13 +1562,68 @@ At 1000+ pods, sidecar overhead (memory per Envoy: ~50MB) adds up: 50GB just for
 
 **Interview one-liner:**
 "Sidecars add cross-cutting capabilities to pods without modifying the application - sharing localhost network for transparent proxying (Envoy for mTLS/routing) and shared volumes for log shipping - with K8s 1.28 native sidecars solving the lifecycle ordering problem where sidecars must start before and outlive the main container."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 The sidecar pattern is becoming a victim of its own success. Istio's ambient mesh (2023) moves the Envoy proxy from per-pod sidecars to per-node, reducing memory overhead by 90%+ in large clusters. The insight: not every cross-cutting concern needs a per-pod container. Some (like L4 proxying) work better at the node level. Per-pod sidecars remain valuable for L7-aware proxying and application-specific helpers.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Sidecar Containers. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1666,58 +1687,6 @@ Optimization options:
 4. **Evaluate necessity**: do all 200 services need service mesh? Maybe only 50 external-facing ones
 
 Principle: sidecars are powerful but not free. At scale, per-pod overhead compounds. Move cross-cutting concerns to per-node when the per-pod model becomes too expensive.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Sidecar Containers. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1733,4 +1702,3 @@ Principle: sidecars are powerful but not free. At scale, per-pod overhead compou
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

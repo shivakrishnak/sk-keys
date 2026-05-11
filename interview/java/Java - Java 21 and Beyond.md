@@ -14,7 +14,7 @@ keywords:
   - String Templates
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -27,7 +27,6 @@ version: 2
 # Virtual Threads
 
 **TL;DR** - Virtual threads are lightweight threads managed by the JVM that make blocking I/O scalable by allowing millions of threads without the memory and context-switching overhead of OS threads.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -43,13 +42,11 @@ A microservice receives 50K concurrent requests during peak traffic. The thread 
 
 **EVOLUTION:**
 OS threads (Java 1.0) -> thread pools and NIO for scalability (Java 1.4) -> CompletableFuture for async composition (Java 8) -> reactive frameworks (RxJava, WebFlux) -> virtual threads (Java 19 preview, Java 21 final). Virtual threads achieve the scalability of reactive without the complexity.
-
 ---
 
 ### 📘 Textbook Definition
 
 Virtual threads (Project Loom) are lightweight threads managed by the JVM rather than the OS. They are mounted on carrier threads (a small pool of OS threads) and automatically unmount when they block on I/O, freeing the carrier for other virtual threads. This enables millions of concurrent threads with a simple blocking programming model.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -63,7 +60,6 @@ Virtual threads let you write simple blocking code that scales to millions of co
 
 **One insight:**
 Virtual threads don't make code faster - they make code more scalable. A single request takes the same time. But instead of blocking an expensive OS thread during I/O waits, the virtual thread unmounts and the carrier thread serves other virtual threads. You get reactive scalability with blocking-style simplicity.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -85,7 +81,6 @@ The JVM's scheduler multiplexes virtual threads onto a small pool of carrier thr
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Handling many concurrent I/O operations requires some form of multiplexing.
 **Accidental:** Reactive programming's callback chains, Mono/Flux wrappers, and backpressure APIs are accidental complexity that virtual threads eliminate.
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -99,7 +94,6 @@ The JVM's scheduler multiplexes virtual threads onto a small pool of carrier thr
 - "Restaurant manager" -> JVM scheduler
 
 Where this analogy breaks down: In a real restaurant, a chef can't pause mid-knife-cut. Virtual threads can be preempted at any blocking point.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -180,7 +174,6 @@ Virtual threads are the JVM's implementation of the universal lightweight concur
 - "Is this IO-bound or CPU-bound?" - virtual threads help IO-bound; CPU-bound needs platform threads
 - "Are we pinning?" - synchronized blocks and native calls pin virtual threads to carriers
 - "Is thread-per-request viable now?" - with virtual threads, yes - even at millions of requests
-
 ---
 
 ### How It Works (Mechanism)
@@ -205,7 +198,6 @@ Virtual threads are the JVM's implementation of the universal lightweight concur
        |
   [continue after socket.read()]
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -219,7 +211,6 @@ Virtual threads are the JVM's implementation of the universal lightweight concur
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -271,7 +262,6 @@ try (var executor = Executors
         .orElseThrow();
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -284,6 +274,7 @@ try (var executor = Executors
 **ANTI-PATTERN:** Pooling virtual threads - they are cheap to create and should be one-per-task, never pooled
 **TRADE-OFF:** Simplicity (thread-per-request) vs control (reactive gives more backpressure control)
 **ONE-LINER:** "Virtual threads make thread-per-request viable at million-connection scale with blocking code"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -293,110 +284,20 @@ try (var executor = Executors
 
 **Interview one-liner:**
 "Virtual threads are JVM-managed lightweight threads that unmount from carrier OS threads during blocking I/O, enabling millions of concurrent tasks with simple blocking code instead of reactive frameworks."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Virtual threads make reactive programming frameworks (WebFlux, RxJava) largely unnecessary for I/O scalability. The entire complexity of Mono/Flux chains, backpressure, and callback hell exists to avoid blocking OS threads. Virtual threads achieve the same scalability with `thread.sleep()`, `socket.read()`, and `jdbc.query()` - the blocking APIs developers already know. Spring Boot 3.2+ lets you switch to virtual threads with a single property.
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: When should you NOT use virtual threads?**
-
-_Why they ask:_ Tests nuanced understanding beyond the hype.
-
-_Strong answer:_
-
-1. **CPU-bound computation:** Virtual threads help I/O-bound work. For CPU-bound work (number crunching, image processing), you're limited by CPU cores regardless. Use parallel streams or ForkJoinPool.
-
-2. **Tasks holding `synchronized` locks during I/O:** Pins the carrier thread, defeating the purpose. Migrate to `ReentrantLock` first.
-
-3. **Thread-local-heavy code:** Millions of virtual threads each with heavy thread-locals = memory explosion. Migrate to scoped values.
-
-4. **Real-time/low-latency requirements:** Virtual thread scheduling adds slight unpredictability. For sub-millisecond latency (HFT), dedicated OS threads with CPU affinity are better.
-
-5. **Already using reactive stack productively:** If your team has mastered WebFlux/RxJava and the codebase is stable, migrating to virtual threads may not be worth the effort.
-
----
-
-**Q2: How do virtual threads differ from Go's goroutines?**
-
-_Why they ask:_ Tests cross-language understanding.
-
-_Strong answer:_
-
-| Aspect        | Java Virtual Threads         | Go Goroutines            |
-| ------------- | ---------------------------- | ------------------------ |
-| Scheduling    | Cooperative (unmount at I/O) | Cooperative + preemptive |
-| Communication | Shared memory + locks        | Channels (CSP model)     |
-| Stack         | Starts at ~1KB, grows        | Starts at ~2KB, grows    |
-| Maturity      | Java 21 (2023)               | Go 1.0 (2012)            |
-| Integration   | Drop-in for existing APIs    | Native from day one      |
-
-Key differences:
-
-- Go goroutines communicate via channels (message passing). Java virtual threads use shared memory with locks (traditional Java model).
-- Go has preemptive scheduling at function calls. Java virtual threads unmount only at blocking points (I/O, locks, sleep).
-- Java virtual threads are compatible with all existing Java APIs, libraries, and debuggers. Go goroutines were designed into the language from scratch.
-
-Java's advantage: backward compatibility. Existing JDBC drivers, HTTP clients, and Spring applications work with virtual threads without code changes.
-
----
-
-**Q3: Explain the concept of pinning and how to diagnose it.**
-
-_Why they ask:_ Tests production-readiness knowledge.
-
-_Strong answer:_
-
-Pinning occurs when a virtual thread cannot unmount from its carrier:
-
-1. **Inside `synchronized` block/method:** The JVM uses OS monitors for `synchronized`, which are tied to the OS thread. The virtual thread must stay on its carrier.
-
-2. **Inside native method (JNI):** Native code uses the OS thread directly.
-
-When pinned, the carrier thread is blocked - no other virtual thread can use it. If all carriers are pinned, virtual threads stall.
-
-**Diagnosis:**
-
-```
--Djdk.tracePinnedThreads=full
-```
-
-This JVM flag prints a stack trace whenever a virtual thread is pinned:
-
-```
-Thread[#42,VirtualThread-42] pinned:
-    java.base/java.lang.VirtualThread$VThread
-    Holder.park(...)
-    com.app.LegacyService.process(
-        LegacyService.java:47)
-        <== monitors:1
-```
-
-**Fix:**
-
-```java
-// Replace synchronized with ReentrantLock
-private final ReentrantLock lock =
-    new ReentrantLock();
-
-void process() {
-    lock.lock();
-    try {
-        // I/O operations here won't pin
-        database.query(sql);
-    } finally {
-        lock.unlock();
-    }
-}
-```
-
-In large codebases, use jdeprscan or custom tooling to find all `synchronized` blocks that contain I/O operations.
-
 ---
 
 ### ⚖️ Comparison Table
@@ -409,7 +310,6 @@ In large codebases, use jdeprscan or custom tooling to find all `synchronized` b
 | Code style | Imperative/blocking | Imperative/blocking | Reactive/functional |
 | Debugging | Standard stack traces | Standard stack traces | Complex (async) |
 | Best for | IO-bound, high concurrency | CPU-bound | IO-bound, backpressure |
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -420,7 +320,6 @@ In large codebases, use jdeprscan or custom tooling to find all `synchronized` b
 | 2 | Virtual threads replace reactive programming entirely | For IO-bound workloads, yes. But reactive frameworks still provide backpressure, which virtual threads don't. CPU-bound work still needs bounded thread pools. |
 | 3 | Virtual threads should be pooled | Never pool virtual threads. They are cheap to create (~1KB) and meant to be one-per-task. Pooling adds complexity without benefit. |
 | 4 | synchronized works fine with virtual threads | synchronized blocks PIN virtual threads to carrier threads, blocking the carrier. Replace synchronized with ReentrantLock to allow unmounting during contention. |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -518,7 +417,102 @@ ScopedValue.where(CTX, new RequestCtx(userId))
     .run(() -> handleRequest());
 ```
 **Prevention:** Replace ThreadLocal with ScopedValue for virtual threads. Audit all ThreadLocal usage before migrating to virtual threads.
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: When should you NOT use virtual threads?**
+
+_Why they ask:_ Tests nuanced understanding beyond the hype.
+
+_Strong answer:_
+
+1. **CPU-bound computation:** Virtual threads help I/O-bound work. For CPU-bound work (number crunching, image processing), you're limited by CPU cores regardless. Use parallel streams or ForkJoinPool.
+
+2. **Tasks holding `synchronized` locks during I/O:** Pins the carrier thread, defeating the purpose. Migrate to `ReentrantLock` first.
+
+3. **Thread-local-heavy code:** Millions of virtual threads each with heavy thread-locals = memory explosion. Migrate to scoped values.
+
+4. **Real-time/low-latency requirements:** Virtual thread scheduling adds slight unpredictability. For sub-millisecond latency (HFT), dedicated OS threads with CPU affinity are better.
+
+5. **Already using reactive stack productively:** If your team has mastered WebFlux/RxJava and the codebase is stable, migrating to virtual threads may not be worth the effort.
+
+---
+
+**Q2: How do virtual threads differ from Go's goroutines?**
+
+_Why they ask:_ Tests cross-language understanding.
+
+_Strong answer:_
+
+| Aspect        | Java Virtual Threads         | Go Goroutines            |
+| ------------- | ---------------------------- | ------------------------ |
+| Scheduling    | Cooperative (unmount at I/O) | Cooperative + preemptive |
+| Communication | Shared memory + locks        | Channels (CSP model)     |
+| Stack         | Starts at ~1KB, grows        | Starts at ~2KB, grows    |
+| Maturity      | Java 21 (2023)               | Go 1.0 (2012)            |
+| Integration   | Drop-in for existing APIs    | Native from day one      |
+
+Key differences:
+
+- Go goroutines communicate via channels (message passing). Java virtual threads use shared memory with locks (traditional Java model).
+- Go has preemptive scheduling at function calls. Java virtual threads unmount only at blocking points (I/O, locks, sleep).
+- Java virtual threads are compatible with all existing Java APIs, libraries, and debuggers. Go goroutines were designed into the language from scratch.
+
+Java's advantage: backward compatibility. Existing JDBC drivers, HTTP clients, and Spring applications work with virtual threads without code changes.
+
+---
+
+**Q3: Explain the concept of pinning and how to diagnose it.**
+
+_Why they ask:_ Tests production-readiness knowledge.
+
+_Strong answer:_
+
+Pinning occurs when a virtual thread cannot unmount from its carrier:
+
+1. **Inside `synchronized` block/method:** The JVM uses OS monitors for `synchronized`, which are tied to the OS thread. The virtual thread must stay on its carrier.
+
+2. **Inside native method (JNI):** Native code uses the OS thread directly.
+
+When pinned, the carrier thread is blocked - no other virtual thread can use it. If all carriers are pinned, virtual threads stall.
+
+**Diagnosis:**
+
+```
+-Djdk.tracePinnedThreads=full
+```
+
+This JVM flag prints a stack trace whenever a virtual thread is pinned:
+
+```
+Thread[#42,VirtualThread-42] pinned:
+    java.base/java.lang.VirtualThread$VThread
+    Holder.park(...)
+    com.app.LegacyService.process(
+        LegacyService.java:47)
+        <== monitors:1
+```
+
+**Fix:**
+
+```java
+// Replace synchronized with ReentrantLock
+private final ReentrantLock lock =
+    new ReentrantLock();
+
+void process() {
+    lock.lock();
+    try {
+        // I/O operations here won't pin
+        database.query(sql);
+    } finally {
+        lock.unlock();
+    }
+}
+```
+
+In large codebases, use jdeprscan or custom tooling to find all `synchronized` blocks that contain I/O operations.
 ---
 
 ### 🔗 Related Keywords
@@ -546,7 +540,6 @@ ScopedValue.where(CTX, new RequestCtx(userId))
 # Scoped Values
 
 **TL;DR** - Scoped values are immutable, thread-bound variables that replace ThreadLocal for virtual thread workloads, with automatic cleanup and zero per-thread storage cost when not used.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -562,13 +555,11 @@ A request-context ThreadLocal stores user identity for the duration of a request
 
 **EVOLUTION:**
 ThreadLocal (Java 1.2) -> InheritableThreadLocal (for child threads) -> ScopedValue (Java 20 preview, Java 21 preview, finalizing in later releases).
-
 ---
 
 ### 📘 Textbook Definition
 
 A `ScopedValue` is a value that is bound for a bounded period of execution (a scope). Unlike ThreadLocal, scoped values are immutable within their scope, automatically cleaned up when the scope exits, and efficiently shared with child threads in structured concurrency. They are designed for the virtual thread era.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -582,7 +573,6 @@ Scoped values are ThreadLocal's replacement - immutable, scope-bounded, and desi
 
 **One insight:**
 The key difference is lifecycle management. ThreadLocal values persist until explicitly removed (memory leak risk). Scoped values are bound to a code block and automatically unbound when the block exits, even if an exception occurs.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -602,7 +592,6 @@ The key difference is lifecycle management. ThreadLocal values persist until exp
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -614,7 +603,6 @@ The key difference is lifecycle management. ThreadLocal values persist until exp
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -685,14 +673,12 @@ Scoped values are the successor to ThreadLocal that solves its fundamental desig
 - "Is this data per-request or per-thread?" - scoped values model per-scope, which aligns with per-request
 - "Is this mutable?" - if yes, scoped values won't work; rethink the design
 - "How many threads will exist?" - if millions (virtual threads), ThreadLocal is a memory bomb
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -706,7 +692,6 @@ Scoped values are the successor to ThreadLocal that solves its fundamental desig
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -739,7 +724,6 @@ void handle(Request req) {
     // Automatically unbound - no leak possible
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -752,6 +736,7 @@ void handle(Request req) {
 **ANTI-PATTERN:** Using ThreadLocal with virtual threads - millions of threads create millions of ThreadLocal copies
 **TRADE-OFF:** Immutability constraint vs memory safety and predictable lifecycle
 **ONE-LINER:** "Scoped values are ThreadLocal done right: immutable, scoped, and safe for virtual threads"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -761,60 +746,20 @@ void handle(Request req) {
 
 **Interview one-liner:**
 "ScopedValues are immutable, scope-bounded thread context that replaces ThreadLocal for virtual thread workloads, with automatic cleanup and zero-cost inheritance for structured concurrency child tasks."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 ScopedValue is faster than ThreadLocal for reads. ThreadLocal uses a hash map per thread (`Thread.threadLocals`), requiring a hash lookup on every `get()`. ScopedValue uses a simple stack-like structure that the JIT compiler can optimize to a direct memory access in most cases.
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: [TODO: Conceptual question - foundational]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete structured answer. 200-500 words.]
-
----
-
-**Q2: [TODO: Debugging/diagnosis scenario]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with diagnostic steps.]
-
----
-
-**Q3: [TODO: Architecture/design question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with design rationale.]
-
----
-
-**Q4: [TODO: Trade-off decision question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with decision framework.]
-
----
-
-**Q5: [TODO: Production scenario question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with metrics/remediation.]
-
 ---
 
 ### ⚖️ Comparison Table
@@ -827,7 +772,6 @@ ScopedValue is faster than ThreadLocal for reads. ThreadLocal uses a hash map pe
 | Inheritance | StructuredTaskScope | InheritableThreadLocal | Explicit |
 | Virtual thread safe | Yes | No (memory leak) | Yes |
 | Performance | Optimized | Hash lookup | Zero overhead |
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -838,7 +782,6 @@ ScopedValue is faster than ThreadLocal for reads. ThreadLocal uses a hash map pe
 | 2 | Scoped values can replace all ThreadLocal uses | Scoped values are immutable within a scope. If you need mutable per-thread state (counters, buffers), ThreadLocal is still necessary. |
 | 3 | Scoped values are only for virtual threads | Scoped values work with both platform and virtual threads. They are beneficial for any code that needs scoped context, regardless of thread type. |
 | 4 | Scoped values have high overhead | Scoped values are optimized by the JVM to be faster than ThreadLocal for read-heavy patterns. The immutability enables caching optimizations. |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -930,7 +873,52 @@ ScopedValue.where(USER, "alice").run(() -> {
 });
 ```
 **Prevention:** Always use StructuredTaskScope to spawn child tasks when scoped values need to be inherited. Never use raw Thread creation.
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
 ---
 
 ### 🔗 Related Keywords
@@ -958,7 +946,6 @@ ScopedValue.where(USER, "alice").run(() -> {
 # Structured Concurrency
 
 **TL;DR** - Structured concurrency treats groups of related concurrent tasks as a single unit of work with unified error handling and cancellation, preventing thread leaks and orphaned tasks.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -974,13 +961,11 @@ A request handler forks three API calls. The first returns successfully, the sec
 
 **EVOLUTION:**
 Raw threads (Java 1.0) -> ExecutorService (Java 5) -> CompletableFuture (Java 8) -> StructuredTaskScope (Java 19 preview, Java 21 preview, finalizing in later releases).
-
 ---
 
 ### 📘 Textbook Definition
 
 Structured concurrency ensures that concurrent tasks started within a scope cannot outlive that scope. When a `StructuredTaskScope` is closed, all tasks must be complete - either finished, failed, or cancelled. This makes concurrent code as predictable as sequential code: tasks are scoped, errors propagate, and resources are cleaned up.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -994,7 +979,6 @@ Structured concurrency makes concurrent tasks behave like structured code blocks
 
 **One insight:**
 The key insight is that a group of concurrent tasks should have the same lifecycle as the code block that created them. Just as a local variable cannot outlive its method, a forked task should not outlive its scope. This eliminates an entire class of bugs: orphaned tasks, leaked threads, and unobserved exceptions.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1014,7 +998,6 @@ The key insight is that a group of concurrent tasks should have the same lifecyc
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1026,7 +1009,6 @@ The key insight is that a group of concurrent tasks should have the same lifecyc
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1110,14 +1092,12 @@ Structured concurrency applies the structured programming principle (every block
 - "What happens to child tasks when the parent fails?" - structured concurrency guarantees cancellation
 - "Can tasks outlive their scope?" - structured = no, unstructured = yes (and that's the bug)
 - "How do I compose concurrent operations?" - StructuredTaskScope is the composition primitive
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1131,7 +1111,6 @@ Structured concurrency applies the structured programming principle (every block
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1165,7 +1144,6 @@ try (var scope = new StructuredTaskScope
 }
 // All tasks complete before scope closes
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1178,6 +1156,7 @@ try (var scope = new StructuredTaskScope
 **ANTI-PATTERN:** Using raw Thread.start() or ExecutorService.submit() without lifetime management - tasks can leak
 **TRADE-OFF:** Strict lifetime control vs flexibility of unstructured fire-and-forget concurrency
 **ONE-LINER:** "Structured concurrency is to threads what structured programming was to goto"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1187,60 +1166,20 @@ try (var scope = new StructuredTaskScope
 
 **Interview one-liner:**
 "Structured concurrency scopes concurrent tasks so they cannot outlive their parent, with automatic cancellation on failure and unified error handling, eliminating orphaned tasks and leaked threads."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Structured concurrency makes thread dumps useful again. With unstructured concurrency, a thread dump shows isolated threads with no relationship to each other. With structured concurrency, thread dumps show the parent-child task hierarchy, making it immediately clear which tasks belong to which request and what the overall state is.
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: [TODO: Conceptual question - foundational]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete structured answer. 200-500 words.]
-
----
-
-**Q2: [TODO: Debugging/diagnosis scenario]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with diagnostic steps.]
-
----
-
-**Q3: [TODO: Architecture/design question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with design rationale.]
-
----
-
-**Q4: [TODO: Trade-off decision question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with decision framework.]
-
----
-
-**Q5: [TODO: Production scenario question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with metrics/remediation.]
-
 ---
 
 ### ⚖️ Comparison Table
@@ -1253,7 +1192,6 @@ Structured concurrency makes thread dumps useful again. With unstructured concur
 | Task leaks | Impossible | Common | Common |
 | Debugging | Clear parent-child | Disconnected | Disconnected |
 | Virtual thread aware | Yes | Partially | No |
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1264,7 +1202,6 @@ Structured concurrency makes thread dumps useful again. With unstructured concur
 | 2 | Structured concurrency prevents all task leaks | Within a StructuredTaskScope, yes. But code can still create unstructured threads outside the scope. Discipline is needed to use structured concurrency consistently. |
 | 3 | Structured concurrency is only for fan-out patterns | It applies to any concurrent work with bounded lifetime: parallel API calls, concurrent validation, map-reduce, timeout handling, and competitive execution (first-to-complete). |
 | 4 | You need structured concurrency for simple parallelism | For embarrassingly parallel, independent tasks with no error correlation, a simple parallel stream or ExecutorService may be simpler. Structured concurrency shines when tasks are related. |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1362,7 +1299,52 @@ try (var scope = new StructuredTaskScope
 }
 ```
 **Prevention:** Use `ShutdownOnFailure` when you need ALL results. Use `ShutdownOnSuccess` only for competitive execution (first-to-complete wins).
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: [TODO: Conceptual question - foundational]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete structured answer. 200-500 words.]
+
+---
+
+**Q2: [TODO: Debugging/diagnosis scenario]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with diagnostic steps.]
+
+---
+
+**Q3: [TODO: Architecture/design question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with design rationale.]
+
+---
+
+**Q4: [TODO: Trade-off decision question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with decision framework.]
+
+---
+
+**Q5: [TODO: Production scenario question]**
+
+*Why they ask:* [TODO]
+
+**Answer:**
+[TODO: Complete answer with metrics/remediation.]
 ---
 
 ### 🔗 Related Keywords
@@ -1390,7 +1372,6 @@ try (var scope = new StructuredTaskScope
 # String Templates
 
 **TL;DR** - String templates (preview feature) enable safe, readable string interpolation with embedded expressions, replacing error-prone string concatenation while allowing custom processors for SQL, JSON, and HTML injection prevention.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1406,13 +1387,11 @@ Every other modern language (Kotlin, Python, JavaScript, C#, Swift) has string i
 
 **EVOLUTION:**
 Concatenation with `+` -> `String.format()` (Java 5) -> text blocks (Java 15) -> string templates (Java 21 preview, evolving). Note: String templates were previewed in Java 21 but were subsequently withdrawn for redesign, as the template processor API needed refinement.
-
 ---
 
 ### 📘 Textbook Definition
 
 String templates allow embedding expressions directly in string literals using `\{expression}` syntax. Unlike simple interpolation in other languages, Java's design includes template processors - pluggable components that can validate and transform the template before producing a result, enabling injection-safe SQL, HTML, and JSON composition.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1426,7 +1405,6 @@ String templates embed expressions in strings with `\{expr}` and support custom 
 
 **One insight:**
 The template processor concept is what distinguishes Java's approach from every other language. `STR."Hello \{name}"` is simple interpolation. But `SQL."SELECT * FROM users WHERE name = \{name}"` could produce a `PreparedStatement` with proper parameterization - making SQL injection impossible by construction.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1446,7 +1424,6 @@ The template processor concept is what distinguishes Java's approach from every 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1458,7 +1435,6 @@ The template processor concept is what distinguishes Java's approach from every 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1512,14 +1488,12 @@ This is a fundamentally different approach from other languages where interpolat
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1533,7 +1507,6 @@ This is a fundamentally different approach from other languages where interpolat
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1562,7 +1535,6 @@ String json = STR."""
     }
     """;
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1575,6 +1547,7 @@ String json = STR."""
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1584,13 +1557,68 @@ String json = STR."""
 
 **Interview one-liner:**
 "String templates enable expression interpolation with pluggable processors that can produce any type, not just strings, enabling injection-safe SQL and HTML by construction rather than convention."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Java deliberately delayed string interpolation for decades while every other language added it, because the Java team wanted to solve it with template processors - not just simple string interpolation. The goal was to make SQL injection and XSS impossible by construction rather than relying on developers to remember to sanitize. This ambitious design led to the feature being previewed and then withdrawn for further refinement.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for String Templates. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1637,58 +1665,6 @@ Java deliberately delayed string interpolation for decades while every other lan
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for String Templates. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1704,4 +1680,3 @@ Java deliberately delayed string interpolation for decades while every other lan
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

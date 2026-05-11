@@ -16,7 +16,7 @@ keywords:
   - BuildKit
 difficulty_range: medium-hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Multi-Stage Build
 
 **TL;DR** - Multi-stage builds use multiple FROM statements in a Dockerfile to separate build-time dependencies from runtime, producing minimal production images with only the application artifacts.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -47,13 +46,11 @@ Image pull takes 3 minutes. Registry storage costs are climbing. Attack surface 
 
 **EVOLUTION:**
 Single-stage Dockerfiles (everything in one image) -> Builder pattern with scripts (build in one container, copy to another manually) -> Multi-stage builds (Docker 17.05, 2017) -> Named stages + `COPY --from` -> BuildKit parallel stage execution (2018+).
-
 ---
 
 ### 📘 Textbook Definition
 
 A multi-stage build is a Dockerfile feature that allows multiple `FROM` instructions, each starting a new build stage. Artifacts can be selectively copied between stages using `COPY --from=<stage>`, enabling build-time dependencies to be discarded from the final image.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -67,7 +64,6 @@ Build in a fat image, run in a slim image - copy only what you need between them
 
 **One insight:**
 The final image only contains the last `FROM` stage plus anything explicitly `COPY --from`'d. Everything else - build tools, source code, intermediate artifacts - is automatically discarded.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -84,7 +80,6 @@ Build stage uses full SDK (JDK + Maven: 500MB). Runtime stage uses minimal base 
 **THE TRADE-OFFS:**
 **Gain:** 60-90% smaller images, reduced attack surface, faster pulls, lower storage costs
 **Cost:** Slightly more complex Dockerfiles, cache management across stages, debugging build stage issues
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -92,7 +87,6 @@ Build stage uses full SDK (JDK + Maven: 500MB). Runtime stage uses minimal base 
 > A multi-stage build is like cooking at home vs ordering takeout. When cooking (build stage), your kitchen is full of ingredients, pots, knives, and spices. When the meal is served (runtime stage), only the plate and food arrive at the table. Nobody brings the kitchen.
 
 Where this analogy breaks down: you can have more than 2 stages (e.g., test stage between build and runtime).
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -111,7 +105,6 @@ Where this analogy breaks down: you can have more than 2 stages (e.g., test stag
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -147,7 +140,6 @@ Size comparison:
   Runtime stage (JRE + JAR): ~180MB
   Savings: 77%
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -157,7 +149,6 @@ Dockerfile parsed -> Stage 1 (build) executes -> Stage 2 (test) executes -> Stag
 
 **FAILURE PATH:**
 Build fails in stage 1 -> debug with `docker build --target build` -> fix -> rebuild (BuildKit may parallelize independent stages)
-
 ---
 
 ### 📌 Quick Reference Card
@@ -170,6 +161,7 @@ Build fails in stage 1 -> debug with `docker build --target build` -> fix -> reb
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -179,13 +171,68 @@ Build fails in stage 1 -> debug with `docker build --target build` -> fix -> reb
 
 **Interview one-liner:**
 "Multi-stage builds separate build-time dependencies from runtime by using multiple FROM stages, selectively copying only artifacts to a minimal final image - typically reducing image size by 60-90% and attack surface proportionally."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 BuildKit can execute independent stages in parallel. If your Dockerfile has stages A, B, C where C depends on A but not B, BuildKit builds A and B simultaneously. This means a well-designed multi-stage Dockerfile can actually be FASTER than a single-stage one, not slower.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Multi-Stage Build. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -228,58 +275,6 @@ Key design decisions:
 - Alpine JRE: ~100MB vs ~400MB for full JDK Ubuntu
 - Cache mount: Maven repo persists across builds
 - Non-root, healthcheck, RAM percentage for production readiness
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Multi-Stage Build. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -304,7 +299,6 @@ Key design decisions:
 # Docker Layer
 
 **TL;DR** - Docker layers are immutable, content-addressed filesystem deltas stacked via union mount (overlay2), where each Dockerfile instruction creates one layer and identical layers are shared across images.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -317,13 +311,11 @@ Every image would be a complete filesystem copy. Pulling 5 images using the same
 
 **EVOLUTION:**
 Complete filesystem images -> AUFS union filesystem (Docker's first storage driver) -> OverlayFS (Linux kernel 3.18) -> overlay2 (default, 2017+) -> Content-addressable storage (Docker 1.10).
-
 ---
 
 ### 📘 Textbook Definition
 
 A Docker layer is an immutable, content-addressed filesystem delta representing the changes made by a single Dockerfile instruction. Layers are stacked using a union filesystem (overlay2), presenting a unified view while enabling deduplication, caching, and incremental distribution.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -337,7 +329,6 @@ Each Dockerfile instruction creates one layer; layers stack and are shared acros
 
 **One insight:**
 Layer caching is why instruction ORDER matters. If instruction 5 changes, instructions 1-4 use cache but 5+ rebuild. Put dependencies (rarely change) before source code (frequently changes).
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -357,7 +348,6 @@ Layer caching is why instruction ORDER matters. If instruction 5 changes, instru
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -369,7 +359,6 @@ Layer caching is why instruction ORDER matters. If instruction 5 changes, instru
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -388,7 +377,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -416,7 +404,6 @@ Sharing:
   Image B: [sha256:a1, sha256:c3, sha256:f6]
   On disk: sha256:a1 and sha256:c3 stored ONCE
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -426,7 +413,6 @@ Dockerfile instruction -> filesystem changes captured as layer -> content-addres
 
 **FAILURE PATH:**
 Cache invalidation cascade: changing line 3 invalidates layers 3-N. `.dockerignore` missing causes all code changes to invalidate `COPY .` layer.
-
 ---
 
 ### 💻 Code Example
@@ -450,7 +436,6 @@ RUN apt-get update && \
     apt-get install -y build-essential && \
     rm -rf /var/lib/apt/lists/*
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -463,6 +448,7 @@ RUN apt-get update && \
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -472,47 +458,25 @@ RUN apt-get update && \
 
 **Interview one-liner:**
 "Docker layers are immutable content-addressed filesystem deltas stacked via overlay2 union mount - enabling incremental builds through caching, storage efficiency through deduplication, and fast distribution by transferring only missing layers."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 The `docker history` command reveals that many popular images have layers with 0 bytes (metadata-only layers from ENV, EXPOSE, CMD instructions). These don't add size but DO affect cache invalidation. Moving metadata instructions to the end of the Dockerfile prevents unnecessary rebuilds of heavier layers above.
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your image is 800MB. How do you identify which layers are largest and optimize?**
-
-_Why they ask:_ Tests practical layer analysis skills.
-
-**Answer:**
-
-```bash
-# Step 1: See layer sizes
-docker history myapp:1.0 --no-trunc
-# Find the 400MB layer from apt-get install
-
-# Step 2: Deep analysis with dive
-dive myapp:1.0
-# Shows wasted space (files deleted in later layers)
-
-# Step 3: Fix strategies
-# a) Combine RUN + cleanup in one layer
-# b) Multi-stage build (largest savings)
-# c) Smaller base image (alpine/distroless)
-# d) Remove unnecessary dependencies
-```
-
-The key insight: most image bloat comes from 2 sources - the base image (fix: use slim/alpine/distroless) and build dependencies that leak into the runtime image (fix: multi-stage builds).
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Docker Layer. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -523,7 +487,6 @@ The key insight: most image bloat comes from 2 sources - the base image (fix: us
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -557,7 +520,33 @@ The key insight: most image bloat comes from 2 sources - the base image (fix: us
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your image is 800MB. How do you identify which layers are largest and optimize?**
+
+_Why they ask:_ Tests practical layer analysis skills.
+
+**Answer:**
+
+```bash
+# Step 1: See layer sizes
+docker history myapp:1.0 --no-trunc
+# Find the 400MB layer from apt-get install
+
+# Step 2: Deep analysis with dive
+dive myapp:1.0
+# Shows wasted space (files deleted in later layers)
+
+# Step 3: Fix strategies
+# a) Combine RUN + cleanup in one layer
+# b) Multi-stage build (largest savings)
+# c) Smaller base image (alpine/distroless)
+# d) Remove unnecessary dependencies
+```
+
+The key insight: most image bloat comes from 2 sources - the base image (fix: use slim/alpine/distroless) and build dependencies that leak into the runtime image (fix: multi-stage builds).
 ---
 
 ### 🔗 Related Keywords
@@ -582,7 +571,6 @@ The key insight: most image bloat comes from 2 sources - the base image (fix: us
 # Distroless Images
 
 **TL;DR** - Distroless images contain only the application and its runtime dependencies - no shell, no package manager, no OS utilities - reducing attack surface to the absolute minimum.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -595,13 +583,11 @@ Your production container includes bash, apt-get, curl, wget, and hundreds of OS
 
 **EVOLUTION:**
 Full OS images (ubuntu, debian) -> Slim variants (python:slim) -> Alpine (5MB, musl libc) -> Distroless (Google, 2017, no shell at all) -> Chainguard images (2022, distroless + daily CVE patching) -> Wolfi (2023, distroless-friendly Linux distro).
-
 ---
 
 ### 📘 Textbook Definition
 
 Distroless images are container base images that contain only the language runtime and application dependencies, with no OS-level package manager, shell, or standard Linux utilities. They are built from scratch using only the minimal set of files needed for the application to run.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -615,7 +601,6 @@ A distroless image is a container with nothing except your app - no shell to hac
 
 **One insight:**
 No shell means an attacker who gets RCE can't easily `wget` malware, `curl` an exfiltration endpoint, or `cat` sensitive files. They're stuck with whatever the application binary can do. This doesn't make you invulnerable, but it massively raises the exploitation cost.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -635,7 +620,6 @@ No shell means an attacker who gets RCE can't easily `wget` malware, `curl` an e
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -647,7 +631,6 @@ No shell means an attacker who gets RCE can't easily `wget` malware, `curl` an e
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -666,7 +649,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -691,7 +673,6 @@ What distroless EXCLUDES:
   - Utilities (curl, wget, ls, cat, ps)
   - Compilers, build tools
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -705,7 +686,6 @@ What distroless EXCLUDES:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -743,7 +723,6 @@ docker run --entrypoint sh \
 kubectl debug -it <pod> \
   --image=busybox --target=app
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -756,6 +735,7 @@ kubectl debug -it <pod> \
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -765,38 +745,25 @@ kubectl debug -it <pod> \
 
 **Interview one-liner:**
 "Distroless images contain only the language runtime and application with no shell or OS utilities - I use them for production containers to minimize attack surface while using multi-stage builds for the development workflow and ephemeral debug containers for troubleshooting."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Google runs virtually all of its production containers on distroless-like images. Internally, their build system (Bazel) produces images that contain only the application binary and its exact transitive dependencies - nothing else. This practice predates the public "distroless" project by years. The public images are simplified versions of what Google uses internally.
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: A developer says "I can't use distroless because I need to debug inside the container." How do you address this concern?**
-
-_Why they ask:_ Tests ability to balance security with operability.
-
-**Answer:**
-Debugging strategies for distroless:
-
-1. **Ephemeral debug containers** (K8s 1.23+): `kubectl debug -it <pod> --image=busybox --target=app` shares the process namespace temporarily
-2. **Debug image variant**: `gcr.io/distroless/java17:debug` includes busybox shell - use in staging only
-3. **Remote debugging**: attach debugger via port (Java `-agentlib:jdwp`, Node `--inspect`)
-4. **Observability**: proper logging + tracing (OpenTelemetry) eliminates 90% of debug reasons
-5. **Sidecar tools**: deploy a debug sidecar pod alongside (shares network namespace)
-
-The principle: debug tooling should be external to the production container. You don't install Wireshark on a production server; similarly, you don't add bash to a production container.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Distroless Images. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -807,7 +774,6 @@ The principle: debug tooling should be external to the production container. You
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -841,7 +807,24 @@ The principle: debug tooling should be external to the production container. You
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: A developer says "I can't use distroless because I need to debug inside the container." How do you address this concern?**
+
+_Why they ask:_ Tests ability to balance security with operability.
+
+**Answer:**
+Debugging strategies for distroless:
+
+1. **Ephemeral debug containers** (K8s 1.23+): `kubectl debug -it <pod> --image=busybox --target=app` shares the process namespace temporarily
+2. **Debug image variant**: `gcr.io/distroless/java17:debug` includes busybox shell - use in staging only
+3. **Remote debugging**: attach debugger via port (Java `-agentlib:jdwp`, Node `--inspect`)
+4. **Observability**: proper logging + tracing (OpenTelemetry) eliminates 90% of debug reasons
+5. **Sidecar tools**: deploy a debug sidecar pod alongside (shares network namespace)
+
+The principle: debug tooling should be external to the production container. You don't install Wireshark on a production server; similarly, you don't add bash to a production container.
 ---
 
 ### 🔗 Related Keywords
@@ -866,7 +849,6 @@ The principle: debug tooling should be external to the production container. You
 # Image Tag Strategy
 
 **TL;DR** - Image tag strategy defines how container images are versioned and referenced, with semantic version tags or SHA digests for production reproducibility and `:latest` reserved for development only.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -876,13 +858,11 @@ Every image is tagged `:latest`. Production runs `myapp:latest` which was differ
 
 **THE INVENTION MOMENT:**
 "This is exactly why image tag strategies were created."
-
 ---
 
 ### 📘 Textbook Definition
 
 An image tag strategy is a naming convention for container image references that enables reproducible deployments, safe rollbacks, and clear artifact lineage from source commit to running container.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -896,7 +876,6 @@ Tag images with immutable identifiers so you always know exactly what's running.
 
 **One insight:**
 Tags are mutable pointers - anyone can push a different image to the same tag. SHA digests (`@sha256:abc123...`) are immutable content addresses. Production deployments should reference digests, not tags, for guaranteed reproducibility.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -916,7 +895,6 @@ Tags are mutable pointers - anyone can push a different image to the same tag. S
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -928,7 +906,6 @@ Tags are mutable pointers - anyone can push a different image to the same tag. S
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -947,7 +924,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -979,7 +955,6 @@ Anti-pattern:
    - Mutable, ambiguous, unreproducible
    - Different content on every push
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -993,7 +968,6 @@ Anti-pattern:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1021,7 +995,6 @@ image: myapp@sha256:9f86d081884c...
 # BAD: Mutable, unreproducible
 image: myapp:latest
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1034,6 +1007,7 @@ image: myapp:latest
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1043,13 +1017,68 @@ image: myapp:latest
 
 **Interview one-liner:**
 "I use semantic version tags for readability with git SHA suffixes for traceability, and pin production deployments to SHA digests for immutability - never `:latest`, which is a mutable pointer that makes rollbacks impossible and reproducibility a fantasy."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 `:latest` is NOT a special tag in Docker. It's just a convention - Docker applies it when you don't specify a tag. It doesn't auto-update, it doesn't mean "newest," and it's overwritten on every untagged push. Yet it's the most commonly used tag in production deployments worldwide.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Image Tag Strategy. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1096,58 +1125,6 @@ image: myapp:latest
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Image Tag Strategy. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1172,7 +1149,6 @@ image: myapp:latest
 # Container Registry
 
 **TL;DR** - A container registry is a repository for storing, distributing, and managing container images, acting as the central artifact store between CI (build) and CD (deploy).
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1182,13 +1158,11 @@ Docker images exist only on the machine where they were built. Deploying to anot
 
 **THE INVENTION MOMENT:**
 "This is exactly why container registries were created."
-
 ---
 
 ### 📘 Textbook Definition
 
 A container registry is a service that stores and distributes OCI-compliant container images and artifacts, providing features like access control, vulnerability scanning, image signing, and content replication.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1202,7 +1176,6 @@ A registry is like npm/Maven Central but for container images.
 
 **One insight:**
 Registries store layers, not complete images. When you push an image that shares base layers with existing images, only new layers are transferred. This is why pushing a code-only change is fast (only the small top layer is new).
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1222,7 +1195,6 @@ Registries store layers, not complete images. When you push an image that shares
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1234,7 +1206,6 @@ Registries store layers, not complete images. When you push an image that shares
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1253,7 +1224,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1280,7 +1250,6 @@ Push/Pull flow:
   docker pull -> registry sends only missing layers
   Layer deduplication across all images in registry
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1294,7 +1263,6 @@ Push/Pull flow:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1307,6 +1275,7 @@ Push/Pull flow:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1316,39 +1285,26 @@ Push/Pull flow:
 
 **Interview one-liner:**
 "I use cloud-managed registries like ECR with IAM-based access control, vulnerability scanning enabled, immutable tags to prevent overwrites, and cross-region replication for multi-region deployments - treating the registry as a critical security boundary in the supply chain."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your registry has 10TB of images. How do you manage storage costs?**
-
-_Why they ask:_ Tests operational maturity with registries at scale.
-
-**Answer:**
-
-1. **Lifecycle policies** - auto-delete images older than N days, keep last N tags per repo
-2. **Smaller images** - multi-stage builds, distroless, alpine (reduces storage by 60-80%)
-3. **Layer deduplication** - use common base images across services (shared layers stored once)
-4. **Immutable tags** - prevent accidental tag overwrites that create orphaned layers
-5. **Garbage collection** - remove unreferenced layers (Harbor: automatic GC, ECR: lifecycle rules)
-6. **Multi-arch manifests** - only pull architecture-specific layers (don't store unused platforms)
-
-Cost breakdown: in most organizations, 80% of registry storage is old/unused image versions. Aggressive lifecycle policies (keep last 10 tags, delete untagged after 7 days) reduce storage by 70%+.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Container Registry. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1359,7 +1315,6 @@ Cost breakdown: in most organizations, 80% of registry storage is old/unused ima
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1393,7 +1348,24 @@ Cost breakdown: in most organizations, 80% of registry storage is old/unused ima
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your registry has 10TB of images. How do you manage storage costs?**
+
+_Why they ask:_ Tests operational maturity with registries at scale.
+
+**Answer:**
+
+1. **Lifecycle policies** - auto-delete images older than N days, keep last N tags per repo
+2. **Smaller images** - multi-stage builds, distroless, alpine (reduces storage by 60-80%)
+3. **Layer deduplication** - use common base images across services (shared layers stored once)
+4. **Immutable tags** - prevent accidental tag overwrites that create orphaned layers
+5. **Garbage collection** - remove unreferenced layers (Harbor: automatic GC, ECR: lifecycle rules)
+6. **Multi-arch manifests** - only pull architecture-specific layers (don't store unused platforms)
+
+Cost breakdown: in most organizations, 80% of registry storage is old/unused image versions. Aggressive lifecycle policies (keep last 10 tags, delete untagged after 7 days) reduce storage by 70%+.
 ---
 
 ### 🔗 Related Keywords
@@ -1418,7 +1390,6 @@ Cost breakdown: in most organizations, 80% of registry storage is old/unused ima
 # BuildKit
 
 **TL;DR** - BuildKit is Docker's modern build engine providing parallel stage execution, advanced caching (cache mounts, registry cache), secret injection, and SSH forwarding for faster, more secure builds.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1431,13 +1402,11 @@ Docker's legacy builder executes sequentially, has no remote caching, can't cach
 
 **EVOLUTION:**
 Legacy Docker builder (sequential, basic cache) -> BuildKit (2018, parallel, advanced cache) -> Default builder in Docker 23.0+ -> Buildx (multi-platform builds on BuildKit).
-
 ---
 
 ### 📘 Textbook Definition
 
 BuildKit is a concurrent, cache-efficient build toolkit that replaces Docker's legacy builder. It features parallel execution of independent build stages, content-based caching, secret and SSH agent forwarding, multi-platform builds, and pluggable output formats.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1451,7 +1420,6 @@ BuildKit makes Docker builds faster and more secure with parallelism and advance
 
 **One insight:**
 The biggest BuildKit win isn't parallelism - it's `--mount=type=cache`. This persists dependency caches (Maven `.m2`, npm `node_modules`, Go modules) between builds, turning a 5-minute dependency download into a 3-second cache hit.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1471,7 +1439,6 @@ The biggest BuildKit win isn't parallelism - it's `--mount=type=cache`. This per
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1483,7 +1450,6 @@ The biggest BuildKit win isn't parallelism - it's `--mount=type=cache`. This per
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1502,7 +1468,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1530,7 +1495,6 @@ BuildKit features:
        git clone git@github.com:org/repo.git
    # SSH key forwarded, never stored in image
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1544,7 +1508,6 @@ BuildKit features:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1581,7 +1544,6 @@ FROM eclipse-temurin:17-jre-alpine
 COPY --from=build /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1594,6 +1556,7 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1603,13 +1566,68 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 
 **Interview one-liner:**
 "BuildKit is Docker's modern build engine - I leverage cache mounts for dependency caching (5-minute builds to seconds), secret mounts for secure credential injection during builds, parallel stage execution for speed, and registry-based cache export for CI cache sharing across agents."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 BuildKit can build images without Docker installed. `buildctl` (BuildKit's CLI) is a standalone builder. This means CI systems don't need Docker-in-Docker (DinD) - they can use BuildKit directly, which is simpler, faster, and more secure. Google's `kaniko` and Red Hat's `buildah` followed this same "buildable without Docker daemon" philosophy.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for BuildKit. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1647,58 +1665,6 @@ Layered optimization approach:
 5. **Remote builders**: BuildKit remote workers (dedicated build machines with warm caches).
 
 Combined impact: 10-minute builds -> 2-3 minutes. 50 services x 7-minute savings = 350 engineer-minutes saved per CI run.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for BuildKit. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1714,4 +1680,3 @@ Combined impact: 10-minute builds -> 2-3 minutes. 50 services x 7-minute savings
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

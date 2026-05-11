@@ -16,7 +16,7 @@ keywords:
   - Chain of Responsibility
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Strategy
 
 **TL;DR** - Strategy defines a family of algorithms, encapsulates each one, and makes them interchangeable at runtime without changing the client code.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -47,13 +46,11 @@ Different regions have different shipping rules. The US has standard/express/ove
 
 **EVOLUTION:**
 The GoF formalized Strategy in 1994. In Java, `Comparator` is the most widely used Strategy: `Collections.sort(list, comparator)`. Java 8 lambdas transformed Strategy from a pattern requiring full classes to a one-liner: `list.sort(Comparator.comparing(User::getName))`. Modern usage includes Spring's `AuthenticationStrategy`, validation strategies, and serialization strategies.
-
 ---
 
 ### 📘 Textbook Definition
 
 Strategy is a behavioral design pattern that defines a family of algorithms, encapsulates each one in a separate class, and makes them interchangeable. Strategy lets the algorithm vary independently from the clients that use it.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -67,7 +64,6 @@ Swap algorithms at runtime without changing the code that uses them.
 
 **One insight:**
 Strategy is the Open/Closed Principle applied to algorithms. The context (checkout) is closed for modification. New algorithms (shipping methods) are added without changing the context. The key: the algorithm is not just different logic - it's an entirely separate object with its own lifecycle.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -88,7 +84,6 @@ The context holds a reference to a strategy interface. It calls the strategy's m
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Selecting the right algorithm requires a decision point somewhere - Strategy moves that decision out of the algorithm
 **Accidental:** In Java pre-8, each strategy required a class file; lambdas eliminated this boilerplate
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -101,7 +96,6 @@ The context holds a reference to a strategy interface. It calls the strategy's m
 - "Changing route preference" -> swapping strategy
 
 Where this analogy breaks down: A taxi driver adapts dynamically; a Strategy object follows one algorithm strictly.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -123,7 +117,6 @@ Strategy is the most common pattern in enterprise Java, often hidden behind fram
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -140,7 +133,6 @@ Strategy is the most common pattern in enterprise Java, often hidden behind fram
     +-- context.execute()
          -> strategy.calculate(data)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -154,7 +146,6 @@ Strategy is the most common pattern in enterprise Java, often hidden behind fram
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -219,7 +210,6 @@ public class PaymentService {
 
 **How to test / verify correctness:**
 Test each strategy in isolation. Test the context with a mock strategy. Test strategy selection with unknown types.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -232,6 +222,7 @@ Test each strategy in isolation. Test the context with a mock strategy. Test str
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -241,13 +232,68 @@ Test each strategy in isolation. Test the context with a mock strategy. Test str
 
 **Interview one-liner:**
 "Strategy encapsulates interchangeable algorithms behind a common interface - in Spring I use auto-discovered strategy beans with a registry map, which gives me Open/Closed compliance and zero switch statements."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 After Java 8, Strategy is the most common pattern in Java code - but developers don't recognize it. Every `Comparator`, every `Predicate`, every `Function` passed as a parameter is a Strategy. `stream.filter(x -> x.isActive())` uses a Strategy. The lambda revolution didn't kill Strategy - it made it so natural that it became invisible.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Strategy. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -295,58 +341,6 @@ Strategy is better when:
 5. **Testing requires isolation** of each algorithm
 
 The smell: if your if-else chain is in a `switch` that you've modified 3+ times to add new cases, it's time for Strategy.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Strategy. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -371,7 +365,6 @@ The smell: if your if-else chain is in a `switch` that you've modified 3+ times 
 # Observer
 
 **TL;DR** - Observer defines a one-to-many dependency between objects so that when one object changes state, all dependents are notified and updated automatically.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -387,13 +380,11 @@ A new component needs price updates. You modify the price feed class to call the
 
 **EVOLUTION:**
 The GoF formalized Observer in 1994. Java had `java.util.Observable` (deprecated in Java 9 - poorly designed). Modern incarnations include: event listeners in every GUI framework, `PropertyChangeListener` in JavaBeans, reactive streams (RxJava, Project Reactor), JavaScript's `addEventListener`, Spring's `ApplicationEventPublisher`, and message brokers (Kafka, RabbitMQ) as distributed observers.
-
 ---
 
 ### 📘 Textbook Definition
 
 Observer is a behavioral design pattern that defines a subscription mechanism to notify multiple objects about any events that happen to the object they're observing. It establishes a one-to-many dependency between a subject and its observers, where the subject maintains a list of observers and notifies them of state changes.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -407,7 +398,6 @@ When something changes, everyone who cares gets notified automatically.
 
 **One insight:**
 Observer decouples the "what happened" from the "who cares." The subject broadcasts events without knowing its observers. Observers react without knowing each other. This loose coupling is why event-driven architectures scale: producers and consumers can evolve independently.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -428,7 +418,6 @@ The subject provides `subscribe(observer)` and `unsubscribe(observer)` methods. 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Someone must maintain the subscription list and trigger notifications - this coordination is inherent
 **Accidental:** Memory leaks from forgotten unsubscribe calls - weak references or scoped subscriptions mitigate this
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -441,7 +430,6 @@ The subject provides `subscribe(observer)` and `unsubscribe(observer)` methods. 
 - "Join/leave group" -> subscribe/unsubscribe
 
 Where this analogy breaks down: In a group chat, members can respond to each other; in Observer, observers typically don't interact - they only react to the subject.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -463,7 +451,6 @@ Observer at scale becomes event-driven architecture. In-process Observer (subjec
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -486,7 +473,6 @@ Observer at scale becomes event-driven architecture. In-process Observer (subjec
 [Observer B] <-- update(state) --/
 [Observer C] <-- update(state) -/
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -500,7 +486,6 @@ Observer at scale becomes event-driven architecture. In-process Observer (subjec
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -569,7 +554,6 @@ public class PriceAlertService {
 
 **How to test / verify correctness:**
 Test the subject publishes events on state change. Test each observer independently with synthetic events. Test subscribe/unsubscribe lifecycle. Test that removing an observer stops it from receiving updates.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -582,6 +566,7 @@ Test the subject publishes events on state change. Test each observer independen
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -591,13 +576,68 @@ Test the subject publishes events on state change. Test each observer independen
 
 **Interview one-liner:**
 "Observer establishes a publish-subscribe relationship where the subject notifies registered observers of state changes - in Spring I use ApplicationEventPublisher with @EventListener, adding @Async for non-blocking notification."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 The entire JavaScript DOM event system is an Observer pattern. Every `addEventListener('click', handler)` is subscribing an observer. Every `removeEventListener` is unsubscribing. Every DOM event that bubbles up is notification propagation. The browser runtime is essentially a massive Observer implementation managing millions of subscriptions. This is also why memory leaks in single-page applications are almost always caused by forgotten event listeners - the Observer pattern's classic failure mode.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Observer. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -636,58 +676,6 @@ Prevention strategies:
 3. **Subscription tokens:** `subscribe()` returns a `Subscription` object with a `cancel()` method. Callers must hold and cancel it.
 4. **Reactive dispose:** In RxJava/Reactor, `Disposable d = flux.subscribe(...)` returns a disposable. Call `d.dispose()` in cleanup.
 5. **Audit logging:** Log subscribe/unsubscribe events. Monitor observer count over time - it should be stable, not growing.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Observer. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -712,7 +700,6 @@ Prevention strategies:
 # Command
 
 **TL;DR** - Command encapsulates a request as an object, allowing you to parameterize clients with operations, queue requests, log them, and support undo/redo.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -728,13 +715,11 @@ A new requirement: audit logging of every operation. Without a unified abstracti
 
 **EVOLUTION:**
 The GoF formalized Command in 1994. It's the foundation of undo/redo in every editor (VS Code, IntelliJ, Photoshop). Modern incarnations include: CQRS (commands separate from queries), event sourcing (commands become the event log), task queues (commands serialized and executed asynchronously), and transaction logs (WAL in databases is essentially a command log).
-
 ---
 
 ### 📘 Textbook Definition
 
 Command is a behavioral design pattern that turns a request into a stand-alone object containing all information about the request. This transformation lets you pass requests as method arguments, delay or queue a request's execution, and support undoable operations.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -748,7 +733,6 @@ Turn actions into objects so you can store, queue, undo, and replay them.
 
 **One insight:**
 Command's real power isn't executing operations - it's making operations into first-class citizens. Once an action is an object, you get an entire vocabulary for free: undo, redo, queue, schedule, retry, log, replay, batch. This is why event sourcing works: every state change is a command object stored forever.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -769,7 +753,6 @@ Each command implements an `execute()` method (and optionally `undo()`). The inv
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Undo requires storing the inverse of every operation - this state must live somewhere
 **Accidental:** In functional languages, commands are just functions with closures - no class ceremony needed
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -782,7 +765,6 @@ Each command implements an `execute()` method (and optionally `undo()`). The inv
 - "Erasing" -> undo()
 
 Where this analogy breaks down: A to-do item doesn't contain all execution details; a Command object contains everything needed to execute.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -804,7 +786,6 @@ Command + Event Sourcing is one of the most powerful architectural combinations.
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -822,7 +803,6 @@ Undo stack:
               undo() -> reverse Cmd3
           [Cmd1] [Cmd2] <- new top
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -836,7 +816,6 @@ Undo stack:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -906,7 +885,6 @@ public class CommandHistory {
 
 **How to test / verify correctness:**
 Test that `execute()` produces the expected state change. Test that `undo()` restores the previous state exactly. Test undo stack with multiple commands.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -919,6 +897,7 @@ Test that `execute()` produces the expected state change. Test that `undo()` res
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -928,13 +907,68 @@ Test that `execute()` produces the expected state change. Test that `undo()` res
 
 **Interview one-liner:**
 "Command encapsulates an action as an object with execute() and undo() - it's the foundation of undo/redo systems, CQRS write models, and any system that needs to queue, log, or replay operations."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Every database transaction log (Write-Ahead Log / WAL) is a Command pattern implementation. Each log entry is a command: "insert row X," "update column Y." On crash recovery, the database replays the log to reconstruct state. PostgreSQL's WAL, MySQL's redo log, and Kafka's commit log all implement the same idea: commands stored as the source of truth, with the current state being a derived materialization. Event sourcing didn't invent this - databases have done it for decades.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Command. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -971,58 +1005,6 @@ Command is overkill when:
 4. **Small team, simple domain:** The organizational benefit of Command (different teams own different commands) doesn't apply to a 3-person team.
 
 Use Command when: operations need undo/redo, audit logging, queuing, scheduling, or when CQRS is warranted by scale requirements.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Command. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1047,7 +1029,6 @@ Use Command when: operations need undo/redo, audit logging, queuing, scheduling,
 # Template Method
 
 **TL;DR** - Template Method defines the skeleton of an algorithm in a superclass but lets subclasses override specific steps without changing the algorithm's structure.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1063,13 +1044,11 @@ A new requirement adds logging between each step. You modify all three implement
 
 **EVOLUTION:**
 The GoF formalized it in 1994. Java uses it extensively: `AbstractList.get()` is abstract while `indexOf()` uses it. `HttpServlet.service()` dispatches to `doGet()`, `doPost()` - the template method. Spring's `JdbcTemplate`, `RestTemplate`, and `AbstractController` all use Template Method. Modern alternatives include Strategy (composition over inheritance) and functional hooks.
-
 ---
 
 ### 📘 Textbook Definition
 
 Template Method is a behavioral design pattern that defines the skeleton of an algorithm in a base class and lets subclasses override specific steps without changing the overall algorithm structure. The base class controls the sequence; subclasses customize individual steps.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1083,7 +1062,6 @@ Define the algorithm's skeleton once; let subclasses fill in the specific steps.
 
 **One insight:**
 Template Method is the inverse of Strategy. Strategy says "the client chooses the algorithm." Template Method says "the superclass controls the algorithm; subclasses customize steps." Template Method uses inheritance; Strategy uses composition. The Hollywood Principle applies: "Don't call us, we'll call you" - the framework calls your overridden methods, not the other way around.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1104,7 +1082,6 @@ The template method is a concrete method that calls a sequence of abstract/hook 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** A fixed algorithm with variable steps requires some mechanism to enforce the sequence while allowing customization
 **Accidental:** Inheritance-based implementation limits reuse to one hierarchy; composition-based alternatives (Strategy) are more flexible
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1116,7 +1093,6 @@ The template method is a concrete method that calls a sequence of abstract/hook 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1138,14 +1114,12 @@ Template Method vs Strategy is the inheritance vs composition debate in pattern 
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1159,7 +1133,6 @@ Template Method vs Strategy is the inheritance vs composition debate in pattern 
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1234,7 +1207,6 @@ public class JsonImporter extends DataImporter {
 
 **How to test / verify correctness:**
 Test the template method calls steps in order (use a spy/mock). Test each subclass's parse method independently. Test hook methods default behavior.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1247,6 +1219,7 @@ Test the template method calls steps in order (use a spy/mock). Test each subcla
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1256,39 +1229,25 @@ Test the template method calls steps in order (use a spy/mock). Test each subcla
 
 **Interview one-liner:**
 "Template Method defines an algorithm skeleton in a base class with abstract steps that subclasses override - like Spring's JdbcTemplate where the framework controls the connection lifecycle and I provide only the query-specific logic."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Spring's `JdbcTemplate` is not actually a Template Method pattern despite its name. It uses Strategy (callback interfaces like `RowMapper`, `PreparedStatementCreator`) passed as parameters, not inheritance. The name comes from the fact that it provides a "template" for JDBC operations - but the implementation mechanism is composition, not the GoF Template Method. This naming confusion causes incorrect pattern identification in many interviews.
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Template Method vs Strategy - when do you choose each?**
-
-_Why they ask:_ Tests understanding of composition vs inheritance trade-offs.
-
-**Answer:**
-| Decision Factor | Template Method | Strategy |
-| -------------------- | ------------------------ | ------------------------ |
-| Variation mechanism | Inheritance (subclass) | Composition (inject) |
-| Runtime flexibility | Fixed at compile time | Swappable at runtime |
-| Code reuse | Shared in base class | No shared structure |
-| Step sequence control | Enforced by base class | No sequence guarantee |
-| Testing | Requires subclass mocks | Mock interface directly |
-| Java limitation | Single inheritance only | No limit |
-
-My rule: If the algorithm has a fixed skeleton with 1-2 variable steps, Template Method is clean. If I need runtime flexibility, multiple variable behaviors, or I'm already using injection, Strategy is better. In modern Java, I often combine both: a template method that delegates to injected strategies.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Template Method. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1299,7 +1258,6 @@ My rule: If the algorithm has a fixed skeleton with 1-2 variable steps, Template
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1333,7 +1291,25 @@ My rule: If the algorithm has a fixed skeleton with 1-2 variable steps, Template
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Template Method vs Strategy - when do you choose each?**
+
+_Why they ask:_ Tests understanding of composition vs inheritance trade-offs.
+
+**Answer:**
+| Decision Factor | Template Method | Strategy |
+| -------------------- | ------------------------ | ------------------------ |
+| Variation mechanism | Inheritance (subclass) | Composition (inject) |
+| Runtime flexibility | Fixed at compile time | Swappable at runtime |
+| Code reuse | Shared in base class | No shared structure |
+| Step sequence control | Enforced by base class | No sequence guarantee |
+| Testing | Requires subclass mocks | Mock interface directly |
+| Java limitation | Single inheritance only | No limit |
+
+My rule: If the algorithm has a fixed skeleton with 1-2 variable steps, Template Method is clean. If I need runtime flexibility, multiple variable behaviors, or I'm already using injection, Strategy is better. In modern Java, I often combine both: a template method that delegates to injected strategies.
 ---
 
 ### 🔗 Related Keywords
@@ -1358,7 +1334,6 @@ My rule: If the algorithm has a fixed skeleton with 1-2 variable steps, Template
 # State
 
 **TL;DR** - State lets an object alter its behavior when its internal state changes, appearing to change its class by delegating behavior to state-specific objects.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1374,13 +1349,11 @@ A developer adds the "Scheduled" state to 14 of 15 methods. The 15th method allo
 
 **EVOLUTION:**
 The GoF formalized State in 1994. It's closely related to finite state machines (FSMs). Modern usage includes: workflow engines, TCP connection states, game entity behavior (idle/walking/attacking), and order processing (created/paid/shipped/delivered). Spring State Machine provides a framework implementation.
-
 ---
 
 ### 📘 Textbook Definition
 
 State is a behavioral design pattern that lets an object alter its behavior when its internal state changes. The object appears to change its class. It encapsulates state-specific behavior in separate state objects and delegates behavior to the current state object.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1394,7 +1367,6 @@ Object behavior changes based on state, with each state as a separate class.
 
 **One insight:**
 State is a Strategy that switches itself. In Strategy, the client selects the algorithm. In State, the current state decides the next state through transitions. The object's behavior is determined by its internal state, and state transitions happen as side effects of operations.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1415,7 +1387,6 @@ The context holds a reference to the current state object. All behavior methods 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** State-dependent behavior requires the behavior-to-state mapping somewhere
 **Accidental:** In simple cases (2-3 states), if-else is clearer than a full State pattern hierarchy
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1427,7 +1398,6 @@ The context holds a reference to the current state object. All behavior methods 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1449,14 +1419,12 @@ For complex workflows, manual State pattern implementation is error-prone. Use S
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1470,7 +1438,6 @@ For complex workflows, manual State pattern implementation is error-prone. Use S
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1556,7 +1523,6 @@ public class Document {
 
 **How to test / verify correctness:**
 Test each state class independently: verify allowed operations succeed and invalid operations throw. Test state transitions: verify the context is in the correct state after each operation.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1569,6 +1535,7 @@ Test each state class independently: verify allowed operations succeed and inval
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1578,35 +1545,25 @@ Test each state class independently: verify allowed operations succeed and inval
 
 **Interview one-liner:**
 "State pattern encapsulates state-specific behavior in separate classes so the object delegates to its current state - eliminating scattered conditionals and making transitions explicit and testable."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 State and Strategy have identical class diagrams. The UML is the same: context holds a reference to a strategy/state interface, concrete classes implement it. The difference is purely in intent and who controls switching. In Strategy, the client sets the strategy. In State, the states transition themselves. This makes State a self-modifying Strategy - the pattern changes its own algorithm based on the results of the previous execution.
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: State vs Strategy - they look the same. How do you tell them apart?**
-
-_Why they ask:_ Tests ability to distinguish patterns by intent, not structure.
-
-**Answer:**
-The UML is identical. The distinction:
-
-- **Strategy:** Client explicitly chooses and sets the algorithm. The strategy doesn't change itself. `paymentService.setStrategy(new CreditCardStrategy())`.
-- **State:** The current state determines behavior AND triggers transitions to other states. The client doesn't choose the state directly - it results from operations. `document.publish()` transitions from ReviewState to PublishedState internally.
-
-The test: If the "strategy" changes itself based on the operation's outcome, it's State. If the client explicitly sets it, it's Strategy.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for State. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1617,7 +1574,6 @@ The test: If the "strategy" changes itself based on the operation's outcome, it'
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1651,7 +1607,21 @@ The test: If the "strategy" changes itself based on the operation's outcome, it'
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: State vs Strategy - they look the same. How do you tell them apart?**
+
+_Why they ask:_ Tests ability to distinguish patterns by intent, not structure.
+
+**Answer:**
+The UML is identical. The distinction:
+
+- **Strategy:** Client explicitly chooses and sets the algorithm. The strategy doesn't change itself. `paymentService.setStrategy(new CreditCardStrategy())`.
+- **State:** The current state determines behavior AND triggers transitions to other states. The client doesn't choose the state directly - it results from operations. `document.publish()` transitions from ReviewState to PublishedState internally.
+
+The test: If the "strategy" changes itself based on the operation's outcome, it's State. If the client explicitly sets it, it's Strategy.
 ---
 
 ### 🔗 Related Keywords
@@ -1676,7 +1646,6 @@ The test: If the "strategy" changes itself based on the operation's outcome, it'
 # Chain of Responsibility
 
 **TL;DR** - Chain of Responsibility passes a request along a chain of handlers, where each handler decides whether to process it or pass it to the next handler in the chain.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1692,13 +1661,11 @@ The business wants tickets to escalate automatically if not handled within SLA. 
 
 **EVOLUTION:**
 The GoF formalized it in 1994. It's used extensively in: servlet filters (`FilterChain`), Spring Security's filter chain, middleware pipelines (Express.js, ASP.NET), exception handling (catch blocks are a chain), and logging frameworks (loggers delegate to parent loggers up the hierarchy).
-
 ---
 
 ### 📘 Textbook Definition
 
 Chain of Responsibility is a behavioral design pattern that lets you pass requests along a chain of handlers. Upon receiving a request, each handler decides either to process it or to pass it to the next handler in the chain. The chain can be configured dynamically.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1712,7 +1679,6 @@ Pass a request through a chain of handlers until one processes it.
 
 **One insight:**
 Chain of Responsibility is about decoupling the sender from the receiver. The sender doesn't know which handler will process the request. The handlers don't know about each other except for "the next one." This decoupling allows dynamic chain configuration and makes adding/removing handlers trivial.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1733,7 +1699,6 @@ Handlers implement a common interface with `handle(request)` and `setNext(handle
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Some mechanism must route requests to handlers - the chain is one of several options (the other being a dispatcher/router)
 **Accidental:** Forgetting to call `next.handle()` in a pipeline chain silently drops the request
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1745,7 +1710,6 @@ Handlers implement a common interface with `handle(request)` and `setNext(handle
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1767,14 +1731,12 @@ The key architectural decision is pure chain vs pipeline. Pure chain (first hand
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1788,7 +1750,6 @@ The key architectural decision is pure chain vs pipeline. Pure chain (first hand
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1861,7 +1822,6 @@ chain.handle(ticket);
 
 **How to test / verify correctness:**
 Test each handler independently with requests it should and should not handle. Test the full chain processes requests correctly. Test that unhandled requests throw or have a fallback.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1874,6 +1834,7 @@ Test each handler independently with requests it should and should not handle. T
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1883,13 +1844,68 @@ Test each handler independently with requests it should and should not handle. T
 
 **Interview one-liner:**
 "Chain of Responsibility passes requests through a chain of handlers where each decides to process or delegate - I see it daily in Spring Security's filter chain and servlet filter pipelines."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Java's exception handling mechanism is a Chain of Responsibility. When an exception is thrown, the JVM walks up the call stack looking for a `catch` block that can handle it. Each stack frame is a "handler" that either catches (handles) or propagates (passes to next). If no handler is found, the thread terminates (end of chain, unhandled). The `throws` declaration is the handler's way of saying "I explicitly pass this to the next handler." Exception handling is the most used pattern you never recognize.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Chain of Responsibility. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1931,58 +1947,6 @@ public class CustomAuditFilter
 ```
 
 Critical: calling `chain.doFilter()` passes to the next filter. Forgetting it silently kills the request. The filter order matters - authentication must happen before authorization.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Chain of Responsibility. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1998,4 +1962,3 @@ Critical: calling `chain.doFilter()` passes to the next filter. Forgetting it si
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

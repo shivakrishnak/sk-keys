@@ -15,7 +15,7 @@ keywords:
   - Connection Pooling
 difficulty_range: medium to hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -29,20 +29,17 @@ version: 2
 # Spring Data Repositories
 
 **TL;DR** - Spring Data JPA auto-generates repository implementations from interfaces, providing CRUD operations and query derivation from method names - eliminating boilerplate DAO code while remaining extensible for complex queries.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every entity needs a DAO class with repetitive `entityManager.find()`, `persist()`, `createQuery()` code. 50 entities = 50 nearly identical DAO classes with the same CRUD patterns.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -55,7 +52,6 @@ Every entity needs a DAO class with repetitive `entityManager.find()`, `persist(
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -75,7 +71,6 @@ Every entity needs a DAO class with repetitive `entityManager.find()`, `persist(
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -87,7 +82,6 @@ Every entity needs a DAO class with repetitive `entityManager.find()`, `persist(
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -224,14 +218,12 @@ List<OrderSummary> findByStatus(
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -245,7 +237,6 @@ List<OrderSummary> findByStatus(
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -258,20 +249,76 @@ List<OrderSummary> findByStatus(
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. Extend `JpaRepository<Entity, IdType>` - get CRUD + paging free
 2. Method name queries: `findBy` + field names + operators (And, Or, OrderBy)
 3. Use `@Query` for complex JPQL/SQL, Specifications for dynamic filters
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Spring Data Repositories. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -308,58 +355,6 @@ Interface projections generate `SELECT col1, col2, col3` SQL. Benefits:
 - No dirty checking overhead
 
 For read-heavy list endpoints, projections can reduce response time by 40-60%.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Spring Data Repositories. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -384,20 +379,17 @@ For read-heavy list endpoints, projections can reduce response time by 40-60%.
 # Transaction Management
 
 **TL;DR** - Spring's transaction abstraction provides declarative transaction management via `@Transactional`, handling begin/commit/rollback automatically with support for propagation, isolation levels, and distributed transactions.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Manual transaction management: `connection.setAutoCommit(false)`, try-catch-finally with `commit()` or `rollback()`, ensuring cleanup in all paths. Miss a rollback and you corrupt data. Nested service calls need manual transaction coordination.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -410,7 +402,6 @@ Manual transaction management: `connection.setAutoCommit(false)`, try-catch-fina
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -430,7 +421,6 @@ Manual transaction management: `connection.setAutoCommit(false)`, try-catch-fina
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -442,7 +432,6 @@ Manual transaction management: `connection.setAutoCommit(false)`, try-catch-fina
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -556,14 +545,12 @@ public List<Order> findAll() {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -577,7 +564,6 @@ public List<Order> findAll() {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -590,20 +576,76 @@ public List<Order> findAll() {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. Default rollback: RuntimeException only. Use `rollbackFor` for checked exceptions.
 2. Self-invocation bypasses the proxy - `@Transactional` won't work on internal calls
 3. `readOnly = true` enables optimizations (no dirty checking, possible replica routing)
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Transaction Management. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -640,58 +682,6 @@ public void process(List<Order> orders) {
     }
 }
 ```
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Transaction Management. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -716,20 +706,17 @@ public void process(List<Order> orders) {
 # N+1 Problem
 
 **TL;DR** - The N+1 problem occurs when fetching a collection of N entities triggers N additional queries for their relationships, turning one query into N+1 queries. Solved by JOIN FETCH, `@EntityGraph`, or batch fetching.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT (N+1 unresolved):**
 A page listing 50 orders with customer names generates 51 queries: 1 for orders + 50 individual customer lookups. Response time balloons from 5ms to 500ms. Under load, database connection pool exhausted.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -742,7 +729,6 @@ A page listing 50 orders with customer names generates 51 queries: 1 for orders 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -762,7 +748,6 @@ A page listing 50 orders with customer names generates 51 queries: 1 for orders 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -774,7 +759,6 @@ A page listing 50 orders with customer names generates 51 queries: 1 for orders 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -895,14 +879,12 @@ List<Order> findByIdIn(List<Long> ids);
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -916,7 +898,6 @@ List<Order> findByIdIn(List<Long> ids);
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -929,6 +910,7 @@ List<Order> findByIdIn(List<Long> ids);
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -938,51 +920,26 @@ List<Order> findByIdIn(List<Long> ids);
 
 **Interview one-liner:**
 "N+1 is solved by fetching relationships eagerly in the same query via JOIN FETCH or EntityGraph, but watch for the pagination trap where JOIN FETCH forces in-memory paging."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: You have a REST endpoint returning paginated orders with line items. It's slow. How do you diagnose and fix?**
-
-_Why they ask:_ Tests real-world debugging.
-
-_Strong answer:_
-
-Diagnosis:
-
-1. Enable SQL logging (`logging.level.org.hibernate.SQL=DEBUG`)
-2. Count queries per request (expect 1-2, seeing 50+)
-3. Or use `spring.jpa.properties.hibernate.generate_statistics=true`
-
-Root cause: `findAll(Pageable)` fires 1 query for orders, then N queries for items (lazy load in serialization).
-
-Fix (two-query approach):
-
-```java
-// Query 1: Get paginated IDs only
-Page<Long> ids = orderRepo.findIdsByStatus(
-    status, pageable);
-// Query 2: Fetch full entities with items
-List<Order> orders = orderRepo
-    .findWithItemsByIdIn(ids.getContent());
-```
-
-This gives: correct pagination (query 1 uses LIMIT/OFFSET) + no N+1 (query 2 uses JOIN FETCH with IN clause).
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for N+1 Problem. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -993,7 +950,6 @@ This gives: correct pagination (query 1 uses LIMIT/OFFSET) + no N+1 (query 2 use
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1027,7 +983,36 @@ This gives: correct pagination (query 1 uses LIMIT/OFFSET) + no N+1 (query 2 use
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: You have a REST endpoint returning paginated orders with line items. It's slow. How do you diagnose and fix?**
+
+_Why they ask:_ Tests real-world debugging.
+
+_Strong answer:_
+
+Diagnosis:
+
+1. Enable SQL logging (`logging.level.org.hibernate.SQL=DEBUG`)
+2. Count queries per request (expect 1-2, seeing 50+)
+3. Or use `spring.jpa.properties.hibernate.generate_statistics=true`
+
+Root cause: `findAll(Pageable)` fires 1 query for orders, then N queries for items (lazy load in serialization).
+
+Fix (two-query approach):
+
+```java
+// Query 1: Get paginated IDs only
+Page<Long> ids = orderRepo.findIdsByStatus(
+    status, pageable);
+// Query 2: Fetch full entities with items
+List<Order> orders = orderRepo
+    .findWithItemsByIdIn(ids.getContent());
+```
+
+This gives: correct pagination (query 1 uses LIMIT/OFFSET) + no N+1 (query 2 uses JOIN FETCH with IN clause).
 ---
 
 ### 🔗 Related Keywords
@@ -1052,20 +1037,17 @@ This gives: correct pagination (query 1 uses LIMIT/OFFSET) + no N+1 (query 2 use
 # Connection Pooling
 
 **TL;DR** - Connection pooling (HikariCP in Spring Boot) maintains pre-opened database connections for reuse, avoiding the overhead of establishing new connections per request (TCP handshake + auth + SSL = 50-200ms saved per query).
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Each database operation opens a new connection (DNS + TCP + TLS + authentication = 50-200ms), executes a 2ms query, then closes. Under load, the database is overwhelmed with connection storms and the application starves waiting for connections.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1078,7 +1060,6 @@ Each database operation opens a new connection (DNS + TCP + TLS + authentication
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1098,7 +1079,6 @@ Each database operation opens a new connection (DNS + TCP + TLS + authentication
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1110,7 +1090,6 @@ Each database operation opens a new connection (DNS + TCP + TLS + authentication
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1210,14 +1189,12 @@ public Order process(Long id) {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1231,7 +1208,6 @@ public Order process(Long id) {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1244,53 +1220,33 @@ public Order process(Long id) {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. HikariCP default in Boot: `maximum-pool-size=10` (often enough!)
 2. Pool sizing: `(CPU cores * 2) + 1` for most workloads
 3. Monitor `hikaricp.connections.pending` - if consistently > 0, pool is too small
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your service throws "Connection is not available, request timed out" under load. What do you do?**
-
-_Why they ask:_ Tests production debugging skills.
-
-_Strong answer:_
-
-Immediate diagnostics:
-
-1. Check `hikaricp.connections.active` vs `maximum-pool-size` (all in use?)
-2. Check `hikaricp.connections.pending` (threads waiting?)
-3. Enable leak detection: `leak-detection-threshold=30000`
-4. Check transaction durations (long TX holds connections)
-
-Common fixes:
-
-- NOT "just increase pool size" (usually masks the real problem)
-- Find long-running transactions (check slow query log)
-- Fix N+1 queries reducing per-request connection hold time
-- Mark read-only operations `@Transactional(readOnly=true)` for faster release
-- If truly need more throughput: increase pool to `(cores * 2) + 1` per the formula
-
-If virtual threads: add Semaphore limiting concurrent DB operations to pool size.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Connection Pooling. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1301,7 +1257,6 @@ If virtual threads: add Semaphore limiting concurrent DB operations to pool size
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1335,7 +1290,32 @@ If virtual threads: add Semaphore limiting concurrent DB operations to pool size
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your service throws "Connection is not available, request timed out" under load. What do you do?**
+
+_Why they ask:_ Tests production debugging skills.
+
+_Strong answer:_
+
+Immediate diagnostics:
+
+1. Check `hikaricp.connections.active` vs `maximum-pool-size` (all in use?)
+2. Check `hikaricp.connections.pending` (threads waiting?)
+3. Enable leak detection: `leak-detection-threshold=30000`
+4. Check transaction durations (long TX holds connections)
+
+Common fixes:
+
+- NOT "just increase pool size" (usually masks the real problem)
+- Find long-running transactions (check slow query log)
+- Fix N+1 queries reducing per-request connection hold time
+- Mark read-only operations `@Transactional(readOnly=true)` for faster release
+- If truly need more throughput: increase pool to `(cores * 2) + 1` per the formula
+
+If virtual threads: add Semaphore limiting concurrent DB operations to pool size.
 ---
 
 ### 🔗 Related Keywords
@@ -1351,4 +1331,3 @@ If virtual threads: add Semaphore limiting concurrent DB operations to pool size
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

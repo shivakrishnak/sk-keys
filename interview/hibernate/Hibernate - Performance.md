@@ -15,7 +15,7 @@ keywords:
   - Hibernate Statistics and Monitoring
 difficulty_range: medium to hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -29,20 +29,17 @@ version: 2
 # First-Level and Second-Level Cache
 
 **TL;DR** - First-level cache (persistence context) is per-session and automatic. Second-level cache (L2C) is shared across sessions and optional. L2C stores entities/queries across requests, reducing database roundtrips by 60-90% for read-heavy data that changes infrequently.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every `findById(42)` hits the database, even if 1000 requests/second ask for the same entity. Catalog data (countries, categories, config) queried repeatedly with identical results.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -55,7 +52,6 @@ Every `findById(42)` hits the database, even if 1000 requests/second ask for the
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -75,7 +71,6 @@ Every `findById(42)` hits the database, even if 1000 requests/second ask for the
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -87,7 +82,6 @@ Every `findById(42)` hits the database, even if 1000 requests/second ask for the
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -192,14 +186,12 @@ Rule: Only cache queries on tables that rarely change (reference data).
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -213,7 +205,6 @@ Rule: Only cache queries on tables that rarely change (reference data).
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -226,46 +217,33 @@ Rule: Only cache queries on tables that rarely change (reference data).
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. L1 is automatic (per session). L2 is opt-in (shared across sessions).
 2. Use L2 for read-heavy, rarely-changing data (config, catalogs, lookups)
 3. Query cache = query -> IDs mapping. Invalidated on ANY table write.
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: When would you NOT use second-level cache?**
-
-_Why they ask:_ Tests understanding beyond "caching is good."
-
-_Strong answer:_
-
-Don't use L2C when:
-
-1. **High write frequency:** Entity updated every few seconds. Cache invalidation overhead exceeds cache hit benefit.
-2. **Large result sets:** Caching 1M entities exhausts memory. Cache eviction thrashes.
-3. **Multi-node without distributed cache:** Node A caches entity, Node B updates it. Node A serves stale data until TTL expires.
-4. **Security-sensitive data:** Cached across sessions means potential cross-user leakage if misconfigured.
-5. **Short-lived entities:** Orders being processed - loaded once, updated, never read again.
-
-Good candidates: Country lists, product categories, feature flags, configuration tables - read 1000x per write.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for First-Level and Second-Level Cache. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -276,7 +254,6 @@ Good candidates: Country lists, product categories, feature flags, configuration
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -310,7 +287,25 @@ Good candidates: Country lists, product categories, feature flags, configuration
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: When would you NOT use second-level cache?**
+
+_Why they ask:_ Tests understanding beyond "caching is good."
+
+_Strong answer:_
+
+Don't use L2C when:
+
+1. **High write frequency:** Entity updated every few seconds. Cache invalidation overhead exceeds cache hit benefit.
+2. **Large result sets:** Caching 1M entities exhausts memory. Cache eviction thrashes.
+3. **Multi-node without distributed cache:** Node A caches entity, Node B updates it. Node A serves stale data until TTL expires.
+4. **Security-sensitive data:** Cached across sessions means potential cross-user leakage if misconfigured.
+5. **Short-lived entities:** Orders being processed - loaded once, updated, never read again.
+
+Good candidates: Country lists, product categories, feature flags, configuration tables - read 1000x per write.
 ---
 
 ### 🔗 Related Keywords
@@ -335,20 +330,17 @@ Good candidates: Country lists, product categories, feature flags, configuration
 # N+1 Detection and Prevention
 
 **TL;DR** - N+1 occurs when loading N entities triggers N additional queries for their lazy relationships. Detect with Hibernate Statistics or `datasource-proxy`. Prevent with `JOIN FETCH`, `@EntityGraph`, `@BatchSize`, or DTO projections.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 APIs that work fine in development (10 records) become unusably slow in production (10,000 records). A "list orders" endpoint that generates 10,001 SQL queries instead of 1-2.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -361,7 +353,6 @@ APIs that work fine in development (10 records) become unusably slow in producti
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -381,7 +372,6 @@ APIs that work fine in development (10 records) become unusably slow in producti
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -393,7 +383,6 @@ APIs that work fine in development (10 records) become unusably slow in producti
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -512,14 +501,12 @@ log.info("L2C hits: {}",
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -533,7 +520,6 @@ log.info("L2C hits: {}",
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -546,48 +532,33 @@ log.info("L2C hits: {}",
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. DTO projections = best prevention (no entities, no lazy loading)
 2. JOIN FETCH for full entity graphs (single query with JOINs)
 3. Automate detection in integration tests with query counting
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: You join a project where the API is slow. How do you find and fix N+1 problems?**
-
-_Why they ask:_ Tests systematic debugging approach.
-
-_Strong answer:_
-
-1. **Enable Hibernate Statistics** to get query count per endpoint
-2. **Add datasource-proxy** for detailed query logging
-3. **Profile the slowest endpoints** (APM tool or manual timing)
-4. **Look for the pattern:** Repeated SELECT statements with different WHERE id=N
-
-Fix strategy:
-
-- **List endpoints:** Switch to DTO projections (eliminate the problem entirely)
-- **Detail endpoints:** Use `@EntityGraph` or JOIN FETCH for needed relationships
-- **Batch endpoints:** Add `@BatchSize(size=25)` as quick win, then refactor to JOIN FETCH
-- **Prevent regression:** Add integration test with query count assertions
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for N+1 Detection and Prevention. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -598,7 +569,6 @@ Fix strategy:
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -632,7 +602,27 @@ Fix strategy:
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: You join a project where the API is slow. How do you find and fix N+1 problems?**
+
+_Why they ask:_ Tests systematic debugging approach.
+
+_Strong answer:_
+
+1. **Enable Hibernate Statistics** to get query count per endpoint
+2. **Add datasource-proxy** for detailed query logging
+3. **Profile the slowest endpoints** (APM tool or manual timing)
+4. **Look for the pattern:** Repeated SELECT statements with different WHERE id=N
+
+Fix strategy:
+
+- **List endpoints:** Switch to DTO projections (eliminate the problem entirely)
+- **Detail endpoints:** Use `@EntityGraph` or JOIN FETCH for needed relationships
+- **Batch endpoints:** Add `@BatchSize(size=25)` as quick win, then refactor to JOIN FETCH
+- **Prevent regression:** Add integration test with query count assertions
 ---
 
 ### 🔗 Related Keywords
@@ -657,20 +647,17 @@ Fix strategy:
 # Batch Fetching and Bulk Operations
 
 **TL;DR** - Batch fetching (`@BatchSize`, `IN` clause grouping) reduces N+1 to N/batchSize+1 queries. Bulk operations (`@Modifying` queries, StatelessSession) bypass the persistence context for high-performance mass updates/inserts.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Importing 100,000 records: 100,000 INSERT statements, persistence context grows to 100,000 entities consuming GBs of memory, massive GC pauses. Updating 50,000 rows: 50,000 individual UPDATE statements taking 30+ minutes.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -683,7 +670,6 @@ Importing 100,000 records: 100,000 INSERT statements, persistence context grows 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -703,7 +689,6 @@ Importing 100,000 records: 100,000 INSERT statements, persistence context grows 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -715,7 +700,6 @@ Importing 100,000 records: 100,000 INSERT statements, persistence context grows 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -833,14 +817,12 @@ public JdbcBatchItemWriter<Product> writer(
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -854,7 +836,6 @@ public JdbcBatchItemWriter<Product> writer(
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -867,58 +848,33 @@ public JdbcBatchItemWriter<Product> writer(
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. `hibernate.jdbc.batch_size=50` + `flush()/clear()` every N rows for bulk inserts
 2. `@Modifying` JPQL for bulk UPDATE/DELETE (single SQL, no entity loading)
 3. StatelessSession for maximum import throughput (no persistence context overhead)
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How would you import 10 million records into the database?**
-
-_Why they ask:_ Tests large-scale data handling knowledge.
-
-_Strong answer:_
-
-For 10M records, don't use JPA at all for the import:
-
-1. **Best option: Database native bulk load**
-   - PostgreSQL: `COPY` command (100K rows/sec)
-   - MySQL: `LOAD DATA INFILE`
-   - Fastest possible, bypasses ORM entirely
-
-2. **If you need validation/transformation:**
-   - Spring Batch with `JdbcBatchItemWriter`
-   - Chunk size: 1000-5000
-   - Partitioned processing (parallel chunks)
-   - Skip/retry for bad records
-
-3. **If you must use JPA:**
-   - StatelessSession (no L1 cache)
-   - Batch size 100-500
-   - Disable second-level cache for import
-   - Disable audit listeners during import
-   - Consider disabling indexes, re-enable after
-
-Never: Regular JPA `em.persist()` without flush/clear - OutOfMemoryError guaranteed at 10M entities in persistence context.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Batch Fetching and Bulk Operations. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -929,7 +885,6 @@ Never: Regular JPA `em.persist()` without flush/clear - OutOfMemoryError guarant
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -963,7 +918,37 @@ Never: Regular JPA `em.persist()` without flush/clear - OutOfMemoryError guarant
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How would you import 10 million records into the database?**
+
+_Why they ask:_ Tests large-scale data handling knowledge.
+
+_Strong answer:_
+
+For 10M records, don't use JPA at all for the import:
+
+1. **Best option: Database native bulk load**
+   - PostgreSQL: `COPY` command (100K rows/sec)
+   - MySQL: `LOAD DATA INFILE`
+   - Fastest possible, bypasses ORM entirely
+
+2. **If you need validation/transformation:**
+   - Spring Batch with `JdbcBatchItemWriter`
+   - Chunk size: 1000-5000
+   - Partitioned processing (parallel chunks)
+   - Skip/retry for bad records
+
+3. **If you must use JPA:**
+   - StatelessSession (no L1 cache)
+   - Batch size 100-500
+   - Disable second-level cache for import
+   - Disable audit listeners during import
+   - Consider disabling indexes, re-enable after
+
+Never: Regular JPA `em.persist()` without flush/clear - OutOfMemoryError guaranteed at 10M entities in persistence context.
 ---
 
 ### 🔗 Related Keywords
@@ -988,20 +973,17 @@ Never: Regular JPA `em.persist()` without flush/clear - OutOfMemoryError guarant
 # Query Optimization
 
 **TL;DR** - Hibernate query optimization involves choosing the right query type (JPQL, Criteria, native SQL), using projections to avoid loading full entities, pagination strategies (offset vs keyset), and understanding how Hibernate generates SQL to avoid performance traps.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Developers write `repo.findAll()` and filter in Java, loading entire tables into memory. Queries return 50 columns when 3 are needed. Pagination with OFFSET degrades linearly with page depth.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1014,7 +996,6 @@ Developers write `repo.findAll()` and filter in Java, loading entire tables into
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1034,7 +1015,6 @@ Developers write `repo.findAll()` and filter in Java, loading entire tables into
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1046,7 +1026,6 @@ Developers write `repo.findAll()` and filter in Java, loading entire tables into
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1140,14 +1119,12 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1161,7 +1138,6 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1174,20 +1150,76 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. Use DTO/interface projections for read-only list views (less data, no dirty checking)
 2. Keyset pagination for deep pages (constant speed vs O(offset) for OFFSET)
 3. `@QueryHints(HINT_READONLY)` skips snapshot creation for read-only queries
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Query Optimization. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1234,58 +1266,6 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Query Optimization. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1310,20 +1290,17 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 # Hibernate Statistics and Monitoring
 
 **TL;DR** - Hibernate Statistics tracks query counts, cache hit ratios, session metrics, and slow queries. Essential for detecting N+1 problems, cache effectiveness, and connection pool issues in production.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 "The API is slow" with no way to know: Is it the query? The connection pool? Lazy loading? Cache misses? Without metrics, debugging is guesswork.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1336,7 +1313,6 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1356,7 +1332,6 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1368,7 +1343,6 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1467,14 +1441,12 @@ public DataSource dataSource(DataSource actual) {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1488,7 +1460,6 @@ public DataSource dataSource(DataSource actual) {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1501,20 +1472,76 @@ public DataSource dataSource(DataSource actual) {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. `hibernate.generate_statistics=true` enables all metrics
 2. Monitor: queries per request (N+1), cache hit ratio, slow queries
 3. Use datasource-proxy for per-query timing and count assertions in tests
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Hibernate Statistics and Monitoring. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1561,58 +1588,6 @@ public DataSource dataSource(DataSource actual) {
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Hibernate Statistics and Monitoring. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1628,4 +1603,3 @@ public DataSource dataSource(DataSource actual) {
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

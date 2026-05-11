@@ -14,7 +14,7 @@ keywords:
   - Schema Migration
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -27,20 +27,17 @@ version: 2
 # Optimistic vs Pessimistic Locking
 
 **TL;DR** - Optimistic locking uses version checks to detect conflicts at commit time; pessimistic locking acquires database locks upfront to prevent conflicts entirely - each trades throughput for safety.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT LOCKING:**
 Two users view the same product page. Both see "stock: 10." User A buys 3 (stock should be 7). User B buys 5 (stock should be 5). Both read stock=10, subtract independently, and write back. Final stock: either 7 or 5, depending on who writes last. Two purchases deducted from 10, but only one deduction was applied. This is the **lost update** problem.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -53,7 +50,6 @@ Two users view the same product page. Both see "stock: 10." User A buys 3 (stock
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -73,7 +69,6 @@ Two users view the same product page. Both see "stock: 10." User A buys 3 (stock
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -85,7 +80,6 @@ Two users view the same product page. Both see "stock: 10." User A buys 3 (stock
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -104,7 +98,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -125,7 +118,6 @@ PESSIMISTIC (DB lock, conflict prevented early):
   User A: UPDATE stock=7, COMMIT (releases lock)
   User B: (unblocked) reads stock=7, UPDATE stock=2
 ```
-
 ---
 
 ### Comparison
@@ -139,7 +131,6 @@ PESSIMISTIC (DB lock, conflict prevented early):
 | Deadlock risk          | None                            | Yes (if multiple locks)     |
 | Stale data             | Possible between read and write | No (lock held)              |
 | JPA annotation         | `@Version`                      | `@Lock(PESSIMISTIC_WRITE)`  |
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -153,7 +144,6 @@ PESSIMISTIC (DB lock, conflict prevented early):
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -214,7 +204,6 @@ public void purchaseProduct(
     // Lock released at commit
 }
 ```
-
 ---
 
 ### Decision Framework
@@ -238,7 +227,6 @@ Short transactions (< 100ms):
 Long transactions (seconds to minutes):
   -> Optimistic (don't hold DB locks that long)
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -251,6 +239,7 @@ Long transactions (seconds to minutes):
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -260,51 +249,26 @@ Long transactions (seconds to minutes):
 
 **Interview one-liner:**
 "I default to optimistic locking with @Version for most use cases because it provides better throughput - I switch to pessimistic locking with SELECT FOR UPDATE only when conflict rates are high and transactions are short, like inventory deductions during flash sales."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: A flash sale has 1000 users buying the same product simultaneously. Which locking strategy do you use and why?**
-
-_Why they ask:_ Tests ability to reason about concurrency under extreme conditions.
-
-**Answer:**
-Pessimistic locking for the critical inventory deduction step. With 1000 concurrent buyers on the same product, optimistic locking would cause massive retry storms - 999 out of 1000 requests fail on first attempt, then 998 fail on retry, etc. This creates exponential database load.
-
-With pessimistic locking: `SELECT ... FOR UPDATE` serializes access. Each buyer waits briefly, then reads the correct current stock and deducts. Total throughput is lower per second, but total success rate is much higher with zero wasted work.
-
-Optimization: Use an atomic SQL update instead of read-then-write: `UPDATE product SET stock = stock - :qty WHERE id = :id AND stock >= :qty`. This is effectively pessimistic (row lock during UPDATE) but avoids the explicit SELECT FOR UPDATE round-trip.
-
-**Q2: Your application throws OptimisticLockException frequently in production. How do you diagnose and fix it?**
-
-_Why they ask:_ Tests real production debugging experience.
-
-**Answer:**
-
-1. **Identify the entity and frequency.** Log the entity type, ID, and stack trace. High frequency on a single entity = hot spot.
-
-2. **Check for unnecessary writes.** If Hibernate's dirty checking triggers an update even when nothing changed (e.g., a setter called with the same value), the version increments unnecessarily. Use `@DynamicUpdate` to only update changed columns.
-
-3. **Check transaction scope.** Long transactions increase the window for conflicts. Shorten the transaction: move read operations outside the transaction, do the write in a minimal transaction.
-
-4. **Add retry logic.** For legitimate conflicts, use Spring Retry with `@Retryable(OptimisticLockException.class, maxAttempts = 3, backoff = @Backoff(delay = 100))`.
-
-5. **Consider switching to pessimistic for hot entities.** If one entity gets 90% of the conflicts, use `PESSIMISTIC_WRITE` for that specific query.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Optimistic vs Pessimistic Locking. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -315,7 +279,6 @@ _Why they ask:_ Tests real production debugging experience.
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -349,7 +312,36 @@ _Why they ask:_ Tests real production debugging experience.
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: A flash sale has 1000 users buying the same product simultaneously. Which locking strategy do you use and why?**
+
+_Why they ask:_ Tests ability to reason about concurrency under extreme conditions.
+
+**Answer:**
+Pessimistic locking for the critical inventory deduction step. With 1000 concurrent buyers on the same product, optimistic locking would cause massive retry storms - 999 out of 1000 requests fail on first attempt, then 998 fail on retry, etc. This creates exponential database load.
+
+With pessimistic locking: `SELECT ... FOR UPDATE` serializes access. Each buyer waits briefly, then reads the correct current stock and deducts. Total throughput is lower per second, but total success rate is much higher with zero wasted work.
+
+Optimization: Use an atomic SQL update instead of read-then-write: `UPDATE product SET stock = stock - :qty WHERE id = :id AND stock >= :qty`. This is effectively pessimistic (row lock during UPDATE) but avoids the explicit SELECT FOR UPDATE round-trip.
+
+**Q2: Your application throws OptimisticLockException frequently in production. How do you diagnose and fix it?**
+
+_Why they ask:_ Tests real production debugging experience.
+
+**Answer:**
+
+1. **Identify the entity and frequency.** Log the entity type, ID, and stack trace. High frequency on a single entity = hot spot.
+
+2. **Check for unnecessary writes.** If Hibernate's dirty checking triggers an update even when nothing changed (e.g., a setter called with the same value), the version increments unnecessarily. Use `@DynamicUpdate` to only update changed columns.
+
+3. **Check transaction scope.** Long transactions increase the window for conflicts. Shorten the transaction: move read operations outside the transaction, do the write in a minimal transaction.
+
+4. **Add retry logic.** For legitimate conflicts, use Spring Retry with `@Retryable(OptimisticLockException.class, maxAttempts = 3, backoff = @Backoff(delay = 100))`.
+
+5. **Consider switching to pessimistic for hot entities.** If one entity gets 90% of the conflicts, use `PESSIMISTIC_WRITE` for that specific query.
 ---
 
 ### 🔗 Related Keywords
@@ -374,13 +366,11 @@ _Why they ask:_ Tests real production debugging experience.
 # JPA Inheritance Mapping
 
 **TL;DR** - JPA offers three strategies to map class hierarchies to database tables: Single Table (one table, discriminator column), Joined (one table per class, JOINs), and Table Per Class (one table per concrete class, UNION).
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Your domain has a `Payment` base class with `CreditCardPayment`, `BankTransferPayment`, and `CryptoPayment` subclasses. How do you store this in a relational database that has no concept of inheritance?
-
 ---
 
 ### Three Strategies
@@ -418,7 +408,6 @@ TABLE PER CLASS (no JOINs, no shared table):
 | 1  | 100.00 | 4111 | | 2  | 250.00 | DE89 |
   UNION ALL needed for polymorphic queries
 ```
-
 ---
 
 ### Comparison
@@ -431,13 +420,11 @@ TABLE PER CLASS (no JOINs, no shared table):
 | Schema evolution    | Easy (add column)                | Moderate (add table) | Hard             |
 | Polymorphic query   | Fast                             | Moderate             | Slow             |
 | NOT NULL constraint | Can't enforce on subclass fields | Can enforce          | Can enforce      |
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -450,7 +437,6 @@ TABLE PER CLASS (no JOINs, no shared table):
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -470,7 +456,6 @@ TABLE PER CLASS (no JOINs, no shared table):
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -482,7 +467,6 @@ TABLE PER CLASS (no JOINs, no shared table):
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -501,14 +485,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -522,7 +504,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -571,7 +552,6 @@ public abstract class Payment {
     private BigDecimal amount;
 }
 ```
-
 ---
 
 ### Decision Framework
@@ -589,7 +569,6 @@ Rarely query by base class, subclasses are independent:
 Default recommendation:
   -> SINGLE_TABLE unless you have a strong reason not to
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -602,6 +581,7 @@ Default recommendation:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -611,14 +591,69 @@ Default recommendation:
 
 **Interview one-liner:**
 "I default to SINGLE_TABLE inheritance for simplicity and performance, accepting NULL columns as the trade-off - I only switch to JOINED when I have many subclass-specific columns that need NOT NULL constraints and polymorphic queries are infrequent."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for JPA Inheritance Mapping. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -665,58 +700,6 @@ Default recommendation:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for JPA Inheritance Mapping. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -741,7 +724,6 @@ Default recommendation:
 # JPQL vs Criteria API vs Native Queries
 
 **TL;DR** - JPQL is HQL-like object-oriented queries, Criteria API builds type-safe queries programmatically, and native SQL gives full database-specific control - choose based on query complexity and dynamism.
-
 ---
 
 ### Comparison
@@ -754,7 +736,6 @@ Default recommendation:
 | DB portability  | Yes (JPA abstracts)    | Yes                       | No (DB-specific)      |
 | Complex queries | Good for simple/medium | Good for dynamic filters  | Best for complex      |
 | Learning curve  | Low (SQL-like)         | High (verbose API)        | Low (if you know SQL) |
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -770,13 +751,11 @@ Default recommendation:
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -789,7 +768,6 @@ Default recommendation:
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -809,7 +787,6 @@ Default recommendation:
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -821,7 +798,6 @@ Default recommendation:
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -840,14 +816,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -861,7 +835,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -908,7 +881,6 @@ public List<Order> findOrders(OrderFilter filter) {
 List<Order> findRecentHighValue(
     @Param("status") String status);
 ```
-
 ---
 
 ### Decision Guide
@@ -927,7 +899,6 @@ Complex query with DB-specific features:
 Reporting/analytics:
   -> Native SQL (performance matters most)
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -940,6 +911,7 @@ Reporting/analytics:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -949,14 +921,69 @@ Reporting/analytics:
 
 **Interview one-liner:**
 "I use JPQL for simple static queries, Criteria API or Spring Data Specifications for dynamic filter-based queries, and native SQL only for complex DB-specific operations like window functions - always with parameterized queries for security."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for JPQL vs Criteria API vs Native Queries. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1003,58 +1030,6 @@ Reporting/analytics:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for JPQL vs Criteria API vs Native Queries. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1079,13 +1054,11 @@ Reporting/analytics:
 # Schema Migration (Flyway / Liquibase)
 
 **TL;DR** - Schema migration tools version-control your database schema changes, applying them in order across all environments - Flyway uses SQL scripts, Liquibase uses XML/YAML/JSON changesets.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Without schema migration: developer A adds a column locally, developer B doesn't know. Production schema drifts from staging. Deploying requires a manual SQL script run by a DBA. Rolling back a bad migration means writing reverse SQL by hand. Nobody knows what schema version production is on.
-
 ---
 
 ### Flyway vs Liquibase
@@ -1099,13 +1072,11 @@ Without schema migration: developer A adds a column locally, developer B doesn't
 | Learning curve   | Very low               | Moderate              |
 | Spring Boot      | Auto-configured        | Auto-configured       |
 | Best for         | Most projects          | Complex multi-DB      |
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1118,7 +1089,6 @@ Without schema migration: developer A adds a column locally, developer B doesn't
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1138,7 +1108,6 @@ Without schema migration: developer A adds a column locally, developer B doesn't
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1150,7 +1119,6 @@ Without schema migration: developer A adds a column locally, developer B doesn't
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1169,14 +1137,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1190,7 +1156,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### Code Example (Flyway)
@@ -1230,7 +1195,6 @@ spring:
 
 - `V1__create_users.sql` - versioned migration
 - `R__seed_data.sql` - repeatable migration
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1243,6 +1207,7 @@ spring:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1252,14 +1217,69 @@ spring:
 
 **Interview one-liner:**
 "I use Flyway for database schema versioning - SQL migration scripts named V1\_\_description.sql run automatically on Spring Boot startup, ensuring every environment has the same schema without manual intervention."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Schema Migration (Flyway / Liquibase). Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1306,58 +1326,6 @@ spring:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Schema Migration (Flyway / Liquibase). Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1373,4 +1341,3 @@ spring:
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

@@ -1,4 +1,4 @@
-# Interview Mastery Dictionary - Master Prompt v2.0
+# Interview Mastery Dictionary - Master Prompt v3.0
 
 > **This is the authoritative generation spec** for every keyword entry
 > in the Interview Mastery Dictionary. Paste this prompt into any AI
@@ -10,14 +10,14 @@
 >
 > | Constant       | Value  | Meaning                                      |
 > | -------------- | ------ | -------------------------------------------- |
-> | `SPEC_VERSION` | `2`    | Integer written to `version:` in all entries |
-> | `SPEC_LABEL`   | `v2.0` | Human-readable label for headers/commits     |
+> | `SPEC_VERSION` | `3`    | Integer written to `version:` in all entries |
+> | `SPEC_LABEL`   | `v3.0` | Human-readable label for headers/commits     |
 
 ---
 
 ````
 ================================================================
-INTERVIEW MASTERY DICTIONARY - MASTER PROMPT v2.0
+INTERVIEW MASTERY DICTIONARY - MASTER PROMPT v3.0
 ================================================================
 
 You are an elite Software Engineering mentor and technical writer.
@@ -285,9 +285,9 @@ status:
   - complete: all keywords fully written
 
 version:
-  - Integer matching SPEC_VERSION (currently 2)
+  - Integer matching SPEC_VERSION (currently 3)
   - Stub files use version: 0
-  - Existing v1.0 content retains version: 1 until upgraded
+  - Existing v1.0/v2.0 content retains its version until upgraded
 
 CRITICAL ENCODING RULES:
   - File MUST start at byte 0 with "---". No BOM.
@@ -346,7 +346,7 @@ CONDITIONAL SECTION DECISION TABLE:
   direct alternatives (e.g., Mutex vs Semaphore). Omit
   when concept is unique with no comparable alternative.
 
-  All other sections (3.1-3.10, 3.12-3.14, 3.16-3.18) are
+  All other sections (3.1-3.10, 3.12-3.14, 3.16-3.19) are
   always required.
 
 Within a file, keywords are separated by:
@@ -628,6 +628,9 @@ Structure:
   **ANTI-PATTERN:** [common misuse - 1 sentence]
   **TRADE-OFF:** [gain vs cost - 1 sentence]
   **ONE-LINER:** [memorable metaphor - 1 sentence]
+  **KEY NUMBERS:** [2-3 critical thresholds, defaults,
+    or limits engineers must know - e.g., "default
+    pool: 200", "99p target: <100ms"]
 
   **If you remember only 3 things:**
   1. [Most important insight - sticky, memorable]
@@ -640,15 +643,50 @@ Structure:
 
 Rules:
   - No ASCII box (encoding-safe)
-  - The 8 fields give instant recall under pressure
+  - The 9 fields give instant recall under pressure
   - The 3 things must be genuinely the most important
   - Interview one-liner must demonstrate working knowledge,
     not textbook recall
+  - KEY NUMBERS must be real, verifiable values - not
+    made-up thresholds. State if default/recommended/hard
   - AVOID WHEN and ANTI-PATTERN are critical: they show
     mastery through contrast (Principle 15)
 
 ----------------------------------------------------------------
-3.13  THE SURPRISING TRUTH  [REQUIRED]
+3.13  MASTERY CHECKLIST  [REQUIRED]
+----------------------------------------------------------------
+
+Section header:
+  ### ✅ Mastery Checklist
+
+PURPOSE: Self-assessment before interviews. Five testable
+indicators that tell the reader "you've truly mastered
+this concept" - not just read about it.
+
+Structure:
+
+  **You've mastered this when you can:**
+  1. **EXPLAIN:** [Teach this to a junior in 2 minutes
+     without notes - 1 sentence describing what to explain]
+  2. **DEBUG:** [Diagnose a specific failure involving this
+     concept from symptoms alone - 1 sentence scenario]
+  3. **DECIDE:** [Choose between this and an alternative
+     under time pressure with clear rationale - 1 sentence]
+  4. **BUILD:** [Implement or configure this correctly in
+     a production context - 1 sentence deliverable]
+  5. **EXTEND:** [Apply the underlying principle to a
+     different domain or novel problem - 1 sentence]
+
+Rules:
+  - Exactly 5 indicators, always in EXPLAIN/DEBUG/DECIDE/
+    BUILD/EXTEND order
+  - Each must be specific to THIS concept (not generic)
+  - Each must be testable - reader can verify yes/no
+  - Focus on practical ability, not theoretical knowledge
+  - 50-100 words total
+
+----------------------------------------------------------------
+3.14  THE SURPRISING TRUTH  [REQUIRED]
 ----------------------------------------------------------------
 
 Section header:
@@ -662,115 +700,6 @@ Rules:
   - Good sources: counterintuitive performance properties,
     scale facts, unexpected origins, design near-misses,
     connections to unrelated fields
-
-----------------------------------------------------------------
-3.14  INTERVIEW DEEP-DIVE  [REQUIRED - PRIMARY SECTION]
-----------------------------------------------------------------
-
-Section header:
-  ### 🎯 Interview Deep-Dive
-
-PURPOSE: This is the STAR SECTION of every entry. Bridge the
-gap between understanding and interview excellence. Real
-questions, real scenarios, complete answers that demonstrate
-mastery. The reader should walk into any interview and own
-the room on this topic.
-
-DISTINCTION:
-  This section provides REAL interview Q&A with COMPLETE
-  ANSWERS. Not hints, not bullet points - full structured
-  answers that teach the reader how to think through problems
-  and articulate solutions under pressure.
-
-QUESTION REQUIREMENTS:
-  - NO CAP on question count. More is better.
-  - Question count scales with difficulty:
-      easy keywords:  minimum 5 questions
-      medium keywords: minimum 7 questions
-      hard keywords:  minimum 10 questions
-  - Questions MUST cover these categories (at least 5
-    of the 8 categories per keyword):
-    * CONCEPTUAL: "What is X and why does it matter?"
-    * DEBUGGING: "You see symptom Y in production. Walk me
-      through diagnosis."
-    * ARCHITECTURE: "Design a system that uses X to solve
-      problem P."
-    * TRADE-OFF: "When would you choose X over Y? What are
-      the precise conditions?"
-    * PRODUCTION: "Your X is degrading under load. What are
-      the 3 most likely causes?"
-    * HANDS-ON: "Implement/configure X for scenario S."
-    * SYSTEM DESIGN: "How does X interact with Y at scale?"
-    * COMPARISON: "Compare X vs Y vs Z for use case U."
-  - At least one DEBUGGING question per keyword (mandatory)
-  - At least one TRADE-OFF question per keyword (mandatory)
-  - Questions ordered: foundational -> advanced -> expert
-  - Every question must be realistic - would a senior
-    interviewer actually ask this?
-  - Questions must test working experience, not definitions
-  - Must NOT duplicate questions from other keywords in
-    the same file
-
-ANSWER REQUIREMENTS:
-  - Every question MUST have a COMPLETE, DETAILED answer
-  - Answer structure (adapt as needed):
-
-    **Answer:**
-    [Opening statement - crisp 1-2 sentence thesis that
-     shows you understand the core issue]
-
-    [Detailed explanation with structure:
-     - Break into logical parts
-     - Use numbered steps for processes
-     - Use comparison tables for trade-offs
-     - Include specific examples, metrics, or commands
-     - Reference real tools/frameworks where applicable]
-
-    [Key insight or takeaway that elevates the answer -
-     something that shows depth beyond the obvious]
-
-  - Answers should have natural LEARNING PROGRESSION:
-    surface -> mechanism -> trade-offs -> production reality
-  - Answers should "low-key impress" - demonstrate depth
-    naturally without showing off
-  - Answers CAN be long - structure and flow matter more
-    than brevity
-  - Include code snippets in answers where applicable
-  - Include diagnostic commands where applicable
-  - Include real metrics/thresholds where applicable
-
-FORMAT:
-
-  **Q1: [Real interview question - specific, scenario-based]**
-
-  *Why they ask:* [What the interviewer is evaluating -
-   1 sentence]
-
-  **Answer:**
-  [Complete, structured answer. Can be 200-500 words.
-   Include code, diagrams, metrics as needed.
-   Structure with sub-headers, numbered lists, or tables
-   for clarity. End with a key insight.]
-
-  ---
-
-  **Q2: [Next question - different category, harder]**
-
-  *Why they ask:* [What skill/depth this probes]
-
-  **Answer:**
-  [Complete answer...]
-
-  [Continue for all questions...]
-
-QUALITY TESTS:
-  - Would a FAANG bar raiser nod at this answer?
-  - Does the answer show hands-on production experience?
-  - Could two candidates with different experience give
-    meaningfully different answers?
-  - Does the answer teach something beyond the question?
-  - Would reading all answers make someone genuinely
-    interview-ready on this topic?
 
 ----------------------------------------------------------------
 3.15  COMPARISON TABLE  [CONDITIONAL]
@@ -877,7 +806,133 @@ Rules:
     in production - never fabricated scenarios
 
 ----------------------------------------------------------------
-3.18  RELATED KEYWORDS  [REQUIRED]
+3.18  INTERVIEW DEEP-DIVE  [REQUIRED - CAPSTONE]
+----------------------------------------------------------------
+
+Section header:
+  ### 🎯 Interview Deep-Dive
+
+PURPOSE: This is the CAPSTONE SECTION of every entry -
+positioned last intentionally. By the time the reader
+reaches this section, they have built complete knowledge
+through all preceding sections: understanding, mechanism,
+reference, self-assessment, pitfalls, and failure modes.
+Now they practice articulating that knowledge under
+interview pressure. The reader should walk into any
+interview and own the room on this topic.
+
+DISTINCTION:
+  This section provides REAL interview Q&A with COMPLETE
+  ANSWERS. Not hints, not bullet points - full structured
+  answers that teach the reader how to think through problems
+  and articulate solutions under pressure.
+
+QUESTION REQUIREMENTS:
+  - NO CAP on question count. More is better.
+  - Question count scales with difficulty:
+      easy keywords:  minimum 5 questions
+      medium keywords: minimum 7 questions
+      hard keywords:  minimum 10 questions
+  - Questions MUST cover these categories (at least 5
+    of the 8 categories per keyword):
+    * CONCEPTUAL: "What is X and why does it matter?"
+    * DEBUGGING: "You see symptom Y in production. Walk me
+      through diagnosis."
+    * ARCHITECTURE: "Design a system that uses X to solve
+      problem P."
+    * TRADE-OFF: "When would you choose X over Y? What are
+      the precise conditions?"
+    * PRODUCTION: "Your X is degrading under load. What are
+      the 3 most likely causes?"
+    * HANDS-ON: "Implement/configure X for scenario S."
+    * SYSTEM DESIGN: "How does X interact with Y at scale?"
+    * COMPARISON: "Compare X vs Y vs Z for use case U."
+  - At least one DEBUGGING question per keyword (mandatory)
+  - At least one TRADE-OFF question per keyword (mandatory)
+  - Questions ordered: foundational -> advanced -> expert
+  - Tag each question with difficulty level:
+      [JUNIOR]: foundational understanding
+      [MID]: working knowledge and trade-offs
+      [SENIOR]: production experience, system thinking
+      [STAFF]: cross-system reasoning, novel synthesis
+  - Every question must be realistic - would a senior
+    interviewer actually ask this?
+  - Questions must test working experience, not definitions
+  - Must NOT duplicate questions from other keywords in
+    the same file
+
+ANSWER REQUIREMENTS:
+  - Every question MUST have a COMPLETE, DETAILED answer
+  - Answer structure (adapt as needed):
+
+    **Answer:**
+    [Opening statement - crisp 1-2 sentence thesis that
+     shows you understand the core issue]
+
+    [Detailed explanation with structure:
+     - Break into logical parts
+     - Use numbered steps for processes
+     - Use comparison tables for trade-offs
+     - Include specific examples, metrics, or commands
+     - Reference real tools/frameworks where applicable]
+
+    [Key insight or takeaway that elevates the answer -
+     something that shows depth beyond the obvious]
+
+  - End every answer with:
+    *What separates good from great:* [1 sentence - the
+     specific insight that elevates this answer from
+     competent to impressive]
+  - Answers should have natural LEARNING PROGRESSION:
+    surface -> mechanism -> trade-offs -> production reality
+  - Answers should "low-key impress" - demonstrate depth
+    naturally without showing off
+  - Answers CAN be long - structure and flow matter more
+    than brevity
+  - Include code snippets in answers where applicable
+  - Include diagnostic commands where applicable
+  - Include real metrics/thresholds where applicable
+
+FORMAT:
+
+  **Q1 [JUNIOR]: [Interview question - scenario-based]**
+
+  *Why they ask:* [What the interviewer is evaluating -
+   1 sentence]
+
+  **Answer:**
+  [Complete, structured answer. Can be 200-500 words.
+   Include code, diagrams, metrics as needed.
+   Structure with sub-headers, numbered lists, or tables
+   for clarity. End with a key insight.]
+
+  *What separates good from great:* [1 sentence - the
+   insight that elevates this answer]
+
+  ---
+
+  **Q2 [MID]: [Next question - different category]**
+
+  *Why they ask:* [What skill/depth this probes]
+
+  **Answer:**
+  [Complete answer...]
+
+  *What separates good from great:* [1 sentence]
+
+  [Continue for all questions...]
+
+QUALITY TESTS:
+  - Would a FAANG bar raiser nod at this answer?
+  - Does the answer show hands-on production experience?
+  - Could two candidates with different experience give
+    meaningfully different answers?
+  - Does the answer teach something beyond the question?
+  - Would reading all answers make someone genuinely
+    interview-ready on this topic?
+
+----------------------------------------------------------------
+3.19  RELATED KEYWORDS  [REQUIRED]
 ----------------------------------------------------------------
 
 Section header:
@@ -1063,6 +1118,7 @@ DEPTH CALIBRATION BY DIFFICULTY
     - 3 failure modes minimum
     - 4 misconceptions minimum
     - 5 interview questions minimum
+    - 5 mastery checklist indicators
 
   medium keywords:
     - Level 2-4 emphasis, Level 5 encouraged
@@ -1070,6 +1126,7 @@ DEPTH CALIBRATION BY DIFFICULTY
     - 3 failure modes minimum
     - 5 misconceptions minimum
     - 7 interview questions minimum
+    - 5 mastery checklist indicators
     - Comparison table strongly recommended
 
   hard keywords:
@@ -1078,6 +1135,7 @@ DEPTH CALIBRATION BY DIFFICULTY
     - 4 failure modes minimum
     - 6 misconceptions minimum
     - 10 interview questions minimum
+    - 5 mastery checklist indicators
     - Comparison table required if alternatives exist
 
 ALWAYS INCLUDE:
@@ -1236,6 +1294,7 @@ Where this analogy breaks down: [1 sentence.]
 **ANTI-PATTERN:** [common misuse - 1 sentence]
 **TRADE-OFF:** [gain vs cost - 1 sentence]
 **ONE-LINER:** [memorable metaphor - 1 sentence]
+**KEY NUMBERS:** [2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 1. [Most important insight]
@@ -1247,65 +1306,20 @@ Where this analogy breaks down: [1 sentence.]
 
 ---
 
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [Teach to a junior in 2 min without notes]
+2. **DEBUG:** [Diagnose a specific failure from symptoms]
+3. **DECIDE:** [Choose this vs alternative under pressure]
+4. **BUILD:** [Implement/configure in production context]
+5. **EXTEND:** [Apply principle to a different domain]
+
+---
+
 ### 💡 The Surprising Truth
 [2-4 sentences. One counterintuitive fact. Specific.
  Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: [Conceptual question - foundational]**
-
-*Why they ask:* [What skill this probes]
-
-**Answer:**
-[Complete structured answer. 200-500 words.
- Learning progression: surface -> depth -> insight.]
-
----
-
-**Q2: [Debugging/diagnosis scenario]**
-
-*Why they ask:* [What this evaluates]
-
-**Answer:**
-[Complete answer with diagnostic steps, tools, commands.]
-
----
-
-**Q3: [Architecture/design question]**
-
-*Why they ask:* [What mastery signal this tests]
-
-**Answer:**
-[Complete answer with design rationale, trade-offs.]
-
----
-
-**Q4: [Trade-off decision question]**
-
-*Why they ask:* [What decision-making skill this probes]
-
-**Answer:**
-[Complete answer with decision framework, conditions.]
-
----
-
-**Q5: [Production scenario question]**
-
-*Why they ask:* [What operational depth this tests]
-
-**Answer:**
-[Complete answer with metrics, thresholds, remediation.]
-
----
-
-[Q6-Q10+: Continue based on difficulty scaling.
- easy: 5 min. medium: 7 min. hard: 10 min.
- Cover at least 5 of the 8 question categories.
- Must include at least 1 DEBUGGING + 1 TRADE-OFF.
- Each with complete answer.]
 
 ---
 
@@ -1349,6 +1363,73 @@ Need [condition]? -> Choose [option].
 
 ---
 
+### 🎯 Interview Deep-Dive
+
+**Q1 [JUNIOR]: [Conceptual question - foundational]**
+
+*Why they ask:* [What skill this probes]
+
+**Answer:**
+[Complete structured answer. 200-500 words.
+ Learning progression: surface -> depth -> insight.]
+
+*What separates good from great:* [1 sentence]
+
+---
+
+**Q2 [MID]: [Debugging/diagnosis scenario]**
+
+*Why they ask:* [What this evaluates]
+
+**Answer:**
+[Complete answer with diagnostic steps, tools, commands.]
+
+*What separates good from great:* [1 sentence]
+
+---
+
+**Q3 [SENIOR]: [Architecture/design question]**
+
+*Why they ask:* [What mastery signal this tests]
+
+**Answer:**
+[Complete answer with design rationale, trade-offs.]
+
+*What separates good from great:* [1 sentence]
+
+---
+
+**Q4 [SENIOR]: [Trade-off decision question]**
+
+*Why they ask:* [What decision-making skill this probes]
+
+**Answer:**
+[Complete answer with decision framework, conditions.]
+
+*What separates good from great:* [1 sentence]
+
+---
+
+**Q5 [STAFF]: [Production scenario question]**
+
+*Why they ask:* [What operational depth this tests]
+
+**Answer:**
+[Complete answer with metrics, thresholds, remediation.]
+
+*What separates good from great:* [1 sentence]
+
+---
+
+[Q6-Q10+: Continue based on difficulty scaling.
+ easy: 5 min. medium: 7 min. hard: 10 min.
+ Cover at least 5 of the 8 question categories.
+ Must include at least 1 DEBUGGING + 1 TRADE-OFF.
+ Tag each: [JUNIOR] [MID] [SENIOR] [STAFF].
+ End each answer with "What separates good from great".]
+
+---
+
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
@@ -1377,7 +1458,7 @@ SINGLE FILE (all keywords in a sub-topic file):
       - Keyword 4
       - Keyword 5
 
-  Follow Interview Mastery Prompt v2.0 exactly.
+  Follow Interview Mastery Prompt v3.0 exactly.
   Generate all keywords in sequence within one file.
   Separate keywords with double horizontal rules.
   Each keyword fully self-contained.
@@ -1390,7 +1471,7 @@ BATCH (all files in a topic folder):
     - Topic - Subtopic2.md (keywords: K4, K5, K6)
     - Topic - Subtopic3.md (keywords: K7, K8, K9)
 
-  Follow Interview Mastery Prompt v2.0 exactly.
+  Follow Interview Mastery Prompt v3.0 exactly.
   Generate one file at a time. Each file complete.
 
 NEW TOPIC:
@@ -1401,7 +1482,7 @@ NEW TOPIC:
   3. Create topic folder + index.md
   4. Generate content for each file
 
-  Follow Interview Mastery Prompt v2.0 exactly.
+  Follow Interview Mastery Prompt v3.0 exactly.
 
 ================================================================
 SECTION 8: SELF-VALIDATION CHECKLIST
@@ -1416,7 +1497,7 @@ FRONTMATTER:
   [ ] No emojis in frontmatter
   [ ] No em dashes anywhere
   [ ] File starts at byte 0 with "---"
-  [ ] version: 2 (SPEC_VERSION)
+  [ ] version: 3 (SPEC_VERSION)
 
 STRUCTURE (per keyword):
   [ ] 3.1  Title - H1 with keyword name
@@ -1432,15 +1513,18 @@ STRUCTURE (per keyword):
   [ ] 3.9  How It Works (summarized but complete)
   [ ] 3.10 Complete Picture (normal + failure + scale)
   [ ] 3.11 Code Example (if programmatic, BAD then GOOD)
-  [ ] 3.12 Quick Reference Card (8 fields + 3 things +
-           interview one-liner)
-  [ ] 3.13 Surprising Truth (one fact)
-  [ ] 3.14 Interview Deep-Dive (scaled by difficulty)
+  [ ] 3.12 Quick Reference Card (9 fields incl KEY NUMBERS
+           + 3 things + interview one-liner)
+  [ ] 3.13 Mastery Checklist (5 indicators: EXPLAIN/DEBUG/
+           DECIDE/BUILD/EXTEND)
+  [ ] 3.14 Surprising Truth (one fact)
   [ ] 3.15 Comparison Table (if 2+ alternatives exist)
   [ ] 3.16 Common Misconceptions (min 4 rows)
   [ ] 3.17 Failure Modes and Diagnosis (min 3 modes
            with real diagnostic commands)
-  [ ] 3.18 Related Keywords (3 categories)
+  [ ] 3.18 Interview Deep-Dive (capstone, scaled by
+           difficulty, with difficulty tags)
+  [ ] 3.19 Related Keywords (3 categories)
 
 INTERVIEW DEEP-DIVE QUALITY:
   [ ] Question count meets difficulty minimum
@@ -1448,13 +1532,27 @@ INTERVIEW DEEP-DIVE QUALITY:
   [ ] At least 5 of 8 question categories covered
   [ ] At least 1 DEBUGGING question present
   [ ] At least 1 TRADE-OFF question present
+  [ ] Every question tagged with difficulty level
+       ([JUNIOR] [MID] [SENIOR] [STAFF])
   [ ] Every question has a COMPLETE answer (not bullets)
+  [ ] Every answer ends with "What separates good from
+       great" insight line
   [ ] Answers show learning progression
   [ ] Answers include code/commands/metrics where relevant
   [ ] Answers would impress a senior interviewer
   [ ] No duplicate questions across keywords in same file
 
-NEW IN v2.0 - ADDITIONAL CHECKS:
+NEW IN v3.0 - ADDITIONAL CHECKS:
+  [ ] Mastery Checklist: 5 indicators in EXPLAIN/DEBUG/
+       DECIDE/BUILD/EXTEND order, each concept-specific
+  [ ] Quick Reference Card: KEY NUMBERS field present
+       with 2-3 real thresholds/defaults
+  [ ] Interview Deep-Dive positioned as capstone (after
+       Failure Modes, before Related Keywords)
+  [ ] Each interview question tagged [JUNIOR]/[MID]/
+       [SENIOR]/[STAFF]
+  [ ] Each answer ends with "What separates good from
+       great" insight line
   [ ] Common Misconceptions: min 4 rows, ordered by danger
   [ ] Failure Modes: min 3 modes with real commands
   [ ] Failure Modes: security mode present if attack
@@ -1511,6 +1609,20 @@ A file is v2.0 (version: 2) if it ALSO has:
     (easy: 5, medium: 7, hard: 10)
   - AVOID WHEN + ANTI-PATTERN in Quick Reference Card
 
-Set version: 2 only after ALL v2.0 markers are present.
+A file is v3.0 (version: 3) if it ALSO has:
+  - Mastery Checklist section with 5 indicators
+    (EXPLAIN/DEBUG/DECIDE/BUILD/EXTEND)
+  - KEY NUMBERS field in Quick Reference Card
+  - Interview Deep-Dive in capstone position (after
+    Failure Modes, before Related Keywords)
+  - Difficulty tags on each interview question
+    ([JUNIOR] [MID] [SENIOR] [STAFF])
+  - "What separates good from great" line after each
+    interview answer
+  - Section order: Quick Ref -> Mastery Checklist ->
+    Surprising Truth -> Comparison -> Misconceptions ->
+    Failure Modes -> Interview Deep-Dive -> Related
+
+Set version: 3 only after ALL v3.0 markers are present.
 
 ````

@@ -13,7 +13,7 @@ keywords:
   - Spring WebFlux
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -25,7 +25,6 @@ version: 2
 # Spring AOP
 
 **TL;DR** - Spring AOP provides aspect-oriented programming through proxy-based interception, enabling cross-cutting concerns like logging, security, and transactions to be separated from business logic.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -35,7 +34,6 @@ Every service method has the same boilerplate: start transaction, check authoriz
 
 **THE BREAKING POINT:**
 Transaction management, security checks, logging, metrics, and caching all wrap business logic. Without AOP, these concerns tangle with the core code, making methods 80% infrastructure and 20% business logic.
-
 ---
 
 ### ⚙️ How It Works
@@ -73,13 +71,11 @@ public void transferMoney(Account a, Account b) {
 | **Advice**     | Action taken at a join point                 | `@Before`, `@After`, `@Around`         |
 | **Pointcut**   | Expression selecting join points             | `execution(* com.app.service.*.*(..))` |
 | **Weaving**    | Linking aspects with target objects          | At runtime (Spring uses proxies)       |
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -92,7 +88,6 @@ public void transferMoney(Account a, Account b) {
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### First Principles
@@ -107,7 +102,6 @@ public void transferMoney(Account a, Account b) {
 
 - **Essential:** Separation of cross-cutting concerns from business logic
 - **Accidental:** JDK dynamic proxy vs CGLIB proxy (implementation detail, not concept)
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -119,7 +113,6 @@ public void transferMoney(Account a, Account b) {
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -131,7 +124,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **Level 3 - Mid-level:** Spring uses JDK dynamic proxies for interfaces and CGLIB for concrete classes. Because it's proxy-based: (1) self-invocation bypasses the proxy (calling `this.method()` inside the same class skips AOP), (2) only public methods can be advised, (3) final classes/methods can't be proxied by CGLIB.
 
 **Level 4 - Senior+:** The proxy limitation is the most important thing to understand. When a `@Transactional` method calls another `@Transactional` method in the same class, the inner method's transaction annotation is ignored because the call doesn't go through the proxy. Solutions: extract to a separate bean, use `AopContext.currentProxy()`, or use AspectJ compile-time weaving for full AOP without proxy limitations.
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -145,7 +137,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -209,7 +200,6 @@ public class OrderService {
     }
 }
 ```
-
 ---
 
 ### The Self-Invocation Trap (Most Asked Interview Question)
@@ -256,7 +246,6 @@ public class EmailService {
     }
 }
 ```
-
 ---
 
 ### Advice Types
@@ -268,7 +257,6 @@ public class EmailService {
 | After Throwing  | `@AfterThrowing`  | After exception         | Error alerting         |
 | After (Finally) | `@After`          | Always after method     | Cleanup                |
 | Around          | `@Around`         | Wraps entire method     | Timing, caching, tx    |
-
 ---
 
 ### Pointcut Expression Syntax
@@ -287,7 +275,6 @@ public class EmailService {
 @Pointcut("execution(* com.app.service.*.*(..)) "
     + "&& !execution(* *.get*(..))")
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -300,6 +287,7 @@ public class EmailService {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -309,7 +297,68 @@ public class EmailService {
 
 **Interview one-liner:**
 "Spring AOP uses proxy-based interception to separate cross-cutting concerns from business logic - the critical limitation is self-invocation bypasses the proxy, which is why @Transactional on a method called by another method in the same class is silently ignored."
+---
 
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
+
+### 💡 The Surprising Truth
+
+Spring's `@Transactional` is the most widely used AOP feature, yet most developers don't realize it's AOP at all. When you see `@Transactional` silently failing, the root cause is almost always the self-invocation trap - and it's one of the top 5 most common Spring bugs in production, often going undetected for months because the code appears to work (it just doesn't have transaction boundaries where you expect them).
+---
+
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Spring AOP. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -368,64 +417,6 @@ _Why they ask:_ Tests debugging skills with AOP-related caching issues.
 
 **Answer:**
 Most likely self-invocation. If the method with `@Cacheable` is called from within the same class, the cache proxy is bypassed and the method always executes. Check: (1) Is the caller in the same class? Extract to a separate service bean. (2) Is the cache key correct? Duplicate keys return wrong cached values. (3) Is the cache manager configured? Missing `@EnableCaching` means all cache annotations are silently ignored. (4) Is the return type serializable? Some cache implementations require serializable values. (5) Is cache eviction happening in the right cache name/key?
-
----
-
-### 💡 The Surprising Truth
-
-Spring's `@Transactional` is the most widely used AOP feature, yet most developers don't realize it's AOP at all. When you see `@Transactional` silently failing, the root cause is almost always the self-invocation trap - and it's one of the top 5 most common Spring bugs in production, often going undetected for months because the code appears to work (it just doesn't have transaction boundaries where you expect them).
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Spring AOP. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -450,13 +441,11 @@ Spring's `@Transactional` is the most widely used AOP feature, yet most develope
 # Spring Testing
 
 **TL;DR** - Spring provides a layered testing framework with annotations like `@SpringBootTest`, `@WebMvcTest`, `@DataJpaTest`, and `@MockBean` that load only the context slices needed for each test type.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Testing a Spring application without the framework's support means manually constructing beans, wiring dependencies, setting up embedded databases, and configuring mock servers. A simple controller test would require bootstrapping the entire application context.
-
 ---
 
 ### Testing Pyramid in Spring
@@ -472,7 +461,6 @@ Testing a Spring application without the framework's support means manually cons
      /  Mockito + JUnit 5    \ Plain POJOs
     /__________________________\
 ```
-
 ---
 
 ### Test Slice Annotations
@@ -485,13 +473,11 @@ Testing a Spring application without the framework's support means manually cons
 | `@WebFluxTest`    | WebFlux controllers          | Reactive controller tests |
 | `@JsonTest`       | Jackson ObjectMapper         | JSON serialization tests  |
 | `@RestClientTest` | RestTemplate/WebClient       | HTTP client tests         |
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -504,7 +490,6 @@ Testing a Spring application without the framework's support means manually cons
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -524,7 +509,6 @@ Testing a Spring application without the framework's support means manually cons
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -536,7 +520,6 @@ Testing a Spring application without the framework's support means manually cons
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -555,14 +538,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -576,7 +557,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -654,7 +634,6 @@ class OrderIntegrationTest {
     }
 }
 ```
-
 ---
 
 ### @MockBean vs @Mock
@@ -678,7 +657,6 @@ class ControllerTest {
 ```
 
 **Key difference:** `@MockBean` pollutes the application context cache. Each unique combination of `@MockBean` creates a new context, slowing down your test suite. Prefer `@Mock` with unit tests where possible.
-
 ---
 
 ### TestContainers (Real Database Testing)
@@ -709,7 +687,6 @@ class OrderRepositoryIT {
     }
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -722,6 +699,7 @@ class OrderRepositoryIT {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -731,51 +709,26 @@ class OrderRepositoryIT {
 
 **Interview one-liner:**
 "I follow the testing pyramid: unit tests with Mockito for business logic, @WebMvcTest for controllers with MockMvc, @DataJpaTest with H2 for repository queries, and @SpringBootTest with TestContainers for integration - preferring test slices over full context loading for speed."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your test suite takes 15 minutes to run. How do you speed it up?**
-
-_Why they ask:_ Tests production testing experience, not just annotation knowledge.
-
-**Answer:**
-
-1. **Audit `@SpringBootTest` usage.** Replace with test slices (`@WebMvcTest`, `@DataJpaTest`) where full context isn't needed. Each slice loads only relevant beans.
-
-2. **Reduce context cache pollution.** Every unique `@MockBean` combination creates a new cached context. Consolidate mocking patterns: create a `@TestConfiguration` with common mocks instead of per-test `@MockBean`.
-
-3. **Move to unit tests.** If a test only validates business logic, it doesn't need Spring at all. Use `@Mock` + `@InjectMocks` with Mockito. These run in milliseconds.
-
-4. **Parallelize.** Add `spring.test.constructor.autowire.mode=all` and enable JUnit 5 parallel execution. Ensure tests don't share state.
-
-5. **Use `@DirtiesContext` sparingly.** It forces context reload. Instead, clean up test data explicitly with `@Sql` or `@Transactional` (auto-rollback).
-
-6. **Share TestContainers.** Use `@Container` with `static` to share a single container across all tests in a class, or use Singleton containers across the suite.
-
-**Q2: What's the difference between `@Transactional` on a test method vs in production code?**
-
-_Why they ask:_ Tests understanding of test transaction behavior.
-
-**Answer:**
-In production, `@Transactional` commits on success and rolls back on exception. In tests, `@Transactional` **always rolls back** by default, regardless of success. This auto-cleanup ensures test isolation - each test starts with a clean database. If you need a test to actually commit (rare), use `@Commit` or `@Rollback(false)`.
-
-Caveat: `@Transactional` test rollback only works with a single datasource and embedded transactions. If your code spawns a new thread, calls an external service, or uses `REQUIRES_NEW` propagation, those side effects won't roll back.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Spring Testing. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -786,7 +739,6 @@ Caveat: `@Transactional` test rollback only works with a single datasource and e
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -820,7 +772,36 @@ Caveat: `@Transactional` test rollback only works with a single datasource and e
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your test suite takes 15 minutes to run. How do you speed it up?**
+
+_Why they ask:_ Tests production testing experience, not just annotation knowledge.
+
+**Answer:**
+
+1. **Audit `@SpringBootTest` usage.** Replace with test slices (`@WebMvcTest`, `@DataJpaTest`) where full context isn't needed. Each slice loads only relevant beans.
+
+2. **Reduce context cache pollution.** Every unique `@MockBean` combination creates a new cached context. Consolidate mocking patterns: create a `@TestConfiguration` with common mocks instead of per-test `@MockBean`.
+
+3. **Move to unit tests.** If a test only validates business logic, it doesn't need Spring at all. Use `@Mock` + `@InjectMocks` with Mockito. These run in milliseconds.
+
+4. **Parallelize.** Add `spring.test.constructor.autowire.mode=all` and enable JUnit 5 parallel execution. Ensure tests don't share state.
+
+5. **Use `@DirtiesContext` sparingly.** It forces context reload. Instead, clean up test data explicitly with `@Sql` or `@Transactional` (auto-rollback).
+
+6. **Share TestContainers.** Use `@Container` with `static` to share a single container across all tests in a class, or use Singleton containers across the suite.
+
+**Q2: What's the difference between `@Transactional` on a test method vs in production code?**
+
+_Why they ask:_ Tests understanding of test transaction behavior.
+
+**Answer:**
+In production, `@Transactional` commits on success and rolls back on exception. In tests, `@Transactional` **always rolls back** by default, regardless of success. This auto-cleanup ensures test isolation - each test starts with a clean database. If you need a test to actually commit (rare), use `@Commit` or `@Rollback(false)`.
+
+Caveat: `@Transactional` test rollback only works with a single datasource and embedded transactions. If your code spawns a new thread, calls an external service, or uses `REQUIRES_NEW` propagation, those side effects won't roll back.
 ---
 
 ### 🔗 Related Keywords
@@ -845,7 +826,6 @@ Caveat: `@Transactional` test rollback only works with a single datasource and e
 # Spring WebFlux
 
 **TL;DR** - Spring WebFlux is Spring's reactive web framework built on Project Reactor, using non-blocking I/O to handle high-concurrency workloads with fewer threads than the traditional servlet model.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -853,7 +833,6 @@ Caveat: `@Transactional` test rollback only works with a single datasource and e
 A traditional Spring MVC application uses one thread per request. With 500 concurrent requests, you need 500 threads. Each thread consumes ~1MB of stack memory. At 10,000 concurrent connections (chat apps, IoT, SSE streams), you run out of threads or memory.
 
 WebFlux uses an event-loop model (like Node.js) with a small fixed thread pool (typically CPU cores x 2), handling thousands of concurrent connections without thread-per-request overhead.
-
 ---
 
 ### MVC vs WebFlux
@@ -881,13 +860,11 @@ SPRING WEBFLUX (event-loop):
 | JDBC           | Supported            | Use R2DBC instead           |
 | Debugging      | Stack traces         | Harder (async)              |
 | Best for       | CRUD APIs, form apps | High-concurrency, streaming |
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -900,7 +877,6 @@ SPRING WEBFLUX (event-loop):
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -920,7 +896,6 @@ SPRING WEBFLUX (event-loop):
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -932,7 +907,6 @@ SPRING WEBFLUX (event-loop):
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -951,14 +925,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -972,7 +944,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1004,7 +975,6 @@ public Flux<ServerSentEvent<String>> streamEvents() {
             .build());
 }
 ```
-
 ---
 
 ### When NOT to Use WebFlux
@@ -1013,7 +983,6 @@ public Flux<ServerSentEvent<String>> streamEvents() {
 2. **Simple CRUD APIs:** WebFlux adds complexity for no benefit at < 1000 concurrent connections.
 3. **Team isn't ready:** Reactive programming has a steep learning curve. Debugging reactive chains is significantly harder.
 4. **Blocking libraries:** If any library in your stack blocks (e.g., synchronous HTTP client, JDBC), it blocks the event loop thread and kills performance for all requests.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1026,6 +995,7 @@ public Flux<ServerSentEvent<String>> streamEvents() {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1035,14 +1005,69 @@ public Flux<ServerSentEvent<String>> streamEvents() {
 
 **Interview one-liner:**
 "Spring WebFlux uses Project Reactor's non-blocking event-loop model to handle thousands of concurrent connections with a small thread pool - I recommend it for streaming/SSE workloads, but for typical CRUD APIs with JDBC, MVC with virtual threads is simpler and equally performant."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Spring WebFlux. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1089,58 +1114,6 @@ public Flux<ServerSentEvent<String>> streamEvents() {
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Spring WebFlux. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1156,4 +1129,3 @@ public Flux<ServerSentEvent<String>> streamEvents() {
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

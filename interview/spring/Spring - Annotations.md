@@ -15,7 +15,7 @@ keywords:
   - Profile
 difficulty_range: easy to medium
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -29,20 +29,17 @@ version: 2
 # Component and Stereotype Annotations
 
 **TL;DR** - `@Component`, `@Service`, `@Repository`, and `@Controller` are stereotype annotations that mark classes for auto-detection by component scanning, with `@Repository` and `@Controller` adding specific behavior (exception translation, request handling).
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every bean must be manually declared in XML or `@Configuration` classes. Adding a new service class requires editing a config file. Developers forget to register beans and get confusing `NoSuchBeanDefinitionException` at runtime.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -55,7 +52,6 @@ Every bean must be manually declared in XML or `@Configuration` classes. Adding 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -75,7 +71,6 @@ Every bean must be manually declared in XML or `@Configuration` classes. Adding 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -87,7 +82,6 @@ Every bean must be manually declared in XML or `@Configuration` classes. Adding 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -173,14 +167,12 @@ public class ReportService { }
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -194,7 +186,6 @@ public class ReportService { }
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -207,55 +198,33 @@ public class ReportService { }
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. All stereotypes are @Component - they're auto-detected by scanning
 2. Only @Repository adds behavior (exception translation)
 3. Component scan starts from @SpringBootApplication's package downward
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: When would you use @Component vs @Service?**
-
-_Why they ask:_ Tests understanding of layered architecture.
-
-_Strong answer:_
-
-Use `@Service` for business logic classes (service layer). Use `@Component` for:
-
-- Infrastructure beans (converters, validators, formatters)
-- Classes that don't fit a specific layer
-- Custom cross-cutting utilities
-
-Functionally identical at runtime. The distinction is semantic - it communicates intent and aids code navigation. Teams should enforce consistent usage through code reviews or ArchUnit rules:
-
-```java
-// ArchUnit test:
-@Test
-void servicesShouldBeInServicePackage() {
-    classes()
-        .that().areAnnotatedWith(Service.class)
-        .should().resideInAPackage("..service..")
-        .check(importedClasses);
-}
-```
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Component and Stereotype Annotations. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -266,7 +235,6 @@ void servicesShouldBeInServicePackage() {
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -300,7 +268,34 @@ void servicesShouldBeInServicePackage() {
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: When would you use @Component vs @Service?**
+
+_Why they ask:_ Tests understanding of layered architecture.
+
+_Strong answer:_
+
+Use `@Service` for business logic classes (service layer). Use `@Component` for:
+
+- Infrastructure beans (converters, validators, formatters)
+- Classes that don't fit a specific layer
+- Custom cross-cutting utilities
+
+Functionally identical at runtime. The distinction is semantic - it communicates intent and aids code navigation. Teams should enforce consistent usage through code reviews or ArchUnit rules:
+
+```java
+// ArchUnit test:
+@Test
+void servicesShouldBeInServicePackage() {
+    classes()
+        .that().areAnnotatedWith(Service.class)
+        .should().resideInAPackage("..service..")
+        .check(importedClasses);
+}
+```
 ---
 
 ### 🔗 Related Keywords
@@ -325,20 +320,17 @@ void servicesShouldBeInServicePackage() {
 # Autowired and Injection
 
 **TL;DR** - `@Autowired` tells Spring to inject a dependency. Constructor injection (preferred) makes dependencies explicit, immutable, and testable. Field injection is convenient but hides dependencies and complicates testing.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Classes create their own dependencies with `new`. Testing requires modifying production code. Changing an implementation requires touching every class that uses it.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -351,7 +343,6 @@ Classes create their own dependencies with `new`. Testing requires modifying pro
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -371,7 +362,6 @@ Classes create their own dependencies with `new`. Testing requires modifying pro
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -383,7 +373,6 @@ Classes create their own dependencies with `new`. Testing requires modifying pro
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -485,14 +474,12 @@ class ReportService {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -506,7 +493,6 @@ class ReportService {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -519,44 +505,33 @@ class ReportService {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. Constructor injection > setter > field (immutable, testable, fail-fast)
 2. `@Qualifier` or `@Primary` resolves ambiguity with multiple beans
 3. Single constructor doesn't need `@Autowired` (auto-detected since 4.3)
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Why is field injection considered an anti-pattern?**
-
-_Why they ask:_ Tests engineering principles understanding.
-
-_Strong answer:_
-
-1. **Hidden dependencies:** Can't see what a class needs without reading internals
-2. **Untestable without Spring:** Must use reflection or start full context to inject mocks
-3. **No immutability:** Can't make fields `final`
-4. **Allows too many dependencies:** No constructor parameter count to signal "this class does too much"
-5. **Circular dependency hiding:** Field injection allows Spring to create circular deps silently
-
-Real impact: A class with field-injected 10 dependencies looks clean but violates SRP. With constructor injection, the 10-parameter constructor is an immediate code smell.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Autowired and Injection. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -567,7 +542,6 @@ Real impact: A class with field-injected 10 dependencies looks clean but violate
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -601,7 +575,23 @@ Real impact: A class with field-injected 10 dependencies looks clean but violate
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Why is field injection considered an anti-pattern?**
+
+_Why they ask:_ Tests engineering principles understanding.
+
+_Strong answer:_
+
+1. **Hidden dependencies:** Can't see what a class needs without reading internals
+2. **Untestable without Spring:** Must use reflection or start full context to inject mocks
+3. **No immutability:** Can't make fields `final`
+4. **Allows too many dependencies:** No constructor parameter count to signal "this class does too much"
+5. **Circular dependency hiding:** Field injection allows Spring to create circular deps silently
+
+Real impact: A class with field-injected 10 dependencies looks clean but violates SRP. With constructor injection, the 10-parameter constructor is an immediate code smell.
 ---
 
 ### 🔗 Related Keywords
@@ -626,20 +616,17 @@ Real impact: A class with field-injected 10 dependencies looks clean but violate
 # Configuration and Bean
 
 **TL;DR** - `@Configuration` classes are special `@Component` classes that use `@Bean` methods to define beans programmatically, with CGLIB proxying ensuring that inter-method calls return the same singleton instance (full mode).
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Some beans require complex initialization logic, third-party library classes can't be annotated with `@Component`, and conditional bean creation requires programmatic control that annotations alone can't provide.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -652,7 +639,6 @@ Some beans require complex initialization logic, third-party library classes can
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -672,7 +658,6 @@ Some beans require complex initialization logic, third-party library classes can
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -684,7 +669,6 @@ Some beans require complex initialization logic, third-party library classes can
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -775,14 +759,12 @@ This is faster (no proxy class generation) and GraalVM native-image friendly. Ru
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -796,7 +778,6 @@ This is faster (no proxy class generation) and GraalVM native-image friendly. Ru
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -809,56 +790,33 @@ This is faster (no proxy class generation) and GraalVM native-image friendly. Ru
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. `@Configuration` = CGLIB proxy ensuring @Bean method calls return singletons
 2. Use `@Bean` for third-party classes you can't annotate
 3. `proxyBeanMethods=false` for performance (Spring Boot's default in auto-configs)
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: What's the difference between @Configuration and @Component with @Bean methods?**
-
-_Why they ask:_ Tests understanding of Spring internals.
-
-_Strong answer:_
-
-`@Configuration` (full mode): Spring creates a CGLIB subclass proxy. When one @Bean method calls another @Bean method, the proxy intercepts and returns the existing singleton from the container - not a new instance.
-
-`@Component` (lite mode): No proxy. @Bean methods are plain Java methods. Calling one @Bean method from another creates a new instance each time - breaking singleton semantics.
-
-```java
-@Configuration
-class Full {
-    @Bean A a() { return new A(); }
-    @Bean B b() { return new B(a()); }
-    // a() returns same instance both times
-}
-
-@Component
-class Lite {
-    @Bean A a() { return new A(); }
-    @Bean B b() { return new B(a()); }
-    // a() creates NEW A each time - 2 instances!
-}
-```
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Configuration and Bean. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -869,7 +827,6 @@ class Lite {
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -903,7 +860,35 @@ class Lite {
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: What's the difference between @Configuration and @Component with @Bean methods?**
+
+_Why they ask:_ Tests understanding of Spring internals.
+
+_Strong answer:_
+
+`@Configuration` (full mode): Spring creates a CGLIB subclass proxy. When one @Bean method calls another @Bean method, the proxy intercepts and returns the existing singleton from the container - not a new instance.
+
+`@Component` (lite mode): No proxy. @Bean methods are plain Java methods. Calling one @Bean method from another creates a new instance each time - breaking singleton semantics.
+
+```java
+@Configuration
+class Full {
+    @Bean A a() { return new A(); }
+    @Bean B b() { return new B(a()); }
+    // a() returns same instance both times
+}
+
+@Component
+class Lite {
+    @Bean A a() { return new A(); }
+    @Bean B b() { return new B(a()); }
+    // a() creates NEW A each time - 2 instances!
+}
+```
 ---
 
 ### 🔗 Related Keywords
@@ -928,20 +913,17 @@ class Lite {
 # Conditional Annotations
 
 **TL;DR** - `@Conditional` annotations enable beans to be created only when specific conditions are met (class on classpath, property set, bean missing), powering Spring Boot's auto-configuration magic.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 A library must work across different environments. Without conditionals, you'd need separate JARs or profiles for every possible configuration. Auto-configuration would be impossible.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -954,7 +936,6 @@ A library must work across different environments. Without conditionals, you'd n
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -974,7 +955,6 @@ A library must work across different environments. Without conditionals, you'd n
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -986,7 +966,6 @@ A library must work across different environments. Without conditionals, you'd n
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1090,14 +1069,12 @@ debug=true
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1111,7 +1088,6 @@ debug=true
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1124,20 +1100,76 @@ debug=true
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. `@ConditionalOnMissingBean` = "back off if user defines their own"
 2. `@ConditionalOnClass` = "only if this library is a dependency"
 3. `debug=true` shows which auto-configs matched and why
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Conditional Annotations. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1180,58 +1212,6 @@ Key principles:
 2. Use `@ConfigurationProperties` for type-safe config
 3. Use `@ConditionalOnClass` to avoid classpath issues
 4. Test with `ApplicationContextRunner`
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Conditional Annotations. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1256,20 +1236,17 @@ Key principles:
 # Profile
 
 **TL;DR** - `@Profile` activates beans or configuration classes only in specific environments (dev, test, prod), enabling environment-specific behavior without code changes.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 if-else chains checking environment variables at runtime. Accidentally connecting to production database during development. Test configurations leaking into production builds.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1282,7 +1259,6 @@ if-else chains checking environment variables at runtime. Accidentally connectin
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1302,7 +1278,6 @@ if-else chains checking environment variables at runtime. Accidentally connectin
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1314,7 +1289,6 @@ if-else chains checking environment variables at runtime. Accidentally connectin
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1406,14 +1380,12 @@ class OrderServiceTest {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1427,7 +1399,6 @@ class OrderServiceTest {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1440,20 +1411,76 @@ class OrderServiceTest {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
 1. `@Profile("dev")` = bean only exists when dev profile active
 2. `application-{profile}.yml` loaded on top of `application.yml`
 3. Profile groups combine multiple profiles under one name
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Profile. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1500,58 +1527,6 @@ class OrderServiceTest {
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Profile. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1567,4 +1542,3 @@ class OrderServiceTest {
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

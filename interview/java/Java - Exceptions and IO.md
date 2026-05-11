@@ -15,7 +15,7 @@ keywords:
   - NIO and NIO.2
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -29,7 +29,6 @@ version: 2
 # Exception Hierarchy
 
 **TL;DR** - Java's exception hierarchy splits into checked (compiler-enforced) and unchecked (runtime) exceptions rooted at Throwable, and knowing which to throw and catch prevents both swallowed errors and cluttered APIs.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -45,13 +44,11 @@ A payment system returns 0 for "no balance" and 0 for "account not found." The c
 
 **EVOLUTION:**
 C used error codes and `errno`. C++ introduced exceptions but without a forced hierarchy. Java (1.0) created a mandatory hierarchy rooted at `Throwable` with the checked/unchecked distinction, forcing compile-time awareness of recoverable errors. Kotlin, Scala, and modern Java frameworks have since moved away from checked exceptions, favoring unchecked exceptions with sealed hierarchies.
-
 ---
 
 ### 📘 Textbook Definition
 
 Java's exception hierarchy is a class tree rooted at `Throwable`. `Error` (subclass of Throwable) represents unrecoverable JVM-level failures (e.g., `OutOfMemoryError`). `Exception` (subclass of Throwable) represents recoverable conditions. `RuntimeException` (subclass of Exception) and its subclasses are unchecked - not enforced by the compiler. All other Exception subclasses are checked - the compiler requires they be caught or declared in the method signature.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -65,7 +62,6 @@ Java forces you to handle predictable failures at compile time and lets runtime 
 
 **One insight:**
 The checked/unchecked split answers one question: "Can the caller reasonably recover from this?" If yes (file not found, network timeout), make it checked - force the caller to have a plan. If no (null pointer, array out of bounds), make it unchecked - it's a bug, not a condition.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -87,7 +83,6 @@ The compiler enforcement of checked exceptions creates a contract: the method si
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Distinguishing "expected failures" from "bugs" is inherently necessary in any robust system.
 **Accidental:** Java's checked exception mechanism forces handling at every call site, even when the only reasonable action is to propagate. This leads to anti-patterns like swallowing exceptions.
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -100,7 +95,6 @@ The compiler enforcement of checked exceptions creates a contract: the method si
 - "Tripping on shoelaces" -> RuntimeException (NullPointerException)
 
 Where this analogy breaks down: In real buildings, you can't prevent structural collapse at compile time.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -125,7 +119,6 @@ Java's exception hierarchy embodies a universal error classification pattern fou
 - "Is this recoverable or a bug?" - recoverable = checked, bug = RuntimeException, system = Error
 - "How deep is this stack?" - deep stacks make exception creation expensive (100+ frames = microseconds)
 - "Should I catch or propagate?" - catch only if you can add value; otherwise let it bubble
-
 ---
 
 ### ⚙️ How It Works
@@ -152,7 +145,6 @@ Exception Hierarchy:
           +-- ClassCastException
           +-- UnsupportedOperationException
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -183,7 +175,6 @@ Exception thrown, no matching catch
 
 **WHAT CHANGES AT SCALE:**
 In high-throughput systems (100K+ requests/sec), exception-driven flow control becomes a performance problem. Each exception captures a full stack trace - at 50+ frames deep in a Spring/microservice stack, this takes microseconds. At scale, use error codes or `Optional` for expected failures and reserve exceptions for truly exceptional conditions.
-
 ---
 
 ### 💻 Code Example
@@ -256,7 +247,6 @@ public class InsufficientStockException
 
 **How to test / verify correctness:**
 Use `assertThrows()` in JUnit to verify the correct exception type is thrown, check the message and cause chain, and ensure no exceptions are silently swallowed by checking log output.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -269,6 +259,7 @@ Use `assertThrows()` in JUnit to verify the correct exception type is thrown, ch
 **ANTI-PATTERN:** `catch (Exception e) { /* ignore */ }` - swallowing exceptions hides bugs permanently
 **TRADE-OFF:** Type-safe error handling vs class proliferation and hierarchy complexity
 **ONE-LINER:** "Error = JVM dying, RuntimeException = your bug, checked Exception = expected failure"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -278,13 +269,117 @@ Use `assertThrows()` in JUnit to verify the correct exception type is thrown, ch
 
 **Interview one-liner:**
 "Java's exception hierarchy splits at RuntimeException: checked exceptions force compile-time awareness of recoverable failures like I/O errors, while unchecked exceptions represent programming bugs that should be fixed, not caught. I design custom hierarchies as unchecked with domain context."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Creating an exception is 50-100x more expensive than a normal object because `fillInStackTrace()` must walk the entire thread call stack and create StackTraceElement objects for each frame. In a deep Spring Boot stack (60+ frames), this takes 5-10 microseconds per exception. Libraries like Netty override `fillInStackTrace()` to skip this for flow-control exceptions like `ChannelClosedException`, improving throughput by up to 30% in connection-heavy workloads.
+---
 
+### ⚖️ Comparison Table
+
+| Aspect | Checked Exception | RuntimeException | Error |
+|--------|------------------|-----------------|------|
+| Extends | Exception | RuntimeException | Error |
+| Compiler enforced | Yes (must catch/declare) | No | No |
+| Recoverable | Usually yes | Usually no (bug) | No (JVM) |
+| Example | IOException, SQLException | NullPointerException | OutOfMemoryError |
+| When to use | External failures (IO, network) | Programming errors | Never throw manually |
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | Errors should be caught and handled | Errors (OutOfMemoryError, StackOverflowError) indicate JVM-level failures. Catching them is almost never correct - the JVM may be in an inconsistent state. |
+| 2 | RuntimeException means 'runtime only' | All exceptions occur at runtime. 'Runtime' means 'unchecked by the compiler.' The name is about compiler behavior, not when the exception happens. |
+| 3 | Custom exceptions should always extend Exception | Extend RuntimeException for programming errors and validation failures. Extend Exception (checked) only for recoverable failures at system boundaries. |
+| 4 | More exception types means better error handling | Excessive exception hierarchy creates catch-block proliferation. One custom exception per module boundary with error codes is often cleaner. |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Catching Exception swallows everything**
+**Symptom:** Bugs silently disappear. Application produces wrong results with no errors logged.
+**Root Cause:** `catch (Exception e) {}` or `catch (Exception e) { log.error(...) }` catches both business exceptions and programming bugs (NPE, ClassCast).
+**Diagnostic:**
+
+```
+grep -rn 'catch.*Exception' src/ | grep -v 'IOException\|SQLException'
+# Find overly broad catch blocks
+```
+
+**Fix:**
+```java
+// BAD: catches everything
+try { process(data); }
+catch (Exception e) { log.error("Failed", e); }
+
+// GOOD: catch specific exceptions
+try { process(data); }
+catch (IOException e) { return fallback(); }
+// Let NPE, ClassCastException propagate
+```
+**Prevention:** Catch the most specific exception type. Never catch Exception in business logic.
+
+**Failure Mode 2: Lost exception cause chain**
+**Symptom:** Log shows "Processing failed" but no root cause or stack trace of the original error.
+**Root Cause:** Rethrowing a new exception without setting the original as the cause.
+**Diagnostic:**
+
+```
+grep -rn 'throw new.*Exception(' src/ | grep -v 'cause\|, e)'
+# Find throw-new without cause parameter
+```
+
+**Fix:**
+```java
+// BAD: loses original cause
+catch (SQLException e) {
+    throw new ServiceException("DB failed");
+}
+
+// GOOD: chain the cause
+catch (SQLException e) {
+    throw new ServiceException("DB failed", e);
+}
+```
+**Prevention:** Always pass the original exception as the cause parameter when wrapping.
+
+**Failure Mode 3: Stack trace cost in hot path**
+**Symptom:** Exception-heavy code path shows `Throwable.fillInStackTrace()` dominating CPU profiler.
+**Root Cause:** Every `new Exception()` walks the entire call stack to capture the trace. In hot paths with deep stacks, this costs microseconds per exception.
+**Diagnostic:**
+
+```
+asprof -e cpu -d 30 -f cpu.html <pid>
+# Look for fillInStackTrace in hot methods
+```
+
+**Fix:**
+```java
+// BAD: exception for control flow
+if (!valid) throw new ValidationException(msg);
+
+// GOOD: use return values for expected cases
+ValidationResult result = validate(input);
+if (!result.isValid()) return error(result);
+
+// Or: pre-allocated exception (rare cases only)
+static final MyException INSTANCE = new MyException();
+@Override
+public Throwable fillInStackTrace() { return this; }
+```
+**Prevention:** Never use exceptions for control flow. Reserve exceptions for truly exceptional conditions.
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -517,107 +612,6 @@ try {
    ```
 
 Multi-catch reduces code duplication when the handling logic is identical for different exception types.
-
----
-
-### ⚖️ Comparison Table
-
-| Aspect | Checked Exception | RuntimeException | Error |
-|--------|------------------|-----------------|------|
-| Extends | Exception | RuntimeException | Error |
-| Compiler enforced | Yes (must catch/declare) | No | No |
-| Recoverable | Usually yes | Usually no (bug) | No (JVM) |
-| Example | IOException, SQLException | NullPointerException | OutOfMemoryError |
-| When to use | External failures (IO, network) | Programming errors | Never throw manually |
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | Errors should be caught and handled | Errors (OutOfMemoryError, StackOverflowError) indicate JVM-level failures. Catching them is almost never correct - the JVM may be in an inconsistent state. |
-| 2 | RuntimeException means 'runtime only' | All exceptions occur at runtime. 'Runtime' means 'unchecked by the compiler.' The name is about compiler behavior, not when the exception happens. |
-| 3 | Custom exceptions should always extend Exception | Extend RuntimeException for programming errors and validation failures. Extend Exception (checked) only for recoverable failures at system boundaries. |
-| 4 | More exception types means better error handling | Excessive exception hierarchy creates catch-block proliferation. One custom exception per module boundary with error codes is often cleaner. |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: Catching Exception swallows everything**
-**Symptom:** Bugs silently disappear. Application produces wrong results with no errors logged.
-**Root Cause:** `catch (Exception e) {}` or `catch (Exception e) { log.error(...) }` catches both business exceptions and programming bugs (NPE, ClassCast).
-**Diagnostic:**
-
-```
-grep -rn 'catch.*Exception' src/ | grep -v 'IOException\|SQLException'
-# Find overly broad catch blocks
-```
-
-**Fix:**
-```java
-// BAD: catches everything
-try { process(data); }
-catch (Exception e) { log.error("Failed", e); }
-
-// GOOD: catch specific exceptions
-try { process(data); }
-catch (IOException e) { return fallback(); }
-// Let NPE, ClassCastException propagate
-```
-**Prevention:** Catch the most specific exception type. Never catch Exception in business logic.
-
-**Failure Mode 2: Lost exception cause chain**
-**Symptom:** Log shows "Processing failed" but no root cause or stack trace of the original error.
-**Root Cause:** Rethrowing a new exception without setting the original as the cause.
-**Diagnostic:**
-
-```
-grep -rn 'throw new.*Exception(' src/ | grep -v 'cause\|, e)'
-# Find throw-new without cause parameter
-```
-
-**Fix:**
-```java
-// BAD: loses original cause
-catch (SQLException e) {
-    throw new ServiceException("DB failed");
-}
-
-// GOOD: chain the cause
-catch (SQLException e) {
-    throw new ServiceException("DB failed", e);
-}
-```
-**Prevention:** Always pass the original exception as the cause parameter when wrapping.
-
-**Failure Mode 3: Stack trace cost in hot path**
-**Symptom:** Exception-heavy code path shows `Throwable.fillInStackTrace()` dominating CPU profiler.
-**Root Cause:** Every `new Exception()` walks the entire call stack to capture the trace. In hot paths with deep stacks, this costs microseconds per exception.
-**Diagnostic:**
-
-```
-asprof -e cpu -d 30 -f cpu.html <pid>
-# Look for fillInStackTrace in hot methods
-```
-
-**Fix:**
-```java
-// BAD: exception for control flow
-if (!valid) throw new ValidationException(msg);
-
-// GOOD: use return values for expected cases
-ValidationResult result = validate(input);
-if (!result.isValid()) return error(result);
-
-// Or: pre-allocated exception (rare cases only)
-static final MyException INSTANCE = new MyException();
-@Override
-public Throwable fillInStackTrace() { return this; }
-```
-**Prevention:** Never use exceptions for control flow. Reserve exceptions for truly exceptional conditions.
-
 ---
 
 ### 🔗 Related Keywords
@@ -637,6 +631,7 @@ public Throwable fillInStackTrace() { return this; }
 - Rust Result<T,E> - algebraic error types instead of exception hierarchy
 - Go error interface - simple error values without hierarchy
 
+
 ---
 
 ---
@@ -644,7 +639,6 @@ public Throwable fillInStackTrace() { return this; }
 # Checked vs Unchecked Exceptions
 
 **TL;DR** - Checked exceptions force compile-time handling for recoverable failures while unchecked exceptions represent programming bugs, and choosing wrong clutters APIs or hides errors.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -660,13 +654,11 @@ A team catches `Exception` everywhere because they can't distinguish recoverable
 
 **EVOLUTION:**
 Java was the first mainstream language to enforce checked exceptions at compile time (1995). C# deliberately omitted them after observing Java's pain points. Kotlin treats all exceptions as unchecked. Modern Java practice has shifted toward unchecked exceptions with global handlers, using checked exceptions only at system boundaries (I/O, network, database).
-
 ---
 
 ### 📘 Textbook Definition
 
 Checked exceptions are subclasses of `Exception` (but not `RuntimeException`) that the Java compiler enforces handling for - callers must either catch them or declare them in their `throws` clause. Unchecked exceptions are subclasses of `RuntimeException` that the compiler does not enforce. The distinction encodes the designer's intent: checked = "this can reasonably fail and the caller should have a plan," unchecked = "this is a programming error."
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -680,7 +672,6 @@ Checked means "expect this to fail," unchecked means "you have a bug."
 
 **One insight:**
 The real question when designing an exception is: "Can the immediate caller do something useful about this?" If yes (retry, use fallback, prompt user), checked is appropriate. If the only option is to crash and log, unchecked is better - forcing empty catch blocks helps nobody.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -702,7 +693,6 @@ By making anticipated failures part of the method signature, the compiler forces
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Some errors are genuinely recoverable and callers need to know about them.
 **Accidental:** Java's implementation forces handling at every call layer, even when the only option is to propagate.
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -716,7 +706,6 @@ By making anticipated failures part of the method signature, the compiler forces
 - "Cancel order" -> graceful degradation
 
 Where this analogy breaks down: In software, unchecked exceptions happen far more frequently than truck fires.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -741,7 +730,6 @@ The checked vs unchecked debate is Java's version of the fundamental error handl
 - "Can the caller realistically recover?" - if yes, checked; if no, unchecked
 - "Does this exception cross a module boundary?" - wrap implementation-specific exceptions at boundaries
 - "Is this breaking lambda/stream composition?" - wrap in unchecked or use ThrowingFunction utilities
-
 ---
 
 ### ⚙️ How It Works
@@ -778,7 +766,6 @@ Compile-time enforcement:
       // No throws clause needed
   }
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -806,7 +793,6 @@ Checked exception swallowed:
 
 **WHAT CHANGES AT SCALE:**
 In large codebases, checked exceptions create coupling: changing a low-level implementation detail (switching from file I/O to network I/O) changes the throws clause, which ripples through every caller. This is why frameworks like Spring wrap checked exceptions in unchecked ones at the boundary layer.
-
 ---
 
 ### 💻 Code Example
@@ -865,7 +851,6 @@ urls.stream()
 
 **How to test / verify correctness:**
 Test that checked exceptions are properly wrapped at boundaries (not swallowed), that unchecked exceptions contain the original cause chain, and that the appropriate exception type is thrown for each failure scenario.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -878,6 +863,7 @@ Test that checked exceptions are properly wrapped at boundaries (not swallowed),
 **ANTI-PATTERN:** Catching checked exceptions and rethrowing as RuntimeException without cause chaining
 **TRADE-OFF:** Compile-time safety vs leaking implementation details and lambda incompatibility
 **ONE-LINER:** "Checked = must handle or declare. Unchecked = handle if you can. Modern: unchecked by default."
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -887,13 +873,132 @@ Test that checked exceptions are properly wrapped at boundaries (not swallowed),
 
 **Interview one-liner:**
 "I treat checked exceptions as boundary-layer contracts for external I/O failures and convert them to rich unchecked domain exceptions at the adapter boundary. This keeps domain APIs clean and compatible with streams and lambdas."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Java's checked exception mechanism was so controversial that the architects of C# (including Anders Hejlsberg, who also designed Turbo Pascal and Delphi) specifically studied Java's experience and decided to omit checked exceptions from C#. Their conclusion: checked exceptions work well for small programs but create significant maintenance burden in large systems because throws clauses become part of the public API contract, making internal implementation changes a breaking change.
+---
 
+### ⚖️ Comparison Table
+
+| Aspect | Checked | Unchecked |
+|--------|---------|----------|
+| Compiler enforcement | Must catch or declare | Optional |
+| Lambda compatible | No (breaks streams) | Yes |
+| API coupling | Tight (leaks impl details) | Loose |
+| Recovery expectation | Caller should handle | Fix the bug |
+| Modern frameworks | Avoided (Spring wraps) | Preferred |
+| Examples | IOException, SQLException | IllegalArgumentException, NPE |
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | Checked exceptions guarantee error handling | Developers often write `catch (Exception e) {}` to satisfy the compiler, which is worse than no checking at all - the error is silently swallowed. |
+| 2 | Unchecked exceptions mean 'don't handle' | Unchecked just means the compiler doesn't force handling. You should still catch where recovery is possible (e.g., validation errors at API boundaries). |
+| 3 | Converting checked to unchecked is always wrong | Frameworks like Spring, Hibernate, and Java NIO.2 intentionally wrap checked in unchecked to improve API ergonomics. This is a design choice, not an anti-pattern. |
+| 4 | throws clause documents all possible exceptions | `throws` only declares checked exceptions. A method can throw any unchecked exception without declaring it. Use Javadoc `@throws` for significant unchecked cases. |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Checked exception leaking implementation details**
+**Symptom:** Service interface declares `throws SQLException` - changing the DB implementation requires changing the interface.
+**Root Cause:** Checked exceptions in the interface signature couple callers to a specific implementation technology.
+**Diagnostic:**
+
+```
+grep -rn 'throws.*SQL\|throws.*Hibernate' src/
+# Find implementation-specific exceptions in interfaces
+```
+
+**Fix:**
+```java
+// BAD: leaks implementation
+interface UserRepo {
+    User find(int id) throws SQLException;
+}
+
+// GOOD: wrap at boundary
+interface UserRepo {
+    User find(int id); // throws unchecked
+}
+class JdbcUserRepo implements UserRepo {
+    public User find(int id) {
+        try { /* JDBC */ }
+        catch (SQLException e) {
+            throw new DataAccessException(e);
+        }
+    }
+}
+```
+**Prevention:** Wrap checked exceptions at module boundaries into module-specific unchecked exceptions.
+
+**Failure Mode 2: Empty catch block hiding failures**
+**Symptom:** Application silently produces wrong output. No errors in logs. Works "most of the time."
+**Root Cause:** Developer added empty catch to satisfy compiler, intending to fix later.
+**Diagnostic:**
+
+```
+grep -A1 'catch.*Exception' src/**/*.java | grep -B1 '^\s*}'
+# Find catch blocks with empty or near-empty bodies
+```
+
+**Fix:**
+```java
+// BAD: silent swallowing
+try { sendEmail(user); }
+catch (MessagingException e) { }
+
+// GOOD: at minimum, log. Preferably handle.
+try { sendEmail(user); }
+catch (MessagingException e) {
+    log.warn("Email failed for user={}", user.id(), e);
+    metrics.increment("email.failure");
+}
+```
+**Prevention:** Static analysis rules (SonarQube, Error Prone) that flag empty catch blocks.
+
+**Failure Mode 3: Wrapping without cause in lambda**
+**Symptom:** Stack trace shows `UncheckedIOException` or `RuntimeException` but root cause is missing.
+**Root Cause:** Lambda wraps checked exception in unchecked but forgets the cause parameter.
+**Diagnostic:**
+
+```
+grep -rn 'RuntimeException(' src/ | grep -v ', e)\|, ex)'
+# Find RuntimeException without cause
+```
+
+**Fix:**
+```java
+// BAD: loses cause
+.map(path -> {
+    try { return Files.readString(path); }
+    catch (IOException e) {
+        throw new RuntimeException("failed"); // no cause!
+    }
+})
+
+// GOOD: preserve cause
+.map(path -> {
+    try { return Files.readString(path); }
+    catch (IOException e) {
+        throw new UncheckedIOException(e); // cause preserved
+    }
+})
+```
+**Prevention:** Always pass the original exception to the wrapping constructor.
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1081,122 +1186,6 @@ I'd explain the three dangers of broad catch:
   ```
 
 Key insight: the instinct to "catch everything" comes from fear of crashes. The fix is confidence in the global error handler - once it exists, developers relax about uncaught exceptions.
-
----
-
-### ⚖️ Comparison Table
-
-| Aspect | Checked | Unchecked |
-|--------|---------|----------|
-| Compiler enforcement | Must catch or declare | Optional |
-| Lambda compatible | No (breaks streams) | Yes |
-| API coupling | Tight (leaks impl details) | Loose |
-| Recovery expectation | Caller should handle | Fix the bug |
-| Modern frameworks | Avoided (Spring wraps) | Preferred |
-| Examples | IOException, SQLException | IllegalArgumentException, NPE |
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | Checked exceptions guarantee error handling | Developers often write `catch (Exception e) {}` to satisfy the compiler, which is worse than no checking at all - the error is silently swallowed. |
-| 2 | Unchecked exceptions mean 'don't handle' | Unchecked just means the compiler doesn't force handling. You should still catch where recovery is possible (e.g., validation errors at API boundaries). |
-| 3 | Converting checked to unchecked is always wrong | Frameworks like Spring, Hibernate, and Java NIO.2 intentionally wrap checked in unchecked to improve API ergonomics. This is a design choice, not an anti-pattern. |
-| 4 | throws clause documents all possible exceptions | `throws` only declares checked exceptions. A method can throw any unchecked exception without declaring it. Use Javadoc `@throws` for significant unchecked cases. |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: Checked exception leaking implementation details**
-**Symptom:** Service interface declares `throws SQLException` - changing the DB implementation requires changing the interface.
-**Root Cause:** Checked exceptions in the interface signature couple callers to a specific implementation technology.
-**Diagnostic:**
-
-```
-grep -rn 'throws.*SQL\|throws.*Hibernate' src/
-# Find implementation-specific exceptions in interfaces
-```
-
-**Fix:**
-```java
-// BAD: leaks implementation
-interface UserRepo {
-    User find(int id) throws SQLException;
-}
-
-// GOOD: wrap at boundary
-interface UserRepo {
-    User find(int id); // throws unchecked
-}
-class JdbcUserRepo implements UserRepo {
-    public User find(int id) {
-        try { /* JDBC */ }
-        catch (SQLException e) {
-            throw new DataAccessException(e);
-        }
-    }
-}
-```
-**Prevention:** Wrap checked exceptions at module boundaries into module-specific unchecked exceptions.
-
-**Failure Mode 2: Empty catch block hiding failures**
-**Symptom:** Application silently produces wrong output. No errors in logs. Works "most of the time."
-**Root Cause:** Developer added empty catch to satisfy compiler, intending to fix later.
-**Diagnostic:**
-
-```
-grep -A1 'catch.*Exception' src/**/*.java | grep -B1 '^\s*}'
-# Find catch blocks with empty or near-empty bodies
-```
-
-**Fix:**
-```java
-// BAD: silent swallowing
-try { sendEmail(user); }
-catch (MessagingException e) { }
-
-// GOOD: at minimum, log. Preferably handle.
-try { sendEmail(user); }
-catch (MessagingException e) {
-    log.warn("Email failed for user={}", user.id(), e);
-    metrics.increment("email.failure");
-}
-```
-**Prevention:** Static analysis rules (SonarQube, Error Prone) that flag empty catch blocks.
-
-**Failure Mode 3: Wrapping without cause in lambda**
-**Symptom:** Stack trace shows `UncheckedIOException` or `RuntimeException` but root cause is missing.
-**Root Cause:** Lambda wraps checked exception in unchecked but forgets the cause parameter.
-**Diagnostic:**
-
-```
-grep -rn 'RuntimeException(' src/ | grep -v ', e)\|, ex)'
-# Find RuntimeException without cause
-```
-
-**Fix:**
-```java
-// BAD: loses cause
-.map(path -> {
-    try { return Files.readString(path); }
-    catch (IOException e) {
-        throw new RuntimeException("failed"); // no cause!
-    }
-})
-
-// GOOD: preserve cause
-.map(path -> {
-    try { return Files.readString(path); }
-    catch (IOException e) {
-        throw new UncheckedIOException(e); // cause preserved
-    }
-})
-```
-**Prevention:** Always pass the original exception to the wrapping constructor.
-
 ---
 
 ### 🔗 Related Keywords
@@ -1216,6 +1205,7 @@ grep -rn 'RuntimeException(' src/ | grep -v ', e)\|, ex)'
 - Kotlin (no checked exceptions) - relies on documentation and nullability instead
 - Result/Either types (Vavr) - type-safe error handling without exceptions
 
+
 ---
 
 ---
@@ -1223,7 +1213,6 @@ grep -rn 'RuntimeException(' src/ | grep -v ', e)\|, ex)'
 # Try-with-Resources
 
 **TL;DR** - Try-with-resources guarantees that AutoCloseable resources are closed even when exceptions occur, eliminating the most common source of resource leaks in Java.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1239,13 +1228,11 @@ A connection pool exhausts because developers occasionally forget `finally` bloc
 
 **EVOLUTION:**
 Pre-Java 7: manual `finally` blocks. Java 7 introduced try-with-resources and the `AutoCloseable` interface. Java 9 enhanced it to allow effectively-final variables declared outside the try block. The pattern has become the standard for all resource management in modern Java.
-
 ---
 
 ### 📘 Textbook Definition
 
 Try-with-resources (Java 7+) is a statement that declares one or more resources in the try header. Resources must implement `AutoCloseable`. The compiler generates code to call `close()` on each resource in reverse declaration order when the try block exits, whether normally or via exception. If both the try body and `close()` throw, the body's exception is primary and the close exception is added as a suppressed exception.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1259,7 +1246,6 @@ Declare resources in the try header and Java guarantees they're closed no matter
 
 **One insight:**
 The real insight is suppressed exceptions. Before Java 7, if `close()` threw, it masked the original exception from the try body - you'd debug the wrong problem. Try-with-resources preserves both: the body exception is primary, the close exception is suppressed and accessible via `getSuppressed()`.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1281,7 +1267,6 @@ The compiler generates a finally block with null checks and suppressed exception
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Resources must be released regardless of success or failure - this is inherent.
 **Accidental:** Pre-Java 7, the accidental complexity was enormous - 15 lines of boilerplate per resource.
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1295,7 +1280,6 @@ The compiler generates a finally block with null checks and suppressed exception
 - "Door jams while you're falling" -> suppressed exception
 
 Where this analogy breaks down: Doors don't suppress their own errors when you're already having an emergency.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1320,7 +1304,6 @@ Try-with-resources is Java's implementation of the RAII (Resource Acquisition Is
 - "Does this object hold a native resource?" - if yes, it must be in try-with-resources
 - "What happens if close() fails?" - check for suppressed exceptions in logs
 - "Is the resource scope correct?" - resource should live exactly as long as needed, no longer
-
 ---
 
 ### ⚙️ How It Works
@@ -1358,7 +1341,6 @@ What the compiler generates (simplified):
       // same pattern for 'in'
   }
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1385,7 +1367,6 @@ try body throws ExA
 
 **WHAT CHANGES AT SCALE:**
 In high-throughput systems, resource leaks are the #1 cause of gradual degradation. Try-with-resources eliminates this class entirely. At scale, the pattern extends to custom AutoCloseable wrappers for connection pools, thread pools, and distributed locks.
-
 ---
 
 ### 💻 Code Example
@@ -1451,7 +1432,6 @@ try (var lock = new DistributedLock(
 
 **How to test / verify correctness:**
 Create a mock `AutoCloseable` that records `close()` calls. Verify it's called even when exceptions occur. Check `getSuppressed()` when both body and close throw.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1464,6 +1444,7 @@ Create a mock `AutoCloseable` that records `close()` calls. Verify it's called e
 **ANTI-PATTERN:** Using try-finally instead of try-with-resources - verbose and error-prone
 **TRADE-OFF:** Automatic cleanup vs resource must implement AutoCloseable and scope must be lexical
 **ONE-LINER:** "Declare resources in try() - guaranteed close in reverse order, even on exception"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1473,13 +1454,130 @@ Create a mock `AutoCloseable` that records `close()` calls. Verify it's called e
 
 **Interview one-liner:**
 "Try-with-resources guarantees AutoCloseable resources are closed in reverse declaration order, even when exceptions occur. If both the try body and close() throw, the body exception is primary and the close exception is added as suppressed."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Before Java 7, the official Sun/Oracle examples for JDBC code had resource leak bugs. The correct manual pattern requires nested try-finally blocks with null checks and exception handling - roughly 20 lines of boilerplate per pair of resources. Studies of open-source Java projects found that over 60% of resource management code had potential leaks. Try-with-resources didn't just reduce boilerplate - it eliminated an entire category of production defects.
+---
 
+### ⚖️ Comparison Table
+
+| Aspect | Try-with-Resources | Try-Finally | Manual close() |
+|--------|-------------------|------------|---------------|
+| Resource leak risk | None | Low (if correct) | High |
+| Suppressed exceptions | Handled automatically | Must code manually | Lost |
+| Lines of code | ~5 | ~15-25 | ~3 (unsafe) |
+| Multiple resources | Declare in same try() | Nested try-finally | Error-prone |
+| Null safety | Built-in | Must check | Must check |
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | try-with-resources can only have one resource | Multiple resources can be declared separated by semicolons: `try (var a = ...; var b = ...)`. They close in reverse declaration order. |
+| 2 | The resource variable must be declared in the try() | Since Java 9, effectively final variables declared outside can be used: `var r = new Resource(); try (r)`. No need to re-declare. |
+| 3 | close() exceptions replace the original exception | Try-with-resources adds close() exceptions as 'suppressed' on the original. Both are preserved and accessible via `getSuppressed()`. |
+| 4 | try-with-resources eliminates all resource leaks | Only if the resource is actually declared in the try(). A resource created and passed to another method without try-with-resources can still leak. |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Resource created outside try-with-resources**
+**Symptom:** Resource leak under exception conditions. Connection pool exhaustion after hours.
+**Root Cause:** Resource created before the try block - if an exception occurs between creation and try, close() never runs.
+**Diagnostic:**
+
+```
+grep -B2 'try (' src/**/*.java | grep 'new.*Stream\|new.*Connection'
+# Find resources created before try()
+```
+
+**Fix:**
+```java
+// BAD: leak if getConnection() succeeds
+// but prepareStatement() fails
+Connection conn = ds.getConnection();
+try (PreparedStatement ps = conn.prepareStatement(sql)) {
+    // conn is NOT managed by try-with-resources!
+}
+
+// GOOD: manage all resources
+try (Connection conn = ds.getConnection();
+     PreparedStatement ps = conn.prepareStatement(sql)) {
+    // both managed
+}
+```
+**Prevention:** Declare ALL resources in the try() parentheses.
+
+**Failure Mode 2: Suppressed exception lost in logging**
+**Symptom:** close() throws but the suppressed exception is never logged; only the primary exception appears.
+**Root Cause:** Logging framework prints the primary exception's stack trace but not its suppressed exceptions.
+**Diagnostic:**
+
+```
+jshell> try { throw new IOException("primary"); }
+...> catch (Exception e) {
+...>     for (var s : e.getSuppressed())
+...>         System.out.println("Suppressed: " + s);
+...> }
+```
+
+**Fix:**
+```java
+// BAD: only logs primary
+catch (Exception e) {
+    log.error("Failed", e); // suppressed not shown
+}
+
+// GOOD: log suppressed too
+catch (Exception e) {
+    log.error("Failed", e);
+    for (Throwable s : e.getSuppressed()) {
+        log.warn("Suppressed during close", s);
+    }
+}
+```
+**Prevention:** Configure logging to include suppressed exceptions. Use structured logging.
+
+**Failure Mode 3: AutoCloseable not implemented correctly**
+**Symptom:** Custom resource is used in try-with-resources but cleanup doesn't happen or throws unexpectedly.
+**Root Cause:** `close()` is not idempotent - calling it twice throws, or it doesn't actually release the resource.
+**Diagnostic:**
+
+```
+# Test idempotency
+jshell> var r = new MyResource();
+jshell> r.close(); r.close(); // should not throw
+```
+
+**Fix:**
+```java
+// BAD: not idempotent
+public void close() {
+    handle.release(); // throws if already released!
+}
+
+// GOOD: idempotent close
+private boolean closed = false;
+public void close() {
+    if (!closed) {
+        handle.release();
+        closed = true;
+    }
+}
+```
+**Prevention:** Make close() idempotent. Track closed state. Test double-close scenarios.
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1692,120 +1790,6 @@ Key design decisions:
 - `close()` deletes in reverse depth order (files before directories)
 - Individual file delete failures are logged but don't prevent cleaning other files
 - `Files.walk()` is itself AutoCloseable - nested try-with-resources
-
----
-
-### ⚖️ Comparison Table
-
-| Aspect | Try-with-Resources | Try-Finally | Manual close() |
-|--------|-------------------|------------|---------------|
-| Resource leak risk | None | Low (if correct) | High |
-| Suppressed exceptions | Handled automatically | Must code manually | Lost |
-| Lines of code | ~5 | ~15-25 | ~3 (unsafe) |
-| Multiple resources | Declare in same try() | Nested try-finally | Error-prone |
-| Null safety | Built-in | Must check | Must check |
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | try-with-resources can only have one resource | Multiple resources can be declared separated by semicolons: `try (var a = ...; var b = ...)`. They close in reverse declaration order. |
-| 2 | The resource variable must be declared in the try() | Since Java 9, effectively final variables declared outside can be used: `var r = new Resource(); try (r)`. No need to re-declare. |
-| 3 | close() exceptions replace the original exception | Try-with-resources adds close() exceptions as 'suppressed' on the original. Both are preserved and accessible via `getSuppressed()`. |
-| 4 | try-with-resources eliminates all resource leaks | Only if the resource is actually declared in the try(). A resource created and passed to another method without try-with-resources can still leak. |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: Resource created outside try-with-resources**
-**Symptom:** Resource leak under exception conditions. Connection pool exhaustion after hours.
-**Root Cause:** Resource created before the try block - if an exception occurs between creation and try, close() never runs.
-**Diagnostic:**
-
-```
-grep -B2 'try (' src/**/*.java | grep 'new.*Stream\|new.*Connection'
-# Find resources created before try()
-```
-
-**Fix:**
-```java
-// BAD: leak if getConnection() succeeds
-// but prepareStatement() fails
-Connection conn = ds.getConnection();
-try (PreparedStatement ps = conn.prepareStatement(sql)) {
-    // conn is NOT managed by try-with-resources!
-}
-
-// GOOD: manage all resources
-try (Connection conn = ds.getConnection();
-     PreparedStatement ps = conn.prepareStatement(sql)) {
-    // both managed
-}
-```
-**Prevention:** Declare ALL resources in the try() parentheses.
-
-**Failure Mode 2: Suppressed exception lost in logging**
-**Symptom:** close() throws but the suppressed exception is never logged; only the primary exception appears.
-**Root Cause:** Logging framework prints the primary exception's stack trace but not its suppressed exceptions.
-**Diagnostic:**
-
-```
-jshell> try { throw new IOException("primary"); }
-...> catch (Exception e) {
-...>     for (var s : e.getSuppressed())
-...>         System.out.println("Suppressed: " + s);
-...> }
-```
-
-**Fix:**
-```java
-// BAD: only logs primary
-catch (Exception e) {
-    log.error("Failed", e); // suppressed not shown
-}
-
-// GOOD: log suppressed too
-catch (Exception e) {
-    log.error("Failed", e);
-    for (Throwable s : e.getSuppressed()) {
-        log.warn("Suppressed during close", s);
-    }
-}
-```
-**Prevention:** Configure logging to include suppressed exceptions. Use structured logging.
-
-**Failure Mode 3: AutoCloseable not implemented correctly**
-**Symptom:** Custom resource is used in try-with-resources but cleanup doesn't happen or throws unexpectedly.
-**Root Cause:** `close()` is not idempotent - calling it twice throws, or it doesn't actually release the resource.
-**Diagnostic:**
-
-```
-# Test idempotency
-jshell> var r = new MyResource();
-jshell> r.close(); r.close(); // should not throw
-```
-
-**Fix:**
-```java
-// BAD: not idempotent
-public void close() {
-    handle.release(); // throws if already released!
-}
-
-// GOOD: idempotent close
-private boolean closed = false;
-public void close() {
-    if (!closed) {
-        handle.release();
-        closed = true;
-    }
-}
-```
-**Prevention:** Make close() idempotent. Track closed state. Test double-close scenarios.
-
 ---
 
 ### 🔗 Related Keywords
@@ -1825,6 +1809,7 @@ public void close() {
 - Python `with` statement (context managers) - same RAII pattern
 - Kotlin `use {}` - extension function equivalent of try-with-resources
 
+
 ---
 
 ---
@@ -1832,7 +1817,6 @@ public void close() {
 # IO Streams
 
 **TL;DR** - Java's IO stream model uses decorator-chained byte streams (InputStream/OutputStream) and character streams (Reader/Writer), and understanding the decorator pattern prevents the most common IO performance mistake: unbuffered reading.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1848,13 +1832,11 @@ A data pipeline hardcodes `FileInputStream` throughout. When the team needs to r
 
 **EVOLUTION:**
 Java 1.0 introduced `InputStream`/`OutputStream` (bytes) and `Reader`/`Writer` (characters). Java 1.1 added `BufferedReader`/`BufferedWriter`. Java 4 introduced NIO with channels and buffers for non-blocking I/O. Java 7 added NIO.2 with `Files` utility class and `Path`. Java 8+ added `Files.lines()` returning a Stream for lazy file processing.
-
 ---
 
 ### 📘 Textbook Definition
 
 Java IO streams are sequential, ordered sequences of data elements. Byte streams (`InputStream`/`OutputStream`) handle raw bytes. Character streams (`Reader`/`Writer`) handle Unicode characters with encoding conversion. Both families use the Decorator pattern: concrete streams wrap other streams to add behavior (buffering, compression, encryption) without modifying the underlying source. This composition model provides a uniform API across diverse data sources.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1868,7 +1850,6 @@ Streams are pipes that move data byte-by-byte or char-by-char from a source to a
 
 **One insight:**
 The #1 performance mistake in Java IO is forgetting to buffer. `FileInputStream.read()` makes one OS system call per byte. Wrapping in `BufferedInputStream` batches reads into 8KB chunks, easily giving 100x throughput improvement.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1890,7 +1871,6 @@ The Decorator pattern allows combining behaviors. Need buffered, compressed, enc
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Data comes from diverse sources - abstraction is necessary.
 **Accidental:** The byte-stream/character-stream split and manual decorator chaining is verbose. NIO.2's `Files.readString()` and `Files.lines()` reduce this significantly.
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1903,7 +1883,6 @@ The Decorator pattern allows combining behaviors. Need buffered, compressed, enc
 - "Factory owner" -> your code, source-agnostic
 
 Where this analogy breaks down: Assembly lines process items in parallel; Java IO streams are strictly sequential.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1928,7 +1907,6 @@ Java's IO Streams implement the decorator pattern over byte/character sequences 
 - "Bytes or characters?" - InputStream for bytes, Reader for characters. Always specify charset.
 - "Am I buffering?" - unbuffered IO to disk is 10-100x slower. Always wrap in Buffered*.
 - "Can I use Files.readAllLines()?" - for small files yes; for large files use streaming to avoid OOM
-
 ---
 
 ### ⚙️ How It Works
@@ -1954,7 +1932,6 @@ Decorator chain for reading a UTF-8 text file:
   Files.newBufferedReader(path, UTF_8)
   // Creates the entire chain in one call
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1983,7 +1960,6 @@ Stream not closed (no try-with-resources)
 
 **WHAT CHANGES AT SCALE:**
 For files > 1GB, `Files.readAllBytes()` causes OutOfMemoryError - use streaming (`Files.lines()` or buffered reading). For 10K+ concurrent connections, blocking IO exhausts thread pools - use NIO or virtual threads. For random access to large files, `MappedByteBuffer` avoids read/write system calls entirely.
-
 ---
 
 ### 💻 Code Example
@@ -2037,7 +2013,6 @@ try (BufferedWriter bw = Files.newBufferedWriter(
 
 **How to test / verify correctness:**
 Use `ByteArrayInputStream`/`ByteArrayOutputStream` for unit tests - no real files needed. Verify encoding by reading back with explicit charset and comparing. Test resource cleanup with `AutoCloseable` mocks.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -2050,6 +2025,7 @@ Use `ByteArrayInputStream`/`ByteArrayOutputStream` for unit tests - no real file
 **ANTI-PATTERN:** Forgetting BufferedInputStream - unbuffered file IO is 10-100x slower
 **TRADE-OFF:** Flexible composition via decoration vs wrapper overhead and synchronization cost
 **ONE-LINER:** "Wrap to compose: FileIn -> BufferedIn -> DataIn. Always buffer, always close."
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -2059,13 +2035,116 @@ Use `ByteArrayInputStream`/`ByteArrayOutputStream` for unit tests - no real file
 
 **Interview one-liner:**
 "Java IO uses the Decorator pattern: byte streams handle raw data, character streams handle encoded text, and decorators like BufferedReader compose for buffered, encoded reading. The key performance rule is always buffer - the difference between buffered and unbuffered file reading is 100x."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 `FileWriter` and `FileReader` use the platform's default encoding, which varies by OS and locale. A file written with `FileWriter` on a Windows machine (Windows-1252) becomes garbled when read on a Linux server (UTF-8). This is why `FileWriter` and `FileReader` are effectively deprecated in practice - always use `Files.newBufferedWriter(path, StandardCharsets.UTF_8)` or `OutputStreamWriter` with an explicit charset.
+---
 
+### ⚖️ Comparison Table
+
+| Aspect | InputStream/OutputStream | Reader/Writer | NIO Channel |
+|--------|------------------------|-------------|------------|
+| Unit | Bytes | Characters | Bytes (Buffer) |
+| Encoding | None (raw bytes) | Charset-aware | Manual |
+| Blocking | Yes | Yes | Configurable |
+| Buffering | Wrap in Buffered* | Wrap in Buffered* | ByteBuffer |
+| Use case | Binary data | Text data | High-performance |
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | BufferedReader is always better than unbuffered | For random-access patterns (seek then read small chunk), buffering wastes memory pre-reading data you won't use. For sequential reading, always buffer. |
+| 2 | InputStream and Reader are interchangeable | InputStream handles raw bytes. Reader handles characters with charset decoding. Mixing them without `InputStreamReader` corrupts multi-byte characters. |
+| 3 | Files.readAllBytes() is fine for any file size | It loads the entire file into memory. For a 2GB file, it needs 2GB of heap. Use streaming APIs (Files.lines() or BufferedReader) for large files. |
+| 4 | Closing the outermost wrapper closes all inner streams | This is usually true for decorator chains, but not guaranteed by the API contract. Always use try-with-resources on the outermost wrapper. |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Charset corruption from default encoding**
+**Symptom:** Characters appear as `?`, `???`, or garbled text. Works on developer's machine but fails on server.
+**Root Cause:** Using `new FileReader(file)` or `new InputStreamReader(fis)` without specifying charset. Default charset varies by OS/locale.
+**Diagnostic:**
+
+```
+grep -rn 'new FileReader\|new InputStreamReader(' src/
+# Check for missing charset parameter
+```
+
+**Fix:**
+```java
+// BAD: platform-dependent encoding
+Reader r = new FileReader("data.csv");
+
+// GOOD: explicit charset
+Reader r = new FileReader("data.csv",
+    StandardCharsets.UTF_8);
+// Or better:
+BufferedReader br = Files.newBufferedReader(
+    Path.of("data.csv"), StandardCharsets.UTF_8);
+```
+**Prevention:** Always specify `StandardCharsets.UTF_8` explicitly. Never rely on default charset.
+
+**Failure Mode 2: OutOfMemoryError from reading entire file**
+**Symptom:** OOM when processing a large file. Heap dump shows giant `byte[]` or `char[]`.
+**Root Cause:** Using `Files.readAllBytes()` or `readAllLines()` on a multi-GB file.
+**Diagnostic:**
+
+```
+grep -rn 'readAllBytes\|readAllLines\|readString' src/
+# Check file sizes these methods are called on
+```
+
+**Fix:**
+```java
+// BAD: loads entire file into memory
+byte[] data = Files.readAllBytes(hugePath);
+
+// GOOD: stream line by line
+try (Stream<String> lines = Files.lines(hugePath,
+        StandardCharsets.UTF_8)) {
+    lines.filter(l -> l.contains("ERROR"))
+         .forEach(this::process);
+}
+```
+**Prevention:** Use streaming APIs for files that could be large. Set size limits at input boundaries.
+
+**Failure Mode 3: Resource leak from unclosed streams**
+**Symptom:** "Too many open files" error after running for hours. `lsof` shows thousands of open file handles.
+**Root Cause:** InputStream/OutputStream opened but never closed, especially in error paths.
+**Diagnostic:**
+
+```
+lsof -p <pid> | wc -l
+# Compare with ulimit -n to check proximity
+```
+
+**Fix:**
+```java
+// BAD: leak on exception
+InputStream is = new FileInputStream(file);
+byte[] data = is.readAllBytes();
+is.close(); // never reached if readAllBytes throws
+
+// GOOD: try-with-resources
+try (InputStream is = new FileInputStream(file)) {
+    byte[] data = is.readAllBytes();
+}
+```
+**Prevention:** Always use try-with-resources for IO streams. Run leak detection tools (Eclipse MAT, VisualVM).
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -2240,106 +2319,6 @@ List<Map.Entry<String, Long>> top10 = topIPs
 Memory analysis: only one line is in memory at a time from the file. The frequency map holds at most one entry per unique IP. For 10GB of web logs, unique IPs are typically < 1M, so the map uses ~50MB.
 
 For truly massive cardinality (billions of unique IPs), use a streaming approximation algorithm like Count-Min Sketch or HyperLogLog, trading exact counts for bounded memory.
-
----
-
-### ⚖️ Comparison Table
-
-| Aspect | InputStream/OutputStream | Reader/Writer | NIO Channel |
-|--------|------------------------|-------------|------------|
-| Unit | Bytes | Characters | Bytes (Buffer) |
-| Encoding | None (raw bytes) | Charset-aware | Manual |
-| Blocking | Yes | Yes | Configurable |
-| Buffering | Wrap in Buffered* | Wrap in Buffered* | ByteBuffer |
-| Use case | Binary data | Text data | High-performance |
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | BufferedReader is always better than unbuffered | For random-access patterns (seek then read small chunk), buffering wastes memory pre-reading data you won't use. For sequential reading, always buffer. |
-| 2 | InputStream and Reader are interchangeable | InputStream handles raw bytes. Reader handles characters with charset decoding. Mixing them without `InputStreamReader` corrupts multi-byte characters. |
-| 3 | Files.readAllBytes() is fine for any file size | It loads the entire file into memory. For a 2GB file, it needs 2GB of heap. Use streaming APIs (Files.lines() or BufferedReader) for large files. |
-| 4 | Closing the outermost wrapper closes all inner streams | This is usually true for decorator chains, but not guaranteed by the API contract. Always use try-with-resources on the outermost wrapper. |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: Charset corruption from default encoding**
-**Symptom:** Characters appear as `?`, `???`, or garbled text. Works on developer's machine but fails on server.
-**Root Cause:** Using `new FileReader(file)` or `new InputStreamReader(fis)` without specifying charset. Default charset varies by OS/locale.
-**Diagnostic:**
-
-```
-grep -rn 'new FileReader\|new InputStreamReader(' src/
-# Check for missing charset parameter
-```
-
-**Fix:**
-```java
-// BAD: platform-dependent encoding
-Reader r = new FileReader("data.csv");
-
-// GOOD: explicit charset
-Reader r = new FileReader("data.csv",
-    StandardCharsets.UTF_8);
-// Or better:
-BufferedReader br = Files.newBufferedReader(
-    Path.of("data.csv"), StandardCharsets.UTF_8);
-```
-**Prevention:** Always specify `StandardCharsets.UTF_8` explicitly. Never rely on default charset.
-
-**Failure Mode 2: OutOfMemoryError from reading entire file**
-**Symptom:** OOM when processing a large file. Heap dump shows giant `byte[]` or `char[]`.
-**Root Cause:** Using `Files.readAllBytes()` or `readAllLines()` on a multi-GB file.
-**Diagnostic:**
-
-```
-grep -rn 'readAllBytes\|readAllLines\|readString' src/
-# Check file sizes these methods are called on
-```
-
-**Fix:**
-```java
-// BAD: loads entire file into memory
-byte[] data = Files.readAllBytes(hugePath);
-
-// GOOD: stream line by line
-try (Stream<String> lines = Files.lines(hugePath,
-        StandardCharsets.UTF_8)) {
-    lines.filter(l -> l.contains("ERROR"))
-         .forEach(this::process);
-}
-```
-**Prevention:** Use streaming APIs for files that could be large. Set size limits at input boundaries.
-
-**Failure Mode 3: Resource leak from unclosed streams**
-**Symptom:** "Too many open files" error after running for hours. `lsof` shows thousands of open file handles.
-**Root Cause:** InputStream/OutputStream opened but never closed, especially in error paths.
-**Diagnostic:**
-
-```
-lsof -p <pid> | wc -l
-# Compare with ulimit -n to check proximity
-```
-
-**Fix:**
-```java
-// BAD: leak on exception
-InputStream is = new FileInputStream(file);
-byte[] data = is.readAllBytes();
-is.close(); // never reached if readAllBytes throws
-
-// GOOD: try-with-resources
-try (InputStream is = new FileInputStream(file)) {
-    byte[] data = is.readAllBytes();
-}
-```
-**Prevention:** Always use try-with-resources for IO streams. Run leak detection tools (Eclipse MAT, VisualVM).
-
 ---
 
 ### 🔗 Related Keywords
@@ -2359,6 +2338,7 @@ try (InputStream is = new FileInputStream(file)) {
 - NIO Channels and Buffers - better for high-throughput or concurrent IO
 - Files utility class (NIO.2) - simpler API for common file operations
 
+
 ---
 
 ---
@@ -2366,7 +2346,6 @@ try (InputStream is = new FileInputStream(file)) {
 # NIO and NIO.2
 
 **TL;DR** - NIO provides non-blocking I/O with channels and buffers for high-connection servers, while NIO.2 adds the modern `Path`/`Files` API that replaces `java.io.File` for all file operations.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -2382,13 +2361,11 @@ An IoT platform receives telemetry from 100K devices. Each device maintains a pe
 
 **EVOLUTION:**
 Java 1.4 introduced NIO (channels, buffers, selectors) for non-blocking IO. Java 7 added NIO.2 (java.nio.file) with `Path`, `Files`, `FileSystem`, `WatchService`, and asynchronous file channels. Java 21 introduced virtual threads, which make blocking IO scale like NIO but with simpler code - potentially reducing NIO's primary use case.
-
 ---
 
 ### 📘 Textbook Definition
 
 NIO (New I/O, `java.nio`) provides channel-based, buffer-oriented I/O with optional non-blocking mode and selector-based multiplexing. Channels represent connections to I/O devices; buffers are fixed-size containers for data. `Selector` monitors multiple channels for readiness, enabling one thread to manage thousands of connections. NIO.2 (`java.nio.file`, Java 7) adds the `Path` interface replacing `File`, the `Files` utility class with 50+ static methods, and the `FileSystem` abstraction for virtual file systems.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -2402,7 +2379,6 @@ NIO handles thousands of connections on few threads; NIO.2 is the modern file AP
 
 **One insight:**
 NIO and NIO.2 solve different problems. NIO's non-blocking channels and selectors solve the C10K problem (10K+ concurrent connections). NIO.2's `Path`/`Files` API solves the terrible `java.io.File` API (no exceptions on failure, platform-dependent behavior, no symbolic link support). You typically use NIO.2 daily and NIO rarely (frameworks like Netty wrap it).
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -2424,7 +2400,6 @@ By separating "is data available?" (Selector) from "read the data" (Channel + Bu
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Non-blocking IO inherently requires readiness checking and event-driven programming.
 **Accidental:** Buffer's flip()/clear()/compact() API is notoriously confusing and error-prone.
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -2438,7 +2413,6 @@ By separating "is data available?" (Selector) from "read the data" (Channel + Bu
 - "Multiple lit lines" -> multiple ready channels
 
 Where this analogy breaks down: Modern phone switchboards are automated, while NIO still requires manual buffer management.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -2463,7 +2437,6 @@ NIO represents the evolution from blocking-thread-per-connection IO to non-block
 - "How many concurrent connections?" - <1000: blocking IO with virtual threads. >10K: NIO with Netty
 - "File or network IO?" - Files: use NIO.2 Path/Files API. Network: use Netty or virtual threads
 - "Is NIO complexity justified?" - with virtual threads (Java 21+), blocking IO scales equally well with simpler code
-
 ---
 
 ### ⚙️ How It Works
@@ -2489,7 +2462,6 @@ NIO Selector model:
   }
   // 1 thread handles 1000s of connections
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -2520,7 +2492,6 @@ Buffer not flipped before reading
 
 **WHAT CHANGES AT SCALE:**
 At 100K connections, a single Selector thread becomes a bottleneck. Netty uses multiple Selectors across an `EventLoopGroup` (typically one per CPU core). Each Selector handles a subset of connections. At 1M+ connections, OS-level tuning is needed: increase `ulimit -n`, tune `net.core.somaxconn`, enable `SO_REUSEPORT`.
-
 ---
 
 ### 💻 Code Example
@@ -2583,7 +2554,6 @@ buf.clear();
 
 **How to test / verify correctness:**
 Test NIO.2 operations with `jimfs` (in-memory filesystem). Test buffer operations by verifying position/limit after each operation. Test Selector-based code with `SocketChannel.open()` in test connecting to a local server.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -2596,6 +2566,7 @@ Test NIO.2 operations with `jimfs` (in-memory filesystem). Test buffer operation
 **ANTI-PATTERN:** Using raw NIO Selectors when Netty or virtual threads provide simpler, safer alternatives
 **TRADE-OFF:** Scalability to 10K+ connections vs complex state machines and buffer management
 **ONE-LINER:** "Channel + Buffer + Selector = scalable IO. But prefer virtual threads (Java 21+) for simplicity"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -2605,13 +2576,128 @@ Test NIO.2 operations with `jimfs` (in-memory filesystem). Test buffer operation
 
 **Interview one-liner:**
 "NIO provides non-blocking I/O with Selectors that multiplex thousands of connections on few threads - this powers Netty and Tomcat's NIO connector. NIO.2's Path/Files API replaced the broken java.io.File with proper exception handling and modern filesystem operations."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Java 21's virtual threads may make NIO's non-blocking model unnecessary for most applications. With virtual threads, you write simple blocking IO code (`socket.read()`) and the JVM automatically parks the virtual thread and reuses the carrier thread - achieving NIO-like scalability with blocking-style simplicity. Internally, virtual threads use NIO under the hood. The framework does the complex event-driven programming so you don't have to.
+---
 
+### ⚖️ Comparison Table
+
+| Aspect | Old IO (java.io) | NIO (java.nio) | NIO.2 (java.nio.file) |
+|--------|-----------------|----------------|---------------------|
+| Blocking | Always | Configurable | Both |
+| Unit | Stream (byte/char) | Buffer | Buffer/Path |
+| File API | File | FileChannel | Path/Files |
+| Multiplexing | No | Selector | AsynchronousChannel |
+| Memory mapping | No | MappedByteBuffer | MappedByteBuffer |
+| Use case | Simple IO | Network servers | File operations |
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | NIO is always faster than old IO | For simple sequential file reads, old IO with buffering is comparable or faster. NIO's advantage is multiplexing (many connections, few threads). |
+| 2 | ByteBuffer is like a byte array | ByteBuffer has position, limit, and capacity state. Forgetting `flip()` after writing is the #1 NIO bug - you read garbage instead of your data. |
+| 3 | NIO replaces java.io completely | NIO.2's Path/Files API replaces java.io.File, but InputStream/Reader are still used for streaming. NIO Channels and Selectors serve different use cases. |
+| 4 | Memory-mapped files are always better for large files | Mapped files consume virtual address space and can cause unpredictable page faults. For sequential reads, buffered streaming is simpler and equally fast. |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: ByteBuffer flip() forgotten**
+**Symptom:** Channel.write() writes zero bytes or garbage. Buffer appears empty after filling it.
+**Root Cause:** After writing to a buffer (put), `flip()` must be called to set position=0 and limit=position before reading. Without flip, position is at the end and limit is at capacity.
+**Diagnostic:**
+
+```
+# Debug buffer state
+System.out.println("pos=" + buf.position()
+    + " lim=" + buf.limit()
+    + " cap=" + buf.capacity());
+# If pos == lim after put, flip was forgotten
+```
+
+**Fix:**
+```java
+// BAD: forgot flip
+ByteBuffer buf = ByteBuffer.allocate(1024);
+channel.read(buf);
+// position is at end of data, limit at capacity
+outChannel.write(buf); // writes 0 bytes!
+
+// GOOD: flip before switching direction
+ByteBuffer buf = ByteBuffer.allocate(1024);
+channel.read(buf);
+buf.flip(); // position=0, limit=bytes read
+outChannel.write(buf);
+buf.clear(); // reset for next read
+```
+**Prevention:** Rule: flip() after every direction change (read->write or write->read). Use `compact()` for partial reads.
+
+**Failure Mode 2: Selector spin loop (100% CPU)**
+**Symptom:** One CPU core at 100%. Thread dump shows thread spinning in `Selector.select()` returning 0.
+**Root Cause:** Known JDK bug on Linux (epoll): cancelled key causes `select()` to return immediately with empty set indefinitely.
+**Diagnostic:**
+
+```
+jstack <pid> | grep -A5 "Selector"
+# Thread spinning in select() with no selected keys
+```
+
+**Fix:**
+```java
+// Detect and rebuild selector
+int spins = 0;
+while (true) {
+    int n = selector.select(1000);
+    if (n == 0 && ++spins > 512) {
+        selector = rebuildSelector(selector);
+        spins = 0;
+    }
+    // process selected keys...
+}
+// Netty handles this automatically
+```
+**Prevention:** Use Netty or another framework that handles the epoll spin bug. Avoid raw Selector usage.
+
+**Failure Mode 3: MappedByteBuffer not released**
+**Symptom:** File cannot be deleted or moved on Windows. "File is in use" error. Memory grows without bound.
+**Root Cause:** `MappedByteBuffer` is not unmapped when the channel/file is closed. It relies on GC finalization, which is non-deterministic.
+**Diagnostic:**
+
+```
+# Check for mapped regions
+pmap <pid> | grep "mapped"
+# On Windows: ProcessExplorer shows file handles
+```
+
+**Fix:**
+```java
+// BAD: buffer lives until GC
+MappedByteBuffer buf = channel.map(
+    READ_ONLY, 0, channel.size());
+channel.close();
+// buf still mapped! File locked on Windows.
+
+// GOOD: use Cleaner (Java 9+) or avoid mapping
+// For Java 9+:
+((sun.misc.Unsafe) ...).invokeCleaner(buf);
+// Better: use Files.readAllBytes for small files
+// or BufferedReader for large files
+```
+**Prevention:** Avoid MappedByteBuffer on Windows. For cross-platform code, prefer streaming IO or `FileChannel.transferTo()`.
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -2813,118 +2899,6 @@ Virtual threads park on blocking IO calls and release the carrier thread - achie
 4. **Ultra-low latency:** NIO with busy-polling avoids the virtual thread scheduling overhead
 
 For new projects: start with virtual threads + blocking IO. Only drop to NIO if profiling shows it's needed.
-
----
-
-### ⚖️ Comparison Table
-
-| Aspect | Old IO (java.io) | NIO (java.nio) | NIO.2 (java.nio.file) |
-|--------|-----------------|----------------|---------------------|
-| Blocking | Always | Configurable | Both |
-| Unit | Stream (byte/char) | Buffer | Buffer/Path |
-| File API | File | FileChannel | Path/Files |
-| Multiplexing | No | Selector | AsynchronousChannel |
-| Memory mapping | No | MappedByteBuffer | MappedByteBuffer |
-| Use case | Simple IO | Network servers | File operations |
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | NIO is always faster than old IO | For simple sequential file reads, old IO with buffering is comparable or faster. NIO's advantage is multiplexing (many connections, few threads). |
-| 2 | ByteBuffer is like a byte array | ByteBuffer has position, limit, and capacity state. Forgetting `flip()` after writing is the #1 NIO bug - you read garbage instead of your data. |
-| 3 | NIO replaces java.io completely | NIO.2's Path/Files API replaces java.io.File, but InputStream/Reader are still used for streaming. NIO Channels and Selectors serve different use cases. |
-| 4 | Memory-mapped files are always better for large files | Mapped files consume virtual address space and can cause unpredictable page faults. For sequential reads, buffered streaming is simpler and equally fast. |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: ByteBuffer flip() forgotten**
-**Symptom:** Channel.write() writes zero bytes or garbage. Buffer appears empty after filling it.
-**Root Cause:** After writing to a buffer (put), `flip()` must be called to set position=0 and limit=position before reading. Without flip, position is at the end and limit is at capacity.
-**Diagnostic:**
-
-```
-# Debug buffer state
-System.out.println("pos=" + buf.position()
-    + " lim=" + buf.limit()
-    + " cap=" + buf.capacity());
-# If pos == lim after put, flip was forgotten
-```
-
-**Fix:**
-```java
-// BAD: forgot flip
-ByteBuffer buf = ByteBuffer.allocate(1024);
-channel.read(buf);
-// position is at end of data, limit at capacity
-outChannel.write(buf); // writes 0 bytes!
-
-// GOOD: flip before switching direction
-ByteBuffer buf = ByteBuffer.allocate(1024);
-channel.read(buf);
-buf.flip(); // position=0, limit=bytes read
-outChannel.write(buf);
-buf.clear(); // reset for next read
-```
-**Prevention:** Rule: flip() after every direction change (read->write or write->read). Use `compact()` for partial reads.
-
-**Failure Mode 2: Selector spin loop (100% CPU)**
-**Symptom:** One CPU core at 100%. Thread dump shows thread spinning in `Selector.select()` returning 0.
-**Root Cause:** Known JDK bug on Linux (epoll): cancelled key causes `select()` to return immediately with empty set indefinitely.
-**Diagnostic:**
-
-```
-jstack <pid> | grep -A5 "Selector"
-# Thread spinning in select() with no selected keys
-```
-
-**Fix:**
-```java
-// Detect and rebuild selector
-int spins = 0;
-while (true) {
-    int n = selector.select(1000);
-    if (n == 0 && ++spins > 512) {
-        selector = rebuildSelector(selector);
-        spins = 0;
-    }
-    // process selected keys...
-}
-// Netty handles this automatically
-```
-**Prevention:** Use Netty or another framework that handles the epoll spin bug. Avoid raw Selector usage.
-
-**Failure Mode 3: MappedByteBuffer not released**
-**Symptom:** File cannot be deleted or moved on Windows. "File is in use" error. Memory grows without bound.
-**Root Cause:** `MappedByteBuffer` is not unmapped when the channel/file is closed. It relies on GC finalization, which is non-deterministic.
-**Diagnostic:**
-
-```
-# Check for mapped regions
-pmap <pid> | grep "mapped"
-# On Windows: ProcessExplorer shows file handles
-```
-
-**Fix:**
-```java
-// BAD: buffer lives until GC
-MappedByteBuffer buf = channel.map(
-    READ_ONLY, 0, channel.size());
-channel.close();
-// buf still mapped! File locked on Windows.
-
-// GOOD: use Cleaner (Java 9+) or avoid mapping
-// For Java 9+:
-((sun.misc.Unsafe) ...).invokeCleaner(buf);
-// Better: use Files.readAllBytes for small files
-// or BufferedReader for large files
-```
-**Prevention:** Avoid MappedByteBuffer on Windows. For cross-platform code, prefer streaming IO or `FileChannel.transferTo()`.
-
 ---
 
 ### 🔗 Related Keywords

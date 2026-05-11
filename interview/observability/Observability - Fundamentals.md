@@ -16,7 +16,7 @@ keywords:
   - Alerting Strategy
 difficulty_range: medium-hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Three Pillars of Observability
 
 **TL;DR** - The three pillars of observability are Metrics (numeric measurements over time), Logs (discrete event records), and Traces (request flow across services) - together they answer what's broken, why it broke, and where it broke in distributed systems.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -44,13 +43,11 @@ A user reports "the app is slow." With no observability, you SSH into servers, t
 
 **EVOLUTION:**
 Monitoring (is it up?) -> Logging (what happened?) -> APM (where is it slow?) -> Observability (understand ANY system behavior from external outputs without deploying new code).
-
 ---
 
 ### 📘 Textbook Definition
 
 Observability is the ability to understand a system's internal state by examining its external outputs. The three pillars - metrics (aggregated numeric measurements), logs (discrete timestamped events), and traces (causal chains across services) - together provide the data needed to answer arbitrary questions about system behavior without deploying new instrumentation.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -64,7 +61,6 @@ Metrics tell you WHAT is wrong, logs tell you WHY, traces tell you WHERE.
 
 **One insight:**
 Observability != monitoring. Monitoring answers predetermined questions ("Is CPU > 80%?"). Observability answers questions you didn't know you'd ask ("Why do 3% of users in EU see 5s latency only on Tuesdays?"). You need all three pillars for true observability.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -84,7 +80,6 @@ Observability != monitoring. Monitoring answers predetermined questions ("Is CPU
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -96,7 +91,6 @@ Observability != monitoring. Monitoring answers predetermined questions ("Is CPU
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -115,7 +109,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -149,7 +142,6 @@ Correlation (the real power):
         -> Logs with trace ID show: "lock wait timeout"
           -> Root cause identified in minutes
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -163,7 +155,6 @@ Correlation (the real power):
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -176,6 +167,7 @@ Correlation (the real power):
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -185,14 +177,69 @@ Correlation (the real power):
 
 **Interview one-liner:**
 "The three observability pillars - metrics for aggregated signals and alerting, logs for detailed event context, and traces for request flow across services - are most powerful when correlated via trace IDs, enabling metric alert -> trace -> log drill-down for rapid root cause analysis, unified by OpenTelemetry."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Three Pillars of Observability. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -239,58 +286,6 @@ Correlation (the real power):
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Three Pillars of Observability. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -315,7 +310,6 @@ Correlation (the real power):
 # Golden Signals
 
 **TL;DR** - The Four Golden Signals (Latency, Traffic, Errors, Saturation) are the essential metrics to monitor for any service - from Google's SRE book, they tell you if your service is healthy and where to look when it's not.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -325,13 +319,11 @@ Teams monitor 500 metrics. Dashboards have 50 panels. Alert fatigue from noise. 
 
 **THE INVENTION MOMENT:**
 "This is exactly why Google SRE defined the four golden signals."
-
 ---
 
 ### 📘 Textbook Definition
 
 The Four Golden Signals (from Google's SRE book) are the four critical measurements for monitoring user-facing systems: Latency (time to serve a request), Traffic (demand on the system), Errors (rate of failed requests), and Saturation (how full the system is).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -344,7 +336,6 @@ The Four Golden Signals (from Google's SRE book) are the four critical measureme
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -364,7 +355,6 @@ The Four Golden Signals (from Google's SRE book) are the four critical measureme
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -376,7 +366,6 @@ The Four Golden Signals (from Google's SRE book) are the four critical measureme
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -395,7 +384,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -436,7 +424,6 @@ Also known as: RED method (Rate, Errors, Duration)
 And: USE method (Utilization, Saturation, Errors)
   for resource-based systems (CPU, disk, network)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -450,7 +437,6 @@ And: USE method (Utilization, Saturation, Errors)
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -463,6 +449,7 @@ And: USE method (Utilization, Saturation, Errors)
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -472,14 +459,69 @@ And: USE method (Utilization, Saturation, Errors)
 
 **Interview one-liner:**
 "I structure monitoring around Google's four golden signals - latency (percentile-based, p95/p99 not averages), traffic (requests/sec), errors (explicit 5xx + implicit failures), and saturation (resource headroom) - using RED for services and USE for infrastructure resources."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Golden Signals. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -526,58 +568,6 @@ And: USE method (Utilization, Saturation, Errors)
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Golden Signals. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -602,7 +592,6 @@ And: USE method (Utilization, Saturation, Errors)
 # SLI SLO SLA
 
 **TL;DR** - SLIs measure service quality (latency percentile), SLOs set internal targets (99.9% requests < 200ms), SLAs are contractual guarantees with consequences (99.5% uptime or credits) - together they create a framework for reliability decisions and error budget management.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -612,13 +601,11 @@ And: USE method (Utilization, Saturation, Errors)
 
 **THE INVENTION MOMENT:**
 "This is exactly why SLIs/SLOs/SLAs were formalized."
-
 ---
 
 ### 📘 Textbook Definition
 
 **SLI** (Service Level Indicator): A quantitative measure of service behavior (e.g., proportion of requests faster than 200ms). **SLO** (Service Level Objective): A target value for an SLI that the service aims to meet (e.g., 99.9% of requests < 200ms over 30 days). **SLA** (Service Level Agreement): A contractual guarantee with consequences for violation (e.g., financial credits if availability < 99.5%).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -631,7 +618,6 @@ And: USE method (Utilization, Saturation, Errors)
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -651,7 +637,6 @@ And: USE method (Utilization, Saturation, Errors)
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -663,7 +648,6 @@ And: USE method (Utilization, Saturation, Errors)
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -682,7 +666,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -731,7 +714,6 @@ Availability levels and downtime:
 
   Each additional "9" costs 10x more to achieve!
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -745,7 +727,6 @@ Availability levels and downtime:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -758,6 +739,7 @@ Availability levels and downtime:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -767,45 +749,26 @@ Availability levels and downtime:
 
 **Interview one-liner:**
 "SLIs quantify user-facing quality (latency, availability), SLOs set reliability targets driving error budgets (the mechanism for balancing feature velocity vs stability), and SLAs are looser contractual guarantees - I measure SLIs at the load balancer and use error budget burn rate for alerting."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How do you choose the right SLO for a service?**
-
-_Why they ask:_ Tests practical SLO engineering.
-
-**Answer:**
-Process:
-
-1. **Start with user expectations**: What latency/availability do users actually notice? Measure current performance as baseline.
-2. **Consider dependencies**: Your SLO can't exceed your dependencies. If your DB is 99.95%, your service can't be 99.99%.
-3. **Consider cost**: Each additional 9 costs ~10x more. 99.99% needs multi-region, automatic failover, etc. Is the business value worth it?
-4. **Start conservative, tighten later**: Begin with 99.5%, measure, then tighten to 99.9% when you can sustain it.
-
-Per service tier:
-
-- **Tier 1** (revenue-critical: checkout, auth): 99.95%, p99 < 200ms
-- **Tier 2** (user-facing: search, recommendations): 99.9%, p99 < 500ms
-- **Tier 3** (internal: batch processing, reports): 99.5%, p99 < 5s
-- **Tier 4** (best-effort: analytics, logs): 99%, no latency SLO
-
-Key insight: Not all services deserve the same SLO. Over-engineering reliability for a Tier 3 service wastes resources that should improve Tier 1.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for SLI SLO SLA. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -816,7 +779,6 @@ Key insight: Not all services deserve the same SLO. Over-engineering reliability
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -850,7 +812,30 @@ Key insight: Not all services deserve the same SLO. Over-engineering reliability
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How do you choose the right SLO for a service?**
+
+_Why they ask:_ Tests practical SLO engineering.
+
+**Answer:**
+Process:
+
+1. **Start with user expectations**: What latency/availability do users actually notice? Measure current performance as baseline.
+2. **Consider dependencies**: Your SLO can't exceed your dependencies. If your DB is 99.95%, your service can't be 99.99%.
+3. **Consider cost**: Each additional 9 costs ~10x more. 99.99% needs multi-region, automatic failover, etc. Is the business value worth it?
+4. **Start conservative, tighten later**: Begin with 99.5%, measure, then tighten to 99.9% when you can sustain it.
+
+Per service tier:
+
+- **Tier 1** (revenue-critical: checkout, auth): 99.95%, p99 < 200ms
+- **Tier 2** (user-facing: search, recommendations): 99.9%, p99 < 500ms
+- **Tier 3** (internal: batch processing, reports): 99.5%, p99 < 5s
+- **Tier 4** (best-effort: analytics, logs): 99%, no latency SLO
+
+Key insight: Not all services deserve the same SLO. Over-engineering reliability for a Tier 3 service wastes resources that should improve Tier 1.
 ---
 
 ### 🔗 Related Keywords
@@ -875,7 +860,6 @@ Key insight: Not all services deserve the same SLO. Over-engineering reliability
 # Structured Logging
 
 **TL;DR** - Structured logging outputs log events as machine-parseable key-value pairs (typically JSON) instead of free-text strings, enabling efficient searching, filtering, aggregation, and correlation across distributed services.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -887,13 +871,11 @@ Key insight: Not all services deserve the same SLO. Over-engineering reliability
 ```
 
 How do you find all errors for user X? All timeouts > 3s? Aggregate error count by endpoint? With free-text logs: regex, hoping format is consistent. At 1TB/day: impossible.
-
 ---
 
 ### 📘 Textbook Definition
 
 Structured logging is the practice of recording log events as structured data (key-value pairs, typically JSON) with consistent fields across all services, enabling programmatic querying, filtering, aggregation, and correlation through log management systems.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -906,7 +888,6 @@ Structured logging is the practice of recording log events as structured data (k
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -926,7 +907,6 @@ Structured logging is the practice of recording log events as structured data (k
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -938,7 +918,6 @@ Structured logging is the practice of recording log events as structured data (k
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -957,7 +936,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -995,7 +973,6 @@ Essential fields:
   timestamp, level, service, trace_id, message
   + context-specific fields (user_id, order_id, etc.)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1009,7 +986,6 @@ Essential fields:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1022,6 +998,7 @@ Essential fields:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1031,14 +1008,69 @@ Essential fields:
 
 **Interview one-liner:**
 "I implement structured JSON logging with mandatory fields (timestamp, level, service, trace_id) plus context fields (user_id, request_id) - enabling efficient search and aggregation in ELK/Loki, automatic correlation with distributed traces, and meaningful alerting on structured queries."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Structured Logging. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1085,58 +1117,6 @@ Essential fields:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Structured Logging. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1161,7 +1141,6 @@ Essential fields:
 # Distributed Tracing
 
 **TL;DR** - Distributed tracing tracks a single request as it flows through multiple services, showing exactly which service/operation caused latency or failure - essential for debugging microservices where a user request touches 10+ services.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1171,13 +1150,11 @@ User reports "checkout is slow." Request hits: API gateway -> auth service -> pr
 
 **THE INVENTION MOMENT:**
 "This is exactly why distributed tracing was created."
-
 ---
 
 ### 📘 Textbook Definition
 
 Distributed tracing is an observability technique that records the causal chain of operations (spans) that comprise a distributed transaction, propagating a unique trace context (trace ID) across service boundaries to provide end-to-end visibility into request latency, errors, and dependencies.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1190,7 +1167,6 @@ Distributed tracing is an observability technique that records the causal chain 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1210,7 +1186,6 @@ Distributed tracing is an observability technique that records the causal chain 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1222,7 +1197,6 @@ Distributed tracing is an observability technique that records the causal chain 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1241,7 +1215,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1277,7 +1250,6 @@ W3C Trace Context standard:
   traceparent: 00-{trace-id}-{parent-span-id}-{flags}
   Example: 00-abc123def456-span789-01
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1291,7 +1263,6 @@ W3C Trace Context standard:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1304,6 +1275,7 @@ W3C Trace Context standard:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1313,14 +1285,69 @@ W3C Trace Context standard:
 
 **Interview one-liner:**
 "Distributed tracing propagates trace context (W3C traceparent) across service boundaries, building a span tree showing exactly where time is spent - I use OpenTelemetry for auto-instrumentation with Jaeger/Tempo as backend, correlating traces with metrics (exemplars) and logs (trace_id field) for full observability."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Distributed Tracing. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1367,58 +1394,6 @@ W3C Trace Context standard:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Distributed Tracing. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1443,20 +1418,17 @@ W3C Trace Context standard:
 # Alerting Strategy
 
 **TL;DR** - An effective alerting strategy focuses on symptoms (user impact) not causes (CPU high), uses multi-window burn rate for SLO-based alerts, routes by severity, and minimizes noise to prevent alert fatigue - every alert must be actionable.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 1000 alerts fire daily. On-call ignores them (alert fatigue). The one critical alert (database about to fail) is lost in noise. CPU alerts fire for autoscaling events. "Everything is red but nothing is actually broken."
-
 ---
 
 ### 📘 Textbook Definition
 
 An alerting strategy defines what to alert on (symptoms over causes), when to alert (thresholds, burn rates), how to route (severity tiers), and how to respond (runbooks), designed to maximize signal-to-noise ratio and ensure every alert represents actionable user impact.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1469,7 +1441,6 @@ An alerting strategy defines what to alert on (symptoms over causes), when to al
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1489,7 +1460,6 @@ An alerting strategy defines what to alert on (symptoms over causes), when to al
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1501,7 +1471,6 @@ An alerting strategy defines what to alert on (symptoms over causes), when to al
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1520,7 +1489,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1561,7 +1529,6 @@ SLO-based alerting (burn rate):
   This replaces: "error rate > 1% for 5 min"
     (arbitrary threshold, no SLO context)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1575,7 +1542,6 @@ SLO-based alerting (burn rate):
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1588,6 +1554,7 @@ SLO-based alerting (burn rate):
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1597,14 +1564,69 @@ SLO-based alerting (burn rate):
 
 **Interview one-liner:**
 "I implement symptom-based alerting using multi-window error budget burn rates (catching sustained impact without false positives), route by severity tier (P1 pages, P3 tickets), and ruthlessly prune non-actionable alerts - every alert must have a runbook and a human action."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Alerting Strategy. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1651,58 +1673,6 @@ SLO-based alerting (burn rate):
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Alerting Strategy. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1718,4 +1688,3 @@ SLO-based alerting (burn rate):
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

@@ -15,7 +15,7 @@ keywords:
   - Notification System
 difficulty_range: medium to hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -29,19 +29,16 @@ version: 2
 # URL Shortener
 
 **TL;DR** - Design a URL shortening service (like bit.ly) that converts long URLs to short codes, redirects short URLs to originals, and handles billions of redirects per day. Core challenge: generating unique, short, collision-free codes at scale.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Long URLs are hard to share (SMS character limits, print media, verbal communication). A URL shortener maps a 200-character URL to a 7-character code, provides analytics (click counts), and enables link management (expiration, editing destination).
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -54,7 +51,6 @@ Long URLs are hard to share (SMS character limits, print media, verbal communica
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -74,7 +70,6 @@ Long URLs are hard to share (SMS character limits, print media, verbal communica
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -86,7 +81,6 @@ Long URLs are hard to share (SMS character limits, print media, verbal communica
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -216,14 +210,12 @@ Every redirect -> log event (async):
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -237,7 +229,6 @@ Every redirect -> log event (async):
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -252,54 +243,29 @@ Every redirect -> log event (async):
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How do you handle custom aliases and prevent abuse?**
-
-_Why they ask:_ Tests edge case handling and security thinking.
-
-_Strong answer:_
-
-**Custom aliases:**
-
-```
-POST /api/shorten
-  { "longUrl": "...", "customAlias": "my-sale" }
-
-1. Check if alias is taken:
-   SELECT FROM urls WHERE short_code = 'my-sale'
-2. If taken -> 409 Conflict
-3. If available -> INSERT with custom code
-4. Reserve common words (blocklist):
-   "admin", "api", "login", "help" -> rejected
-```
-
-**Abuse prevention:**
-
-- Rate limiting: 100 URLs/hour per user (authenticated), 10/hour anonymous
-- Blocklist: check destination URL against malware/phishing lists (Google Safe Browsing API)
-- Link preview: `GET /api/preview/{code}` shows destination before redirect
-- Expiration: default 2 years, max 10 years, min 1 hour
-- CAPTCHA for anonymous users creating > 5 links
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for URL Shortener. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -310,7 +276,6 @@ POST /api/shorten
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -344,7 +309,37 @@ POST /api/shorten
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How do you handle custom aliases and prevent abuse?**
+
+_Why they ask:_ Tests edge case handling and security thinking.
+
+_Strong answer:_
+
+**Custom aliases:**
+
+```
+POST /api/shorten
+  { "longUrl": "...", "customAlias": "my-sale" }
+
+1. Check if alias is taken:
+   SELECT FROM urls WHERE short_code = 'my-sale'
+2. If taken -> 409 Conflict
+3. If available -> INSERT with custom code
+4. Reserve common words (blocklist):
+   "admin", "api", "login", "help" -> rejected
+```
+
+**Abuse prevention:**
+
+- Rate limiting: 100 URLs/hour per user (authenticated), 10/hour anonymous
+- Blocklist: check destination URL against malware/phishing lists (Google Safe Browsing API)
+- Link preview: `GET /api/preview/{code}` shows destination before redirect
+- Expiration: default 2 years, max 10 years, min 1 hour
+- CAPTCHA for anonymous users creating > 5 links
 ---
 
 ### 🔗 Related Keywords
@@ -369,19 +364,16 @@ POST /api/shorten
 # Rate Limiter
 
 **TL;DR** - A rate limiter controls how many requests a client can make in a time window, protecting services from abuse, DDoS, and resource exhaustion. Core algorithms: Token Bucket (smooth, bursty), Sliding Window (precise), Fixed Window (simple). Typically implemented at the API Gateway with Redis as the counter store.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 A single misbehaving client sends 100K requests/second, consuming all server threads. Legitimate users get 503 errors. Without rate limiting, one bad actor can take down the entire service. Also needed: API monetization tiers (free=100/day, pro=10K/day).
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -394,7 +386,6 @@ A single misbehaving client sends 100K requests/second, consuming all server thr
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -414,7 +405,6 @@ A single misbehaving client sends 100K requests/second, consuming all server thr
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -426,7 +416,6 @@ A single misbehaving client sends 100K requests/second, consuming all server thr
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -591,14 +580,12 @@ All must pass for request to proceed.
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -612,7 +599,6 @@ All must pass for request to proceed.
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -627,16 +613,72 @@ All must pass for request to proceed.
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Rate Limiter. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -696,58 +738,6 @@ return 1  -- allowed
 
 - If Redis is down: allow all requests (fail open) with local in-memory rate limiter as fallback
 - Never fail closed (reject all) due to rate limiter failure - that's a self-inflicted outage
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Rate Limiter. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -772,19 +762,16 @@ return 1  -- allowed
 # News Feed and Timeline
 
 **TL;DR** - Design a social media news feed (like Twitter/Facebook) that shows each user a personalized, ranked timeline. Core challenge: fan-out (1 post from a user with 10M followers must appear in 10M timelines). Two approaches: fan-out-on-write (pre-compute) vs fan-out-on-read (compute at read time).
-
 ---
 
 ### 🔥 The Problem This Solves
 
 User follows 500 people. Each posts multiple times daily. Building a real-time feed by querying "all posts from all followed users, sorted by time" requires joining 500 users' posts at read time - too slow at scale.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -797,7 +784,6 @@ User follows 500 people. Each posts multiple times daily. Building a real-time f
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -817,7 +803,6 @@ User follows 500 people. Each posts multiple times daily. Building a real-time f
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -829,7 +814,6 @@ User follows 500 people. Each posts multiple times daily. Building a real-time f
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -966,14 +950,12 @@ Timeline cache (Redis):
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -987,7 +969,6 @@ Timeline cache (Redis):
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1002,16 +983,72 @@ Timeline cache (Redis):
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for News Feed and Timeline. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1054,58 +1091,6 @@ Follower reads feed:
 - Push notification via WebSocket (only connected users)
 - Pre-compute for active users only (signed in last 24h)
 - Inactive users: build timeline on-demand when they return
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for News Feed and Timeline. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1130,19 +1115,16 @@ Follower reads feed:
 # Chat System
 
 **TL;DR** - Design a real-time messaging system (like WhatsApp/Slack) supporting 1:1 chats and group chats. Core challenges: real-time delivery via WebSockets, message ordering, offline message delivery, and scaling persistent connections across millions of users.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Users expect messages delivered in real-time (< 200ms) with guaranteed delivery (even if recipient is offline), correct ordering (messages in a conversation appear in the order sent), and multi-device sync. HTTP polling is too slow and wasteful.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1155,7 +1137,6 @@ Users expect messages delivered in real-time (< 200ms) with guaranteed delivery 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1175,7 +1156,6 @@ Users expect messages delivered in real-time (< 200ms) with guaranteed delivery 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1187,7 +1167,6 @@ Users expect messages delivered in real-time (< 200ms) with guaranteed delivery 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1333,14 +1312,12 @@ Sync on reconnect:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1354,7 +1331,6 @@ Sync on reconnect:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1369,16 +1345,72 @@ Sync on reconnect:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Chat System. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1440,58 +1472,6 @@ Multi-device: each device has its own key pair
   Message encrypted N times (once per device)
   Server stores N ciphertexts per message
 ```
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Chat System. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1516,19 +1496,16 @@ Multi-device: each device has its own key pair
 # Notification System
 
 **TL;DR** - Design a notification system that delivers push notifications, emails, SMS, and in-app notifications to millions of users with low latency, guaranteed delivery, and user preferences. Core challenges: multi-channel routing, deduplication, rate limiting, and handling provider failures.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Users need to be notified about events (order shipped, payment received, friend request) across multiple channels. Each user has different preferences (email for orders, push for messages, no SMS). Without a centralized system, every service implements its own notification logic - inconsistent, unmaintainable, and users get spammed.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1541,7 +1518,6 @@ Users need to be notified about events (order shipped, payment received, friend 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1561,7 +1537,6 @@ Users need to be notified about events (order shipped, payment received, friend 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1573,7 +1548,6 @@ Users need to be notified about events (order shipped, payment received, friend 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1741,14 +1715,12 @@ Metrics dashboard:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1762,7 +1734,6 @@ Metrics dashboard:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1777,16 +1748,72 @@ Metrics dashboard:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Notification System. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1907,58 +1934,6 @@ Final decision: send or suppress, per channel
 - Email for orders and security only
 - SMS for security only
 - Quiet hours: 10pm - 8am local time
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Notification System. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1974,4 +1949,3 @@ Final decision: send or suppress, per channel
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

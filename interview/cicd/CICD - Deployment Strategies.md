@@ -16,7 +16,7 @@ keywords:
   - Progressive Delivery
 difficulty_range: medium-hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Blue-Green Deployment
 
 **TL;DR** - Blue-green deployment maintains two identical production environments (blue=current, green=new), routes traffic from blue to green after validation, and keeps blue as instant rollback - zero-downtime with full environment isolation.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -41,13 +40,11 @@ Deployment means in-place update. During the update, the system is in a mixed st
 
 **THE INVENTION MOMENT:**
 "This is exactly why blue-green deployment was invented."
-
 ---
 
 ### 📘 Textbook Definition
 
 Blue-green deployment is a release technique using two identical production environments (blue and green). At any time, one serves live traffic while the other is idle or being prepared. Deployment targets the idle environment; traffic is switched after validation, with the previous environment available for instant rollback.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -60,7 +57,6 @@ Blue-green deployment is a release technique using two identical production envi
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -80,7 +76,6 @@ Blue-green deployment is a release technique using two identical production envi
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -92,7 +87,6 @@ Blue-green deployment is a release technique using two identical production envi
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -111,7 +105,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -141,7 +134,6 @@ Implementation options:
   - K8s Service selector change (fast)
   - Cloud: swap deployment slots (Azure)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -155,7 +147,6 @@ Implementation options:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -168,6 +159,7 @@ Implementation options:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -177,48 +169,26 @@ Implementation options:
 
 **Interview one-liner:**
 "Blue-green gives instant rollback by maintaining two production environments - deploy to idle, validate, switch traffic via LB - the main challenge is database schema compatibility requiring expand-contract migrations since both versions briefly share the same DB."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How do you handle database migrations with blue-green deployments?**
-
-_Why they ask:_ Tests understanding of the hardest part of blue-green.
-
-**Answer:**
-The problem: Blue (v1) and Green (v2) share the same database. If v2 migration breaks v1's queries, you can't rollback to Blue.
-
-Solution: Expand-Contract pattern
-
-1. **Expand** (deploy with v2): Add new columns/tables alongside old ones. Both versions work.
-2. **Migrate**: Copy/transform data to new structure (background job)
-3. **Contract** (separate deploy after v1 retired): Remove old columns/tables.
-
-Example: Rename column `name` to `full_name`
-
-- Bad: `ALTER TABLE users RENAME COLUMN name TO full_name` (breaks v1)
-- Good:
-  1. Add `full_name` column, write to both (v2 deploy)
-  2. Backfill `full_name` from `name`
-  3. Switch reads to `full_name` (v3 deploy)
-  4. Drop `name` column (v4 deploy, after v2 is gone)
-
-Rule: Every migration must be backward-compatible with N-1 version.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Blue-Green Deployment. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -229,7 +199,6 @@ Rule: Every migration must be backward-compatible with N-1 version.
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -263,7 +232,33 @@ Rule: Every migration must be backward-compatible with N-1 version.
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How do you handle database migrations with blue-green deployments?**
+
+_Why they ask:_ Tests understanding of the hardest part of blue-green.
+
+**Answer:**
+The problem: Blue (v1) and Green (v2) share the same database. If v2 migration breaks v1's queries, you can't rollback to Blue.
+
+Solution: Expand-Contract pattern
+
+1. **Expand** (deploy with v2): Add new columns/tables alongside old ones. Both versions work.
+2. **Migrate**: Copy/transform data to new structure (background job)
+3. **Contract** (separate deploy after v1 retired): Remove old columns/tables.
+
+Example: Rename column `name` to `full_name`
+
+- Bad: `ALTER TABLE users RENAME COLUMN name TO full_name` (breaks v1)
+- Good:
+  1. Add `full_name` column, write to both (v2 deploy)
+  2. Backfill `full_name` from `name`
+  3. Switch reads to `full_name` (v3 deploy)
+  4. Drop `name` column (v4 deploy, after v2 is gone)
+
+Rule: Every migration must be backward-compatible with N-1 version.
 ---
 
 ### 🔗 Related Keywords
@@ -288,7 +283,6 @@ Rule: Every migration must be backward-compatible with N-1 version.
 # Canary Deployment
 
 **TL;DR** - Canary deployment routes a small percentage of traffic to the new version (1%, 5%, 10%), monitors error rates and latency, and progressively increases traffic if healthy - catching production issues before full rollout with minimal blast radius.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -298,13 +292,11 @@ Blue-green is all-or-nothing (100% of traffic switches). You've tested in stagin
 
 **THE INVENTION MOMENT:**
 "This is exactly why canary deployments were created."
-
 ---
 
 ### 📘 Textbook Definition
 
 Canary deployment is a progressive release technique that routes a small subset of production traffic to the new version while the majority continues using the current version, enabling real-world validation with minimal user impact. Traffic percentage increases incrementally based on health metrics.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -317,7 +309,6 @@ Canary deployment is a progressive release technique that routes a small subset 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -337,7 +328,6 @@ Canary deployment is a progressive release technique that routes a small subset 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -349,7 +339,6 @@ Canary deployment is a progressive release technique that routes a small subset 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -368,7 +357,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -419,7 +407,6 @@ spec:
         - pause: { duration: 15m }
         - setWeight: 100
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -433,7 +420,6 @@ spec:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -446,6 +432,7 @@ spec:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -455,14 +442,69 @@ spec:
 
 **Interview one-liner:**
 "Canary deployments progressively shift traffic (1% -> 5% -> 25% -> 100%) with automated metric analysis at each step - I use Argo Rollouts with Prometheus queries comparing canary error rates and latency against baseline, with automatic rollback on degradation."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Canary Deployment. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -509,58 +551,6 @@ spec:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Canary Deployment. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -585,20 +575,17 @@ spec:
 # Rolling Deployment
 
 **TL;DR** - Rolling deployment gradually replaces instances of the old version with the new version one at a time (or in batches), maintaining overall capacity while never having all instances on the same version during the transition.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 All instances updated simultaneously = downtime during update. Blue-green requires 2x infrastructure. Need a middle ground that maintains availability with minimal extra resources.
-
 ---
 
 ### 📘 Textbook Definition
 
 Rolling deployment incrementally replaces instances of the previous application version with instances of the new version, ensuring a minimum number of instances are always available during the transition. Controlled by max-surge (extra instances allowed) and max-unavailable (instances that can be down).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -611,7 +598,6 @@ Rolling deployment incrementally replaces instances of the previous application 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -631,7 +617,6 @@ Rolling deployment incrementally replaces instances of the previous application 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -643,7 +628,6 @@ Rolling deployment incrementally replaces instances of the previous application 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -662,7 +646,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -689,7 +672,6 @@ Rolling deployment challenges:
   - No instant rollback (unlike blue-green)
   - Session affinity can cause uneven distribution
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -703,7 +685,6 @@ Rolling deployment challenges:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -716,6 +697,7 @@ Rolling deployment challenges:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -725,14 +707,69 @@ Rolling deployment challenges:
 
 **Interview one-liner:**
 "Rolling deployment is the Kubernetes default - it gradually replaces pods maintaining availability with configurable maxSurge/maxUnavailable, but requires backward-compatible changes since both versions coexist, and rollback takes as long as the original deployment unlike instant blue-green switches."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Rolling Deployment. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -779,58 +816,6 @@ Rolling deployment challenges:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Rolling Deployment. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -855,7 +840,6 @@ Rolling deployment challenges:
 # Feature Flags
 
 **TL;DR** - Feature flags (toggles) are runtime switches that decouple deployment from release - code is in production but hidden behind flags, enabling progressive rollout, instant kill switches, A/B testing, and trunk-based development.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -865,13 +849,11 @@ Deploy = Release. The moment code is in production, all users see it. Half-built
 
 **THE INVENTION MOMENT:**
 "This is exactly why feature flags were created."
-
 ---
 
 ### 📘 Textbook Definition
 
 Feature flags are conditional statements in code that enable runtime control over feature visibility without code deployment. They enable progressive rollout (percentage-based), targeted release (user segments), A/B testing, and instant feature deactivation (kill switch).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -884,7 +866,6 @@ Feature flags are conditional statements in code that enable runtime control ove
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -904,7 +885,6 @@ Feature flags are conditional statements in code that enable runtime control ove
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -916,7 +896,6 @@ Feature flags are conditional statements in code that enable runtime control ove
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -935,7 +914,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -985,7 +963,6 @@ Dangers of flag debt:
   N flags = 2^N possible states (unmaintainable)
   RULE: Remove flags within 2 weeks of full rollout
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -999,7 +976,6 @@ Dangers of flag debt:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1012,6 +988,7 @@ Dangers of flag debt:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1021,14 +998,69 @@ Dangers of flag debt:
 
 **Interview one-liner:**
 "Feature flags decouple deployment from release - I use them for trunk-based development (hide incomplete work), progressive rollouts (1% -> 100%), instant kill switches for incidents, and A/B testing - with strict hygiene rules requiring flag removal within 2 weeks of full rollout to prevent combinatorial state explosion."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Feature Flags. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1075,58 +1107,6 @@ Dangers of flag debt:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Feature Flags. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1151,20 +1131,17 @@ Dangers of flag debt:
 # A/B Testing
 
 **TL;DR** - A/B testing (split testing) routes different user segments to different feature variants, measuring statistical impact on business metrics to make data-driven product decisions - requires feature flags and proper statistical methodology.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Product decisions based on opinions ("I think users prefer blue buttons"). Ship a change, metrics move - but was it the change or seasonal variation? No controlled experiment, no statistical significance, no causal proof.
-
 ---
 
 ### 📘 Textbook Definition
 
 A/B testing is a controlled experiment where users are randomly assigned to variants (A=control, B=treatment) and business metrics are measured to determine if the treatment produces a statistically significant improvement, requiring proper sample size, randomization, and statistical analysis.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1177,7 +1154,6 @@ A/B testing is a controlled experiment where users are randomly assigned to vari
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1197,7 +1173,6 @@ A/B testing is a controlled experiment where users are randomly assigned to vari
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1209,7 +1184,6 @@ A/B testing is a controlled experiment where users are randomly assigned to vari
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1228,7 +1202,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1262,7 +1235,6 @@ Common mistakes:
   - Changing test mid-flight (invalidates results)
   - Ignoring novelty effect (users try new things)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1276,7 +1248,6 @@ Common mistakes:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1289,6 +1260,7 @@ Common mistakes:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1298,14 +1270,69 @@ Common mistakes:
 
 **Interview one-liner:**
 "A/B testing uses controlled randomized experiments via feature flags to measure causal impact of changes on business metrics - I ensure proper sample size calculation upfront, full business-cycle duration, and statistical significance before declaring winners."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for A/B Testing. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1352,58 +1379,6 @@ Common mistakes:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for A/B Testing. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1428,7 +1403,6 @@ Common mistakes:
 # Progressive Delivery
 
 **TL;DR** - Progressive delivery extends continuous delivery with gradual rollouts (canary, blue-green), automated analysis, and traffic management - giving operators fine-grained control over who sees new versions and when, with automated rollback on degradation.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1438,13 +1412,11 @@ Continuous deployment is binary: either everything auto-deploys to all users, or
 
 **THE INVENTION MOMENT:**
 "This is exactly why progressive delivery was formalized."
-
 ---
 
 ### 📘 Textbook Definition
 
 Progressive delivery is an umbrella term for deployment strategies that give teams gradual control over release exposure, combining techniques like canary analysis, feature flags, traffic splitting, and automated rollback to reduce the blast radius of failed deployments while maintaining deployment velocity.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1457,7 +1429,6 @@ Progressive delivery is an umbrella term for deployment strategies that give tea
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1477,7 +1448,6 @@ Progressive delivery is an umbrella term for deployment strategies that give tea
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1489,7 +1459,6 @@ Progressive delivery is an umbrella term for deployment strategies that give tea
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1508,7 +1477,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1546,7 +1514,6 @@ Maturity levels:
   L5: Full progressive (flags + canary + auto-analysis
       + automated rollback + experimentation)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1560,7 +1527,6 @@ Maturity levels:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1573,6 +1539,7 @@ Maturity levels:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1582,14 +1549,69 @@ Maturity levels:
 
 **Interview one-liner:**
 "Progressive delivery extends CD with graduated exposure control - combining canary deployments (traffic splitting), automated metric analysis (comparing against baseline), feature flags (user segment targeting), and automated rollback - giving teams deployment velocity with safety guarantees through tools like Argo Rollouts and Flagger."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Progressive Delivery. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1636,58 +1658,6 @@ Maturity levels:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Progressive Delivery. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1703,4 +1673,3 @@ Maturity levels:
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

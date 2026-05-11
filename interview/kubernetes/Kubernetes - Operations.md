@@ -16,7 +16,7 @@ keywords:
   - Cluster Upgrades
 difficulty_range: hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Horizontal Pod Autoscaler
 
 **TL;DR** - HPA automatically scales pod replicas based on observed metrics (CPU, memory, custom metrics) to match demand - scaling up during traffic spikes and down during quiet periods to optimize cost and performance.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -41,13 +40,11 @@ You set replicas: 3. At 2 AM, 3 pods waste money serving no traffic. At 2 PM dur
 
 **THE INVENTION MOMENT:**
 "This is exactly why Horizontal Pod Autoscaler was created."
-
 ---
 
 ### 📘 Textbook Definition
 
 The Horizontal Pod Autoscaler automatically scales the number of pod replicas in a Deployment, ReplicaSet, or StatefulSet based on observed CPU utilization, memory usage, or custom/external metrics, using a control loop that periodically (default 15s) queries the metrics API and adjusts replicas.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -60,7 +57,6 @@ The Horizontal Pod Autoscaler automatically scales the number of pod replicas in
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -80,7 +76,6 @@ The Horizontal Pod Autoscaler automatically scales the number of pod replicas in
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -92,7 +87,6 @@ The Horizontal Pod Autoscaler automatically scales the number of pod replicas in
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -111,7 +105,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -174,7 +167,6 @@ Prerequisites:
      (HPA uses requests as 100% baseline)
   3. Custom metrics: Prometheus adapter or KEDA
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -188,7 +180,6 @@ Prerequisites:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -201,6 +192,7 @@ Prerequisites:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -210,45 +202,26 @@ Prerequisites:
 
 **Interview one-liner:**
 "HPA scales replicas based on observed metrics against target utilization - I set CPU target at 70%, configure asymmetric behavior (fast scale-up, slow scale-down with 5-min stabilization), always ensure pods have resource requests, and use KEDA for event-driven scaling from queues or custom metrics."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: HPA keeps scaling up but pods aren't getting more traffic. What's wrong?**
-
-_Why they ask:_ Tests debugging autoscaler behavior.
-
-**Answer:**
-Root causes:
-
-1. **Pods failing readiness probes** - HPA sees high CPU on existing pods (they're overloaded), scales up, but new pods fail readiness so they don't receive traffic. Existing pods stay overloaded. Infinite scaling.
-2. **Resource requests too low** - Pod requests 100m CPU but uses 500m normally. HPA thinks it's at 500% utilization and keeps scaling.
-3. **Insufficient cluster capacity** - Pods are pending (not enough nodes). Need Cluster Autoscaler to add nodes.
-4. **External bottleneck** - Database connection pool exhausted. More pods can't help if the bottleneck is downstream.
-
-Debug:
-
-```bash
-kubectl get hpa api-hpa
-kubectl describe hpa api-hpa  # Check events and metrics
-kubectl top pods -l app=api   # Actual resource usage
-kubectl get pods -l app=api   # Check for pending/crashloop
-```
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Horizontal Pod Autoscaler. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -259,7 +232,6 @@ kubectl get pods -l app=api   # Check for pending/crashloop
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -293,7 +265,30 @@ kubectl get pods -l app=api   # Check for pending/crashloop
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: HPA keeps scaling up but pods aren't getting more traffic. What's wrong?**
+
+_Why they ask:_ Tests debugging autoscaler behavior.
+
+**Answer:**
+Root causes:
+
+1. **Pods failing readiness probes** - HPA sees high CPU on existing pods (they're overloaded), scales up, but new pods fail readiness so they don't receive traffic. Existing pods stay overloaded. Infinite scaling.
+2. **Resource requests too low** - Pod requests 100m CPU but uses 500m normally. HPA thinks it's at 500% utilization and keeps scaling.
+3. **Insufficient cluster capacity** - Pods are pending (not enough nodes). Need Cluster Autoscaler to add nodes.
+4. **External bottleneck** - Database connection pool exhausted. More pods can't help if the bottleneck is downstream.
+
+Debug:
+
+```bash
+kubectl get hpa api-hpa
+kubectl describe hpa api-hpa  # Check events and metrics
+kubectl top pods -l app=api   # Actual resource usage
+kubectl get pods -l app=api   # Check for pending/crashloop
+```
 ---
 
 ### 🔗 Related Keywords
@@ -318,20 +313,17 @@ kubectl get pods -l app=api   # Check for pending/crashloop
 # Resource Management
 
 **TL;DR** - Resource management (requests, limits, LimitRanges, ResourceQuotas) controls how much CPU and memory pods can use, enabling fair scheduling, preventing noisy neighbors, and controlling costs across teams.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 One team deploys a memory-leaking app that consumes all node memory, causing OOM kills of other teams' pods. No way to limit cost per team. Scheduler can't make informed placement decisions. Everything fights for resources.
-
 ---
 
 ### 📘 Textbook Definition
 
 Kubernetes resource management uses requests (guaranteed minimum for scheduling) and limits (maximum allowed, enforced by kernel) for CPU and memory, with LimitRanges setting per-pod defaults and ResourceQuotas capping total namespace consumption.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -344,7 +336,6 @@ Kubernetes resource management uses requests (guaranteed minimum for scheduling)
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -364,7 +355,6 @@ Kubernetes resource management uses requests (guaranteed minimum for scheduling)
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -376,7 +366,6 @@ Kubernetes resource management uses requests (guaranteed minimum for scheduling)
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -395,7 +384,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -467,7 +455,6 @@ Key concepts:
     BestEffort: No requests or limits
       First to be evicted under pressure
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -481,7 +468,6 @@ Key concepts:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -494,6 +480,7 @@ Key concepts:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -503,14 +490,69 @@ Key concepts:
 
 **Interview one-liner:**
 "Requests guarantee scheduling capacity and define QoS class, limits enforce maximums (CPU=throttle, memory=OOM-kill) - I always set memory limits and requests, use LimitRanges for namespace defaults, and ResourceQuotas for team-level cost control and fair sharing."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Resource Management. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -557,58 +599,6 @@ Key concepts:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Resource Management. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -633,7 +623,6 @@ Key concepts:
 # Health Probes
 
 **TL;DR** - Liveness, readiness, and startup probes tell Kubernetes when to restart a pod (broken), when to route traffic to it (ready), and when to give it extra startup time - critical for zero-downtime operations.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -643,13 +632,11 @@ A pod's container is running (PID 1 alive) but the application is deadlocked. Ku
 
 **THE INVENTION MOMENT:**
 "This is exactly why Kubernetes health probes were created."
-
 ---
 
 ### 📘 Textbook Definition
 
 Kubernetes probes are periodic diagnostic checks performed by the kubelet: liveness probes determine if a container should be restarted (application stuck), readiness probes determine if traffic should be routed to it (ready to serve), and startup probes disable liveness checks during slow initialization.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -662,7 +649,6 @@ Kubernetes probes are periodic diagnostic checks performed by the kubelet: liven
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -682,7 +668,6 @@ Kubernetes probes are periodic diagnostic checks performed by the kubelet: liven
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -694,7 +679,6 @@ Kubernetes probes are periodic diagnostic checks performed by the kubelet: liven
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -713,7 +697,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -778,7 +761,6 @@ Common mistakes:
     (traffic hits unready pods -> errors)
   - Timeout too short for heavy endpoints
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -792,7 +774,6 @@ Common mistakes:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -805,6 +786,7 @@ Common mistakes:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -814,14 +796,69 @@ Common mistakes:
 
 **Interview one-liner:**
 "I configure all three probes: startup for slow-initializing apps (avoids premature liveness kills), liveness checking only internal application health (never external deps), and readiness for traffic routing - critical for zero-downtime rolling updates where new pods must pass readiness before receiving traffic."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Health Probes. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -868,58 +905,6 @@ Common mistakes:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Health Probes. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -944,20 +929,17 @@ Common mistakes:
 # Rolling Updates
 
 **TL;DR** - Rolling updates gradually replace old pods with new ones, maintaining availability throughout the deployment by controlling how many pods can be unavailable (maxUnavailable) and how many extra pods can exist (maxSurge) during the transition.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Deployment update = kill all old pods, start new ones. During the gap, zero capacity. Users experience downtime. If new version is broken, 100% of traffic hits the broken version before anyone notices.
-
 ---
 
 ### 📘 Textbook Definition
 
 A rolling update incrementally replaces pods of the previous version with pods of the new version in a controlled manner, ensuring that a minimum number of pods remain available and a maximum number of extra pods are created during the update process.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -970,7 +952,6 @@ A rolling update incrementally replaces pods of the previous version with pods o
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -990,7 +971,6 @@ A rolling update incrementally replaces pods of the previous version with pods o
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1002,7 +982,6 @@ A rolling update incrementally replaces pods of the previous version with pods o
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1021,7 +1000,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1063,7 +1041,6 @@ Graceful shutdown:
   5. App drains in-flight requests
   6. Container exits (or killed after grace period)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1077,7 +1054,6 @@ Graceful shutdown:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1090,6 +1066,7 @@ Graceful shutdown:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1099,14 +1076,69 @@ Graceful shutdown:
 
 **Interview one-liner:**
 "Zero-downtime rolling updates require: maxUnavailable:0 with maxSurge for capacity, readiness probes to gate traffic routing, and preStop hooks with graceful SIGTERM handling to drain in-flight requests before pod termination - validated with `kubectl rollout status` and automated rollback on error rates."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Rolling Updates. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1153,58 +1185,6 @@ Graceful shutdown:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Rolling Updates. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1229,7 +1209,6 @@ Graceful shutdown:
 # Helm
 
 **TL;DR** - Helm is the package manager for Kubernetes - it templates, packages, versions, and manages complex multi-resource applications as a single unit (chart), enabling reusable deployments across environments with value-based customization.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1239,13 +1218,11 @@ Deploying an application requires 10+ YAML files (Deployment, Service, ConfigMap
 
 **THE INVENTION MOMENT:**
 "This is exactly why Helm was created."
-
 ---
 
 ### 📘 Textbook Definition
 
 Helm is a package manager for Kubernetes that bundles multiple resource manifests into versioned charts, uses Go templates for parameterization via values files, manages releases with upgrade/rollback history, and provides dependency management for complex applications.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1258,7 +1235,6 @@ Helm is a package manager for Kubernetes that bundles multiple resource manifest
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1278,7 +1254,6 @@ Helm is a package manager for Kubernetes that bundles multiple resource manifest
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1290,7 +1265,6 @@ Helm is a package manager for Kubernetes that bundles multiple resource manifest
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1309,7 +1283,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1360,7 +1333,6 @@ helm list -n production
 helm template my-release ./mychart \
   -f values-prod.yaml
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1374,7 +1346,6 @@ helm template my-release ./mychart \
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1387,6 +1358,7 @@ helm template my-release ./mychart \
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1396,14 +1368,69 @@ helm template my-release ./mychart \
 
 **Interview one-liner:**
 "Helm packages Kubernetes applications as versioned charts with Go templating for environment customization - I use it with values files per environment, `helm template` for GitOps integration with ArgoCD, and maintain charts with proper dependency management and semantic versioning."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Helm. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1450,58 +1477,6 @@ helm template my-release ./mychart \
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Helm. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1526,20 +1501,17 @@ helm template my-release ./mychart \
 # Cluster Upgrades
 
 **TL;DR** - Kubernetes cluster upgrades follow a sequential version progression (one minor version at a time), upgrading control plane first then nodes, with proper testing, pod disruption budgets, and rollback plans to maintain availability.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Kubernetes releases every 4 months with a 14-month support window. Falling behind means no security patches, deprecated APIs breaking workloads, and eventually a painful multi-version jump.
-
 ---
 
 ### 📘 Textbook Definition
 
 Cluster upgrades update Kubernetes components (API server, etcd, kubelet, kube-proxy) to newer versions following the version skew policy: kube-apiserver can be at most one minor version ahead of kubelet, and upgrades must proceed sequentially (1.27 -> 1.28 -> 1.29, never skip).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1552,7 +1524,6 @@ Cluster upgrades update Kubernetes components (API server, etcd, kubelet, kube-p
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1572,7 +1543,6 @@ Cluster upgrades update Kubernetes components (API server, etcd, kubelet, kube-p
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1584,7 +1554,6 @@ Cluster upgrades update Kubernetes components (API server, etcd, kubelet, kube-p
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1603,7 +1572,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1650,7 +1618,6 @@ spec:
       app: api-server
 # During node drain, won't evict if it would violate PDB
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1664,7 +1631,6 @@ spec:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1677,6 +1643,7 @@ spec:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1686,14 +1653,69 @@ spec:
 
 **Interview one-liner:**
 "I maintain quarterly upgrade cadence (within support window), testing in staging first, checking deprecated APIs with pluto, ensuring PDBs protect workloads during node rolling upgrades, and using managed K8s (EKS/GKE) where control plane upgrades are handled automatically."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Cluster Upgrades. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1730,58 +1752,6 @@ Plan:
    - This is the hardest hop - plan 2-4 weeks for PSP migration alone
 
 Timeline: ~3-4 months for 5 hops with proper testing. Don't rush it.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Cluster Upgrades. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1797,4 +1767,3 @@ Timeline: ~3-4 months for 5 hops with proper testing. Don't rush it.
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

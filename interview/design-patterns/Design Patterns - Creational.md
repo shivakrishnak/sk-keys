@@ -15,7 +15,7 @@ keywords:
   - Prototype
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -29,7 +29,6 @@ version: 2
 # Singleton
 
 **TL;DR** - Singleton ensures a class has exactly one instance and provides a global access point to it, solving uncontrolled instantiation of shared resources.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -45,13 +44,11 @@ Two configuration objects load the same file but one gets modified at runtime. H
 
 **EVOLUTION:**
 The GoF formalized it in 1994, but the concept existed in Smalltalk before that. Early implementations used eager initialization. Java's memory model issues led to the double-checked locking debate. Modern implementations use enum-based singletons (Java) or module-level instances (Python). The pattern has become controversial - many now consider it an anti-pattern when overused, preferring dependency injection for testability.
-
 ---
 
 ### 📘 Textbook Definition
 
 Singleton is a creational design pattern that restricts the instantiation of a class to exactly one object. It provides a global point of access to that instance. The class itself is responsible for keeping track of its sole instance and ensuring that no other instance can be created.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -65,7 +62,6 @@ One instance, one access point, guaranteed by the class itself.
 
 **One insight:**
 The key insight is not "only one instance" - it's "controlled access to shared state." The real value is coordination. When you need a single source of truth that multiple components access, Singleton provides the guarantee. The danger is when you use it as a glorified global variable.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -86,7 +82,6 @@ The constructor must be private (preventing external `new`). A static method pro
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Ensuring exactly one instance in a concurrent environment requires synchronization - no implementation avoids this
 **Accidental:** The testability problems come from the pattern conflating "single instance" with "global access" - DI containers solve this by managing the lifecycle externally
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -99,7 +94,6 @@ The constructor must be private (preventing external `new`). A static method pro
 - "Office controls access" -> thread-safe getInstance()
 
 Where this analogy breaks down: Unlike a government office, Singleton doesn't queue requests - concurrent access happens simultaneously and must be synchronized.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -127,7 +121,6 @@ Singleton is the most misused pattern. The real question isn't "how to implement
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -155,7 +148,6 @@ The double-checked locking pattern:
 2. Synchronize only if instance might be null
 3. Second check inside synchronized block
 4. `volatile` prevents seeing partially constructed object
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -181,7 +173,6 @@ The double-checked locking pattern:
 
 **WHAT CHANGES AT SCALE:**
 In a distributed system, each JVM has its own Singleton. With 50 microservice instances, you have 50 "singletons." True global uniqueness requires distributed coordination (ZooKeeper, Redis-based locks, or database-backed leader election). At scale, the Singleton pattern shifts from a code pattern to an infrastructure pattern.
-
 ---
 
 ### 💻 Code Example
@@ -259,7 +250,6 @@ public class ConnectionPool {
 
 **How to test / verify correctness:**
 Use a concurrent test with `CountDownLatch` to have N threads call `getInstance()` simultaneously, then assert all returned references are `==` (same object). For DI-managed singletons, verify scope in integration tests.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -272,6 +262,7 @@ Use a concurrent test with `CountDownLatch` to have N threads call `getInstance(
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -281,13 +272,68 @@ Use a concurrent test with `CountDownLatch` to have N threads call `getInstance(
 
 **Interview one-liner:**
 "Singleton guarantees one instance per JVM with controlled access - I prefer enum implementation in Java for safety, but in Spring applications I rely on the container's singleton scope for testability."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Most developers think Singleton's purpose is memory savings. In reality, the GoF intended it for coordination - ensuring a single point of control. The irony is that in distributed systems, the pattern that guarantees "only one" actually creates "one per node," which is the opposite of its intent. This is why distributed singletons require entirely different mechanisms (leader election, distributed locks) that have nothing to do with the original pattern.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Singleton. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -416,58 +462,6 @@ My audit approach:
 5. **Validate:** After conversion, ensure the application context has the expected bean count and that each former Singleton is created exactly once (verify with `@PostConstruct` logging or Actuator's `/beans` endpoint).
 
 The goal isn't zero Singletons - it's zero hand-coded Singletons. Let the framework manage lifecycle.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Singleton. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -484,6 +478,7 @@ The goal isn't zero Singletons - it's zero hand-coded Singletons. Let the framew
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -491,7 +486,6 @@ The goal isn't zero Singletons - it's zero hand-coded Singletons. Let the framew
 # Factory Method
 
 **TL;DR** - Factory Method defines an interface for creating objects but lets subclasses decide which class to instantiate, decoupling creation logic from usage code.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -507,13 +501,11 @@ A new requirement for air freight arrives. The `if-else` chain in every creation
 
 **EVOLUTION:**
 Factory Method was formalized by the GoF in 1994 but the concept of virtual constructors existed in Smalltalk. Java's `Collection.iterator()` is a classic example - each collection returns its own iterator type. Modern usage includes static factory methods (Bloch's Effective Java), Spring's `FactoryBean`, and functional approaches where lambdas replace subclass hierarchies.
-
 ---
 
 ### 📘 Textbook Definition
 
 Factory Method is a creational design pattern that defines an interface for creating an object but lets subclasses alter the type of objects that will be created. The pattern delegates instantiation to subclasses, enabling a class to defer object creation to its children while maintaining a uniform interface.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -527,7 +519,6 @@ Let subclasses decide what to create while the parent defines how to use it.
 
 **One insight:**
 Factory Method isn't about factories - it's about the Open/Closed Principle. You can add new product types by creating new subclasses without modifying existing code. The creation decision moves from the caller to the hierarchy, making the system extensible at the type level.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -548,7 +539,6 @@ The parent class defines the algorithm that uses the product. The "factory metho
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** You need some mechanism to map a creation decision to a concrete type - that mapping logic must exist somewhere
 **Accidental:** The subclass explosion can be mitigated with parameterized factories or lambdas, but the core inheritance-based pattern requires it
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -561,7 +551,6 @@ The parent class defines the algorithm that uses the product. The "factory metho
 - "Customer doesn't know the supplier" -> client uses interface
 
 Where this analogy breaks down: In the pattern, the subclass relationship is fixed at compile time, while franchise locations can change suppliers dynamically.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -583,7 +572,6 @@ The classic GoF Factory Method using subclasses is now relatively rare in modern
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -609,7 +597,6 @@ Client code          Creator hierarchy
 3. The factory method (overridden) returns a concrete product
 4. The algorithm uses the product through its interface
 5. Client never knows which concrete product was created
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -634,7 +621,6 @@ Client code          Creator hierarchy
 
 **WHAT CHANGES AT SCALE:**
 At scale, factory methods are often combined with dependency injection. Spring's `FactoryBean<T>` interface is essentially a factory method that the container calls. In plugin architectures, factory methods load classes dynamically, which requires careful error handling for `ClassNotFoundException` and version mismatches.
-
 ---
 
 ### 💻 Code Example
@@ -718,7 +704,6 @@ var pushService = new NotificationService(
 
 **How to test / verify correctness:**
 Test each factory subclass returns the correct product type. Test the template method works with each product via integration tests. For functional factories, pass `Supplier<MockNotification>` in unit tests.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -731,6 +716,7 @@ Test each factory subclass returns the correct product type. Test the template m
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -740,13 +726,68 @@ Test each factory subclass returns the correct product type. Test the template m
 
 **Interview one-liner:**
 "Factory Method delegates object creation to subclasses so the parent class can define an algorithm that works with any product type - I use it when I need polymorphic creation, especially in framework code, though in modern Java I often prefer functional factories with Supplier."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Factory Method is the most common design pattern in the Java standard library, but most developers don't recognize it. Every `Collection.iterator()` call, every `DriverManager.getConnection()`, every `NumberFormat.getInstance()` is a factory method. You've been using it daily without knowing it. The pattern is so fundamental that it's invisible - it's the default way frameworks let you customize behavior.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Factory Method. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -885,58 +926,6 @@ _Why they ask:_ Tests production experience and awareness of pattern limitations
 5. **Testing partial mocks:** If the factory method and the algorithm are in the same class, you need to partially mock the class to test the algorithm with a different product. This is fragile and a sign that creation and usage should be in separate classes.
 
 Mitigation: In modern Java, use functional factories (`Supplier<T>`, `Function<Config, T>`) to avoid class explosion, and let the DI container manage factory beans to avoid lifecycle conflicts.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Factory Method. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -953,6 +942,7 @@ Mitigation: In modern Java, use functional factories (`Supplier<T>`, `Function<C
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -960,7 +950,6 @@ Mitigation: In modern Java, use functional factories (`Supplier<T>`, `Function<C
 # Abstract Factory
 
 **TL;DR** - Abstract Factory provides an interface for creating families of related objects without specifying their concrete classes, ensuring consistency across product variants.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -976,13 +965,11 @@ With 10 components and 3 platforms, you have 30 concrete classes. Without a mech
 
 **EVOLUTION:**
 Formalized by the GoF in 1994, inspired by systems like ET++ and InterViews. The pattern was critical in the era of platform-specific UI toolkits. Today, it's used in cross-platform frameworks, theming systems, and anywhere you need to ensure a consistent family of objects. Modern examples include Java's `UIManager` (Look and Feel), Spring's `AbstractFactoryBean`, and cloud SDK clients that produce platform-specific request/response objects.
-
 ---
 
 ### 📘 Textbook Definition
 
 Abstract Factory is a creational design pattern that provides an interface for creating families of related or dependent objects without specifying their concrete classes. It ensures that products created by a single factory are compatible with each other, enforcing consistency within a product family.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -996,7 +983,6 @@ Create families of related objects that belong together, guaranteed consistent.
 
 **One insight:**
 The key difference from Factory Method is "family." Factory Method creates one product. Abstract Factory creates a coordinated set of products that must work together. If your system only creates one type of object, you don't need Abstract Factory.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1017,7 +1003,6 @@ One factory interface declares methods for creating each product type. Each conc
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Coordinating multiple related objects requires some grouping mechanism - families must be enforced somewhere
 **Accidental:** The interface rigidity (can't add a new product type without modifying all factories) is a limitation of the static type system; languages with duck typing avoid this
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1030,7 +1015,6 @@ One factory interface declares methods for creating each product type. Each conc
 - "Can't mix SUV door with sedan body" -> family consistency
 
 Where this analogy breaks down: In software, switching families is instant (swap the factory reference), while reconfiguring an assembly line takes days.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1052,7 +1036,6 @@ Abstract Factory shines in exactly one scenario: when you have multiple product 
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -1079,7 +1062,6 @@ Client -> [AbstractFactory]
 3. All products come from the same family
 4. Client works with product interfaces only
 5. Swapping the factory swaps the entire product family
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1103,7 +1085,6 @@ Client -> [AbstractFactory]
 
 **WHAT CHANGES AT SCALE:**
 At scale, Abstract Factory often evolves into a registry pattern where factories are dynamically loaded. Plugin systems register their factory implementation, and the runtime selects based on configuration. In cloud environments, the "family" might be a cloud provider (AWS vs Azure vs GCP), with each factory producing provider-specific clients.
-
 ---
 
 ### 💻 Code Example
@@ -1166,7 +1147,6 @@ public class Dialog {
 
 **How to test / verify correctness:**
 Create a `TestUIFactory` that returns mock products. Verify that `Dialog` calls the correct factory methods. Integration test each concrete factory to verify products are compatible.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1179,6 +1159,7 @@ Create a `TestUIFactory` that returns mock products. Verify that `Dialog` calls 
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1188,13 +1169,68 @@ Create a `TestUIFactory` that returns mock products. Verify that `Dialog` calls 
 
 **Interview one-liner:**
 "Abstract Factory guarantees consistency across a family of related products by encapsulating creation behind an interface - I use it when mixing product variants would cause bugs, like cross-platform UI or multi-cloud SDK abstractions."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Abstract Factory is often confused with Factory Method, but they solve fundamentally different problems. Factory Method creates one product with polymorphic behavior. Abstract Factory coordinates multiple products into a consistent family. You can use Factory Method without Abstract Factory, but every Abstract Factory internally uses Factory Methods. The relationship is compositional, not hierarchical.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Abstract Factory. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1269,58 +1305,6 @@ Mitigation strategies:
 4. **Accept the trade-off:** If the product set is stable (defined by a spec or standard), the rigidity is actually a feature - it prevents partial implementations.
 
 In my experience, if you're adding product types frequently, Abstract Factory is the wrong pattern. Use a service registry or plugin architecture instead.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Abstract Factory. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1337,6 +1321,7 @@ In my experience, if you're adding product types frequently, Abstract Factory is
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -1344,7 +1329,6 @@ In my experience, if you're adding product types frequently, Abstract Factory is
 # Builder
 
 **TL;DR** - Builder separates the construction of a complex object from its representation, allowing the same construction process to create different representations step by step.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1360,13 +1344,11 @@ A new field is added. Every constructor overload needs updating. Three developer
 
 **EVOLUTION:**
 The GoF Builder (1994) focused on constructing complex objects step-by-step with a director. Bloch's Effective Java (2001) popularized a simpler variant: the static inner class builder, which provides a fluent API for object construction. Modern Java uses Lombok's `@Builder`, Kotlin's data classes with named/default parameters, and record builders. The pattern evolved from "separate construction and representation" to "provide a readable, type-safe construction API."
-
 ---
 
 ### 📘 Textbook Definition
 
 Builder is a creational design pattern that separates the construction of a complex object from its representation so that the same construction process can create different representations. It provides a step-by-step approach to building objects, allowing for fine-grained control over the construction process.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1380,7 +1362,6 @@ Build complex objects step by step with a readable, mistake-proof API.
 
 **One insight:**
 Builder isn't just about avoiding long constructors. It's about making invalid objects impossible to construct. A well-designed Builder can enforce invariants: requiring an email before building, preventing conflicting options, validating at build time. It shifts validation from runtime errors to compile-time constraints.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1401,7 +1382,6 @@ The builder accumulates state through method calls. Each method returns the buil
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Complex objects need a construction mechanism that handles optional fields, defaults, and validation
 **Accidental:** The boilerplate of writing the builder class - Lombok and IDE generators eliminate this
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1414,7 +1394,6 @@ The builder accumulates state through method calls. Each method returns the buil
 - "Sealed order" -> immutable final object
 
 Where this analogy breaks down: A kiosk allows changing your mind before submitting; Builder methods are typically additive - you don't "undo" a setter.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1436,7 +1415,6 @@ Advanced Builder patterns include: (1) **Step Builder** - compile-time enforceme
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -1460,7 +1438,6 @@ Builder internals:
        |
   [new User(this) -> immutable object]
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1485,7 +1462,6 @@ Builder internals:
 
 **WHAT CHANGES AT SCALE:**
 At scale, Builders are used to construct complex configuration objects for frameworks (Spring `WebClient.builder()`, OkHttp `Request.Builder`). In microservices, request/response DTOs often use Builders. With code generation (Lombok, AutoValue, Immutables), the boilerplate cost drops to zero, making Builder the default for any object with more than 3-4 fields.
-
 ---
 
 ### 💻 Code Example
@@ -1570,7 +1546,6 @@ var req = new HttpRequest.Builder("https://api.com")
 
 **How to test / verify correctness:**
 Test that `build()` throws on invalid combinations. Test that default values work when optional fields are omitted. Test immutability - the product should not change when the builder is reused.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1583,6 +1558,7 @@ Test that `build()` throws on invalid combinations. Test that default values wor
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1592,13 +1568,68 @@ Test that `build()` throws on invalid combinations. Test that default values wor
 
 **Interview one-liner:**
 "Builder provides a fluent, step-by-step API for constructing complex immutable objects - I use it for any class with more than 3-4 parameters, especially when some are optional, and in modern Java I use Lombok's @Builder to eliminate the boilerplate."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Builder pattern's original GoF purpose was not about avoiding long constructors. It was about using the same construction process to create different representations - like parsing an RTF document and producing either a PDF or an ASCII text output. The "Effective Java" variant that developers use daily is a simplified adaptation that dropped the Director and focused on fluent APIs. Most "Builder pattern" interviews test a pattern that isn't quite what the GoF described.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Builder. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1680,58 +1711,6 @@ Don't use Builder when:
 5. **Performance-critical hot paths:** Builder creates an intermediate object that's immediately discarded. In tight loops processing millions of items, this generates garbage pressure. Use direct construction instead.
 
 The general rule: use Builder when the construction API would otherwise be confusing, error-prone, or unsafe. If construction is straightforward, don't add the pattern.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Builder. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1748,6 +1727,7 @@ The general rule: use Builder when the construction API would otherwise be confu
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -1755,7 +1735,6 @@ The general rule: use Builder when the construction API would otherwise be confu
 # Prototype
 
 **TL;DR** - Prototype creates new objects by cloning an existing instance, avoiding costly initialization when objects share most of their configuration.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1771,13 +1750,11 @@ A new requirement adds customizable enemies - same base model with slight variat
 
 **EVOLUTION:**
 The GoF formalized Prototype in 1994, though the concept of cloning existed in Lisp and Smalltalk. JavaScript's prototype-based inheritance is built on this pattern. Java's `Cloneable` interface is a language-level implementation (though widely considered broken). Modern usage includes `Object.assign()` in JavaScript, `copy()` in Kotlin data classes, and prototype registries in game engines and document editors.
-
 ---
 
 ### 📘 Textbook Definition
 
 Prototype is a creational design pattern that specifies the kind of objects to create using a prototypical instance, and creates new objects by copying this prototype. It delegates the cloning process to the actual objects that are being cloned, avoiding coupling to their concrete classes.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1791,7 +1768,6 @@ Clone an existing object instead of building from scratch.
 
 **One insight:**
 Prototype is not just about performance. It's about creating objects when you don't know their concrete class at compile time. If you receive an object through an interface, you can't call `new` on it (you don't know the class). But you can call `clone()`. Prototype enables polymorphic object creation without knowing the concrete type.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1812,7 +1788,6 @@ Each clonable class implements a `clone()` method that creates a copy of itself.
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Copying object state requires knowing which fields to deep-copy vs shallow-copy - this decision is domain-specific
 **Accidental:** Java's `Cloneable` interface has no `clone()` method, the `Object.clone()` return type is `Object`, and the specification is vague about deep vs shallow copy
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1825,7 +1800,6 @@ Each clonable class implements a `clone()` method that creates a copy of itself.
 - "No blueprint needed" -> no constructor call
 
 Where this analogy breaks down: Biological cells share no memory after division; software clones may share references to the same objects (shallow copy) unless explicitly deep-copied.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1847,7 +1821,6 @@ Prototype is most powerful in systems where you don't know concrete types at com
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -1873,7 +1846,6 @@ Prototype is most powerful in systems where you don't know concrete types at com
     v
 [Fully configured enemy in the game]
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1898,7 +1870,6 @@ Prototype is most powerful in systems where you don't know concrete types at com
 
 **WHAT CHANGES AT SCALE:**
 At scale, prototype cloning must be thread-safe. If the prototype is mutable and shared across threads, cloning a partially-modified prototype produces inconsistent objects. Solutions include immutable prototypes (safest), copy-on-write semantics, or per-thread prototype instances.
-
 ---
 
 ### 💻 Code Example
@@ -1972,7 +1943,6 @@ e.setPosition(new Vector3(10, 0, 5));
 
 **How to test / verify correctness:**
 Test that modifying a clone does not affect the original (deep copy verification). Test that clone equals the original in all fields (correctness). Performance test: measure clone time vs constructor time.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1985,6 +1955,7 @@ Test that modifying a clone does not affect the original (deep copy verification
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1994,13 +1965,68 @@ Test that modifying a clone does not affect the original (deep copy verification
 
 **Interview one-liner:**
 "Prototype creates objects by cloning a pre-configured instance, which is essential when initialization is expensive or when you need to create objects without knowing their concrete type - I always use copy constructors over Cloneable for safety."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Java's `Cloneable` interface is one of the most broken APIs in the language. It has no methods (it's a marker interface), but `Object.clone()` checks for it and throws `CloneNotSupportedException` if it's missing. The `clone()` method returns `Object`, requiring a cast. And the specification doesn't define whether the copy should be shallow or deep. Joshua Bloch, who helped design the Java collections framework, calls it "a moderately broken design" in Effective Java. This is why modern Java code uses copy constructors or `static CopyOf()` methods instead.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Prototype. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -2085,58 +2111,6 @@ Three production scenarios where Prototype proved valuable:
 3. **Kubernetes manifest generation:** Base YAML manifests stored as prototypes. For each microservice deployment, clone the base and modify the image, replicas, and environment variables. This ensures all services share the same resource limits, health checks, and security contexts unless explicitly overridden.
 
 The common thread: Prototype shines when objects are "mostly the same" with small variations, and the base configuration is expensive or error-prone to recreate.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Prototype. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords

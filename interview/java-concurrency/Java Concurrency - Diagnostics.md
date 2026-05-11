@@ -13,7 +13,7 @@ keywords:
   - Producer-Consumer Pattern
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -25,14 +25,12 @@ version: 2
 # Deadlock Detection and Thread Dump Analysis
 
 **TL;DR** - Deadlock occurs when two or more threads wait forever for locks held by each other; detection requires thread dump analysis using `jstack`, `jcmd`, or VisualVM to identify the circular wait chain.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **THE 3AM SCENARIO:**
 Your application becomes unresponsive. CPU is near 0%. Threads are alive but doing nothing. No errors in logs. No exceptions. The application is silently frozen. This is a deadlock - threads are permanently blocked waiting for locks that will never be released.
-
 ---
 
 ### How Deadlocks Happen
@@ -56,13 +54,11 @@ Timeline:
 2. **Hold and wait:** Thread holds one resource while waiting for another
 3. **No preemption:** Locks can't be forcibly taken
 4. **Circular wait:** A waits for B, B waits for A
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -75,7 +71,6 @@ Timeline:
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -95,7 +90,6 @@ Timeline:
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -107,7 +101,6 @@ Timeline:
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -126,14 +119,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -147,7 +138,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -215,7 +205,6 @@ class TransferService {
     }
 }
 ```
-
 ---
 
 ### Thread Dump Analysis
@@ -262,7 +251,6 @@ Java stack information for threads listed above:
 2. `"waiting to lock"` - which lock the thread wants
 3. `"which is held by"` - who holds that lock
 4. Stack trace - where in your code the lock was acquired
-
 ---
 
 ### Thread States in Dumps
@@ -279,7 +267,6 @@ Java stack information for threads listed above:
 - Many threads BLOCKED on same lock = lock contention (bottleneck)
 - Two threads each BLOCKED waiting for the other = deadlock
 - Thread WAITING on `Object.wait()` with no notifier = potential livelock
-
 ---
 
 ### Prevention Checklist
@@ -290,7 +277,6 @@ Java stack information for threads listed above:
 4. **Minimize scope:** Hold locks for the shortest time possible
 5. **Avoid nested locks:** If you need two locks, question the design
 6. **Virtual threads:** Java 21 virtual threads with `ReentrantLock` reduce contention
-
 ---
 
 ### 📌 Quick Reference Card
@@ -303,6 +289,7 @@ Java stack information for threads listed above:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -312,14 +299,69 @@ Java stack information for threads listed above:
 
 **Interview one-liner:**
 "I prevent deadlocks by enforcing consistent lock ordering and using tryLock with timeout instead of synchronized - when diagnosing a suspected deadlock, I capture a thread dump with jcmd and look for the 'Found Java-level deadlock' section showing the circular wait chain."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Deadlock Detection and Thread Dump Analysis. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -379,58 +421,6 @@ _Why they ask:_ Classic concurrency question testing conceptual clarity.
 - **Livelock:** Threads are not blocked but make no progress. They keep responding to each other's actions (like two people in a hallway both stepping aside in the same direction). CPU > 0% but no useful work. Harder to detect.
 
 - **Starvation:** One thread never gets to run because higher-priority threads always take the lock. The starved thread is perpetually BLOCKED or WAITING. Fix: use fair locks (`new ReentrantLock(true)`), though fair locks have ~10-20% lower throughput.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Deadlock Detection and Thread Dump Analysis. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -455,13 +445,11 @@ _Why they ask:_ Classic concurrency question testing conceptual clarity.
 # Testing Concurrent Code
 
 **TL;DR** - Testing concurrent code requires techniques beyond standard unit testing: `CountDownLatch` for synchronization, stress tests for race conditions, and tools like `jcstress` for formal verification.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Regular unit tests run single-threaded. A race condition that occurs once in 10,000 executions will pass every test run. "Works on my machine" becomes "crashes in production under load."
-
 ---
 
 ### Techniques
@@ -483,13 +471,11 @@ TECHNIQUE 4: jcstress (formal concurrency testing)
   JVM-level tool that systematically tests
   memory ordering and visibility
 ```
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -502,7 +488,6 @@ TECHNIQUE 4: jcstress (formal concurrency testing)
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -522,7 +507,6 @@ TECHNIQUE 4: jcstress (formal concurrency testing)
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -534,7 +518,6 @@ TECHNIQUE 4: jcstress (formal concurrency testing)
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -553,14 +536,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -574,7 +555,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -628,7 +608,6 @@ void shouldEventuallyProcess() {
                 .equals("COMPLETED"));
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -641,6 +620,7 @@ void shouldEventuallyProcess() {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -650,14 +630,69 @@ void shouldEventuallyProcess() {
 
 **Interview one-liner:**
 "I test concurrent code with CountDownLatch for forced interleaving, @RepeatedTest for statistical confidence, and Awaitility for async assertions - but I also design for testability by preferring immutable objects and atomic operations over manual synchronization."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Testing Concurrent Code. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -704,58 +739,6 @@ void shouldEventuallyProcess() {
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Testing Concurrent Code. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -780,7 +763,6 @@ void shouldEventuallyProcess() {
 # Producer-Consumer Pattern
 
 **TL;DR** - Producer-Consumer decouples data production from consumption using a shared buffer (typically a `BlockingQueue`), allowing producers and consumers to operate at different speeds.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -796,13 +778,11 @@ void shouldEventuallyProcess() {
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -815,7 +795,6 @@ void shouldEventuallyProcess() {
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -835,7 +814,6 @@ void shouldEventuallyProcess() {
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -847,7 +825,6 @@ void shouldEventuallyProcess() {
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -866,7 +843,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -879,7 +855,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
               Bounded buffer
               (backpressure when full)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -893,7 +868,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -937,7 +911,6 @@ public class EventProcessor {
     }
 }
 ```
-
 ---
 
 ### BlockingQueue Implementations
@@ -949,7 +922,6 @@ public class EventProcessor {
 | `PriorityBlockingQueue` | No            | Priority       | Priority processing |
 | `SynchronousQueue`      | Zero capacity | Direct handoff | Thread pools        |
 | `DelayQueue`            | No            | Delay-based    | Scheduled tasks     |
-
 ---
 
 ### 📌 Quick Reference Card
@@ -962,6 +934,7 @@ public class EventProcessor {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -971,14 +944,69 @@ public class EventProcessor {
 
 **Interview one-liner:**
 "I implement producer-consumer with a bounded ArrayBlockingQueue for natural backpressure - producers block when the queue is full, preventing memory exhaustion, while consumers block when empty, eliminating busy-waiting."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Producer-Consumer Pattern. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1025,58 +1053,6 @@ public class EventProcessor {
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Producer-Consumer Pattern. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1092,4 +1068,3 @@ public class EventProcessor {
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

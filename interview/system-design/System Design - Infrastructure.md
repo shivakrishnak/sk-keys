@@ -14,7 +14,7 @@ keywords:
   - Bloom Filters
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -27,20 +27,17 @@ version: 2
 # Load Balancing
 
 **TL;DR** - Load balancing distributes incoming traffic across multiple servers to prevent any single server from becoming a bottleneck, improving availability, throughput, and fault tolerance.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT LOAD BALANCING:**
 One server handles all traffic. At 1000 requests/second it's fine. At 10,000 requests/second, it maxes out CPU, starts queuing requests, response times spike from 50ms to 5 seconds, and eventually crashes. You can't scale by making one server infinitely powerful (vertical scaling has limits).
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -53,7 +50,6 @@ One server handles all traffic. At 1000 requests/second it's fine. At 10,000 req
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -73,7 +69,6 @@ One server handles all traffic. At 1000 requests/second it's fine. At 10,000 req
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -85,7 +80,6 @@ One server handles all traffic. At 1000 requests/second it's fine. At 10,000 req
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -104,7 +98,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -121,7 +114,6 @@ WITH:
                      +-> [Server 4]
                           (load shared)
 ```
-
 ---
 
 ### Algorithms
@@ -135,7 +127,6 @@ WITH:
 | **IP Hash**              | Hash client IP to pick server                 | Sticky sessions (soft)            |
 | **Consistent Hashing**   | Hash-ring distribution                        | Caching layers, minimal remapping |
 | **Random**               | Pick a random server                          | Simple, surprisingly effective    |
-
 ---
 
 ### Layer 4 vs Layer 7
@@ -164,7 +155,6 @@ EXAMPLE L7 ROUTING:
   /static/*     -> CDN / Static servers
   Host: admin.* -> Admin Service cluster
 ```
-
 ---
 
 ### Health Checks
@@ -184,7 +174,6 @@ DEEP HEALTH CHECK:
   /health/live  -> is the process alive?
   /health/db    -> can reach the database?
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -198,7 +187,6 @@ DEEP HEALTH CHECK:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -211,6 +199,7 @@ DEEP HEALTH CHECK:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -220,14 +209,69 @@ DEEP HEALTH CHECK:
 
 **Interview one-liner:**
 "I use Layer 7 load balancing (ALB/Nginx) for HTTP services with path-based routing and Least Connections algorithm, with active health checks on /health/ready - for raw TCP throughput, I use Layer 4 (NLB) with passive health monitoring."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Load Balancing. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -262,58 +306,6 @@ Multi-tier approach:
 Key configurations: Connection draining (finish in-flight requests before removing servers). Cross-zone load balancing (distribute across availability zones). Rate limiting at the ALB level to prevent DDoS.
 
 At 100K RPS, a single ALB handles this easily (AWS ALB scales to millions RPS). The bottleneck is usually the application tier, not the load balancer.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Load Balancing. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -338,7 +330,6 @@ At 100K RPS, a single ALB handles this easily (AWS ALB scales to millions RPS). 
 # CDN (Content Delivery Network)
 
 **TL;DR** - A CDN caches content at geographically distributed edge servers, delivering static and dynamic content from the nearest location to reduce latency from hundreds of milliseconds to single digits.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -346,13 +337,11 @@ At 100K RPS, a single ALB handles this easily (AWS ALB scales to millions RPS). 
 Your server is in US-East. A user in Tokyo requests your web page. The request travels across the Pacific Ocean, hits your server, builds the response, and travels back. Round-trip latency: 200-300ms. For every image, CSS file, and JS bundle, add another 200ms. Page load: 3-5 seconds.
 
 With a CDN edge server in Tokyo: first request is cached, subsequent requests served from Tokyo. Latency: 10-20ms.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -365,7 +354,6 @@ With a CDN edge server in Tokyo: first request is cached, subsequent requests se
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -385,7 +373,6 @@ With a CDN edge server in Tokyo: first request is cached, subsequent requests se
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -397,7 +384,6 @@ With a CDN edge server in Tokyo: first request is cached, subsequent requests se
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -416,7 +402,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -448,7 +433,6 @@ CDN ARCHITECTURE:
     |       |       |       |
 [Users]  [Users]  [Users]  [Users]
 ```
-
 ---
 
 ### What to Cache
@@ -460,7 +444,6 @@ CDN ARCHITECTURE:
 | HTML pages (static/SSG)         | Medium (minutes to hours)    | Good         |
 | Personalized content            | Don't cache at CDN           | Poor         |
 | Real-time data (chat, stock)    | Don't cache                  | Not suitable |
-
 ---
 
 ### Cache Invalidation Strategies
@@ -486,7 +469,6 @@ CDN ARCHITECTURE:
    Serve stale, fetch fresh in background
    Best of both worlds
 ```
-
 ---
 
 ### CDN Providers
@@ -497,7 +479,6 @@ CDN ARCHITECTURE:
 | Cloudflare | DDoS protection, free tier    | Most web apps      |
 | Akamai     | Enterprise, largest network   | High-traffic media |
 | Fastly     | Edge compute, real-time purge | Dynamic content    |
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -511,7 +492,6 @@ CDN ARCHITECTURE:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -524,6 +504,7 @@ CDN ARCHITECTURE:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -533,39 +514,26 @@ CDN ARCHITECTURE:
 
 **Interview one-liner:**
 "I put a CDN in front of all static assets with cache-busting hashes for instant invalidation, and cache idempotent API responses at the edge with short TTLs and stale-while-revalidate for the optimal latency-freshness balance."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How do you handle cache invalidation for a product catalog that updates every few minutes?**
-
-_Why they ask:_ Cache invalidation is one of the "two hard problems" in computer science.
-
-**Answer:**
-Layered approach:
-
-1. **Short TTL for listing pages:** `Cache-Control: max-age=60, stale-while-revalidate=300`. Users see data at most 60 seconds stale. In the background, the CDN revalidates with the origin. If the origin is slow, serve stale for up to 5 minutes.
-
-2. **Event-driven purge for critical updates:** When a product price changes, the inventory service publishes a `ProductUpdated` event. A cache invalidation service listens and calls the CDN purge API for that specific product URL.
-
-3. **Cache busting for product images:** Images are stored with content hashes: `/images/product-abc123.jpg`. When the image changes, the hash changes, and the new URL is a cache miss.
-
-4. **Surrogate keys (Fastly/Varnish):** Tag cached responses with product IDs. Purge all cache entries tagged with `product:12345` in one API call - no need to know all URLs.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for CDN (Content Delivery Network). Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -576,7 +544,6 @@ Layered approach:
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -610,7 +577,24 @@ Layered approach:
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How do you handle cache invalidation for a product catalog that updates every few minutes?**
+
+_Why they ask:_ Cache invalidation is one of the "two hard problems" in computer science.
+
+**Answer:**
+Layered approach:
+
+1. **Short TTL for listing pages:** `Cache-Control: max-age=60, stale-while-revalidate=300`. Users see data at most 60 seconds stale. In the background, the CDN revalidates with the origin. If the origin is slow, serve stale for up to 5 minutes.
+
+2. **Event-driven purge for critical updates:** When a product price changes, the inventory service publishes a `ProductUpdated` event. A cache invalidation service listens and calls the CDN purge API for that specific product URL.
+
+3. **Cache busting for product images:** Images are stored with content hashes: `/images/product-abc123.jpg`. When the image changes, the hash changes, and the new URL is a cache miss.
+
+4. **Surrogate keys (Fastly/Varnish):** Tag cached responses with product IDs. Purge all cache entries tagged with `product:12345` in one API call - no need to know all URLs.
 ---
 
 ### 🔗 Related Keywords
@@ -635,19 +619,16 @@ Layered approach:
 # Leader Election
 
 **TL;DR** - Leader election ensures exactly one node in a distributed cluster is designated as the leader to coordinate work, preventing split-brain scenarios where multiple nodes think they're in charge.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 You have 5 instances of your scheduler service. Only one should run the daily report. Without leader election, all 5 run it simultaneously. Or worse: a network partition splits the cluster, and both halves elect a leader (split-brain).
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -660,7 +641,6 @@ You have 5 instances of your scheduler service. Only one should run the daily re
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -680,7 +660,6 @@ You have 5 instances of your scheduler service. Only one should run the daily re
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -692,7 +671,6 @@ You have 5 instances of your scheduler service. Only one should run the daily re
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -711,7 +689,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -733,7 +710,6 @@ SPLIT-BRAIN (the nightmare):
   Both think they're the leader
   Both process work -> duplicates, corruption
 ```
-
 ---
 
 ### Implementation Approaches
@@ -746,7 +722,6 @@ SPLIT-BRAIN (the nightmare):
 | **Redis**          | SETNX with TTL (Redlock)          | Common       |
 | **Raft consensus** | Log replication + voting          | Strongest    |
 | **K8s Lease**      | Kubernetes Lease objects          | K8s-native   |
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -760,7 +735,6 @@ SPLIT-BRAIN (the nightmare):
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### Code Example (Database-Based)
@@ -798,7 +772,6 @@ public void dailyReport() {
     reportService.generateDaily();
 }
 ```
-
 ---
 
 ### Raft Consensus (Brief Overview)
@@ -817,7 +790,6 @@ KEY INSIGHT:
   Majority quorum prevents split-brain
   (Can't have two leaders with majority of same cluster)
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -830,6 +802,7 @@ KEY INSIGHT:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -839,14 +812,69 @@ KEY INSIGHT:
 
 **Interview one-liner:**
 "For simple leader election, I use a database row with heartbeat timeout, which is sufficient for most applications - for distributed consensus at the infrastructure level, Raft-based systems like etcd provide stronger guarantees with majority quorum preventing split-brain."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Leader Election. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -893,58 +921,6 @@ KEY INSIGHT:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Leader Election. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -969,7 +945,6 @@ KEY INSIGHT:
 # Bloom Filters
 
 **TL;DR** - A Bloom filter is a space-efficient probabilistic data structure that tells you "definitely NOT in the set" or "probably in the set" - using minimal memory to avoid expensive lookups for non-existent keys.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -977,13 +952,11 @@ KEY INSIGHT:
 Your database has 1 billion user records. A request comes for `user_id=abc123`. To check if this user exists, you query the database. 99% of lookups are for users that DON'T exist (invalid IDs, typos, attacks). Each lookup is a wasted database round-trip.
 
 A Bloom filter sits in front of the database. It uses ~1GB of memory to represent 1 billion keys. For non-existent keys, it immediately says "definitely not here" without touching the database. Database lookups drop by 99%.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -996,7 +969,6 @@ A Bloom filter sits in front of the database. It uses ~1GB of memory to represen
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1016,7 +988,6 @@ A Bloom filter sits in front of the database. It uses ~1GB of memory to represen
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1028,7 +999,6 @@ A Bloom filter sits in front of the database. It uses ~1GB of memory to represen
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1047,7 +1017,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1082,7 +1051,6 @@ BLOOM FILTER (bit array + hash functions):
 - **Possible false positives:** If it says "probably in set," it might be wrong (tunable - typically 1% FP rate)
 - **No deletion:** Standard Bloom filters don't support removal (use Counting Bloom Filter for that)
 - **Space:** ~10 bits per element for 1% FP rate
-
 ---
 
 ### Real-World Use Cases
@@ -1095,7 +1063,6 @@ BLOOM FILTER (bit array + hash functions):
 | Spam filter     | Known spam signatures        | Fast pre-filter        |
 | Web crawler     | Already-visited URLs         | Avoid re-crawling      |
 | Cryptocurrency  | SPV wallet transaction check | Save bandwidth         |
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1109,7 +1076,6 @@ BLOOM FILTER (bit array + hash functions):
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1122,6 +1088,7 @@ BLOOM FILTER (bit array + hash functions):
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1131,14 +1098,69 @@ BLOOM FILTER (bit array + hash functions):
 
 **Interview one-liner:**
 "I use Bloom filters as a pre-filter in front of expensive lookups - with ~10 bits per element and a 1% false positive rate, they eliminate 99% of unnecessary database queries for non-existent keys, as used by BigTable, PostgreSQL, and CDN caches."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Bloom Filters. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1185,58 +1207,6 @@ BLOOM FILTER (bit array + hash functions):
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Bloom Filters. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1252,4 +1222,3 @@ BLOOM FILTER (bit array + hash functions):
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

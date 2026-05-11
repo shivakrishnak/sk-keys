@@ -16,7 +16,7 @@ keywords:
   - Observability Architecture
 difficulty_range: medium to hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Distributed Logging
 
 **TL;DR** - In microservices, a single user request traverses multiple services. Distributed logging aggregates logs from all services into a centralized system (ELK, Loki, CloudWatch) so you can trace a request end-to-end using a correlation ID. Without it, debugging requires SSH-ing into 10 different servers and grepping logs manually.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -47,13 +46,11 @@ version: 2
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -66,7 +63,6 @@ version: 2
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -86,7 +82,6 @@ version: 2
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -98,7 +93,6 @@ version: 2
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -186,14 +180,12 @@ Rule: Production runs at INFO level.
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -207,7 +199,6 @@ Rule: Production runs at INFO level.
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -222,45 +213,29 @@ Rule: Production runs at INFO level.
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: A user reports their order is stuck. How do you trace the request across 5 microservices?**
-
-_Why they ask:_ Tests practical debugging approach.
-
-_Strong answer:_
-
-1. **Get the order ID from the user.** Search centralized logs for `orderId = "ORD-456"`.
-2. **Find the correlation ID.** First log entry shows `correlationId = "abc-123"`.
-3. **Search all logs by correlation ID.** See the full journey:
-   ```
-   10:00:01 [Order]    OrderReceived    abc-123
-   10:00:02 [Inventory] StockReserved   abc-123
-   10:00:03 [Payment]   ChargeAttempted  abc-123
-   10:00:03 [Payment]   ChargeDeclined   abc-123
-   10:00:04 [Order]    PaymentFailed    abc-123
-   ```
-4. **Root cause:** Payment was declined. But Order Service never updated the order status (bug: missing event handler for PaymentFailed).
-5. **Fix:** Add PaymentFailed handler that sets order status to PAYMENT_FAILED and notifies the user.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Distributed Logging. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -271,7 +246,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -305,7 +279,28 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: A user reports their order is stuck. How do you trace the request across 5 microservices?**
+
+_Why they ask:_ Tests practical debugging approach.
+
+_Strong answer:_
+
+1. **Get the order ID from the user.** Search centralized logs for `orderId = "ORD-456"`.
+2. **Find the correlation ID.** First log entry shows `correlationId = "abc-123"`.
+3. **Search all logs by correlation ID.** See the full journey:
+   ```
+   10:00:01 [Order]    OrderReceived    abc-123
+   10:00:02 [Inventory] StockReserved   abc-123
+   10:00:03 [Payment]   ChargeAttempted  abc-123
+   10:00:03 [Payment]   ChargeDeclined   abc-123
+   10:00:04 [Order]    PaymentFailed    abc-123
+   ```
+4. **Root cause:** Payment was declined. But Order Service never updated the order status (bug: missing event handler for PaymentFailed).
+5. **Fix:** Add PaymentFailed handler that sets order status to PAYMENT_FAILED and notifies the user.
 ---
 
 ### 🔗 Related Keywords
@@ -330,7 +325,6 @@ _Strong answer:_
 # Correlation ID
 
 **TL;DR** - A Correlation ID is a unique identifier assigned at the system entry point and propagated through every service call, event, and log entry for a single user request. It's the thread that ties distributed logs together and makes end-to-end tracing possible.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -346,13 +340,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -365,7 +357,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -385,7 +376,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -397,7 +387,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -488,14 +477,12 @@ Best practice: Use both. Correlation ID for business tracing. Trace ID for perfo
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -509,7 +496,6 @@ Best practice: Use both. Correlation ID for business tracing. Trace ID for perfo
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -524,55 +510,29 @@ Best practice: Use both. Correlation ID for business tracing. Trace ID for perfo
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How do you ensure the correlation ID survives async operations (Kafka, thread pool)?**
-
-_Why they ask:_ Tests understanding of context propagation challenges.
-
-_Strong answer:_
-
-**Problem:** MDC is thread-local. When you publish to Kafka or submit to a thread pool, the new thread doesn't have the MDC context.
-
-**Solutions:**
-
-1. **Kafka producer:** Copy correlation ID to message header before publishing
-2. **Kafka consumer:** Extract from message header, set in MDC before processing
-3. **Thread pool:** Use MDC-aware executor that copies context to child threads
-
-```java
-// Kafka: propagate via headers
-kafkaTemplate.send(
-    new ProducerRecord<>("topic", key, value)
-        .headers()
-        .add("correlationId",
-            MDC.get("correlationId").getBytes()));
-
-// Thread pool: MDC-aware executor
-ExecutorService mdcExecutor =
-    new MDCExecutorService(
-        Executors.newFixedThreadPool(10));
-// Automatically copies MDC to child threads
-```
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Correlation ID. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -583,7 +543,6 @@ ExecutorService mdcExecutor =
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -617,7 +576,38 @@ ExecutorService mdcExecutor =
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How do you ensure the correlation ID survives async operations (Kafka, thread pool)?**
+
+_Why they ask:_ Tests understanding of context propagation challenges.
+
+_Strong answer:_
+
+**Problem:** MDC is thread-local. When you publish to Kafka or submit to a thread pool, the new thread doesn't have the MDC context.
+
+**Solutions:**
+
+1. **Kafka producer:** Copy correlation ID to message header before publishing
+2. **Kafka consumer:** Extract from message header, set in MDC before processing
+3. **Thread pool:** Use MDC-aware executor that copies context to child threads
+
+```java
+// Kafka: propagate via headers
+kafkaTemplate.send(
+    new ProducerRecord<>("topic", key, value)
+        .headers()
+        .add("correlationId",
+            MDC.get("correlationId").getBytes()));
+
+// Thread pool: MDC-aware executor
+ExecutorService mdcExecutor =
+    new MDCExecutorService(
+        Executors.newFixedThreadPool(10));
+// Automatically copies MDC to child threads
+```
 ---
 
 ### 🔗 Related Keywords
@@ -642,7 +632,6 @@ ExecutorService mdcExecutor =
 # OpenTelemetry
 
 **TL;DR** - OpenTelemetry (OTel) is the vendor-neutral standard for collecting traces, metrics, and logs from microservices. It provides auto-instrumentation (zero-code) and manual instrumentation APIs. Data is exported to backends like Jaeger, Prometheus, Grafana, or Datadog.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -658,13 +647,11 @@ ExecutorService mdcExecutor =
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -677,7 +664,6 @@ ExecutorService mdcExecutor =
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -697,7 +683,6 @@ ExecutorService mdcExecutor =
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -709,7 +694,6 @@ ExecutorService mdcExecutor =
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -828,14 +812,12 @@ exporters:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -849,7 +831,6 @@ exporters:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -864,43 +845,29 @@ exporters:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your tracing shows a request taking 3 seconds, but individual spans total only 500ms. Where's the missing 2.5 seconds?**
-
-_Why they ask:_ Tests practical trace analysis.
-
-_Strong answer:_
-
-**Possible causes for uninstrumented time:**
-
-1. **Uninstrumented code:** Business logic between instrumented calls (missing spans). Add custom spans.
-2. **Thread pool queue wait:** Request waiting in a thread pool queue (not in any span). Add span for queue wait time.
-3. **Connection pool wait:** Waiting for a database or HTTP connection from pool. Enable connection pool instrumentation.
-4. **DNS resolution:** First call to a service involves DNS lookup. Not instrumented by default.
-5. **Serialization/deserialization:** Large payloads take time to marshal. Not typically instrumented.
-6. **GC pause:** A garbage collection pause doesn't show in any span but adds to total time.
-
-**Diagnosis:** Look at the trace waterfall. The gap between span end and next span start is the uninstrumented time. Add spans to cover that gap.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for OpenTelemetry. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -911,7 +878,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -945,7 +911,26 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your tracing shows a request taking 3 seconds, but individual spans total only 500ms. Where's the missing 2.5 seconds?**
+
+_Why they ask:_ Tests practical trace analysis.
+
+_Strong answer:_
+
+**Possible causes for uninstrumented time:**
+
+1. **Uninstrumented code:** Business logic between instrumented calls (missing spans). Add custom spans.
+2. **Thread pool queue wait:** Request waiting in a thread pool queue (not in any span). Add span for queue wait time.
+3. **Connection pool wait:** Waiting for a database or HTTP connection from pool. Enable connection pool instrumentation.
+4. **DNS resolution:** First call to a service involves DNS lookup. Not instrumented by default.
+5. **Serialization/deserialization:** Large payloads take time to marshal. Not typically instrumented.
+6. **GC pause:** A garbage collection pause doesn't show in any span but adds to total time.
+
+**Diagnosis:** Look at the trace waterfall. The gap between span end and next span start is the uninstrumented time. Add spans to cover that gap.
 ---
 
 ### 🔗 Related Keywords
@@ -970,7 +955,6 @@ _Strong answer:_
 # Chaos Engineering
 
 **TL;DR** - Chaos Engineering is the discipline of experimenting on a production system to build confidence in its ability to handle failures. Deliberately inject failures (kill pods, add latency, corrupt network) and verify the system degrades gracefully. "If you don't test failure in production, production will test it for you."
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -986,13 +970,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1005,7 +987,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1025,7 +1006,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1037,7 +1017,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1101,14 +1080,12 @@ Break things on purpose (in a controlled way) to find weaknesses before real fai
 3. **Level 3:** Network partition between services, verify circuit breakers
 4. **Level 4:** Multi-AZ failure simulation, verify cross-AZ failover
 5. **Level 5:** Continuous chaos in production (GameDay culture)
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1122,7 +1099,6 @@ Break things on purpose (in a controlled way) to find weaknesses before real fai
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1137,44 +1113,29 @@ Break things on purpose (in a controlled way) to find weaknesses before real fai
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your team wants to start chaos engineering. What's your plan for the first 90 days?**
-
-_Why they ask:_ Tests practical implementation planning.
-
-_Strong answer:_
-
-**Days 1-30: Foundation**
-
-1. Ensure all services have health checks, circuit breakers, and timeouts
-2. Set up monitoring dashboards with clear steady-state metrics
-3. Run chaos experiments in staging only (build confidence and tooling)
-
-**Days 31-60: Production experiments** 4. Start with low-risk: kill one pod of a stateless service during low traffic 5. Graduate to: add latency to one downstream dependency 6. Document all experiments: hypothesis, results, fixes
-
-**Days 61-90: Automation** 7. Schedule recurring experiments (weekly pod kills) 8. Add chaos tests to CI/CD pipeline (staging gate) 9. Run first "GameDay" (coordinated multi-failure scenario with the team)
-
-**Key principle:** Never run chaos experiments without monitoring and a rollback plan. The goal is learning, not breaking things.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Chaos Engineering. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1185,7 +1146,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1219,7 +1179,27 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your team wants to start chaos engineering. What's your plan for the first 90 days?**
+
+_Why they ask:_ Tests practical implementation planning.
+
+_Strong answer:_
+
+**Days 1-30: Foundation**
+
+1. Ensure all services have health checks, circuit breakers, and timeouts
+2. Set up monitoring dashboards with clear steady-state metrics
+3. Run chaos experiments in staging only (build confidence and tooling)
+
+**Days 31-60: Production experiments** 4. Start with low-risk: kill one pod of a stateless service during low traffic 5. Graduate to: add latency to one downstream dependency 6. Document all experiments: hypothesis, results, fixes
+
+**Days 61-90: Automation** 7. Schedule recurring experiments (weekly pod kills) 8. Add chaos tests to CI/CD pipeline (staging gate) 9. Run first "GameDay" (coordinated multi-failure scenario with the team)
+
+**Key principle:** Never run chaos experiments without monitoring and a rollback plan. The goal is learning, not breaking things.
 ---
 
 ### 🔗 Related Keywords
@@ -1244,7 +1224,6 @@ _Strong answer:_
 # Cross-Cutting Concerns
 
 **TL;DR** - Cross-cutting concerns are functionalities needed by every service: logging, authentication, tracing, rate limiting, error handling, configuration. Instead of implementing them in each service, centralize them in shared libraries, API gateways, or service mesh sidecars.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1260,13 +1239,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1279,7 +1256,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1299,7 +1275,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1311,7 +1286,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1356,14 +1330,12 @@ Things every service needs but that aren't part of the service's core business. 
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1377,7 +1349,6 @@ Things every service needs but that aren't part of the service's core business. 
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1392,40 +1363,29 @@ Things every service needs but that aren't part of the service's core business. 
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: You have 30 microservices in 3 languages (Java, Node.js, Go). How do you standardize cross-cutting concerns?**
-
-_Why they ask:_ Tests architecture thinking for heterogeneous environments.
-
-_Strong answer:_
-
-**Layered approach:**
-
-1. **Service mesh (Istio):** Handles mTLS, retry, circuit breaking, rate limiting at network level. Works for all languages, zero application code.
-2. **OTel auto-instrumentation:** Each language has an OTel agent. Java agent, Node.js SDK, Go SDK. Standardized trace/metric format.
-3. **Thin platform SDK per language:** Common logging format (JSON), health check endpoint (`/health`), config loading (from Consul/env vars). 3 small SDKs, not 3 copies of complex logic.
-4. **API Gateway (Kong/Envoy):** Authentication, rate limiting, request logging at the edge. One place, all traffic.
-5. **Templates:** Cookiecutter/Yeoman templates for new services. Include all cross-cutting concerns from day 1.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Cross-Cutting Concerns. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1436,7 +1396,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1470,7 +1429,23 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: You have 30 microservices in 3 languages (Java, Node.js, Go). How do you standardize cross-cutting concerns?**
+
+_Why they ask:_ Tests architecture thinking for heterogeneous environments.
+
+_Strong answer:_
+
+**Layered approach:**
+
+1. **Service mesh (Istio):** Handles mTLS, retry, circuit breaking, rate limiting at network level. Works for all languages, zero application code.
+2. **OTel auto-instrumentation:** Each language has an OTel agent. Java agent, Node.js SDK, Go SDK. Standardized trace/metric format.
+3. **Thin platform SDK per language:** Common logging format (JSON), health check endpoint (`/health`), config loading (from Consul/env vars). 3 small SDKs, not 3 copies of complex logic.
+4. **API Gateway (Kong/Envoy):** Authentication, rate limiting, request logging at the edge. One place, all traffic.
+5. **Templates:** Cookiecutter/Yeoman templates for new services. Include all cross-cutting concerns from day 1.
 ---
 
 ### 🔗 Related Keywords
@@ -1495,7 +1470,6 @@ _Strong answer:_
 # Observability Architecture
 
 **TL;DR** - Observability architecture is the unified system of traces, metrics, and logs that enables understanding system behavior from external outputs. The three pillars (traces for request paths, metrics for aggregates, logs for details) must be correlated so you can drill from a dashboard alert to the exact log line in the exact service for the exact request.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1511,13 +1485,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1530,7 +1502,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1550,7 +1521,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1562,7 +1532,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1644,14 +1613,12 @@ If error budget consumed:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1665,7 +1632,6 @@ If error budget consumed:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1680,16 +1646,72 @@ If error budget consumed:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Observability Architecture. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1729,58 +1751,6 @@ _Strong answer:_
   labels:
     severity: ticket
 ```
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Observability Architecture. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1796,4 +1766,3 @@ _Strong answer:_
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

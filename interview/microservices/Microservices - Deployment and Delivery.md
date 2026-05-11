@@ -16,7 +16,7 @@ keywords:
   - Graceful Shutdown
 difficulty_range: medium to hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Blue-Green Deployment
 
 **TL;DR** - Blue-Green deployment maintains two identical production environments. "Blue" runs the current version, "Green" runs the new version. Traffic switches from Blue to Green instantly. If Green fails, switch back to Blue in seconds.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -47,13 +46,11 @@ version: 2
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -66,7 +63,6 @@ version: 2
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -86,7 +82,6 @@ version: 2
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -98,7 +93,6 @@ version: 2
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -183,14 +177,12 @@ Blue-Green assumes both versions can work with the same database. If v2.0 change
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -204,7 +196,6 @@ Blue-Green assumes both versions can work with the same database. If v2.0 change
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -219,40 +210,29 @@ Blue-Green assumes both versions can work with the same database. If v2.0 change
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: What's the main disadvantage of Blue-Green deployment?**
-
-_Why they ask:_ Tests awareness of trade-offs.
-
-_Strong answer:_
-
-**Cost:** You need 2x infrastructure. Two full production environments running simultaneously. For a 100-pod service, that's 200 pods during deployment.
-
-**Mitigations:**
-
-1. Cloud auto-scaling: Green environment scales up only during deployment, scales down after Blue is decommissioned
-2. Kubernetes: Use rolling update (default) for most services, reserve Blue-Green for critical services needing instant rollback
-3. Short deployment window: Green only needs to be fully provisioned for the switch + validation period (minutes, not hours)
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Blue-Green Deployment. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -263,7 +243,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -297,7 +276,23 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: What's the main disadvantage of Blue-Green deployment?**
+
+_Why they ask:_ Tests awareness of trade-offs.
+
+_Strong answer:_
+
+**Cost:** You need 2x infrastructure. Two full production environments running simultaneously. For a 100-pod service, that's 200 pods during deployment.
+
+**Mitigations:**
+
+1. Cloud auto-scaling: Green environment scales up only during deployment, scales down after Blue is decommissioned
+2. Kubernetes: Use rolling update (default) for most services, reserve Blue-Green for critical services needing instant rollback
+3. Short deployment window: Green only needs to be fully provisioned for the switch + validation period (minutes, not hours)
 ---
 
 ### 🔗 Related Keywords
@@ -322,7 +317,6 @@ _Strong answer:_
 # Canary Deployment
 
 **TL;DR** - Route a small percentage of production traffic (1-5%) to the new version while the rest stays on the old version. Monitor error rates, latency, and business metrics. If the canary is healthy, gradually increase traffic (10%, 25%, 50%, 100%). If unhealthy, route all traffic back to the old version.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -338,13 +332,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -357,7 +349,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -377,7 +368,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -389,7 +379,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -470,14 +459,12 @@ spec:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -491,7 +478,6 @@ spec:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -506,42 +492,29 @@ spec:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your canary shows 0.5% error rate vs 0.3% baseline. Is that significant enough to rollback?**
-
-_Why they ask:_ Tests judgment and statistical reasoning.
-
-_Strong answer:_
-
-**Depends on context:**
-
-1. **Sample size:** If canary has only 100 requests, 0.5% vs 0.3% is 0.5 errors vs 0.3 errors - not statistically significant. Need at least 10,000+ requests.
-2. **Error types:** Are the errors new error types or existing ones? New 500s on a previously-stable endpoint = rollback even at 0.1%.
-3. **Business impact:** If errors affect payment processing, even 0.2% increase is critical. If errors are on non-critical endpoints, might be acceptable.
-4. **Trend:** Is error rate stable at 0.5% or increasing? Stable = might be okay. Increasing = rollback.
-5. **Duration:** Wait at least 15-30 minutes to establish a pattern. Short spikes might be noise.
-
-**Decision framework:** Use automated analysis (Kayenta, Argo Rollouts analysis) with statistical significance tests. Don't rely on human eyeballing metrics.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Canary Deployment. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -552,7 +525,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -586,7 +558,25 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your canary shows 0.5% error rate vs 0.3% baseline. Is that significant enough to rollback?**
+
+_Why they ask:_ Tests judgment and statistical reasoning.
+
+_Strong answer:_
+
+**Depends on context:**
+
+1. **Sample size:** If canary has only 100 requests, 0.5% vs 0.3% is 0.5 errors vs 0.3 errors - not statistically significant. Need at least 10,000+ requests.
+2. **Error types:** Are the errors new error types or existing ones? New 500s on a previously-stable endpoint = rollback even at 0.1%.
+3. **Business impact:** If errors affect payment processing, even 0.2% increase is critical. If errors are on non-critical endpoints, might be acceptable.
+4. **Trend:** Is error rate stable at 0.5% or increasing? Stable = might be okay. Increasing = rollback.
+5. **Duration:** Wait at least 15-30 minutes to establish a pattern. Short spikes might be noise.
+
+**Decision framework:** Use automated analysis (Kayenta, Argo Rollouts analysis) with statistical significance tests. Don't rely on human eyeballing metrics.
 ---
 
 ### 🔗 Related Keywords
@@ -611,7 +601,6 @@ _Strong answer:_
 # Zero-Downtime Deployment
 
 **TL;DR** - Deploying new code without any service interruption. Users never see a 503 or a dropped connection during deployment. Requires: rolling updates, graceful shutdown, backward-compatible changes, and database migration strategy.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -627,13 +616,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -646,7 +633,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -666,7 +652,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -678,7 +663,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -765,14 +749,12 @@ ALTER TABLE orders DROP COLUMN legacy_status;
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -786,7 +768,6 @@ ALTER TABLE orders DROP COLUMN legacy_status;
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -801,46 +782,29 @@ ALTER TABLE orders DROP COLUMN legacy_status;
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: During a rolling deployment, old pods run v1 and new pods run v2 simultaneously. What problems can this cause?**
-
-_Why they ask:_ Tests awareness of version compatibility.
-
-_Strong answer:_
-
-**Problems:**
-
-1. **API incompatibility:** v2 returns a new response format. Load balancer sends requests randomly to v1 and v2 -> client gets inconsistent responses.
-2. **Database schema mismatch:** v2 adds a NOT NULL column. v1 pods can't insert rows.
-3. **Cache format change:** v1 writes cache in format A. v2 reads cache expecting format B. Cache corruption.
-4. **Message format change:** v2 publishes events with new fields. v1 consumers can't deserialize.
-
-**Prevention:**
-
-1. **Backward-compatible APIs:** v2 adds fields but doesn't remove or rename them. Use API versioning headers.
-2. **Expand-contract DB migrations:** Add nullable columns first. Make NOT NULL only after all pods are v2.
-3. **Cache versioning:** Include version in cache key (`order:123:v2`). Or clear cache during deploy.
-4. **Schema-registered events:** Use Avro/Protobuf with backward compatibility mode. New fields have defaults.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Zero-Downtime Deployment. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -851,7 +815,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -885,7 +848,29 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: During a rolling deployment, old pods run v1 and new pods run v2 simultaneously. What problems can this cause?**
+
+_Why they ask:_ Tests awareness of version compatibility.
+
+_Strong answer:_
+
+**Problems:**
+
+1. **API incompatibility:** v2 returns a new response format. Load balancer sends requests randomly to v1 and v2 -> client gets inconsistent responses.
+2. **Database schema mismatch:** v2 adds a NOT NULL column. v1 pods can't insert rows.
+3. **Cache format change:** v1 writes cache in format A. v2 reads cache expecting format B. Cache corruption.
+4. **Message format change:** v2 publishes events with new fields. v1 consumers can't deserialize.
+
+**Prevention:**
+
+1. **Backward-compatible APIs:** v2 adds fields but doesn't remove or rename them. Use API versioning headers.
+2. **Expand-contract DB migrations:** Add nullable columns first. Make NOT NULL only after all pods are v2.
+3. **Cache versioning:** Include version in cache key (`order:123:v2`). Or clear cache during deploy.
+4. **Schema-registered events:** Use Avro/Protobuf with backward compatibility mode. New fields have defaults.
 ---
 
 ### 🔗 Related Keywords
@@ -910,7 +895,6 @@ _Strong answer:_
 # Feature Flags
 
 **TL;DR** - Feature flags decouple deployment from release. Code is deployed to production but hidden behind a flag. The flag controls which users see the new feature. This enables trunk-based development, A/B testing, gradual rollouts, and instant kill switches without redeployment.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -926,13 +910,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -945,7 +927,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -965,7 +946,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -977,7 +957,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1062,14 +1041,12 @@ public class CheckoutService {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1083,7 +1060,6 @@ public class CheckoutService {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1098,47 +1074,29 @@ public class CheckoutService {
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your team has 47 feature flags in production, some from 2 years ago. What's the risk and how do you fix it?**
-
-_Why they ask:_ Tests operational maturity.
-
-_Strong answer:_
-
-**Risks:**
-
-1. **Code complexity:** 47 flags = potentially 2^47 code paths. Impossible to test all combinations.
-2. **Technical debt:** Old flag branches never removed. Dead code everywhere.
-3. **Performance:** Each flag evaluation is a check. 47 evaluations per request adds up.
-4. **Incidents:** Someone accidentally toggles a 2-year-old flag. Unknown behavior.
-
-**Fix:**
-
-1. **Audit:** List all flags with owner, creation date, last toggled date
-2. **Classify:** Release flags >30 days old -> remove. Ops flags -> keep but document.
-3. **Policy:** Every release flag gets an expiration date (max 30 days). CI fails if expired flag exists.
-4. **Automation:** Scheduled job alerts when flag is older than 30 days. Auto-create cleanup tickets.
-5. **Limit:** Max 15 active flags at any time. New flag = remove an old one first.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Feature Flags. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1149,7 +1107,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1183,7 +1140,30 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your team has 47 feature flags in production, some from 2 years ago. What's the risk and how do you fix it?**
+
+_Why they ask:_ Tests operational maturity.
+
+_Strong answer:_
+
+**Risks:**
+
+1. **Code complexity:** 47 flags = potentially 2^47 code paths. Impossible to test all combinations.
+2. **Technical debt:** Old flag branches never removed. Dead code everywhere.
+3. **Performance:** Each flag evaluation is a check. 47 evaluations per request adds up.
+4. **Incidents:** Someone accidentally toggles a 2-year-old flag. Unknown behavior.
+
+**Fix:**
+
+1. **Audit:** List all flags with owner, creation date, last toggled date
+2. **Classify:** Release flags >30 days old -> remove. Ops flags -> keep but document.
+3. **Policy:** Every release flag gets an expiration date (max 30 days). CI fails if expired flag exists.
+4. **Automation:** Scheduled job alerts when flag is older than 30 days. Auto-create cleanup tickets.
+5. **Limit:** Max 15 active flags at any time. New flag = remove an old one first.
 ---
 
 ### 🔗 Related Keywords
@@ -1208,7 +1188,6 @@ _Strong answer:_
 # Progressive Delivery
 
 **TL;DR** - Progressive delivery extends CI/CD with gradual, automated rollout strategies: canary, feature flags, A/B testing, and automated rollback based on real-time metrics. It's CI/CD + canary + feature flags + automated analysis as a unified practice.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1224,13 +1203,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1243,7 +1220,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1263,7 +1239,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1275,7 +1250,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1331,14 +1305,12 @@ PR merged -> CI builds + tests
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1352,7 +1324,6 @@ PR merged -> CI builds + tests
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1367,42 +1338,29 @@ PR merged -> CI builds + tests
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How is progressive delivery different from just doing canary deployments?**
-
-_Why they ask:_ Tests understanding of the broader concept.
-
-_Strong answer:_
-
-Canary is one technique within progressive delivery. Progressive delivery is the philosophy + toolchain:
-
-1. **Canary:** Infrastructure-level traffic splitting (by pods/percentage)
-2. **Feature flags:** Application-level targeting (by user, segment, geography)
-3. **Automated analysis:** No human decides to promote - metrics do
-4. **Rollback automation:** Machine triggers rollback, not an engineer at 3 AM
-5. **Experimentation:** A/B test business metrics, not just technical health
-
-Progressive delivery = canary + feature flags + automation + experimentation as a unified pipeline.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Progressive Delivery. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1413,7 +1371,6 @@ Progressive delivery = canary + feature flags + automation + experimentation as 
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1447,7 +1404,25 @@ Progressive delivery = canary + feature flags + automation + experimentation as 
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How is progressive delivery different from just doing canary deployments?**
+
+_Why they ask:_ Tests understanding of the broader concept.
+
+_Strong answer:_
+
+Canary is one technique within progressive delivery. Progressive delivery is the philosophy + toolchain:
+
+1. **Canary:** Infrastructure-level traffic splitting (by pods/percentage)
+2. **Feature flags:** Application-level targeting (by user, segment, geography)
+3. **Automated analysis:** No human decides to promote - metrics do
+4. **Rollback automation:** Machine triggers rollback, not an engineer at 3 AM
+5. **Experimentation:** A/B test business metrics, not just technical health
+
+Progressive delivery = canary + feature flags + automation + experimentation as a unified pipeline.
 ---
 
 ### 🔗 Related Keywords
@@ -1472,7 +1447,6 @@ Progressive delivery = canary + feature flags + automation + experimentation as 
 # Graceful Shutdown
 
 **TL;DR** - Graceful shutdown ensures a service instance completes in-flight requests, drains connections, and deregisters from service discovery before stopping. Without it, users see connection resets, 502 errors, and lost messages during deployments.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1488,13 +1462,11 @@ Progressive delivery = canary + feature flags + automation + experimentation as 
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1507,7 +1479,6 @@ Progressive delivery = canary + feature flags + automation + experimentation as 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1527,7 +1498,6 @@ Progressive delivery = canary + feature flags + automation + experimentation as 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1539,7 +1509,6 @@ Progressive delivery = canary + feature flags + automation + experimentation as 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1629,14 +1598,12 @@ public void shutdown() {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1650,7 +1617,6 @@ public void shutdown() {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1665,16 +1631,72 @@ public void shutdown() {
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Graceful Shutdown. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1710,58 +1732,6 @@ lifecycle:
 ```
 
 This delays app shutdown by 10 seconds. During those 10 seconds, the load balancer catches up and stops sending traffic. Then the app shuts down gracefully.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Graceful Shutdown. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1777,4 +1747,3 @@ This delays app shutdown by 10 seconds. During those 10 seconds, the load balanc
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

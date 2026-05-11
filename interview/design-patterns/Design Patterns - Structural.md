@@ -15,7 +15,7 @@ keywords:
   - Composite
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -29,7 +29,6 @@ version: 2
 # Adapter
 
 **TL;DR** - Adapter converts the interface of a class into another interface clients expect, allowing incompatible interfaces to work together without modifying either.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -45,13 +44,11 @@ You create a wrapper class that copies data from DataSource to a temporary buffe
 
 **EVOLUTION:**
 The GoF formalized Adapter in 1994 with two variants: class adapter (inheritance) and object adapter (composition). Java's `Arrays.asList()` is a classic adapter - it adapts an array to the `List` interface. Modern usage includes Spring's `HandlerAdapter`, SLF4J (adapting any logging framework to one interface), and REST API adapters that translate between API versions.
-
 ---
 
 ### 📘 Textbook Definition
 
 Adapter is a structural design pattern that allows objects with incompatible interfaces to collaborate. It wraps one interface and translates calls to the format expected by the other, acting as a bridge between two incompatible systems without modifying either.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -65,7 +62,6 @@ A translator between two incompatible interfaces.
 
 **One insight:**
 Adapter is about reuse, not abstraction. You have existing code that works. You have new code that needs a different interface. Adapter lets you use both without rewriting either. It's the pattern of practical integration.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -86,7 +82,6 @@ The adapter implements the target interface. It holds a reference to the adaptee
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Interface translation requires code somewhere - the mapping logic is inherent
 **Accidental:** In languages with duck typing (Python, Go), many Adapter use cases disappear because interfaces are implicit
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -99,7 +94,6 @@ The adapter implements the target interface. It holds a reference to the adaptee
 - "Languages" -> incompatible interfaces
 
 Where this analogy breaks down: A human translator can handle ambiguity; an Adapter maps method signatures precisely and fails on any mismatch.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -121,7 +115,6 @@ Adapter is the pattern of pragmatic integration. In microservices, anti-corrupti
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -142,7 +135,6 @@ Adapter is the pattern of pragmatic integration. In microservices, anti-corrupti
 4. Adapter calls adaptee's method
 5. Adapter translates the return value
 6. Client receives the expected response
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -167,7 +159,6 @@ Adapter is the pattern of pragmatic integration. In microservices, anti-corrupti
 
 **WHAT CHANGES AT SCALE:**
 At scale, adapter layers become performance bottlenecks if they perform complex data transformations. Use object pooling or caching in the adapter for expensive translations. In distributed systems, API gateways act as network-level adapters, translating protocols (REST to gRPC, GraphQL to REST).
-
 ---
 
 ### 💻 Code Example
@@ -232,7 +223,6 @@ public class ReportService {
 
 **How to test / verify correctness:**
 Unit test the adapter by mocking the adaptee, verifying parameter translation. Integration test with the real adaptee to verify end-to-end data flow.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -245,6 +235,7 @@ Unit test the adapter by mocking the adaptee, verifying parameter translation. I
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -254,13 +245,68 @@ Unit test the adapter by mocking the adaptee, verifying parameter translation. I
 
 **Interview one-liner:**
 "Adapter wraps an incompatible interface to make it conform to what the client expects - I use it at integration boundaries, like wrapping third-party APIs behind our own interfaces so vendor changes don't ripple through the codebase."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 SLF4J, the logging facade used by virtually every Java application, is the most successful Adapter pattern implementation in the Java ecosystem. It doesn't log anything itself - it adapts any logging framework (Log4j, Logback, JUL) to a single API. The genius is that the Adapter is the product. Most developers use SLF4J daily without realizing they're using an Adapter pattern.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Adapter. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -340,58 +386,6 @@ Adapter is wrong when:
 4. **Adapting adapters:** If you're wrapping an adapter in another adapter, the design has gone wrong. Redesign the interfaces or introduce a proper abstraction layer.
 
 The smell: if your adapter is longer than 50 lines and contains conditional logic, it's no longer an adapter - it's a translation service that should be a first-class component.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Adapter. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -408,6 +402,7 @@ The smell: if your adapter is longer than 50 lines and contains conditional logi
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -415,7 +410,6 @@ The smell: if your adapter is longer than 50 lines and contains conditional logi
 # Decorator
 
 **TL;DR** - Decorator attaches additional responsibilities to an object dynamically by wrapping it, providing a flexible alternative to subclassing for extending behavior.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -431,13 +425,11 @@ A customer wants double whipped cream. Your rigid hierarchy doesn't support quan
 
 **EVOLUTION:**
 The GoF formalized Decorator in 1994. Java's I/O streams are the classic example: `new BufferedReader(new InputStreamReader(new FileInputStream(file)))`. Each wrapper adds behavior. Modern usage includes Spring's `@Transactional` (decorating method calls with transaction management), middleware pipelines in Express.js, and Python's `@decorator` syntax (syntactic sugar for function wrapping).
-
 ---
 
 ### 📘 Textbook Definition
 
 Decorator is a structural design pattern that lets you attach new behaviors to objects by placing them inside wrapper objects that contain the behaviors. It provides a flexible alternative to subclassing for extending functionality, supporting the Open/Closed Principle by allowing behavior composition at runtime.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -451,7 +443,6 @@ Wrap an object to add behavior without changing its interface.
 
 **One insight:**
 Decorator is not about decoration - it's about composition over inheritance. Instead of creating 32 subclasses for every combination, you create 5 decorators and compose them at runtime. The key: the decorator has the same interface as the object it wraps, so clients don't know they're talking to a decorated version.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -472,7 +463,6 @@ The decorator forwards calls to the wrapped component and adds behavior before/a
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Combining behaviors requires some composition mechanism - the wrapping pattern is inherent
 **Accidental:** Java's I/O stream API makes simple operations verbose (`new BufferedReader(new InputStreamReader(...))`) - this is an API design choice, not a pattern limitation
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -485,7 +475,6 @@ The decorator forwards calls to the wrapped component and adds behavior before/a
 - "Stackable" -> decorators can wrap decorators
 
 Where this analogy breaks down: Matryoshka dolls are purely visual; Decorators actively modify or enhance behavior on each method call.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -507,7 +496,6 @@ Decorator is the foundational pattern behind middleware, interceptors, and aspec
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -534,7 +522,6 @@ Call chain:
               <- store in cache
            <- return to client
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -560,7 +547,6 @@ Call chain:
 
 **WHAT CHANGES AT SCALE:**
 At scale, decorator chains can become performance bottlenecks due to deep call stacks. Profiling shows N extra method calls per operation (one per decorator). In high-throughput systems, consider inlining critical decorators or using AOP byte-code weaving (AspectJ) to avoid the runtime overhead of object wrapping.
-
 ---
 
 ### 💻 Code Example
@@ -649,7 +635,6 @@ public class LoggingUserService implements UserService {
 
 **How to test / verify correctness:**
 Test each decorator independently with a mock component. Test decorator stacking order. Verify the original component is called exactly once per decorated call.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -662,6 +647,7 @@ Test each decorator independently with a mock component. Test decorator stacking
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -671,13 +657,68 @@ Test each decorator independently with a mock component. Test decorator stacking
 
 **Interview one-liner:**
 "Decorator wraps an object to add behavior dynamically while keeping the same interface - I use it for cross-cutting concerns like logging, caching, and circuit breaking, where inheritance would cause a class explosion."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Python's `@decorator` syntax, used millions of times daily, is technically function composition, not the GoF Decorator pattern. `@log def foo()` replaces `foo` with `log(foo)`. It doesn't implement a shared interface or use object wrapping. Yet it achieves the same goal: adding behavior without modifying the original. This shows that patterns transcend their original OOP formulation - the principle is universal even when the implementation looks nothing like the GoF diagram.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Decorator. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -753,58 +794,6 @@ _Why they ask:_ Tests real-world experience with pattern limitations.
 4. **Interface bloat:** If the component interface has 20 methods, every decorator must implement all 20 (delegating most). This is tedious and error-prone. Use abstract base decorators that delegate everything, then override specific methods.
 
 5. **Spring proxy conflicts:** Spring already proxies beans for `@Transactional`, `@Cacheable`, etc. Wrapping a proxied bean in a manual Decorator can create confusing double-proxying. Use Spring's AOP consistently instead of mixing approaches.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Decorator. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -821,6 +810,7 @@ _Why they ask:_ Tests real-world experience with pattern limitations.
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -828,7 +818,6 @@ _Why they ask:_ Tests real-world experience with pattern limitations.
 # Proxy
 
 **TL;DR** - Proxy provides a surrogate or placeholder for another object to control access to it, adding behavior like lazy loading, caching, or access control.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -844,13 +833,11 @@ Adding access control means modifying the image loading code directly. Adding ca
 
 **EVOLUTION:**
 The GoF described several proxy types in 1994: virtual (lazy loading), protection (access control), remote (network access). Java's `java.lang.reflect.Proxy` and Spring's AOP proxies are language/framework-level implementations. Modern usage includes Hibernate's lazy-loading proxies, API gateway proxies, and service mesh sidecar proxies.
-
 ---
 
 ### 📘 Textbook Definition
 
 Proxy is a structural design pattern that provides a substitute or placeholder for another object. A proxy controls access to the original object, allowing you to perform something either before or after the request reaches the original object.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -864,7 +851,6 @@ A stand-in that controls access to the real object.
 
 **One insight:**
 Proxy and Decorator look identical in structure (both wrap an object with the same interface). The difference is intent: Decorator adds behavior, Proxy controls access. A caching proxy decides WHETHER to call the real object. A logging decorator ALWAYS calls the real object and adds logging.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -885,7 +871,6 @@ The proxy holds a reference to the real subject. It intercepts calls and can: de
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Controlling access requires interception - some proxy-like mechanism is unavoidable
 **Accidental:** Java's reflection-based dynamic proxies are slow compared to compile-time generated proxies (like those from ByteBuddy or AspectJ)
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -898,7 +883,6 @@ The proxy holds a reference to the real subject. It intercepts calls and can: de
 - "Same withdrawal interface" -> shared interface
 
 Where this analogy breaks down: ATMs are physically separate from vaults; in software, proxies and real subjects often exist in the same process.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -920,7 +904,6 @@ In Spring, every `@Transactional` bean is a proxy. This has critical implication
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -947,7 +930,6 @@ Types of proxy behavior:
 - Caching: return cached result if available
 - Remote: serialize call, send over network
 - Logging: record call details around delegation
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -974,7 +956,6 @@ Types of proxy behavior:
 
 **WHAT CHANGES AT SCALE:**
 At scale, proxy chains (API gateway -> service mesh -> application proxy) add latency at each layer. Each proxy adds 0.1-1ms. With 5 proxy layers, that's 0.5-5ms per call - significant at thousands of requests per second. Monitor proxy overhead separately from business logic.
-
 ---
 
 ### 💻 Code Example
@@ -1036,7 +1017,6 @@ public class LazyImageProxy implements Image {
 
 **How to test / verify correctness:**
 Verify that the real subject is not created until first access. Verify that subsequent accesses reuse the same instance. Test thread safety if proxies are shared.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1049,6 +1029,7 @@ Verify that the real subject is not created until first access. Verify that subs
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1058,13 +1039,68 @@ Verify that the real subject is not created until first access. Verify that subs
 
 **Interview one-liner:**
 "Proxy provides a surrogate that controls access to the real object - in Spring, I'm aware that AOP proxies mean self-invocation bypasses @Transactional, which is the most common gotcha in enterprise Java."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Hibernate's lazy loading, which has caused more `LazyInitializationException` bugs than any other feature, is a Proxy pattern implementation. Hibernate generates a CGLIB proxy subclass of your entity. The proxy holds only the entity ID. When you access any field, the proxy triggers a database query. This is elegant in theory but dangerous in practice: accessing a lazy field outside a transaction throws an exception, and N+1 query problems occur when iterating collections of proxied entities. Understanding that "it's just a proxy" makes the entire behavior predictable.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Proxy. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1122,58 +1158,6 @@ _Why they ask:_ Tests understanding of Spring's proxy implementation details.
 Spring Boot 2.x+ defaults to CGLIB even when interfaces exist (configurable via `spring.aop.proxy-target-class`). CGLIB creates a subclass at runtime using bytecode generation, which is why `final` classes and methods can't be proxied.
 
 In practice, the choice rarely matters for application developers. It matters when: (1) you have `final` service classes (CGLIB fails), (2) you're doing `instanceof` checks (CGLIB proxy is a subclass; JDK proxy is not), (3) you're optimizing startup time (JDK proxies are faster to create).
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Proxy. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1190,6 +1174,7 @@ In practice, the choice rarely matters for application developers. It matters wh
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -1197,7 +1182,6 @@ In practice, the choice rarely matters for application developers. It matters wh
 # Facade
 
 **TL;DR** - Facade provides a simplified interface to a complex subsystem, reducing the learning curve and decoupling clients from internal complexity.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1213,13 +1197,11 @@ Three different teams write video processing code. Each team sequences the steps
 
 **EVOLUTION:**
 The GoF formalized Facade in 1994 as one of the simplest patterns. Java's `javax.faces` (JSF) is named after this pattern. Modern usage includes Spring's `JdbcTemplate` (facade over raw JDBC), REST API controllers (facade over business logic), and SDK client libraries (facade over raw HTTP APIs).
-
 ---
 
 ### 📘 Textbook Definition
 
 Facade is a structural design pattern that provides a simplified interface to a library, framework, or complex set of classes. It defines a higher-level interface that makes the subsystem easier to use by wrapping complexity behind a cohesive API.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1233,7 +1215,6 @@ A simple front door to a complex system.
 
 **One insight:**
 Facade doesn't add functionality - it simplifies access. The subsystem classes still exist and are still usable directly. Facade provides a shortcut for the 80% common use case while leaving the 20% of complex scenarios to direct subsystem access.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1254,7 +1235,6 @@ The facade knows which subsystem classes to invoke and in what order. It transla
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Complex subsystems exist for good reasons - someone must orchestrate them
 **Accidental:** The orchestration logic could be in a library, a script, or inline - Facade just formalizes it
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1267,7 +1247,6 @@ The facade knows which subsystem classes to invoke and in what order. It transla
 - "Driver doesn't need to know internals" -> simplified interface
 
 Where this analogy breaks down: Car ignition is a single operation; Facades typically expose multiple methods covering different use cases.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1289,7 +1268,6 @@ The danger of Facade is becoming a god object. If your `OrderFacade` has 30 meth
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -1308,7 +1286,6 @@ Facade.processVideo(input, output):
   4. write(encoded, output)
   5. cleanup(decoder, filtered, encoded)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1334,7 +1311,6 @@ Facade.processVideo(input, output):
 
 **WHAT CHANGES AT SCALE:**
 At scale, facades often become the bottleneck point for adding new features. Every new requirement goes through the facade, which grows endlessly. Split facades by domain or use case before they exceed 10-15 methods.
-
 ---
 
 ### 💻 Code Example
@@ -1403,7 +1379,6 @@ var result = orderFacade.processOrder(order);
 
 **How to test / verify correctness:**
 Mock all subsystems and verify the facade calls them in the correct order. Test error handling by making each subsystem throw and verifying cleanup happens.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1416,6 +1391,7 @@ Mock all subsystems and verify the facade calls them in the correct order. Test 
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1425,13 +1401,68 @@ Mock all subsystems and verify the facade calls them in the correct order. Test 
 
 **Interview one-liner:**
 "Facade provides a simplified interface to a complex subsystem - like Spring's JdbcTemplate wrapping raw JDBC - I use it to give clients a clean 80% API while keeping full subsystem access available for the 20% of advanced cases."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Every REST API controller is a Facade. It presents a simplified HTTP interface to complex business logic, database operations, and external service calls. Most developers create facades daily without recognizing the pattern. The pattern is so natural that it's invisible - which is actually the highest compliment to a design pattern.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Facade. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1466,58 +1497,6 @@ An API Gateway is a Facade at the network level. The concepts map directly:
 | Examples    | Spring `JdbcTemplate`         | Kong, AWS API Gateway        |
 
 Both simplify access to complex internals. The API Gateway adds network concerns (TLS termination, load balancing, request transformation) that don't exist in an in-process Facade.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Facade. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1534,6 +1513,7 @@ Both simplify access to complex internals. The API Gateway adds network concerns
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -1541,7 +1521,6 @@ Both simplify access to complex internals. The API Gateway adds network concerns
 # Composite
 
 **TL;DR** - Composite lets you compose objects into tree structures and treat individual objects and compositions uniformly through a shared interface.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1557,13 +1536,11 @@ A new requirement: symbolic links (which can point to files or directories). The
 
 **EVOLUTION:**
 The GoF formalized Composite in 1994. It's fundamental to GUI frameworks (Swing's `JComponent`, JavaFX's `Node`), XML/HTML DOM trees, and expression parsers. React's component tree is a Composite: `<App>` contains `<Header>`, which contains `<Nav>`, which contains `<Link>`s. Each can be rendered uniformly.
-
 ---
 
 ### 📘 Textbook Definition
 
 Composite is a structural design pattern that lets you compose objects into tree structures to represent part-whole hierarchies. Composite lets clients treat individual objects (leaves) and compositions (nodes) uniformly through a common interface.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1577,7 +1554,6 @@ Treat single objects and groups of objects the same way.
 
 **One insight:**
 Composite eliminates the distinction between "one" and "many." When you can treat a single file and an entire directory tree with the same interface, every algorithm that works on one works on the other. This is the power of recursive composition.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1598,7 +1574,6 @@ A common interface declares operations like `getSize()`, `print()`, or `execute(
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Tree structures require recursive traversal - this is inherent to the data structure
 **Accidental:** The debate about whether `add(child)` should be in the base interface or only in Composite nodes is a language limitation
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1611,7 +1586,6 @@ A common interface declares operations like `getSize()`, `print()`, or `execute(
 - "Contains others" -> children collection
 
 Where this analogy breaks down: Matryoshka are strictly linear (one inside another); Composite supports branching trees (one node containing multiple children).
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1633,7 +1607,6 @@ Composite is the foundation of the Interpreter pattern (ASTs), the Visitor patte
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -1656,7 +1629,6 @@ getSize():
   File -> return this.size
   Directory -> children.sum(c -> c.getSize())
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1687,7 +1659,6 @@ getSize():
 
 **WHAT CHANGES AT SCALE:**
 With millions of nodes, recursive `getSize()` is slow. Solutions: cache computed values at each composite node, invalidate on child changes (observer pattern), or use lazy evaluation. UI frameworks like React solve this with virtual DOM diffing - only recompute changed subtrees.
-
 ---
 
 ### 💻 Code Example
@@ -1767,7 +1738,6 @@ bundle.add(subBundle);
 
 **How to test / verify correctness:**
 Test leaf nodes return their value directly. Test composites with one level of children. Test deep nesting (3+ levels). Test empty composites return zero/identity. Test that adding/removing children updates results.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1780,6 +1750,7 @@ Test leaf nodes return their value directly. Test composites with one level of c
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1789,13 +1760,68 @@ Test leaf nodes return their value directly. Test composites with one level of c
 
 **Interview one-liner:**
 "Composite composes objects into tree structures and lets clients treat leaves and branches uniformly - I've used it in menu systems, org hierarchies, and anywhere a part-whole relationship needs recursive operations."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 React's entire rendering model is a Composite pattern. Every React component is either a leaf (renders HTML) or a composite (renders other components). The `render()` method is the uniform interface. JSX syntax (`<Parent><Child/></Parent>`) is just syntactic sugar for building a Composite tree. The virtual DOM diffing algorithm is a Composite tree traversal. Understanding this makes React's reconciliation algorithm, `shouldComponentUpdate`, and `React.memo` immediately understandable.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Composite. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1860,58 +1886,6 @@ public class Role implements Permission {
 ```
 
 A `Role` can contain `SimplePermission`s and other `Role`s (role inheritance). `admin.hasAccess("users", "delete")` checks all nested permissions recursively. This models how RBAC actually works in enterprise systems.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Composite. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords

@@ -16,7 +16,7 @@ keywords:
   - Cluster Security
 difficulty_range: hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # RBAC
 
 **TL;DR** - Role-Based Access Control (RBAC) in Kubernetes restricts API operations by binding roles (sets of permissions) to users, groups, or service accounts - implementing least-privilege access at namespace or cluster level.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -41,13 +40,11 @@ Every user and service account has full cluster-admin access. A developer can ac
 
 **THE INVENTION MOMENT:**
 "This is exactly why Kubernetes RBAC was created."
-
 ---
 
 ### 📘 Textbook Definition
 
 RBAC is an authorization mechanism that regulates access to Kubernetes resources based on the roles of individual users or service accounts. It uses four objects: Role (namespace permissions), ClusterRole (cluster-wide permissions), RoleBinding (assigns Role to subject), and ClusterRoleBinding (assigns ClusterRole to subject).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -60,7 +57,6 @@ RBAC is an authorization mechanism that regulates access to Kubernetes resources
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -80,7 +76,6 @@ RBAC is an authorization mechanism that regulates access to Kubernetes resources
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -92,7 +87,6 @@ RBAC is an authorization mechanism that regulates access to Kubernetes resources
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -111,7 +105,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -174,7 +167,6 @@ RBAC Model:
     edit:           Read/write most resources
     view:           Read-only access
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -188,7 +180,6 @@ RBAC Model:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -201,6 +192,7 @@ RBAC Model:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -210,14 +202,69 @@ RBAC Model:
 
 **Interview one-liner:**
 "RBAC implements least-privilege by binding Roles (namespace-scoped permission sets) to subjects via RoleBindings - I define fine-grained roles per team/service, avoid cluster-admin for apps, audit with `can-i`, and use ClusterRoles only for cross-namespace resources like nodes and PVs."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for RBAC. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -253,58 +300,6 @@ Common causes:
 3. **Missing verb** (has `get`/`list` but not `create`/`update`)
 4. **Missing apiGroup** (resources: deployments needs apiGroups: ["apps"], not [""])
 5. **Aggregate ClusterRoles** not including the needed role
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for RBAC. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -329,20 +324,17 @@ Common causes:
 # Pod Security Standards
 
 **TL;DR** - Pod Security Standards (PSS) define three levels (Privileged, Baseline, Restricted) of security policies enforced at namespace level, replacing the deprecated PodSecurityPolicy to prevent pods from running as root, accessing host, or using dangerous capabilities.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Any pod can run as root, mount host filesystem, share host network, and access every Linux capability. A single container escape means full node compromise. No default security posture.
-
 ---
 
 ### 📘 Textbook Definition
 
 Pod Security Standards define three progressive security levels (Privileged, Baseline, Restricted) that are enforced by the Pod Security Admission controller at namespace level, controlling what security contexts pods may use - restricting root execution, privilege escalation, volume types, and Linux capabilities.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -355,7 +347,6 @@ Pod Security Standards define three progressive security levels (Privileged, Bas
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -375,7 +366,6 @@ Pod Security Standards define three progressive security levels (Privileged, Bas
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -387,7 +377,6 @@ Pod Security Standards define three progressive security levels (Privileged, Bas
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -406,7 +395,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -462,7 +450,6 @@ Migration strategy:
   2. Move to warn: restricted (alert teams)
   3. Finally enforce: restricted (reject violators)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -476,7 +463,6 @@ Migration strategy:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -489,6 +475,7 @@ Migration strategy:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -498,14 +485,69 @@ Migration strategy:
 
 **Interview one-liner:**
 "Pod Security Standards enforce security posture at namespace level via three progressive profiles - I use `restricted` enforcement for production (non-root, drop-all-caps, read-only-root, seccomp) with a graduated rollout starting with audit mode to identify violations before enforcing."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Pod Security Standards. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -552,58 +594,6 @@ Migration strategy:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Pod Security Standards. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -628,20 +618,17 @@ Migration strategy:
 # Service Account
 
 **TL;DR** - Service Accounts provide identity for pods to authenticate with the Kubernetes API and external services, enabling RBAC-based access control for workloads and integration with cloud IAM via workload identity.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 All pods in a namespace share the default service account, which may have excessive permissions. No workload identity for external service authentication. No way to differentiate "this pod should read secrets" from "this pod should only list pods."
-
 ---
 
 ### 📘 Textbook Definition
 
 A ServiceAccount provides an identity for processes running in a Pod to authenticate with the Kubernetes API server. Pods are assigned a ServiceAccount (default if unspecified) whose token is auto-mounted and can be bound to RBAC roles. Since K8s 1.24, tokens are short-lived bound tokens (not long-lived secrets).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -654,7 +641,6 @@ A ServiceAccount provides an identity for processes running in a Pod to authenti
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -674,7 +660,6 @@ A ServiceAccount provides an identity for processes running in a Pod to authenti
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -686,7 +671,6 @@ A ServiceAccount provides an identity for processes running in a Pod to authenti
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -705,7 +689,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -758,7 +741,6 @@ Best practices:
   4. Short-lived tokens (default since 1.24)
      instead of long-lived secrets
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -772,7 +754,6 @@ Best practices:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -785,6 +766,7 @@ Best practices:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -794,14 +776,69 @@ Best practices:
 
 **Interview one-liner:**
 "Service Accounts provide workload identity for RBAC - I create dedicated SAs per application with minimal permissions, disable auto-mount when K8s API access isn't needed, and use IRSA/Workload Identity for cloud service authentication instead of storing credentials in Secrets."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Service Account. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -848,58 +885,6 @@ Best practices:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Service Account. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -924,20 +909,17 @@ Best practices:
 # Admission Controllers
 
 **TL;DR** - Admission Controllers intercept API requests after authentication/authorization but before persistence, allowing mutation (adding sidecars, defaults) and validation (policy enforcement, security checks) of resources.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 RBAC says "user CAN create a pod" but can't say "pod MUST have resource limits" or "pod MUST NOT use latest tag" or "automatically inject sidecar proxy." You need a hook between authorization and object creation.
-
 ---
 
 ### 📘 Textbook Definition
 
 Admission Controllers are plugins that intercept requests to the Kubernetes API server after the request is authenticated and authorized but before the object is persisted. They can mutate objects (MutatingAdmissionWebhook), validate them (ValidatingAdmissionWebhook), or both.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -950,7 +932,6 @@ Admission Controllers are plugins that intercept requests to the Kubernetes API 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -970,7 +951,6 @@ Admission Controllers are plugins that intercept requests to the Kubernetes API 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -982,7 +962,6 @@ Admission Controllers are plugins that intercept requests to the Kubernetes API 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1001,7 +980,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1050,7 +1028,6 @@ spec:
                     memory: "?*"
                     cpu: "?*"
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1064,7 +1041,6 @@ spec:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1077,6 +1053,7 @@ spec:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1086,14 +1063,69 @@ spec:
 
 **Interview one-liner:**
 "Admission controllers intercept API requests post-authorization for mutation (injecting sidecars, adding defaults) and validation (enforcing policies like resource limits, image registries, security contexts) - I use Kyverno or OPA Gatekeeper for organizational policies as code."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Admission Controllers. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1140,58 +1172,6 @@ spec:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Admission Controllers. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1216,20 +1196,17 @@ spec:
 # Network Policy Security
 
 **TL;DR** - Network Policy Security implements defense-in-depth microsegmentation by combining default-deny policies, namespace isolation, and explicit allow rules to prevent lateral movement from compromised pods.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Default Kubernetes networking allows all pod-to-pod communication. A compromised frontend can scan the network, access databases, read secrets from other namespaces, and exfiltrate data. One breach = full cluster access.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1242,7 +1219,6 @@ Default Kubernetes networking allows all pod-to-pod communication. A compromised
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1262,7 +1238,6 @@ Default Kubernetes networking allows all pod-to-pod communication. A compromised
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1274,7 +1249,6 @@ Default Kubernetes networking allows all pod-to-pod communication. A compromised
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1293,7 +1267,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1365,7 +1338,6 @@ Common mistake:
   -> All services fail to find each other
   -> Always allow UDP 53 to kube-system
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1379,7 +1351,6 @@ Common mistake:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1392,6 +1363,7 @@ Common mistake:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1401,14 +1373,69 @@ Common mistake:
 
 **Interview one-liner:**
 "I implement network microsegmentation with default-deny in all namespaces, then explicitly allow required communication paths - frontend to backend, backend to database - always including DNS egress, enforced by Calico or Cilium, and verified with connectivity testing tools."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Network Policy Security. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1455,58 +1482,6 @@ Common mistake:
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Network Policy Security. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1531,20 +1506,17 @@ Common mistake:
 # Cluster Security
 
 **TL;DR** - Kubernetes cluster security is a layered approach combining API server hardening, etcd encryption, node security, image security, runtime protection, and audit logging to defend the entire attack surface.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Attack surface is enormous: API server, etcd, kubelet, container runtime, supply chain, network, credentials. A single misconfiguration (anonymous auth, unencrypted etcd, exposed kubelet) compromises the entire cluster.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1557,7 +1529,6 @@ Attack surface is enormous: API server, etcd, kubelet, container runtime, supply
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1577,7 +1548,6 @@ Attack surface is enormous: API server, etcd, kubelet, container runtime, supply
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1589,7 +1559,6 @@ Attack surface is enormous: API server, etcd, kubelet, container runtime, supply
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1608,7 +1577,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1664,7 +1632,6 @@ resources:
               secret: <base64-encoded-key>
       - identity: {} # Fallback for reading old data
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1678,7 +1645,6 @@ resources:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1691,6 +1657,7 @@ resources:
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1700,44 +1667,26 @@ resources:
 
 **Interview one-liner:**
 "Cluster security requires defense in depth - API server hardening (OIDC, audit logging), etcd encryption at rest, Pod Security Standards enforcement, image signing and scanning, network policies for microsegmentation, and runtime protection with Falco - validated continuously with CIS benchmarks via kube-bench."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: You inherit a cluster with no security controls. What are your first 5 actions in priority order?**
-
-_Why they ask:_ Tests security prioritization and practical knowledge.
-
-**Answer:**
-
-1. **Enable RBAC and audit logging** - Know who's doing what. Remove any anonymous/default admin access. This gives visibility.
-2. **Encrypt etcd at rest** - Secrets are stored plaintext by default in etcd. Anyone with etcd access has all secrets.
-3. **Apply Pod Security Standards (restricted)** - Prevent privileged containers, root execution. Start with audit mode, move to enforce.
-4. **Default-deny Network Policies** - Stop lateral movement. Most important after initial compromise containment.
-5. **Image scanning in CI/CD + registry allowlisting** - Prevent vulnerable/malicious images from entering the cluster.
-
-Why this order:
-
-- Items 1-2: Immediate risk of data exposure
-- Items 3-4: Contain blast radius of any breach
-- Item 5: Prevent new vulnerabilities entering
-
-After these: enable seccomp, implement Falco, set up kube-bench automated scanning, establish secret rotation, implement workload identity.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Cluster Security. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1748,7 +1697,6 @@ After these: enable seccomp, implement Falco, set up kube-bench automated scanni
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1782,7 +1730,29 @@ After these: enable seccomp, implement Falco, set up kube-bench automated scanni
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: You inherit a cluster with no security controls. What are your first 5 actions in priority order?**
+
+_Why they ask:_ Tests security prioritization and practical knowledge.
+
+**Answer:**
+
+1. **Enable RBAC and audit logging** - Know who's doing what. Remove any anonymous/default admin access. This gives visibility.
+2. **Encrypt etcd at rest** - Secrets are stored plaintext by default in etcd. Anyone with etcd access has all secrets.
+3. **Apply Pod Security Standards (restricted)** - Prevent privileged containers, root execution. Start with audit mode, move to enforce.
+4. **Default-deny Network Policies** - Stop lateral movement. Most important after initial compromise containment.
+5. **Image scanning in CI/CD + registry allowlisting** - Prevent vulnerable/malicious images from entering the cluster.
+
+Why this order:
+
+- Items 1-2: Immediate risk of data exposure
+- Items 3-4: Contain blast radius of any breach
+- Item 5: Prevent new vulnerabilities entering
+
+After these: enable seccomp, implement Falco, set up kube-bench automated scanning, establish secret rotation, implement workload identity.
 ---
 
 ### 🔗 Related Keywords
@@ -1798,4 +1768,3 @@ After these: enable seccomp, implement Falco, set up kube-bench automated scanni
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

@@ -16,7 +16,7 @@ keywords:
   - Docker Secrets
 difficulty_range: hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Container Security
 
 **TL;DR** - Container security is defense-in-depth across the image supply chain, runtime isolation, network policies, and host hardening - because containers share a kernel, they need multiple compensating controls.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -47,13 +46,11 @@ A container running as root exploits a kernel vulnerability to escape its namesp
 
 **EVOLUTION:**
 Default Docker (everything runs as root) -> User namespaces and capabilities (2015) -> Image scanning/Clair (2016) -> Pod Security Policies (K8s 1.3) -> Rootless containers (2019) -> gVisor/Kata (2018+) -> Pod Security Standards (K8s 1.25) -> Image signing/cosign, SBOM (2022+).
-
 ---
 
 ### 📘 Textbook Definition
 
 Container security encompasses the protection of containerized workloads across their lifecycle: build (image scanning, base image provenance, secrets management), deploy (admission control, image signing verification), and runtime (namespace isolation, capability dropping, seccomp profiles, network policies, and runtime threat detection).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -67,7 +64,6 @@ Container security means treating containers as untrusted by default and applyin
 
 **One insight:**
 The container boundary is NOT a security boundary by default. A container running as root with `--privileged` has essentially full host access. Security comes from actively restricting what containers can do, not from the container abstraction itself.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -88,7 +84,6 @@ Because the kernel is shared, you need: namespace isolation (limit visibility), 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Shared kernel means you MUST restrict what containers can do
 **Accidental:** The proliferation of tools and standards (PSP vs PSA vs OPA vs Kyverno)
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -102,7 +97,6 @@ Because the kernel is shared, you need: namespace isolation (limit visibility), 
 - "Core" -> runtime detection (Falco, alert on anomalies)
 
 Where this analogy breaks down: unlike onion layers, security layers work simultaneously, not sequentially.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -124,7 +118,6 @@ Design a container security architecture: image provenance chain (cosign signing
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -149,7 +142,6 @@ Container Security Layers:
 | Patched kernel | CIS benchmark | SELinux      |
 +-----------------------------------------------+
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -162,7 +154,6 @@ Image has critical CVE -> scanner blocks in CI -> if bypassed, admission control
 
 **WHAT CHANGES AT SCALE:**
 At 100+ images, scanning must be automated and continuous (new CVEs found daily in existing images). At 1000+ pods, network policy management requires tooling (Cilium's network policy editor). At multi-cluster scale, need centralized policy management (Kyverno/OPA across clusters).
-
 ---
 
 ### 💻 Code Example
@@ -218,7 +209,6 @@ cosign verify --key cosign.pub myapp:1.0
 
 **How to test / verify correctness:**
 Run `kubectl auth can-i --as=system:serviceaccount:ns:sa` to verify RBAC. Deploy test pod with restricted security context and confirm it starts. Attempt privilege escalation from inside pod (should fail).
-
 ---
 
 ### 📌 Quick Reference Card
@@ -231,6 +221,7 @@ Run `kubectl auth can-i --as=system:serviceaccount:ns:sa` to verify RBAC. Deploy
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -240,13 +231,68 @@ Run `kubectl auth can-i --as=system:serviceaccount:ns:sa` to verify RBAC. Deploy
 
 **Interview one-liner:**
 "Container security is defense-in-depth across the lifecycle: supply chain integrity (scanning, signing), deploy-time enforcement (admission control, policy-as-code), runtime isolation (dropped capabilities, seccomp, read-only FS), and runtime detection (Falco, audit logs) - because the shared kernel means no single layer is sufficient."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 The `--privileged` flag in Docker is used in 15% of production containers (various surveys). It gives containers full access to ALL host devices and ALL capabilities - effectively disabling container isolation entirely. Most teams use it because "the app didn't work without it" instead of finding which specific capability was needed (usually just `NET_ADMIN` or `SYS_PTRACE`).
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Container Security. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -354,58 +400,6 @@ Phased approach (you can't fix 40% overnight):
 - Monitor for regression
 
 Success metric: 0% root containers in 3 months, with no production incidents from the migration.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Container Security. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -422,6 +416,7 @@ Success metric: 0% root containers in 3 months, with no production incidents fro
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -429,7 +424,6 @@ Success metric: 0% root containers in 3 months, with no production incidents fro
 # Linux Namespaces
 
 **TL;DR** - Linux namespaces are the kernel mechanism that makes containers possible by isolating what each process can see - its own PID tree, network stack, filesystem, and more.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -445,13 +439,11 @@ A multi-tenant server where Customer A's process can `kill -9` Customer B's proc
 
 **EVOLUTION:**
 Mount namespace (Linux 2.4.19, 2002) -> UTS, IPC, PID namespaces (2006-2008) -> Network namespace (2009) -> User namespace (2013) -> Cgroup namespace (2016). Docker uses all 8 namespace types to create containers.
-
 ---
 
 ### 📘 Textbook Definition
 
 Linux namespaces are a kernel feature that partitions system resources so that one set of processes sees one set of resources while another set sees a different set. There are 8 namespace types (mnt, pid, net, ipc, uts, user, cgroup, time), each isolating a specific aspect of the system's global resources.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -465,7 +457,6 @@ Namespaces make a process think it has its own private OS.
 
 **One insight:**
 Containers ARE namespaces + cgroups. There's no special "container" concept in the Linux kernel - it's just a process running in isolated namespaces with resource limits. `docker run` = `unshare` + `pivot_root` + cgroup setup + exec.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -486,7 +477,6 @@ By combining all namespace types, you create a process that can't see other proc
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Some form of resource partitioning is needed for multi-tenancy
 **Accidental:** Namespace escape bugs, interaction complexity between namespace types
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -499,7 +489,6 @@ By combining all namespace types, you create a process that can't see other proc
 - "Multiple people" -> multiple containers seeing different views
 
 Where this analogy breaks down: AR glasses don't prevent the wearer from affecting the physical world, but namespaces DO restrict what a process can access.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -534,7 +523,6 @@ User namespaces are the key to rootless containers: PID 1 inside the container c
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -560,7 +548,6 @@ ls -la /proc/<PID>/ns/
 # Enter container's namespace from host
 nsenter -t <PID> -n ip addr  # See container's network
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -573,7 +560,6 @@ Namespace escape (kernel bug) -> process gains access to host namespace -> can s
 
 **WHAT CHANGES AT SCALE:**
 Each namespace consumes kernel memory. At 10,000+ containers per host, namespace overhead becomes measurable. Network namespaces are the most expensive (each gets a full network stack clone).
-
 ---
 
 ### 💻 Code Example
@@ -597,7 +583,6 @@ hostname  # Shows "my-container"
 ps aux    # Shows only 2 processes (bash, ps)
 ip addr   # Shows only loopback (no host network)
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -610,6 +595,7 @@ ip addr   # Shows only loopback (no host network)
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -619,13 +605,68 @@ ip addr   # Shows only loopback (no host network)
 
 **Interview one-liner:**
 "Linux namespaces partition kernel resources so each container gets its own isolated view - separate PID tree, network stack, filesystem mounts, and user IDs - which is the fundamental mechanism that makes container isolation work without hardware virtualization."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 The first namespace (mount namespace) was added to Linux in 2002 - over a decade before Docker. Docker didn't invent container technology; it combined existing kernel primitives (namespaces from 2002-2016, cgroups from 2006) with a developer-friendly UX. The innovation was the developer experience, not the isolation technology.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Linux Namespaces. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -681,58 +722,6 @@ Limitations:
 - Performance: slight overhead for UID translation on every file access
 
 This is why rootless Podman became popular - it uses user namespaces by default, making container runtime itself unprivileged.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Linux Namespaces. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -749,6 +738,7 @@ This is why rootless Podman became popular - it uses user namespaces by default,
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -756,7 +746,6 @@ This is why rootless Podman became popular - it uses user namespaces by default,
 # Cgroups
 
 **TL;DR** - Cgroups (control groups) limit and account for the CPU, memory, disk I/O, and network bandwidth that containers can use, preventing any single container from starving the system.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -772,13 +761,11 @@ One noisy-neighbor container caused a cascading production outage affecting 200 
 
 **EVOLUTION:**
 Process limits (ulimit, 1980s) -> cgroups v1 (Linux 2.6.24, 2008, developed by Google) -> cgroups v2 unified hierarchy (Linux 4.5, 2016) -> cgroups v2 as default in containerd/Docker (2022+). Kubernetes support for cgroups v2 is GA since K8s 1.25.
-
 ---
 
 ### 📘 Textbook Definition
 
 Control groups (cgroups) are a Linux kernel mechanism for organizing processes into hierarchical groups whose resource usage (CPU, memory, block I/O, network) can be limited, accounted for, and isolated. They provide the resource limiting half of container isolation (namespaces provide the visibility half).
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -792,7 +779,6 @@ Cgroups are resource quotas for processes - ensuring no process hogs the system.
 
 **One insight:**
 Namespaces control what a process can SEE. Cgroups control what a process can USE. Together they create containers: isolated view + limited resources.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -813,7 +799,6 @@ Hierarchical cgroups let you set limits at multiple levels: cluster -> node -> p
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Shared hosts need resource isolation
 **Accidental:** cgroups v1 vs v2 differences, memory accounting subtleties (cache vs RSS), CPU throttling behavior
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -826,7 +811,6 @@ Hierarchical cgroups let you set limits at multiple levels: cluster -> node -> p
 - "Monthly bill" -> resource accounting metrics
 
 Where this analogy breaks down: you can't request a plan upgrade mid-call, but Kubernetes VPA can adjust limits dynamically.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -848,7 +832,6 @@ cgroups v2 unifies the hierarchy (v1 had separate hierarchies per controller). K
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -877,7 +860,6 @@ Enforcement flow:
       -> if quota exhausted: throttle until next period
       -> cpu.stat: nr_throttled += 1
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -890,7 +872,6 @@ Memory leak -> usage hits limit -> OOM kill -> container restarts (kubelet resta
 
 **WHAT CHANGES AT SCALE:**
 At high density (100+ containers per host), accurate resource requests become critical for scheduling efficiency. Over-requesting wastes cluster resources. Under-requesting causes throttling and OOM. Production teams use VPA (Vertical Pod Autoscaler) to right-size based on actual usage.
-
 ---
 
 ### 💻 Code Example
@@ -931,7 +912,6 @@ dmesg | grep -i "oom\|killed"
 kubectl describe pod myapp | grep -A5 "Last State"
 # Reason: OOMKilled
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -944,6 +924,7 @@ kubectl describe pod myapp | grep -A5 "Last State"
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -953,13 +934,68 @@ kubectl describe pod myapp | grep -A5 "Last State"
 
 **Interview one-liner:**
 "Cgroups enforce resource isolation at the kernel level - memory limits trigger OOM kills, CPU limits trigger throttling - and in Kubernetes, requests guarantee scheduling placement while limits provide hard enforcement ceilings, requiring careful tuning to balance efficiency with stability."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 CPU limits in Kubernetes are controversial. Many production teams (including Google internally) run without CPU limits, using only CPU requests. The reason: CPU throttling occurs even when the host has idle cores, causing latency spikes in latency-sensitive services. With only requests (no limits), containers can burst to use idle CPU while still getting their guaranteed share under contention. This is why Kubernetes has a "Burstable" QoS class.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Cgroups. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1024,58 +1060,6 @@ Three strategies:
    - Throttled at limit regardless of host utilization
 
 Recommendation: Set memory limits always (OOM is worse than throttling). For CPU: consider dropping limits for latency-sensitive services and rely on requests for fair scheduling. Google's Borg and many large K8s operators follow this pattern.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Cgroups. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1092,6 +1076,7 @@ Recommendation: Set memory limits always (OOM is worse than throttling). For CPU
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -1099,7 +1084,6 @@ Recommendation: Set memory limits always (OOM is worse than throttling). For CPU
 # Image Scanning
 
 **TL;DR** - Image scanning analyzes container images for known vulnerabilities (CVEs), misconfigurations, and compliance issues before deployment, acting as a security gate in the CI/CD pipeline.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1115,13 +1099,11 @@ A production breach traced back to a publicly-known CVE in a base image that had
 
 **EVOLUTION:**
 Manual audits -> Clair (CoreOS, 2015) -> Docker Security Scanning (2016) -> Trivy (2019, fast and comprehensive) -> Grype (2021, Anchore) -> Continuous scanning + SBOM integration (2022+). Modern scanners check: OS packages, language dependencies, misconfigurations, and secrets.
-
 ---
 
 ### 📘 Textbook Definition
 
 Container image scanning is the automated analysis of container image contents against vulnerability databases (NVD, vendor advisories) to identify known security issues (CVEs) in OS packages, language-specific dependencies, and configuration. It operates on the image filesystem layers without running the container.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1135,7 +1117,6 @@ Image scanning finds known vulnerabilities in your container before attackers do
 
 **One insight:**
 Scanning finds KNOWN vulnerabilities only. Zero-days won't appear. This is why scanning is necessary but not sufficient - you also need runtime detection for unknown threats. The real value is preventing the easy attacks (publicly-known CVEs with available patches).
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1156,7 +1137,6 @@ Scan in CI (gate deployments) AND scan continuously in registry (catch new CVEs 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** You must know what's in your images to assess risk
 **Accidental:** Scanner differences (Trivy vs Grype find different CVEs), database lag, severity scoring debates
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1169,7 +1149,6 @@ Scan in CI (gate deployments) AND scan continuously in registry (catch new CVEs 
 - "Product recall" -> image blocked from deployment
 
 Where this analogy breaks down: not all "allergens" (CVEs) actually affect your application - the vulnerable code path may never be reached.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1191,7 +1170,6 @@ Build a vulnerability management program: triage based on exploitability (EPSS s
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -1217,7 +1195,6 @@ Scan output:
   CVE-2024-XXXX | libcrypto3 | 3.1.3 -> 3.1.4
   (Remote code execution via buffer overflow)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1230,7 +1207,6 @@ Critical CVE found -> CI blocks push -> developer updates dependency/base image 
 
 **WHAT CHANGES AT SCALE:**
 At 100+ images, scan results must be aggregated and prioritized. At 1000+ images, you need automated patching (base image rebuild triggers), SLA tracking, and exception management for known-acceptable risks.
-
 ---
 
 ### 💻 Code Example
@@ -1264,7 +1240,6 @@ grype sbom:./sbom.json
   with:
     sarif_file: trivy-results.sarif
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1277,6 +1252,7 @@ grype sbom:./sbom.json
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1286,13 +1262,68 @@ grype sbom:./sbom.json
 
 **Interview one-liner:**
 "Image scanning cross-references container contents against CVE databases in CI to block vulnerable deployments, but must be combined with continuous registry scanning for newly-discovered CVEs, SBOM generation for rapid impact assessment, and runtime detection for zero-days."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Studies show that 60-80% of container images in public registries contain at least one HIGH or CRITICAL vulnerability. But fewer than 5% of those CVEs are actually exploitable in the context they're used (the vulnerable code path is never reached). This is why VEX (Vulnerability Exploitability eXchange) and reachability analysis are becoming critical - without them, teams waste enormous effort patching CVEs that can't actually be exploited.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Image Scanning. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1340,13 +1371,214 @@ _Why they ask:_ Tests ability to balance security with development velocity.
 5. **Prevention:** Monthly base image update cadence (not yearly). Automated testing against new base images. The longer between updates, the more breakage accumulates.
 
 The principle: security is a risk trade-off. "Can't update" usually means "haven't invested in update automation." The cost of being breached almost always exceeds the cost of fixing compatibility.
+---
 
+### 🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- [TODO] - [why needed]
+- [TODO] - [why needed]
+
+**Builds on this (learn these next):**
+- [TODO] - [what it adds]
+- [TODO] - [what it adds]
+
+**Alternatives / Comparisons:**
+- [TODO] - [when to prefer it]
+- [TODO] - [when to prefer it]
+
+
+---
+
+---
+
+# Rootless Containers
+
+**TL;DR** - Rootless containers run the entire container runtime without root privileges on the host, dramatically reducing the blast radius of container escapes.
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Docker daemon runs as root. Container escape = root on host. A CVE in the container runtime gives attackers full system control.
+
+**THE BREAKING POINT:**
+CVE-2019-5736 (runc container escape) gave root access to the host. Every Docker/containerd installation was vulnerable. Running as root made the exploit devastating.
+
+**THE INVENTION MOMENT:**
+"This is exactly why rootless containers were created."
+
+**EVOLUTION:**
+Root-only Docker (2013-2018) -> Rootless Docker experimental (2019) -> Podman rootless by default (2019) -> Rootless Docker GA (2020) -> Kubernetes rootless mode (2022+) -> Industry shift toward rootless-first.
+---
+
+### 📘 Textbook Definition
+
+Rootless containers are containers where the entire container runtime (daemon, networking, storage) runs as an unprivileged user on the host using user namespaces to remap container UID 0 to an unprivileged host UID. This ensures that even a complete container escape only gives attacker access as an unprivileged user.
+---
+
+### ⏱️ Understand It in 30 Seconds
+
+**One line:**
+Rootless means the container AND its runtime need zero root access on the host.
+
+**One analogy:**
+
+> Regular Docker is like having a master key to the building while doing maintenance in one apartment. Rootless is like doing maintenance with only the apartment key - even if you break through the walls, you can't access the building's control room.
+
+**One insight:**
+The magic is user namespaces: inside the container, the process thinks it's root (UID 0). On the host, it's actually UID 100000+ (unprivileged). Container escape lands you as "nobody" instead of "root."
+---
+
+### 🔩 First Principles Explanation
+
+**CORE INVARIANTS:**
+
+1. No process in the container stack has root on the host
+2. User namespace remaps UID 0 (container) to unprivileged UID (host)
+3. Network is handled in user-space (slirp4netns or pasta) instead of iptables
+
+**DERIVED DESIGN:**
+Without root, you can't create real network bridges (need iptables = root). Solution: user-space networking (slightly slower but unprivileged). Without root, you can't use privileged storage drivers. Solution: overlay with fuse-overlayfs.
+
+**THE TRADE-OFFS:**
+**Gain:** Massively reduced blast radius, no root daemon attack surface, multi-user safety
+**Cost:** Performance overhead (user-space networking ~10-15% slower), some features unavailable (privileged containers, host networking), compatibility issues
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** Root is genuinely needed for some kernel operations (network device creation)
+**Accidental:** Workarounds for lack of kernel support (slirp4netns being replaced by pasta, fuse-overlayfs overhead)
+---
+
+### 🧠 Mental Model / Analogy
+
+> Rootless containers are like a sandbox at a playground. Kids (containers) can build whatever they want inside the sandbox, but the sandbox walls prevent them from affecting the playground. Even if a kid digs to the bottom, they hit a concrete floor (unprivileged UID) - they can't reach the playground's underground pipes (kernel).
+
+- "Sandbox walls" -> user namespace boundary
+- "Concrete floor" -> unprivileged host UID
+- "Underground pipes" -> host root capabilities
+- "Kids building" -> container processes thinking they're root
+
+Where this analogy breaks down: containers need to communicate (networking), which sandboxes don't.
+---
+
+### 📶 Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+Normal Docker needs admin access to run. Rootless containers don't - even if someone breaks out of the container, they can't take over the computer.
+
+**Level 2 - How to use it (junior developer):**
+Use Podman (rootless by default) or install Docker rootless mode. `podman run` works without `sudo`. Limitation: can't bind to ports < 1024 without extra config.
+
+**Level 3 - How it works (mid-level engineer):**
+Three key mechanisms: (1) User namespace maps container UID 0 to host UID 100000+ (via `/etc/subuid`). (2) Network: slirp4netns/pasta creates a user-space network stack (TAP device in user namespace). (3) Storage: fuse-overlayfs or native overlay (kernel 5.11+) without root. The container runtime itself runs as regular user.
+
+**Level 4 - Mastery (senior/staff+ engineer):**
+Rootless has been production-ready since 2022 but adoption is slow due to: port binding limitations (use `net.ipv4.ip_unprivileged_port_start=0`), storage performance (native overlay requires kernel 5.11+), and Kubernetes rootless still being complex to configure. The future: Kubernetes will default to rootless (containerd in user namespace). The current gap: stateful workloads needing specific file ownership are tricky with UID remapping.
+
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics.
+ What would you change if redesigning today?
+ How does this compose at extreme scale?]
+---
+
+### ⚙️ How It Works
+
+```
+Traditional Docker (rootful):
+  Host root -> dockerd (root) -> containerd (root)
+    -> runc (root) -> container process (root in ns)
+  ESCAPE = HOST ROOT ACCESS
+
+Rootless Docker:
+  Host user (UID 1000) -> rootlesskit
+    -> dockerd (UID 1000) -> containerd (UID 1000)
+      -> runc (UID 1000) -> container (UID 0 in ns)
+  Container UID 0 = Host UID 100000
+  ESCAPE = HOST UID 100000 (unprivileged!)
+
+User namespace mapping:
+  /etc/subuid: user1:100000:65536
+  Container UID 0   -> Host UID 100000
+  Container UID 1   -> Host UID 100001
+  Container UID 999 -> Host UID 100999
+```
+---
+
+### 🔄 Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+User runs `podman run` (no sudo) -> rootlesskit sets up user namespace <- YOU ARE HERE -> slirp4netns provides networking -> fuse-overlayfs provides storage -> container runs as host UID 100000+
+
+**FAILURE PATH:**
+Container escape in rootless mode -> attacker lands as UID 100000 on host -> can't read other users' files, can't install packages, can't modify system -> blast radius: only the running user's files
+
+**WHAT CHANGES AT SCALE:**
+Rootless adds ~10-15% networking overhead (user-space stack). At high-throughput workloads (>10Gbps), this matters. For most microservices (<1Gbps), it's negligible. With kernel 5.11+ and native overlay, storage overhead is eliminated.
+---
+
+### 💻 Code Example
+
+```bash
+# Podman (rootless by default)
+podman run -d --name myapp -p 8080:8080 myapp:1.0
+# No sudo needed. Runs as your user.
+
+# Docker rootless mode setup
+dockerd-rootless-setuptool.sh install
+# Then: export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+docker run -d myapp:1.0
+
+# Verify rootless operation
+podman info | grep rootless
+# rootless: true
+
+# Check UID mapping from host
+ps aux | grep myapp
+# UID 100000 (not root!)
+```
+---
+
+### 📌 Quick Reference Card
+
+**WHAT IT IS:** [TODO]
+**PROBLEM IT SOLVES:** [TODO]
+**KEY INSIGHT:** [TODO]
+**USE WHEN:** [TODO]
+**AVOID WHEN:** [TODO]
+**ANTI-PATTERN:** [TODO]
+**TRADE-OFF:** [TODO]
+**ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
+
+**If you remember only 3 things:**
+
+1. Rootless = entire container stack runs without root. Container escape = unprivileged user (not root) on host.
+2. Podman is rootless by default; Docker requires explicit rootless mode setup
+3. Trade-off: slightly slower networking (user-space), can't bind port < 1024 without kernel tuning, but massively better security posture
+
+**Interview one-liner:**
+"Rootless containers run the entire runtime as an unprivileged user using user namespaces to remap UID 0 inside the container to an unprivileged UID on the host - so even a complete container escape only gives attacker access as an unprivileged user, not root."
+---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
+
+### 💡 The Surprising Truth
+
+Podman was created by Red Hat specifically to prove that Docker's root daemon architecture was unnecessary. Podman has no daemon, runs rootless by default, and is CLI-compatible with Docker (`alias docker=podman`). Yet Docker still dominates developer tooling because of ecosystem momentum (Docker Desktop, Docker Compose), not technical superiority.
 ---
 
 ### ⚖️ Comparison Table
 
-[TODO: Include if 2+ named alternatives exist for Image Scanning. Otherwise remove this section.]
-
+[TODO: Include if 2+ named alternatives exist for Rootless Containers. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1357,7 +1589,6 @@ The principle: security is a risk trade-off. "Can't update" usually means "haven
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1391,211 +1622,6 @@ The principle: security is a risk trade-off. "Can't update" usually means "haven
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
-
----
-
-### 🔗 Related Keywords
-
-**Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
-
-**Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
-
-**Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
----
-
----
-
-# Rootless Containers
-
-**TL;DR** - Rootless containers run the entire container runtime without root privileges on the host, dramatically reducing the blast radius of container escapes.
-
----
-
-### 🔥 The Problem This Solves
-
-**WORLD WITHOUT IT:**
-Docker daemon runs as root. Container escape = root on host. A CVE in the container runtime gives attackers full system control.
-
-**THE BREAKING POINT:**
-CVE-2019-5736 (runc container escape) gave root access to the host. Every Docker/containerd installation was vulnerable. Running as root made the exploit devastating.
-
-**THE INVENTION MOMENT:**
-"This is exactly why rootless containers were created."
-
-**EVOLUTION:**
-Root-only Docker (2013-2018) -> Rootless Docker experimental (2019) -> Podman rootless by default (2019) -> Rootless Docker GA (2020) -> Kubernetes rootless mode (2022+) -> Industry shift toward rootless-first.
-
----
-
-### 📘 Textbook Definition
-
-Rootless containers are containers where the entire container runtime (daemon, networking, storage) runs as an unprivileged user on the host using user namespaces to remap container UID 0 to an unprivileged host UID. This ensures that even a complete container escape only gives attacker access as an unprivileged user.
-
----
-
-### ⏱️ Understand It in 30 Seconds
-
-**One line:**
-Rootless means the container AND its runtime need zero root access on the host.
-
-**One analogy:**
-
-> Regular Docker is like having a master key to the building while doing maintenance in one apartment. Rootless is like doing maintenance with only the apartment key - even if you break through the walls, you can't access the building's control room.
-
-**One insight:**
-The magic is user namespaces: inside the container, the process thinks it's root (UID 0). On the host, it's actually UID 100000+ (unprivileged). Container escape lands you as "nobody" instead of "root."
-
----
-
-### 🔩 First Principles Explanation
-
-**CORE INVARIANTS:**
-
-1. No process in the container stack has root on the host
-2. User namespace remaps UID 0 (container) to unprivileged UID (host)
-3. Network is handled in user-space (slirp4netns or pasta) instead of iptables
-
-**DERIVED DESIGN:**
-Without root, you can't create real network bridges (need iptables = root). Solution: user-space networking (slightly slower but unprivileged). Without root, you can't use privileged storage drivers. Solution: overlay with fuse-overlayfs.
-
-**THE TRADE-OFFS:**
-**Gain:** Massively reduced blast radius, no root daemon attack surface, multi-user safety
-**Cost:** Performance overhead (user-space networking ~10-15% slower), some features unavailable (privileged containers, host networking), compatibility issues
-
-**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** Root is genuinely needed for some kernel operations (network device creation)
-**Accidental:** Workarounds for lack of kernel support (slirp4netns being replaced by pasta, fuse-overlayfs overhead)
-
----
-
-### 🧠 Mental Model / Analogy
-
-> Rootless containers are like a sandbox at a playground. Kids (containers) can build whatever they want inside the sandbox, but the sandbox walls prevent them from affecting the playground. Even if a kid digs to the bottom, they hit a concrete floor (unprivileged UID) - they can't reach the playground's underground pipes (kernel).
-
-- "Sandbox walls" -> user namespace boundary
-- "Concrete floor" -> unprivileged host UID
-- "Underground pipes" -> host root capabilities
-- "Kids building" -> container processes thinking they're root
-
-Where this analogy breaks down: containers need to communicate (networking), which sandboxes don't.
-
----
-
-### 📶 Gradual Depth - Five Levels
-
-**Level 1 - What it is (anyone can understand):**
-Normal Docker needs admin access to run. Rootless containers don't - even if someone breaks out of the container, they can't take over the computer.
-
-**Level 2 - How to use it (junior developer):**
-Use Podman (rootless by default) or install Docker rootless mode. `podman run` works without `sudo`. Limitation: can't bind to ports < 1024 without extra config.
-
-**Level 3 - How it works (mid-level engineer):**
-Three key mechanisms: (1) User namespace maps container UID 0 to host UID 100000+ (via `/etc/subuid`). (2) Network: slirp4netns/pasta creates a user-space network stack (TAP device in user namespace). (3) Storage: fuse-overlayfs or native overlay (kernel 5.11+) without root. The container runtime itself runs as regular user.
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-Rootless has been production-ready since 2022 but adoption is slow due to: port binding limitations (use `net.ipv4.ip_unprivileged_port_start=0`), storage performance (native overlay requires kernel 5.11+), and Kubernetes rootless still being complex to configure. The future: Kubernetes will default to rootless (containerd in user namespace). The current gap: stateful workloads needing specific file ownership are tricky with UID remapping.
-
-
-**Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
-
----
-
-### ⚙️ How It Works
-
-```
-Traditional Docker (rootful):
-  Host root -> dockerd (root) -> containerd (root)
-    -> runc (root) -> container process (root in ns)
-  ESCAPE = HOST ROOT ACCESS
-
-Rootless Docker:
-  Host user (UID 1000) -> rootlesskit
-    -> dockerd (UID 1000) -> containerd (UID 1000)
-      -> runc (UID 1000) -> container (UID 0 in ns)
-  Container UID 0 = Host UID 100000
-  ESCAPE = HOST UID 100000 (unprivileged!)
-
-User namespace mapping:
-  /etc/subuid: user1:100000:65536
-  Container UID 0   -> Host UID 100000
-  Container UID 1   -> Host UID 100001
-  Container UID 999 -> Host UID 100999
-```
-
----
-
-### 🔄 Complete Picture - End-to-End Flow
-
-**NORMAL FLOW:**
-User runs `podman run` (no sudo) -> rootlesskit sets up user namespace <- YOU ARE HERE -> slirp4netns provides networking -> fuse-overlayfs provides storage -> container runs as host UID 100000+
-
-**FAILURE PATH:**
-Container escape in rootless mode -> attacker lands as UID 100000 on host -> can't read other users' files, can't install packages, can't modify system -> blast radius: only the running user's files
-
-**WHAT CHANGES AT SCALE:**
-Rootless adds ~10-15% networking overhead (user-space stack). At high-throughput workloads (>10Gbps), this matters. For most microservices (<1Gbps), it's negligible. With kernel 5.11+ and native overlay, storage overhead is eliminated.
-
----
-
-### 💻 Code Example
-
-```bash
-# Podman (rootless by default)
-podman run -d --name myapp -p 8080:8080 myapp:1.0
-# No sudo needed. Runs as your user.
-
-# Docker rootless mode setup
-dockerd-rootless-setuptool.sh install
-# Then: export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
-docker run -d myapp:1.0
-
-# Verify rootless operation
-podman info | grep rootless
-# rootless: true
-
-# Check UID mapping from host
-ps aux | grep myapp
-# UID 100000 (not root!)
-```
-
----
-
-### 📌 Quick Reference Card
-
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-
-**If you remember only 3 things:**
-
-1. Rootless = entire container stack runs without root. Container escape = unprivileged user (not root) on host.
-2. Podman is rootless by default; Docker requires explicit rootless mode setup
-3. Trade-off: slightly slower networking (user-space), can't bind port < 1024 without kernel tuning, but massively better security posture
-
-**Interview one-liner:**
-"Rootless containers run the entire runtime as an unprivileged user using user namespaces to remap UID 0 inside the container to an unprivileged UID on the host - so even a complete container escape only gives attacker access as an unprivileged user, not root."
-
----
-
-### 💡 The Surprising Truth
-
-Podman was created by Red Hat specifically to prove that Docker's root daemon architecture was unnecessary. Podman has no daemon, runs rootless by default, and is CLI-compatible with Docker (`alias docker=podman`). Yet Docker still dominates developer tooling because of ecosystem momentum (Docker Desktop, Docker Compose), not technical superiority.
-
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1651,58 +1677,6 @@ Phased migration:
 - Pod security standards enforce: `runAsNonRoot: true`
 
 Key: the main blocker is usually volume permissions (UID mapping), not the runtime itself. Test early with real workloads.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Rootless Containers. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1719,6 +1693,7 @@ Key: the main blocker is usually volume permissions (UID mapping), not the runti
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+
 ---
 
 ---
@@ -1726,7 +1701,6 @@ Key: the main blocker is usually volume permissions (UID mapping), not the runti
 # Docker Secrets
 
 **TL;DR** - Docker secrets provide encrypted-at-rest secret storage and in-memory-only delivery to containers, preventing secrets from appearing in images, environment variables, or container filesystems persistently.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1742,13 +1716,11 @@ An API key was committed to a public Dockerfile. Automated scanners detected it 
 
 **EVOLUTION:**
 Hardcoded credentials -> Environment variables (slightly better) -> Docker Secrets (Swarm, 2017) -> Kubernetes Secrets (base64, not encrypted) -> External secret stores (Vault, AWS Secrets Manager) + CSI driver (2020+) -> SOPS, sealed-secrets, external-secrets operator.
-
 ---
 
 ### 📘 Textbook Definition
 
 Docker secrets is a mechanism for securely managing sensitive data (passwords, TLS certificates, API keys) used by container services. Secrets are encrypted at rest, transmitted over TLS, mounted as tmpfs files (in-memory only) inside containers, and never written to disk on worker nodes.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1762,7 +1734,6 @@ Secrets are securely stored credentials delivered to containers as in-memory fil
 
 **One insight:**
 The real problem isn't storing secrets - it's preventing them from leaking. Environment variables appear in `docker inspect`, process listings, and crash dumps. File-based secrets in tmpfs avoid all these exposure vectors.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1783,7 +1754,6 @@ Encrypted at rest (Raft log in Swarm, etcd in K8s) + encrypted in transit (TLS) 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Applications need credentials; these must be protected
 **Accidental:** Kubernetes Secrets being only base64 (not encrypted by default), proliferation of tools (Vault vs SOPS vs sealed-secrets)
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1796,7 +1766,6 @@ Encrypted at rest (Raft log in Swarm, etcd in K8s) + encrypted in transit (TLS) 
 - "Shredding after reading" -> tmpfs cleanup on container stop
 
 Where this analogy breaks down: secrets can be read multiple times during the container's lifetime; shredding only happens at container termination.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1818,7 +1787,6 @@ Design a secrets architecture: HashiCorp Vault as source of truth (dynamic secre
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### ⚙️ How It Works
@@ -1842,7 +1810,6 @@ Kubernetes:
 Docker Swarm:
   Raft log (encrypted) -> TLS -> tmpfs at /run/secrets/
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1855,7 +1822,6 @@ Secret leaked (env var logged, crash dump) -> rotate immediately in Vault -> all
 
 **WHAT CHANGES AT SCALE:**
 At 100+ secrets: need namespaced access control, rotation schedules, leak detection. At 1000+ microservices: dynamic secrets (Vault generates unique DB credentials per pod, TTL-based, auto-revoked) eliminate shared credentials entirely.
-
 ---
 
 ### 💻 Code Example
@@ -1899,7 +1865,6 @@ String password = Files.readString(
     Path.of("/secrets/password")).trim();
 // Re-reads on each connection for rotation support
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1912,6 +1877,7 @@ String password = Files.readString(
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1921,13 +1887,68 @@ String password = Files.readString(
 
 **Interview one-liner:**
 "I use volume-mounted secrets from an external store like Vault - encrypted at rest, delivered via tmpfs (never touches disk), with automatic rotation and audit logging - avoiding environment variables which leak into inspect output, process tables, and crash dumps."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Kubernetes Secrets are NOT encrypted by default - they're only base64-encoded in etcd (decode with `echo <value> | base64 -d`). Anyone with etcd access or the right RBAC can read all secrets in plain text. You must explicitly enable encryption-at-rest (`EncryptionConfiguration`) AND restrict RBAC. Most "quick start" clusters have completely unencrypted secrets.
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Docker Secrets. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1995,58 +2016,6 @@ Prevention:
 - Education: never put secrets in code, use env injection
 
 Key principle: rotation is the fix, not git history rewriting. Once pushed, assume it's compromised regardless of cleanup.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Docker Secrets. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords

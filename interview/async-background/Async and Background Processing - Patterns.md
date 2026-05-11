@@ -17,7 +17,7 @@ keywords:
   - Async API Design
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -33,7 +33,6 @@ version: 2
 # Event-Driven Architecture (EDA)
 
 **TL;DR** - Event-Driven Architecture structures applications around producing, detecting, and reacting to events, decoupling components so they communicate through events rather than direct calls.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -43,13 +42,11 @@ Order service calls shipping service (HTTP). Shipping service calls inventory se
 
 **THE KEY INSIGHT:**
 "Order placed" is a fact about the world. Multiple services need to react to this fact. The order service shouldn't know or care who reacts. It should announce the event and move on.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -62,7 +59,6 @@ Order service calls shipping service (HTTP). Shipping service calls inventory se
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -82,7 +78,6 @@ Order service calls shipping service (HTTP). Shipping service calls inventory se
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -94,7 +89,6 @@ Order service calls shipping service (HTTP). Shipping service calls inventory se
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -113,7 +107,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -141,7 +134,6 @@ EVENT-DRIVEN:
 1. **Event Notification:** "Something happened." Consumers query for details. Minimal coupling.
 2. **Event-Carried State Transfer:** Event contains all data consumers need. No callback queries.
 3. **Event Sourcing:** Events are the source of truth. Current state is derived by replaying events.
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -155,7 +147,6 @@ EVENT-DRIVEN:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -202,7 +193,6 @@ public class AnalyticsEventHandler {
     }
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -215,6 +205,7 @@ public class AnalyticsEventHandler {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -224,40 +215,26 @@ public class AnalyticsEventHandler {
 
 **Interview one-liner:**
 "Event-Driven Architecture lets services communicate by publishing events rather than making direct calls - I use it to decouple services so new consumers can subscribe without modifying producers, accepting the trade-off of more complex debugging with distributed tracing."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: What are the challenges of Event-Driven Architecture?**
-
-_Why they ask:_ Tests awareness of trade-offs beyond the happy path.
-
-**Answer:**
-
-1. **Debugging complexity:** No single request/response trace. Event flows span multiple services asynchronously. Solution: distributed tracing (Jaeger, Zipkin) with correlation IDs.
-
-2. **Eventual consistency:** After publishing an event, consumers haven't processed it yet. The order service shows "created" while shipping still doesn't know. Solution: design UIs to show pending states.
-
-3. **Event ordering:** If "order updated" arrives before "order created," consumers break. Solution: partition by entity ID (all events for order-123 go to same partition, preserving order).
-
-4. **Schema evolution:** Changing event structure breaks consumers. Solution: schema registry (Avro, Protobuf) with backward/forward compatibility.
-
-5. **Debugging "who consumes what":** No single place shows all consumers of an event. Solution: event catalog, AsyncAPI documentation, consumer registration.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Event-Driven Architecture (EDA). Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -268,7 +245,6 @@ _Why they ask:_ Tests awareness of trade-offs beyond the happy path.
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -302,7 +278,25 @@ _Why they ask:_ Tests awareness of trade-offs beyond the happy path.
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: What are the challenges of Event-Driven Architecture?**
+
+_Why they ask:_ Tests awareness of trade-offs beyond the happy path.
+
+**Answer:**
+
+1. **Debugging complexity:** No single request/response trace. Event flows span multiple services asynchronously. Solution: distributed tracing (Jaeger, Zipkin) with correlation IDs.
+
+2. **Eventual consistency:** After publishing an event, consumers haven't processed it yet. The order service shows "created" while shipping still doesn't know. Solution: design UIs to show pending states.
+
+3. **Event ordering:** If "order updated" arrives before "order created," consumers break. Solution: partition by entity ID (all events for order-123 go to same partition, preserving order).
+
+4. **Schema evolution:** Changing event structure breaks consumers. Solution: schema registry (Avro, Protobuf) with backward/forward compatibility.
+
+5. **Debugging "who consumes what":** No single place shows all consumers of an event. Solution: event catalog, AsyncAPI documentation, consumer registration.
 ---
 
 ### 🔗 Related Keywords
@@ -327,20 +321,17 @@ _Why they ask:_ Tests awareness of trade-offs beyond the happy path.
 # Saga Pattern
 
 **TL;DR** - Saga manages distributed transactions across multiple services by breaking them into a sequence of local transactions, each with a compensating action for rollback.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT SAGA:**
 Order processing spans 4 services: create order, reserve inventory, charge payment, schedule shipping. If payment fails after inventory is reserved, you need to undo the reservation. In a monolith, a database transaction handles this. In microservices, there's no distributed transaction (2PC is too slow). How do you ensure all-or-nothing across services?
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -353,7 +344,6 @@ Order processing spans 4 services: create order, reserve inventory, charge payme
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -373,7 +363,6 @@ Order processing spans 4 services: create order, reserve inventory, charge payme
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -385,7 +374,6 @@ Order processing spans 4 services: create order, reserve inventory, charge payme
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -404,7 +392,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -441,7 +428,6 @@ ORCHESTRATION (central coordinator):
 | Visibility           | Hard to see full flow   | Clear in orchestrator |
 | Complexity           | Simple for 3-4 steps    | Better for 5+ steps   |
 | Single failure point | No                      | Orchestrator          |
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -455,7 +441,6 @@ ORCHESTRATION (central coordinator):
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -494,7 +479,6 @@ public class OrderSaga {
     }
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -507,6 +491,7 @@ public class OrderSaga {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -516,38 +501,26 @@ public class OrderSaga {
 
 **Interview one-liner:**
 "Saga manages distributed transactions by breaking them into local transactions with compensating actions - I choose choreography for simple 3-4 step flows and orchestration for complex workflows where visibility of the full saga state matters."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: What are the failure modes of the Saga pattern?**
-
-_Why they ask:_ Tests deep understanding of distributed transaction challenges.
-
-**Answer:**
-
-1. **Compensation failure:** What if the compensating action itself fails? (Payment charged, shipping fails, inventory release fails.) Solution: retry compensations with exponential backoff. Store compensation state. Use a dead letter queue for failed compensations.
-
-2. **Intermediate states:** Between steps, data is temporarily inconsistent. (Order created, inventory not yet reserved.) Users might see stale data. Solution: use saga status fields ("PENDING," "PROCESSING," "COMPLETED") and design UI for intermediate states.
-
-3. **Idempotency:** If a step is retried, it must be idempotent. Charging payment twice is catastrophic. Solution: idempotency keys on every step.
-
-4. **Ordering:** In choreography, events might arrive out of order. Solution: include saga ID and step number in events. Consumers validate ordering.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Saga Pattern. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -558,7 +531,6 @@ _Why they ask:_ Tests deep understanding of distributed transaction challenges.
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -592,7 +564,23 @@ _Why they ask:_ Tests deep understanding of distributed transaction challenges.
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: What are the failure modes of the Saga pattern?**
+
+_Why they ask:_ Tests deep understanding of distributed transaction challenges.
+
+**Answer:**
+
+1. **Compensation failure:** What if the compensating action itself fails? (Payment charged, shipping fails, inventory release fails.) Solution: retry compensations with exponential backoff. Store compensation state. Use a dead letter queue for failed compensations.
+
+2. **Intermediate states:** Between steps, data is temporarily inconsistent. (Order created, inventory not yet reserved.) Users might see stale data. Solution: use saga status fields ("PENDING," "PROCESSING," "COMPLETED") and design UI for intermediate states.
+
+3. **Idempotency:** If a step is retried, it must be idempotent. Charging payment twice is catastrophic. Solution: idempotency keys on every step.
+
+4. **Ordering:** In choreography, events might arrive out of order. Solution: include saga ID and step number in events. Consumers validate ordering.
 ---
 
 ### 🔗 Related Keywords
@@ -617,7 +605,6 @@ _Why they ask:_ Tests deep understanding of distributed transaction challenges.
 # Outbox Pattern
 
 **TL;DR** - Outbox Pattern ensures reliable event publishing by writing events to a database table (outbox) in the same transaction as the business operation, then asynchronously polling and publishing them to the broker.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -634,13 +621,11 @@ public void createOrder(Order order) {
 ```
 
 What if the DB write succeeds but the Kafka send fails? The order exists but no event is published. What if Kafka succeeds but the transaction rolls back? An event is published for a non-existent order. You can't atomically write to a database AND a message broker.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -653,7 +638,6 @@ What if the DB write succeeds but the Kafka send fails? The order exists but no 
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -673,7 +657,6 @@ What if the DB write succeeds but the Kafka send fails? The order exists but no 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -685,7 +668,6 @@ What if the DB write succeeds but the Kafka send fails? The order exists but no 
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -704,7 +686,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -724,7 +705,6 @@ STEP 2: Async relay (polling or CDC)
 STEP 3: Cleanup
   Delete published events (or archive)
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -738,7 +718,6 @@ STEP 3: Cleanup
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -780,7 +759,6 @@ public void publishOutboxEvents() {
 // reads database WAL, publishes to Kafka
 // No polling needed, lower latency
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -793,6 +771,7 @@ public void publishOutboxEvents() {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -802,14 +781,69 @@ public void publishOutboxEvents() {
 
 **Interview one-liner:**
 "Outbox pattern solves the dual-write problem by writing events to a database outbox table in the same transaction as business data, then asynchronously relaying them to the message broker - either by polling or CDC with Debezium."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Outbox Pattern. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -856,58 +890,6 @@ public void publishOutboxEvents() {
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Outbox Pattern. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -932,19 +914,16 @@ public void publishOutboxEvents() {
 # Backpressure
 
 **TL;DR** - Backpressure is a mechanism where a consumer signals to the producer to slow down when it can't keep up with the incoming data rate, preventing system overload.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Producer generates 10,000 events/sec. Consumer processes 5,000/sec. Without backpressure: memory fills with buffered events, GC thrashes, OOM crash. The fast producer kills the slow consumer.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -957,7 +936,6 @@ Producer generates 10,000 events/sec. Consumer processes 5,000/sec. Without back
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -977,7 +955,6 @@ Producer generates 10,000 events/sec. Consumer processes 5,000/sec. Without back
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -989,7 +966,6 @@ Producer generates 10,000 events/sec. Consumer processes 5,000/sec. Without back
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1008,7 +984,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1031,7 +1006,6 @@ WITH BACKPRESSURE:
 3. **Block:** Producer blocks until consumer catches up (simplest, but blocks upstream)
 4. **Rate limit:** Producer sends at consumer's declared rate
 5. **Reactive pull:** Consumer requests N items when ready (Reactive Streams)
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1045,7 +1019,6 @@ WITH BACKPRESSURE:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1065,7 +1038,6 @@ Flux.range(1, 1_000_000)
 // max.poll.records controls batch size
 // Consumer controls its own pace
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1078,6 +1050,7 @@ Flux.range(1, 1_000_000)
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1087,14 +1060,69 @@ Flux.range(1, 1_000_000)
 
 **Interview one-liner:**
 "Backpressure lets consumers signal producers to slow down when overwhelmed - I use reactive streams for in-process backpressure and Kafka's pull-based consumption for distributed backpressure."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Backpressure. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1141,58 +1169,6 @@ Flux.range(1, 1_000_000)
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Backpressure. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1217,19 +1193,16 @@ Flux.range(1, 1_000_000)
 # CQRS with Events
 
 **TL;DR** - CQRS separates read and write models, using events to keep the read model synchronized with the write model, enabling independent optimization of each.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Your e-commerce system has a normalized write model (orders, line_items, products - 3 tables with JOINs). Reads need a denormalized view (order with full product details, customer info, shipping status). The same model can't be optimal for both: normalized for writes (avoid anomalies) and denormalized for reads (avoid JOINs).
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1242,7 +1215,6 @@ Your e-commerce system has a normalized write model (orders, line_items, product
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1262,7 +1234,6 @@ Your e-commerce system has a normalized write model (orders, line_items, product
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1274,7 +1245,6 @@ Your e-commerce system has a normalized write model (orders, line_items, product
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1293,7 +1263,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1316,7 +1285,6 @@ READ SIDE:          v
 2. Read model: denormalized, optimized for query patterns
 3. Events synchronize write -> read (eventually consistent)
 4. Commands change state. Queries return state. Never mix.
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1330,7 +1298,6 @@ READ SIDE:          v
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1375,7 +1342,6 @@ public class OrderQueryHandler {
     }
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1388,6 +1354,7 @@ public class OrderQueryHandler {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1397,14 +1364,69 @@ public class OrderQueryHandler {
 
 **Interview one-liner:**
 "CQRS separates read and write models, using events to sync them - I use it when read patterns differ significantly from write patterns, accepting eventual consistency for the benefit of independently optimized models."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for CQRS with Events. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1451,58 +1473,6 @@ public class OrderQueryHandler {
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for CQRS with Events. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1527,13 +1497,11 @@ public class OrderQueryHandler {
 # Priority Queues
 
 **TL;DR** - Priority queues process messages based on priority level rather than arrival order, ensuring critical tasks are handled before routine ones.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Your support ticket system processes tickets first-come-first-served. A critical production outage ticket waits behind 500 password reset tickets. The outage takes 3 hours to reach a human because the queue doesn't distinguish urgency.
-
 ---
 
 ### Implementation Approaches
@@ -1553,13 +1521,11 @@ APPROACH 3: Weighted consumption
   Read 5 from high, 3 from medium, 1 from low
   per polling cycle
 ```
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1572,7 +1538,6 @@ APPROACH 3: Weighted consumption
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1592,7 +1557,6 @@ APPROACH 3: Weighted consumption
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1604,7 +1568,6 @@ APPROACH 3: Weighted consumption
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1623,14 +1586,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1644,7 +1605,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1673,7 +1633,6 @@ public void submitTicket(Ticket ticket) {
     rabbitTemplate.convertAndSend(queue, ticket);
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1686,6 +1645,7 @@ public void submitTicket(Ticket ticket) {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1695,14 +1655,69 @@ public void submitTicket(Ticket ticket) {
 
 **Interview one-liner:**
 "I implement priority processing with separate queues per priority level and dedicated workers for critical queues - this is simpler and more reliable than broker-level priority."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Priority Queues. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1749,58 +1764,6 @@ public void submitTicket(Ticket ticket) {
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Priority Queues. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1825,19 +1788,16 @@ public void submitTicket(Ticket ticket) {
 # Async API Design
 
 **TL;DR** - Async APIs accept requests immediately, process them in the background, and provide status endpoints or callbacks for clients to get results.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Your API generates a financial report that takes 45 seconds. The HTTP connection times out at 30 seconds. The client gets an error even though the report was being generated. You can't make a 45-second operation synchronous.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1850,7 +1810,6 @@ Your API generates a financial report that takes 45 seconds. The HTTP connection
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1870,7 +1829,6 @@ Your API generates a financial report that takes 45 seconds. The HTTP connection
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1882,7 +1840,6 @@ Your API generates a financial report that takes 45 seconds. The HTTP connection
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1901,7 +1858,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -1921,7 +1877,6 @@ POST /reports {callbackUrl: "https://me/hook"}
   -> [Process in background]
   -> POST https://me/hook {result: {...}}
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1935,7 +1890,6 @@ POST /reports {callbackUrl: "https://me/hook"}
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1983,7 +1937,6 @@ public class ReportWorker {
     }
 }
 ```
-
 ---
 
 ### Design Decisions
@@ -1994,7 +1947,6 @@ public class ReportWorker {
 | Webhooks  | Server-to-server, real-time needs | Medium            |
 | WebSocket | Real-time progress updates        | Higher            |
 | SSE       | One-way server push, progress     | Medium            |
-
 ---
 
 ### 📌 Quick Reference Card
@@ -2007,6 +1959,7 @@ public class ReportWorker {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -2016,14 +1969,69 @@ public class ReportWorker {
 
 **Interview one-liner:**
 "For operations exceeding request timeout, I return 202 Accepted with a job ID, process in the background, and provide both polling endpoints and webhook callbacks - the Location header points to the status URL."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Async API Design. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -2070,58 +2078,6 @@ public class ReportWorker {
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Async API Design. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -2137,4 +2093,3 @@ public class ReportWorker {
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

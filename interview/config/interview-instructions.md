@@ -48,7 +48,7 @@ When working with interview content, follow these rules for different scenarios:
 
 ## Content Rules Summary
 
-Each keyword within a file has 18 sections (see `INTERVIEW_PROMPT.md` v2.0 for full spec):
+Each keyword within a file has 19 sections (see `INTERVIEW_PROMPT.md` v3.0 for full spec):
 
 1. Title (`# KEYWORD NAME`)
 2. TL;DR (one sentence, 25 words max)
@@ -61,13 +61,14 @@ Each keyword within a file has 18 sections (see `INTERVIEW_PROMPT.md` v2.0 for f
 9. How It Works (summarized but complete mechanism)
 10. Complete Picture - End-to-End Flow (normal + failure + scale)
 11. Code Example (CONDITIONAL - real-world, BAD then GOOD, production-grade)
-12. Quick Reference Card (8 fields + 3 things + interview one-liner)
-13. The Surprising Truth (one counterintuitive fact)
-14. Interview Deep-Dive (scaled by difficulty: easy=5, medium=7, hard=10)
+12. Quick Reference Card (9 fields incl KEY NUMBERS + 3 things + interview one-liner)
+13. Mastery Checklist (5 indicators: EXPLAIN/DEBUG/DECIDE/BUILD/EXTEND)
+14. The Surprising Truth (one counterintuitive fact)
 15. Comparison Table (CONDITIONAL - when 2+ alternatives exist)
 16. Common Misconceptions (min 4 rows, danger-ordered)
 17. Failure Modes and Diagnosis (min 3 modes with real diagnostic commands)
-18. Related Keywords (prerequisites / builds-on / alternatives)
+18. Interview Deep-Dive (CAPSTONE - scaled by difficulty: easy=5, medium=7, hard=10)
+19. Related Keywords (prerequisites / builds-on / alternatives)
 
 ## Interview Deep-Dive Rules (Critical)
 
@@ -76,6 +77,8 @@ This is the most important section. Rules:
 - **No cap on question count** - more is better
 - **Minimum scales by difficulty:** easy=5, medium=7, hard=10
 - Every question MUST have a **complete, detailed answer** (not bullet hints)
+- **Tag each question** with difficulty: `[JUNIOR]` `[MID]` `[SENIOR]` `[STAFF]`
+- **End every answer** with `*What separates good from great:*` insight line
 - Answers should demonstrate natural depth ("low-key impress the interviewer")
 - Answers can be long but must have clear structure and learning progression
 - **Must cover at least 5 of 8 question categories** per keyword
@@ -90,7 +93,7 @@ This is the most important section. Rules:
 - PowerShell scripts: always use `pwsh` (PowerShell 7+), never `powershell.exe`
 - File writing: `[System.Text.UTF8Encoding]::new($false)` (no BOM)
 - No emojis in YAML frontmatter (encoding safety)
-- Section headers in content body may use emojis for readability
+- Section headers in content body MUST use emoji prefixes as defined in spec
 - No em dashes anywhere - use regular hyphens only
 
 ## Formatting Rules

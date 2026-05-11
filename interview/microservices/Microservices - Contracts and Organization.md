@@ -16,7 +16,7 @@ keywords:
   - FinOps
 difficulty_range: medium to hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Service Contract
 
 **TL;DR** - A service contract is the formal specification of a service's API: endpoints, request/response formats, error codes, SLAs, and behavioral guarantees. It's the promise a service makes to its consumers. Breaking a contract breaks consumers. Contracts should be explicit, versioned, and tested.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -47,13 +46,11 @@ version: 2
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -66,7 +63,6 @@ version: 2
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -86,7 +82,6 @@ version: 2
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -98,7 +93,6 @@ version: 2
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -187,14 +181,12 @@ public class OrderResponse {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -208,7 +200,6 @@ public class OrderResponse {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -223,41 +214,29 @@ public class OrderResponse {
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your service has 15 consumers. You need to add a required field to the request. How?**
-
-_Why they ask:_ Tests backward compatibility management.
-
-_Strong answer:_
-
-**Never make a new field required immediately. Phased approach:**
-
-1. **Add as optional with default:** New field `priority` defaults to `"NORMAL"` if not provided. Deploy.
-2. **Notify consumers:** "New field `priority` available. Will become required in v2 (3 months)."
-3. **Monitor adoption:** Track how many consumers send the field.
-4. **Deprecation warning:** After 2 months, return header `Deprecation: true` for requests without `priority`.
-5. **Make required in v2:** Release API v2 with `priority` required. Keep v1 running with the default.
-6. **Sunset v1:** After all consumers migrate (+ grace period), remove v1.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Service Contract. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -268,7 +247,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -302,7 +280,24 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your service has 15 consumers. You need to add a required field to the request. How?**
+
+_Why they ask:_ Tests backward compatibility management.
+
+_Strong answer:_
+
+**Never make a new field required immediately. Phased approach:**
+
+1. **Add as optional with default:** New field `priority` defaults to `"NORMAL"` if not provided. Deploy.
+2. **Notify consumers:** "New field `priority` available. Will become required in v2 (3 months)."
+3. **Monitor adoption:** Track how many consumers send the field.
+4. **Deprecation warning:** After 2 months, return header `Deprecation: true` for requests without `priority`.
+5. **Make required in v2:** Release API v2 with `priority` required. Keep v1 running with the default.
+6. **Sunset v1:** After all consumers migrate (+ grace period), remove v1.
 ---
 
 ### 🔗 Related Keywords
@@ -327,7 +322,6 @@ _Strong answer:_
 # Backward Compatibility
 
 **TL;DR** - Backward compatibility means new versions of a service work with existing consumers without requiring them to change. Adding fields is safe. Removing, renaming, or changing field types is breaking. In microservices, backward compatibility is essential because you can't deploy all consumers simultaneously.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -343,13 +337,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -362,7 +354,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -382,7 +373,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -394,7 +384,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -476,14 +465,12 @@ Phase 3 - Contract:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -497,7 +484,6 @@ Phase 3 - Contract:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -512,48 +498,29 @@ Phase 3 - Contract:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: You discover a field name is misleading (`amount` should be `totalAmount`). It's been in production for 6 months with 10 consumers. How do you rename it?**
-
-_Why they ask:_ Tests practical API evolution.
-
-_Strong answer:_
-
-**Never rename directly. Use Expand-Contract:**
-
-1. **v1.1:** Add `totalAmount` alongside `amount`. Both contain the same value.
-
-```json
-{ "amount": 99.99, "totalAmount": 99.99 }
-```
-
-2. **Document deprecation:** Mark `amount` as deprecated in OpenAPI spec. Notify consumer teams.
-
-3. **Monitor:** Track which consumers still use `amount` (log access patterns or use API analytics).
-
-4. **v2.0 (after all consumers migrated):** Remove `amount` field. Only `totalAmount` remains.
-
-5. **Timeline:** Give consumers 3 months minimum. Don't rush - forcing a rename on 10 teams simultaneously is a coordination nightmare.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Backward Compatibility. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -564,7 +531,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -598,7 +564,31 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: You discover a field name is misleading (`amount` should be `totalAmount`). It's been in production for 6 months with 10 consumers. How do you rename it?**
+
+_Why they ask:_ Tests practical API evolution.
+
+_Strong answer:_
+
+**Never rename directly. Use Expand-Contract:**
+
+1. **v1.1:** Add `totalAmount` alongside `amount`. Both contain the same value.
+
+```json
+{ "amount": 99.99, "totalAmount": 99.99 }
+```
+
+2. **Document deprecation:** Mark `amount` as deprecated in OpenAPI spec. Notify consumer teams.
+
+3. **Monitor:** Track which consumers still use `amount` (log access patterns or use API analytics).
+
+4. **v2.0 (after all consumers migrated):** Remove `amount` field. Only `totalAmount` remains.
+
+5. **Timeline:** Give consumers 3 months minimum. Don't rush - forcing a rename on 10 teams simultaneously is a coordination nightmare.
 ---
 
 ### 🔗 Related Keywords
@@ -623,7 +613,6 @@ _Strong answer:_
 # API Versioning
 
 **TL;DR** - API versioning lets you evolve your API without breaking existing consumers. Three main approaches: URL path (`/v1/orders`), header (`Accept: application/vnd.api.v2+json`), and query parameter (`?version=2`). URL path versioning is most common for its simplicity.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -639,13 +628,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -658,7 +645,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -678,7 +664,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -690,7 +675,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -764,14 +748,12 @@ Removed: 410 Gone response
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -785,7 +767,6 @@ Removed: 410 Gone response
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -800,41 +781,29 @@ Removed: 410 Gone response
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: You have a public API with v1 and v2. v1 is 3 years old. How do you sunset it?**
-
-_Why they ask:_ Tests API lifecycle management.
-
-_Strong answer:_
-
-1. **Analyze usage:** How many consumers? How much traffic? Any high-value partners on v1?
-2. **Announce deprecation:** Blog post, email, in-API deprecation headers. 6-month notice minimum for public APIs.
-3. **Migration guide:** Document every v1->v2 change. Provide code examples.
-4. **Migration support:** Offer to help high-value partners migrate. Pair programming sessions.
-5. **Deprecation warnings:** Return `Sunset: Sat, 01 Mar 2025 00:00:00 GMT` header on every v1 response.
-6. **Reduce support:** After 4 months, stop v1 bug fixes (security fixes only).
-7. **Sunset:** After 6 months, return `410 Gone` with migration instructions link.
-8. **Monitor:** Track v1 traffic until zero. Contact remaining consumers directly.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for API Versioning. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -845,7 +814,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -879,7 +847,24 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: You have a public API with v1 and v2. v1 is 3 years old. How do you sunset it?**
+
+_Why they ask:_ Tests API lifecycle management.
+
+_Strong answer:_
+
+1. **Analyze usage:** How many consumers? How much traffic? Any high-value partners on v1?
+2. **Announce deprecation:** Blog post, email, in-API deprecation headers. 6-month notice minimum for public APIs.
+3. **Migration guide:** Document every v1->v2 change. Provide code examples.
+4. **Migration support:** Offer to help high-value partners migrate. Pair programming sessions.
+5. **Deprecation warnings:** Return `Sunset: Sat, 01 Mar 2025 00:00:00 GMT` header on every v1 response.
+6. **Reduce support:** After 4 months, stop v1 bug fixes (security fixes only).
+7. **Sunset:** After 6 months, return `410 Gone` with migration instructions link.
+8. **Monitor:** Track v1 traffic until zero. Contact remaining consumers directly.
 ---
 
 ### 🔗 Related Keywords
@@ -904,7 +889,6 @@ _Strong answer:_
 # Consumer-Driven Contract Testing
 
 **TL;DR** - Consumer-driven contract testing (CDCT) lets consumers define what they expect from a provider's API. The provider runs these contracts as tests. If the provider changes the API in a way that violates any consumer's expectations, the test fails before deployment. Tools: Pact (most popular), Spring Cloud Contract.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -920,13 +904,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -939,7 +921,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -959,7 +940,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -971,7 +951,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1084,14 +1063,12 @@ public MessagePact orderShippedPact(
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1105,7 +1082,6 @@ public MessagePact orderShippedPact(
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1120,45 +1096,29 @@ public MessagePact orderShippedPact(
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: You have 5 consumers of your API. How does CDCT prevent you from breaking them?**
-
-_Why they ask:_ Tests practical CDCT understanding.
-
-_Strong answer:_
-
-**Without CDCT:** Provider runs its own tests -> pass. Deploys. Consumer A's integration breaks because provider renamed a field.
-
-**With CDCT:**
-
-1. Each of 5 consumers defines their contract (what fields they use, what status codes they expect)
-2. Provider's CI runs all 5 contracts before every deployment
-3. Provider renames field -> Consumer A's contract fails -> deployment blocked
-4. Provider team sees which consumer would break and why
-5. Provider coordinates with Consumer A team before making the change
-6. "Can I Deploy?" check integrates with CI/CD - no manual verification needed
-
-**Key insight:** Each consumer only tests what THEY use. Consumer A cares about `orderId` and `status`. Consumer B cares about `orderId` and `total`. Provider can safely remove `createdAt` if no consumer's contract references it.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Consumer-Driven Contract Testing. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1169,7 +1129,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1203,7 +1162,28 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: You have 5 consumers of your API. How does CDCT prevent you from breaking them?**
+
+_Why they ask:_ Tests practical CDCT understanding.
+
+_Strong answer:_
+
+**Without CDCT:** Provider runs its own tests -> pass. Deploys. Consumer A's integration breaks because provider renamed a field.
+
+**With CDCT:**
+
+1. Each of 5 consumers defines their contract (what fields they use, what status codes they expect)
+2. Provider's CI runs all 5 contracts before every deployment
+3. Provider renames field -> Consumer A's contract fails -> deployment blocked
+4. Provider team sees which consumer would break and why
+5. Provider coordinates with Consumer A team before making the change
+6. "Can I Deploy?" check integrates with CI/CD - no manual verification needed
+
+**Key insight:** Each consumer only tests what THEY use. Consumer A cares about `orderId` and `status`. Consumer B cares about `orderId` and `total`. Provider can safely remove `createdAt` if no consumer's contract references it.
 ---
 
 ### 🔗 Related Keywords
@@ -1228,7 +1208,6 @@ _Strong answer:_
 # Team Topologies
 
 **TL;DR** - Team Topologies is a framework for organizing teams in a microservices architecture. It defines four team types (Stream-aligned, Enabling, Platform, Complicated-subsystem) and three interaction modes (Collaboration, X-as-a-Service, Facilitating). It applies Conway's Law intentionally: design teams to match the desired architecture.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1244,13 +1223,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1263,7 +1240,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1283,7 +1259,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1295,7 +1270,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1374,14 +1348,12 @@ Each team should own what they can understand. If a team owns 15 services, their
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1395,7 +1367,6 @@ Each team should own what they can understand. If a team owns 15 services, their
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1410,16 +1381,72 @@ Each team should own what they can understand. If a team owns 15 services, their
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Team Topologies. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1459,58 +1486,6 @@ Each team: can deploy independently
 2. Give them end-to-end ownership (deploy their own services).
 3. After 3 months, evaluate: deployment frequency, lead time, team satisfaction.
 4. Expand to other teams based on results.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Team Topologies. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1535,7 +1510,6 @@ Each team: can deploy independently
 # FinOps
 
 **TL;DR** - FinOps (Financial Operations) is the practice of managing cloud costs with engineering collaboration. In microservices, each team is accountable for their services' cloud costs. Key practices: cost allocation by team/service, right-sizing, spot instances, reserved capacity, and waste elimination.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1551,13 +1525,11 @@ Each team: can deploy independently
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1570,7 +1542,6 @@ Each team: can deploy independently
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1590,7 +1561,6 @@ Each team: can deploy independently
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1602,7 +1572,6 @@ Each team: can deploy independently
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1680,14 +1649,12 @@ If cost per order increases 10%: investigate
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1701,7 +1668,6 @@ If cost per order increases 10%: investigate
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1716,54 +1682,29 @@ If cost per order increases 10%: investigate
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your cloud bill jumped 40% this month. How do you investigate?**
-
-_Why they ask:_ Tests cost management skills.
-
-_Strong answer:_
-
-**Investigation process:**
-
-1. **Cost breakdown by service:** Which service's cost increased? Use tagging and cost explorer.
-2. **Cost breakdown by category:** Compute? Storage? Data transfer? Network?
-3. **Correlate with events:**
-   - New service deployed? (new compute cost)
-   - Traffic spike? (more instances scaled)
-   - Data growth? (storage increase)
-   - Forgot to clean up? (dev environment left running)
-
-4. **Common culprits:**
-   - **Data transfer:** Service in us-east calling service in eu-west = cross-region charges
-   - **Logging explosion:** DEBUG logging enabled in production = 10x log volume
-   - **Auto-scaling misconfigured:** Min replicas set to 20 instead of 2
-   - **Orphaned resources:** Load balancers, EBS volumes from deleted services
-
-5. **Fix and prevent:**
-   - Set cost alerts at 20% increase threshold
-   - Monthly cost review per team
-   - Tag enforcement (no tag = alert)
-   - Automated cleanup of orphaned resources
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for FinOps. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1774,7 +1715,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1808,7 +1748,37 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your cloud bill jumped 40% this month. How do you investigate?**
+
+_Why they ask:_ Tests cost management skills.
+
+_Strong answer:_
+
+**Investigation process:**
+
+1. **Cost breakdown by service:** Which service's cost increased? Use tagging and cost explorer.
+2. **Cost breakdown by category:** Compute? Storage? Data transfer? Network?
+3. **Correlate with events:**
+   - New service deployed? (new compute cost)
+   - Traffic spike? (more instances scaled)
+   - Data growth? (storage increase)
+   - Forgot to clean up? (dev environment left running)
+
+4. **Common culprits:**
+   - **Data transfer:** Service in us-east calling service in eu-west = cross-region charges
+   - **Logging explosion:** DEBUG logging enabled in production = 10x log volume
+   - **Auto-scaling misconfigured:** Min replicas set to 20 instead of 2
+   - **Orphaned resources:** Load balancers, EBS volumes from deleted services
+
+5. **Fix and prevent:**
+   - Set cost alerts at 20% increase threshold
+   - Monthly cost review per team
+   - Tag enforcement (no tag = alert)
+   - Automated cleanup of orphaned resources
 ---
 
 ### 🔗 Related Keywords
@@ -1824,4 +1794,3 @@ _Strong answer:_
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

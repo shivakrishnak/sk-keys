@@ -17,7 +17,7 @@ keywords:
   - Async Architecture Selection
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -33,20 +33,17 @@ version: 2
 # Async Observability
 
 **TL;DR** - Async observability means tracking messages across decoupled services using correlation IDs, distributed tracing, and queue-specific metrics to diagnose issues in systems where there's no request-response to trace.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT ASYNC OBSERVABILITY:**
 A customer reports their order never shipped. The order service shows "created." Kafka has 12 million messages across 50 partitions. The shipping consumer has 3 instances. Which message is the order? Did it reach the consumer? Did the consumer fail? Where in the pipeline did it stop? You have no way to trace an async flow.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -59,7 +56,6 @@ A customer reports their order never shipped. The order service shows "created."
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -79,7 +75,6 @@ A customer reports their order never shipped. The order service shows "created."
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -91,7 +86,6 @@ A customer reports their order never shipped. The order service shows "created."
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -110,7 +104,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -142,7 +135,6 @@ SOLUTION:
 1. **Correlation IDs:** Thread a unique ID through every message so you can trace a business flow
 2. **Distributed tracing:** Propagate trace context (OpenTelemetry) in message headers
 3. **Queue metrics:** Consumer lag, processing time, DLQ depth, error rates
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -156,7 +148,6 @@ SOLUTION:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -204,7 +195,6 @@ public void handle(ConsumerRecord<String, Object>
     }
 }
 ```
-
 ---
 
 ### Essential Metrics Dashboard
@@ -217,7 +207,6 @@ public void handle(ConsumerRecord<String, Object>
 | Error rate             | Consumer app    | > 1% of messages         |
 | End-to-end latency     | Trace system    | > SLA threshold          |
 | Queue depth            | Broker metrics  | Sustained growth         |
-
 ---
 
 ### 📌 Quick Reference Card
@@ -230,6 +219,7 @@ public void handle(ConsumerRecord<String, Object>
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -239,14 +229,69 @@ public void handle(ConsumerRecord<String, Object>
 
 **Interview one-liner:**
 "I make async systems observable by propagating correlation IDs and OpenTelemetry trace context in message headers, monitoring consumer lag as the primary health metric, and alerting on DLQ depth for silent failures."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Async Observability. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -293,58 +338,6 @@ public void handle(ConsumerRecord<String, Object>
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Async Observability. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -369,19 +362,16 @@ public void handle(ConsumerRecord<String, Object>
 # Consumer Lag Monitoring
 
 **TL;DR** - Consumer lag measures how many messages a consumer group hasn't processed yet, revealing whether consumers are keeping pace with producers.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 Your Kafka consumers process 5,000 msg/sec, but producers suddenly spike to 15,000 msg/sec during a flash sale. Without lag monitoring, you don't know consumers are falling behind until customers report orders not processing.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -394,7 +384,6 @@ Your Kafka consumers process 5,000 msg/sec, but producers suddenly spike to 15,0
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -414,7 +403,6 @@ Your Kafka consumers process 5,000 msg/sec, but producers suddenly spike to 15,0
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -426,7 +414,6 @@ Your Kafka consumers process 5,000 msg/sec, but producers suddenly spike to 15,0
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -445,7 +432,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### ⚙️ How It Works
@@ -464,7 +450,6 @@ HEALTHY:   lag = 0-100 (caught up)
 WARNING:   lag = 1,000+ and growing
 CRITICAL:  lag = 100,000+ or growing 1K/min
 ```
-
 ---
 
 ### Monitoring Tools
@@ -510,7 +495,6 @@ public class LagMonitor {
     }
 }
 ```
-
 ---
 
 ### Remediation Strategies
@@ -522,7 +506,6 @@ public class LagMonitor {
 | Uneven partitions    | Rebalance partitions, fix key distribution |
 | Consumer crash loop  | Fix the bug, check DLQ                     |
 | Producer burst       | Auto-scale consumers, backpressure         |
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -536,7 +519,6 @@ public class LagMonitor {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -549,6 +531,7 @@ public class LagMonitor {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -558,14 +541,69 @@ public class LagMonitor {
 
 **Interview one-liner:**
 "Consumer lag is the difference between the latest message offset and the consumer's committed offset - I monitor it as the primary Kafka health metric and scale consumers up to partition count when lag grows."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Consumer Lag Monitoring. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -612,58 +650,6 @@ public class LagMonitor {
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Consumer Lag Monitoring. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -688,13 +674,11 @@ public class LagMonitor {
 # Async Error Handling
 
 **TL;DR** - Async error handling addresses failures that occur outside the request-response cycle, where there's no caller waiting for a response to receive the error.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 In sync processing, errors propagate up the call stack. The HTTP response carries the error to the client. In async processing, the producer is long gone when the consumer fails. There's nobody to report the error to. Failed messages disappear unless you explicitly handle them.
-
 ---
 
 ### Error Handling Strategies
@@ -719,13 +703,11 @@ STRATEGY 3: Error topic/queue
                     -> [Error Handler Service]
                     -> Compensating action
 ```
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -738,7 +720,6 @@ STRATEGY 3: Error topic/queue
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -758,7 +739,6 @@ STRATEGY 3: Error topic/queue
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -770,7 +750,6 @@ STRATEGY 3: Error topic/queue
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -789,14 +768,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -810,7 +787,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -854,7 +830,6 @@ public void handle(Order order, Channel ch,
     }
 }
 ```
-
 ---
 
 ### Decision Matrix
@@ -866,7 +841,6 @@ public void handle(Order order, Channel ch,
 | Poison message     | DLQ + alert     | Causes consumer crash       |
 | Business rule fail | Error topic     | Insufficient funds          |
 | Unknown            | Retry then DLQ  | Default safe behavior       |
-
 ---
 
 ### 📌 Quick Reference Card
@@ -879,6 +853,7 @@ public void handle(Order order, Channel ch,
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -888,14 +863,69 @@ public void handle(Order order, Channel ch,
 
 **Interview one-liner:**
 "I classify async errors as transient (retry with exponential backoff) or permanent (send to DLQ immediately) - every queue must have a DLQ as a safety net, with alerts on DLQ depth."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Async Error Handling. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -942,58 +972,6 @@ public void handle(Order order, Channel ch,
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Async Error Handling. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1018,7 +996,6 @@ public void handle(Order order, Channel ch,
 # Async Trade-offs
 
 **TL;DR** - Async processing gains throughput, resilience, and decoupling at the cost of complexity, eventual consistency, and harder debugging.
-
 ---
 
 ### The Complete Trade-off Matrix
@@ -1035,7 +1012,6 @@ public void handle(Order order, Channel ch,
 | Availability   | All services must be up     | Producer works even if consumer is down     |
 | Complexity     | Simple                      | More moving parts (broker, consumers, DLQ)  |
 | Testing        | Unit/integration            | Contract tests, async assertions            |
-
 ---
 
 ### When to Go Async
@@ -1055,7 +1031,6 @@ public void handle(Order order, Channel ch,
 - Strong consistency is required (financial debit/credit)
 - Simple request-response with one downstream service
 - Adding a broker adds more complexity than the problem warrants
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1071,13 +1046,11 @@ public void handle(Order order, Channel ch,
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1090,7 +1063,6 @@ public void handle(Order order, Channel ch,
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1110,7 +1082,6 @@ public void handle(Order order, Channel ch,
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1122,7 +1093,6 @@ public void handle(Order order, Channel ch,
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1141,14 +1111,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1162,7 +1130,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1175,6 +1142,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1184,14 +1152,69 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Interview one-liner:**
 "Async is worth the complexity when operations are slow or multiple services need to react independently - I stay sync for fast operations requiring immediate confirmation and strong consistency."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Async Trade-offs. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1238,58 +1261,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Async Trade-offs. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1314,7 +1285,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 # Event-Driven vs Request-Response
 
 **TL;DR** - Request-response uses direct synchronous calls between services; event-driven uses asynchronous events through a broker, each suited for different interaction patterns.
-
 ---
 
 ### Comparison
@@ -1344,7 +1314,6 @@ EVENT-DRIVEN:
 | Debugging      | Trace one call chain | Trace across async boundaries |
 | Data freshness | Real-time            | Eventually consistent         |
 | Best for       | Queries, validations | Notifications, workflows      |
-
 ---
 
 ### Hybrid Approach (Common in Practice)
@@ -1364,7 +1333,6 @@ EVENT-DRIVEN:
 ```
 
 Most real systems use both: sync for queries and commands requiring immediate feedback, async for notifications and reactions to state changes.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1380,13 +1348,11 @@ Most real systems use both: sync for queries and commands requiring immediate fe
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1399,7 +1365,6 @@ Most real systems use both: sync for queries and commands requiring immediate fe
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1419,7 +1384,6 @@ Most real systems use both: sync for queries and commands requiring immediate fe
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1431,7 +1395,6 @@ Most real systems use both: sync for queries and commands requiring immediate fe
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1450,14 +1413,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1471,7 +1432,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1484,6 +1444,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1493,14 +1454,69 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Interview one-liner:**
 "I use request-response for queries and immediate-feedback operations, and event-driven for multi-consumer notifications and decoupling - most production systems are hybrid, using both where each fits."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Event-Driven vs Request-Response. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1547,58 +1563,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Event-Driven vs Request-Response. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1623,7 +1587,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 # Flow Control
 
 **TL;DR** - Flow control manages the rate of data flow between producer and consumer to prevent overwhelming either party, using techniques like backpressure, rate limiting, buffering, and throttling.
-
 ---
 
 ### Techniques
@@ -1657,7 +1620,6 @@ LOAD SHEDDING:
 | Buffering     | Between              | Absorbs spikes, memory cost      |
 | Backpressure  | Consumer to producer | Optimal, complex to implement    |
 | Load shedding | Consumer side        | Drops messages, preserves system |
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1673,13 +1635,11 @@ LOAD SHEDDING:
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1692,7 +1652,6 @@ LOAD SHEDDING:
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1712,7 +1671,6 @@ LOAD SHEDDING:
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1724,7 +1682,6 @@ LOAD SHEDDING:
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1743,14 +1700,12 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Level 5 - Distinguished (expert thinking):**
 [TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1764,7 +1719,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1777,6 +1731,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1786,14 +1741,69 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Interview one-liner:**
 "I implement flow control by combining rate limiting at producers, buffering for burst absorption, and backpressure for sustained overload - with load shedding as the last-resort safety valve."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for Flow Control. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1840,58 +1850,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Answer:**
 [TODO: Complete answer with metrics/remediation.]
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Flow Control. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1916,6 +1874,25 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 # Async Architecture Selection
 
 **TL;DR** - Choosing the right async architecture depends on message ordering needs, throughput requirements, consumer patterns, and operational complexity tolerance.
+---
+
+### Decision Framework
+
+```
+START
+  |
+  v
+Need ordering guarantees?
+  |-- Yes --> Need high throughput?
+  |             |-- Yes --> KAFKA (partitioned log)
+  |             |-- No --> RABBITMQ (single queue)
+  |
+  |-- No --> Need routing/filtering?
+              |-- Yes --> RABBITMQ (exchanges)
+              |-- No --> Need cloud-native simplicity?
+                          |-- Yes --> SQS/SNS
+                          |-- No --> RABBITMQ
+```
 
 ---
 
@@ -1948,145 +1925,6 @@ Need ordering guarantees?
 | Periodic jobs           | Scheduling        | Quartz, ShedLock, k8s CronJob |
 | Real-time analytics     | Stream processing | Kafka Streams, Flink          |
 | Order processing        | Saga              | Temporal, Kafka + Outbox      |
-
----
-
-### 💡 The Surprising Truth
-
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: You're designing an async system for an e-commerce platform. Walk through your architecture decisions.**
-
-_Why they ask:_ Tests ability to synthesize multiple async concepts into a coherent architecture.
-
-**Answer:**
-
-1. **Order creation:** Synchronous API returns order ID immediately. Outbox pattern writes event to outbox table atomically with order.
-
-2. **Event backbone:** Kafka for event streaming - ordered by order ID (partition key), high throughput, replay capability for rebuilding read models.
-
-3. **Downstream processing:** Shipping, inventory, notification services consume from Kafka with independent consumer groups. Each processes at its own pace.
-
-4. **Saga for fulfillment:** Temporal orchestrates the multi-step fulfillment: reserve inventory -> charge payment -> schedule shipping. Compensating actions on failure.
-
-5. **Error handling:** DLQ for each consumer group. Transient errors retry 3x with backoff. Permanent errors go to DLQ immediately. Alert on DLQ depth > 0.
-
-6. **Observability:** Correlation ID propagated in Kafka headers. OpenTelemetry for distributed tracing. Consumer lag monitoring with Burrow. Dashboard with lag, DLQ depth, processing latency p99.
-
-7. **Scheduling:** Quartz with ShedLock for daily reports and cleanup. Kubernetes CronJobs for infrastructure tasks.
-
----
-
-### 🔥 The Problem This Solves
-
-**WORLD WITHOUT IT:**
-[TODO: Concrete pain scenario. 2-4 sentences.]
-
-**THE BREAKING POINT:**
-[TODO: Specific failure. 1-2 sentences.]
-
-**THE INVENTION MOMENT:**
-"This is exactly why Async Architecture Selection was created."
-
-**EVOLUTION:**
-[TODO: predecessor -> current form -> future.]
-
----
-
-### 📘 Textbook Definition
-
-[TODO: 2-4 sentences. Formal. Technically precise.]
-
----
-
-### ⏱️ Understand It in 30 Seconds
-
-**One line:**
-[TODO: 15 words max. Zero jargon.]
-
-**One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
-
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
-
----
-
-### 🔩 First Principles Explanation
-
-**CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
-
-**DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
-
-**THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
-
-**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
-
----
-
-### 🧠 Mental Model / Analogy
-
-> [TODO: Primary analogy in blockquote.]
-
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-
-Where this analogy breaks down: [TODO: 1 sentence.]
-
----
-
-### 📶 Gradual Depth - Five Levels
-
-**Level 1 - What it is (anyone can understand):**
-[TODO: Plain English. No jargon. 2-4 sentences.]
-
-**Level 2 - How to use it (junior developer):**
-[TODO: Basic usage. Common patterns. 3-5 sentences.]
-
-**Level 3 - How it works (mid-level engineer):**
-[TODO: Internals. Data structures. 4-6 sentences.]
-
-**Level 4 - Production mastery (senior/staff engineer):**
-[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
-
-**Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
-
----
-
-### How It Works (Mechanism)
-
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
-
----
-
-### 🔄 Complete Picture - End-to-End Flow
-
-**NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
-
-**FAILURE PATH:**
-[TODO: cascade -> observable symptom]
-
-**WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -2099,6 +1937,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -2108,13 +1947,26 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 **Interview one-liner:**
 "I select async architecture based on ordering needs (Kafka for ordered streams, RabbitMQ for flexible routing, SQS for simplicity), always ensuring DLQs, correlation IDs, and consumer lag monitoring are in place from day one."
+---
 
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
+
+### 💡 The Surprising Truth
+
+[TODO: 2-4 sentences. One counterintuitive fact.
+ Specific. Makes this concept permanently memorable.]
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Async Architecture Selection. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -2125,7 +1977,6 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -2159,7 +2010,29 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: You're designing an async system for an e-commerce platform. Walk through your architecture decisions.**
+
+_Why they ask:_ Tests ability to synthesize multiple async concepts into a coherent architecture.
+
+**Answer:**
+
+1. **Order creation:** Synchronous API returns order ID immediately. Outbox pattern writes event to outbox table atomically with order.
+
+2. **Event backbone:** Kafka for event streaming - ordered by order ID (partition key), high throughput, replay capability for rebuilding read models.
+
+3. **Downstream processing:** Shipping, inventory, notification services consume from Kafka with independent consumer groups. Each processes at its own pace.
+
+4. **Saga for fulfillment:** Temporal orchestrates the multi-step fulfillment: reserve inventory -> charge payment -> schedule shipping. Compensating actions on failure.
+
+5. **Error handling:** DLQ for each consumer group. Transient errors retry 3x with backoff. Permanent errors go to DLQ immediately. Alert on DLQ depth > 0.
+
+6. **Observability:** Correlation ID propagated in Kafka headers. OpenTelemetry for distributed tracing. Consumer lag monitoring with Burrow. Dashboard with lag, DLQ depth, processing latency p99.
+
+7. **Scheduling:** Quartz with ShedLock for daily reports and cleanup. Kubernetes CronJobs for infrastructure tasks.
 ---
 
 ### 🔗 Related Keywords
@@ -2176,3 +2049,102 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
 
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+[TODO: Concrete pain scenario. 2-4 sentences.]
+
+**THE BREAKING POINT:**
+[TODO: Specific failure. 1-2 sentences.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Async Architecture Selection was created."
+
+**EVOLUTION:**
+[TODO: predecessor -> current form -> future.]
+---
+
+### 📘 Textbook Definition
+
+[TODO: 2-4 sentences. Formal. Technically precise.]
+---
+
+### ⏱️ Understand It in 30 Seconds
+
+**One line:**
+[TODO: 15 words max. Zero jargon.]
+
+**One analogy:**
+> [TODO: 2-3 sentence real-world analogy.]
+
+**One insight:**
+[TODO: What separates knowing the name from understanding it.]
+---
+
+### 🔩 First Principles Explanation
+
+**CORE INVARIANTS:**
+1. [TODO: Always true about this concept]
+2. [TODO: Always true about this concept]
+3. [TODO: Always true about this concept]
+
+**DERIVED DESIGN:**
+[TODO: How the invariants force the design.]
+
+**THE TRADE-OFFS:**
+**Gain:** [TODO]
+**Cost:** [TODO]
+
+**ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+**Essential:** [TODO]
+**Accidental:** [TODO]
+---
+
+### 🧠 Mental Model / Analogy
+
+> [TODO: Primary analogy in blockquote.]
+
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+- "[TODO: Analogy element]" -> [technical element]
+
+Where this analogy breaks down: [TODO: 1 sentence.]
+---
+
+### 📶 Gradual Depth - Five Levels
+
+**Level 1 - What it is (anyone can understand):**
+[TODO: Plain English. No jargon. 2-4 sentences.]
+
+**Level 2 - How to use it (junior developer):**
+[TODO: Basic usage. Common patterns. 3-5 sentences.]
+
+**Level 3 - How it works (mid-level engineer):**
+[TODO: Internals. Data structures. 4-6 sentences.]
+
+**Level 4 - Production mastery (senior/staff engineer):**
+[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
+
+**Level 5 - Distinguished (expert thinking):**
+[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
+---
+
+### How It Works (Mechanism)
+
+[TODO: Internal mechanics. Data flow. Key steps.
+ 4-8 sentences covering implementation details.]
+---
+
+### 🔄 Complete Picture - End-to-End Flow
+
+**NORMAL FLOW:**
+[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
+       -> [TODO]
+
+**FAILURE PATH:**
+[TODO: cascade -> observable symptom]
+
+**WHAT CHANGES AT SCALE:**
+[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]

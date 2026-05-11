@@ -17,7 +17,7 @@ keywords:
   - Pass by Value vs Pass by Reference
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -33,7 +33,6 @@ version: 2
 # Variables and Data Types
 
 **TL;DR** - Java is statically typed with 8 primitives that live on the stack and objects that live on the heap, and knowing the difference prevents half of all beginner bugs.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -49,13 +48,11 @@ Dynamic typing works for scripts but breaks down in large codebases. A team of 2
 
 **EVOLUTION:**
 Early languages like FORTRAN had implicit typing by variable name prefix. C introduced explicit declarations but allowed dangerous implicit casts. Java (1995) enforced strict static typing with no implicit narrowing conversions, added wrapper classes for primitives (Java 5 autoboxing), and continued refining with `var` local variable inference (Java 10).
-
 ---
 
 ### 📘 Textbook Definition
 
 Java's type system divides all data into two categories: primitive types (8 fixed-size value types stored on the stack) and reference types (objects stored on the heap, accessed via pointers). Every variable must be declared with a type before use, and the compiler enforces type safety at compile time, preventing category errors before the program runs.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -69,7 +66,6 @@ Java has 8 small value types and everything else is an object pointer.
 
 **One insight:**
 The primitive-vs-reference distinction is not just academic - it determines equality semantics (`==` vs `.equals()`), memory layout, null-ability, and performance characteristics. Every Java bug involving `==` on strings or integers outside the cache range traces back to this single distinction.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -91,7 +87,6 @@ Because primitives are stack-allocated values with no identity, they use `==` fo
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** The distinction between value semantics and reference semantics is fundamental to any language with heap allocation - you must decide whether variables hold values or pointers.
 **Accidental:** The need for wrapper classes (`Integer`, `Long`) exists only because Java generics use type erasure and cannot handle primitives. Project Valhalla aims to eliminate this.
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -105,7 +100,6 @@ Because primitives are stack-allocated values with no identity, they use `==` fo
 - "Closed account" -> null reference
 
 Where this analogy breaks down: Cash can be split (you can break a $20 into two $10s), but primitives are atomic - you cannot split an `int` into two smaller ints that together equal the original.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -130,7 +124,6 @@ The primitive/object duality in Java is an instance of a universal tension in la
 - "Does this type have identity?" If no, it should be a value type
 - "Will this allocation survive the nursery?" If no, the JIT may scalar-replace it - but don't count on it in complex call graphs
 - "Is my array layout cache-friendly?" Primitive arrays yes, object arrays almost never
-
 ---
 
 ### ⚙️ How It Works
@@ -155,7 +148,6 @@ Java's type system operates at two levels: compile-time checking and runtime rep
 
 **Autoboxing mechanism:**
 When you write `List<Integer> list; list.add(42);`, the compiler inserts `Integer.valueOf(42)`, which checks the cache (-128 to 127). Cached values return the same object; uncached values create new heap objects. This is why `==` works for small boxed integers but fails for large ones.
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -181,7 +173,6 @@ NullPointerException -> reference variable is null, method called on it.
 
 **WHAT CHANGES AT SCALE:**
 At scale, the primitive vs object choice directly impacts GC pressure. A system processing 1M events/second with `Integer` wrappers creates 1M short-lived objects per second, triggering frequent young-gen GC pauses. Switching to primitive `int` eliminates those allocations entirely. This is why high-performance Java libraries (Trove, Eclipse Collections, Chronicle) provide primitive-specialized collections.
-
 ---
 
 ### 💻 Code Example
@@ -244,7 +235,6 @@ System.out.println(c.equals(d));  // true
 
 **How to test / verify correctness:**
 Use `System.identityHashCode()` to verify whether two references point to the same object. Write unit tests that explicitly test boundary values (127/128 for Integer cache, empty/non-empty strings for interning). Use `-XX:AutoBoxCacheMax=<size>` JVM flag to adjust cache size in performance-critical applications.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -257,6 +247,7 @@ Use `System.identityHashCode()` to verify whether two references point to the sa
 **ANTI-PATTERN:** Using `==` to compare objects instead of `.equals()`
 **TRADE-OFF:** Type safety and performance (primitives) vs flexibility and nullability (objects)
 **ONE-LINER:** "8 primitives on the stack, everything else on the heap - know which is which"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -266,13 +257,116 @@ Use `System.identityHashCode()` to verify whether two references point to the sa
 
 **Interview one-liner:**
 "Java has 8 primitives stored by value on the stack and reference types stored on the heap. The key implication is that `==` compares values for primitives but addresses for objects, which is why we use `.equals()` for content comparison - and in performance-critical code, primitive types avoid GC pressure entirely."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Java's `Integer` cache (values -128 to 127 returning the same object for `Integer.valueOf()`) was not an optimization afterthought - it was mandated by the Java Language Specification starting in Java 5. The JLS requires that autoboxing for `boolean`, `byte`, `char` (0-127), `short`, and `int` (-128 to 127) must return cached instances. This means `Integer a = 42; Integer b = 42; a == b` is guaranteed true by specification, not by luck - but `Integer a = 200; Integer b = 200; a == b` is implementation-dependent, making `==` on boxed types one of the most subtle traps in the language.
+---
 
+### ⚖️ Comparison Table
+
+| Aspect          | Primitives               | Reference Types             |
+| --------------- | ------------------------ | --------------------------- |
+| Storage         | Stack (method frame)     | Heap (GC-managed)           |
+| Default value   | `0`, `false`, `'\u0000'` | `null`                      |
+| Nullable        | No                       | Yes                         |
+| `==` behavior   | Compares values          | Compares addresses          |
+| GC overhead     | None                     | Subject to GC               |
+| Generic support | No (requires boxing)     | Yes                         |
+| Memory per item | 1-8 bytes                | 16+ bytes (header + fields) |
+---
+
+### ⚠️ Common Misconceptions
+
+| #   | Misconception                                | Reality                                                                                                                                                                       |
+| --- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `String` is a primitive type                 | `String` is a reference type (object on the heap). It has special language support (literals, `+` concatenation) but is still a class - compare with `.equals()`, never `==`. |
+| 2   | `Integer == Integer` works like `int == int` | Only works for cached values (-128 to 127). `Integer.valueOf(200) == Integer.valueOf(200)` is `false` because two distinct heap objects are created. Always use `.equals()`.  |
+| 3   | Autoboxing has no performance cost           | Each autobox outside the cache range creates a new heap object with 16-byte overhead. In tight loops this causes 5-10x slowdown and frequent young-gen GC pauses.             |
+| 4   | `var` makes Java dynamically typed           | `var` (Java 10+) is compile-time type inference. The type is fixed at declaration - `var x = 42;` makes `x` an `int` permanently. It is syntactic sugar, not dynamic typing.  |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: NullPointerException on unboxing**
+**Symptom:** NPE on a line with simple arithmetic like `int x = someInteger + 1`
+**Root Cause:** `someInteger` is a `null` `Integer` reference; unboxing `null` throws NPE.
+**Diagnostic:**
+
+```
+java -XX:+ShowCodeDetailsInExceptionMessages MyApp
+# Java 14+: NPE message names the exact null variable
+```
+
+**Fix:**
+
+```java
+// BAD: blind unboxing
+int x = map.get("key") + 1; // NPE if missing
+
+// GOOD: null-safe default
+int x = map.getOrDefault("key", 0) + 1;
+```
+
+**Prevention:** Use `Optional<Integer>` or primitive-specialized maps (`IntIntHashMap` from Eclipse Collections).
+
+**Failure Mode 2: Silent precision loss in narrowing casts**
+**Symptom:** Calculated values are wrong - large numbers wrap around or decimals truncate silently.
+**Root Cause:** Explicit cast `(int) longValue` silently discards high bits.
+**Diagnostic:**
+
+```
+jshell> Math.toIntExact(3_000_000_000L)
+# Throws ArithmeticException: integer overflow
+```
+
+**Fix:**
+
+```java
+// BAD: silent truncation
+int count = (int) longCount;
+
+// GOOD: fail-fast on overflow
+int count = Math.toIntExact(longCount);
+```
+
+**Prevention:** Use `Math.addExact()`, `Math.multiplyExact()` for overflow-safe arithmetic. Default to `long` for counters.
+
+**Failure Mode 3: Excessive GC pressure from autoboxing**
+**Symptom:** High young-gen GC frequency, increased p99 latency.
+**Root Cause:** `Map<String, Integer>` or `List<Long>` in hot loops creating millions of short-lived wrappers.
+**Diagnostic:**
+
+```
+jstat -gc <pid> 1000
+# Watch YGC count and YGCT - if YGC rises every
+# few seconds, check allocation rate
+```
+
+**Fix:**
+
+```java
+// BAD: boxed types in hot path
+Map<String, Integer> counts = new HashMap<>();
+counts.merge(key, 1, Integer::sum);
+
+// GOOD: primitive-specialized collection
+Object2IntOpenHashMap<String> counts =
+    new Object2IntOpenHashMap<>();
+counts.addTo(key, 1); // no boxing
+```
+
+**Prevention:** Profile with JFR allocation tracking. Use primitive-specialized collections (fastutil, Eclipse Collections) for hot-path data structures.
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -586,106 +680,6 @@ try {
 - `try-with-resources` + `AutoCloseable` for deterministic cleanup
 - `java.lang.ref.Cleaner` (Java 9+) for cases that truly need GC-triggered cleanup
 - Explicit `close()` methods with ownership tracking
-
----
-
-### ⚖️ Comparison Table
-
-| Aspect          | Primitives               | Reference Types             |
-| --------------- | ------------------------ | --------------------------- |
-| Storage         | Stack (method frame)     | Heap (GC-managed)           |
-| Default value   | `0`, `false`, `'\u0000'` | `null`                      |
-| Nullable        | No                       | Yes                         |
-| `==` behavior   | Compares values          | Compares addresses          |
-| GC overhead     | None                     | Subject to GC               |
-| Generic support | No (requires boxing)     | Yes                         |
-| Memory per item | 1-8 bytes                | 16+ bytes (header + fields) |
-
----
-
-### ⚠️ Common Misconceptions
-
-| #   | Misconception                                | Reality                                                                                                                                                                       |
-| --- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | `String` is a primitive type                 | `String` is a reference type (object on the heap). It has special language support (literals, `+` concatenation) but is still a class - compare with `.equals()`, never `==`. |
-| 2   | `Integer == Integer` works like `int == int` | Only works for cached values (-128 to 127). `Integer.valueOf(200) == Integer.valueOf(200)` is `false` because two distinct heap objects are created. Always use `.equals()`.  |
-| 3   | Autoboxing has no performance cost           | Each autobox outside the cache range creates a new heap object with 16-byte overhead. In tight loops this causes 5-10x slowdown and frequent young-gen GC pauses.             |
-| 4   | `var` makes Java dynamically typed           | `var` (Java 10+) is compile-time type inference. The type is fixed at declaration - `var x = 42;` makes `x` an `int` permanently. It is syntactic sugar, not dynamic typing.  |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: NullPointerException on unboxing**
-**Symptom:** NPE on a line with simple arithmetic like `int x = someInteger + 1`
-**Root Cause:** `someInteger` is a `null` `Integer` reference; unboxing `null` throws NPE.
-**Diagnostic:**
-
-```
-java -XX:+ShowCodeDetailsInExceptionMessages MyApp
-# Java 14+: NPE message names the exact null variable
-```
-
-**Fix:**
-
-```java
-// BAD: blind unboxing
-int x = map.get("key") + 1; // NPE if missing
-
-// GOOD: null-safe default
-int x = map.getOrDefault("key", 0) + 1;
-```
-
-**Prevention:** Use `Optional<Integer>` or primitive-specialized maps (`IntIntHashMap` from Eclipse Collections).
-
-**Failure Mode 2: Silent precision loss in narrowing casts**
-**Symptom:** Calculated values are wrong - large numbers wrap around or decimals truncate silently.
-**Root Cause:** Explicit cast `(int) longValue` silently discards high bits.
-**Diagnostic:**
-
-```
-jshell> Math.toIntExact(3_000_000_000L)
-# Throws ArithmeticException: integer overflow
-```
-
-**Fix:**
-
-```java
-// BAD: silent truncation
-int count = (int) longCount;
-
-// GOOD: fail-fast on overflow
-int count = Math.toIntExact(longCount);
-```
-
-**Prevention:** Use `Math.addExact()`, `Math.multiplyExact()` for overflow-safe arithmetic. Default to `long` for counters.
-
-**Failure Mode 3: Excessive GC pressure from autoboxing**
-**Symptom:** High young-gen GC frequency, increased p99 latency.
-**Root Cause:** `Map<String, Integer>` or `List<Long>` in hot loops creating millions of short-lived wrappers.
-**Diagnostic:**
-
-```
-jstat -gc <pid> 1000
-# Watch YGC count and YGCT - if YGC rises every
-# few seconds, check allocation rate
-```
-
-**Fix:**
-
-```java
-// BAD: boxed types in hot path
-Map<String, Integer> counts = new HashMap<>();
-counts.merge(key, 1, Integer::sum);
-
-// GOOD: primitive-specialized collection
-Object2IntOpenHashMap<String> counts =
-    new Object2IntOpenHashMap<>();
-counts.addTo(key, 1); // no boxing
-```
-
-**Prevention:** Profile with JFR allocation tracking. Use primitive-specialized collections (fastutil, Eclipse Collections) for hot-path data structures.
-
 ---
 
 ### 🔗 Related Keywords
@@ -705,6 +699,7 @@ counts.addTo(key, 1); // no boxing
 - Kotlin's unified type system - no primitive/object split at language level
 - Project Valhalla value types - future Java feature eliminating wrapper classes
 
+
 ---
 
 ---
@@ -712,7 +707,6 @@ counts.addTo(key, 1); // no boxing
 # Pass by Value vs Pass by Reference
 
 **TL;DR** - Java is always pass-by-value, but for objects the "value" being passed is a copy of the reference (pointer), not the object itself.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -728,13 +722,11 @@ C++ offered both pass-by-value and pass-by-reference (and pass-by-pointer), lead
 
 **EVOLUTION:**
 FORTRAN passed everything by reference (callee could modify caller's variables). C introduced pass-by-value with explicit pointer passing for mutation. C++ added reference parameters (`&`). Java chose pass-by-value only, but since objects are accessed through references, the reference itself is passed by value - giving the appearance of pass-by-reference for object mutation while preventing reference reassignment from affecting the caller.
-
 ---
 
 ### 📘 Textbook Definition
 
 In Java, all method arguments are passed by value. For primitive types, the value of the variable is copied. For reference types, the value of the reference (the memory address pointing to the object on the heap) is copied. The method receives its own local copy of the reference, which points to the same object as the caller's reference, but reassigning the local reference does not affect the caller's variable.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -748,7 +740,6 @@ Java copies the variable's bits into the method - value bits for primitives, add
 
 **One insight:**
 The confusion comes from conflating "I can modify the object" with "this is pass-by-reference." True pass-by-reference (like C++ `&`) would let the method change which object the caller's variable points to. Java never allows this - the method gets a copy of the pointer, not an alias to the caller's pointer.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -769,7 +760,6 @@ Since references are copied, methods can mutate objects (add to a list, set a fi
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Any language must define whether function parameters alias or copy the caller's variables - this is a fundamental design choice.
 **Accidental:** The confusion in Java is accidental - it arises because "pass-by-value of a reference" behaves similarly to "pass-by-reference" for mutation, but differently for reassignment.
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -783,7 +773,6 @@ Since references are copied, methods can mutate objects (add to a list, set a fi
 - "Swapping for a different remote" -> reassigning the local reference (no effect on caller)
 
 Where this analogy breaks down: A real photocopy of a remote would not work at all, while a copied reference in Java is fully functional - both copies control the same object equally.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -808,7 +797,6 @@ Java's pass-by-value-of-reference model is a specific instance of the ownership 
 - "Is ownership transferred or shared?" - if the caller retains a reference, you have shared mutable state
 - "Would this be safe if called from another thread?" - if no, the API design is fragile
 - "Can I make this parameter immutable?" - Records and unmodifiable collections eliminate entire bug classes
-
 ---
 
 ### ⚙️ How It Works
@@ -840,7 +828,6 @@ When a method is called, the JVM creates a new stack frame with local variable s
 When the method does `list.add(elem3)`, both frames' references still point to the same ArrayList, which now contains `[elem1, elem2, elem3]`.
 
 When the method does `list = new ArrayList<>()`, only the method's local variable changes to a new address. The caller's `myList` still points to the original ArrayList.
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -862,7 +849,6 @@ Passing null reference -> method receives null copy -> NullPointerException when
 
 **WHAT CHANGES AT SCALE:**
 In high-throughput systems, the copy-by-value model means method calls are cheap (copying 4-8 bytes for a reference), but shared mutable state through those references is the primary source of concurrency bugs. At scale, teams shift toward immutable data transfer objects, event-based communication, and message passing specifically because "shared mutable objects via copied references" becomes unmanageable across 50+ services.
-
 ---
 
 ### 💻 Code Example
@@ -912,7 +898,6 @@ replaceList(myList);
 
 **How to test / verify correctness:**
 Use `System.identityHashCode(obj)` before and after method calls to verify whether the same object instance is being referenced. In unit tests, assert that caller variables retain their original values after methods that attempt reassignment.
-
 ---
 
 ### 📌 Quick Reference Card
@@ -925,6 +910,7 @@ Use `System.identityHashCode(obj)` before and after method calls to verify wheth
 **ANTI-PATTERN:** Trying to implement swap() or out-parameters - they cannot work in Java
 **TRADE-OFF:** Safety (no variable aliasing) vs convenience (no multi-return without wrappers)
 **ONE-LINER:** "Copy the pointer, share the object, can't swap the caller's variables"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -934,13 +920,133 @@ Use `System.identityHashCode(obj)` before and after method calls to verify wheth
 
 **Interview one-liner:**
 "Java is strictly pass-by-value. For objects, the reference is copied, so the method shares access to the same heap object and can mutate it, but reassigning the parameter only changes the local copy - the caller's variable is unaffected."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 The "is Java pass-by-value or pass-by-reference" question has been debated for over 25 years, and the confusion persists because Java's model is genuinely unusual. Most languages either fully copy (pass-by-value of the whole object, like C structs) or fully alias (pass-by-reference like C++ `&`). Java does neither - it copies the reference but shares the object, creating a third model that James Gosling called "pass by value of the reference." This hybrid behaves identically to pass-by-reference in 95% of cases (mutation works), and differently in only 5% of cases (reassignment does not propagate) - which is exactly why the confusion is so persistent and the interview question so revealing.
+---
 
+### ⚖️ Comparison Table
+
+| Language      | Model                        | Mutation via param?      | Reassignment propagates? |
+| ------------- | ---------------------------- | ------------------------ | ------------------------ |
+| Java          | Pass-by-value (of reference) | Yes                      | No                       |
+| C++ (default) | Pass-by-value (copy)         | No (copy is independent) | No                       |
+| C++ (`&` ref) | Pass-by-reference            | Yes                      | Yes                      |
+| Python        | Pass-by-object-reference     | Yes (mutables)           | No                       |
+| Rust          | Move / borrow                | Only with `&mut`         | No (ownership transfer)  |
+| C# (`ref`)    | Pass-by-reference            | Yes                      | Yes                      |
+---
+
+### ⚠️ Common Misconceptions
+
+| #   | Misconception                                                                 | Reality                                                                                                                                                                                                                   |
+| --- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Java is pass-by-reference for objects                                         | Java is always pass-by-value. For objects, the value copied is the reference (pointer), not the object. The definitive proof: you cannot write a working `swap(a, b)` method in Java.                                     |
+| 2   | Mutating an object through a parameter proves pass-by-reference               | Mutation works because both caller and method hold references to the same heap object. This is shared access, not aliasing of the caller's variable. C++ `&` references can reassign the caller's variable - Java cannot. |
+| 3   | Passing an object to a method is expensive because the whole object is copied | Only the reference (4-8 bytes) is copied, never the object. Passing a 10MB `ArrayList` costs the same as passing a single `int` - one pointer copy.                                                                       |
+| 4   | Making a parameter `final` prevents the caller's object from being modified   | `final` only prevents reassigning the local parameter variable. The method can still call `list.add()`, `obj.setField()`, etc. To prevent mutation, pass an unmodifiable wrapper or immutable type.                       |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Method "loses" an object after reassignment**
+**Symptom:** Caller's variable is unchanged after a method that was supposed to replace it (e.g., `resetList(myList)` has no effect).
+**Root Cause:** Method reassigned the local parameter (`list = new ArrayList<>()`) instead of mutating the existing object.
+**Diagnostic:**
+
+```
+# Add identity logging before/after call
+System.out.println(System.identityHashCode(myList));
+resetList(myList);
+System.out.println(System.identityHashCode(myList));
+# Same hash = object not replaced (expected)
+```
+
+**Fix:**
+
+```java
+// BAD: reassignment - no effect on caller
+void resetList(List<String> list) {
+    list = new ArrayList<>(); // local only
+}
+
+// GOOD: mutate in place
+void resetList(List<String> list) {
+    list.clear(); // modifies shared object
+}
+```
+
+**Prevention:** Return new objects instead of trying to replace parameters. Use `List<String> reset()` rather than `void reset(List<String>)`.
+
+**Failure Mode 2: Data race from shared mutable parameter**
+**Symptom:** Intermittent `ConcurrentModificationException`, corrupted data, or stale reads when a mutable object is passed to another thread.
+**Root Cause:** Two threads hold references to the same mutable object with no synchronization.
+**Diagnostic:**
+
+```
+jstack <pid> | grep -A 20 "ConcurrentModification"
+# Or enable: -XX:+HeapDumpOnOutOfMemoryError
+# for corruption cases
+```
+
+**Fix:**
+
+```java
+// BAD: shared mutable state
+executor.submit(() -> process(sharedList));
+
+// GOOD: defensive copy or immutable
+executor.submit(() ->
+    process(List.copyOf(sharedList)));
+```
+
+**Prevention:** Pass immutable types (`List.copyOf()`, Records) across thread boundaries. Use `ConcurrentHashMap` if mutation is required.
+
+**Failure Mode 3: Unintended side effects through aliased references**
+**Symptom:** A collection or object changes unexpectedly because a method modified it through a stored reference.
+**Root Cause:** Caller passed a mutable object; callee stored and later mutated it.
+**Diagnostic:**
+
+```
+# Use breakpoint with condition on collection size
+# In IDE: set conditional breakpoint on list.size()
+# changes, inspect call stack to find mutator
+jdb -connect com.example.Main
+stop at MyClass:42 if list.size() != expected
+```
+
+**Fix:**
+
+```java
+// BAD: storing caller's mutable reference
+class Cache {
+    private List<String> data;
+    void setData(List<String> d) {
+        this.data = d; // alias!
+    }
+}
+
+// GOOD: defensive copy
+class Cache {
+    private List<String> data;
+    void setData(List<String> d) {
+        this.data = List.copyOf(d);
+    }
+}
+```
+
+**Prevention:** Defensive copy on input (store) and output (return). Use immutable types by default.
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1074,123 +1180,6 @@ When you pass a mutable object to another thread, both threads hold references t
 5. **Message passing:** Use `BlockingQueue` to transfer ownership of objects between threads rather than sharing them.
 
 **Key insight:** The safest concurrent code shares nothing. Java's parameter model makes sharing easy but safe sharing hard - which is why modern Java increasingly favors immutable records, functional streams, and message-based architectures.
-
----
-
-### ⚖️ Comparison Table
-
-| Language      | Model                        | Mutation via param?      | Reassignment propagates? |
-| ------------- | ---------------------------- | ------------------------ | ------------------------ |
-| Java          | Pass-by-value (of reference) | Yes                      | No                       |
-| C++ (default) | Pass-by-value (copy)         | No (copy is independent) | No                       |
-| C++ (`&` ref) | Pass-by-reference            | Yes                      | Yes                      |
-| Python        | Pass-by-object-reference     | Yes (mutables)           | No                       |
-| Rust          | Move / borrow                | Only with `&mut`         | No (ownership transfer)  |
-| C# (`ref`)    | Pass-by-reference            | Yes                      | Yes                      |
-
----
-
-### ⚠️ Common Misconceptions
-
-| #   | Misconception                                                                 | Reality                                                                                                                                                                                                                   |
-| --- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Java is pass-by-reference for objects                                         | Java is always pass-by-value. For objects, the value copied is the reference (pointer), not the object. The definitive proof: you cannot write a working `swap(a, b)` method in Java.                                     |
-| 2   | Mutating an object through a parameter proves pass-by-reference               | Mutation works because both caller and method hold references to the same heap object. This is shared access, not aliasing of the caller's variable. C++ `&` references can reassign the caller's variable - Java cannot. |
-| 3   | Passing an object to a method is expensive because the whole object is copied | Only the reference (4-8 bytes) is copied, never the object. Passing a 10MB `ArrayList` costs the same as passing a single `int` - one pointer copy.                                                                       |
-| 4   | Making a parameter `final` prevents the caller's object from being modified   | `final` only prevents reassigning the local parameter variable. The method can still call `list.add()`, `obj.setField()`, etc. To prevent mutation, pass an unmodifiable wrapper or immutable type.                       |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: Method "loses" an object after reassignment**
-**Symptom:** Caller's variable is unchanged after a method that was supposed to replace it (e.g., `resetList(myList)` has no effect).
-**Root Cause:** Method reassigned the local parameter (`list = new ArrayList<>()`) instead of mutating the existing object.
-**Diagnostic:**
-
-```
-# Add identity logging before/after call
-System.out.println(System.identityHashCode(myList));
-resetList(myList);
-System.out.println(System.identityHashCode(myList));
-# Same hash = object not replaced (expected)
-```
-
-**Fix:**
-
-```java
-// BAD: reassignment - no effect on caller
-void resetList(List<String> list) {
-    list = new ArrayList<>(); // local only
-}
-
-// GOOD: mutate in place
-void resetList(List<String> list) {
-    list.clear(); // modifies shared object
-}
-```
-
-**Prevention:** Return new objects instead of trying to replace parameters. Use `List<String> reset()` rather than `void reset(List<String>)`.
-
-**Failure Mode 2: Data race from shared mutable parameter**
-**Symptom:** Intermittent `ConcurrentModificationException`, corrupted data, or stale reads when a mutable object is passed to another thread.
-**Root Cause:** Two threads hold references to the same mutable object with no synchronization.
-**Diagnostic:**
-
-```
-jstack <pid> | grep -A 20 "ConcurrentModification"
-# Or enable: -XX:+HeapDumpOnOutOfMemoryError
-# for corruption cases
-```
-
-**Fix:**
-
-```java
-// BAD: shared mutable state
-executor.submit(() -> process(sharedList));
-
-// GOOD: defensive copy or immutable
-executor.submit(() ->
-    process(List.copyOf(sharedList)));
-```
-
-**Prevention:** Pass immutable types (`List.copyOf()`, Records) across thread boundaries. Use `ConcurrentHashMap` if mutation is required.
-
-**Failure Mode 3: Unintended side effects through aliased references**
-**Symptom:** A collection or object changes unexpectedly because a method modified it through a stored reference.
-**Root Cause:** Caller passed a mutable object; callee stored and later mutated it.
-**Diagnostic:**
-
-```
-# Use breakpoint with condition on collection size
-# In IDE: set conditional breakpoint on list.size()
-# changes, inspect call stack to find mutator
-jdb -connect com.example.Main
-stop at MyClass:42 if list.size() != expected
-```
-
-**Fix:**
-
-```java
-// BAD: storing caller's mutable reference
-class Cache {
-    private List<String> data;
-    void setData(List<String> d) {
-        this.data = d; // alias!
-    }
-}
-
-// GOOD: defensive copy
-class Cache {
-    private List<String> data;
-    void setData(List<String> d) {
-        this.data = List.copyOf(d);
-    }
-}
-```
-
-**Prevention:** Defensive copy on input (store) and output (return). Use immutable types by default.
-
 ---
 
 ### 🔗 Related Keywords

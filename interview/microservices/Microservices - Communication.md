@@ -16,7 +16,7 @@ keywords:
   - GraphQL Federation
 difficulty_range: medium to hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -31,7 +31,6 @@ version: 2
 # Inter-Service Communication
 
 **TL;DR** - Services communicate synchronously (REST, gRPC) for request-response or asynchronously (Kafka, RabbitMQ) for fire-and-forget and eventual consistency. Sync for queries (need answer now), async for commands (fire and handle later). Never build synchronous chains deeper than 2 services.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -47,13 +46,11 @@ version: 2
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -66,7 +63,6 @@ version: 2
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -86,7 +82,6 @@ version: 2
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -98,7 +93,6 @@ version: 2
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -174,14 +168,12 @@ Client -> API -> Order Saga Orchestrator
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -195,7 +187,6 @@ Client -> API -> Order Saga Orchestrator
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -210,50 +201,29 @@ Client -> API -> Order Saga Orchestrator
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: A user places an order. It needs inventory check, payment, and shipping. Design the communication pattern.**
-
-_Why they ask:_ Tests communication pattern selection.
-
-_Strong answer:_
-
-**Hybrid sync + async:**
-
-```
-User -> POST /orders
-  -> Order Service:
-     1. SYNC gRPC: Inventory.reserveStock()
-        (fail-fast if unavailable)
-     2. SYNC gRPC: Payment.charge()
-        (fail-fast if declined)
-     3. Return 201 Created to user
-     4. ASYNC event: OrderConfirmed
-        -> Shipping subscribes (create label)
-        -> Email subscribes (send confirmation)
-        -> Analytics subscribes (update metrics)
-```
-
-Why hybrid: User needs immediate yes/no for inventory and payment (sync). User doesn't wait for shipping label or email (async). Adding a new consumer (e.g., loyalty points) = subscribe to event, zero changes to Order Service.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Inter-Service Communication. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -264,7 +234,6 @@ Why hybrid: User needs immediate yes/no for inventory and payment (sync). User d
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -298,7 +267,33 @@ Why hybrid: User needs immediate yes/no for inventory and payment (sync). User d
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: A user places an order. It needs inventory check, payment, and shipping. Design the communication pattern.**
+
+_Why they ask:_ Tests communication pattern selection.
+
+_Strong answer:_
+
+**Hybrid sync + async:**
+
+```
+User -> POST /orders
+  -> Order Service:
+     1. SYNC gRPC: Inventory.reserveStock()
+        (fail-fast if unavailable)
+     2. SYNC gRPC: Payment.charge()
+        (fail-fast if declined)
+     3. Return 201 Created to user
+     4. ASYNC event: OrderConfirmed
+        -> Shipping subscribes (create label)
+        -> Email subscribes (send confirmation)
+        -> Analytics subscribes (update metrics)
+```
+
+Why hybrid: User needs immediate yes/no for inventory and payment (sync). User doesn't wait for shipping label or email (async). Adding a new consumer (e.g., loyalty points) = subscribe to event, zero changes to Order Service.
 ---
 
 ### 🔗 Related Keywords
@@ -323,7 +318,6 @@ Why hybrid: User needs immediate yes/no for inventory and payment (sync). User d
 # Synchronous vs Async Communication
 
 **TL;DR** - Synchronous communication (HTTP, gRPC) couples sender and receiver in time - both must be running. Async communication (messaging, events) decouples them - sender publishes and moves on. Choose sync for queries needing immediate answers, async for commands and events where temporal decoupling matters.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -339,13 +333,11 @@ Why hybrid: User needs immediate yes/no for inventory and payment (sync). User d
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -358,7 +350,6 @@ Why hybrid: User needs immediate yes/no for inventory and payment (sync). User d
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -378,7 +369,6 @@ Why hybrid: User needs immediate yes/no for inventory and payment (sync). User d
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -390,7 +380,6 @@ Why hybrid: User needs immediate yes/no for inventory and payment (sync). User d
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -458,14 +447,12 @@ kafkaTemplate.send("report-requests",
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -479,7 +466,6 @@ kafkaTemplate.send("report-requests",
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -494,48 +480,29 @@ kafkaTemplate.send("report-requests",
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your checkout service calls 3 downstream services synchronously. One becomes slow (30s response time). What happens and how do you fix it?**
-
-_Why they ask:_ Tests understanding of cascading failure.
-
-_Strong answer:_
-
-**What happens:**
-
-1. Slow service response time increases to 30s
-2. Checkout threads wait for 30s each (thread pool exhaustion)
-3. With 200 threads and 30s waits: only 6-7 req/sec throughput (was 1000/sec)
-4. All threads exhausted -> checkout returns 503 to all users
-5. Cart service calls checkout -> also backs up -> also dies
-6. **Cascading failure:** One slow service kills the entire system
-
-**Fixes (apply all):**
-
-1. **Timeouts (immediate):** Set 2-3s timeout on every downstream call. Never use default (infinite).
-2. **Circuit Breaker:** After 50% failure rate in 10 calls, stop calling for 30s. Return fallback/error immediately.
-3. **Bulkhead:** Allocate max 50 threads for that service. Even if all stuck, other endpoints work.
-4. **Make it async:** If the slow service is deferrable (e.g., shipping estimation), make it async. Return partial response to user, fill in shipping later.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Synchronous vs Async Communication. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -546,7 +513,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -580,7 +546,31 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your checkout service calls 3 downstream services synchronously. One becomes slow (30s response time). What happens and how do you fix it?**
+
+_Why they ask:_ Tests understanding of cascading failure.
+
+_Strong answer:_
+
+**What happens:**
+
+1. Slow service response time increases to 30s
+2. Checkout threads wait for 30s each (thread pool exhaustion)
+3. With 200 threads and 30s waits: only 6-7 req/sec throughput (was 1000/sec)
+4. All threads exhausted -> checkout returns 503 to all users
+5. Cart service calls checkout -> also backs up -> also dies
+6. **Cascading failure:** One slow service kills the entire system
+
+**Fixes (apply all):**
+
+1. **Timeouts (immediate):** Set 2-3s timeout on every downstream call. Never use default (infinite).
+2. **Circuit Breaker:** After 50% failure rate in 10 calls, stop calling for 30s. Return fallback/error immediately.
+3. **Bulkhead:** Allocate max 50 threads for that service. Even if all stuck, other endpoints work.
+4. **Make it async:** If the slow service is deferrable (e.g., shipping estimation), make it async. Return partial response to user, fill in shipping later.
 ---
 
 ### 🔗 Related Keywords
@@ -605,7 +595,6 @@ _Strong answer:_
 # API Gateway
 
 **TL;DR** - An API Gateway is the single entry point for all external client requests, handling routing, authentication, rate limiting, SSL termination, and protocol translation. It shields internal service topology from external clients and provides cross-cutting concerns in one place.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -621,13 +610,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -640,7 +627,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -660,7 +646,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -672,7 +657,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -733,14 +717,12 @@ With Gateway:
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -754,7 +736,6 @@ With Gateway:
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -769,16 +750,72 @@ With Gateway:
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for API Gateway. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -814,58 +851,6 @@ Client -> [JWT] -> API Gateway
 ```
 
 Why split: Gateway handles expensive crypto once. Services own their business rules. Gateway never makes business decisions.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for API Gateway. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -890,7 +875,6 @@ Why split: Gateway handles expensive crypto once. Services own their business ru
 # Service Discovery and Registry
 
 **TL;DR** - Service Discovery enables services to find each other dynamically without hardcoded URLs. A Service Registry maintains a live directory of service instances (IP, port, health). In Kubernetes, this is built-in via Services and CoreDNS.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -906,13 +890,11 @@ Why split: Gateway handles expensive crypto once. Services own their business ru
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -925,7 +907,6 @@ Why split: Gateway handles expensive crypto once. Services own their business ru
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -945,7 +926,6 @@ Why split: Gateway handles expensive crypto once. Services own their business ru
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -957,7 +937,6 @@ Why split: Gateway handles expensive crypto once. Services own their business ru
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1043,14 +1022,12 @@ In Kubernetes: **don't use Eureka.** K8s Services provide discovery natively. Us
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1064,7 +1041,6 @@ In Kubernetes: **don't use Eureka.** K8s Services provide discovery natively. Us
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1079,42 +1055,29 @@ In Kubernetes: **don't use Eureka.** K8s Services provide discovery natively. Us
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: What happens when service discovery returns stale data (instance died but registry hasn't updated)?**
-
-_Why they ask:_ Tests failure handling with discovery.
-
-_Strong answer:_
-
-**Problem:** Registry shows instance B1 as healthy, but B1 crashed 5 seconds ago (before next health check). Service A calls B1 -> connection refused.
-
-**Mitigations:**
-
-1. **Client-side retry:** If B1 fails, try B2 immediately (different instance)
-2. **Circuit breaker:** If B1 fails repeatedly, remove from local cache
-3. **Fast health checks:** Reduce interval from 30s to 10s (trade-off: more network traffic)
-4. **Client-side health cache:** After connection failure, mark instance unhealthy locally for 30s before retrying
-5. **K8s approach:** Readiness probes remove pod from Service endpoints within seconds. Combined with connection draining during shutdown.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Service Discovery and Registry. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1125,7 +1088,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1159,7 +1121,25 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: What happens when service discovery returns stale data (instance died but registry hasn't updated)?**
+
+_Why they ask:_ Tests failure handling with discovery.
+
+_Strong answer:_
+
+**Problem:** Registry shows instance B1 as healthy, but B1 crashed 5 seconds ago (before next health check). Service A calls B1 -> connection refused.
+
+**Mitigations:**
+
+1. **Client-side retry:** If B1 fails, try B2 immediately (different instance)
+2. **Circuit breaker:** If B1 fails repeatedly, remove from local cache
+3. **Fast health checks:** Reduce interval from 30s to 10s (trade-off: more network traffic)
+4. **Client-side health cache:** After connection failure, mark instance unhealthy locally for 30s before retrying
+5. **K8s approach:** Readiness probes remove pod from Service endpoints within seconds. Combined with connection draining during shutdown.
 ---
 
 ### 🔗 Related Keywords
@@ -1184,7 +1164,6 @@ _Strong answer:_
 # Backend for Frontend (BFF)
 
 **TL;DR** - BFF is a pattern where each client type (mobile, web, partner API) gets its own API gateway that aggregates and tailors responses from backend services. Instead of one generic API for all clients, each BFF optimizes for its client's needs.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1200,13 +1179,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1219,7 +1196,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1239,7 +1215,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1251,7 +1226,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1325,14 +1299,12 @@ Each team controls their BFF's release cycle, data shaping, and caching strategy
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1346,7 +1318,6 @@ Each team controls their BFF's release cycle, data shaping, and caching strategy
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1361,43 +1332,29 @@ Each team controls their BFF's release cycle, data shaping, and caching strategy
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: When should you use a BFF vs a single API Gateway?**
-
-_Why they ask:_ Tests architecture decision-making.
-
-_Strong answer:_
-
-| Use single gateway         | Use BFF                                |
-| -------------------------- | -------------------------------------- |
-| All clients need same data | Clients need very different payloads   |
-| Small number of endpoints  | Complex aggregation per client         |
-| One client type            | 3+ client types (mobile, web, partner) |
-| Simple CRUD                | Rich orchestration per client          |
-
-BFF is justified when: (1) mobile team wants to reduce payload by 80%, (2) web team wants to add server-side rendering without affecting mobile API, (3) partner API needs versioned contracts independent of internal changes.
-
-BFF is overkill when: one React SPA is the only client.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Backend for Frontend (BFF). Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1408,7 +1365,6 @@ BFF is overkill when: one React SPA is the only client.
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1442,7 +1398,26 @@ BFF is overkill when: one React SPA is the only client.
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: When should you use a BFF vs a single API Gateway?**
+
+_Why they ask:_ Tests architecture decision-making.
+
+_Strong answer:_
+
+| Use single gateway         | Use BFF                                |
+| -------------------------- | -------------------------------------- |
+| All clients need same data | Clients need very different payloads   |
+| Small number of endpoints  | Complex aggregation per client         |
+| One client type            | 3+ client types (mobile, web, partner) |
+| Simple CRUD                | Rich orchestration per client          |
+
+BFF is justified when: (1) mobile team wants to reduce payload by 80%, (2) web team wants to add server-side rendering without affecting mobile API, (3) partner API needs versioned contracts independent of internal changes.
+
+BFF is overkill when: one React SPA is the only client.
 ---
 
 ### 🔗 Related Keywords
@@ -1467,7 +1442,6 @@ BFF is overkill when: one React SPA is the only client.
 # GraphQL Federation
 
 **TL;DR** - GraphQL Federation composes a single graph API from multiple microservices, each owning part of the schema. Clients query one endpoint and get data from multiple services in a single request. The gateway merges subgraph schemas and routes queries to the right services.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1483,13 +1457,11 @@ BFF is overkill when: one React SPA is the only client.
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1502,7 +1474,6 @@ BFF is overkill when: one React SPA is the only client.
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1522,7 +1493,6 @@ BFF is overkill when: one React SPA is the only client.
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1534,7 +1504,6 @@ BFF is overkill when: one React SPA is the only client.
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1628,14 +1597,12 @@ type User @key(fields: "id") {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1649,7 +1616,6 @@ type User @key(fields: "id") {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1664,16 +1630,72 @@ type User @key(fields: "id") {
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
+---
 
+### ⚖️ Comparison Table
+
+[TODO: Include if 2+ named alternatives exist for GraphQL Federation. Otherwise remove this section.]
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -1716,58 +1738,6 @@ resolve: (lineItem) => productLoader.load(lineItem.productId);
 ```
 
 At the federation level, Apollo Router batches entity references automatically: if 20 orders reference products, the router sends one `_entities` query with 20 IDs to the Product subgraph instead of 20 separate queries.
-
----
-
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for GraphQL Federation. Otherwise remove this section.]
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -1783,4 +1753,3 @@ At the federation level, Apollo Router batches entity references automatically: 
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

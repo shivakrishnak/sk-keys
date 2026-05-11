@@ -15,7 +15,7 @@ keywords:
   - Switch Expressions
 difficulty_range: mixed
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -29,7 +29,6 @@ version: 2
 # Records
 
 **TL;DR** - Records are immutable data carriers that auto-generate equals, hashCode, toString, and accessors from a concise declaration, eliminating hundreds of lines of boilerplate for simple value objects.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -45,13 +44,11 @@ A HashMap lookup fails silently because a developer added a new field to a data 
 
 **EVOLUTION:**
 Manual POJO boilerplate -> IDE generation (still manual maintenance) -> Lombok `@Data`/`@Value` (annotation processor dependency) -> Records (Java 14 preview, Java 16 final). Records are a language feature, not a library - the compiler guarantees correctness.
-
 ---
 
 ### 📘 Textbook Definition
 
 A record is a restricted class that acts as a transparent carrier for an immutable tuple of values. The compiler automatically generates: a canonical constructor, private final fields, accessor methods (same name as fields, no `get` prefix), `equals()` and `hashCode()` based on all components, and `toString()` showing all components. Records are final (cannot be extended), cannot declare instance fields beyond the record components, and can implement interfaces.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -65,7 +62,6 @@ Records turn `class Point { int x; int y; ... 50 lines ... }` into `record Point
 
 **One insight:**
 Records are not just shorter syntax - they make a semantic commitment: "this class is defined entirely by its data." The compiler enforces this by generating equals/hashCode from all components, making records safe for use as HashMap keys, in Sets, and in pattern matching without any manual maintenance.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -88,7 +84,6 @@ Because records are defined by their components, they are ideal targets for patt
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Value objects need equals/hashCode/toString - this is inherent.
 **Accidental:** Writing 60 lines of boilerplate for 3 fields is purely accidental complexity that records eliminate.
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -100,7 +95,6 @@ Because records are defined by their components, they are ideal targets for patt
 - "Equal if same coordinates" -> generated equals/hashCode
 
 Where this analogy breaks down: Records can have methods and implement interfaces, which tuples in most languages cannot.
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -170,7 +164,6 @@ Records represent the JVM's first step toward value semantics - the idea that so
 - "Is this object defined by its data or its identity?" - data = record, identity = class
 - "Would I want structural equality?" - if yes, record's auto-generated equals is correct
 - "Can this be immutable?" - records enforce immutability, which is essential for thread safety
-
 ---
 
 ### How It Works (Mechanism)
@@ -189,7 +182,6 @@ Records represent the JVM's first step toward value semantics - the idea that so
   |   +-- int hashCode()
   |   +-- String toString()
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -203,7 +195,6 @@ Records represent the JVM's first step toward value semantics - the idea that so
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -260,7 +251,6 @@ record Email(String address) {
     }
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -273,6 +263,7 @@ record Email(String address) {
 **ANTI-PATTERN:** Using records with mutable component types (List, Date) - immutability is not deep by default
 **TRADE-OFF:** Simplicity and safety vs flexibility - no inheritance, no mutable fields, no custom storage
 **ONE-LINER:** "Records are transparent, immutable data carriers where the class IS its data"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -282,13 +273,121 @@ record Email(String address) {
 
 **Interview one-liner:**
 "Records are immutable data carriers that generate equals/hashCode/toString from their components, eliminating boilerplate while making the semantic commitment that the class is defined entirely by its data."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Records use `invokedynamic` for their equals, hashCode, and toString methods rather than generating fixed bytecode. This means the JVM can optimize these methods differently at runtime based on the actual usage patterns. In benchmarks, record equals/hashCode can be faster than hand-written implementations because the JVM can inline and optimize the generated code path.
+---
 
+### ⚖️ Comparison Table
+
+| Aspect | Record | Regular Class | Lombok @Data |
+|--------|--------|---------------|-------------|
+| Mutability | Immutable | Mutable | Mutable |
+| equals/hashCode | Auto (components) | Manual | Auto (all fields) |
+| Inheritance | Cannot extend | Can extend | Can extend |
+| Boilerplate | Zero | High | Low (annotation) |
+| Compile-time safety | Yes | N/A | Annotation processor |
+| Serialization | Built-in support | Manual | Manual |
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | Records are just like Lombok @Data | Records are immutable (final fields, no setters) and part of the language. Lombok @Data generates mutable classes with setters. Records also integrate with sealed classes and pattern matching. |
+| 2 | Records can't have methods | Records can have instance methods, static methods, and implement interfaces. They just can't have non-final instance fields or extend other classes. |
+| 3 | Records provide deep immutability | Record fields are final (shallow immutability), but mutable component types (List, Map) can still be modified. Use `List.copyOf()` in the compact constructor for deep immutability. |
+| 4 | Records replace all POJOs | Records can't extend classes, can't have mutable state, and auto-generate equals based on all components. When you need inheritance or mutable state, regular classes are still needed. |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Mutable component types break immutability**
+**Symptom:** Record instances are modified after creation. Unexpected state changes in code that assumes immutability.
+**Root Cause:** Record components are final references, but the referenced objects (List, Map, Date) can be mutated externally.
+**Diagnostic:**
+
+```
+# Find records with mutable component types
+grep -rn "record.*List\|record.*Map\|record.*Date" src/
+```
+
+**Fix:**
+```java
+// BAD: mutable list in record
+record Team(String name, List<String> members) {}
+var team = new Team("A", new ArrayList<>(list));
+team.members().add("hacker"); // mutates!
+
+// GOOD: defensive copy in compact constructor
+record Team(String name, List<String> members) {
+    Team {
+        members = List.copyOf(members);
+    }
+}
+```
+**Prevention:** Always use `List.copyOf()`, `Map.copyOf()`, or `Set.copyOf()` in compact constructors for collection components.
+
+**Failure Mode 2: Record serialization with different component order**
+**Symptom:** Deserialization fails or produces wrong values when record component order is changed between versions.
+**Root Cause:** Record serialization uses the canonical constructor with components in declaration order. Reordering components changes the constructor signature.
+**Diagnostic:**
+
+```
+# Check for serializable records that changed
+git diff --name-only HEAD~10 | xargs grep -l "record"
+# Verify component order matches serialized data
+```
+
+**Fix:**
+```java
+// BAD: changing component order
+// v1: record Point(int x, int y)
+// v2: record Point(int y, int x)  // BREAKS!
+
+// GOOD: never reorder components
+// Add new components at the end
+// Use explicit serialization if order matters
+```
+**Prevention:** Treat record component order as a public API contract. Never reorder existing components. Add new components at the end.
+
+**Failure Mode 3: Records in JPA entities**
+**Symptom:** JPA/Hibernate errors when using records as entities. "No default constructor" or "Cannot set field" errors.
+**Root Cause:** JPA requires a no-arg constructor, mutable fields, and setter methods. Records have none of these.
+**Diagnostic:**
+
+```
+grep -rn "@Entity" src/ | xargs grep "record "
+# Records cannot be JPA entities
+```
+
+**Fix:**
+```java
+// BAD: record as JPA entity
+@Entity
+record User(Long id, String name) {} // FAILS
+
+// GOOD: records for DTOs, classes for entities
+@Entity
+class UserEntity { /* mutable fields */ }
+record UserDto(Long id, String name) {
+    static UserDto from(UserEntity e) {
+        return new UserDto(e.getId(), e.getName());
+    }
+}
+```
+**Prevention:** Use records for DTOs, projections, and value objects. Use regular classes for JPA entities.
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -476,111 +575,6 @@ _Strong answer:_
 - No inheritance or builder needed
 
 In a new Java 16+ project, records should be the default for value objects. Use Lombok only for cases records cannot handle.
-
----
-
-### ⚖️ Comparison Table
-
-| Aspect | Record | Regular Class | Lombok @Data |
-|--------|--------|---------------|-------------|
-| Mutability | Immutable | Mutable | Mutable |
-| equals/hashCode | Auto (components) | Manual | Auto (all fields) |
-| Inheritance | Cannot extend | Can extend | Can extend |
-| Boilerplate | Zero | High | Low (annotation) |
-| Compile-time safety | Yes | N/A | Annotation processor |
-| Serialization | Built-in support | Manual | Manual |
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | Records are just like Lombok @Data | Records are immutable (final fields, no setters) and part of the language. Lombok @Data generates mutable classes with setters. Records also integrate with sealed classes and pattern matching. |
-| 2 | Records can't have methods | Records can have instance methods, static methods, and implement interfaces. They just can't have non-final instance fields or extend other classes. |
-| 3 | Records provide deep immutability | Record fields are final (shallow immutability), but mutable component types (List, Map) can still be modified. Use `List.copyOf()` in the compact constructor for deep immutability. |
-| 4 | Records replace all POJOs | Records can't extend classes, can't have mutable state, and auto-generate equals based on all components. When you need inheritance or mutable state, regular classes are still needed. |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: Mutable component types break immutability**
-**Symptom:** Record instances are modified after creation. Unexpected state changes in code that assumes immutability.
-**Root Cause:** Record components are final references, but the referenced objects (List, Map, Date) can be mutated externally.
-**Diagnostic:**
-
-```
-# Find records with mutable component types
-grep -rn "record.*List\|record.*Map\|record.*Date" src/
-```
-
-**Fix:**
-```java
-// BAD: mutable list in record
-record Team(String name, List<String> members) {}
-var team = new Team("A", new ArrayList<>(list));
-team.members().add("hacker"); // mutates!
-
-// GOOD: defensive copy in compact constructor
-record Team(String name, List<String> members) {
-    Team {
-        members = List.copyOf(members);
-    }
-}
-```
-**Prevention:** Always use `List.copyOf()`, `Map.copyOf()`, or `Set.copyOf()` in compact constructors for collection components.
-
-**Failure Mode 2: Record serialization with different component order**
-**Symptom:** Deserialization fails or produces wrong values when record component order is changed between versions.
-**Root Cause:** Record serialization uses the canonical constructor with components in declaration order. Reordering components changes the constructor signature.
-**Diagnostic:**
-
-```
-# Check for serializable records that changed
-git diff --name-only HEAD~10 | xargs grep -l "record"
-# Verify component order matches serialized data
-```
-
-**Fix:**
-```java
-// BAD: changing component order
-// v1: record Point(int x, int y)
-// v2: record Point(int y, int x)  // BREAKS!
-
-// GOOD: never reorder components
-// Add new components at the end
-// Use explicit serialization if order matters
-```
-**Prevention:** Treat record component order as a public API contract. Never reorder existing components. Add new components at the end.
-
-**Failure Mode 3: Records in JPA entities**
-**Symptom:** JPA/Hibernate errors when using records as entities. "No default constructor" or "Cannot set field" errors.
-**Root Cause:** JPA requires a no-arg constructor, mutable fields, and setter methods. Records have none of these.
-**Diagnostic:**
-
-```
-grep -rn "@Entity" src/ | xargs grep "record "
-# Records cannot be JPA entities
-```
-
-**Fix:**
-```java
-// BAD: record as JPA entity
-@Entity
-record User(Long id, String name) {} // FAILS
-
-// GOOD: records for DTOs, classes for entities
-@Entity
-class UserEntity { /* mutable fields */ }
-record UserDto(Long id, String name) {
-    static UserDto from(UserEntity e) {
-        return new UserDto(e.getId(), e.getName());
-    }
-}
-```
-**Prevention:** Use records for DTOs, projections, and value objects. Use regular classes for JPA entities.
-
 ---
 
 ### 🔗 Related Keywords
@@ -608,7 +602,6 @@ record UserDto(Long id, String name) {
 # Sealed Classes
 
 **TL;DR** - Sealed classes restrict which classes can extend them, giving the compiler exhaustive knowledge of a type hierarchy for pattern matching and enabling true algebraic data types in Java.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -624,13 +617,11 @@ A payment processing system uses `abstract class PaymentMethod` with `CreditCard
 
 **EVOLUTION:**
 Final classes (no extension) and open classes (unlimited extension) since Java 1.0 -> Sealed classes (Java 15 preview, Java 17 final) -> Exhaustive pattern matching with sealed types (Java 21).
-
 ---
 
 ### 📘 Textbook Definition
 
 A sealed class or interface declares a fixed set of permitted subtypes using the `permits` clause. Only the permitted classes can extend or implement the sealed type. The compiler knows all possible subtypes at compile time, enabling exhaustive switch expressions and pattern matching without a default branch.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -644,7 +635,6 @@ Sealed classes tell the compiler "these are the ONLY subtypes" - no surprises, n
 
 **One insight:**
 Sealed classes solve the "expression problem" for Java. Before sealed classes, adding a new subtype was easy (just extend) but adding a new operation was hard (must find all switch/if-else chains). Sealed classes make both safe: the compiler tells you when a switch is not exhaustive after adding a new permitted subtype.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -666,7 +656,6 @@ Combined with records and pattern matching, sealed classes create algebraic data
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Sometimes a type hierarchy is genuinely closed - there are exactly N variants and no more.
 **Accidental:** The requirement that permitted subtypes be in the same module/package is a limitation of Java's compilation model.
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -678,7 +667,6 @@ Combined with records and pattern matching, sealed classes create algebraic data
 - "Each constant can vary" -> records with different components
 
 Where this analogy breaks down: Unlike enums, sealed subtypes can have their own methods, constructors, and even be sealed themselves (creating a hierarchy).
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -768,7 +756,6 @@ Sealed classes implement closed-world subtyping - the ability to define a type w
 - "Should this hierarchy be open or closed?" - if subtypes are a fixed set, seal it
 - "Does switch need to be exhaustive?" - sealed enables compiler-checked exhaustiveness
 - "Is this a state machine or event type?" - sealed classes model finite type sets perfectly
-
 ---
 
 ### How It Works (Mechanism)
@@ -789,7 +776,6 @@ Sealed classes implement closed-world subtyping - the ability to define a type w
   "Shape permits Circle, Rectangle, Triangle
    but only Circle, Rectangle are covered"
 ```
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -803,7 +789,6 @@ Sealed classes implement closed-world subtyping - the ability to define a type w
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -836,7 +821,6 @@ String processResult(PaymentResult result) {
     };
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -849,6 +833,7 @@ String processResult(PaymentResult result) {
 **ANTI-PATTERN:** Sealing a class but adding a 'catch-all' subtype to handle future cases - defeats the purpose
 **TRADE-OFF:** Exhaustiveness checking and type safety vs extensibility - sealed hierarchies can't be extended by consumers
 **ONE-LINER:** "Sealed classes tell the compiler: these are ALL the subtypes, check my switches"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -858,13 +843,121 @@ String processResult(PaymentResult result) {
 
 **Interview one-liner:**
 "Sealed classes declare a closed set of permitted subtypes, giving the compiler exhaustive type knowledge for pattern matching and preventing unauthorized extension of controlled type hierarchies."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Sealed classes make the `Visitor` design pattern nearly obsolete. The Visitor pattern exists because Java lacked exhaustive type matching - you needed double dispatch to safely handle all subtypes. With sealed classes and pattern matching switches, you get compile-time exhaustiveness checking directly, making the Visitor's ceremony unnecessary.
+---
 
+### ⚖️ Comparison Table
+
+| Aspect | Sealed Class | Final Class | Abstract Class |
+|--------|-------------|-------------|---------------|
+| Extension | Permitted set | None | Unlimited |
+| Exhaustiveness | Compiler-checked | N/A | No |
+| Pattern matching | Full support | Limited | Requires default |
+| Use case | Fixed type hierarchy | Utility class | Open hierarchy |
+| JDK version | 17+ | Any | Any |
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | Sealed classes are just final classes with subtypes | Sealed classes define a CLOSED hierarchy - the compiler knows all subtypes and can verify exhaustive pattern matching. Final classes prevent ALL extension. |
+| 2 | All subtypes must be in the same file | Subtypes must be in the same package (or module), not necessarily the same file. The `permits` clause lists all allowed subtypes explicitly. |
+| 3 | Sealed classes prevent extension entirely | Sealed classes control the FIRST level of extension. Permitted subtypes can themselves be sealed, non-sealed (open for further extension), or final. |
+| 4 | Sealed classes are only useful with pattern matching | Sealed classes are valuable for domain modeling even without pattern matching. They document and enforce the type hierarchy at compile time. |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Non-exhaustive switch after adding a new permitted subtype**
+**Symptom:** Compilation error in all switch expressions that match on the sealed type after adding a new permitted subclass.
+**Root Cause:** Adding a new subtype to the `permits` clause makes existing exhaustive switches incomplete.
+**Diagnostic:**
+
+```
+# Find all switch expressions on the sealed type
+grep -rn "switch.*instanceof\|case.*Shape" src/
+# Each must handle the new subtype
+```
+
+**Fix:**
+```java
+// When adding Circle to sealed Shape:
+sealed interface Shape
+    permits Square, Triangle, Circle {}
+
+// Every switch must be updated:
+return switch (shape) {
+    case Square s -> s.side() * s.side();
+    case Triangle t -> 0.5 * t.base() * t.height();
+    case Circle c -> Math.PI * c.radius() * c.radius();
+    // Compiler error if Circle case is missing
+};
+```
+**Prevention:** Document all switch sites when defining sealed hierarchies. Consider adding tests that verify all subtypes are handled.
+
+**Failure Mode 2: Sealed class with non-sealed subtype opens the hierarchy**
+**Symptom:** External code extends a subtype of the sealed class, bypassing the closed hierarchy.
+**Root Cause:** A permitted subtype declared `non-sealed` allows unrestricted extension, breaking exhaustiveness guarantees.
+**Diagnostic:**
+
+```
+grep -rn "non-sealed" src/
+# Each non-sealed subtype is an open extension point
+```
+
+**Fix:**
+```java
+// BAD: non-sealed reopens the hierarchy
+sealed interface Result permits Ok, Err {}
+non-sealed class Ok implements Result {}
+// Anyone can: class WeirdOk extends Ok {}
+
+// GOOD: use final or sealed on subtypes
+sealed interface Result permits Ok, Err {}
+record Ok(Object value) implements Result {}
+record Err(String msg) implements Result {}
+// Both are final (records are implicitly final)
+```
+**Prevention:** Prefer `final` or `record` for leaf subtypes. Use `non-sealed` only when intentional open extension is needed.
+
+**Failure Mode 3: Circular permits dependency**
+**Symptom:** Compilation error: "cyclic inheritance" or confusing type hierarchies.
+**Root Cause:** Two sealed types permitting each other's subtypes, creating circular dependencies.
+**Diagnostic:**
+
+```
+grep -rn "sealed.*permits" src/ | sort
+# Check for circular references between sealed types
+```
+
+**Fix:**
+```java
+// BAD: circular sealed hierarchy
+sealed interface A permits B {}
+sealed interface B extends A permits C {}
+// (confusing, hard to reason about)
+
+// GOOD: clear tree hierarchy
+sealed interface Shape permits Circle, Polygon {}
+sealed interface Polygon extends Shape
+    permits Triangle, Square {}
+record Circle(double r) implements Shape {}
+```
+**Prevention:** Design sealed hierarchies as strict trees. Each sealed type should have a clear parent and non-overlapping subtypes.
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -953,111 +1046,6 @@ record CreateUser(String name, String email)
 ```
 
 This is especially valuable for message-driven architectures where commands/events are serialized across service boundaries. The sealed type acts as a schema that both serialization and pattern matching can enforce.
-
----
-
-### ⚖️ Comparison Table
-
-| Aspect | Sealed Class | Final Class | Abstract Class |
-|--------|-------------|-------------|---------------|
-| Extension | Permitted set | None | Unlimited |
-| Exhaustiveness | Compiler-checked | N/A | No |
-| Pattern matching | Full support | Limited | Requires default |
-| Use case | Fixed type hierarchy | Utility class | Open hierarchy |
-| JDK version | 17+ | Any | Any |
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | Sealed classes are just final classes with subtypes | Sealed classes define a CLOSED hierarchy - the compiler knows all subtypes and can verify exhaustive pattern matching. Final classes prevent ALL extension. |
-| 2 | All subtypes must be in the same file | Subtypes must be in the same package (or module), not necessarily the same file. The `permits` clause lists all allowed subtypes explicitly. |
-| 3 | Sealed classes prevent extension entirely | Sealed classes control the FIRST level of extension. Permitted subtypes can themselves be sealed, non-sealed (open for further extension), or final. |
-| 4 | Sealed classes are only useful with pattern matching | Sealed classes are valuable for domain modeling even without pattern matching. They document and enforce the type hierarchy at compile time. |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: Non-exhaustive switch after adding a new permitted subtype**
-**Symptom:** Compilation error in all switch expressions that match on the sealed type after adding a new permitted subclass.
-**Root Cause:** Adding a new subtype to the `permits` clause makes existing exhaustive switches incomplete.
-**Diagnostic:**
-
-```
-# Find all switch expressions on the sealed type
-grep -rn "switch.*instanceof\|case.*Shape" src/
-# Each must handle the new subtype
-```
-
-**Fix:**
-```java
-// When adding Circle to sealed Shape:
-sealed interface Shape
-    permits Square, Triangle, Circle {}
-
-// Every switch must be updated:
-return switch (shape) {
-    case Square s -> s.side() * s.side();
-    case Triangle t -> 0.5 * t.base() * t.height();
-    case Circle c -> Math.PI * c.radius() * c.radius();
-    // Compiler error if Circle case is missing
-};
-```
-**Prevention:** Document all switch sites when defining sealed hierarchies. Consider adding tests that verify all subtypes are handled.
-
-**Failure Mode 2: Sealed class with non-sealed subtype opens the hierarchy**
-**Symptom:** External code extends a subtype of the sealed class, bypassing the closed hierarchy.
-**Root Cause:** A permitted subtype declared `non-sealed` allows unrestricted extension, breaking exhaustiveness guarantees.
-**Diagnostic:**
-
-```
-grep -rn "non-sealed" src/
-# Each non-sealed subtype is an open extension point
-```
-
-**Fix:**
-```java
-// BAD: non-sealed reopens the hierarchy
-sealed interface Result permits Ok, Err {}
-non-sealed class Ok implements Result {}
-// Anyone can: class WeirdOk extends Ok {}
-
-// GOOD: use final or sealed on subtypes
-sealed interface Result permits Ok, Err {}
-record Ok(Object value) implements Result {}
-record Err(String msg) implements Result {}
-// Both are final (records are implicitly final)
-```
-**Prevention:** Prefer `final` or `record` for leaf subtypes. Use `non-sealed` only when intentional open extension is needed.
-
-**Failure Mode 3: Circular permits dependency**
-**Symptom:** Compilation error: "cyclic inheritance" or confusing type hierarchies.
-**Root Cause:** Two sealed types permitting each other's subtypes, creating circular dependencies.
-**Diagnostic:**
-
-```
-grep -rn "sealed.*permits" src/ | sort
-# Check for circular references between sealed types
-```
-
-**Fix:**
-```java
-// BAD: circular sealed hierarchy
-sealed interface A permits B {}
-sealed interface B extends A permits C {}
-// (confusing, hard to reason about)
-
-// GOOD: clear tree hierarchy
-sealed interface Shape permits Circle, Polygon {}
-sealed interface Polygon extends Shape
-    permits Triangle, Square {}
-record Circle(double r) implements Shape {}
-```
-**Prevention:** Design sealed hierarchies as strict trees. Each sealed type should have a clear parent and non-overlapping subtypes.
-
 ---
 
 ### 🔗 Related Keywords
@@ -1085,7 +1073,6 @@ record Circle(double r) implements Shape {}
 # Pattern Matching
 
 **TL;DR** - Pattern matching lets you test a value's type and extract its components in one step, replacing verbose instanceof checks and casts with concise, safe, and exhaustive expressions.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1101,13 +1088,11 @@ A 200-line method with 15 `instanceof` checks, each followed by a cast. A develo
 
 **EVOLUTION:**
 `instanceof` + cast (Java 1.0) -> `instanceof` pattern matching (Java 14 preview, Java 16 final) -> switch pattern matching (Java 17 preview, Java 21 final) -> record pattern deconstruction (Java 21) -> primitive patterns (future).
-
 ---
 
 ### 📘 Textbook Definition
 
 Pattern matching is a language feature that combines a type test with a variable binding in a single operation. Instead of writing `if (obj instanceof String) { String s = (String) obj; }`, you write `if (obj instanceof String s)`. Switch pattern matching extends this to switch expressions, enabling type-based branching with exhaustiveness checking when used with sealed types.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1121,7 +1106,6 @@ Pattern matching combines "is it this type?" and "give me the value" into one sa
 
 **One insight:**
 Pattern matching is not just syntactic sugar for instanceof + cast. In switch expressions with sealed types, the compiler verifies exhaustiveness - if you add a new permitted subtype, every switch that doesn't handle it becomes a compile error. This turns runtime `ClassCastException` into compile-time errors.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1139,7 +1123,6 @@ Record patterns enable deconstruction: `case Point(int x, int y)` both matches t
 **THE TRADE-OFFS:**
 **Gain:** Less code, safer (no explicit casts), exhaustive checking with sealed types
 **Cost:** New syntax to learn, flow scoping can be subtle, null handling in switches requires explicit case
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1151,7 +1134,6 @@ Record patterns enable deconstruction: `case Point(int x, int y)` both matches t
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1252,14 +1234,12 @@ Text blocks solve the universal string literal readability problem: embedding mu
 - "Is this string >1 line?" - text block for readability
 - "Does this have escape characters?" - text block eliminates most escaping
 - "Is indentation significant?" - understand the common whitespace stripping algorithm
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1273,7 +1253,6 @@ Text blocks solve the universal string literal readability problem: embedding mu
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1309,7 +1288,6 @@ double area(Shape shape) {
     };
 }
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1322,6 +1300,7 @@ double area(Shape shape) {
 **ANTI-PATTERN:** Mixing tabs and spaces in text blocks - inconsistent whitespace breaks the stripping algorithm
 **TRADE-OFF:** Readability vs precision - indentation stripping is implicit and may surprise if not understood
 **ONE-LINER:** "Text blocks make embedded SQL, JSON, and HTML look like actual SQL, JSON, and HTML"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1331,100 +1310,25 @@ double area(Shape shape) {
 
 **Interview one-liner:**
 "Pattern matching unifies type testing and extraction into a single expression, and combined with sealed types, enables exhaustive, compile-time-verified type-based branching."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Null handling in pattern matching switches is explicit and deliberate. Before Java 21, a switch on a reference type would throw `NullPointerException` on null input. With pattern matching switches, you can add `case null ->` as an explicit branch. This makes null handling visible and intentional rather than a runtime surprise.
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How does pattern matching in switches differ from traditional switch statements?**
-
-_Why they ask:_ Tests understanding of the evolution and new capabilities.
-
-_Strong answer:_
-
-Traditional switch: matches only on constants (int, String, enum). Falls through by default. Statements only (pre-Java 14).
-
-Pattern matching switch:
-
-1. Matches on types, not just constants
-2. Binds variables in the matched branch
-3. Supports guards (`when` clause)
-4. Exhaustive with sealed types (no default needed)
-5. Expression form returns values
-6. No fall-through in arrow syntax
-
-```java
-// Traditional: constant matching
-switch (status) {
-    case "ACTIVE": handle(); break;
-    case "INACTIVE": disable(); break;
-    default: throw new IllegalStateException();
-}
-
-// Pattern matching: type + guard matching
-return switch (event) {
-    case OrderCreated o when o.items().isEmpty()
-        -> handleEmpty(o);
-    case OrderCreated o
-        -> handleOrder(o);
-    case OrderCancelled c
-        -> handleCancel(c);
-    case null
-        -> handleNull();
-};
-```
-
----
-
-**Q2: Explain flow scoping for pattern variables. Where is the variable in scope?**
-
-_Why they ask:_ Tests understanding of a subtle and unique feature.
-
-_Strong answer:_
-
-The pattern variable is in scope wherever the compiler can prove the pattern matched:
-
-```java
-// In scope in true branch
-if (x instanceof String s) {
-    // s in scope
-}
-
-// In scope after negated check
-// (compiler knows x is NOT String)
-if (!(x instanceof String s)) {
-    return; // x is not String, s not in scope
-}
-// s IS in scope here (x must be String
-// to reach this point)
-
-// Works with && (both sides must be true)
-if (x instanceof String s && s.length() > 0) {
-    // s in scope
-}
-
-// DOES NOT work with || (only one side
-// needs to be true - can't guarantee match)
-// if (x instanceof String s || s.isEmpty())
-// COMPILE ERROR
-```
-
-In switch expressions, the pattern variable is scoped to that case's arrow expression or block. It is not visible in other cases.
-
-This scoping is purely a compiler analysis - no runtime checks. The variable binding is erased at bytecode level, just like a normal local variable after a cast.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Pattern Matching. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1435,7 +1339,6 @@ This scoping is purely a compiler analysis - no runtime checks. The variable bin
 | 2 | Leading whitespace is always removed | Only COMMON leading whitespace is removed. The closing `"""` position determines the common indent baseline. Relative indentation is preserved. |
 | 3 | Text blocks support string interpolation | Java text blocks have no interpolation syntax. Use `.formatted()` (JDK 15+) or `String.format()` for variable substitution. |
 | 4 | Text blocks can start on the opening line | Content must start on the line AFTER the opening `"""`. The opening delimiter line cannot contain content - only a line terminator follows it. |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1520,7 +1423,86 @@ javac -version
      + "WHERE u.active = true")
 ```
 **Prevention:** Ensure annotation processors support JDK 15+. Test with text blocks in annotations during upgrade.
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How does pattern matching in switches differ from traditional switch statements?**
+
+_Why they ask:_ Tests understanding of the evolution and new capabilities.
+
+_Strong answer:_
+
+Traditional switch: matches only on constants (int, String, enum). Falls through by default. Statements only (pre-Java 14).
+
+Pattern matching switch:
+
+1. Matches on types, not just constants
+2. Binds variables in the matched branch
+3. Supports guards (`when` clause)
+4. Exhaustive with sealed types (no default needed)
+5. Expression form returns values
+6. No fall-through in arrow syntax
+
+```java
+// Traditional: constant matching
+switch (status) {
+    case "ACTIVE": handle(); break;
+    case "INACTIVE": disable(); break;
+    default: throw new IllegalStateException();
+}
+
+// Pattern matching: type + guard matching
+return switch (event) {
+    case OrderCreated o when o.items().isEmpty()
+        -> handleEmpty(o);
+    case OrderCreated o
+        -> handleOrder(o);
+    case OrderCancelled c
+        -> handleCancel(c);
+    case null
+        -> handleNull();
+};
+```
+
+---
+
+**Q2: Explain flow scoping for pattern variables. Where is the variable in scope?**
+
+_Why they ask:_ Tests understanding of a subtle and unique feature.
+
+_Strong answer:_
+
+The pattern variable is in scope wherever the compiler can prove the pattern matched:
+
+```java
+// In scope in true branch
+if (x instanceof String s) {
+    // s in scope
+}
+
+// In scope after negated check
+// (compiler knows x is NOT String)
+if (!(x instanceof String s)) {
+    return; // x is not String, s not in scope
+}
+// s IS in scope here (x must be String
+// to reach this point)
+
+// Works with && (both sides must be true)
+if (x instanceof String s && s.length() > 0) {
+    // s in scope
+}
+
+// DOES NOT work with || (only one side
+// needs to be true - can't guarantee match)
+// if (x instanceof String s || s.isEmpty())
+// COMPILE ERROR
+```
+
+In switch expressions, the pattern variable is scoped to that case's arrow expression or block. It is not visible in other cases.
+
+This scoping is purely a compiler analysis - no runtime checks. The variable binding is erased at bytecode level, just like a normal local variable after a cast.
 ---
 
 ### 🔗 Related Keywords
@@ -1548,7 +1530,6 @@ javac -version
 # Text Blocks
 
 **TL;DR** - Text blocks provide multi-line string literals with automatic indentation management, eliminating escape character hell for JSON, SQL, HTML, and other embedded text.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1564,13 +1545,11 @@ A developer writes a SQL query as a concatenated string. They miss a space befor
 
 **EVOLUTION:**
 String concatenation with `+` and `\n` -> `String.format()` -> `StringBuilder` -> Text blocks (Java 13 preview, Java 15 final).
-
 ---
 
 ### 📘 Textbook Definition
 
 A text block is a multi-line string literal delimited by triple double-quotes (`"""`). It begins on the line after the opening delimiter and ends at the closing delimiter. The compiler strips common leading whitespace (incidental indentation), normalizes line terminators to `\n`, and allows embedded double quotes without escaping.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1584,7 +1563,6 @@ Text blocks let you write multi-line strings exactly as they should appear, no e
 
 **One insight:**
 The closing `"""` position matters - it determines how much leading whitespace is stripped. Moving the closing delimiter left or right adjusts the indentation of the entire block. This is the single most important rule for text blocks.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1604,7 +1582,6 @@ The closing `"""` position matters - it determines how much leading whitespace i
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1616,7 +1593,6 @@ The closing `"""` position matters - it determines how much leading whitespace i
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1691,14 +1667,12 @@ Switch expressions transform Java's switch from a statement (control flow) to an
 - "Is switch producing a value?" - use expression form with arrow syntax
 - "Is fall-through intentional?" - if not, arrow form prevents it by design
 - "Is the type sealed?" - compiler enforces exhaustiveness with sealed types
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1712,7 +1686,6 @@ Switch expressions transform Java's switch from a statement (control flow) to an
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -1740,7 +1713,6 @@ String query = """
     ORDER BY o.created_at DESC
     """;
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1753,6 +1725,7 @@ String query = """
 **ANTI-PATTERN:** Using colon-form switch with break statements when arrow-form is cleaner and safer
 **TRADE-OFF:** Safety (no fall-through) vs flexibility (intentional fall-through requires colon form)
 **ONE-LINER:** "Switch expressions turn 'do something for each case' into 'what is the value for each case'"
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -1762,95 +1735,20 @@ String query = """
 
 **Interview one-liner:**
 "Text blocks are multi-line string literals delimited by triple quotes that auto-strip incidental indentation and normalize line endings, replacing escape-heavy string concatenation for SQL, JSON, and HTML."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 Text blocks support two new escape sequences: `\s` (a space that prevents trailing whitespace stripping) and `\` at end of line (line continuation - suppresses the newline). The `\` continuation means you can write long single-line strings across multiple source lines without inserting unwanted newlines.
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How does incidental whitespace stripping work? What determines how much whitespace is removed?**
-
-_Why they ask:_ Tests understanding of the most confusing text block feature.
-
-_Strong answer:_
-
-The compiler determines "incidental" whitespace by finding the minimum indentation across all non-blank content lines AND the closing `"""` line. That minimum is stripped from every line.
-
-```java
-// 8 spaces before each line, 8 before """
-String a = """
-        line1
-        line2
-        """;
-// min indent = 8 -> strip 8
-// Result: "line1\nline2\n"
-
-// 8 spaces before lines, 4 before """
-String b = """
-        line1
-        line2
-    """;
-// min indent = 4 (""" position wins)
-// Result: "    line1\n    line2\n"
-
-// Mixed indentation
-String c = """
-        line1
-            line2
-        """;
-// min indent = 8 -> strip 8
-// Result: "line1\n    line2\n"
-// (line2 retains 4 extra spaces)
-```
-
-Practical rule: position the closing `"""` at the column where you want the left margin of the text to be.
-
----
-
-**Q2: Can text blocks be used with `String.format()` or `formatted()`? What are the security implications?**
-
-_Why they ask:_ Tests practical usage and security awareness.
-
-_Strong answer:_
-
-Yes, text blocks work with both:
-
-```java
-String html = """
-    <div class="%s">
-        <h1>%s</h1>
-        <p>%s</p>
-    </div>
-    """.formatted(cssClass, title, body);
-```
-
-**Security warning:** If `title` or `body` come from user input, this is an XSS vulnerability. Text blocks make string interpolation look clean and natural, which can mask injection risks.
-
-Rules:
-
-- SQL: always use parameterized queries (`?` placeholders), never string interpolation
-- HTML: use template engines (Thymeleaf, Freemarker) that auto-escape
-- JSON: use Jackson/Gson for serialization, not text block templates
-- Test data, logging, documentation: text block formatting is safe
-
-```java
-// DANGEROUS: SQL injection possible
-String sql = """
-    SELECT * FROM users WHERE name = '%s'
-    """.formatted(userInput);
-
-// SAFE: parameterized query
-String sql = """
-    SELECT * FROM users WHERE name = ?
-    """;
-stmt.setString(1, userInput);
-```
-
 ---
 
 ### ⚖️ Comparison Table
@@ -1863,7 +1761,6 @@ stmt.setString(1, userInput);
 | Interpolation | No (use .formatted) | No | Yes (append) |
 | Escaping | Minimal | Heavy | Heavy |
 | Type | String | String | String |
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1874,7 +1771,6 @@ stmt.setString(1, userInput);
 | 2 | Switch expressions replace switch statements | Both forms coexist. Switch statements (with fall-through) are still valid. Use expressions when producing a value, statements for side-effect-only logic. |
 | 3 | All switch expressions need a default case | If the switch covers all possible values (all enum constants, all sealed subtypes), no default is needed. The compiler verifies exhaustiveness. |
 | 4 | yield is the same as return | `yield` returns a value from a switch expression block. `return` exits the enclosing method. Using `return` inside a switch expression block is a compilation error. |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1964,7 +1860,87 @@ String label = switch (status) {
 };
 ```
 **Prevention:** Add a default clause with AssertionError for enums from external modules. Recompile all consumers when enum changes.
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How does incidental whitespace stripping work? What determines how much whitespace is removed?**
+
+_Why they ask:_ Tests understanding of the most confusing text block feature.
+
+_Strong answer:_
+
+The compiler determines "incidental" whitespace by finding the minimum indentation across all non-blank content lines AND the closing `"""` line. That minimum is stripped from every line.
+
+```java
+// 8 spaces before each line, 8 before """
+String a = """
+        line1
+        line2
+        """;
+// min indent = 8 -> strip 8
+// Result: "line1\nline2\n"
+
+// 8 spaces before lines, 4 before """
+String b = """
+        line1
+        line2
+    """;
+// min indent = 4 (""" position wins)
+// Result: "    line1\n    line2\n"
+
+// Mixed indentation
+String c = """
+        line1
+            line2
+        """;
+// min indent = 8 -> strip 8
+// Result: "line1\n    line2\n"
+// (line2 retains 4 extra spaces)
+```
+
+Practical rule: position the closing `"""` at the column where you want the left margin of the text to be.
+
+---
+
+**Q2: Can text blocks be used with `String.format()` or `formatted()`? What are the security implications?**
+
+_Why they ask:_ Tests practical usage and security awareness.
+
+_Strong answer:_
+
+Yes, text blocks work with both:
+
+```java
+String html = """
+    <div class="%s">
+        <h1>%s</h1>
+        <p>%s</p>
+    </div>
+    """.formatted(cssClass, title, body);
+```
+
+**Security warning:** If `title` or `body` come from user input, this is an XSS vulnerability. Text blocks make string interpolation look clean and natural, which can mask injection risks.
+
+Rules:
+
+- SQL: always use parameterized queries (`?` placeholders), never string interpolation
+- HTML: use template engines (Thymeleaf, Freemarker) that auto-escape
+- JSON: use Jackson/Gson for serialization, not text block templates
+- Test data, logging, documentation: text block formatting is safe
+
+```java
+// DANGEROUS: SQL injection possible
+String sql = """
+    SELECT * FROM users WHERE name = '%s'
+    """.formatted(userInput);
+
+// SAFE: parameterized query
+String sql = """
+    SELECT * FROM users WHERE name = ?
+    """;
+stmt.setString(1, userInput);
+```
 ---
 
 ### 🔗 Related Keywords
@@ -1992,7 +1968,6 @@ String label = switch (status) {
 # Switch Expressions
 
 **TL;DR** - Switch expressions return values, use arrow syntax to prevent fall-through, and support pattern matching, making switch a powerful expression instead of a bug-prone statement.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -2008,13 +1983,11 @@ A developer adds a new enum constant but forgets to add a `case` in the switch s
 
 **EVOLUTION:**
 Switch statements with fall-through (Java 1.0) -> switch expressions with arrow syntax (Java 12 preview, Java 14 final) -> switch pattern matching (Java 17 preview, Java 21 final).
-
 ---
 
 ### 📘 Textbook Definition
 
 A switch expression evaluates to a value, uses arrow (`->`) syntax to prevent fall-through, and the compiler enforces exhaustiveness. Combined with pattern matching (Java 21), it supports type-based branching, guards, null handling, and record deconstruction.
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -2028,7 +2001,6 @@ Switch expressions return a value, prevent fall-through, and the compiler ensure
 
 **One insight:**
 The arrow syntax (`->`) is not just cosmetic. It fundamentally changes the semantics: no fall-through, expression-based (returns a value), and the compiler enforces that every possible value is handled. Missing a case with arrow syntax is a compile error, not a runtime mystery.
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -2048,7 +2020,6 @@ The arrow syntax (`->`) is not just cosmetic. It fundamentally changes the seman
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -2060,7 +2031,6 @@ The arrow syntax (`->`) is not just cosmetic. It fundamentally changes the seman
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -2152,14 +2122,12 @@ int eval(Expr e) {
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -2173,7 +2141,6 @@ int eval(Expr e) {
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 💻 Code Example
@@ -2208,7 +2175,6 @@ int days = switch (month) {
 // No fall-through possible
 // Compiler error if non-exhaustive
 ```
-
 ---
 
 ### 📌 Quick Reference Card
@@ -2221,6 +2187,7 @@ int days = switch (month) {
 **ANTI-PATTERN:** [TODO]
 **TRADE-OFF:** [TODO]
 **ONE-LINER:** [TODO]
+**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
 
 **If you remember only 3 things:**
 
@@ -2230,13 +2197,74 @@ int days = switch (month) {
 
 **Interview one-liner:**
 "Switch expressions use arrow syntax to eliminate fall-through bugs, return values directly, and the compiler enforces exhaustiveness, making switch a safe, expression-based control flow mechanism."
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 You can mix arrow and colon syntax in the same file but not in the same switch. However, the Java language team deliberately designed switch expressions to make the old colon syntax feel uncomfortable - the new arrow syntax is so much cleaner that teams naturally migrate. Java 21's pattern matching switches only support arrow syntax, making the migration path inevitable.
+---
 
+### ⚖️ Comparison Table
+
+| Feature | Switch Expression | Switch Statement | if-else |
+|---------|------------------|-----------------|--------|
+| Returns value | Yes | No | No (ternary: yes) |
+| Fall-through | No (arrow) | Yes (colon) | No |
+| Exhaustiveness | Compiler-checked | No | No |
+| Pattern matching | JDK 21+ | No | No |
+| Multi-case | Comma-separated | Stack cases | \|\| chains |
+---
+
+### ⚠️ Common Misconceptions
+
+| # | Misconception | Reality |
+|---|---------------|---------|
+| 1 | [TODO] | [TODO] |
+| 2 | [TODO] | [TODO] |
+| 3 | [TODO] | [TODO] |
+| 4 | [TODO] | [TODO] |
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 2: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
+
+**Failure Mode 3: [TODO]**
+**Symptom:** [TODO]
+**Root Cause:** [TODO]
+**Diagnostic:**
+```
+[TODO: real diagnostic command]
+```
+**Fix:** [TODO: BAD then GOOD]
+**Prevention:** [TODO]
 ---
 
 ### 🎯 Interview Deep-Dive
@@ -2304,64 +2332,6 @@ String r = switch (input) {
     default -> "unknown"; // REQUIRED
 };
 ```
-
----
-
-### ⚖️ Comparison Table
-
-| Feature | Switch Expression | Switch Statement | if-else |
-|---------|------------------|-----------------|--------|
-| Returns value | Yes | No | No (ternary: yes) |
-| Fall-through | No (arrow) | Yes (colon) | No |
-| Exhaustiveness | Compiler-checked | No | No |
-| Pattern matching | JDK 21+ | No | No |
-| Multi-case | Comma-separated | Stack cases | \|\| chains |
-
----
-
-### ⚠️ Common Misconceptions
-
-| # | Misconception | Reality |
-|---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
-
----
-
-### 🚨 Failure Modes and Diagnosis
-
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
-
 ---
 
 ### 🔗 Related Keywords
@@ -2377,4 +2347,3 @@ String r = switch (input) {
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-

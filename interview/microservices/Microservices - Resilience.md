@@ -17,7 +17,7 @@ keywords:
   - Health Check Patterns
 difficulty_range: medium to hard
 status: in-progress
-version: 2
+version: 3
 ---
 
 **Keywords covered in this file:**
@@ -33,20 +33,17 @@ version: 2
 # Circuit Breaker
 
 **TL;DR** - A Circuit Breaker prevents cascading failures by stopping calls to a failing downstream service. It has three states: CLOSED (normal), OPEN (requests immediately fail without calling downstream), HALF-OPEN (allows test calls to check if recovery has happened). Without it, one slow service kills your entire system.
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Payment Service becomes slow (30s response). Order Service keeps calling it with all available threads. Thread pool exhausts. Cart Service calls Order Service -> also backs up. In 60 seconds, every service is down because one service was slow.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -59,7 +56,6 @@ Payment Service becomes slow (30s response). Order Service keeps calling it with
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -79,7 +75,6 @@ Payment Service becomes slow (30s response). Order Service keeps calling it with
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -91,7 +86,6 @@ Payment Service becomes slow (30s response). Order Service keeps calling it with
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -182,14 +176,12 @@ When circuit opens for an instance, remove it from the load balancer rotation. W
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -203,7 +195,6 @@ When circuit opens for an instance, remove it from the load balancer rotation. W
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -218,48 +209,29 @@ When circuit opens for an instance, remove it from the load balancer rotation. W
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your circuit breaker is transitioning CLOSED -> OPEN -> HALF_OPEN -> OPEN repeatedly. What's happening and what do you do?**
-
-_Why they ask:_ Tests debugging and tuning skills.
-
-_Strong answer:_
-
-**Diagnosis:** The downstream service is partially recovering but not fully healthy. During HALF_OPEN, some test calls succeed but failure rate is still above threshold.
-
-**Root causes:**
-
-1. Downstream is partially healthy (some pods up, some down)
-2. Circuit breaker settings too aggressive (small sliding window, low failure threshold)
-3. Health check passes but service can't handle full load
-
-**Fixes:**
-
-1. **Check downstream:** Is it truly recovering? Check its health endpoints, pod status, error logs
-2. **Tune settings:** Increase `permittedNumberOfCallsInHalfOpenState` from 3 to 10 for better signal
-3. **Increase wait duration:** Give downstream more time to fully recover before testing
-4. **Add slow-call threshold:** If downstream is "up" but returning in 20s, that's still a failure
-5. **Fix downstream:** The circuit breaker is a symptom. Fix the root cause (memory leak, connection pool exhaustion, deadlock)
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Circuit Breaker. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -270,7 +242,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -304,7 +275,31 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your circuit breaker is transitioning CLOSED -> OPEN -> HALF_OPEN -> OPEN repeatedly. What's happening and what do you do?**
+
+_Why they ask:_ Tests debugging and tuning skills.
+
+_Strong answer:_
+
+**Diagnosis:** The downstream service is partially recovering but not fully healthy. During HALF_OPEN, some test calls succeed but failure rate is still above threshold.
+
+**Root causes:**
+
+1. Downstream is partially healthy (some pods up, some down)
+2. Circuit breaker settings too aggressive (small sliding window, low failure threshold)
+3. Health check passes but service can't handle full load
+
+**Fixes:**
+
+1. **Check downstream:** Is it truly recovering? Check its health endpoints, pod status, error logs
+2. **Tune settings:** Increase `permittedNumberOfCallsInHalfOpenState` from 3 to 10 for better signal
+3. **Increase wait duration:** Give downstream more time to fully recover before testing
+4. **Add slow-call threshold:** If downstream is "up" but returning in 20s, that's still a failure
+5. **Fix downstream:** The circuit breaker is a symptom. Fix the root cause (memory leak, connection pool exhaustion, deadlock)
 ---
 
 ### 🔗 Related Keywords
@@ -329,7 +324,6 @@ _Strong answer:_
 # Bulkhead Pattern
 
 **TL;DR** - Bulkhead isolates resources (thread pools, connection pools, memory) per downstream dependency so that a failure in one doesn't consume resources needed by others. Named after ship bulkheads that prevent one breach from sinking the whole ship.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -345,13 +339,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -364,7 +356,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -384,7 +375,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -396,7 +386,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -463,14 +452,12 @@ Order matters: Bulkhead first (protect resources), then Circuit Breaker (protect
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -484,7 +471,6 @@ Order matters: Bulkhead first (protect resources), then Circuit Breaker (protect
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -499,45 +485,29 @@ Order matters: Bulkhead first (protect resources), then Circuit Breaker (protect
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: How do you size a bulkhead's thread pool?**
-
-_Why they ask:_ Tests capacity planning.
-
-_Strong answer:_
-
-**Formula:** `pool_size = target_throughput * avg_latency`
-
-Example: Need 100 req/s to Payment Service, average latency 200ms.
-Pool size = 100 \* 0.2 = 20 threads minimum.
-Add 50% buffer: 30 threads.
-
-**But also consider:**
-
-- Slow call scenario: If latency spikes to 2s, 30 threads handle only 15 req/s
-- That's by design - bulkhead caps the damage
-- Set max wait duration: If all 30 threads busy, wait max 500ms, then reject
-- Monitor: Track rejection rate. If consistently rejecting, either increase pool or fix downstream latency
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Bulkhead Pattern. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -548,7 +518,6 @@ Add 50% buffer: 30 threads.
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -582,7 +551,28 @@ Add 50% buffer: 30 threads.
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: How do you size a bulkhead's thread pool?**
+
+_Why they ask:_ Tests capacity planning.
+
+_Strong answer:_
+
+**Formula:** `pool_size = target_throughput * avg_latency`
+
+Example: Need 100 req/s to Payment Service, average latency 200ms.
+Pool size = 100 \* 0.2 = 20 threads minimum.
+Add 50% buffer: 30 threads.
+
+**But also consider:**
+
+- Slow call scenario: If latency spikes to 2s, 30 threads handle only 15 req/s
+- That's by design - bulkhead caps the damage
+- Set max wait duration: If all 30 threads busy, wait max 500ms, then reject
+- Monitor: Track rejection rate. If consistently rejecting, either increase pool or fix downstream latency
 ---
 
 ### 🔗 Related Keywords
@@ -607,7 +597,6 @@ Add 50% buffer: 30 threads.
 # Timeout/Retry/Fallback Strategy
 
 **TL;DR** - Every external call needs three things: a timeout (how long to wait), a retry policy (how many times to try again), and a fallback (what to do when all attempts fail). Without these, a single slow or failing dependency takes down your service.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -623,13 +612,11 @@ Add 50% buffer: 30 threads.
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -642,7 +629,6 @@ Add 50% buffer: 30 threads.
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -662,7 +648,6 @@ Add 50% buffer: 30 threads.
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -674,7 +659,6 @@ Add 50% buffer: 30 threads.
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -769,14 +753,12 @@ Each service subtracts elapsed time from the budget and passes the remaining bud
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -790,7 +772,6 @@ Each service subtracts elapsed time from the budget and passes the remaining bud
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -805,42 +786,29 @@ Each service subtracts elapsed time from the budget and passes the remaining bud
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: A retry storm is bringing down your downstream service. What happened and how do you fix it?**
-
-_Why they ask:_ Tests understanding of retry amplification.
-
-_Strong answer:_
-
-**What happened:** Downstream had a brief issue. 100 upstream instances each retry 3 times = 300 extra requests on an already struggling service. The retries prevent recovery.
-
-**Fixes:**
-
-1. **Exponential backoff with jitter:** Spread retries over time. Jitter prevents all instances retrying simultaneously.
-2. **Circuit breaker:** After failure threshold, stop calling entirely. No retries.
-3. **Retry budget:** Max 10% of traffic can be retries. Once budget exceeded, stop retrying.
-4. **Limit max retries:** 2-3 max. Not 10.
-5. **Server-side: Return 429 with Retry-After header.** Clients respect this.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Timeout/Retry/Fallback Strategy. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -851,7 +819,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -885,7 +852,25 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: A retry storm is bringing down your downstream service. What happened and how do you fix it?**
+
+_Why they ask:_ Tests understanding of retry amplification.
+
+_Strong answer:_
+
+**What happened:** Downstream had a brief issue. 100 upstream instances each retry 3 times = 300 extra requests on an already struggling service. The retries prevent recovery.
+
+**Fixes:**
+
+1. **Exponential backoff with jitter:** Spread retries over time. Jitter prevents all instances retrying simultaneously.
+2. **Circuit breaker:** After failure threshold, stop calling entirely. No retries.
+3. **Retry budget:** Max 10% of traffic can be retries. Once budget exceeded, stop retrying.
+4. **Limit max retries:** 2-3 max. Not 10.
+5. **Server-side: Return 429 with Retry-After header.** Clients respect this.
 ---
 
 ### 🔗 Related Keywords
@@ -910,7 +895,6 @@ _Strong answer:_
 # Resilience4j
 
 **TL;DR** - Resilience4j is the standard resilience library for Java microservices, providing Circuit Breaker, Bulkhead, Rate Limiter, Retry, and Time Limiter as composable, lightweight decorators. It replaces Netflix Hystrix (deprecated).
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -926,13 +910,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -945,7 +927,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -965,7 +946,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -977,7 +957,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1076,14 +1055,12 @@ a failure, and Retry decides whether to retry.
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1097,7 +1074,6 @@ a failure, and Retry decides whether to retry.
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1112,45 +1088,29 @@ a failure, and Retry decides whether to retry.
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: What is the correct order to apply Resilience4j decorators and why?**
-
-_Why they ask:_ Tests deep understanding of composition.
-
-_Strong answer:_
-
-**Correct order (outermost to innermost):**
-`Retry -> CircuitBreaker -> RateLimiter -> Bulkhead -> TimeLimiter -> Call`
-
-**Why this order:**
-
-1. **TimeLimiter (innermost):** Caps call duration. Prevents thread from blocking forever.
-2. **Bulkhead:** Limits concurrent calls. Rejects immediately if all slots taken.
-3. **RateLimiter:** Limits calls per time window. Protects downstream from overload.
-4. **CircuitBreaker:** Tracks success/failure. If failure rate exceeds threshold, short-circuits (doesn't call inner decorators at all).
-5. **Retry (outermost):** If everything inside fails, decides whether to retry the entire chain.
-
-**Wrong order example:** If Retry is inside CircuitBreaker, each retry counts as a separate call for circuit breaker metrics. 3 retries of 1 failure = 3 failures recorded. Circuit opens 3x faster than expected.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Resilience4j. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1161,7 +1121,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1195,7 +1154,28 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: What is the correct order to apply Resilience4j decorators and why?**
+
+_Why they ask:_ Tests deep understanding of composition.
+
+_Strong answer:_
+
+**Correct order (outermost to innermost):**
+`Retry -> CircuitBreaker -> RateLimiter -> Bulkhead -> TimeLimiter -> Call`
+
+**Why this order:**
+
+1. **TimeLimiter (innermost):** Caps call duration. Prevents thread from blocking forever.
+2. **Bulkhead:** Limits concurrent calls. Rejects immediately if all slots taken.
+3. **RateLimiter:** Limits calls per time window. Protects downstream from overload.
+4. **CircuitBreaker:** Tracks success/failure. If failure rate exceeds threshold, short-circuits (doesn't call inner decorators at all).
+5. **Retry (outermost):** If everything inside fails, decides whether to retry the entire chain.
+
+**Wrong order example:** If Retry is inside CircuitBreaker, each retry counts as a separate call for circuit breaker metrics. 3 retries of 1 failure = 3 failures recorded. Circuit opens 3x faster than expected.
 ---
 
 ### 🔗 Related Keywords
@@ -1220,20 +1200,17 @@ _Strong answer:_
 # Saga Pattern
 
 **TL;DR** - A Saga is a sequence of local transactions across multiple services, where each step has a compensating action to undo it if a later step fails. It replaces distributed transactions (2PC) which don't scale in microservices. Two styles: Orchestration (central coordinator) and Choreography (event-driven, no coordinator).
-
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Order requires inventory reservation + payment + shipping. Can't wrap in one database transaction because each is a separate service with its own database. Without Saga, you get partial completion: payment succeeds but shipping fails. Money charged but nothing shipped.
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1246,7 +1223,6 @@ Order requires inventory reservation + payment + shipping. Can't wrap in one dat
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1266,7 +1242,6 @@ Order requires inventory reservation + payment + shipping. Can't wrap in one dat
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1278,7 +1253,6 @@ Order requires inventory reservation + payment + shipping. Can't wrap in one dat
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1378,14 +1352,12 @@ it resumes from last state on restart.
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1399,7 +1371,6 @@ it resumes from last state on restart.
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1414,48 +1385,29 @@ it resumes from last state on restart.
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Choreography saga with 8 services is becoming unmaintainable. How do you fix it?**
-
-_Why they ask:_ Tests architecture judgment on saga style.
-
-_Strong answer:_
-
-**Problem:** With 8 services, choreography creates a web of event dependencies. No single place shows the full flow. Debugging requires tracing events across 8 services. Adding a 9th step requires understanding all existing event chains.
-
-**Solution: Migrate to orchestration.**
-
-1. Create a SagaOrchestrator service that owns the saga definition
-2. Saga definition lists all steps + compensations in order
-3. Each step is a command to a service (not an event subscription)
-4. Orchestrator persists saga state in its own database
-5. If orchestrator crashes, restart from last persisted state
-6. Full saga flow visible in one file
-
-**Hybrid approach for complex systems:**
-
-- Orchestration for the main order saga (8 steps)
-- Choreography for cross-cutting concerns (analytics, audit logging) that subscribe to saga completion events
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Saga Pattern. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1466,7 +1418,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1500,7 +1451,31 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Choreography saga with 8 services is becoming unmaintainable. How do you fix it?**
+
+_Why they ask:_ Tests architecture judgment on saga style.
+
+_Strong answer:_
+
+**Problem:** With 8 services, choreography creates a web of event dependencies. No single place shows the full flow. Debugging requires tracing events across 8 services. Adding a 9th step requires understanding all existing event chains.
+
+**Solution: Migrate to orchestration.**
+
+1. Create a SagaOrchestrator service that owns the saga definition
+2. Saga definition lists all steps + compensations in order
+3. Each step is a command to a service (not an event subscription)
+4. Orchestrator persists saga state in its own database
+5. If orchestrator crashes, restart from last persisted state
+6. Full saga flow visible in one file
+
+**Hybrid approach for complex systems:**
+
+- Orchestration for the main order saga (8 steps)
+- Choreography for cross-cutting concerns (analytics, audit logging) that subscribe to saga completion events
 ---
 
 ### 🔗 Related Keywords
@@ -1525,7 +1500,6 @@ _Strong answer:_
 # Dead Letter Queue Strategy
 
 **TL;DR** - A Dead Letter Queue (DLQ) captures messages that fail processing after all retries are exhausted. Instead of losing the message or blocking the queue, failed messages are moved to a separate queue for investigation, manual replay, or automated remediation.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1541,13 +1515,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1560,7 +1532,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1580,7 +1551,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1592,7 +1562,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1656,14 +1625,12 @@ public DefaultErrorHandler errorHandler(
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -1677,7 +1644,6 @@ public DefaultErrorHandler errorHandler(
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -1692,43 +1658,29 @@ public DefaultErrorHandler errorHandler(
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your DLQ has 10,000 messages from a 2-hour outage. How do you replay them safely?**
-
-_Why they ask:_ Tests operational maturity.
-
-_Strong answer:_
-
-**NOT safe:** Dump all 10K messages back to main queue at once. Downstream can't handle the burst. And some messages might be duplicates of already-processed ones.
-
-**Safe replay process:**
-
-1. **Analyze:** Sample 100 messages to understand why they failed. Was it the same error?
-2. **Fix root cause first:** Deploy the fix before replaying
-3. **Deduplicate:** Check if some messages were already processed (idempotency key check). Remove duplicates from DLQ.
-4. **Rate-limited replay:** Replay 100 messages/minute, not 10K at once. Monitor downstream health during replay.
-5. **Idempotent consumers:** Ensure consumers handle replayed messages safely (same orderId processed twice = no double charge)
-6. **Monitor:** Watch error rates during replay. If failures resume, stop replay and investigate.
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Dead Letter Queue Strategy. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -1739,7 +1691,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -1773,7 +1724,26 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your DLQ has 10,000 messages from a 2-hour outage. How do you replay them safely?**
+
+_Why they ask:_ Tests operational maturity.
+
+_Strong answer:_
+
+**NOT safe:** Dump all 10K messages back to main queue at once. Downstream can't handle the burst. And some messages might be duplicates of already-processed ones.
+
+**Safe replay process:**
+
+1. **Analyze:** Sample 100 messages to understand why they failed. Was it the same error?
+2. **Fix root cause first:** Deploy the fix before replaying
+3. **Deduplicate:** Check if some messages were already processed (idempotency key check). Remove duplicates from DLQ.
+4. **Rate-limited replay:** Replay 100 messages/minute, not 10K at once. Monitor downstream health during replay.
+5. **Idempotent consumers:** Ensure consumers handle replayed messages safely (same orderId processed twice = no double charge)
+6. **Monitor:** Watch error rates during replay. If failures resume, stop replay and investigate.
 ---
 
 ### 🔗 Related Keywords
@@ -1798,7 +1768,6 @@ _Strong answer:_
 # Health Check Patterns
 
 **TL;DR** - Health checks let infrastructure (load balancers, Kubernetes, service registry) know whether a service instance is alive and ready to receive traffic. Two types: Liveness (is the process alive?) and Readiness (can it serve requests?). Getting them wrong causes cascading restarts or traffic to unhealthy instances.
-
 ---
 
 ### 🔥 The Problem This Solves
@@ -1814,13 +1783,11 @@ _Strong answer:_
 
 **EVOLUTION:**
 [TODO: predecessor -> current form -> future.]
-
 ---
 
 ### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
-
 ---
 
 ### ⏱️ Understand It in 30 Seconds
@@ -1833,7 +1800,6 @@ _Strong answer:_
 
 **One insight:**
 [TODO: What separates knowing the name from understanding it.]
-
 ---
 
 ### 🔩 First Principles Explanation
@@ -1853,7 +1819,6 @@ _Strong answer:_
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** [TODO]
 **Accidental:** [TODO]
-
 ---
 
 ### 🧠 Mental Model / Analogy
@@ -1865,7 +1830,6 @@ _Strong answer:_
 - "[TODO: Analogy element]" -> [technical element]
 
 Where this analogy breaks down: [TODO: 1 sentence.]
-
 ---
 
 ### 📶 Gradual Depth - Five Levels
@@ -1993,14 +1957,12 @@ public class ReadinessHealthIndicator
 [TODO: Cross-domain pattern recognition. Expert heuristics.
  What would you change if redesigning today?
  How does this compose at extreme scale?]
-
 ---
 
 ### How It Works (Mechanism)
 
 [TODO: Internal mechanics. Data flow. Key steps.
  4-8 sentences covering implementation details.]
-
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
@@ -2014,7 +1976,6 @@ public class ReadinessHealthIndicator
 
 **WHAT CHANGES AT SCALE:**
 [TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
-
 ---
 
 ### 📌 Quick Reference Card
@@ -2029,42 +1990,29 @@ public class ReadinessHealthIndicator
 | ANTI-PATTERN| [TODO: Common misuse]        |
 | TRADE-OFF   | [TODO: What you give up]     |
 | ONE-LINER   | [TODO: Interview summary]    |
+| KEY NUMBERS | [TODO: 2-3 critical thresholds]  |
 +-------------------------------------------+
 ```
-
 ---
+
+### ✅ Mastery Checklist
+
+**You've mastered this when you can:**
+1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
+2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
+3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
+4. **BUILD:** [TODO: Implement/configure in production context]
+5. **EXTEND:** [TODO: Apply principle to a different domain]---
 
 ### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
-
----
-
-### 🎯 Interview Deep-Dive
-
-**Q1: Your service has a memory leak. Liveness probe passes (process responds). How does this eventually cause problems?**
-
-_Why they ask:_ Tests understanding of health check limitations.
-
-_Strong answer:_
-
-**What happens:** Memory leak means heap fills gradually. Liveness probe returns 200 (process alive). But GC pauses increase -> response times degrade -> eventually OOM kill (but before that, service is extremely slow for minutes).
-
-**Detection strategies:**
-
-1. **Readiness check includes response time:** If average latency > 2s, fail readiness -> remove from load balancer
-2. **Liveness check includes memory threshold:** If heap usage > 90% for 5 minutes, fail liveness -> restart
-3. **Custom metric-based probe:** Check GC pause time. If GC occupies > 50% of CPU time, fail.
-4. **External monitoring:** Prometheus alert on `jvm.memory.used / jvm.memory.max > 0.85` -> alert team
-5. **Preventive restart:** Some teams set max uptime (e.g., rolling restart every 24h) as a safety net for slow leaks
-
 ---
 
 ### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Health Check Patterns. Otherwise remove this section.]
-
 ---
 
 ### ⚠️ Common Misconceptions
@@ -2075,7 +2023,6 @@ _Strong answer:_
 | 2 | [TODO] | [TODO] |
 | 3 | [TODO] | [TODO] |
 | 4 | [TODO] | [TODO] |
-
 ---
 
 ### 🚨 Failure Modes and Diagnosis
@@ -2109,7 +2056,25 @@ _Strong answer:_
 ```
 **Fix:** [TODO: BAD then GOOD]
 **Prevention:** [TODO]
+---
 
+### 🎯 Interview Deep-Dive
+
+**Q1: Your service has a memory leak. Liveness probe passes (process responds). How does this eventually cause problems?**
+
+_Why they ask:_ Tests understanding of health check limitations.
+
+_Strong answer:_
+
+**What happens:** Memory leak means heap fills gradually. Liveness probe returns 200 (process alive). But GC pauses increase -> response times degrade -> eventually OOM kill (but before that, service is extremely slow for minutes).
+
+**Detection strategies:**
+
+1. **Readiness check includes response time:** If average latency > 2s, fail readiness -> remove from load balancer
+2. **Liveness check includes memory threshold:** If heap usage > 90% for 5 minutes, fail liveness -> restart
+3. **Custom metric-based probe:** Check GC pause time. If GC occupies > 50% of CPU time, fail.
+4. **External monitoring:** Prometheus alert on `jvm.memory.used / jvm.memory.max > 0.85` -> alert team
+5. **Preventive restart:** Some teams set max uptime (e.g., rolling restart every 24h) as a safety net for slow leaks
 ---
 
 ### 🔗 Related Keywords
@@ -2125,4 +2090,3 @@ _Strong answer:_
 **Alternatives / Comparisons:**
 - [TODO] - [when to prefer it]
 - [TODO] - [when to prefer it]
-
