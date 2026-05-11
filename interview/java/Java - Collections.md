@@ -113,9 +113,12 @@ ArrayList's 1.5x growth factor is a compromise - 2x (used in some C++ vectors) w
 
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+ArrayList is an instance of the universal array-vs-linked trade-off found in every language and system: contiguous memory (cache-friendly, O(1) random access) vs pointer-chained nodes (O(1) insertion anywhere). The expert heuristic: if you are unsure which List to use, ArrayList is correct 95% of the time because modern CPUs reward spatial locality far more than algorithmic complexity predicts. At extreme scale, ArrayList's internal `Object[]` means every element is a heap pointer, destroying cache efficiency for primitives - this is why Chronicle Queue, Agrona, and Eclipse Collections provide `IntArrayList` with contiguous int storage. If redesigning today, you would make ArrayList generic over value types (Project Valhalla) so `ArrayList<int>` stores primitives inline, eliminating autoboxing and achieving C-level memory density.
+
+**Expert thinking cues:**
+- "Is my access pattern sequential or random?" - ArrayList wins both due to cache prefetching
+- "How often do I insert in the middle?" - if rarely, the O(n) cost is irrelevant vs cache benefits
+- "Am I storing primitives?" - if yes, use primitive-specialized lists to avoid 16-byte/element overhead
 
 ---
 
@@ -236,14 +239,14 @@ Write a unit test that adds elements beyond initial capacity, verifies `size()` 
 
 ### Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
+**WHAT IT IS:** Resizable array-backed list with O(1) random access
+**PROBLEM IT SOLVES:** Dynamic-size ordered collection with fast index-based access
+**KEY INSIGHT:** Contiguous memory layout makes it cache-friendly - faster than LinkedList for almost everything
+**USE WHEN:** Ordered data with frequent reads, iteration, or index-based access
+**AVOID WHEN:** Frequent insertions/removals in the middle of large lists (>10K elements)
+**ANTI-PATTERN:** Using LinkedList "because insertions are O(1)" - cache misses make it slower in practice
+**TRADE-OFF:** Fast reads and iteration vs O(n) mid-list insertion and occasional resize copies
+**ONE-LINER:** "Array that grows - fast reads, cache-friendly, wrong only for heavy mid-list insertion"
 
 **If you remember only 3 things:**
 
@@ -494,7 +497,14 @@ Additional consideration: at 50M elements, even iterating has cache implications
 
 ### Comparison Table
 
-[TODO: Include if 2+ named alternatives exist for ArrayList. Otherwise remove this section.]
+| Aspect | ArrayList | LinkedList | CopyOnWriteArrayList |
+|--------|-----------|------------|---------------------|
+| Random access | O(1) | O(n) | O(1) |
+| Add at end | O(1) amortized | O(1) | O(n) copy |
+| Insert middle | O(n) shift | O(1) at node | O(n) copy |
+| Memory layout | Contiguous array | Scattered nodes | Contiguous array |
+| Thread safety | No | No | Yes (read-heavy) |
+| Iterator | Fail-fast | Fail-fast | Snapshot |
 
 ---
 
@@ -502,60 +512,100 @@ Additional consideration: at 50M elements, even iterating has cache implications
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | LinkedList is faster for insertions | Only at a known node position. Finding the node is O(n), and cache misses make LinkedList 5-10x slower than ArrayList for most real workloads. |
+| 2 | ArrayList capacity equals size | Capacity is the internal array length; size is the number of elements. `new ArrayList<>(100)` allocates space for 100 but `size()` is 0. |
+| 3 | `trimToSize()` should be called after every removal | Shrinking the array copies all elements. Only call when the list is finalized and memory matters. |
+| 4 | `Collections.synchronizedList()` makes it fully thread-safe | Individual operations are synchronized, but compound operations (iterate-then-modify) still need external locking. Use `CopyOnWriteArrayList` for read-heavy concurrent access. |
 
 ---
 
 ### Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: ConcurrentModificationException during iteration**
+**Symptom:** `ConcurrentModificationException` from `Iterator.next()` during for-each.
+**Root Cause:** Modifying the list (add/remove) while iterating with a fail-fast iterator.
 **Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
 ```
-[TODO: real diagnostic command]
+grep -n 'for.*:.*list' MyClass.java
+# Find list.remove() or list.add() inside for-each
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Fix:**
+```java
+// BAD: modify during iteration
+for (String s : list) {
+    if (s.isEmpty()) list.remove(s);
+}
+
+// GOOD: use removeIf
+list.removeIf(String::isEmpty);
+```
+**Prevention:** Use `removeIf()`, `Iterator.remove()`, or stream-filter-collect.
+
+**Failure Mode 2: OutOfMemoryError from unbounded growth**
+**Symptom:** `OutOfMemoryError: Java heap space` after hours/days of operation.
+**Root Cause:** ArrayList used as buffer/log that grows without bound.
 **Diagnostic:**
+
 ```
-[TODO: real diagnostic command]
+jmap -histo:live <pid> | head -20
+# Look for Object[] with millions of instances
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+
+**Fix:**
+```java
+// BAD: unbounded accumulation
+List<Event> events = new ArrayList<>();
+void onEvent(Event e) { events.add(e); }
+
+// GOOD: bounded with eviction
+ArrayDeque<Event> events = new ArrayDeque<>();
+void onEvent(Event e) {
+    if (events.size() >= MAX) events.pollFirst();
+    events.addLast(e);
+}
+```
+**Prevention:** Always set size bounds on in-memory collections. Monitor collection sizes.
+
+**Failure Mode 3: Latency spikes from resize-and-copy**
+**Symptom:** Periodic latency spikes. `Arrays.copyOf` in profiler hot paths.
+**Root Cause:** Default capacity (10) causes repeated resize when adding thousands of elements.
+**Diagnostic:**
+
+```
+asprof -e alloc -d 30 -f alloc.html <pid>
+# Look for Object[] from ArrayList.grow
+```
+
+**Fix:**
+```java
+// BAD: default capacity, many resizes
+List<Row> rows = new ArrayList<>();
+
+// GOOD: pre-size when count is known
+List<Row> rows = new ArrayList<>(expectedCount);
+```
+**Prevention:** Pre-size lists when expected count is known. Use `ensureCapacity()` before bulk adds.
 
 ---
 
 ### Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+
+- Variables and Data Types - arrays and reference types
+- Generics and Type Erasure - how `ArrayList<T>` stores `Object[]` internally
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+
+- ConcurrentCollections - thread-safe alternatives (`CopyOnWriteArrayList`)
+- Streams API - functional operations over collections
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
+
+- LinkedList - when you need O(1) insert/remove at known positions
+- `List.of()` / `Collections.unmodifiableList()` - when immutability is required
 
 ---
 
@@ -655,9 +705,12 @@ HashMap's `hash()` function XORs `h ^ (h >>> 16)` to spread high bits into the l
 
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+HashMap is the canonical implementation of the hash table - the most important data structure in practical computing. The expert insight is that HashMap's design embodies the space-time trade-off at every level: it trades memory (load factor overhead, node objects, tree nodes) for O(1) average-case lookups. The same pattern appears in database indexes (B-trees trade space for seek time), CPU caches (SRAM trades die area for speed), and DNS (caching trades memory for latency). At extreme scale, HashMap's limitations become apparent: `Object[]` bucket array + Node linked lists + TreeNode red-black trees create cache-unfriendly pointer-chasing. This is why high-performance systems use open-addressing maps (Eclipse Collections, fastutil) or off-heap maps (Chronicle Map) where keys and values are stored inline. If redesigning today, you would make HashMap Valhalla-aware so `HashMap<int, long>` uses a flat array of (int, long) pairs - no boxing, no Node objects, no pointer chasing.
+
+**Expert thinking cues:**
+- "How many entries and what is the key distribution?" - uniform hashing gives O(1); pathological keys give O(log n) with treeification
+- "Is this map long-lived or short-lived?" - long-lived maps with poor initial sizing waste memory permanently
+- "Do I need concurrency?" - if yes, never use HashMap with external sync; use ConcurrentHashMap
 
 ---
 
@@ -784,14 +837,14 @@ Test that your key class's `hashCode()` and `equals()` satisfy the contract: equ
 
 ### Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
+**WHAT IT IS:** Hash table implementation of Map with O(1) average put/get
+**PROBLEM IT SOLVES:** Fast key-value lookup, deduplication, grouping, counting
+**KEY INSIGHT:** Hash function distributes keys across buckets; collisions resolved by chaining (linked list then red-black tree)
+**USE WHEN:** Key-based lookup, counting, grouping, caching, deduplication
+**AVOID WHEN:** Need ordered iteration (use TreeMap), need thread safety (use ConcurrentHashMap)
+**ANTI-PATTERN:** Using mutable objects as keys - if hashCode changes after insertion, the entry is lost
+**TRADE-OFF:** O(1) speed vs memory overhead (~48 bytes per entry vs ~16 for array)
+**ONE-LINER:** "O(1) lookup via hashing - the workhorse of every Java application"
 
 **If you remember only 3 things:**
 
@@ -981,7 +1034,14 @@ Key insight: under normal conditions with a good hash function, treeification al
 
 ### Comparison Table
 
-[TODO: Include if 2+ named alternatives exist for HashMap. Otherwise remove this section.]
+| Aspect | HashMap | TreeMap | LinkedHashMap | ConcurrentHashMap |
+|--------|---------|---------|--------------|-------------------|
+| Order | None | Sorted by key | Insertion order | None |
+| Get/Put | O(1) avg | O(log n) | O(1) avg | O(1) avg |
+| Null keys | 1 allowed | No | 1 allowed | No |
+| Thread safe | No | No | No | Yes |
+| Memory/entry | ~48 bytes | ~56 bytes | ~56 bytes | ~56 bytes |
+| Use case | General purpose | Range queries | LRU cache | Concurrent access |
 
 ---
 
@@ -989,60 +1049,99 @@ Key insight: under normal conditions with a good hash function, treeification al
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | HashMap maintains insertion order | HashMap makes no ordering guarantees. Use `LinkedHashMap` for insertion order or `TreeMap` for sorted order. |
+| 2 | `hashCode()` alone determines the bucket | HashMap applies a secondary spread function `h ^ (h >>> 16)` to reduce collisions from poor `hashCode()` implementations. |
+| 3 | HashMap handles concurrent access with external sync | External `synchronized` blocks work but are coarse-grained. `ConcurrentHashMap` uses fine-grained striped locking for 10-100x better throughput. |
+| 4 | HashMap always uses linked lists for collisions | Since Java 8, buckets with 8+ collisions treeify into red-black trees (O(log n) worst case), preventing hash-flooding DoS from degrading to O(n). |
 
 ---
 
 ### Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: Lost entries from mutable keys**
+**Symptom:** `map.get(key)` returns null for a key that was just inserted.
+**Root Cause:** Key object mutated after insertion, changing its `hashCode()`. Entry stranded in wrong bucket.
 **Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
 ```
-[TODO: real diagnostic command]
+jshell> map.entrySet().stream()
+  .filter(e -> e.getKey().equals(target))
+  .count()
+# If 0 but map.size() grew, key hash changed
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Fix:**
+```java
+// BAD: mutable key
+List<String> key = new ArrayList<>();
+map.put(key, "val");
+key.add("oops"); // hashCode changed!
+
+// GOOD: immutable key
+String key = String.join(",", items);
+map.put(key, "val");
+```
+**Prevention:** Only use immutable types as keys (String, Integer, Records, enums).
+
+**Failure Mode 2: Infinite loop from concurrent modification**
+**Symptom:** Thread hangs at 100% CPU. Thread dump shows `HashMap.get()` or `resize()` looping.
+**Root Cause:** Two threads trigger simultaneous resize, creating circular linked list in a bucket.
 **Diagnostic:**
+
 ```
-[TODO: real diagnostic command]
+jstack <pid> | grep -A 5 "HashMap"
+# Threads stuck in HashMap.getNode or resize
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+
+**Fix:**
+```java
+// BAD: shared HashMap across threads
+Map<String, Integer> shared = new HashMap<>();
+
+// GOOD: use ConcurrentHashMap
+Map<String, Integer> shared =
+    new ConcurrentHashMap<>();
+```
+**Prevention:** Never share HashMap across threads. Use ConcurrentHashMap or thread-local maps.
+
+**Failure Mode 3: Hash-flooding DoS attack**
+**Symptom:** API latency spikes to seconds. CPU 100% in `HashMap.put()`.
+**Root Cause:** Attacker crafts keys with identical hash codes, degrading to O(n) per operation.
+**Diagnostic:**
+
+```
+asprof -e cpu -d 30 -f cpu.html <pid>
+# HashMap.putVal or TreeNode.find dominating CPU
+```
+
+**Fix:**
+```java
+// Limit input sizes at API boundaries
+if (input.size() > MAX_ENTRIES)
+    throw new IllegalArgumentException();
+// Java 8+ treeifies at 8 collisions (O(log n))
+// Ensure keys implement Comparable
+```
+**Prevention:** Validate and limit input sizes at API boundaries. Use Java 8+. Keys should implement `Comparable`.
 
 ---
 
 ### Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+
+- `equals()` and `hashCode()` contract - foundation of HashMap correctness
+- Variables and Data Types - object identity vs equality
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+
+- ConcurrentHashMap - thread-safe version with segment locking
+- Streams `Collectors.groupingBy()`, `toMap()` patterns
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
+
+- TreeMap - when sorted key order is required
+- LinkedHashMap - when insertion order or LRU eviction is needed
 
 ---
 
@@ -1141,9 +1240,12 @@ TreeMap is the right choice when you need SortedMap/NavigableMap operations. In 
 
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+TreeMap implements a red-black tree - the same balanced BST used in Linux's CFS scheduler (`struct rb_node`), Java's `TreeSet`, and database indexes (B-trees are the disk-optimized cousin). The cross-domain insight: any time you need ordered data with O(log n) insert/delete/search, you are using a balanced tree variant - the only question is which balance strategy (red-black, AVL, B-tree, skip list). TreeMap's limitation is that it requires `Comparable` keys or a `Comparator`, making it type-constrained compared to HashMap. At scale, TreeMap's O(log n) per operation makes it unsuitable for hot-path lookups (HashMap's O(1) dominates), but it shines for range queries, sliding windows, and ordered iteration that HashMap cannot provide. If redesigning today, you might consider a skip list (like `ConcurrentSkipListMap`) as the default sorted map because it supports concurrent access without global locking.
+
+**Expert thinking cues:**
+- "Do I need range queries?" - if yes, TreeMap; if only point lookups, HashMap
+- "Is the comparison expensive?" - TreeMap calls `compareTo()` on every traversal step; expensive comparisons amplify O(log n)
+- "Is this concurrent?" - use `ConcurrentSkipListMap` instead of synchronized TreeMap
 
 ---
 
@@ -1261,14 +1363,14 @@ Verify that `subMap()` boundaries work correctly (inclusive vs exclusive), that 
 
 ### Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
+**WHAT IT IS:** Red-black tree implementation of SortedMap with O(log n) operations
+**PROBLEM IT SOLVES:** Ordered key-value storage with range queries and sorted iteration
+**KEY INSIGHT:** Self-balancing guarantees O(log n) worst case - no hash collision degradation
+**USE WHEN:** Range queries (`subMap`, `headMap`), sorted iteration, floor/ceiling lookups
+**AVOID WHEN:** Only need point lookups - HashMap is 3-10x faster for `get()`/`put()`
+**ANTI-PATTERN:** Using TreeMap for unsorted data just because "it's ordered" - HashMap + sort-on-read is faster
+**TRADE-OFF:** Guaranteed O(log n) and sorted order vs 3-10x slower than HashMap for basic operations
+**ONE-LINER:** "Sorted map via red-black tree - use for range queries, not point lookups"
 
 **If you remember only 3 things:**
 
@@ -1420,7 +1522,14 @@ For concurrent access, replace TreeMap with `ConcurrentSkipListMap` which provid
 
 ### Comparison Table
 
-[TODO: Include if 2+ named alternatives exist for TreeMap. Otherwise remove this section.]
+| Aspect | TreeMap | HashMap | ConcurrentSkipListMap |
+|--------|---------|---------|----------------------|
+| Order | Sorted by key | None | Sorted by key |
+| Get/Put | O(log n) | O(1) avg | O(log n) |
+| Range queries | Yes (`subMap`) | No | Yes (`subMap`) |
+| Null keys | No | 1 allowed | No |
+| Thread safe | No | No | Yes (lock-free) |
+| Memory/entry | ~56 bytes | ~48 bytes | ~72 bytes |
 
 ---
 
@@ -1428,60 +1537,103 @@ For concurrent access, replace TreeMap with `ConcurrentSkipListMap` which provid
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | TreeMap is always slower than HashMap | For range queries, floor/ceiling, and sorted iteration, TreeMap is faster because HashMap would require collecting and sorting all entries. |
+| 2 | TreeMap uses a plain binary search tree | It uses a red-black tree (self-balancing BST). A plain BST degrades to O(n) with sorted insertions; red-black guarantees O(log n). |
+| 3 | Any object can be a TreeMap key | Keys must implement `Comparable` or a `Comparator` must be provided. Otherwise `ClassCastException` at runtime. |
+| 4 | TreeMap is a good choice for caching | TreeMap has no size limit or eviction policy. For caching, use `LinkedHashMap` with `removeEldestEntry()` or Caffeine/Guava caches. |
 
 ---
 
 ### Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: ClassCastException on put()**
+**Symptom:** `ClassCastException: MyKey cannot be cast to Comparable` on first `put()`.
+**Root Cause:** Key class does not implement `Comparable` and no `Comparator` provided.
 **Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
 ```
-[TODO: real diagnostic command]
+javap -p MyKey.class | grep Comparable
+# Check if key implements Comparable
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Fix:**
+```java
+// BAD: no ordering defined
+TreeMap<MyKey, String> map = new TreeMap<>();
+
+// GOOD: provide Comparator
+TreeMap<MyKey, String> map = new TreeMap<>(
+    Comparator.comparing(MyKey::getName));
+```
+**Prevention:** Always define ordering via `Comparable` or `Comparator`.
+
+**Failure Mode 2: Corrupt tree from broken compareTo()**
+**Symptom:** `get()` returns null for existing keys. Entries disappear.
+**Root Cause:** `compareTo()` violates transitivity or is inconsistent with `equals()`.
 **Diagnostic:**
+
 ```
-[TODO: real diagnostic command]
+jshell> var c = map.comparator();
+jshell> c.compare(a, b) + c.compare(b, a)
+# Must be 0 (antisymmetry). Non-zero = broken.
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+
+**Fix:**
+```java
+// BAD: overflow in subtraction
+int compareTo(MyKey o) {
+    return this.value - o.value; // overflow!
+}
+
+// GOOD: safe comparison
+int compareTo(MyKey o) {
+    return Integer.compare(this.value, o.value);
+}
+```
+**Prevention:** Use `Integer.compare()`, `Comparator.comparing()`. Unit test transitivity.
+
+**Failure Mode 3: Performance degradation with expensive compareTo()**
+**Symptom:** TreeMap operations slower than expected. `compareTo()` dominates profiler.
+**Root Cause:** Comparison involves string concatenation, regex, or I/O. Called O(log n) times per op.
+**Diagnostic:**
+
+```
+asprof -e cpu -d 30 -f cpu.html <pid>
+# Look for compareTo dominating hot methods
+```
+
+**Fix:**
+```java
+// BAD: expensive comparison
+int compareTo(Key o) {
+    return toString().compareTo(o.toString());
+}
+
+// GOOD: compare primitive fields
+int compareTo(Key o) {
+    return Integer.compare(priority, o.priority);
+}
+```
+**Prevention:** Compare primitive fields directly. Cache derived comparison keys.
 
 ---
 
 ### Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+
+- Comparable and Comparator - required for key ordering
+- HashMap - the unordered alternative for informed choice
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+
+- ConcurrentSkipListMap - thread-safe sorted map alternative
+- NavigableMap API - `floorKey()`, `ceilingKey()`, `subMap()` range ops
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
+
+- HashMap + sort-on-read - faster for infrequent sorted access
+- Skip list - probabilistic alternative with simpler concurrency
 
 ---
 
@@ -1580,9 +1732,12 @@ The "HashMap with dummy values" design is memory-inefficient - each element wast
 
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+HashSet is a degenerate case of HashMap - literally implemented as `HashMap<E, PRESENT>` where `PRESENT` is a static dummy `Object`. This reveals a deep pattern: sets and maps are the same data structure - a set is a map where you only care about keys. This equivalence appears in Redis (SET is implemented as a hash table), databases (UNIQUE index is a key-only B-tree), and file systems (a directory is a set of filenames backed by an inode map). At scale, HashSet's 48 bytes/element overhead (HashMap.Node + dummy value) is wasteful for simple membership tests. OpenHashSet implementations (Eclipse Collections, fastutil) use open addressing with ~16 bytes/element. If redesigning today, you would separate Set from Map implementation, using a flat hash table for sets and eliminating the dummy value waste.
+
+**Expert thinking cues:**
+- "Is this a membership test or a lookup?" - if membership only, consider BitSet or Bloom filter for extreme scale
+- "How large will this set grow?" - at millions of elements, 48 bytes each adds up fast
+- "Is the hashCode distribution good?" - if keys cluster, performance degrades identically to HashMap
 
 ---
 
@@ -1684,14 +1839,14 @@ Verify that `add()` returns false for duplicates, that `size()` reflects unique 
 
 ### Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
+**WHAT IT IS:** Hash-table-backed Set with O(1) add, remove, contains
+**PROBLEM IT SOLVES:** Fast membership testing, deduplication, uniqueness enforcement
+**KEY INSIGHT:** Backed by HashMap internally - same performance characteristics, same pitfalls
+**USE WHEN:** Deduplication, membership checks, set operations (union, intersection)
+**AVOID WHEN:** Need ordering (use TreeSet), need insertion order (use LinkedHashSet)
+**ANTI-PATTERN:** Using a List and calling `contains()` for uniqueness checks - O(n) vs O(1)
+**TRADE-OFF:** O(1) operations vs 48 bytes memory overhead per element
+**ONE-LINER:** "HashMap minus values - O(1) membership test, dedup in one line"
 
 **If you remember only 3 things:**
 
@@ -1901,7 +2056,13 @@ This is a memory leak. The object is referenced by the set (preventing GC) but c
 
 ### Comparison Table
 
-[TODO: Include if 2+ named alternatives exist for HashSet. Otherwise remove this section.]
+| Aspect | HashSet | TreeSet | LinkedHashSet | EnumSet |
+|--------|---------|---------|--------------|--------|
+| Order | None | Sorted | Insertion | Natural (enum) |
+| Add/Contains | O(1) | O(log n) | O(1) | O(1) |
+| Null | 1 allowed | No | 1 allowed | No |
+| Memory/elem | ~48 bytes | ~56 bytes | ~56 bytes | 1 bit |
+| Backed by | HashMap | TreeMap | LinkedHashMap | Bit vector |
 
 ---
 
@@ -1909,60 +2070,101 @@ This is a memory leak. The object is referenced by the set (preventing GC) but c
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | HashSet maintains insertion order | HashSet has no ordering guarantees. Use `LinkedHashSet` for insertion order or `TreeSet` for sorted order. |
+| 2 | Two equal objects can exist in a HashSet | Objects with the same `equals()` result occupy the same slot. But if `hashCode()` is broken (equal objects return different hashes), duplicates can appear. |
+| 3 | HashSet is memory-efficient | Each element costs ~48 bytes (HashMap.Node + dummy Object). For large primitive sets, use BitSet or primitive-specialized sets (fastutil). |
+| 4 | `set.remove(obj)` always works if obj was added | If `obj` was mutated after adding (changing its `hashCode`), `remove()` cannot find it - same stranded-entry problem as HashMap. |
 
 ---
 
 ### Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: Duplicates appear in the Set**
+**Symptom:** `set.size()` larger than expected. Iteration shows duplicate-looking elements.
+**Root Cause:** `hashCode()` and/or `equals()` not properly overridden.
 **Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
 ```
-[TODO: real diagnostic command]
+jshell> var a = new MyObj("x");
+jshell> var b = new MyObj("x");
+jshell> a.equals(b) // should be true
+jshell> a.hashCode() == b.hashCode() // must match
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Fix:**
+```java
+// BAD: no equals/hashCode override
+class Item { String name; }
+
+// GOOD: use Record (auto equals/hashCode)
+record Item(String name) {}
+```
+**Prevention:** Use Records for value types. Override `equals`/`hashCode` with IDE generation.
+
+**Failure Mode 2: Set operations produce wrong results**
+**Symptom:** `retainAll()` or `removeAll()` returns unexpected results.
+**Root Cause:** Mixing types (e.g., `Set<Integer>` vs `Set<Long>`). `Integer.equals(Long)` is always false.
 **Diagnostic:**
+
 ```
-[TODO: real diagnostic command]
+jshell> new Integer(1).equals(new Long(1))
+# false - different types never equal
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+
+**Fix:**
+```java
+// BAD: mixed types
+Set<Integer> a = Set.of(1, 2, 3);
+Set<Long> b = Set.of(1L, 2L);
+a.retainAll(b); // empty!
+
+// GOOD: consistent types
+Set<Long> a = Set.of(1L, 2L, 3L);
+Set<Long> b = Set.of(1L, 2L);
+a.retainAll(b); // {1L, 2L}
+```
+**Prevention:** Use identical element types in set operations.
+
+**Failure Mode 3: Memory overhead for large primitive sets**
+**Symptom:** Excessive heap for a Set of integers. Millions of `Integer` wrapper objects.
+**Root Cause:** HashSet stores boxed wrappers (~48 bytes each) not primitives (4 bytes).
+**Diagnostic:**
+
+```
+jmap -histo:live <pid> | grep Integer
+# Millions of java.lang.Integer instances
+```
+
+**Fix:**
+```java
+// BAD: 48 bytes per element
+Set<Integer> ids = new HashSet<>();
+
+// GOOD: 1 bit per element (dense range)
+BitSet ids = new BitSet();
+ids.set(userId);
+// Or: IntOpenHashSet from fastutil (sparse)
+```
+**Prevention:** Use BitSet for dense ranges, primitive-specialized sets for sparse data.
 
 ---
 
 ### Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+
+- `equals()` and `hashCode()` contract - HashSet correctness depends on this
+- HashMap - HashSet is literally backed by HashMap
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+
+- EnumSet - ultra-efficient bit-vector set for enum types
+- Streams `distinct()` - uses HashSet internally for deduplication
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
+
+- TreeSet - when sorted iteration is required
+- BitSet - for dense integer membership with minimal memory
 
 ---
 
@@ -2061,9 +2263,12 @@ ArrayDeque outperforms LinkedList for all queue/stack operations because of cach
 
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+Queue and Deque are Java's abstraction over the fundamental FIFO/LIFO patterns that appear everywhere in computing: CPU instruction pipelines (FIFO), function call stacks (LIFO), BFS/DFS graph traversal (Queue/Stack), OS process schedulers (priority queues), and message brokers (Kafka partitions are durable queues). The expert insight is that `ArrayDeque` should be your default for both stack and queue use cases - it outperforms `LinkedList` due to cache-friendly contiguous memory, and outperforms `Stack` which has unnecessary synchronization. At extreme scale, in-memory queues become the bottleneck, and you shift to off-heap ring buffers (LMAX Disruptor), persistent queues (Chronicle Queue), or distributed queues (Kafka, SQS). If redesigning Java's collections today, you would deprecate `Stack` and `Vector` entirely and make `ArrayDeque` the only recommended implementation for both FIFO and LIFO patterns.
+
+**Expert thinking cues:**
+- "Stack or Queue?" - use `ArrayDeque` for both; `push/pop` for stack, `offer/poll` for queue
+- "Bounded or unbounded?" - unbounded queues are memory leaks waiting to happen
+- "Single-thread or concurrent?" - if concurrent, use `BlockingQueue` implementations, never plain Deque
 
 ---
 
@@ -2188,14 +2393,14 @@ Verify FIFO order with sequential offer/poll, test empty queue returns null from
 
 ### Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
+**WHAT IT IS:** Interfaces for FIFO (Queue) and double-ended (Deque) collections
+**PROBLEM IT SOLVES:** Ordered processing, BFS, task scheduling, undo stacks
+**KEY INSIGHT:** `ArrayDeque` is the best implementation for both stack and queue - faster than Stack and LinkedList
+**USE WHEN:** Task scheduling (FIFO), undo/redo (LIFO), BFS traversal, producer-consumer buffers
+**AVOID WHEN:** Need random access by index - use ArrayList instead
+**ANTI-PATTERN:** Using `java.util.Stack` - it extends Vector with unnecessary synchronization
+**TRADE-OFF:** Efficient head/tail operations vs no random access by index
+**ONE-LINER:** "ArrayDeque for stack and queue, BlockingQueue for threads, never use Stack class"
 
 **If you remember only 3 things:**
 
@@ -2397,7 +2602,14 @@ Decision: "Can my producer afford to spin or skip when the queue is full?" If ye
 
 ### Comparison Table
 
-[TODO: Include if 2+ named alternatives exist for Queue and Deque. Otherwise remove this section.]
+| Aspect | ArrayDeque | LinkedList | PriorityQueue | BlockingQueue |
+|--------|------------|------------|--------------|---------------|
+| Structure | Circular array | Doubly-linked | Binary heap | Varies |
+| Add/Remove | O(1) amortized | O(1) | O(log n) | O(1) + blocking |
+| Memory | Contiguous | Scattered | Contiguous | Varies |
+| Null allowed | No | Yes | No | No |
+| Thread safe | No | No | No | Yes |
+| Use case | General FIFO/LIFO | Legacy | Priority ordering | Producer-consumer |
 
 ---
 
@@ -2405,60 +2617,97 @@ Decision: "Can my producer afford to spin or skip when the queue is full?" If ye
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | `java.util.Stack` is the recommended stack | `Stack` extends `Vector` (synchronized everything). Use `ArrayDeque` with `push()`/`pop()` instead - 5-10x faster. |
+| 2 | LinkedList is better than ArrayDeque for queues | ArrayDeque is faster due to cache locality. LinkedList creates a new Node object per element, causing GC pressure and cache misses. |
+| 3 | PriorityQueue sorts elements on insertion | PriorityQueue is a min-heap. Only the head is guaranteed minimum. Iteration order is NOT sorted - use `poll()` repeatedly to get sorted output. |
+| 4 | Queue.add() and Queue.offer() are identical | `add()` throws on a full bounded queue; `offer()` returns `false`. In production, prefer `offer()` to avoid exceptions in normal flow. |
 
 ---
 
 ### Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: NPE from null elements in ArrayDeque**
+**Symptom:** `NullPointerException` from `ArrayDeque.addLast()` or `offerFirst()`.
+**Root Cause:** ArrayDeque prohibits null elements (null is the empty-slot marker internally).
 **Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
 ```
-[TODO: real diagnostic command]
+grep -n '\.offer(null)\|\.add(null)' MyClass.java
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Fix:**
+```java
+// BAD: null element
+deque.offer(null); // NPE
+
+// GOOD: filter nulls
+if (value != null) deque.offer(value);
+// Or wrap: deque.offer(Optional.ofNullable(v));
+```
+**Prevention:** Filter nulls at the producer side. Use `Optional` if null is meaningful.
+
+**Failure Mode 2: Unbounded queue causing OOM**
+**Symptom:** Heap grows until `OutOfMemoryError`. Producer faster than consumer.
+**Root Cause:** Unbounded `ArrayDeque` or `LinkedList` as work queue without backpressure.
 **Diagnostic:**
+
 ```
-[TODO: real diagnostic command]
+jmap -histo:live <pid> | head -20
+# Look for ArrayDeque or Node[] with millions
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+
+**Fix:**
+```java
+// BAD: unbounded
+Queue<Task> q = new ArrayDeque<>();
+
+// GOOD: bounded with backpressure
+BlockingQueue<Task> q =
+    new ArrayBlockingQueue<>(1000);
+q.offer(task, 5, TimeUnit.SECONDS);
+```
+**Prevention:** Bound all queues in production. Use `BlockingQueue` with capacity limits. Monitor queue depth.
+
+**Failure Mode 3: Wrong element order (FIFO vs LIFO confusion)**
+**Symptom:** Elements processed in wrong order. BFS produces DFS results.
+**Root Cause:** Using `push()`/`pop()` (LIFO) when `offer()`/`poll()` (FIFO) intended, or vice versa.
+**Diagnostic:**
+
+```
+grep -n 'push\|pop\|offer\|poll' MyClass.java
+# push/pop = LIFO; offer/poll = FIFO
+```
+
+**Fix:**
+```java
+// FIFO queue:
+Queue<Node> q = new ArrayDeque<>();
+q.offer(root); q.poll();
+
+// LIFO stack:
+Deque<Node> s = new ArrayDeque<>();
+s.push(root); s.pop();
+```
+**Prevention:** Declare type as `Queue<>` for FIFO or `Deque<>` for LIFO to signal intent.
 
 ---
 
 ### Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+
+- ArrayList - understanding array-backed collections
+- Data Structures basics - FIFO, LIFO, and heap concepts
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+
+- BlockingQueue and producer-consumer patterns
+- PriorityQueue - heap-based priority ordering
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
+
+- LMAX Disruptor - lock-free ring buffer for extreme throughput
+- Kafka/SQS - distributed durable queues for cross-service communication
 
 ---
 
@@ -2558,9 +2807,12 @@ Iterable is a functional interface (`@FunctionalInterface`), meaning you can use
 
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+Iterator is Java's implementation of the iterator pattern - one of the most universal abstractions in computing. The same pattern appears as cursors in databases (DECLARE CURSOR, FETCH NEXT), generators in Python (`yield`), streams in Node.js (readable stream events), and iterators in Rust (`impl Iterator for T`). The deep insight is that Iterator decouples traversal from storage, enabling lazy evaluation - you can process a billion-row result set with constant memory because only one element is materialized at a time. Java's `Iterable` (for-each support) and `Iterator` (traversal state) are deliberately separate because a single collection may support multiple concurrent traversals. At extreme scale, the pull-based Iterator model becomes the push-based reactive model (Project Reactor, RxJava) to handle backpressure - but the abstraction is the same: sequential access to elements without exposing the underlying structure.
+
+**Expert thinking cues:**
+- "Pull or push?" - Iterator is pull (consumer controls pace); Reactive is push (producer controls pace with backpressure)
+- "Can I iterate twice?" - Iterators are single-use; Iterables can create new iterators
+- "Is this fail-fast or snapshot?" - ArrayList's iterator is fail-fast; CopyOnWriteArrayList is snapshot
 
 ---
 
@@ -2694,14 +2946,14 @@ Test that your custom Iterable supports multiple independent iterations, that `h
 
 ### Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
+**WHAT IT IS:** Interfaces for sequential element access: `Iterable` (can be iterated) and `Iterator` (does the iterating)
+**PROBLEM IT SOLVES:** Uniform traversal of any collection without knowing its internal structure
+**KEY INSIGHT:** `Iterable` enables for-each loops; `Iterator` holds traversal state and is single-use
+**USE WHEN:** For-each loops, custom collection classes, lazy data sources, streaming results
+**AVOID WHEN:** Need index-based access - use `List.get(i)` or `ListIterator`
+**ANTI-PATTERN:** Modifying a collection during for-each iteration - use `Iterator.remove()` or `removeIf()`
+**TRADE-OFF:** Abstraction and safety vs no random access and single-pass limitation
+**ONE-LINER:** "Iterable = for-each support, Iterator = single-use traversal cursor"
 
 **If you remember only 3 things:**
 
@@ -2934,7 +3186,13 @@ Key insight: this is a language-level special case, not a type system relationsh
 
 ### Comparison Table
 
-[TODO: Include if 2+ named alternatives exist for Iterator and Iterable. Otherwise remove this section.]
+| Aspect | Iterator | ListIterator | Spliterator | Stream |
+|--------|----------|--------------|------------|--------|
+| Direction | Forward only | Bidirectional | Forward (splittable) | Forward |
+| Modify | `remove()` only | `add()`, `set()`, `remove()` | No | No |
+| Parallel | No | No | Yes (split + fork) | Yes |
+| Lazy | Yes | Yes | Yes | Yes |
+| Reusable | No (single-pass) | No | No | No |
 
 ---
 
@@ -2942,57 +3200,104 @@ Key insight: this is a language-level special case, not a type system relationsh
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | `for (T x : collection)` creates a copy | For-each compiles to `Iterator` calls. No copy is made. Modifying the collection during iteration causes `ConcurrentModificationException`. |
+| 2 | Iterator can be reused after reaching the end | Iterators are single-pass. Once `hasNext()` returns false, you must obtain a new Iterator from the Iterable. |
+| 3 | All Iterators are fail-fast | Only modifiable-collection iterators (ArrayList, HashMap) are fail-fast. Concurrent collections use snapshot or weakly-consistent iterators. |
+| 4 | Iterable and Iterator are the same thing | `Iterable` has `iterator()` which creates a new `Iterator`. `Iterator` has `hasNext()`, `next()`, `remove()`. One creates, the other traverses. |
 
 ---
 
 ### Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: ConcurrentModificationException**
+**Symptom:** `ConcurrentModificationException` during for-each loop.
+**Root Cause:** Collection modified (add/remove) while iterating. Fail-fast iterator detects via `modCount`.
 **Diagnostic:**
-```
-[TODO: real diagnostic command]
-```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
-**Diagnostic:**
 ```
-[TODO: real diagnostic command]
+# Stack trace shows Iterator.next() - find
+# collection.remove()/add() inside the loop
+grep -n 'for.*:.*list' MyClass.java
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Fix:**
+```java
+// BAD: modify during for-each
+for (String s : list) {
+    if (s.isEmpty()) list.remove(s);
+}
+
+// GOOD: use Iterator.remove()
+var it = list.iterator();
+while (it.hasNext()) {
+    if (it.next().isEmpty()) it.remove();
+}
+// Or: list.removeIf(String::isEmpty);
+```
+**Prevention:** Use `removeIf()` or explicit `Iterator.remove()`. Never modify inside for-each.
+
+**Failure Mode 2: NoSuchElementException from bare next()**
+**Symptom:** `NoSuchElementException` from `Iterator.next()`.
+**Root Cause:** Calling `next()` without checking `hasNext()` first.
 **Diagnostic:**
+
 ```
-[TODO: real diagnostic command]
+grep -n '\.next()' MyClass.java
+# Verify each has a corresponding hasNext() check
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+
+**Fix:**
+```java
+// BAD: no guard
+String first = iterator.next();
+
+// GOOD: check first
+if (iterator.hasNext()) {
+    String first = iterator.next();
+}
+```
+**Prevention:** Always pair `next()` with `hasNext()`. Use for-each when possible.
+
+**Failure Mode 3: Custom Iterable returns same Iterator instance**
+**Symptom:** Second for-each over the same object produces no elements.
+**Root Cause:** `iterator()` returns a cached Iterator; after first traversal, cursor is at end.
+**Diagnostic:**
+
+```
+jshell> var a = myIterable.iterator();
+jshell> var b = myIterable.iterator();
+jshell> a == b // true means bug!
+```
+
+**Fix:**
+```java
+// BAD: reuses iterator
+public Iterator<T> iterator() {
+    return this.cachedIterator;
+}
+
+// GOOD: new iterator each call
+public Iterator<T> iterator() {
+    return new MyIterator<>(this.data);
+}
+```
+**Prevention:** `iterator()` must always return a new instance. Test by iterating twice.
 
 ---
 
 ### Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+
+- Collections Framework basics - List, Set, Map interfaces
+- For-each loop syntax - syntactic sugar calling `iterator()` under the hood
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+
+- Streams API - functional evolution of Iterator
+- Spliterator - parallelizable iterator for fork-join decomposition
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
+
+- Python generators (`yield`) - lazy iteration with simpler syntax
+- Reactive Streams (Publisher/Subscriber) - push-based with backpressure
