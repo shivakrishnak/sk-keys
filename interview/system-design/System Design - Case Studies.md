@@ -18,25 +18,33 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [URL Shortener](#url-shortener)
+- [Rate Limiter](#rate-limiter)
+- [News Feed and Timeline](#news-feed-and-timeline)
+- [Chat System](#chat-system)
+- [Notification System](#notification-system)
+
 # URL Shortener
 
 **TL;DR** - Design a URL shortening service (like bit.ly) that converts long URLs to short codes, redirects short URLs to originals, and handles billions of redirects per day. Core challenge: generating unique, short, collision-free codes at scale.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Long URLs are hard to share (SMS character limits, print media, verbal communication). A URL shortener maps a 200-character URL to a 7-character code, provides analytics (click counts), and enables link management (expiration, editing destination).
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -49,7 +57,7 @@ Long URLs are hard to share (SMS character limits, print media, verbal communica
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -69,7 +77,7 @@ Long URLs are hard to share (SMS character limits, print media, verbal communica
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -81,7 +89,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - Back-of-Envelope Estimation**
 
@@ -218,7 +226,7 @@ Every redirect -> log event (async):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -232,7 +240,7 @@ Every redirect -> log event (async):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -249,14 +257,14 @@ Every redirect -> log event (async):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle custom aliases and prevent abuse?**
 
@@ -288,13 +296,13 @@ POST /api/shorten
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for URL Shortener. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -305,7 +313,7 @@ POST /api/shorten
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -339,7 +347,7 @@ POST /api/shorten
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -364,19 +372,19 @@ POST /api/shorten
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 A single misbehaving client sends 100K requests/second, consuming all server threads. Legitimate users get 503 errors. Without rate limiting, one bad actor can take down the entire service. Also needed: API monetization tiers (free=100/day, pro=10K/day).
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -389,7 +397,7 @@ A single misbehaving client sends 100K requests/second, consuming all server thr
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -409,7 +417,7 @@ A single misbehaving client sends 100K requests/second, consuming all server thr
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -421,7 +429,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - Back-of-Envelope Estimation**
 
@@ -593,7 +601,7 @@ All must pass for request to proceed.
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -607,7 +615,7 @@ All must pass for request to proceed.
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -624,14 +632,14 @@ All must pass for request to proceed.
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Design a rate limiter for a multi-tier API (free/pro/enterprise). How do you handle distributed counting?**
 
@@ -691,13 +699,13 @@ return 1  -- allowed
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Rate Limiter. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -708,7 +716,7 @@ return 1  -- allowed
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -742,7 +750,7 @@ return 1  -- allowed
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -767,19 +775,19 @@ return 1  -- allowed
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 User follows 500 people. Each posts multiple times daily. Building a real-time feed by querying "all posts from all followed users, sorted by time" requires joining 500 users' posts at read time - too slow at scale.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -792,7 +800,7 @@ User follows 500 people. Each posts multiple times daily. Building a real-time f
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -812,7 +820,7 @@ User follows 500 people. Each posts multiple times daily. Building a real-time f
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -824,7 +832,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - Back-of-Envelope Estimation**
 
@@ -968,7 +976,7 @@ Timeline cache (Redis):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -982,7 +990,7 @@ Timeline cache (Redis):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -999,14 +1007,14 @@ Timeline cache (Redis):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: A celebrity with 50M followers posts. How do you handle the fan-out without delaying their post?**
 
@@ -1049,13 +1057,13 @@ Follower reads feed:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for News Feed and Timeline. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1066,7 +1074,7 @@ Follower reads feed:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1100,7 +1108,7 @@ Follower reads feed:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1125,19 +1133,19 @@ Follower reads feed:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Users expect messages delivered in real-time (< 200ms) with guaranteed delivery (even if recipient is offline), correct ordering (messages in a conversation appear in the order sent), and multi-device sync. HTTP polling is too slow and wasteful.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1150,7 +1158,7 @@ Users expect messages delivered in real-time (< 200ms) with guaranteed delivery 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1170,7 +1178,7 @@ Users expect messages delivered in real-time (< 200ms) with guaranteed delivery 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1182,7 +1190,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - Back-of-Envelope Estimation**
 
@@ -1335,7 +1343,7 @@ Sync on reconnect:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1349,7 +1357,7 @@ Sync on reconnect:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1366,14 +1374,14 @@ Sync on reconnect:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you guarantee message delivery even when the recipient is offline for days?**
 
@@ -1435,13 +1443,13 @@ Multi-device: each device has its own key pair
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Chat System. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1452,7 +1460,7 @@ Multi-device: each device has its own key pair
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1486,7 +1494,7 @@ Multi-device: each device has its own key pair
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1511,19 +1519,19 @@ Multi-device: each device has its own key pair
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Users need to be notified about events (order shipped, payment received, friend request) across multiple channels. Each user has different preferences (email for orders, push for messages, no SMS). Without a centralized system, every service implements its own notification logic - inconsistent, unmaintainable, and users get spammed.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1536,7 +1544,7 @@ Users need to be notified about events (order shipped, payment received, friend 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1556,7 +1564,7 @@ Users need to be notified about events (order shipped, payment received, friend 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1568,7 +1576,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - Back-of-Envelope Estimation**
 
@@ -1743,7 +1751,7 @@ Metrics dashboard:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1757,7 +1765,7 @@ Metrics dashboard:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1774,14 +1782,14 @@ Metrics dashboard:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: A flash sale starts and 10M users need to be notified simultaneously. How do you handle the spike?**
 
@@ -1902,13 +1910,13 @@ Final decision: send or suppress, per channel
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Notification System. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1919,7 +1927,7 @@ Final decision: send or suppress, per channel
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1953,7 +1961,7 @@ Final decision: send or suppress, per channel
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

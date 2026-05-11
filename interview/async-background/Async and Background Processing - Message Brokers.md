@@ -20,25 +20,35 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [RabbitMQ](#rabbitmq)
+- [Apache Kafka](#apache-kafka)
+- [Amazon SQS](#amazon-sqs)
+- [Kafka Consumer Groups](#kafka-consumer-groups)
+- [Kafka Exactly-Once](#kafka-exactly-once)
+- [Dead Letter Queues](#dead-letter-queues)
+- [Message Broker Selection](#message-broker-selection)
+
 # RabbitMQ
 
 **TL;DR** - RabbitMQ is a traditional message broker implementing AMQP with smart routing, exchanges, and bindings - ideal for complex routing, RPC patterns, and task distribution.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Your microservices need reliable message delivery with complex routing: order events go to shipping AND billing, but priority orders go to a special handler, and returns go to a different queue entirely. You need a broker that understands routing logic, not just pass-through delivery.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -51,7 +61,7 @@ Your microservices need reliable message delivery with complex routing: order ev
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -71,7 +81,7 @@ Your microservices need reliable message delivery with complex routing: order ev
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -83,7 +93,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -102,7 +112,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 [Producer] -> [Exchange] -> [Binding] -> [Queue] -> [Consumer]
@@ -123,7 +133,7 @@ Exchange types:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -137,7 +147,7 @@ Exchange types:
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Spring AMQP - Producer
@@ -204,7 +214,7 @@ public class RabbitConfig {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -226,14 +236,14 @@ public class RabbitConfig {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -280,13 +290,13 @@ public class RabbitConfig {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for RabbitMQ. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -297,7 +307,7 @@ public class RabbitConfig {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -331,7 +341,7 @@ public class RabbitConfig {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -356,19 +366,19 @@ public class RabbitConfig {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Your system produces 500K events per second. Multiple services need different views of the same data. Some consumers process in real-time, others batch-process hourly. Traditional message brokers delete messages after consumption, so you can't replay or reprocess. You need a persistent, ordered, replayable event log.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -381,7 +391,7 @@ Your system produces 500K events per second. Multiple services need different vi
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -401,7 +411,7 @@ Your system produces 500K events per second. Multiple services need different vi
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -413,7 +423,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -432,7 +442,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 [Producers] -> [Topic]
@@ -459,7 +469,7 @@ Messages are NOT deleted after consumption.
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -473,7 +483,7 @@ Messages are NOT deleted after consumption.
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Spring Kafka - Producer
@@ -518,7 +528,7 @@ public class OrderAnalytics {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -540,14 +550,14 @@ public class OrderAnalytics {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you choose between Kafka and RabbitMQ?**
 
@@ -578,13 +588,13 @@ Decision framework:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Apache Kafka. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -595,7 +605,7 @@ Decision framework:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -629,7 +639,7 @@ Decision framework:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -654,19 +664,19 @@ Decision framework:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 You need a message queue but don't want to manage RabbitMQ clusters, handle broker failover, or worry about disk space. You need a queue that just works with no infrastructure management.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -679,7 +689,7 @@ You need a message queue but don't want to manage RabbitMQ clusters, handle brok
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -699,7 +709,7 @@ You need a message queue but don't want to manage RabbitMQ clusters, handle brok
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -711,7 +721,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -730,7 +740,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 [Producer] -> [SQS Queue] -> [Consumer]
@@ -762,7 +772,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -776,7 +786,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -798,14 +808,14 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -852,13 +862,13 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Amazon SQS. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -869,7 +879,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -903,7 +913,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -928,19 +938,19 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 A Kafka topic has 1 million events per hour. One consumer can process 200K/hour. You need 5 consumers to keep up. But each event should be processed only once per service. Consumer groups solve this: within a group, partitions are divided among consumers. Across groups, each group gets all events independently.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -953,7 +963,7 @@ A Kafka topic has 1 million events per hour. One consumer can process 200K/hour.
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -973,7 +983,7 @@ A Kafka topic has 1 million events per hour. One consumer can process 200K/hour.
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -985,7 +995,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1004,7 +1014,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Topic: order-events (6 partitions)
@@ -1035,7 +1045,7 @@ REBALANCE (Consumer B dies):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1049,7 +1059,7 @@ REBALANCE (Consumer B dies):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1071,14 +1081,14 @@ REBALANCE (Consumer B dies):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1125,13 +1135,13 @@ REBALANCE (Consumer B dies):
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Kafka Consumer Groups. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1142,7 +1152,7 @@ REBALANCE (Consumer B dies):
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1176,7 +1186,7 @@ REBALANCE (Consumer B dies):
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1201,19 +1211,19 @@ REBALANCE (Consumer B dies):
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 A Kafka consumer reads an event, processes it, and writes the result to another Kafka topic. If the consumer crashes after writing but before committing the offset, it reprocesses the event and writes a duplicate to the output topic. Kafka's EOS prevents this by making the output write and offset commit atomic.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1226,7 +1236,7 @@ A Kafka consumer reads an event, processes it, and writes the result to another 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1246,7 +1256,7 @@ A Kafka consumer reads an event, processes it, and writes the result to another 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1258,7 +1268,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1277,7 +1287,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 WITHOUT EOS:
@@ -1324,7 +1334,7 @@ Kafka's exactly-once works **within Kafka only.** If your consumer reads from Ka
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1338,7 +1348,7 @@ Kafka's exactly-once works **within Kafka only.** If your consumer reads from Ka
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1360,14 +1370,14 @@ Kafka's exactly-once works **within Kafka only.** If your consumer reads from Ka
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1414,13 +1424,13 @@ Kafka's exactly-once works **within Kafka only.** If your consumer reads from Ka
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Kafka Exactly-Once Semantics. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1431,7 +1441,7 @@ Kafka's exactly-once works **within Kafka only.** If your consumer reads from Ka
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1465,7 +1475,7 @@ Kafka's exactly-once works **within Kafka only.** If your consumer reads from Ka
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1490,19 +1500,19 @@ Kafka's exactly-once works **within Kafka only.** If your consumer reads from Ka
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 A malformed message enters your queue. The consumer fails to process it. The message is redelivered. Fails again. Redelivered again. This loops forever, blocking all other messages behind it. The "poison pill" problem.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1515,7 +1525,7 @@ A malformed message enters your queue. The consumer fails to process it. The mes
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1535,7 +1545,7 @@ A malformed message enters your queue. The consumer fails to process it. The mes
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1547,7 +1557,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1566,7 +1576,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 [Queue] -> [Consumer]
@@ -1590,7 +1600,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1604,7 +1614,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // RabbitMQ DLQ configuration
@@ -1660,7 +1670,7 @@ public void handleDeadLetter(ConsumerRecord<?, ?> r) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1682,14 +1692,14 @@ public void handleDeadLetter(ConsumerRecord<?, ?> r) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1736,13 +1746,13 @@ public void handleDeadLetter(ConsumerRecord<?, ?> r) {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Dead Letter Queues (DLQ). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1753,7 +1763,7 @@ public void handleDeadLetter(ConsumerRecord<?, ?> r) {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1787,7 +1797,7 @@ public void handleDeadLetter(ConsumerRecord<?, ?> r) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1855,7 +1865,7 @@ START
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1871,13 +1881,13 @@ START
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1890,7 +1900,7 @@ START
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1910,7 +1920,7 @@ START
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1922,7 +1932,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1948,7 +1958,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1962,7 +1972,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1984,14 +1994,14 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -2038,13 +2048,13 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Message Broker Selection. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2055,7 +2065,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2089,7 +2099,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

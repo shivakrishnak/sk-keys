@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "Cloud AWS"
+parent: "Interview Mastery"
+nav_order: 13
+has_children: true
+permalink: /interview/cloud-aws/
 description: "AWS services, architecture patterns, compute, networking, data, messaging, and security for cloud-native applications"
 keywords_count: 30
 files_count: 5

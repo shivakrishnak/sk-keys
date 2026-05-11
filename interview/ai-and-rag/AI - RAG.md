@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "AI - RAG"
+parent: "AI Foundations, LLMs, RAG and Agents"
+grand_parent: "Interview Mastery"
+nav_order: 3
+permalink: /interview/ai-and-rag/rag/
 topic: AI Foundations, LLMs, RAG and Agents
 subtopic: RAG
 keywords:
@@ -14,26 +19,35 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [RAG Architecture](#rag-architecture)
+- [Vector Databases](#vector-databases)
+- [Chunking Strategies](#chunking-strategies)
+- [Retrieval Methods](#retrieval-methods)
+- [Reranking](#reranking)
+- [RAG Evaluation](#rag-evaluation)
+
 # RAG Architecture
 
 **TL;DR** - Retrieval-Augmented Generation (RAG) grounds LLM responses in your actual data by retrieving relevant documents before generation - reducing hallucination, enabling knowledge updates without retraining, and providing source attribution for trustworthy AI applications.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 LLMs have training data cutoff dates and no access to your private data. They hallucinate confidently. Fine-tuning is expensive and can't keep up with data changes. You need models to answer from YOUR current documents accurately.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -46,7 +60,7 @@ LLMs have training data cutoff dates and no access to your private data. They ha
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -66,7 +80,7 @@ LLMs have training data cutoff dates and no access to your private data. They ha
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -78,7 +92,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -97,7 +111,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 RAG pipeline:
@@ -160,7 +174,7 @@ RAG vs Fine-tuning:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -174,7 +188,7 @@ RAG vs Fine-tuning:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -196,14 +210,14 @@ RAG vs Fine-tuning:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -250,13 +264,13 @@ RAG vs Fine-tuning:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for RAG Architecture. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -267,7 +281,7 @@ RAG vs Fine-tuning:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -301,7 +315,7 @@ RAG vs Fine-tuning:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -326,20 +340,20 @@ RAG vs Fine-tuning:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You have 1 million document embeddings (1536 dimensions each). Finding the most similar vectors by brute-force comparison = 1M \* 1536 multiplications per query. Takes seconds, not milliseconds. Doesn't scale.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -352,7 +366,7 @@ You have 1 million document embeddings (1536 dimensions each). Finding the most 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -372,7 +386,7 @@ You have 1 million document embeddings (1536 dimensions each). Finding the most 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -384,7 +398,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -403,7 +417,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Vector database concepts:
@@ -451,7 +465,7 @@ pgvector (start here for most teams):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -465,7 +479,7 @@ pgvector (start here for most teams):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -487,14 +501,14 @@ pgvector (start here for most teams):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -541,13 +555,13 @@ pgvector (start here for most teams):
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Vector Databases. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -558,7 +572,7 @@ pgvector (start here for most teams):
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -592,7 +606,7 @@ pgvector (start here for most teams):
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -617,20 +631,20 @@ pgvector (start here for most teams):
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Embed an entire 50-page document as one vector? The embedding becomes too diluted (averages all topics). Embed each sentence individually? Lose context between sentences. Chunking strategy determines the granularity and quality of retrieval.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -643,7 +657,7 @@ Embed an entire 50-page document as one vector? The embedding becomes too dilute
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -663,7 +677,7 @@ Embed an entire 50-page document as one vector? The embedding becomes too dilute
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -675,7 +689,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -694,7 +708,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Chunking methods:
@@ -745,7 +759,7 @@ Best practices:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -759,7 +773,7 @@ Best practices:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -781,14 +795,14 @@ Best practices:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -835,13 +849,13 @@ Best practices:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Chunking Strategies. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -852,7 +866,7 @@ Best practices:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -886,7 +900,7 @@ Best practices:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -911,20 +925,20 @@ Best practices:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Pure vector search misses exact keyword matches ("error code ABC-123" won't find the document with that exact code). Pure keyword search misses semantic similarity ("how to fix memory issues" won't find "heap overflow troubleshooting"). You need both.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -937,7 +951,7 @@ Pure vector search misses exact keyword matches ("error code ABC-123" won't find
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -957,7 +971,7 @@ Pure vector search misses exact keyword matches ("error code ABC-123" won't find
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -969,7 +983,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -988,7 +1002,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Retrieval methods:
@@ -1041,7 +1055,7 @@ Advanced retrieval patterns:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1055,7 +1069,7 @@ Advanced retrieval patterns:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1077,14 +1091,14 @@ Advanced retrieval patterns:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1131,13 +1145,13 @@ Advanced retrieval patterns:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Retrieval Methods. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1148,7 +1162,7 @@ Advanced retrieval patterns:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1182,7 +1196,7 @@ Advanced retrieval patterns:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1207,20 +1221,20 @@ Advanced retrieval patterns:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Initial retrieval (vector search) returns top-20 results. Some are relevant, some aren't. The order isn't optimal - result #15 might be more relevant than result #2. Bi-encoder embeddings can't capture fine-grained query-document interactions.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1233,7 +1247,7 @@ Initial retrieval (vector search) returns top-20 results. Some are relevant, som
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1253,7 +1267,7 @@ Initial retrieval (vector search) returns top-20 results. Some are relevant, som
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1265,7 +1279,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1284,7 +1298,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Bi-encoder vs Cross-encoder:
@@ -1333,7 +1347,7 @@ When to use reranking:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1347,7 +1361,7 @@ When to use reranking:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1369,14 +1383,14 @@ When to use reranking:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1423,13 +1437,13 @@ When to use reranking:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Reranking. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1440,7 +1454,7 @@ When to use reranking:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1474,7 +1488,7 @@ When to use reranking:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1499,20 +1513,20 @@ When to use reranking:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 "The RAG system seems to work" is not a metric. Without evaluation: you can't measure improvement, can't catch regressions, can't identify whether problems are in retrieval or generation, can't compare configurations objectively.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1525,7 +1539,7 @@ When to use reranking:
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1545,7 +1559,7 @@ When to use reranking:
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1557,7 +1571,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1576,7 +1590,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 RAG evaluation dimensions:
@@ -1627,7 +1641,7 @@ Continuous evaluation:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1641,7 +1655,7 @@ Continuous evaluation:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1663,14 +1677,14 @@ Continuous evaluation:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1717,13 +1731,13 @@ Continuous evaluation:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for RAG Evaluation. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1734,7 +1748,7 @@ Continuous evaluation:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1768,7 +1782,7 @@ Continuous evaluation:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

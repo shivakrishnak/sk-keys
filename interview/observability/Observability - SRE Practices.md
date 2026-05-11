@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "Observability - SRE Practices"
+parent: "Observability"
+grand_parent: "Interview Mastery"
+nav_order: 3
+permalink: /interview/observability/sre-practices/
 topic: Observability
 subtopic: SRE Practices
 keywords:
@@ -14,26 +19,35 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Incident Management](#incident-management)
+- [Error Budget](#error-budget)
+- [Chaos Engineering](#chaos-engineering)
+- [On-Call Best Practices](#on-call-best-practices)
+- [Postmortem Culture](#postmortem-culture)
+- [Capacity Planning](#capacity-planning)
+
 # Incident Management
 
 **TL;DR** - Incident management is the structured process of detecting, responding to, and resolving production incidents - with defined roles (incident commander, communications), severity levels, runbooks, and post-resolution analysis to minimize user impact and recovery time.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 System goes down. Everyone panics. Three people SSH into the same server making conflicting changes. Nobody communicates status to stakeholders. Nobody knows who's in charge. Recovery takes 4x longer than it should because effort is uncoordinated.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Incident management is a structured framework for responding to unplanned service disruptions, encompassing detection (alerting), response (coordinated team actions with defined roles), resolution (restoring service), and follow-up (postmortem and prevention), designed to minimize Mean Time to Recovery (MTTR).
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -46,7 +60,7 @@ Incident management is a structured framework for responding to unplanned servic
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -66,7 +80,7 @@ Incident management is a structured framework for responding to unplanned servic
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -78,7 +92,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -97,7 +111,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Incident lifecycle:
@@ -137,7 +151,7 @@ Incident workflow:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -151,7 +165,7 @@ Incident workflow:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -173,14 +187,14 @@ Incident workflow:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Walk me through how you'd handle a SEV1 incident where the payment system is completely down.**
 
@@ -224,13 +238,13 @@ Post-resolution:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Incident Management. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -241,7 +255,7 @@ Post-resolution:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -275,7 +289,7 @@ Post-resolution:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -300,7 +314,7 @@ Post-resolution:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Eternal tension: Product wants features shipped faster. SRE wants more stability testing. Neither side has a framework for resolving the conflict. Decisions are based on authority, not data.
@@ -310,13 +324,13 @@ Eternal tension: Product wants features shipped faster. SRE wants more stability
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 An error budget is the maximum allowable threshold for errors and service unavailability, derived from the SLO (error budget = 100% - SLO). It provides a quantitative measure for balancing service reliability against feature velocity: when budget remains, teams prioritize features; when budget is depleted, teams prioritize reliability.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -329,7 +343,7 @@ An error budget is the maximum allowable threshold for errors and service unavai
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -349,7 +363,7 @@ An error budget is the maximum allowable threshold for errors and service unavai
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -361,7 +375,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -380,7 +394,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Error Budget calculation:
@@ -419,7 +433,7 @@ Error budget burn rate alerting:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -433,7 +447,7 @@ Error budget burn rate alerting:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -455,14 +469,14 @@ Error budget burn rate alerting:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -509,13 +523,13 @@ Error budget burn rate alerting:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Error Budget. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -526,7 +540,7 @@ Error budget burn rate alerting:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -560,7 +574,7 @@ Error budget burn rate alerting:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -585,7 +599,7 @@ Error budget burn rate alerting:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 "We think the system handles failures gracefully." But nobody's tested it. The retry logic was written 2 years ago. Circuit breakers have never actually tripped. The failover was tested once in staging (which doesn't match production). You find out it doesn't work during a real outage at 3 AM.
@@ -595,13 +609,13 @@ Error budget burn rate alerting:
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Chaos engineering is the discipline of experimenting on a distributed system to build confidence in the system's capability to withstand turbulent conditions in production. It follows a scientific method: hypothesize steady state, introduce variables (failures), observe impact, and identify weaknesses.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -614,7 +628,7 @@ Chaos engineering is the discipline of experimenting on a distributed system to 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -634,7 +648,7 @@ Chaos engineering is the discipline of experimenting on a distributed system to 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -646,7 +660,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -665,7 +679,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Chaos Engineering process:
@@ -708,7 +722,7 @@ Tools:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -722,7 +736,7 @@ Tools:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -744,14 +758,14 @@ Tools:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -798,13 +812,13 @@ Tools:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Chaos Engineering. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -815,7 +829,7 @@ Tools:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -849,7 +863,7 @@ Tools:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -874,20 +888,20 @@ Tools:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 On-call engineers paged 20 times per shift. Most alerts are noise. No runbooks - they're expected to "just know." No handoff process. Same person on-call for weeks. Burnout, attrition, and slow incident response.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 On-call best practices encompass the policies, tools, and cultural norms that make incident response sustainable and effective: actionable alerting (signal over noise), runbook documentation, healthy rotation schedules, fair compensation, escalation procedures, and continuous improvement through postmortems.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -900,7 +914,7 @@ On-call best practices encompass the policies, tools, and cultural norms that ma
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -920,7 +934,7 @@ On-call best practices encompass the policies, tools, and cultural norms that ma
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -932,7 +946,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -951,7 +965,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Healthy on-call characteristics:
@@ -993,7 +1007,7 @@ Anti-patterns:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1007,7 +1021,7 @@ Anti-patterns:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1029,14 +1043,14 @@ Anti-patterns:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1083,13 +1097,13 @@ Anti-patterns:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for On-Call Best Practices. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1100,7 +1114,7 @@ Anti-patterns:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1134,7 +1148,7 @@ Anti-patterns:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1159,20 +1173,20 @@ Anti-patterns:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Incident happens. Manager asks "who did this?" Engineer gets blamed. Engineers start hiding mistakes, avoiding risky but necessary changes, and not reporting near-misses. Organization learns nothing. Same incidents repeat.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A blameless postmortem is a structured review of an incident that assumes people made the best decisions they could with available information, focusing on identifying systemic factors (tooling gaps, process failures, missing guardrails) that contributed to the incident, and generating action items that prevent recurrence.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1185,7 +1199,7 @@ A blameless postmortem is a structured review of an incident that assumes people
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1205,7 +1219,7 @@ A blameless postmortem is a structured review of an incident that assumes people
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1217,7 +1231,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1236,7 +1250,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Postmortem structure:
@@ -1274,7 +1288,7 @@ Blameless principles:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1288,7 +1302,7 @@ Blameless principles:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1310,14 +1324,14 @@ Blameless principles:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1364,13 +1378,13 @@ Blameless principles:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Postmortem Culture. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1381,7 +1395,7 @@ Blameless principles:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1415,7 +1429,7 @@ Blameless principles:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1440,20 +1454,20 @@ Blameless principles:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Black Friday: 10x normal traffic. Systems collapse because nobody planned for it. Or: over-provisioned all year "just in case" - spending 5x more than needed 11 months of the year.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Capacity planning is the process of determining the compute, storage, and network resources required to meet future demand, based on current utilization trends, known growth rates, seasonal patterns, and planned business events, balancing reliability (headroom) against cost efficiency.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1466,7 +1480,7 @@ Capacity planning is the process of determining the compute, storage, and networ
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1486,7 +1500,7 @@ Capacity planning is the process of determining the compute, storage, and networ
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1498,7 +1512,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1517,7 +1531,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Capacity planning process:
@@ -1556,7 +1570,7 @@ Key metrics to track:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1570,7 +1584,7 @@ Key metrics to track:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1592,14 +1606,14 @@ Key metrics to track:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1646,13 +1660,13 @@ Key metrics to track:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Capacity Planning. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1663,7 +1677,7 @@ Key metrics to track:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1697,7 +1711,7 @@ Key metrics to track:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

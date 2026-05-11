@@ -19,26 +19,35 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Monolith to Microservices Migration](#monolith-to-microservices-migration)
+- [Strangler Fig Pattern](#strangler-fig-pattern)
+- [Re-platforming vs Re-architecting](#re-platforming-vs-re-architecting)
+- [Cloud Migration](#cloud-migration)
+- [Technology Migration Strategy](#technology-migration-strategy)
+- [POC Strategy](#poc-strategy)
+
 # Monolith to Microservices Migration
 
 **TL;DR** - Migrating from monolith to microservices is a multi-year journey, not a rewrite. Extract services incrementally using the Strangler Fig pattern. Start with the service that has the clearest boundary and lowest risk. Most migrations fail because teams try to rewrite everything at once instead of incrementally extracting.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 The monolith is 500K lines. Deployments take 4 hours. One team's change breaks another team's feature. Scaling means scaling the entire application even if only one module needs it. But a big-bang rewrite would take 2 years and likely fail.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -51,7 +60,7 @@ The monolith is 500K lines. Deployments take 4 hours. One team's change breaks a
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -71,7 +80,7 @@ The monolith is 500K lines. Deployments take 4 hours. One team's change breaks a
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -83,7 +92,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Extract pieces from the monolith one at a time, like removing Jenga blocks carefully. The monolith keeps running while you build new services alongside it. Eventually, the monolith shrinks to nothing.
@@ -157,7 +166,7 @@ Phase 4: Eventually
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -171,7 +180,7 @@ Phase 4: Eventually
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -188,14 +197,14 @@ Phase 4: Eventually
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your monolith has a tightly coupled Order and Payment module. How do you extract Order as a separate service?**
 
@@ -245,13 +254,13 @@ class OrderServiceClient {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Monolith to Microservices Migration. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -262,7 +271,7 @@ class OrderServiceClient {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -296,7 +305,7 @@ class OrderServiceClient {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -321,7 +330,7 @@ class OrderServiceClient {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -337,13 +346,13 @@ class OrderServiceClient {
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -356,7 +365,7 @@ class OrderServiceClient {
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -376,7 +385,7 @@ class OrderServiceClient {
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -388,7 +397,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Build the new system alongside the old one. Route some requests to the new system. Over time, more and more requests go to the new system until the old one handles nothing and can be turned off.
@@ -492,7 +501,7 @@ Both systems need access to the same data during transition:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -506,7 +515,7 @@ Both systems need access to the same data during transition:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -523,14 +532,14 @@ Both systems need access to the same data during transition:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You're 60% through a Strangler Fig migration. The remaining 40% of the monolith is the most complex and tightly coupled. What do you do?**
 
@@ -552,13 +561,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Strangler Fig Pattern. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -569,7 +578,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -603,7 +612,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -628,7 +637,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -644,13 +653,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -663,7 +672,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -683,7 +692,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -695,7 +704,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Re-platforming: Move your furniture to a new house (same furniture, new location). Re-architecting: Renovate while you move (new layout, new furniture).
@@ -756,7 +765,7 @@ Don't choose one strategy for everything. Different parts of the system deserve 
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -770,7 +779,7 @@ Don't choose one strategy for everything. Different parts of the system deserve 
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -787,14 +796,14 @@ Don't choose one strategy for everything. Different parts of the system deserve 
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Management wants to re-architect the entire platform to microservices. How do you respond?**
 
@@ -815,13 +824,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Re-platforming vs Re-architecting. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -832,7 +841,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -866,7 +875,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -891,7 +900,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -907,13 +916,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -926,7 +935,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -946,7 +955,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -958,7 +967,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Moving your IT from your own servers to rented servers in the cloud. Like moving from owning a house to renting an apartment - less maintenance responsibility, more flexibility, different cost model.
@@ -992,7 +1001,7 @@ Moving your IT from your own servers to rented servers in the cloud. Like moving
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1006,7 +1015,7 @@ Moving your IT from your own servers to rented servers in the cloud. Like moving
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1023,14 +1032,14 @@ Moving your IT from your own servers to rented servers in the cloud. Like moving
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your database is 5TB and must migrate to the cloud with minimal downtime. How?**
 
@@ -1050,13 +1059,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Cloud Migration. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1067,7 +1076,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1101,7 +1110,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1126,7 +1135,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1142,13 +1151,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1161,7 +1170,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1181,7 +1190,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1193,7 +1202,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Changing from one technology to another (Java 8 to Java 21, MySQL to PostgreSQL, Spring MVC to WebFlux) without breaking things.
@@ -1263,7 +1272,7 @@ Phase 4: Decommission
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1277,7 +1286,7 @@ Phase 4: Decommission
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1294,14 +1303,14 @@ Phase 4: Decommission
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your team wants to migrate from Java to Go for "better performance." How do you evaluate this?**
 
@@ -1319,13 +1328,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Technology Migration Strategy. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1336,7 +1345,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1370,7 +1379,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1395,7 +1404,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1411,13 +1420,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1430,7 +1439,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1450,7 +1459,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1462,7 +1471,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A small experiment to answer: "Can this technology actually solve our problem?" Build just enough to prove it works (or doesn't), then decide to invest fully or abandon.
@@ -1526,7 +1535,7 @@ A small experiment to answer: "Can this technology actually solve our problem?" 
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1540,7 +1549,7 @@ A small experiment to answer: "Can this technology actually solve our problem?" 
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1557,14 +1566,14 @@ A small experiment to answer: "Can this technology actually solve our problem?" 
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You're evaluating whether to use Event Sourcing for your order management system. Design the POC.**
 
@@ -1603,13 +1612,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for POC Strategy. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1620,7 +1629,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1654,7 +1663,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

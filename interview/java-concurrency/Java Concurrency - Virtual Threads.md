@@ -18,13 +18,21 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Virtual Threads](#virtual-threads)
+- [Structured Concurrency](#structured-concurrency)
+- [Scoped Values](#scoped-values)
+- [Pinning and Carrier Threads](#pinning-and-carrier-threads)
+- [Migration from Platform Threads](#migration-from-platform-threads)
+
 # Virtual Threads
 
 **TL;DR** - Virtual threads (Java 21) are lightweight, JVM-managed threads that enable one-thread-per-task concurrency for I/O-bound workloads without the memory overhead of platform threads, allowing millions of concurrent tasks.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Platform threads map 1:1 to OS threads. Each costs ~1MB stack + kernel data structures. A server with 10,000 concurrent I/O-bound requests needs 10,000 threads = 10GB of stack memory. To stay within bounds, you use thread pools that artificially limit concurrency - forcing complex async code (CompletableFuture, reactive) to avoid blocking threads.
@@ -40,13 +48,13 @@ Platform threads + thread pools (Java 1-4) -> Executor framework (Java 5) -> Com
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Virtual threads are lightweight threads managed by the JVM, not the OS. They are scheduled by the JVM onto a small pool of platform (carrier) threads. When a virtual thread blocks on I/O, it unmounts from the carrier thread (freeing it for other virtual threads) and remounts when the I/O completes. This enables the simple thread-per-task model at massive scale.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Virtual threads let you write simple blocking code that scales to millions of concurrent tasks.
@@ -60,7 +68,7 @@ Virtual threads don't make code faster - they make it scale. A single request st
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -75,7 +83,7 @@ Virtual threads don't make code faster - they make it scale. A single request st
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -87,7 +95,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Virtual threads let your server handle a million concurrent connections using simple code, without needing complex async frameworks or reactive programming.
@@ -204,7 +212,7 @@ Thread.currentThread().isVirtual(); // true
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -218,7 +226,7 @@ Thread.currentThread().isVirtual(); // true
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Platform thread pool limits concurrency:**
 
@@ -259,7 +267,7 @@ try (var exec = Executors
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -281,13 +289,13 @@ try (var exec = Executors
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Virtual threads don't make individual requests faster - they make the system handle more concurrent requests. A single HTTP call still takes 200ms whether you're on a platform thread or virtual thread. The win is that instead of needing 5000 platform threads (5GB RAM) to handle 5000 concurrent requests, you use 5000 virtual threads (~5MB total) on a handful of carrier threads.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is pinning and when does it happen?**
 
@@ -447,13 +455,13 @@ Migration checklist:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Virtual Threads. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -464,7 +472,7 @@ Migration checklist:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -498,7 +506,7 @@ Migration checklist:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -523,7 +531,7 @@ Migration checklist:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You submit 3 async tasks. Task 1 fails fast. Tasks 2 and 3 continue running needlessly, consuming resources. The parent must manually track, cancel, and join all tasks. Error handling is scattered. Leaked threads from abandoned tasks accumulate.
@@ -536,13 +544,13 @@ A CompletableFuture fan-out calls 5 services. Service 1 throws an exception. The
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Structured concurrency ensures that concurrent tasks form a tree structure: when a parent task splits into subtasks, all subtasks must complete (or be cancelled) before the parent completes. It provides: automatic cancellation propagation, clear error handling, thread dump readability, and prevention of thread/task leaks.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -555,7 +563,7 @@ Structured concurrency ensures that concurrent tasks form a tree structure: when
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -575,7 +583,7 @@ Structured concurrency ensures that concurrent tasks form a tree structure: when
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -587,7 +595,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Just like `try-finally` ensures cleanup for resources, structured concurrency ensures cleanup for concurrent tasks. No subtask escapes its parent's scope.
@@ -684,7 +692,7 @@ Structured concurrency works with any threads but is designed for virtual thread
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -698,7 +706,7 @@ Structured concurrency works with any threads but is designed for virtual thread
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Unstructured: leaked tasks on failure:**
 
@@ -746,7 +754,7 @@ try (var scope = new StructuredTaskScope
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -768,14 +776,14 @@ try (var scope = new StructuredTaskScope
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How does structured concurrency compare to CompletableFuture.allOf()?**
 
@@ -838,13 +846,13 @@ This is equivalent to `CompletableFuture.anyOf()` but with automatic cancellatio
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Structured Concurrency. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -855,7 +863,7 @@ This is equivalent to `CompletableFuture.anyOf()` but with automatic cancellatio
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -889,7 +897,7 @@ This is equivalent to `CompletableFuture.anyOf()` but with automatic cancellatio
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -914,7 +922,7 @@ This is equivalent to `CompletableFuture.anyOf()` but with automatic cancellatio
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 ThreadLocal works with platform thread pools (bounded copies). With virtual threads (potentially millions), ThreadLocal creates millions of copies consuming gigabytes. ThreadLocal also leaks memory in pools when not explicitly removed, and doesn't inherit properly in structured concurrency.
@@ -924,13 +932,13 @@ ThreadLocal works with platform thread pools (bounded copies). With virtual thre
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -943,7 +951,7 @@ ThreadLocal works with platform thread pools (bounded copies). With virtual thre
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -963,7 +971,7 @@ ThreadLocal works with platform thread pools (bounded copies). With virtual thre
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -975,7 +983,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 ScopedValue is like a "this context applies here and in everything called from here" variable that automatically disappears when the scope ends.
@@ -1060,7 +1068,7 @@ ScopedValue.where(CURRENT_USER, admin)
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1074,7 +1082,7 @@ ScopedValue.where(CURRENT_USER, admin)
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1096,14 +1104,14 @@ ScopedValue.where(CURRENT_USER, admin)
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Why can't you just use ThreadLocal with virtual threads?**
 
@@ -1158,13 +1166,13 @@ Challenges:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Scoped Values. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1175,7 +1183,7 @@ Challenges:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1209,7 +1217,7 @@ Challenges:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1234,20 +1242,20 @@ Challenges:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT (understanding pinning):**
 Without understanding pinning, teams migrate to virtual threads expecting automatic scaling, but hit mysterious performance degradation. Under load, the system behaves as if it only has a few platform threads - because that's exactly what happens when all carriers are pinned.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1260,7 +1268,7 @@ Without understanding pinning, teams migrate to virtual threads expecting automa
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1280,7 +1288,7 @@ Without understanding pinning, teams migrate to virtual threads expecting automa
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1292,7 +1300,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Normally, virtual threads release their carrier when they block. Pinning means a virtual thread is stuck on its carrier, preventing other virtual threads from using that carrier.
@@ -1404,7 +1412,7 @@ platformPool.submit(() -> {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1418,7 +1426,7 @@ platformPool.submit(() -> {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1440,14 +1448,14 @@ platformPool.submit(() -> {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your app migrated to virtual threads but throughput didn't improve. Diagnose.**
 
@@ -1515,13 +1523,13 @@ The carrier pool also has a max size (default 256). When all carriers are pinned
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Pinning and Carrier Threads. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1532,7 +1540,7 @@ The carrier pool also has a max size (default 256). When all carriers are pinned
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1566,7 +1574,7 @@ The carrier pool also has a max size (default 256). When all carriers are pinned
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1591,20 +1599,20 @@ The carrier pool also has a max size (default 256). When all carriers are pinned
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Teams change one line (`newFixedThreadPool(200)` to `newVirtualThreadPerTaskExecutor()`), deploy, and get: database connection pool exhaustion, memory spikes from ThreadLocal explosion, and downstream services overwhelmed by unlimited concurrency.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1617,7 +1625,7 @@ Teams change one line (`newFixedThreadPool(200)` to `newVirtualThreadPerTaskExec
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1637,7 +1645,7 @@ Teams change one line (`newFixedThreadPool(200)` to `newVirtualThreadPerTaskExec
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1649,7 +1657,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Moving from platform threads to virtual threads isn't just a config change - you need to check that your code and libraries are compatible.
@@ -1740,7 +1748,7 @@ void handleRequest() {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1754,7 +1762,7 @@ void handleRequest() {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1776,14 +1784,14 @@ void handleRequest() {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your team migrated to virtual threads and the database connection pool is exhausted. Why?**
 
@@ -1848,13 +1856,13 @@ Practical reality: Most Spring Boot apps can migrate without ThreadLocal changes
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Migration from Platform Threads. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1865,7 +1873,7 @@ Practical reality: Most Spring Boot apps can migrate without ThreadLocal changes
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1899,7 +1907,7 @@ Practical reality: Most Spring Boot apps can migrate without ThreadLocal changes
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

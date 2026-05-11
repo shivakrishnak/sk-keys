@@ -17,26 +17,33 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Optimistic vs Pessimistic Locking](#optimistic-vs-pessimistic-locking)
+- [JPA Inheritance Mapping](#jpa-inheritance-mapping)
+- [JPQL vs Criteria API vs Native Queries](#jpql-vs-criteria-api-vs-native-queries)
+- [Schema Migration](#schema-migration)
+
 # Optimistic vs Pessimistic Locking
 
 **TL;DR** - Optimistic locking uses version checks to detect conflicts at commit time; pessimistic locking acquires database locks upfront to prevent conflicts entirely - each trades throughput for safety.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT LOCKING:**
 Two users view the same product page. Both see "stock: 10." User A buys 3 (stock should be 7). User B buys 5 (stock should be 5). Both read stock=10, subtract independently, and write back. Final stock: either 7 or 5, depending on who writes last. Two purchases deducted from 10, but only one deduction was applied. This is the **lost update** problem.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -49,7 +56,7 @@ Two users view the same product page. Both see "stock: 10." User A buys 3 (stock
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -69,7 +76,7 @@ Two users view the same product page. Both see "stock: 10." User A buys 3 (stock
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -81,7 +88,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -100,7 +107,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 OPTIMISTIC (version-based, conflict detected late):
@@ -135,7 +142,7 @@ PESSIMISTIC (DB lock, conflict prevented early):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -149,7 +156,7 @@ PESSIMISTIC (DB lock, conflict prevented early):
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // OPTIMISTIC LOCKING
@@ -234,7 +241,7 @@ Long transactions (seconds to minutes):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -256,14 +263,14 @@ Long transactions (seconds to minutes):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: A flash sale has 1000 users buying the same product simultaneously. Which locking strategy do you use and why?**
 
@@ -294,13 +301,13 @@ _Why they ask:_ Tests real production debugging experience.
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Optimistic vs Pessimistic Locking. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -311,7 +318,7 @@ _Why they ask:_ Tests real production debugging experience.
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -345,7 +352,7 @@ _Why they ask:_ Tests real production debugging experience.
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -370,7 +377,7 @@ _Why they ask:_ Tests real production debugging experience.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Your domain has a `Payment` base class with `CreditCardPayment`, `BankTransferPayment`, and `CryptoPayment` subclasses. How do you store this in a relational database that has no concept of inheritance?
 
@@ -427,13 +434,13 @@ TABLE PER CLASS (no JOINs, no shared table):
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -446,7 +453,7 @@ TABLE PER CLASS (no JOINs, no shared table):
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -466,7 +473,7 @@ TABLE PER CLASS (no JOINs, no shared table):
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -478,7 +485,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -504,7 +511,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -518,7 +525,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // SINGLE TABLE (recommended default)
@@ -585,7 +592,7 @@ Default recommendation:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -607,14 +614,14 @@ Default recommendation:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -661,13 +668,13 @@ Default recommendation:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for JPA Inheritance Mapping. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -678,7 +685,7 @@ Default recommendation:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -712,7 +719,7 @@ Default recommendation:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -750,7 +757,7 @@ Default recommendation:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -766,13 +773,13 @@ Default recommendation:
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -785,7 +792,7 @@ Default recommendation:
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -805,7 +812,7 @@ Default recommendation:
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -817,7 +824,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -843,7 +850,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -857,7 +864,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // JPQL: Simple, readable, best for static queries
@@ -923,7 +930,7 @@ Reporting/analytics:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -945,14 +952,14 @@ Reporting/analytics:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -999,13 +1006,13 @@ Reporting/analytics:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for JPQL vs Criteria API vs Native Queries. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1016,7 +1023,7 @@ Reporting/analytics:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1050,7 +1057,7 @@ Reporting/analytics:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1075,7 +1082,7 @@ Reporting/analytics:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Without schema migration: developer A adds a column locally, developer B doesn't know. Production schema drifts from staging. Deploying requires a manual SQL script run by a DBA. Rolling back a bad migration means writing reverse SQL by hand. Nobody knows what schema version production is on.
 
@@ -1095,13 +1102,13 @@ Without schema migration: developer A adds a column locally, developer B doesn't
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1114,7 +1121,7 @@ Without schema migration: developer A adds a column locally, developer B doesn't
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1134,7 +1141,7 @@ Without schema migration: developer A adds a column locally, developer B doesn't
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1146,7 +1153,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1172,7 +1179,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1226,7 +1233,7 @@ spring:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1248,14 +1255,14 @@ spring:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1302,13 +1309,13 @@ spring:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Schema Migration (Flyway / Liquibase). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1319,7 +1326,7 @@ spring:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1353,7 +1360,7 @@ spring:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

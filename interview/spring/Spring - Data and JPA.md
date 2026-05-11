@@ -18,26 +18,34 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Spring Data Repositories](#spring-data-repositories)
+- [Transaction Management](#transaction-management)
+- [Transactional Annotation](#transactional-annotation)
+- [N+1 Problem](#n1-problem)
+- [Connection Pooling](#connection-pooling)
+
 # Spring Data Repositories
 
 **TL;DR** - Spring Data JPA auto-generates repository implementations from interfaces, providing CRUD operations and query derivation from method names - eliminating boilerplate DAO code while remaining extensible for complex queries.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every entity needs a DAO class with repetitive `entityManager.find()`, `persist()`, `createQuery()` code. 50 entities = 50 nearly identical DAO classes with the same CRUD patterns.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -50,7 +58,7 @@ Every entity needs a DAO class with repetitive `entityManager.find()`, `persist(
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -70,7 +78,7 @@ Every entity needs a DAO class with repetitive `entityManager.find()`, `persist(
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -82,7 +90,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Define an interface with method names like `findByEmailAndStatus`, and Spring generates the implementation automatically. No SQL, no boilerplate.
@@ -226,7 +234,7 @@ List<OrderSummary> findByStatus(
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -240,7 +248,7 @@ List<OrderSummary> findByStatus(
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -259,14 +267,14 @@ List<OrderSummary> findByStatus(
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When do derived queries become a bad idea?**
 
@@ -303,13 +311,13 @@ For read-heavy list endpoints, projections can reduce response time by 40-60%.
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Spring Data Repositories. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -320,7 +328,7 @@ For read-heavy list endpoints, projections can reduce response time by 40-60%.
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -354,7 +362,7 @@ For read-heavy list endpoints, projections can reduce response time by 40-60%.
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -379,20 +387,20 @@ For read-heavy list endpoints, projections can reduce response time by 40-60%.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Manual transaction management: `connection.setAutoCommit(false)`, try-catch-finally with `commit()` or `rollback()`, ensuring cleanup in all paths. Miss a rollback and you corrupt data. Nested service calls need manual transaction coordination.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -405,7 +413,7 @@ Manual transaction management: `connection.setAutoCommit(false)`, try-catch-fina
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -425,7 +433,7 @@ Manual transaction management: `connection.setAutoCommit(false)`, try-catch-fina
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -437,7 +445,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Wrap business operations in a transaction: either everything succeeds (commit) or everything is undone (rollback). Spring handles this automatically.
@@ -558,7 +566,7 @@ public List<Order> findAll() {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -572,7 +580,7 @@ public List<Order> findAll() {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -591,14 +599,14 @@ public List<Order> findAll() {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Explain a scenario where @Transactional doesn't work as expected.**
 
@@ -635,13 +643,13 @@ public void process(List<Order> orders) {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Transaction Management. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -652,7 +660,7 @@ public void process(List<Order> orders) {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -686,7 +694,7 @@ public void process(List<Order> orders) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -711,20 +719,20 @@ public void process(List<Order> orders) {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT (N+1 unresolved):**
 A page listing 50 orders with customer names generates 51 queries: 1 for orders + 50 individual customer lookups. Response time balloons from 5ms to 500ms. Under load, database connection pool exhausted.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -737,7 +745,7 @@ A page listing 50 orders with customer names generates 51 queries: 1 for orders 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -757,7 +765,7 @@ A page listing 50 orders with customer names generates 51 queries: 1 for orders 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -769,7 +777,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 You ask for a list of 100 items. For each item, the system makes a separate database call to get related data. 1 + 100 = 101 queries instead of 1 or 2.
@@ -897,7 +905,7 @@ List<Order> findByIdIn(List<Long> ids);
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -911,7 +919,7 @@ List<Order> findByIdIn(List<Long> ids);
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -933,14 +941,14 @@ List<Order> findByIdIn(List<Long> ids);
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You have a REST endpoint returning paginated orders with line items. It's slow. How do you diagnose and fix?**
 
@@ -971,13 +979,13 @@ This gives: correct pagination (query 1 uses LIMIT/OFFSET) + no N+1 (query 2 use
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for N+1 Problem. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -988,7 +996,7 @@ This gives: correct pagination (query 1 uses LIMIT/OFFSET) + no N+1 (query 2 use
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1022,7 +1030,7 @@ This gives: correct pagination (query 1 uses LIMIT/OFFSET) + no N+1 (query 2 use
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1047,20 +1055,20 @@ This gives: correct pagination (query 1 uses LIMIT/OFFSET) + no N+1 (query 2 use
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Each database operation opens a new connection (DNS + TCP + TLS + authentication = 50-200ms), executes a 2ms query, then closes. Under load, the database is overwhelmed with connection storms and the application starves waiting for connections.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1073,7 +1081,7 @@ Each database operation opens a new connection (DNS + TCP + TLS + authentication
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1093,7 +1101,7 @@ Each database operation opens a new connection (DNS + TCP + TLS + authentication
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1105,7 +1113,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Keep a pool of ready-to-use database connections. When code needs a DB connection, borrow one from the pool. When done, return it (don't close it). Like a car rental instead of buying a new car for each trip.
@@ -1212,7 +1220,7 @@ public Order process(Long id) {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1226,7 +1234,7 @@ public Order process(Long id) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1245,14 +1253,14 @@ public Order process(Long id) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your service throws "Connection is not available, request timed out" under load. What do you do?**
 
@@ -1279,13 +1287,13 @@ If virtual threads: add Semaphore limiting concurrent DB operations to pool size
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Connection Pooling. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1296,7 +1304,7 @@ If virtual threads: add Semaphore limiting concurrent DB operations to pool size
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1330,7 +1338,7 @@ If virtual threads: add Semaphore limiting concurrent DB operations to pool size
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

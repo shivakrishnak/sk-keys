@@ -19,13 +19,22 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [ArrayList](#arraylist)
+- [HashMap](#hashmap)
+- [TreeMap](#treemap)
+- [HashSet](#hashset)
+- [Queue and Deque](#queue-and-deque)
+- [Iterator and Iterable](#iterator-and-iterable)
+
 # ArrayList
 
 **TL;DR** - ArrayList is a resizable array backed by `Object[]` that gives O(1) random access but O(n) insertion at arbitrary positions, and understanding its growth strategy prevents memory waste and performance cliffs.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You need a list of customer orders, but you don't know how many there will be. With plain arrays, you must declare the size upfront. When the array fills up, you manually create a bigger one, copy everything over, and update every reference. Every team does this differently - some double the size, some add 10 slots, some forget to copy and lose data.
@@ -41,13 +50,13 @@ Java 1.0 shipped `Vector`, a synchronized resizable array. But synchronization o
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 `ArrayList` is a resizable-array implementation of the `List` interface in `java.util`. It maintains an internal `Object[]` array that grows automatically when capacity is exceeded, using an amortized growth strategy (typically 1.5x in OpenJDK). It permits all elements including `null`, is not synchronized, and provides O(1) index-based access with O(n) worst-case insertion and deletion.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A list that grows itself when full and gives instant access by position.
@@ -61,7 +70,7 @@ The key insight is amortized cost. Growing the array is expensive (copy everythi
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -83,7 +92,7 @@ Contiguous storage forces a trade-off: random access is instant (pointer + offse
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Imagine a parking lot with numbered spots in a row. You can drive straight to spot 47 because you know exactly where it is. But if you want to squeeze a new car between spot 10 and 11, every car from 11 onward must shift down one spot.
 
@@ -97,7 +106,7 @@ Where this analogy breaks down: Real parking lots don't automatically build bigg
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 ArrayList is a list that grows automatically when you add items. You can access any item by its position number instantly. It's the most commonly used list in Java.
@@ -122,7 +131,7 @@ ArrayList is an instance of the universal array-vs-linked trade-off found in eve
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 ArrayList internal structure:
@@ -160,7 +169,7 @@ With 2x growth, previously freed arrays can never be reused for the new allocati
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -189,7 +198,7 @@ With millions of elements, a single resize copies millions of references, causin
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - Common mistake: not pre-sizing**
 
@@ -237,7 +246,7 @@ Write a unit test that adds elements beyond initial capacity, verifies `size()` 
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Resizable array-backed list with O(1) random access
 **PROBLEM IT SOLVES:** Dynamic-size ordered collection with fast index-based access
@@ -259,13 +268,13 @@ Write a unit test that adds elements beyond initial capacity, verifies `size()` 
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 ArrayList's default initial capacity of 10 was set in Java 1.2 and has never changed, despite being a poor fit for most real-world workloads. Internal JDK profiling showed that most ArrayLists either hold 0-2 elements (wasting 8 slots) or grow well past 10 (triggering multiple resizes). Modern Java actually optimizes the zero-element case: `new ArrayList<>()` creates a shared empty array and defers allocation until the first `add()`.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the internal data structure of ArrayList and how does it grow?**
 
@@ -495,7 +504,7 @@ Additional consideration: at 50M elements, even iterating has cache implications
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | ArrayList | LinkedList | CopyOnWriteArrayList |
 |--------|-----------|------------|---------------------|
@@ -508,7 +517,7 @@ Additional consideration: at 50M elements, even iterating has cache implications
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -519,7 +528,7 @@ Additional consideration: at 50M elements, even iterating has cache implications
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: ConcurrentModificationException during iteration**
 **Symptom:** `ConcurrentModificationException` from `Iterator.next()` during for-each.
@@ -590,7 +599,7 @@ List<Row> rows = new ArrayList<>(expectedCount);
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -617,7 +626,7 @@ List<Row> rows = new ArrayList<>(expectedCount);
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You have a million user records and need to find one by email. With a list, you scan all million entries - O(n). A sorted list with binary search gives O(log n), but inserting new users requires re-sorting. You need constant-time lookup by arbitrary keys without maintaining sort order.
@@ -633,13 +642,13 @@ Java 1.0 had `Hashtable` (synchronized, no nulls allowed). Java 1.2 introduced `
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 `HashMap` is a hash table implementation of the `Map` interface that stores key-value pairs in an array of buckets. It computes a hash of each key to determine the bucket index, provides O(1) average-case `get` and `put` operations, handles collisions via chaining (linked list, then red-black tree after threshold), and automatically resizes when the load factor is exceeded. It permits one null key and multiple null values, and is not thread-safe.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A dictionary that finds any value by its key in constant time using hashing.
@@ -653,7 +662,7 @@ The magic is in the hash function: it converts any key into an array index. When
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -675,7 +684,7 @@ The hash-to-index mapping creates a fixed-size bucket array. Collisions are inev
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Imagine a post office with numbered P.O. boxes. Your name gets converted to a box number by a formula. To pick up mail, you compute your box number and go directly there. If two people get the same box number, their mail shares the box in a stack.
 
@@ -689,7 +698,7 @@ Where this analogy breaks down: P.O. boxes don't automatically reorganize themse
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 HashMap is a container that stores pairs of things: a key and a value. You give it a key, and it instantly gives back the associated value. Like a real dictionary where you look up a word (key) and get the definition (value).
@@ -714,7 +723,7 @@ HashMap is the canonical implementation of the hash table - the most important d
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 HashMap structure (Java 8+):
@@ -747,7 +756,7 @@ HashMap structure (Java 8+):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -778,7 +787,7 @@ With millions of entries, `resize()` becomes expensive - doubling a 10M-entry ta
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - Broken hashCode/equals**
 
@@ -835,7 +844,7 @@ Test that your key class's `hashCode()` and `equals()` satisfy the contract: equ
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Hash table implementation of Map with O(1) average put/get
 **PROBLEM IT SOLVES:** Fast key-value lookup, deduplication, grouping, counting
@@ -857,13 +866,13 @@ Test that your key class's `hashCode()` and `equals()` satisfy the contract: equ
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 HashMap's treeification threshold of 8 wasn't arbitrary - it was derived from Poisson probability analysis. With a load factor of 0.75 and a reasonably distributed hash function, the probability of any single bucket containing 8 or more entries is approximately 0.00000006 (6 in 100 million). The feature exists almost exclusively as a defense against hash-flooding denial-of-service attacks, where an attacker deliberately crafts keys with identical hash codes to degrade HashMap to O(n) performance.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Walk me through what happens internally when you call `map.put(key, value)`.**
 
@@ -1032,7 +1041,7 @@ Key insight: under normal conditions with a good hash function, treeification al
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | HashMap | TreeMap | LinkedHashMap | ConcurrentHashMap |
 |--------|---------|---------|--------------|-------------------|
@@ -1045,7 +1054,7 @@ Key insight: under normal conditions with a good hash function, treeification al
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1056,7 +1065,7 @@ Key insight: under normal conditions with a good hash function, treeification al
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Lost entries from mutable keys**
 **Symptom:** `map.get(key)` returns null for a key that was just inserted.
@@ -1126,7 +1135,7 @@ if (input.size() > MAX_ENTRIES)
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -1153,7 +1162,7 @@ if (input.size() > MAX_ENTRIES)
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You need a leaderboard showing scores from highest to lowest. With HashMap, you can look up any player's score in O(1), but to get "all players scoring between 80 and 90" you must scan every entry. Sorting the entire map on every query kills performance.
@@ -1169,13 +1178,13 @@ TreeMap was introduced in Java 1.2 as part of the Collections Framework. It impl
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 `TreeMap` is a red-black tree-based implementation of the `NavigableMap` interface. It stores key-value pairs sorted by keys' natural ordering (via `Comparable`) or by a provided `Comparator`. All basic operations (`get`, `put`, `remove`, `containsKey`) run in O(log n) time. It does not permit null keys (when using natural ordering) and guarantees that iteration follows key order.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A map that keeps its keys sorted and lets you query ranges efficiently.
@@ -1189,7 +1198,7 @@ The key insight is the trade-off: TreeMap sacrifices HashMap's O(1) lookup for O
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1211,7 +1220,7 @@ A balanced binary search tree inherently maintains sorted order at the cost of O
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Imagine a filing cabinet where folders are always kept in alphabetical order. Finding a folder takes a bit longer than reaching into a numbered bin, but you can instantly find "all folders from M to P" by looking at one section.
 
@@ -1224,7 +1233,7 @@ Where this analogy breaks down: Filing cabinets don't automatically rebalance th
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 TreeMap is a map that keeps its keys sorted automatically. When you iterate over it, entries come out in order. It's slower than HashMap but lets you do things like "find all entries between two values."
@@ -1249,7 +1258,7 @@ TreeMap implements a red-black tree - the same balanced BST used in Linux's CFS 
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Red-Black Tree structure (simplified):
@@ -1281,7 +1290,7 @@ Red-Black Tree structure (simplified):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -1311,7 +1320,7 @@ TreeMap's O(log n) is very stable - doubling the entries adds only one more comp
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - Range queries**
 
@@ -1361,7 +1370,7 @@ Verify that `subMap()` boundaries work correctly (inclusive vs exclusive), that 
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Red-black tree implementation of SortedMap with O(log n) operations
 **PROBLEM IT SOLVES:** Ordered key-value storage with range queries and sorted iteration
@@ -1383,13 +1392,13 @@ Verify that `subMap()` boundaries work correctly (inclusive vs exclusive), that 
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 TreeMap's `subMap()`, `headMap()`, and `tailMap()` return live views, not copies. Inserting into the view inserts into the original tree, and vice versa. But if you insert a key outside the view's range, it throws `IllegalArgumentException`. This means you can use a subMap view as a "windowed writer" that enforces key bounds at the API level - a design pattern rarely taught but extremely useful for partitioned processing.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When would you choose TreeMap over HashMap?**
 
@@ -1520,7 +1529,7 @@ For concurrent access, replace TreeMap with `ConcurrentSkipListMap` which provid
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | TreeMap | HashMap | ConcurrentSkipListMap |
 |--------|---------|---------|----------------------|
@@ -1533,7 +1542,7 @@ For concurrent access, replace TreeMap with `ConcurrentSkipListMap` which provid
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1544,7 +1553,7 @@ For concurrent access, replace TreeMap with `ConcurrentSkipListMap` which provid
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: ClassCastException on put()**
 **Symptom:** `ClassCastException: MyKey cannot be cast to Comparable` on first `put()`.
@@ -1618,7 +1627,7 @@ int compareTo(Key o) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -1645,7 +1654,7 @@ int compareTo(Key o) {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You need to track which users are currently online. Using a List, checking "is user X online?" scans the entire list - O(n). Adding a user requires first checking the whole list for duplicates. At 100K online users, every status check takes milliseconds.
@@ -1661,13 +1670,13 @@ Java 1.0 had no Set interface. Java 1.2 introduced the Collections Framework wit
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 `HashSet` is an implementation of the `Set` interface backed internally by a `HashMap`. It stores unique elements with no guaranteed iteration order, provides O(1) average-case `add`, `remove`, and `contains` operations, permits one null element, and is not thread-safe. Two elements are considered duplicates if their `equals()` method returns true.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A bag that automatically rejects duplicates and finds any element instantly.
@@ -1681,7 +1690,7 @@ HashSet is literally a HashMap with ignored values. `set.add(element)` calls `ma
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1703,7 +1712,7 @@ Since a Set is conceptually a Map with only keys, HashSet delegates everything t
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a jar of unique marbles. Each marble has a color, and the jar rejects any marble whose color is already present. Finding "do I have a blue marble?" is instant because marbles are organized by color hash.
 
@@ -1716,7 +1725,7 @@ Where this analogy breaks down: Real jars don't organize contents by hash - find
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 HashSet is a collection that stores unique items. If you try to add something that's already there, it silently ignores the duplicate. You can quickly check if any item exists in the set.
@@ -1741,7 +1750,7 @@ HashSet is a degenerate case of HashMap - literally implemented as `HashMap<E, P
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 HashSet internal delegation:
@@ -1764,7 +1773,7 @@ Everything - capacity, load factor, resizing, collision handling, treeification 
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -1791,7 +1800,7 @@ At millions of elements, HashSet's memory overhead becomes significant. Each ele
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - Deduplication**
 
@@ -1837,7 +1846,7 @@ Verify that `add()` returns false for duplicates, that `size()` reflects unique 
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Hash-table-backed Set with O(1) add, remove, contains
 **PROBLEM IT SOLVES:** Fast membership testing, deduplication, uniqueness enforcement
@@ -1859,13 +1868,13 @@ Verify that `add()` returns false for duplicates, that `size()` reflects unique 
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Because HashSet wraps HashMap, creating a `HashSet<>(collection)` actually creates a HashMap with capacity sized for the collection's size divided by the load factor (0.75). So `new HashSet<>(Arrays.asList(1,2,3))` creates an internal HashMap with capacity 4 (3/0.75 = 4, rounded to next power of 2 = 4). This means small sets are more memory-efficient than you'd expect, but the PRESENT dummy value is still wasted space - a fact that led Google's Guava and Eclipse Collections to create Set implementations that don't wrap Map.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How does HashSet determine if two elements are duplicates?**
 
@@ -2054,7 +2063,7 @@ This is a memory leak. The object is referenced by the set (preventing GC) but c
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | HashSet | TreeSet | LinkedHashSet | EnumSet |
 |--------|---------|---------|--------------|--------|
@@ -2066,7 +2075,7 @@ This is a memory leak. The object is referenced by the set (preventing GC) but c
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2077,7 +2086,7 @@ This is a memory leak. The object is referenced by the set (preventing GC) but c
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Duplicates appear in the Set**
 **Symptom:** `set.size()` larger than expected. Iteration shows duplicate-looking elements.
@@ -2149,7 +2158,7 @@ ids.set(userId);
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -2176,7 +2185,7 @@ ids.set(userId);
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You need to process incoming requests in order. With a List, you `add()` at the end and `remove(0)` from the front. But `remove(0)` on ArrayList shifts every element - O(n). With LinkedList used as a List, you lose type safety that enforces FIFO discipline. Any developer can accidentally `get(5)` and break the ordering guarantee.
@@ -2192,13 +2201,13 @@ Java 1.2 had only `LinkedList`. Java 5 introduced the `Queue` interface and `Pri
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 `Queue` is a `Collection` subinterface modeling a FIFO (first-in, first-out) data structure with operations for insertion (`offer`/`add`), removal (`poll`/`remove`), and inspection (`peek`/`element`). `Deque` (double-ended queue) extends `Queue` to support insertion and removal at both ends. Implementations include `ArrayDeque` (resizable array, fastest general-purpose), `LinkedList` (doubly-linked list, implements both `List` and `Deque`), and `PriorityQueue` (binary heap, elements dequeued by priority).
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A line where people join at the back and leave from the front.
@@ -2212,7 +2221,7 @@ The critical decision is implementation choice. `ArrayDeque` is faster than `Lin
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -2233,7 +2242,7 @@ The dual-method design (`add`/`offer`, `remove`/`poll`, `element`/`peek`) exists
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A conveyor belt in a factory: items are placed on one end and taken off the other end in the same order they were placed. A Deque is a conveyor belt that can run in both directions.
 
@@ -2247,7 +2256,7 @@ Where this analogy breaks down: PriorityQueue doesn't follow conveyor order - it
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A Queue is a line - first in, first out. A Deque (pronounced "deck") lets you add or remove from either end. Java gives you several implementations optimized for different scenarios.
@@ -2272,7 +2281,7 @@ Queue and Deque are Java's abstraction over the fundamental FIFO/LIFO patterns t
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 ArrayDeque circular buffer:
@@ -2307,7 +2316,7 @@ ArrayDeque circular buffer:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -2336,7 +2345,7 @@ At high throughput, the choice between queue implementations becomes critical. A
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - Queue implementation choice**
 
@@ -2391,7 +2400,7 @@ Verify FIFO order with sequential offer/poll, test empty queue returns null from
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Interfaces for FIFO (Queue) and double-ended (Deque) collections
 **PROBLEM IT SOLVES:** Ordered processing, BFS, task scheduling, undo stacks
@@ -2413,13 +2422,13 @@ Verify FIFO order with sequential offer/poll, test empty queue returns null from
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Java's `Stack` class is universally considered a design mistake. It extends `Vector` (synchronized array), which means every push/pop acquires a lock even in single-threaded code. Worse, because it extends `Vector`, you can call `get(3)` on a Stack - breaking the LIFO abstraction entirely. The official Javadoc for `Stack` says: "A more complete and consistent set of LIFO stack operations is provided by the Deque interface." Yet `Stack` cannot be deprecated because too much legacy code depends on it.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What's the difference between `offer()` and `add()` on a Queue?**
 
@@ -2600,7 +2609,7 @@ Decision: "Can my producer afford to spin or skip when the queue is full?" If ye
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | ArrayDeque | LinkedList | PriorityQueue | BlockingQueue |
 |--------|------------|------------|--------------|---------------|
@@ -2613,7 +2622,7 @@ Decision: "Can my producer afford to spin or skip when the queue is full?" If ye
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2624,7 +2633,7 @@ Decision: "Can my producer afford to spin or skip when the queue is full?" If ye
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: NPE from null elements in ArrayDeque**
 **Symptom:** `NullPointerException` from `ArrayDeque.addLast()` or `offerFirst()`.
@@ -2692,7 +2701,7 @@ s.push(root); s.pop();
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -2719,7 +2728,7 @@ s.push(root); s.pop();
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every collection has its own way to traverse: arrays use index loops, linked lists follow pointers, trees do recursive walks. Client code must know the internal structure of each collection to iterate. Changing from ArrayList to TreeSet requires rewriting every loop.
@@ -2735,13 +2744,13 @@ Java 1.0 had `Enumeration` with `hasMoreElements()`/`nextElement()`. Java 1.2 re
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 `Iterable<T>` is a functional interface with one method, `iterator()`, that returns an `Iterator<T>`. Any class implementing `Iterable` can be used in Java's enhanced for-each loop. `Iterator<T>` is a stateful cursor with `hasNext()`, `next()`, and optionally `remove()`. Together they implement the Iterator design pattern, decoupling traversal logic from collection internals and providing a uniform interface for sequential element access.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Iterable says "I can be looped over," Iterator does the actual looping.
@@ -2755,7 +2764,7 @@ The for-each loop `for (String s : list)` is syntactic sugar. The compiler conve
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -2777,7 +2786,7 @@ Separating "I am iterable" (Iterable) from "I am iterating" (Iterator) allows mu
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A TV remote (Iterator) and a TV channel list (Iterable). The channel list says "you can browse me." The remote has "next channel" and "is there another channel?" buttons. Each person gets their own remote, so multiple viewers can browse independently.
 
@@ -2791,7 +2800,7 @@ Where this analogy breaks down: TV remotes can go backward; standard Java Iterat
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Iterable is a promise: "you can go through my items one by one." Iterator is the mechanism that actually steps through them. Together, they let Java's for-each loop work on any collection.
@@ -2816,7 +2825,7 @@ Iterator is Java's implementation of the iterator pattern - one of the most univ
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 for-each desugaring:
@@ -2850,7 +2859,7 @@ for-each desugaring:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -2877,7 +2886,7 @@ For large collections, Iterator's one-element-at-a-time model becomes a bottlene
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - Custom Iterable**
 
@@ -2944,7 +2953,7 @@ Test that your custom Iterable supports multiple independent iterations, that `h
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Interfaces for sequential element access: `Iterable` (can be iterated) and `Iterator` (does the iterating)
 **PROBLEM IT SOLVES:** Uniform traversal of any collection without knowing its internal structure
@@ -2966,13 +2975,13 @@ Test that your custom Iterable supports multiple independent iterations, that `h
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 `Iterable` is a `@FunctionalInterface` with a single abstract method (`iterator()`). This means you can create an Iterable with a lambda: `Iterable<String> words = () -> scanner;` wraps any Iterator in an Iterable. This trick is particularly powerful for adapting I/O sources (Scanners, BufferedReaders, database result sets) to work with for-each loops without writing a full class.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between Iterable and Iterator? Why are they separate interfaces?**
 
@@ -3184,7 +3193,7 @@ Key insight: this is a language-level special case, not a type system relationsh
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | Iterator | ListIterator | Spliterator | Stream |
 |--------|----------|--------------|------------|--------|
@@ -3196,7 +3205,7 @@ Key insight: this is a language-level special case, not a type system relationsh
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -3207,7 +3216,7 @@ Key insight: this is a language-level special case, not a type system relationsh
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: ConcurrentModificationException**
 **Symptom:** `ConcurrentModificationException` during for-each loop.
@@ -3285,7 +3294,7 @@ public Iterator<T> iterator() {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 

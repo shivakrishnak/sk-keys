@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "AI Foundations, LLMs, RAG and Agents"
+parent: "Interview Mastery"
+nav_order: 14
+has_children: true
+permalink: /interview/ai-and-rag/
 description: "AI fundamentals, LLMs, prompt engineering, RAG architectures, AI agents, and LLMOps for production AI systems"
 keywords_count: 30
 files_count: 5

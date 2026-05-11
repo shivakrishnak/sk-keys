@@ -18,13 +18,21 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [DispatcherServlet and Request Processing](#dispatcherservlet-and-request-processing)
+- [RestController and Request Mapping](#restcontroller-and-request-mapping)
+- [Exception Handling](#exception-handling)
+- [Validation](#validation)
+- [Filters and Interceptors](#filters-and-interceptors)
+
 # DispatcherServlet and Request Processing
 
 **TL;DR** - DispatcherServlet is the front controller that receives all HTTP requests and dispatches them to the appropriate handler (controller method) through a pipeline of handler mappings, adapters, and view resolvers.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Each URL requires its own servlet registered in web.xml. Routing logic scattered across dozens of servlets. No unified way to handle cross-cutting concerns (logging, auth, content negotiation).
@@ -34,13 +42,13 @@ Each URL requires its own servlet registered in web.xml. Routing logic scattered
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -53,7 +61,7 @@ Each URL requires its own servlet registered in web.xml. Routing logic scattered
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -73,7 +81,7 @@ Each URL requires its own servlet registered in web.xml. Routing logic scattered
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -85,7 +93,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 DispatcherServlet is the traffic cop. Every request comes to it first, and it figures out which controller method should handle it.
@@ -179,7 +187,7 @@ public Callable<Result> slowEndpoint() {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -193,7 +201,7 @@ public Callable<Result> slowEndpoint() {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -212,14 +220,14 @@ public Callable<Result> slowEndpoint() {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between a Filter and a HandlerInterceptor?**
 
@@ -270,13 +278,13 @@ public class TimingInterceptor
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for DispatcherServlet and Request Processing. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -287,7 +295,7 @@ public class TimingInterceptor
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -321,7 +329,7 @@ public class TimingInterceptor
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -346,20 +354,20 @@ public class TimingInterceptor
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Manually reading request bodies, parsing JSON, setting content types, writing response bytes. Every endpoint repeats serialization/deserialization boilerplate.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -372,7 +380,7 @@ Manually reading request bodies, parsing JSON, setting content types, writing re
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -392,7 +400,7 @@ Manually reading request bodies, parsing JSON, setting content types, writing re
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -404,7 +412,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 You annotate a method with `@GetMapping("/users")`, return a Java object, and Spring automatically converts it to JSON and sends it as the HTTP response.
@@ -517,7 +525,7 @@ public record OrderResponse(
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -531,7 +539,7 @@ public record OrderResponse(
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -550,14 +558,14 @@ public record OrderResponse(
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between @Controller and @RestController?**
 
@@ -590,13 +598,13 @@ class ApiController {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for RestController and Request Mapping. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -607,7 +615,7 @@ class ApiController {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -641,7 +649,7 @@ class ApiController {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -666,20 +674,20 @@ class ApiController {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every controller method has try-catch blocks returning different error formats. Some return 500 for business errors, others return 200 with error messages in the body. Clients can't reliably parse error responses.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -692,7 +700,7 @@ Every controller method has try-catch blocks returning different error formats. 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -712,7 +720,7 @@ Every controller method has try-catch blocks returning different error formats. 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -724,7 +732,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of catching exceptions in every method, you define one central place that converts exceptions to proper HTTP error responses.
@@ -831,7 +839,7 @@ public ProblemDetail handle(ApiException ex) {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -845,7 +853,7 @@ public ProblemDetail handle(ApiException ex) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -864,14 +872,14 @@ public ProblemDetail handle(ApiException ex) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you ensure consistent error responses across 50 microservices?**
 
@@ -898,13 +906,13 @@ public class ErrorHandlingAutoConfig {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Exception Handling. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -915,7 +923,7 @@ public class ErrorHandlingAutoConfig {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -949,7 +957,7 @@ public class ErrorHandlingAutoConfig {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -974,20 +982,20 @@ public class ErrorHandlingAutoConfig {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Manual if-checks for every field: `if (name == null || name.isBlank()) throw...`. Validation logic duplicated across controllers. Easy to forget a check. Inconsistent error messages.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1000,7 +1008,7 @@ Manual if-checks for every field: `if (name == null || name.isBlank()) throw...`
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1020,7 +1028,7 @@ Manual if-checks for every field: `if (name == null || name.isBlank()) throw...`
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1032,7 +1040,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Annotate fields with rules (`@NotNull`, `@Size`, `@Email`), and Spring automatically rejects invalid requests before your code runs.
@@ -1125,7 +1133,7 @@ public User create(
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1139,7 +1147,7 @@ public User create(
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1158,14 +1166,14 @@ public User create(
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1212,13 +1220,13 @@ public User create(
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Validation. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1229,7 +1237,7 @@ public User create(
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1263,7 +1271,7 @@ public User create(
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1288,20 +1296,20 @@ public User create(
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every controller method must check authentication, log timing, set CORS headers, and validate request IDs. Duplication across 100+ endpoints. Miss one and you have a security hole.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1314,7 +1322,7 @@ Every controller method must check authentication, log timing, set CORS headers,
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1334,7 +1342,7 @@ Every controller method must check authentication, log timing, set CORS headers,
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1346,7 +1354,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Filters and interceptors are checkpoints that every request passes through before reaching your controller - like airport security before the gate.
@@ -1446,7 +1454,7 @@ Filter can wrap request/response (modify what downstream sees). Interceptor cann
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1460,7 +1468,7 @@ Filter can wrap request/response (modify what downstream sees). Interceptor cann
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1479,14 +1487,14 @@ Filter can wrap request/response (modify what downstream sees). Interceptor cann
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1533,13 +1541,13 @@ Filter can wrap request/response (modify what downstream sees). Interceptor cann
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Filters and Interceptors. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1550,7 +1558,7 @@ Filter can wrap request/response (modify what downstream sees). Interceptor cann
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1584,7 +1592,7 @@ Filter can wrap request/response (modify what downstream sees). Interceptor cann
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

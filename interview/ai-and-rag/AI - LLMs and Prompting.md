@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "AI - LLMs and Prompting"
+parent: "AI Foundations, LLMs, RAG and Agents"
+grand_parent: "Interview Mastery"
+nav_order: 2
+permalink: /interview/ai-and-rag/llms-and-prompting/
 topic: AI Foundations, LLMs, RAG and Agents
 subtopic: LLMs and Prompting
 keywords:
@@ -14,26 +19,35 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [LLM Architecture](#llm-architecture)
+- [Prompt Engineering](#prompt-engineering)
+- [Few-Shot Learning](#few-shot-learning)
+- [Chain-of-Thought](#chain-of-thought)
+- [Temperature and Sampling](#temperature-and-sampling)
+- [Context Windows](#context-windows)
+
 # LLM Architecture
 
 **TL;DR** - Large Language Models are decoder-only Transformers with billions of parameters trained on internet-scale text to predict the next token - emergent capabilities (reasoning, coding, translation) arise from scale, and understanding the architecture informs how to use them effectively.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without understanding LLM architecture, developers treat models as magic black boxes - unable to predict failures, optimize costs, work within context limits, or understand why prompting techniques work.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -46,7 +60,7 @@ Without understanding LLM architecture, developers treat models as magic black b
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -66,7 +80,7 @@ Without understanding LLM architecture, developers treat models as magic black b
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -78,7 +92,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -97,7 +111,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 LLM architecture (decoder-only Transformer):
@@ -142,7 +156,7 @@ Emergent capabilities (appear at scale):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -156,7 +170,7 @@ Emergent capabilities (appear at scale):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -178,14 +192,14 @@ Emergent capabilities (appear at scale):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -232,13 +246,13 @@ Emergent capabilities (appear at scale):
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for LLM Architecture. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -249,7 +263,7 @@ Emergent capabilities (appear at scale):
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -283,7 +297,7 @@ Emergent capabilities (appear at scale):
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -308,20 +322,20 @@ Emergent capabilities (appear at scale):
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Same question, wildly different answers. "Write code" produces inconsistent quality. No way to reliably constrain outputs. Model ignores requirements, hallucinates, or produces wrong format. Vague prompts = vague results.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -334,7 +348,7 @@ Same question, wildly different answers. "Write code" produces inconsistent qual
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -354,7 +368,7 @@ Same question, wildly different answers. "Write code" produces inconsistent qual
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -366,7 +380,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -385,7 +399,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Prompt anatomy:
@@ -441,7 +455,7 @@ Common failure patterns:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -455,7 +469,7 @@ Common failure patterns:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -477,14 +491,14 @@ Common failure patterns:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -531,13 +545,13 @@ Common failure patterns:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Prompt Engineering. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -548,7 +562,7 @@ Common failure patterns:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -582,7 +596,7 @@ Common failure patterns:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -607,20 +621,20 @@ Common failure patterns:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Telling the model "classify sentiment as positive/negative/neutral" gives inconsistent results. Some responses include explanations, some use different labels, some hedge. Instructions alone don't reliably convey the expected behavior pattern.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -633,7 +647,7 @@ Telling the model "classify sentiment as positive/negative/neutral" gives incons
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -653,7 +667,7 @@ Telling the model "classify sentiment as positive/negative/neutral" gives incons
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -665,7 +679,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -684,7 +698,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Zero-shot (instruction only):
@@ -727,7 +741,7 @@ When to go beyond few-shot:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -741,7 +755,7 @@ When to go beyond few-shot:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -763,14 +777,14 @@ When to go beyond few-shot:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -817,13 +831,13 @@ When to go beyond few-shot:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Few-Shot Learning. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -834,7 +848,7 @@ When to go beyond few-shot:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -868,7 +882,7 @@ When to go beyond few-shot:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -893,20 +907,20 @@ When to go beyond few-shot:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Ask "What's 17 \* 23 + 45 / 9?" and the model guesses. Complex reasoning tasks fail because the model tries to produce the answer in one step. Multi-step problems require intermediate reasoning, but models default to single-hop answers.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -919,7 +933,7 @@ Ask "What's 17 \* 23 + 45 / 9?" and the model guesses. Complex reasoning tasks f
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -939,7 +953,7 @@ Ask "What's 17 \* 23 + 45 / 9?" and the model guesses. Complex reasoning tasks f
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -951,7 +965,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -970,7 +984,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Without CoT (direct answer):
@@ -1023,7 +1037,7 @@ Implementation pattern:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1037,7 +1051,7 @@ Implementation pattern:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1059,14 +1073,14 @@ Implementation pattern:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1113,13 +1127,13 @@ Implementation pattern:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Chain-of-Thought. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1130,7 +1144,7 @@ Implementation pattern:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1164,7 +1178,7 @@ Implementation pattern:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1189,20 +1203,20 @@ Implementation pattern:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Same prompt returns different results every time (or always the same boring response). Code generation produces "creative" hallucinations. Creative writing is repetitive. No control over the determinism/creativity trade-off.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1215,7 +1229,7 @@ Same prompt returns different results every time (or always the same boring resp
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1235,7 +1249,7 @@ Same prompt returns different results every time (or always the same boring resp
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1247,7 +1261,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1266,7 +1280,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 How generation works:
@@ -1316,7 +1330,7 @@ Key insight: temp=0 is NOT truly deterministic
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1330,7 +1344,7 @@ Key insight: temp=0 is NOT truly deterministic
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1352,14 +1366,14 @@ Key insight: temp=0 is NOT truly deterministic
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1406,13 +1420,13 @@ Key insight: temp=0 is NOT truly deterministic
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Temperature and Sampling. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1423,7 +1437,7 @@ Key insight: temp=0 is NOT truly deterministic
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1457,7 +1471,7 @@ Key insight: temp=0 is NOT truly deterministic
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1482,20 +1496,20 @@ Key insight: temp=0 is NOT truly deterministic
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Conversations get too long and the model "forgets" earlier messages. Documents exceed the limit. Costs grow linearly with context length. Important instructions at the beginning get lost ("lost in the middle" problem).
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1508,7 +1522,7 @@ Conversations get too long and the model "forgets" earlier messages. Documents e
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1528,7 +1542,7 @@ Conversations get too long and the model "forgets" earlier messages. Documents e
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1540,7 +1554,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1559,7 +1573,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Context window sizes (2024-2025):
@@ -1608,7 +1622,7 @@ Latency implications:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1622,7 +1636,7 @@ Latency implications:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1644,14 +1658,14 @@ Latency implications:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1698,13 +1712,13 @@ Latency implications:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Context Windows. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1715,7 +1729,7 @@ Latency implications:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1749,7 +1763,7 @@ Latency implications:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

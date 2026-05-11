@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "Containers - Fundamentals"
+parent: "Containers"
+grand_parent: "Interview Mastery"
+nav_order: 1
+permalink: /interview/containers/fundamentals/
 topic: Containers
 subtopic: Fundamentals
 keywords:
@@ -14,13 +19,22 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Containerization](#containerization)
+- [Docker vs VM](#docker-vs-vm)
+- [Docker Image](#docker-image)
+- [Dockerfile](#dockerfile)
+- [Docker Compose](#docker-compose)
+- [Container Orchestration](#container-orchestration)
+
 # Containerization
 
 **TL;DR** - Containerization packages an application with all its dependencies into an isolated, portable unit that runs consistently across any environment.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You develop on macOS, CI runs on Ubuntu, production is Amazon Linux. Your app works locally but crashes in staging because the system has OpenSSL 1.1 instead of 3.0. The ops team spends days debugging "works on my machine" issues. Every server is a snowflake with different library versions.
@@ -36,13 +50,13 @@ chroot (1979) gave process isolation. FreeBSD jails (2000) added networking isol
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Containerization is an OS-level virtualization method that packages application code, runtime, system tools, libraries, and settings into a standalone executable unit called a container. Containers share the host kernel but run in isolated user spaces using Linux namespaces and cgroups for resource isolation and limitation.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A container is a lightweight, isolated box for running an app with everything it needs.
@@ -56,7 +70,7 @@ The key insight is that containers share the host OS kernel. They're NOT separat
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -77,7 +91,7 @@ Because containers share the kernel, they're lightweight (MBs not GBs). Because 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A container is like an apartment in a building. Each apartment has its own locked door, its own address, its own utilities meter - but they all share the building's foundation, plumbing infrastructure, and structural walls.
 
@@ -91,7 +105,7 @@ Where this analogy breaks down: apartments can't be instantly replicated and mov
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A container is a way to package software so it runs the same everywhere. It's like a sealed lunch box - everything the app needs is inside, and it doesn't leak into or depend on what's outside.
@@ -113,7 +127,7 @@ Container security depends on the shared kernel - a kernel exploit escapes ALL c
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 1. **Build time:** Dockerfile instructions execute sequentially, each creating a filesystem layer (copy-on-write)
 2. **Image storage:** Layers are content-addressed (SHA256), deduplicated, and cached
@@ -139,7 +153,7 @@ Container security depends on the shared kernel - a kernel exploit escapes ALL c
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 Developer writes code -> Dockerfile defines environment -> `docker build` creates image -> Push to registry -> `docker pull` on target -> `docker run` starts container <- YOU ARE HERE -> App serves traffic
@@ -152,7 +166,7 @@ At 100+ containers, you need orchestration (Kubernetes). At 1000+, image pull be
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - BAD vs GOOD Dockerfile:**
 
@@ -207,7 +221,7 @@ Build image, run container, verify process isolation with `docker exec`, confirm
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -229,13 +243,13 @@ Build image, run container, verify process isolation with `docker exec`, confirm
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Most container "security breaches" aren't container escapes - they're misconfiguration: running as root, mounting the Docker socket, using `--privileged` mode, or exposing the Docker API without TLS. The container boundary itself is rarely the weak point; the human decisions around it are.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What's the difference between a container and a VM? When would you choose one over the other?**
 
@@ -388,13 +402,13 @@ The biggest wins are usually: (1) fixing .dockerignore (reduces context transfer
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Containerization. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -405,7 +419,7 @@ The biggest wins are usually: (1) fixing .dockerignore (reduces context transfer
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -439,7 +453,7 @@ The biggest wins are usually: (1) fixing .dockerignore (reduces context transfer
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -463,7 +477,7 @@ The biggest wins are usually: (1) fixing .dockerignore (reduces context transfer
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT BOTH:**
 Every application runs directly on bare metal. Installing two apps that need different library versions is impossible without conflicts. Scaling means buying new servers.
@@ -479,13 +493,13 @@ Bare metal (1960s-1990s) -> Hardware virtualization/VMware (1999) -> Paravirtual
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A virtual machine emulates a complete hardware environment including CPU, memory, and I/O devices, running a full guest operating system on a hypervisor. A container provides OS-level process isolation using kernel namespaces and cgroups, sharing the host kernel while presenting an isolated userspace to applications.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 VMs virtualize hardware; containers virtualize the OS.
@@ -499,7 +513,7 @@ The shared kernel is the fundamental trade-off. It gives containers their speed 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -520,7 +534,7 @@ VMs pay the cost of a full OS (500MB-2GB RAM) for each instance. Containers pay 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > VMs = separate houses on a street. Containers = apartments in a building.
 
@@ -535,7 +549,7 @@ Where this analogy breaks down: containers can be created in milliseconds; you c
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A VM is a complete simulated computer running inside another computer. A container is a lightweight isolated environment that shares the main computer's core system. VMs are heavier but more isolated; containers are lighter but share more.
@@ -557,7 +571,7 @@ The VM vs container boundary is blurring. Kata Containers and Firecracker run ea
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 VM Architecture:
@@ -593,7 +607,7 @@ Container Architecture:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 Developer chooses deployment model -> Containers for microservices <- YOU ARE HERE -> Container runs on VM in cloud -> VM provides hardware isolation from other tenants
@@ -606,7 +620,7 @@ At small scale (< 10 services), the choice barely matters. At 50+ services, cont
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```bash
 # Compare startup time
@@ -630,7 +644,7 @@ docker stats --no-stream
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -652,13 +666,13 @@ docker stats --no-stream
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 AWS Lambda, the poster child of "serverless," actually runs each function invocation inside a Firecracker microVM - a tiny VM that boots in 125ms with 5MB memory overhead. The industry is converging on "container ergonomics with VM isolation" rather than choosing one over the other.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your company runs sensitive financial workloads alongside less-critical internal tools. How would you architect the isolation?**
 
@@ -695,13 +709,13 @@ The "when NOT to use" signal of mastery: containers introduce complexity (networ
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Docker vs VM. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -712,7 +726,7 @@ The "when NOT to use" signal of mastery: containers introduce complexity (networ
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -746,7 +760,7 @@ The "when NOT to use" signal of mastery: containers introduce complexity (networ
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -770,7 +784,7 @@ The "when NOT to use" signal of mastery: containers introduce complexity (networ
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Deploying means SSHing into a server, running install scripts, hoping nothing changed since last time. Each server drifts from the others. "It worked in staging" is a daily occurrence because staging doesn't match production.
@@ -786,13 +800,13 @@ Tarball archives -> VM images (AMIs, VMDKs) -> Docker images with layers (2013) 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A Docker image is a read-only, ordered collection of filesystem layers and metadata that together form a complete filesystem for running a container. Each layer represents a set of filesystem changes, layers are content-addressed by their SHA256 digest, and they're assembled at runtime using union mount (overlay2) to present a unified view.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 An image is a frozen, layered snapshot of everything your app needs to run.
@@ -806,7 +820,7 @@ Images are immutable. When a container writes files, those writes go to a thin w
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -827,7 +841,7 @@ Immutability enables caching (rebuild only changed layers), sharing (common base
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > An image is like a stack of transparent sheets (overhead projector slides). Each sheet adds something new on top of the ones below. You can't modify a sheet once it's printed - only add a new one on top.
 
@@ -841,7 +855,7 @@ Where this analogy breaks down: layers can delete files from lower layers (white
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A Docker image is like a template for creating containers. It contains your app plus everything it needs. You build it once and can create many identical containers from it.
@@ -863,7 +877,7 @@ Image supply chain security requires: content trust (Notary/cosign for signing),
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Image Layer Stack (overlay2):
@@ -889,7 +903,7 @@ Image Manifest (JSON):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 Dockerfile -> `docker build` -> layers created <- YOU ARE HERE -> image tagged -> pushed to registry -> pulled by runtime -> container created with writable layer on top
@@ -902,7 +916,7 @@ At 100+ images, registry storage and network bandwidth matter. Deduplication of 
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```bash
 # Inspect image layers
@@ -924,7 +938,7 @@ trivy image myapp:1.0
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -946,13 +960,13 @@ trivy image myapp:1.0
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 A `:latest` tag is NOT special in Docker - it's just a convention. It doesn't auto-update, it doesn't mean "newest," and it's not immutable. If someone pushes a different image to the same tag, your `docker pull` gets completely different code. This is why production deployments must use version tags or SHA digests.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your production image is 2.1GB. Walk me through how you'd reduce it.**
 
@@ -1000,13 +1014,13 @@ Key: shift-left scanning catches 90% of issues. The remaining 10% requires runti
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Docker Image. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1017,7 +1031,7 @@ Key: shift-left scanning catches 90% of issues. The remaining 10% requires runti
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1051,7 +1065,7 @@ Key: shift-left scanning catches 90% of issues. The remaining 10% requires runti
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1075,7 +1089,7 @@ Key: shift-left scanning catches 90% of issues. The remaining 10% requires runti
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Building images requires running manual commands in a container, committing the result, and hoping you remember every step. No reproducibility, no version control, no code review of your build process.
@@ -1091,13 +1105,13 @@ Manual image creation -> Dockerfiles (2013) -> Multi-stage builds (2017) -> Buil
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A Dockerfile is a text file containing an ordered sequence of instructions that Docker uses to automatically build an image. Each instruction creates a layer in the image, and the complete file describes the transformation from a base image to a fully configured application environment.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A Dockerfile is the recipe for building a container image.
@@ -1111,7 +1125,7 @@ Every instruction creates a layer that's cached. If you change line 5, lines 1-4
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1132,7 +1146,7 @@ The caching model means: put stable things (apt install) early, volatile things 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A Dockerfile is like assembly instructions for IKEA furniture. Each step (instruction) builds on the previous. If you redo step 5, steps 1-4 don't need redoing. The final product is deterministic - same instructions, same furniture.
 
@@ -1146,7 +1160,7 @@ Where this analogy breaks down: you can have multiple instruction manuals (multi
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A file that tells Docker how to build an image step by step - what OS to start from, what software to install, what files to include, and what command to run when the container starts.
@@ -1168,7 +1182,7 @@ Optimize for CI cache hit rate: use `COPY --link` (BuildKit) to make layer indep
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```dockerfile
 # Production-ready Dockerfile example
@@ -1195,7 +1209,7 @@ ENTRYPOINT ["java", \
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 Write Dockerfile -> `docker build .` <- YOU ARE HERE -> BuildKit parses instructions -> executes layers sequentially -> caches each -> produces final image -> tags and pushes
@@ -1208,7 +1222,7 @@ At team scale: standardize base images, lint Dockerfiles (hadolint), enforce non
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```dockerfile
 # BAD: Common anti-patterns
@@ -1242,7 +1256,7 @@ ENTRYPOINT ["node", "src/server.js"]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1264,13 +1278,13 @@ ENTRYPOINT ["node", "src/server.js"]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 `COPY` and `ADD` are NOT the same. `ADD` can extract tarballs and fetch URLs - which makes builds non-reproducible (URL content can change). Docker's own best practices now recommend NEVER using `ADD` unless you specifically need tar extraction. Yet it remains in 90% of tutorial Dockerfiles.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Explain the difference between CMD and ENTRYPOINT. When do you use each?**
 
@@ -1328,13 +1342,13 @@ Other common culprits:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Dockerfile. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1345,7 +1359,7 @@ Other common culprits:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1379,7 +1393,7 @@ Other common culprits:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1403,7 +1417,7 @@ Other common culprits:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Running a web app with a database, cache, and message broker requires 4 separate `docker run` commands with complex networking flags, volume mappings, and environment variables. Restarting means remembering the exact order and flags.
@@ -1419,13 +1433,13 @@ Shell scripts with docker commands -> Fig (2013, acquired by Docker) -> Docker C
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Docker Compose is a tool for defining and managing multi-container Docker applications using a declarative YAML file (docker-compose.yml). It handles container lifecycle, networking (auto-creates a default network), volume management, and service dependencies from a single configuration.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Compose lets you define your entire multi-container application stack in one file.
@@ -1439,7 +1453,7 @@ Compose isn't for production orchestration - it's for local development and CI. 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1460,7 +1474,7 @@ By creating a shared network automatically, Compose eliminates manual `--network
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Compose is like a blueprint for a model train layout. It defines where each piece goes (services), how they connect (networks), and what persists when you pack it away (volumes).
 
@@ -1474,7 +1488,7 @@ Where this analogy breaks down: containers can be scaled to multiple instances; 
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A single file that describes all the containers your app needs and how they connect. Run one command and everything starts together.
@@ -1496,7 +1510,7 @@ Design Compose files as development contracts: they define the service topology 
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```yaml
 # docker-compose.yml - production-like local dev
@@ -1543,7 +1557,7 @@ volumes:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 Write docker-compose.yml -> `docker compose up` <- YOU ARE HERE -> Creates network -> Starts services in dependency order -> Services discover each other by name -> Application stack running
@@ -1556,7 +1570,7 @@ Compose doesn't scale. Beyond local dev and CI, you need Kubernetes (distributed
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```bash
 # Start everything in background
@@ -1583,7 +1597,7 @@ docker compose down -v
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1605,13 +1619,13 @@ docker compose down -v
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 `depends_on` without health checks is almost useless. It only waits for the container to START (PID 1 running), not for the application inside to be READY. Your database container starts in 200ms but takes 5 seconds to accept connections. Without `condition: service_healthy`, your app will crash-loop trying to connect to a not-yet-ready database.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle secrets in Docker Compose without putting them in the YAML file?**
 
@@ -1680,13 +1694,13 @@ Common causes:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Docker Compose. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1697,7 +1711,7 @@ Common causes:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1731,7 +1745,7 @@ Common causes:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1755,7 +1769,7 @@ Common causes:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You have 50 microservices in containers. One crashes at 3 AM - nobody restarts it. Traffic spikes and you need 10 more instances - you SSH into servers and manually run `docker run`. A server dies and 20 containers vanish.
@@ -1771,13 +1785,13 @@ Manual + scripts -> Mesos/Marathon (2013) -> Docker Swarm (2014) -> Kubernetes (
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Container orchestration is the automated management of containerized application lifecycles across distributed infrastructure, handling scheduling (placing containers on appropriate nodes), scaling (adjusting replica counts), networking (service discovery and load balancing), and self-healing (restarting failed containers and rescheduling from failed nodes).
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Orchestration is the autopilot for running containers at scale.
@@ -1791,7 +1805,7 @@ The fundamental abstraction is "desired state." You declare "I want 3 replicas o
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1812,7 +1826,7 @@ Because you declare desired state, the system can self-heal (restart failed cont
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > An orchestrator is like an air traffic controller. Planes (containers) need to land on runways (nodes). The controller decides which runway has capacity, handles emergencies (container crashes), reroutes during congestion (load balancing), and ensures safe spacing (resource limits).
 
@@ -1826,7 +1840,7 @@ Where this analogy breaks down: orchestrators can create new planes (auto-scalin
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of manually starting and managing containers, orchestration software does it automatically - restarting crashed ones, adding more when busy, and balancing work across servers.
@@ -1848,7 +1862,7 @@ Orchestration choice is an architecture decision: Kubernetes for complex microse
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Kubernetes Architecture:
@@ -1873,7 +1887,7 @@ Kubernetes Architecture:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 Deploy manifest -> API server stores desired state -> Scheduler picks nodes -> Kubelet starts pods <- YOU ARE HERE -> Service routes traffic -> HPA monitors load -> scales up/down automatically
@@ -1886,7 +1900,7 @@ At 10 services, orchestration may be overkill (Docker Compose suffices). At 50+,
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```yaml
 # Kubernetes Deployment (desired state)
@@ -1920,7 +1934,7 @@ spec:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1942,13 +1956,13 @@ spec:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Google ran Borg (Kubernetes' predecessor) for 15 years before open-sourcing Kubernetes in 2014. But Kubernetes is NOT Borg - it's a clean-room reimplementation of Borg's concepts. Borg handles millions of containers at Google; most K8s clusters struggle past 5,000 nodes without significant tuning. The gap between Google's internal system and what the industry runs is still enormous.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your team is evaluating Kubernetes vs ECS/Fargate vs Cloud Run. What's your decision framework?**
 
@@ -2009,13 +2023,13 @@ The reconciliation loop runs every ~10 seconds. Total recovery time for a node f
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Container Orchestration. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2026,7 +2040,7 @@ The reconciliation loop runs every ~10 seconds. Total recovery time for a node f
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2060,7 +2074,7 @@ The reconciliation loop runs every ~10 seconds. Total recovery time for a node f
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

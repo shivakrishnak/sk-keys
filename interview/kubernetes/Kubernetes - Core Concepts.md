@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "Kubernetes - Core Concepts"
+parent: "Kubernetes"
+grand_parent: "Interview Mastery"
+nav_order: 1
+permalink: /interview/kubernetes/core-concepts/
 topic: Kubernetes
 subtopic: Core Concepts
 keywords:
@@ -14,13 +19,22 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Kubernetes Architecture](#kubernetes-architecture)
+- [Control Plane](#control-plane)
+- [etcd](#etcd)
+- [kubelet](#kubelet)
+- [kube-proxy](#kube-proxy)
+- [API Server](#api-server)
+
 # Kubernetes Architecture
 
 **TL;DR** - Kubernetes is a distributed system with a control plane (brain) that manages worker nodes (muscle), using a declarative desired-state model with continuous reconciliation to orchestrate containers at scale.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You have 200 containers across 50 servers. One server dies - 20 containers vanish. Traffic spikes - nobody adds capacity. A deploy fails - rollback is manual and terrifying.
@@ -33,13 +47,13 @@ Manual ops + scripts -> Google Borg (internal, 2003) -> Mesos/Marathon (2013) ->
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Kubernetes is a portable, extensible platform for managing containerized workloads and services that facilitates both declarative configuration and automation. Its architecture consists of a control plane (API server, scheduler, controller manager, etcd) and worker nodes (kubelet, kube-proxy, container runtime), communicating via the API server as the single source of truth.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Kubernetes is an autopilot for containers - you declare what you want, it makes it happen and keeps it that way.
@@ -53,7 +67,7 @@ The fundamental paradigm is "desired state reconciliation." You never say "start
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -71,7 +85,7 @@ Because state is centralized (etcd), any component can fail and recover by re-re
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > K8s is like a thermostat. You set the desired temperature (desired state). The thermostat (controller) continuously measures actual temperature and turns heating/cooling on/off to maintain the target. You don't say "turn on the heater for 10 minutes" - you say "maintain 72F."
 
@@ -79,7 +93,7 @@ Where this analogy breaks down: K8s has dozens of controllers (thermostats) for 
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -98,7 +112,7 @@ Where this analogy breaks down: K8s has dozens of controllers (thermostats) for 
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Kubernetes Architecture:
@@ -138,7 +152,7 @@ Kubernetes Architecture:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 User applies Deployment YAML -> API server validates, stores in etcd -> Deployment controller creates ReplicaSet -> ReplicaSet controller creates Pods -> Scheduler assigns Pods to nodes <- YOU ARE HERE -> kubelet on assigned node starts containers via CRI
@@ -148,7 +162,7 @@ Node dies -> controller detects pods missing (heartbeat timeout: 40s) -> creates
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -170,13 +184,13 @@ Node dies -> controller detects pods missing (heartbeat timeout: 40s) -> creates
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Kubernetes doesn't actually restart crashed containers - kubelet does. And kubelet doesn't watch for crashes - it's the container runtime (containerd) that detects PID 1 exit. The reconciliation chain is: container exits -> containerd notifies kubelet -> kubelet applies restart policy -> containerd starts new container. Three different systems coordinate, each with their own failure modes.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Walk me through what happens from `kubectl apply -f deployment.yaml` to a running pod.**
 
@@ -230,13 +244,13 @@ Key insight: K8s is designed so that worker node operation is independent of con
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Kubernetes Architecture. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -247,7 +261,7 @@ Key insight: K8s is designed so that worker node operation is independent of con
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -281,7 +295,7 @@ Key insight: K8s is designed so that worker node operation is independent of con
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -306,20 +320,20 @@ Key insight: K8s is designed so that worker node operation is independent of con
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Someone must decide where to run containers, restart them when they fail, and coordinate everything. Without a control plane, you're back to manual ops.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The Kubernetes control plane is the set of components that make global decisions about the cluster (scheduling, detecting and responding to events, starting new pods when replica counts are unmet) consisting of: kube-apiserver, etcd, kube-scheduler, and kube-controller-manager.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 The control plane decides WHAT runs WHERE and keeps it that way.
@@ -333,7 +347,7 @@ The control plane is stateless except for etcd. API server, scheduler, and contr
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -353,7 +367,7 @@ The control plane is stateless except for etcd. API server, scheduler, and contr
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -365,7 +379,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -384,7 +398,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Control Plane Components:
@@ -416,7 +430,7 @@ etcd:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -430,7 +444,7 @@ etcd:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -452,14 +466,14 @@ etcd:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How would you make the control plane highly available?**
 
@@ -479,13 +493,13 @@ Key: test control plane failure regularly. Kill one etcd node and verify cluster
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Control Plane. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -496,7 +510,7 @@ Key: test control plane failure regularly. Kill one etcd node and verify cluster
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -530,7 +544,7 @@ Key: test control plane failure regularly. Kill one etcd node and verify cluster
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -555,20 +569,20 @@ Key: test control plane failure regularly. Kill one etcd node and verify cluster
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Cluster state (what should run where, what's actually running) needs to survive component restarts, node failures, and network partitions. Without a distributed consistent store, you lose state on failure.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 etcd is a strongly consistent, distributed key-value store that uses the RAFT consensus algorithm to replicate data across cluster members. In Kubernetes, it stores all cluster state (objects, configs, secrets) and is the only stateful component in the control plane.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 etcd is Kubernetes' database - lose it and you lose the cluster.
@@ -582,7 +596,7 @@ etcd is on the critical path for EVERY Kubernetes operation. A slow etcd means s
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -602,7 +616,7 @@ etcd is on the critical path for EVERY Kubernetes operation. A slow etcd means s
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -614,7 +628,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -633,7 +647,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 etcd Cluster (RAFT consensus):
@@ -661,7 +675,7 @@ etcd Cluster (RAFT consensus):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -675,7 +689,7 @@ etcd Cluster (RAFT consensus):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -697,13 +711,13 @@ etcd Cluster (RAFT consensus):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 etcd has a hard limit of 1.5 million key-value pairs (configurable but rarely changed). Large Kubernetes clusters (5000+ nodes) can hit this limit with just Pod objects. This is one reason why very large organizations run multiple smaller clusters rather than one massive cluster, and why Kubernetes has object count limits per namespace.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: etcd is reporting high latency. What's your troubleshooting approach?**
 
@@ -738,13 +752,13 @@ Prevention: dedicated nodes for etcd, SSD storage, monitor fsync_duration_second
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for etcd. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -755,7 +769,7 @@ Prevention: dedicated nodes for etcd, SSD storage, monitor fsync_duration_second
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -789,7 +803,7 @@ Prevention: dedicated nodes for etcd, SSD storage, monitor fsync_duration_second
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -814,20 +828,20 @@ Prevention: dedicated nodes for etcd, SSD storage, monitor fsync_duration_second
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 The control plane decides where pods should run, but something must actually start and monitor them on each node. Without kubelet, desired state remains just words in etcd.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 kubelet is the primary node agent in Kubernetes that runs on every worker node, receiving PodSpecs from the API server and ensuring the described containers are running and healthy using the container runtime (containerd/CRI-O) via the Container Runtime Interface.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 kubelet is the per-node manager that turns PodSpecs into running containers.
@@ -841,7 +855,7 @@ kubelet doesn't just start containers - it continuously monitors them via probes
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -861,7 +875,7 @@ kubelet doesn't just start containers - it continuously monitors them via probes
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -873,7 +887,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -892,7 +906,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 kubelet operation cycle:
@@ -921,7 +935,7 @@ Probe types:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -935,7 +949,7 @@ Probe types:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -957,14 +971,14 @@ Probe types:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1011,13 +1025,13 @@ Probe types:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for kubelet. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1028,7 +1042,7 @@ Probe types:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1062,7 +1076,7 @@ Probe types:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1087,20 +1101,20 @@ Probe types:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Pod IPs are ephemeral (change on restart). A Service needs a stable IP (ClusterIP) that routes to whichever pods are currently healthy. Something must translate that virtual IP into actual pod IPs on every node.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 kube-proxy is a network proxy running on each node that implements Kubernetes Service concepts by maintaining network rules (iptables or IPVS) that route traffic destined for Service ClusterIPs/NodePorts to the appropriate backend pods.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1113,7 +1127,7 @@ kube-proxy is a network proxy running on each node that implements Kubernetes Se
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1133,7 +1147,7 @@ kube-proxy is a network proxy running on each node that implements Kubernetes Se
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1145,7 +1159,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1164,7 +1178,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 kube-proxy modes:
@@ -1196,7 +1210,7 @@ EndpointSlice flow:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1210,7 +1224,7 @@ EndpointSlice flow:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1232,14 +1246,14 @@ EndpointSlice flow:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1286,13 +1300,13 @@ EndpointSlice flow:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for kube-proxy. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1303,7 +1317,7 @@ EndpointSlice flow:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1337,7 +1351,7 @@ EndpointSlice flow:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1362,20 +1376,20 @@ EndpointSlice flow:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every component (scheduler, controllers, kubelet, kubectl) would need to talk to etcd directly. No access control, no validation, no audit trail. Chaos.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The kube-apiserver is the front-end for the Kubernetes control plane, exposing the Kubernetes API via REST. It validates and configures data for API objects (pods, services, deployments), handles authentication, authorization (RBAC), admission control, and is the only component that communicates with etcd.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 API server is the single front door - every K8s operation goes through it.
@@ -1389,7 +1403,7 @@ The API server is stateless - it just validates and proxies to etcd. This means 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1409,7 +1423,7 @@ The API server is stateless - it just validates and proxies to etcd. This means 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1421,7 +1435,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1440,7 +1454,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Request flow through API Server:
@@ -1465,7 +1479,7 @@ kubectl apply -f deployment.yaml
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1479,7 +1493,7 @@ kubectl apply -f deployment.yaml
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1501,14 +1515,14 @@ kubectl apply -f deployment.yaml
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do admission controllers work and when would you write a custom one?**
 
@@ -1550,13 +1564,13 @@ Use custom webhooks when: enforcing org policies (no `latest` tags, require labe
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for API Server. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1567,7 +1581,7 @@ Use custom webhooks when: enforcing org policies (no `latest` tags, require labe
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1601,7 +1615,7 @@ Use custom webhooks when: enforcing org policies (no `latest` tags, require labe
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

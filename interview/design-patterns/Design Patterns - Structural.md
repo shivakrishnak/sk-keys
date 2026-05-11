@@ -18,13 +18,21 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Adapter](#adapter)
+- [Decorator](#decorator)
+- [Proxy](#proxy)
+- [Facade](#facade)
+- [Composite](#composite)
+
 # Adapter
 
 **TL;DR** - Adapter converts the interface of a class into another interface clients expect, allowing incompatible interfaces to work together without modifying either.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your analytics system processes data from `DataSource` objects with a `getData()` method. A new vendor provides a superior analytics library, but it expects `Stream` objects with a `read()` method. The two interfaces are incompatible. You can't change the vendor library. You can't rewrite every DataSource implementation. You're stuck between two systems that should work together but can't.
@@ -40,13 +48,13 @@ The GoF formalized Adapter in 1994 with two variants: class adapter (inheritance
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Adapter is a structural design pattern that allows objects with incompatible interfaces to collaborate. It wraps one interface and translates calls to the format expected by the other, acting as a bridge between two incompatible systems without modifying either.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A translator between two incompatible interfaces.
@@ -60,7 +68,7 @@ Adapter is about reuse, not abstraction. You have existing code that works. You 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -81,7 +89,7 @@ The adapter implements the target interface. It holds a reference to the adaptee
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of Adapter as a human translator at a UN meeting. The speaker talks in French. The listener understands only English. The translator sits between them, converting French to English in real time. Neither the speaker nor the listener changes how they communicate.
 
@@ -94,7 +102,7 @@ Where this analogy breaks down: A human translator can handle ambiguity; an Adap
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Adapter is a wrapper that makes one thing look like another. Like a phone case that adds a headphone jack to a phone that only has USB-C.
@@ -116,7 +124,7 @@ Adapter is the pattern of pragmatic integration. In microservices, anti-corrupti
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 [Client] --> [Target Interface]
@@ -137,7 +145,7 @@ Adapter is the pattern of pragmatic integration. In microservices, anti-corrupti
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -162,7 +170,7 @@ At scale, adapter layers become performance bottlenecks if they perform complex 
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - BAD: Direct coupling to third-party API**
 
@@ -227,7 +235,7 @@ Unit test the adapter by mocking the adaptee, verifying parameter translation. I
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -249,13 +257,13 @@ Unit test the adapter by mocking the adaptee, verifying parameter translation. I
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 SLF4J, the logging facade used by virtually every Java application, is the most successful Adapter pattern implementation in the Java ecosystem. It doesn't log anything itself - it adapts any logging framework (Log4j, Logback, JUL) to a single API. The genius is that the Adapter is the product. Most developers use SLF4J daily without realizing they're using an Adapter pattern.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What's the difference between Adapter, Decorator, and Proxy? They all wrap objects.**
 
@@ -335,13 +343,13 @@ The smell: if your adapter is longer than 50 lines and contains conditional logi
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Adapter. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -352,7 +360,7 @@ The smell: if your adapter is longer than 50 lines and contains conditional logi
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -386,7 +394,7 @@ The smell: if your adapter is longer than 50 lines and contains conditional logi
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -410,7 +418,7 @@ The smell: if your adapter is longer than 50 lines and contains conditional logi
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your coffee shop application has a base `Coffee` class. Customers want extras: milk, sugar, whipped cream, caramel. You create subclasses: `CoffeeWithMilk`, `CoffeeWithSugar`, `CoffeeWithMilkAndSugar`, `CoffeeWithMilkAndSugarAndWhippedCream`. With 5 add-ons, you need 2^5 = 32 subclasses. Adding a 6th add-on doubles it to 64. The class hierarchy explodes.
@@ -426,13 +434,13 @@ The GoF formalized Decorator in 1994. Java's I/O streams are the classic example
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Decorator is a structural design pattern that lets you attach new behaviors to objects by placing them inside wrapper objects that contain the behaviors. It provides a flexible alternative to subclassing for extending functionality, supporting the Open/Closed Principle by allowing behavior composition at runtime.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Wrap an object to add behavior without changing its interface.
@@ -446,7 +454,7 @@ Decorator is not about decoration - it's about composition over inheritance. Ins
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -467,7 +475,7 @@ The decorator forwards calls to the wrapped component and adds behavior before/a
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of Decorator as Russian nesting dolls (Matryoshka). Each doll wraps the one inside it. They all look the same from the outside (same interface). Each layer adds something (decoration). You can add or remove layers without breaking the structure.
 
@@ -480,7 +488,7 @@ Where this analogy breaks down: Matryoshka dolls are purely visual; Decorators a
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Decorator wraps something to add extras without changing the original. Like putting a phone case on your phone - the phone still works the same way, but now it's protected and maybe has a card holder.
@@ -502,7 +510,7 @@ Decorator is the foundational pattern behind middleware, interceptors, and aspec
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Client -> [Component interface]
@@ -529,7 +537,7 @@ Call chain:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -555,7 +563,7 @@ At scale, decorator chains can become performance bottlenecks due to deep call s
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - BAD: Subclass explosion**
 
@@ -644,7 +652,7 @@ Test each decorator independently with a mock component. Test decorator stacking
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -666,13 +674,13 @@ Test each decorator independently with a mock component. Test decorator stacking
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Python's `@decorator` syntax, used millions of times daily, is technically function composition, not the GoF Decorator pattern. `@log def foo()` replaces `foo` with `log(foo)`. It doesn't implement a shared interface or use object wrapping. Yet it achieves the same goal: adding behavior without modifying the original. This shows that patterns transcend their original OOP formulation - the principle is universal even when the implementation looks nothing like the GoF diagram.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How does Decorator differ from inheritance for extending behavior?**
 
@@ -748,13 +756,13 @@ _Why they ask:_ Tests real-world experience with pattern limitations.
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Decorator. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -765,7 +773,7 @@ _Why they ask:_ Tests real-world experience with pattern limitations.
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -799,7 +807,7 @@ _Why they ask:_ Tests real-world experience with pattern limitations.
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -823,7 +831,7 @@ _Why they ask:_ Tests real-world experience with pattern limitations.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your application loads a high-resolution image gallery. Each image is 50MB. Loading all 100 images at startup consumes 5GB of memory and takes 30 seconds. The user only views 3-4 images per session. 96% of the loaded data is wasted.
@@ -839,13 +847,13 @@ The GoF described several proxy types in 1994: virtual (lazy loading), protectio
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Proxy is a structural design pattern that provides a substitute or placeholder for another object. A proxy controls access to the original object, allowing you to perform something either before or after the request reaches the original object.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A stand-in that controls access to the real object.
@@ -859,7 +867,7 @@ Proxy and Decorator look identical in structure (both wrap an object with the sa
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -880,7 +888,7 @@ The proxy holds a reference to the real subject. It intercepts calls and can: de
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of Proxy as an ATM machine. The bank vault holds your money (real subject). The ATM (proxy) provides the same withdrawal interface but adds: authentication (PIN check), balance verification, transaction logging, and withdrawal limits - all before touching the vault.
 
@@ -893,7 +901,7 @@ Where this analogy breaks down: ATMs are physically separate from vaults; in sof
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A proxy is a stand-in. Instead of talking to the real thing directly, you talk to a representative that decides how and when to involve the real thing.
@@ -915,7 +923,7 @@ In Spring, every `@Transactional` bean is a proxy. This has critical implication
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 [Client] -> [Proxy (same interface)]
@@ -942,7 +950,7 @@ Types of proxy behavior:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -969,7 +977,7 @@ At scale, proxy chains (API gateway -> service mesh -> application proxy) add la
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - BAD: Eagerly loading expensive resources**
 
@@ -1031,7 +1039,7 @@ Verify that the real subject is not created until first access. Verify that subs
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1053,13 +1061,13 @@ Verify that the real subject is not created until first access. Verify that subs
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Hibernate's lazy loading, which has caused more `LazyInitializationException` bugs than any other feature, is a Proxy pattern implementation. Hibernate generates a CGLIB proxy subclass of your entity. The proxy holds only the entity ID. When you access any field, the proxy triggers a database query. This is elegant in theory but dangerous in practice: accessing a lazy field outside a transaction throws an exception, and N+1 query problems occur when iterating collections of proxied entities. Understanding that "it's just a proxy" makes the entire behavior predictable.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Why does `@Transactional` not work when calling a method from within the same class?**
 
@@ -1117,13 +1125,13 @@ In practice, the choice rarely matters for application developers. It matters wh
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Proxy. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1134,7 +1142,7 @@ In practice, the choice rarely matters for application developers. It matters wh
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1168,7 +1176,7 @@ In practice, the choice rarely matters for application developers. It matters wh
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1192,7 +1200,7 @@ In practice, the choice rarely matters for application developers. It matters wh
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your application needs to process a video: decode the source, apply filters, adjust audio levels, encode to target format, and write to disk. Each step uses a different library with its own API: `FFmpegDecoder`, `FilterEngine`, `AudioProcessor`, `H264Encoder`, `DiskWriter`. Every client that processes video must learn 5 APIs, handle 5 initialization sequences, and manage 5 error types.
@@ -1208,13 +1216,13 @@ The GoF formalized Facade in 1994 as one of the simplest patterns. Java's `javax
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Facade is a structural design pattern that provides a simplified interface to a library, framework, or complex set of classes. It defines a higher-level interface that makes the subsystem easier to use by wrapping complexity behind a cohesive API.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A simple front door to a complex system.
@@ -1228,7 +1236,7 @@ Facade doesn't add functionality - it simplifies access. The subsystem classes s
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1249,7 +1257,7 @@ The facade knows which subsystem classes to invoke and in what order. It transla
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a car ignition system. Turning the key (facade) triggers a complex sequence: battery engages starter motor, fuel pump activates, spark plugs fire, engine turns over, onboard computer initializes. You don't interact with each subsystem. The key is your facade.
 
@@ -1262,7 +1270,7 @@ Where this analogy breaks down: Car ignition is a single operation; Facades typi
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Facade gives you one simple button to do something complicated. Instead of pressing 10 buttons in the right order, you press one.
@@ -1284,7 +1292,7 @@ The danger of Facade is becoming a god object. If your `OrderFacade` has 30 meth
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 [Client] --> [Facade]
@@ -1303,7 +1311,7 @@ Facade.processVideo(input, output):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -1329,7 +1337,7 @@ At scale, facades often become the bottleneck point for adding new features. Eve
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - BAD: Client manages complex subsystem directly**
 
@@ -1398,7 +1406,7 @@ Mock all subsystems and verify the facade calls them in the correct order. Test 
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1420,13 +1428,13 @@ Mock all subsystems and verify the facade calls them in the correct order. Test 
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Every REST API controller is a Facade. It presents a simplified HTTP interface to complex business logic, database operations, and external service calls. Most developers create facades daily without recognizing the pattern. The pattern is so natural that it's invisible - which is actually the highest compliment to a design pattern.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you decide what goes in a Facade vs what stays in the subsystem?**
 
@@ -1461,13 +1469,13 @@ Both simplify access to complex internals. The API Gateway adds network concerns
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Facade. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1478,7 +1486,7 @@ Both simplify access to complex internals. The API Gateway adds network concerns
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1512,7 +1520,7 @@ Both simplify access to complex internals. The API Gateway adds network concerns
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1536,7 +1544,7 @@ Both simplify access to complex internals. The API Gateway adds network concerns
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your file system browser needs to calculate the size of a directory. A directory contains files and other directories. Files have a fixed size. A directory's size is the sum of everything it contains, recursively. Without a uniform interface, you need `if (item instanceof File) ... else if (item instanceof Directory) ...` at every operation site. Every new operation (delete, search, display) needs the same conditional.
@@ -1552,13 +1560,13 @@ The GoF formalized Composite in 1994. It's fundamental to GUI frameworks (Swing'
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Composite is a structural design pattern that lets you compose objects into tree structures to represent part-whole hierarchies. Composite lets clients treat individual objects (leaves) and compositions (nodes) uniformly through a common interface.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Treat single objects and groups of objects the same way.
@@ -1572,7 +1580,7 @@ Composite eliminates the distinction between "one" and "many." When you can trea
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1593,7 +1601,7 @@ A common interface declares operations like `getSize()`, `print()`, or `execute(
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a Russian nesting doll (Matryoshka) family tree. Each doll either contains other dolls (composite) or is the smallest doll (leaf). When you paint all dolls, you paint the outer one, then recursively paint everything inside. "Paint all" works whether you have one doll or a hundred nested ones.
 
@@ -1606,7 +1614,7 @@ Where this analogy breaks down: Matryoshka are strictly linear (one inside anoth
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Composite lets you treat a group of things exactly like a single thing. A box can contain items or other boxes. You calculate the total weight the same way regardless.
@@ -1628,7 +1636,7 @@ Composite is the foundation of the Interpreter pattern (ASTs), the Visitor patte
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 [FileSystem Component]
@@ -1651,7 +1659,7 @@ getSize():
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -1682,7 +1690,7 @@ With millions of nodes, recursive `getSize()` is slow. Solutions: cache computed
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - BAD: Type-checking everywhere**
 
@@ -1762,7 +1770,7 @@ Test leaf nodes return their value directly. Test composites with one level of c
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1784,13 +1792,13 @@ Test leaf nodes return their value directly. Test composites with one level of c
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 React's entire rendering model is a Composite pattern. Every React component is either a leaf (renders HTML) or a composite (renders other components). The `render()` method is the uniform interface. JSX syntax (`<Parent><Child/></Parent>`) is just syntactic sugar for building a Composite tree. The virtual DOM diffing algorithm is a Composite tree traversal. Understanding this makes React's reconciliation algorithm, `shouldComponentUpdate`, and `React.memo` immediately understandable.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Where does Composite appear in the Java standard library?**
 
@@ -1855,13 +1863,13 @@ A `Role` can contain `SimplePermission`s and other `Role`s (role inheritance). `
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Composite. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1872,7 +1880,7 @@ A `Role` can contain `SimplePermission`s and other `Role`s (role inheritance). `
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1906,7 +1914,7 @@ A `Role` can contain `SimplePermission`s and other `Role`s (role inheritance). `
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

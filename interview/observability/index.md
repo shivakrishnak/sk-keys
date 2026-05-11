@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "Observability"
+parent: "Interview Mastery"
+nav_order: 12
+has_children: true
+permalink: /interview/observability/
 description: "Monitoring, logging, tracing, SRE practices, alerting, and incident management for production systems"
 keywords_count: 18
 files_count: 3

@@ -19,13 +19,22 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Monolith vs Microservices](#monolith-vs-microservices)
+- [Service Decomposition and Bounded Contexts](#service-decomposition-and-bounded-contexts)
+- [Inter-Service Communication](#inter-service-communication)
+- [API Gateway and Service Discovery](#api-gateway-and-service-discovery)
+- [Resilience Patterns](#resilience-patterns)
+- [Event-Driven Architecture and CQRS](#event-driven-architecture-and-cqrs)
+
 # Monolith vs Microservices
 
 **TL;DR** - A monolith is a single deployable unit where all business logic shares one process and database. Microservices are independently deployable services that own their data and communicate over the network. Monolith-first is almost always the right starting point; microservices solve organizational scaling problems, not technical ones.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT (monolith at scale):**
 30 developers pushing to one repo. A one-line CSS change requires redeploying the entire 2M-line application. Payment team's release is blocked by a search team bug. Friday deploys terrify everyone because blast radius is the entire system. Release cadence: once every 2 weeks instead of daily.
@@ -35,13 +44,13 @@ Microservices solve TEAM scaling, not primarily technical scaling. Conway's Law:
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -54,7 +63,7 @@ Microservices solve TEAM scaling, not primarily technical scaling. Conway's Law:
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -74,7 +83,7 @@ Microservices solve TEAM scaling, not primarily technical scaling. Conway's Law:
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -86,7 +95,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Monolith: One big app does everything. Simple to build, hard to scale organizationally. Microservices: Many small apps, each doing one thing, talking over the network. Complex to build, allows teams to move independently.
@@ -178,7 +187,7 @@ Benefits of starting modular monolith:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -192,7 +201,7 @@ Benefits of starting modular monolith:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -214,14 +223,14 @@ Benefits of starting modular monolith:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You're starting a new product with a team of 5. The CTO wants microservices "to scale from day 1." What's your advice?**
 
@@ -274,13 +283,13 @@ Fix:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Monolith vs Microservices. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -291,7 +300,7 @@ Fix:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -325,7 +334,7 @@ Fix:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -350,20 +359,20 @@ Fix:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Teams split services by technical layer (UI service, business logic service, data service) or by entity (UserService, OrderService, ProductService). Result: every feature touches every service. No team can ship independently.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -376,7 +385,7 @@ Teams split services by technical layer (UI service, business logic service, dat
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -396,7 +405,7 @@ Teams split services by technical layer (UI service, business logic service, dat
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -408,7 +417,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of splitting by technology (frontend/backend/database), split by business capability (ordering, payments, shipping). Each team owns the full stack for their capability.
@@ -501,7 +510,7 @@ New Svc  [Orders v2 (complete)]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -515,7 +524,7 @@ New Svc  [Orders v2 (complete)]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -534,14 +543,14 @@ New Svc  [Orders v2 (complete)]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you decide the boundaries for your first microservice extraction from a monolith?**
 
@@ -580,13 +589,13 @@ Process:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Service Decomposition and Bounded Contexts. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -597,7 +606,7 @@ Process:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -631,7 +640,7 @@ Process:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -656,20 +665,20 @@ Process:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 After splitting into microservices, services need to talk. Bad choice: synchronous chains of 8 services where any single failure cascades. Or: everything async where you can't get a response in time.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -682,7 +691,7 @@ After splitting into microservices, services need to talk. Bad choice: synchrono
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -702,7 +711,7 @@ After splitting into microservices, services need to talk. Bad choice: synchrono
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -714,7 +723,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Sync: "Call and wait for response" (like a phone call). Async: "Send message, continue working, handle response later" (like email).
@@ -815,7 +824,7 @@ Inventory  Payment  Notification
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -829,7 +838,7 @@ Inventory  Payment  Notification
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -848,14 +857,14 @@ Inventory  Payment  Notification
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: A user places an order. It needs inventory check, payment, and shipping. Design the communication.**
 
@@ -895,13 +904,13 @@ Why this hybrid:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Inter-Service Communication. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -912,7 +921,7 @@ Why this hybrid:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -946,7 +955,7 @@ Why this hybrid:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -971,20 +980,20 @@ Why this hybrid:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Clients must know the address of every microservice (20+ URLs). Each service's URL changes on every deployment. Adding a new instance requires updating every caller's configuration. Authentication logic duplicated in every service.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -997,7 +1006,7 @@ Clients must know the address of every microservice (20+ URLs). Each service's U
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1017,7 +1026,7 @@ Clients must know the address of every microservice (20+ URLs). Each service's U
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1029,7 +1038,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 API Gateway: One front door for all external requests. Routes to the right service internally. Service Discovery: A phone book that services use to find each other.
@@ -1139,7 +1148,7 @@ spec:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1153,7 +1162,7 @@ spec:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1172,14 +1181,14 @@ spec:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Should authentication happen at the gateway or at each service?**
 
@@ -1221,13 +1230,13 @@ Security: Internal network must be trusted (or use mTLS between services). If at
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for API Gateway and Service Discovery. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1238,7 +1247,7 @@ Security: Internal network must be trusted (or use mTLS between services). If at
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1272,7 +1281,7 @@ Security: Internal network must be trusted (or use mTLS between services). If at
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1297,20 +1306,20 @@ Security: Internal network must be trusted (or use mTLS between services). If at
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Payment service responds slowly (30s timeout). Order service has 200 threads, all waiting for payment. Order service becomes unresponsive. Cart service depends on order service - also dies. Notification service depends on cart - also dies. One slow service kills the entire system in 60 seconds.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1323,7 +1332,7 @@ Payment service responds slowly (30s timeout). Order service has 200 threads, al
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1343,7 +1352,7 @@ Payment service responds slowly (30s timeout). Order service has 200 threads, al
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1355,7 +1364,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Patterns that stop failures from spreading. If one service is sick, isolate it so it doesn't infect healthy services. Fail fast, protect resources, degrade gracefully.
@@ -1490,7 +1499,7 @@ Thread.sleep(delay + jitter);
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1504,7 +1513,7 @@ Thread.sleep(delay + jitter);
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1523,14 +1532,14 @@ Thread.sleep(delay + jitter);
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your checkout service calls 4 downstream services. One is slow. Design the resilience strategy.**
 
@@ -1580,13 +1589,13 @@ Key principles:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Resilience Patterns. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1597,7 +1606,7 @@ Key principles:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1631,7 +1640,7 @@ Key principles:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1656,20 +1665,20 @@ Key principles:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Order Service needs to notify Inventory, Payment, Shipping, Analytics, Recommendations, and Email services when an order is placed. Direct calls create 6 synchronous dependencies. Adding a 7th consumer requires changing Order Service code. Read-heavy endpoints (product listing) compete for resources with write-heavy endpoints (order processing).
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1682,7 +1691,7 @@ Order Service needs to notify Inventory, Payment, Shipping, Analytics, Recommend
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1702,7 +1711,7 @@ Order Service needs to notify Inventory, Payment, Shipping, Analytics, Recommend
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1714,7 +1723,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 EDA: Instead of "calling" other services, publish "this happened" events. Anyone interested subscribes. CQRS: Use one database optimized for writes, another optimized for reads.
@@ -1843,7 +1852,7 @@ COMMIT;
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1857,7 +1866,7 @@ COMMIT;
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1879,14 +1888,14 @@ COMMIT;
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Design an event-driven order processing system. How do you handle failures and ensure exactly-once processing?**
 
@@ -1962,13 +1971,13 @@ Best practice: Combine (2) and (4). Frontend shows optimistic state. Backend ens
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Event-Driven Architecture and CQRS. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1979,7 +1988,7 @@ Best practice: Combine (2) and (4). Frontend shows optimistic state. Backend ens
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2013,7 +2022,7 @@ Best practice: Combine (2) and (4). Frontend shows optimistic state. Backend ens
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

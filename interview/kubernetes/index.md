@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "Kubernetes"
+parent: "Interview Mastery"
+nav_order: 10
+has_children: true
+permalink: /interview/kubernetes/
 description: Interview mastery content for Kubernetes orchestration
 keywords_count: 36
 files_count: 6

@@ -19,26 +19,35 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Service Mesh](#service-mesh)
+- [Sidecar Pattern](#sidecar-pattern)
+- [Istio](#istio)
+- [Envoy Proxy](#envoy-proxy)
+- [Platform Engineering](#platform-engineering)
+- [Multi-Tenancy](#multi-tenancy)
+
 # Service Mesh
 
 **TL;DR** - A Service Mesh is a dedicated infrastructure layer that handles service-to-service communication transparently. It provides mTLS, traffic management, observability, and resilience (retries, circuit breaking) without application code changes. The mesh uses sidecar proxies (typically Envoy) injected alongside each service pod.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every service team must implement: mTLS between services, retry logic, circuit breaking, traffic splitting for canary, distributed tracing, mutual authentication. 30 services in 3 languages = 90 implementations of the same concerns. Some teams skip security. Some retry logic has bugs. No consistency.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -51,7 +60,7 @@ Every service team must implement: mTLS between services, retry logic, circuit b
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -71,7 +80,7 @@ Every service team must implement: mTLS between services, retry logic, circuit b
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -83,7 +92,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 An invisible network layer between your services that handles security, reliability, and monitoring. Your code doesn't know it's there. Like a smart postal system that handles encryption, routing, and delivery tracking without the letter writer knowing.
@@ -174,7 +183,7 @@ Instead of sidecar per pod, use a shared proxy per node. Reduces resource overhe
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -188,7 +197,7 @@ Instead of sidecar per pod, use a shared proxy per node. Reduces resource overhe
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -205,14 +214,14 @@ Instead of sidecar per pod, use a shared proxy per node. Reduces resource overhe
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You're evaluating whether to adopt a service mesh. What criteria do you use to decide?**
 
@@ -245,13 +254,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Service Mesh. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -262,7 +271,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -296,7 +305,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -321,7 +330,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -337,13 +346,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -356,7 +365,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -376,7 +385,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -388,7 +397,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Like a motorcycle sidecar - a separate vehicle attached to the main one, providing extra functionality (carrying a passenger) without modifying the motorcycle itself.
@@ -473,7 +482,7 @@ Before native sidecar support, the ordering problem was real: main container mig
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -487,7 +496,7 @@ Before native sidecar support, the ordering problem was real: main container mig
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -504,14 +513,14 @@ Before native sidecar support, the ordering problem was real: main container mig
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What are the downsides of the sidecar pattern?**
 
@@ -529,13 +538,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Sidecar Pattern. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -546,7 +555,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -580,7 +589,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -605,7 +614,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -621,13 +630,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -640,7 +649,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -660,7 +669,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -672,7 +681,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Istio is the "operating system" for microservices networking. Install it in your Kubernetes cluster and every service automatically gets encryption, traffic control, and monitoring.
@@ -802,7 +811,7 @@ spec:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -816,7 +825,7 @@ spec:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -833,14 +842,14 @@ spec:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What's the operational overhead of running Istio in production?**
 
@@ -860,13 +869,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Istio. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -877,7 +886,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -911,7 +920,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -936,7 +945,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -952,13 +961,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -971,7 +980,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -991,7 +1000,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1003,7 +1012,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A smart traffic cop that sits between services and handles routing, security, and monitoring. Your application sends traffic to Envoy (localhost), and Envoy handles the rest.
@@ -1099,7 +1108,7 @@ static_resources:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1113,7 +1122,7 @@ static_resources:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1130,14 +1139,14 @@ static_resources:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Why is Envoy preferred over Nginx for service mesh use cases?**
 
@@ -1158,13 +1167,13 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Envoy Proxy. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1175,7 +1184,7 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1209,7 +1218,7 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1234,7 +1243,7 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1250,13 +1259,13 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1269,7 +1278,7 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1289,7 +1298,7 @@ Envoy was designed from the ground up for dynamic, API-driven microservices. Ngi
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1301,7 +1310,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A platform team builds the "developer highway" so product teams don't have to build their own roads. Developers get self-service tools to deploy, monitor, and manage services without becoming infrastructure experts.
@@ -1369,7 +1378,7 @@ With platform:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1383,7 +1392,7 @@ With platform:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1400,14 +1409,14 @@ With platform:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you measure the success of a platform engineering initiative?**
 
@@ -1426,13 +1435,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Platform Engineering. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1443,7 +1452,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1477,7 +1486,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1502,7 +1511,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1518,13 +1527,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1537,7 +1546,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1557,7 +1566,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1569,7 +1578,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 One apartment building (application) with many tenants (customers). Each has their own private unit (data), shares the hallways and elevators (infrastructure). Cheaper than building a separate house for each.
@@ -1665,7 +1674,7 @@ One tenant generates 10x more load than others. They consume all database connec
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1679,7 +1688,7 @@ One tenant generates 10x more load than others. They consume all database connec
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1696,14 +1705,14 @@ One tenant generates 10x more load than others. They consume all database connec
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: A bug in your multi-tenant application exposed Tenant A's data to Tenant B. How do you prevent this?**
 
@@ -1732,13 +1741,13 @@ CREATE POLICY tenant_isolation ON orders
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Multi-Tenancy. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1749,7 +1758,7 @@ CREATE POLICY tenant_isolation ON orders
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1783,7 +1792,7 @@ CREATE POLICY tenant_isolation ON orders
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "Containers - Security"
+parent: "Containers"
+grand_parent: "Interview Mastery"
+nav_order: 4
+permalink: /interview/containers/security/
 topic: Containers
 subtopic: Security
 keywords:
@@ -14,13 +19,22 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Container Security](#container-security)
+- [Linux Namespaces](#linux-namespaces)
+- [Cgroups](#cgroups)
+- [Image Scanning](#image-scanning)
+- [Rootless Containers](#rootless-containers)
+- [Docker Secrets](#docker-secrets)
+
 # Container Security
 
 **TL;DR** - Container security is defense-in-depth across the image supply chain, runtime isolation, network policies, and host hardening - because containers share a kernel, they need multiple compensating controls.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Containers run as root with full capabilities, mount the Docker socket, use unscanned base images, and communicate freely on the network. A single compromised container leads to full host takeover.
@@ -36,13 +50,13 @@ Default Docker (everything runs as root) -> User namespaces and capabilities (20
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Container security encompasses the protection of containerized workloads across their lifecycle: build (image scanning, base image provenance, secrets management), deploy (admission control, image signing verification), and runtime (namespace isolation, capability dropping, seccomp profiles, network policies, and runtime threat detection).
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Container security means treating containers as untrusted by default and applying isolation at every layer.
@@ -56,7 +70,7 @@ The container boundary is NOT a security boundary by default. A container runnin
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -77,7 +91,7 @@ Because the kernel is shared, you need: namespace isolation (limit visibility), 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Container security is like layers of an onion. Each layer stops a different class of attack. Peel one layer, and the next protects you. No single layer is sufficient, but together they make exploitation impractical.
 
@@ -91,7 +105,7 @@ Where this analogy breaks down: unlike onion layers, security layers work simult
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Making sure containers can't do more than they should - they can't access other containers' data, can't break out to the host machine, and don't contain known vulnerabilities.
@@ -113,7 +127,7 @@ Design a container security architecture: image provenance chain (cosign signing
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Container Security Layers:
@@ -138,7 +152,7 @@ Container Security Layers:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 Build image -> Scan (Trivy) -> Sign (cosign) -> Push to registry -> Admission controller verifies signature and policies <- YOU ARE HERE -> Pod runs with restricted security context -> Network policy limits communication -> Falco monitors runtime
@@ -151,7 +165,7 @@ At 100+ images, scanning must be automated and continuous (new CVEs found daily 
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```yaml
 # Kubernetes Pod Security Context (GOOD)
@@ -207,7 +221,7 @@ Run `kubectl auth can-i --as=system:serviceaccount:ns:sa` to verify RBAC. Deploy
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -229,13 +243,13 @@ Run `kubectl auth can-i --as=system:serviceaccount:ns:sa` to verify RBAC. Deploy
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 The `--privileged` flag in Docker is used in 15% of production containers (various surveys). It gives containers full access to ALL host devices and ALL capabilities - effectively disabling container isolation entirely. Most teams use it because "the app didn't work without it" instead of finding which specific capability was needed (usually just `NET_ADMIN` or `SYS_PTRACE`).
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Walk me through a container escape scenario and how you'd prevent it.**
 
@@ -343,13 +357,13 @@ Success metric: 0% root containers in 3 months, with no production incidents fro
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Container Security. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -360,7 +374,7 @@ Success metric: 0% root containers in 3 months, with no production incidents fro
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -394,7 +408,7 @@ Success metric: 0% root containers in 3 months, with no production incidents fro
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -418,7 +432,7 @@ Success metric: 0% root containers in 3 months, with no production incidents fro
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 All processes on a Linux machine share everything - PID space, network interfaces, filesystem mounts, hostnames. Process A can see and signal process B. There's no isolation without running separate kernels (VMs).
@@ -434,13 +448,13 @@ Mount namespace (Linux 2.4.19, 2002) -> UTS, IPC, PID namespaces (2006-2008) -> 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Linux namespaces are a kernel feature that partitions system resources so that one set of processes sees one set of resources while another set sees a different set. There are 8 namespace types (mnt, pid, net, ipc, uts, user, cgroup, time), each isolating a specific aspect of the system's global resources.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Namespaces make a process think it has its own private OS.
@@ -454,7 +468,7 @@ Containers ARE namespaces + cgroups. There's no special "container" concept in t
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -475,7 +489,7 @@ By combining all namespace types, you create a process that can't see other proc
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Namespaces are like augmented reality glasses, where each person wearing them sees a different customized overlay of the real world. The physical world (kernel) is the same, but each person's view (namespace) is filtered.
 
@@ -488,7 +502,7 @@ Where this analogy breaks down: AR glasses don't prevent the wearer from affecti
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A way to give each program its own private view of the system - its own list of running programs, its own network, its own file system - while actually sharing one computer.
@@ -523,7 +537,7 @@ User namespaces are the key to rootless containers: PID 1 inside the container c
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```bash
 # Create a new PID + mount namespace
@@ -549,7 +563,7 @@ nsenter -t <PID> -n ip addr  # See container's network
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 `docker run` -> containerd calls runc -> runc calls `clone()` with namespace flags <- YOU ARE HERE -> child process has new namespaces -> `pivot_root` to container filesystem -> exec entrypoint
@@ -562,7 +576,7 @@ Each namespace consumes kernel memory. At 10,000+ containers per host, namespace
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```bash
 # Create a minimal "container" with just namespaces
@@ -586,7 +600,7 @@ ip addr   # Shows only loopback (no host network)
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -608,13 +622,13 @@ ip addr   # Shows only loopback (no host network)
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 The first namespace (mount namespace) was added to Linux in 2002 - over a decade before Docker. Docker didn't invent container technology; it combined existing kernel primitives (namespaces from 2002-2016, cgroups from 2006) with a developer-friendly UX. The innovation was the developer experience, not the isolation technology.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: A developer says "containers are secure because they're isolated." How do you respond?**
 
@@ -670,13 +684,13 @@ This is why rootless Podman became popular - it uses user namespaces by default,
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Linux Namespaces. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -687,7 +701,7 @@ This is why rootless Podman became popular - it uses user namespaces by default,
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -721,7 +735,7 @@ This is why rootless Podman became popular - it uses user namespaces by default,
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -745,7 +759,7 @@ This is why rootless Podman became popular - it uses user namespaces by default,
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 A rogue container with a memory leak consumes all host RAM, causing the OOM killer to randomly kill other containers. A crypto-mining container uses 100% CPU, starving all legitimate workloads.
@@ -761,13 +775,13 @@ Process limits (ulimit, 1980s) -> cgroups v1 (Linux 2.6.24, 2008, developed by G
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Control groups (cgroups) are a Linux kernel mechanism for organizing processes into hierarchical groups whose resource usage (CPU, memory, block I/O, network) can be limited, accounted for, and isolated. They provide the resource limiting half of container isolation (namespaces provide the visibility half).
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Cgroups are resource quotas for processes - ensuring no process hogs the system.
@@ -781,7 +795,7 @@ Namespaces control what a process can SEE. Cgroups control what a process can US
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -802,7 +816,7 @@ Hierarchical cgroups let you set limits at multiple levels: cluster -> node -> p
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Cgroups are like a prepaid phone plan. You get a set amount of data (memory limit), minutes (CPU shares), and texts (I/O bandwidth). Go over data, you're cut off (OOM kill). Go over minutes, you're throttled (CPU throttling). The carrier (kernel) enforces limits regardless of what you try.
 
@@ -815,7 +829,7 @@ Where this analogy breaks down: you can't request a plan upgrade mid-call, but K
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Cgroups are the system that limits how much computer resources (memory, CPU) each container can use, so one greedy container can't ruin things for others.
@@ -837,7 +851,7 @@ cgroups v2 unifies the hierarchy (v1 had separate hierarchies per controller). K
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 cgroups v2 unified hierarchy:
@@ -866,7 +880,7 @@ Enforcement flow:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 Container starts -> assigned to cgroup <- YOU ARE HERE -> kernel enforces limits -> `docker stats` shows usage -> if approaching limit, app should self-monitor and adapt
@@ -879,7 +893,7 @@ At high density (100+ containers per host), accurate resource requests become cr
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```bash
 # Docker: Set resource limits
@@ -920,7 +934,7 @@ kubectl describe pod myapp | grep -A5 "Last State"
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -942,13 +956,13 @@ kubectl describe pod myapp | grep -A5 "Last State"
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 CPU limits in Kubernetes are controversial. Many production teams (including Google internally) run without CPU limits, using only CPU requests. The reason: CPU throttling occurs even when the host has idle cores, causing latency spikes in latency-sensitive services. With only requests (no limits), containers can burst to use idle CPU while still getting their guaranteed share under contention. This is why Kubernetes has a "Burstable" QoS class.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your Java container keeps getting OOM-killed despite having "-Xmx256m" and a 512MB container limit. Why?**
 
@@ -1013,13 +1027,13 @@ Recommendation: Set memory limits always (OOM is worse than throttling). For CPU
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Cgroups. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1030,7 +1044,7 @@ Recommendation: Set memory limits always (OOM is worse than throttling). For CPU
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1064,7 +1078,7 @@ Recommendation: Set memory limits always (OOM is worse than throttling). For CPU
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1088,7 +1102,7 @@ Recommendation: Set memory limits always (OOM is worse than throttling). For CPU
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You deploy containers built on base images with known critical vulnerabilities. Attackers exploit CVE-2021-44228 (Log4Shell) in your container because nobody checked if the image contained a vulnerable log4j version.
@@ -1104,13 +1118,13 @@ Manual audits -> Clair (CoreOS, 2015) -> Docker Security Scanning (2016) -> Triv
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Container image scanning is the automated analysis of container image contents against vulnerability databases (NVD, vendor advisories) to identify known security issues (CVEs) in OS packages, language-specific dependencies, and configuration. It operates on the image filesystem layers without running the container.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Image scanning finds known vulnerabilities in your container before attackers do.
@@ -1124,7 +1138,7 @@ Scanning finds KNOWN vulnerabilities only. Zero-days won't appear. This is why s
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1145,7 +1159,7 @@ Scan in CI (gate deployments) AND scan continuously in registry (catch new CVEs 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Image scanning is like an ingredients label + allergy check. The SBOM (Software Bill of Materials) lists every ingredient. The scanner cross-references against known allergens (CVEs). If a match is found, the product is flagged before it ships.
 
@@ -1158,7 +1172,7 @@ Where this analogy breaks down: not all "allergens" (CVEs) actually affect your 
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A tool that checks your container for known security problems before you deploy it, like a spell-checker for vulnerabilities.
@@ -1180,7 +1194,7 @@ Build a vulnerability management program: triage based on exploitability (EPSS s
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Scanning Pipeline:
@@ -1206,7 +1220,7 @@ Scan output:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 Build image -> Scan in CI <- YOU ARE HERE -> No critical CVEs -> Push to registry -> Continuous scan in registry -> Deploy with admission check
@@ -1219,7 +1233,7 @@ At 100+ images, scan results must be aggregated and prioritized. At 1000+ images
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```bash
 # Scan with Trivy (most popular open-source)
@@ -1253,7 +1267,7 @@ grype sbom:./sbom.json
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1275,13 +1289,13 @@ grype sbom:./sbom.json
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Studies show that 60-80% of container images in public registries contain at least one HIGH or CRITICAL vulnerability. But fewer than 5% of those CVEs are actually exploitable in the context they're used (the vulnerable code path is never reached). This is why VEX (Vulnerability Exploitability eXchange) and reachability analysis are becoming critical - without them, teams waste enormous effort patching CVEs that can't actually be exploited.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How would you design an image scanning strategy for an organization with 500 microservices?**
 
@@ -1329,13 +1343,13 @@ The principle: security is a risk trade-off. "Can't update" usually means "haven
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Image Scanning. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1346,7 +1360,7 @@ The principle: security is a risk trade-off. "Can't update" usually means "haven
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1380,7 +1394,7 @@ The principle: security is a risk trade-off. "Can't update" usually means "haven
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1404,7 +1418,7 @@ The principle: security is a risk trade-off. "Can't update" usually means "haven
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Docker daemon runs as root. Container escape = root on host. A CVE in the container runtime gives attackers full system control.
@@ -1420,13 +1434,13 @@ Root-only Docker (2013-2018) -> Rootless Docker experimental (2019) -> Podman ro
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Rootless containers are containers where the entire container runtime (daemon, networking, storage) runs as an unprivileged user on the host using user namespaces to remap container UID 0 to an unprivileged host UID. This ensures that even a complete container escape only gives attacker access as an unprivileged user.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Rootless means the container AND its runtime need zero root access on the host.
@@ -1440,7 +1454,7 @@ The magic is user namespaces: inside the container, the process thinks it's root
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1461,7 +1475,7 @@ Without root, you can't create real network bridges (need iptables = root). Solu
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Rootless containers are like a sandbox at a playground. Kids (containers) can build whatever they want inside the sandbox, but the sandbox walls prevent them from affecting the playground. Even if a kid digs to the bottom, they hit a concrete floor (unprivileged UID) - they can't reach the playground's underground pipes (kernel).
 
@@ -1474,7 +1488,7 @@ Where this analogy breaks down: containers need to communicate (networking), whi
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Normal Docker needs admin access to run. Rootless containers don't - even if someone breaks out of the container, they can't take over the computer.
@@ -1496,7 +1510,7 @@ Rootless has been production-ready since 2022 but adoption is slow due to: port 
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Traditional Docker (rootful):
@@ -1520,7 +1534,7 @@ User namespace mapping:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 User runs `podman run` (no sudo) -> rootlesskit sets up user namespace <- YOU ARE HERE -> slirp4netns provides networking -> fuse-overlayfs provides storage -> container runs as host UID 100000+
@@ -1533,7 +1547,7 @@ Rootless adds ~10-15% networking overhead (user-space stack). At high-throughput
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```bash
 # Podman (rootless by default)
@@ -1556,7 +1570,7 @@ ps aux | grep myapp
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1578,13 +1592,13 @@ ps aux | grep myapp
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Podman was created by Red Hat specifically to prove that Docker's root daemon architecture was unnecessary. Podman has no daemon, runs rootless by default, and is CLI-compatible with Docker (`alias docker=podman`). Yet Docker still dominates developer tooling because of ecosystem momentum (Docker Desktop, Docker Compose), not technical superiority.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When would you NOT use rootless containers?**
 
@@ -1640,13 +1654,13 @@ Key: the main blocker is usually volume permissions (UID mapping), not the runti
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Rootless Containers. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1657,7 +1671,7 @@ Key: the main blocker is usually volume permissions (UID mapping), not the runti
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1691,7 +1705,7 @@ Key: the main blocker is usually volume permissions (UID mapping), not the runti
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1715,7 +1729,7 @@ Key: the main blocker is usually volume permissions (UID mapping), not the runti
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Database passwords in environment variables (visible in `docker inspect`), API keys baked into images (visible in `docker history`), or `.env` files in version control.
@@ -1731,13 +1745,13 @@ Hardcoded credentials -> Environment variables (slightly better) -> Docker Secre
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Docker secrets is a mechanism for securely managing sensitive data (passwords, TLS certificates, API keys) used by container services. Secrets are encrypted at rest, transmitted over TLS, mounted as tmpfs files (in-memory only) inside containers, and never written to disk on worker nodes.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Secrets are securely stored credentials delivered to containers as in-memory files.
@@ -1751,7 +1765,7 @@ The real problem isn't storing secrets - it's preventing them from leaking. Envi
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1772,7 +1786,7 @@ Encrypted at rest (Raft log in Swarm, etcd in K8s) + encrypted in transit (TLS) 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Secrets management is like a secure document courier service. The document (secret) is sealed in a tamper-evident envelope (encrypted). The courier (orchestrator) delivers it only to the verified recipient (authorized container). After reading, the document is shredded (tmpfs cleared on container stop).
 
@@ -1785,7 +1799,7 @@ Where this analogy breaks down: secrets can be read multiple times during the co
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A safe way to give containers passwords and keys without putting them in plain text where others can see them.
@@ -1807,7 +1821,7 @@ Design a secrets architecture: HashiCorp Vault as source of truth (dynamic secre
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Secrets Delivery Flow:
@@ -1831,7 +1845,7 @@ Docker Swarm:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 Secret created in Vault -> external-secrets operator syncs to K8s Secret -> Pod spec mounts as volume <- YOU ARE HERE -> Application reads file from /secrets/ -> Secret rotated in Vault -> operator updates K8s Secret -> volume auto-refreshes
@@ -1844,7 +1858,7 @@ At 100+ secrets: need namespaced access control, rotation schedules, leak detect
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```yaml
 # BAD: Secret in environment variable
@@ -1888,7 +1902,7 @@ String password = Files.readString(
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1910,13 +1924,13 @@ String password = Files.readString(
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Kubernetes Secrets are NOT encrypted by default - they're only base64-encoded in etcd (decode with `echo <value> | base64 -d`). Anyone with etcd access or the right RBAC can read all secrets in plain text. You must explicitly enable encryption-at-rest (`EncryptionConfiguration`) AND restrict RBAC. Most "quick start" clusters have completely unencrypted secrets.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Compare the different approaches to secrets in containers. When would you use each?**
 
@@ -1984,13 +1998,13 @@ Key principle: rotation is the fix, not git history rewriting. Once pushed, assu
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Docker Secrets. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2001,7 +2015,7 @@ Key principle: rotation is the fix, not git history rewriting. Once pushed, assu
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2035,7 +2049,7 @@ Key principle: rotation is the fix, not git history rewriting. Once pushed, assu
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

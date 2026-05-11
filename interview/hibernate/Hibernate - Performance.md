@@ -18,26 +18,34 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [First-Level and Second-Level Cache](#first-level-and-second-level-cache)
+- [N+1 Detection and Prevention](#n1-detection-and-prevention)
+- [Batch Fetching and Bulk Operations](#batch-fetching-and-bulk-operations)
+- [Query Optimization](#query-optimization)
+- [Hibernate Statistics and Monitoring](#hibernate-statistics-and-monitoring)
+
 # First-Level and Second-Level Cache
 
 **TL;DR** - First-level cache (persistence context) is per-session and automatic. Second-level cache (L2C) is shared across sessions and optional. L2C stores entities/queries across requests, reducing database roundtrips by 60-90% for read-heavy data that changes infrequently.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every `findById(42)` hits the database, even if 1000 requests/second ask for the same entity. Catalog data (countries, categories, config) queried repeatedly with identical results.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -50,7 +58,7 @@ Every `findById(42)` hits the database, even if 1000 requests/second ask for the
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -70,7 +78,7 @@ Every `findById(42)` hits the database, even if 1000 requests/second ask for the
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -82,7 +90,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 First-level: "If I already loaded this entity in the current request, don't load it again." Second-level: "If ANY request already loaded this entity recently, reuse it."
@@ -194,7 +202,7 @@ Rule: Only cache queries on tables that rarely change (reference data).
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -208,7 +216,7 @@ Rule: Only cache queries on tables that rarely change (reference data).
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -227,14 +235,14 @@ Rule: Only cache queries on tables that rarely change (reference data).
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When would you NOT use second-level cache?**
 
@@ -254,13 +262,13 @@ Good candidates: Country lists, product categories, feature flags, configuration
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for First-Level and Second-Level Cache. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -271,7 +279,7 @@ Good candidates: Country lists, product categories, feature flags, configuration
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -305,7 +313,7 @@ Good candidates: Country lists, product categories, feature flags, configuration
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -330,20 +338,20 @@ Good candidates: Country lists, product categories, feature flags, configuration
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 APIs that work fine in development (10 records) become unusably slow in production (10,000 records). A "list orders" endpoint that generates 10,001 SQL queries instead of 1-2.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -356,7 +364,7 @@ APIs that work fine in development (10 records) become unusably slow in producti
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -376,7 +384,7 @@ APIs that work fine in development (10 records) become unusably slow in producti
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -388,7 +396,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 You load a list of 100 items. For each item, Hibernate makes a separate query for related data. That's 1 + 100 = 101 queries when you could have done it in 1-2.
@@ -514,7 +522,7 @@ log.info("L2C hits: {}",
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -528,7 +536,7 @@ log.info("L2C hits: {}",
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -547,14 +555,14 @@ log.info("L2C hits: {}",
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You join a project where the API is slow. How do you find and fix N+1 problems?**
 
@@ -576,13 +584,13 @@ Fix strategy:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for N+1 Detection and Prevention. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -593,7 +601,7 @@ Fix strategy:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -627,7 +635,7 @@ Fix strategy:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -652,20 +660,20 @@ Fix strategy:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Importing 100,000 records: 100,000 INSERT statements, persistence context grows to 100,000 entities consuming GBs of memory, massive GC pauses. Updating 50,000 rows: 50,000 individual UPDATE statements taking 30+ minutes.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -678,7 +686,7 @@ Importing 100,000 records: 100,000 INSERT statements, persistence context grows 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -698,7 +706,7 @@ Importing 100,000 records: 100,000 INSERT statements, persistence context grows 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -710,7 +718,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of doing things one at a time, batch them: insert 50 rows in one statement, update 1000 rows in one query.
@@ -835,7 +843,7 @@ public JdbcBatchItemWriter<Product> writer(
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -849,7 +857,7 @@ public JdbcBatchItemWriter<Product> writer(
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -868,14 +876,14 @@ public JdbcBatchItemWriter<Product> writer(
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How would you import 10 million records into the database?**
 
@@ -907,13 +915,13 @@ Never: Regular JPA `em.persist()` without flush/clear - OutOfMemoryError guarant
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Batch Fetching and Bulk Operations. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -924,7 +932,7 @@ Never: Regular JPA `em.persist()` without flush/clear - OutOfMemoryError guarant
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -958,7 +966,7 @@ Never: Regular JPA `em.persist()` without flush/clear - OutOfMemoryError guarant
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -983,20 +991,20 @@ Never: Regular JPA `em.persist()` without flush/clear - OutOfMemoryError guarant
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Developers write `repo.findAll()` and filter in Java, loading entire tables into memory. Queries return 50 columns when 3 are needed. Pagination with OFFSET degrades linearly with page depth.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1009,7 +1017,7 @@ Developers write `repo.findAll()` and filter in Java, loading entire tables into
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1029,7 +1037,7 @@ Developers write `repo.findAll()` and filter in Java, loading entire tables into
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1041,7 +1049,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Write queries that get exactly what you need from the database - no more, no less. The database is always faster at filtering and joining than your Java code.
@@ -1142,7 +1150,7 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1156,7 +1164,7 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1175,14 +1183,14 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1229,13 +1237,13 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Query Optimization. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1246,7 +1254,7 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1280,7 +1288,7 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1305,20 +1313,20 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 "The API is slow" with no way to know: Is it the query? The connection pool? Lazy loading? Cache misses? Without metrics, debugging is guesswork.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1331,7 +1339,7 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1351,7 +1359,7 @@ Complex reporting queries with CTEs, window functions, and entity views often ex
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1363,7 +1371,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Hibernate counts everything it does: how many queries, how long they took, how often caches were hit. You can see exactly where time is spent.
@@ -1469,7 +1477,7 @@ public DataSource dataSource(DataSource actual) {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1483,7 +1491,7 @@ public DataSource dataSource(DataSource actual) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1502,14 +1510,14 @@ public DataSource dataSource(DataSource actual) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1556,13 +1564,13 @@ public DataSource dataSource(DataSource actual) {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Hibernate Statistics and Monitoring. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1573,7 +1581,7 @@ public DataSource dataSource(DataSource actual) {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1607,7 +1615,7 @@ public DataSource dataSource(DataSource actual) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

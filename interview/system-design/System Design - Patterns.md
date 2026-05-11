@@ -19,26 +19,35 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Hexagonal and Clean Architecture](#hexagonal-and-clean-architecture)
+- [Domain-Driven Design](#domain-driven-design)
+- [Saga Pattern](#saga-pattern)
+- [Event Sourcing](#event-sourcing)
+- [Strangler Fig Pattern](#strangler-fig-pattern)
+- [Sidecar and Service Mesh](#sidecar-and-service-mesh)
+
 # Hexagonal and Clean Architecture
 
 **TL;DR** - Hexagonal (Ports and Adapters) architecture isolates business logic from infrastructure by defining ports (interfaces) that adapters (implementations) connect to. Clean Architecture formalizes this with concentric dependency rings: domain at the center depends on nothing; everything else depends inward.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Business logic is tangled with database queries, HTTP controllers, and message queue code. Changing from PostgreSQL to DynamoDB requires rewriting business rules. Unit testing requires a running database. Framework upgrades break domain logic.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -51,7 +60,7 @@ Business logic is tangled with database queries, HTTP controllers, and message q
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -71,7 +80,7 @@ Business logic is tangled with database queries, HTTP controllers, and message q
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -83,7 +92,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Put your business rules in the center. Everything external (database, web framework, message queue) plugs in around it like adapters. You can swap any adapter without touching the business rules.
@@ -226,7 +235,7 @@ com.company.order/
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -240,7 +249,7 @@ com.company.order/
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -259,14 +268,14 @@ com.company.order/
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How would you structure a microservice using Hexagonal Architecture? Show the package layout.**
 
@@ -315,13 +324,13 @@ Key rules:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Hexagonal and Clean Architecture. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -332,7 +341,7 @@ Key rules:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -366,7 +375,7 @@ Key rules:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -391,20 +400,20 @@ Key rules:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Developers model the domain using technical concepts (tables, services, DTOs) instead of business concepts. Business experts say "loan origination" but code has `LoanService.process()`. When requirements change, developers can't map business rules to code. Every domain change is a treasure hunt through technical layers.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -417,7 +426,7 @@ Developers model the domain using technical concepts (tables, services, DTOs) in
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -437,7 +446,7 @@ Developers model the domain using technical concepts (tables, services, DTOs) in
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -449,7 +458,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Write code using the same words the business uses. If business says "Place Order," code has `placeOrder()`. If they say "Order is Fulfilled," code has `OrderStatus.FULFILLED`. No translation layer between business and code.
@@ -584,7 +593,7 @@ public class StripePaymentAdapter
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -598,7 +607,7 @@ public class StripePaymentAdapter
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -617,14 +626,14 @@ public class StripePaymentAdapter
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you decide aggregate boundaries? What's the consequence of making aggregates too large?**
 
@@ -670,13 +679,13 @@ Rule of thumb: If an aggregate regularly exceeds 100 child entities, it's too la
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Domain-Driven Design. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -687,7 +696,7 @@ Rule of thumb: If an aggregate regularly exceeds 100 child entities, it's too la
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -721,7 +730,7 @@ Rule of thumb: If an aggregate regularly exceeds 100 child entities, it's too la
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -746,20 +755,20 @@ Rule of thumb: If an aggregate regularly exceeds 100 child entities, it's too la
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Microservices each own their database. You can't use a single ACID transaction across 4 databases in 4 services. 2PC holds locks and blocks on coordinator failure. You need a way to maintain data consistency across services without distributed locks.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -772,7 +781,7 @@ Microservices each own their database. You can't use a single ACID transaction a
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -792,7 +801,7 @@ Microservices each own their database. You can't use a single ACID transaction a
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -804,7 +813,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of one big transaction, execute a chain of small transactions. If step 3 fails, undo steps 2 and 1 with compensating actions (like refunding a payment if shipping fails).
@@ -958,7 +967,7 @@ Persistence:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -972,7 +981,7 @@ Persistence:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -991,14 +1000,14 @@ Persistence:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Design a saga for a travel booking (flight + hotel + car rental). What happens when the hotel booking fails after the flight is confirmed?**
 
@@ -1054,13 +1063,13 @@ Optimized flow:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Saga Pattern. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1071,7 +1080,7 @@ Optimized flow:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1105,7 +1114,7 @@ Optimized flow:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1130,20 +1139,20 @@ Optimized flow:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Database stores only current state: `balance = $500`. How did it get there? Who changed it? What was it yesterday at 3pm? Traditional databases lose this history. Audit requirements force you to build separate logging. Bugs in state calculation are unrecoverable.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1156,7 +1165,7 @@ Database stores only current state: `balance = $500`. How did it get there? Who 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1176,7 +1185,7 @@ Database stores only current state: `balance = $500`. How did it get there? Who 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1188,7 +1197,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of recording "bank balance is $500," record every transaction: "deposited $1000," "withdrew $300," "deposited $200," "withdrew $400." Current balance is always derivable: $1000 - $300 + $200 - $400 = $500.
@@ -1333,7 +1342,7 @@ public class AddressChangedUpcaster {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1347,7 +1356,7 @@ public class AddressChangedUpcaster {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1366,14 +1375,14 @@ public class AddressChangedUpcaster {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Design an event-sourced banking system. How do you handle a balance check before withdrawal?**
 
@@ -1441,13 +1450,13 @@ void appendEvent(String aggregateId,
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Event Sourcing. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1458,7 +1467,7 @@ void appendEvent(String aggregateId,
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1492,7 +1501,7 @@ void appendEvent(String aggregateId,
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1517,20 +1526,20 @@ void appendEvent(String aggregateId,
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 "Big bang rewrite" - rebuild the entire system from scratch, then switch over. Takes 18-24 months. During that time, the old system still needs maintenance (double the work). On switch day, everything breaks because the new system wasn't tested with real traffic. 70%+ of big-bang rewrites fail.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1543,7 +1552,7 @@ void appendEvent(String aggregateId,
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1563,7 +1572,7 @@ void appendEvent(String aggregateId,
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1575,7 +1584,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of replacing the whole system at once, replace it one piece at a time. New features go to the new system. Old features migrate gradually. The old system slowly "dies" as traffic shifts away.
@@ -1698,7 +1707,7 @@ public class LegacyOrderAdapter
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1712,7 +1721,7 @@ public class LegacyOrderAdapter
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1731,14 +1740,14 @@ public class LegacyOrderAdapter
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You're migrating a 15-year-old monolith to microservices. Walk through your strangler fig strategy.**
 
@@ -1797,13 +1806,13 @@ Phase N (Orders - last):
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Strangler Fig Pattern. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1814,7 +1823,7 @@ Phase N (Orders - last):
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1848,7 +1857,7 @@ Phase N (Orders - last):
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1873,20 +1882,20 @@ Phase N (Orders - last):
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every microservice must implement: TLS, retries, circuit breakers, tracing, metrics, rate limiting, access control. 50 services in 5 languages = implementing these patterns 50 times. Library updates require redeploying all services.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1899,7 +1908,7 @@ Every microservice must implement: TLS, retries, circuit breakers, tracing, metr
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1919,7 +1928,7 @@ Every microservice must implement: TLS, retries, circuit breakers, tracing, metr
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1931,7 +1940,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A sidecar is a helper container that runs alongside your service and handles networking concerns. Instead of your Java/Python/Go code doing retries and encryption, the sidecar does it transparently.
@@ -2039,7 +2048,7 @@ spec:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -2053,7 +2062,7 @@ spec:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -2072,14 +2081,14 @@ spec:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your company has 50 microservices in 3 languages. How do you implement zero-trust networking?**
 
@@ -2138,13 +2147,13 @@ spec:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Sidecar and Service Mesh. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2155,7 +2164,7 @@ spec:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2189,7 +2198,7 @@ spec:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

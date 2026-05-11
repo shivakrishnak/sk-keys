@@ -20,13 +20,23 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Sync vs Async vs Parallel](#sync-vs-async-vs-parallel)
+- [Message Queue vs Event Bus](#message-queue-vs-event-bus)
+- [At-Least-Once vs Exactly-Once](#at-least-once-vs-exactly-once)
+- [Idempotency](#idempotency)
+- [Job Queues](#job-queues)
+- [Delivery Guarantees](#delivery-guarantees)
+- [Async Mental Model](#async-mental-model)
+
 # Sync vs Async vs Parallel
 
 **TL;DR** - Synchronous blocks the caller until completion, asynchronous returns immediately with a future result, and parallel executes multiple tasks simultaneously on different threads/cores.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT ASYNC:**
 Your API endpoint processes a user order: validate (5ms), charge payment (500ms), send email (300ms), update analytics (200ms). Synchronously, the user waits 1005ms. With 100 concurrent users, you need 100 threads blocked on payment/email calls. Thread pool exhaustion at 200 concurrent requests.
@@ -42,13 +52,13 @@ From blocking I/O (early servers) to thread pools (Tomcat) to non-blocking I/O (
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 **Synchronous:** The caller waits for the operation to complete before continuing. Thread is blocked. **Asynchronous:** The caller initiates the operation and continues immediately. Result arrives later via callback, future, or event. **Parallel:** Multiple operations execute simultaneously on different CPU cores. Parallel is about execution. Async is about waiting.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Sync waits, async delegates, parallel multiplies.
@@ -62,7 +72,7 @@ Async and parallel are orthogonal. You can have async without parallel (one thre
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -77,7 +87,7 @@ Async and parallel are orthogonal. You can have async without parallel (one thre
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -89,7 +99,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -108,7 +118,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 SYNCHRONOUS:
@@ -128,7 +138,7 @@ Core 3: [task C]---->[done]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -142,7 +152,7 @@ Core 3: [task C]---->[done]
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Sync (blocking):**
 
@@ -184,7 +194,7 @@ public BigDecimal totalRevenue(List<Order> orders) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -206,14 +216,14 @@ public BigDecimal totalRevenue(List<Order> orders) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When would you choose sync over async in a modern system?**
 
@@ -251,13 +261,13 @@ With virtual threads, you write blocking code (`result = httpClient.send(request
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Sync vs Async vs Parallel. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -268,7 +278,7 @@ With virtual threads, you write blocking code (`result = httpClient.send(request
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -302,7 +312,7 @@ With virtual threads, you write blocking code (`result = httpClient.send(request
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -327,7 +337,7 @@ With virtual threads, you write blocking code (`result = httpClient.send(request
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT EITHER:**
 Service A needs to tell Service B about a new order. Direct HTTP call: if B is down, the order is lost. If B is slow, A is slow. If C also needs to know, A must call C too. Every new consumer requires modifying A. Tight coupling, no resilience.
@@ -337,13 +347,13 @@ Sometimes exactly ONE consumer should process a message (job processing - "resiz
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A **message queue** provides point-to-point communication where a message is delivered to exactly one consumer from a pool. Consumers compete for messages. A **event bus** (pub/sub) provides one-to-many communication where an event is delivered to all subscribers of that topic. Each subscriber gets a copy.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -356,7 +366,7 @@ A **message queue** provides point-to-point communication where a message is del
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -376,7 +386,7 @@ A **message queue** provides point-to-point communication where a message is del
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -388,7 +398,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -407,7 +417,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 MESSAGE QUEUE (point-to-point):
@@ -438,7 +448,7 @@ EVENT BUS (pub/sub):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -452,7 +462,7 @@ EVENT BUS (pub/sub):
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Message Queue: work distribution
@@ -479,7 +489,7 @@ public void onOrderCreated(OrderEvent event) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -501,14 +511,14 @@ public void onOrderCreated(OrderEvent event) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -555,13 +565,13 @@ public void onOrderCreated(OrderEvent event) {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Message Queue vs Event Bus. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -572,7 +582,7 @@ public void onOrderCreated(OrderEvent event) {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -606,7 +616,7 @@ public void onOrderCreated(OrderEvent event) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -631,7 +641,7 @@ public void onOrderCreated(OrderEvent event) {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 A payment processing system sends a "charge customer $100" message. What happens if the network fails after the consumer processes the message but before it acknowledges it?
 
@@ -641,13 +651,13 @@ A payment processing system sends a "charge customer $100" message. What happens
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -660,7 +670,7 @@ A payment processing system sends a "charge customer $100" message. What happens
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -680,7 +690,7 @@ A payment processing system sends a "charge customer $100" message. What happens
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -692,7 +702,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -711,7 +721,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 AT-LEAST-ONCE:
@@ -748,7 +758,7 @@ EXACTLY-ONCE (Kafka):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -762,7 +772,7 @@ EXACTLY-ONCE (Kafka):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -784,14 +794,14 @@ EXACTLY-ONCE (Kafka):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -838,13 +848,13 @@ EXACTLY-ONCE (Kafka):
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for At-Least-Once vs Exactly-Once Delivery. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -855,7 +865,7 @@ EXACTLY-ONCE (Kafka):
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -889,7 +899,7 @@ EXACTLY-ONCE (Kafka):
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -914,7 +924,7 @@ EXACTLY-ONCE (Kafka):
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IDEMPOTENCY:**
 Payment message is delivered twice (network retry). Customer is charged $100 twice. Total: $200 instead of $100. Without idempotency, every retry is dangerous.
@@ -924,13 +934,13 @@ In distributed systems, messages WILL be duplicated. Networks fail after process
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -943,7 +953,7 @@ In distributed systems, messages WILL be duplicated. Networks fail after process
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -963,7 +973,7 @@ In distributed systems, messages WILL be duplicated. Networks fail after process
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -975,7 +985,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -994,7 +1004,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 NON-IDEMPOTENT (dangerous):
@@ -1013,7 +1023,7 @@ Request 2 (key=abc): charge $100    -> already done,
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1027,7 +1037,7 @@ Request 2 (key=abc): charge $100    -> already done,
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD: Non-idempotent**
 
@@ -1060,7 +1070,7 @@ public void processPayment(PaymentRequest req) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1082,14 +1092,14 @@ public void processPayment(PaymentRequest req) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How would you implement idempotency for a payment processing API?**
 
@@ -1130,13 +1140,13 @@ Key design decisions:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Idempotency. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1147,7 +1157,7 @@ Key design decisions:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1181,7 +1191,7 @@ Key design decisions:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1206,7 +1216,7 @@ Key design decisions:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 User uploads a 100MB video. Processing takes 5 minutes (transcode, generate thumbnails, analyze content). Without a job queue, the HTTP request blocks for 5 minutes. The user sees a spinning loader. If they close the browser, the processing is lost.
 
@@ -1214,13 +1224,13 @@ With a job queue: submit a "process video" job, return immediately with a job ID
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1233,7 +1243,7 @@ With a job queue: submit a "process video" job, return immediately with a job ID
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1253,7 +1263,7 @@ With a job queue: submit a "process video" job, return immediately with a job ID
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1265,7 +1275,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1284,7 +1294,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 [User Request] -> [API Server]
@@ -1302,7 +1312,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1316,7 +1326,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Submit job (returns immediately)
@@ -1355,7 +1365,7 @@ public JobStatus getStatus(@PathVariable String id) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1377,14 +1387,14 @@ public JobStatus getStatus(@PathVariable String id) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1431,13 +1441,13 @@ public JobStatus getStatus(@PathVariable String id) {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Job Queues. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1448,7 +1458,7 @@ public JobStatus getStatus(@PathVariable String id) {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1482,7 +1492,7 @@ public JobStatus getStatus(@PathVariable String id) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1507,7 +1517,7 @@ public JobStatus getStatus(@PathVariable String id) {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 In distributed messaging, three failures can occur: (1) message never reaches the broker, (2) broker crashes before delivering, (3) consumer crashes after processing but before acknowledging. Each delivery guarantee addresses these failures differently with different trade-offs.
 
@@ -1552,13 +1562,13 @@ EXACTLY-ONCE:
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1571,7 +1581,7 @@ EXACTLY-ONCE:
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1591,7 +1601,7 @@ EXACTLY-ONCE:
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1603,7 +1613,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1622,7 +1632,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1636,7 +1646,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1658,14 +1668,14 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1712,13 +1722,13 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Delivery Guarantees. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1729,7 +1739,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1763,7 +1773,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1788,7 +1798,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Developers struggle with async because they think in sequential steps: "do A, then B, then C." Async requires a different mental model: "initiate A, do other work, react when A completes."
 
@@ -1837,13 +1847,13 @@ ASYNC MENTAL MODEL (initiate-and-react):
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1856,7 +1866,7 @@ ASYNC MENTAL MODEL (initiate-and-react):
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1876,7 +1886,7 @@ ASYNC MENTAL MODEL (initiate-and-react):
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1888,7 +1898,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1914,7 +1924,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1928,7 +1938,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1950,14 +1960,14 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -2004,13 +2014,13 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Async Mental Model. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2021,7 +2031,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2055,7 +2065,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

@@ -18,13 +18,21 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [ConcurrentHashMap](#concurrenthashmap)
+- [CopyOnWriteArrayList](#copyonwritearraylist)
+- [BlockingQueue](#blockingqueue)
+- [CountDownLatch and CyclicBarrier](#countdownlatch-and-cyclicbarrier)
+- [Semaphore and Phaser](#semaphore-and-phaser)
+
 # ConcurrentHashMap
 
 **TL;DR** - ConcurrentHashMap provides thread-safe key-value storage with high throughput by using fine-grained locking (lock striping) rather than a single lock, allowing concurrent reads and writes to different segments.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 `HashMap` corrupts silently under concurrent access (infinite loops in Java 7, lost entries in Java 8+). `Hashtable` synchronizes every method on one lock, serializing ALL operations. `Collections.synchronizedMap()` is the same - one lock bottleneck.
@@ -40,13 +48,13 @@ Hashtable (Java 1.0) -> Collections.synchronizedMap (Java 2) -> ConcurrentHashMa
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 `ConcurrentHashMap` is a thread-safe Map that achieves high concurrency by partitioning the data into independently-locked segments (Java 5-7) or using CAS operations on individual bins with synchronized on the first node of each bin (Java 8+). Reads are mostly lock-free; writes lock only the affected bin.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -59,7 +67,7 @@ Hashtable (Java 1.0) -> Collections.synchronizedMap (Java 2) -> ConcurrentHashMa
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -79,7 +87,7 @@ Hashtable (Java 1.0) -> Collections.synchronizedMap (Java 2) -> ConcurrentHashMa
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -91,7 +99,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A dictionary that multiple threads can safely read from and write to simultaneously without corrupting data or blocking each other.
@@ -198,7 +206,7 @@ int sum = map.reduceValues(1000,
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -212,7 +220,7 @@ int sum = map.reduceValues(1000,
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - synchronized map bottleneck:**
 
@@ -241,7 +249,7 @@ cache.computeIfAbsent(key,
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -263,14 +271,14 @@ cache.computeIfAbsent(key,
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Why can't ConcurrentHashMap accept null keys or values?**
 
@@ -366,13 +374,13 @@ Map<K,V> snapshot = new HashMap<>(map);
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for ConcurrentHashMap. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -383,7 +391,7 @@ Map<K,V> snapshot = new HashMap<>(map);
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -417,7 +425,7 @@ Map<K,V> snapshot = new HashMap<>(map);
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -442,7 +450,7 @@ Map<K,V> snapshot = new HashMap<>(map);
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 An event listener list is read on every event (thousands of times per second) but modified rarely (listener add/remove). Synchronizing reads blocks event delivery. Using a regular ArrayList causes ConcurrentModificationException.
@@ -452,13 +460,13 @@ An event listener list is read on every event (thousands of times per second) bu
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -471,7 +479,7 @@ An event listener list is read on every event (thousands of times per second) bu
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -491,7 +499,7 @@ An event listener list is read on every event (thousands of times per second) bu
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -503,7 +511,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Every time someone writes, a complete copy of the list is made. Readers always see a consistent snapshot without any locking.
@@ -583,7 +591,7 @@ Alternatives for write-heavy concurrent lists:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -597,7 +605,7 @@ Alternatives for write-heavy concurrent lists:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -619,14 +627,14 @@ Alternatives for write-heavy concurrent lists:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Why does CopyOnWriteArrayList never throw ConcurrentModificationException?**
 
@@ -665,13 +673,13 @@ For a list of 10,000 elements: each write allocates a 10,000-element array. With
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for CopyOnWriteArrayList. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -682,7 +690,7 @@ For a list of 10,000 elements: each write allocates a 10,000-element array. With
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -716,7 +724,7 @@ For a list of 10,000 elements: each write allocates a 10,000-element array. With
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -741,7 +749,7 @@ For a list of 10,000 elements: each write allocates a 10,000-element array. With
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Producer thread generates work items. Consumer thread processes them. Without a blocking queue, you need: a shared list + a lock + wait/notify signaling + size tracking + careful coordination. Every producer-consumer requires reimplementing this dance.
@@ -751,13 +759,13 @@ Producer thread generates work items. Consumer thread processes them. Without a 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -770,7 +778,7 @@ Producer thread generates work items. Consumer thread processes them. Without a 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -790,7 +798,7 @@ Producer thread generates work items. Consumer thread processes them. Without a 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -802,7 +810,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A queue where putting blocks when the queue is full (backpressure) and taking blocks when empty (wait for work). Producers and consumers automatically coordinate without custom signaling.
@@ -899,7 +907,7 @@ processBatch(batch);
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -913,7 +921,7 @@ processBatch(batch);
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Manual producer-consumer with wait/notify:**
 
@@ -964,7 +972,7 @@ executor.submit(() -> {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -986,14 +994,14 @@ executor.submit(() -> {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between offer/poll and put/take?**
 
@@ -1042,13 +1050,13 @@ The problem: under load spike, unlimited thread creation -> OOM. That's why Cach
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for BlockingQueue. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1059,7 +1067,7 @@ The problem: under load spike, unlimited thread creation -> OOM. That's why Cach
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1093,7 +1101,7 @@ The problem: under load spike, unlimited thread creation -> OOM. That's why Cach
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1118,7 +1126,7 @@ The problem: under load spike, unlimited thread creation -> OOM. That's why Cach
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Starting a concurrent test requires all threads to begin simultaneously. Without a starting gate, threads start at different times (first thread runs before last thread is even created). Similarly, waiting for N parallel tasks to complete requires manual counting with synchronization.
@@ -1128,13 +1136,13 @@ Starting a concurrent test requires all threads to begin simultaneously. Without
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1147,7 +1155,7 @@ Starting a concurrent test requires all threads to begin simultaneously. Without
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1167,7 +1175,7 @@ Starting a concurrent test requires all threads to begin simultaneously. Without
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1179,7 +1187,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 CountDownLatch: "Everyone wait until N things happen, then go." (One-time.)
@@ -1282,7 +1290,7 @@ When the barrier breaks, ALL waiting threads receive `BrokenBarrierException`. Y
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1296,7 +1304,7 @@ When the barrier breaks, ALL waiting threads receive `BrokenBarrierException`. Y
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1318,14 +1326,14 @@ When the barrier breaks, ALL waiting threads receive `BrokenBarrierException`. Y
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Give a real-world use case for each.**
 
@@ -1399,13 +1407,13 @@ if (!latch.await(30, SECONDS)) {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for CountDownLatch and CyclicBarrier. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1416,7 +1424,7 @@ if (!latch.await(30, SECONDS)) {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1450,7 +1458,7 @@ if (!latch.await(30, SECONDS)) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1475,7 +1483,7 @@ if (!latch.await(30, SECONDS)) {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 A database connection pool has 10 connections. 50 threads want connections. Without a semaphore, you need a counter + wait/notify + careful synchronization to limit concurrent access to exactly 10.
@@ -1485,13 +1493,13 @@ A database connection pool has 10 connections. 50 threads want connections. With
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1504,7 +1512,7 @@ A database connection pool has 10 connections. 50 threads want connections. With
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1524,7 +1532,7 @@ A database connection pool has 10 connections. 50 threads want connections. With
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1536,7 +1544,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Semaphore: A bouncer at a club with N-person capacity. When full, newcomers wait outside. When someone leaves, the next person enters.
@@ -1634,7 +1642,7 @@ phaser.arriveAndAwaitAdvance(); // wait for all
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1648,7 +1656,7 @@ phaser.arriveAndAwaitAdvance(); // wait for all
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1670,14 +1678,14 @@ phaser.arriveAndAwaitAdvance(); // wait for all
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How would you implement a rate limiter with Semaphore?**
 
@@ -1739,13 +1747,13 @@ Contrast with ReentrantLock: you can only unlock if you hold the lock. Semaphore
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Semaphore and Phaser. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1756,7 +1764,7 @@ Contrast with ReentrantLock: you can only unlock if you hold the lock. Semaphore
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1790,7 +1798,7 @@ Contrast with ReentrantLock: you can only unlock if you hold the lock. Semaphore
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

@@ -17,26 +17,33 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Circuit Breaker](#circuit-breaker)
+- [Service Discovery](#service-discovery)
+- [Config Server](#config-server)
+- [Distributed Tracing](#distributed-tracing)
+
 # Circuit Breaker
 
 **TL;DR** - A circuit breaker prevents cascading failures by detecting when a downstream service is failing and short-circuiting requests (returning fallback immediately) instead of waiting for timeouts - protecting system resources and enabling graceful degradation.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Service A calls Service B. Service B is slow/down. Service A's threads block waiting for timeouts (30s each). Thread pool exhausted. Service A becomes unresponsive. Services C, D, E that depend on A also fail. One slow service takes down the entire system.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -49,7 +56,7 @@ Service A calls Service B. Service B is slow/down. Service A's threads block wai
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -69,7 +76,7 @@ Service A calls Service B. Service B is slow/down. Service A's threads block wai
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -81,7 +88,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Like an electrical circuit breaker: when too many failures happen, the breaker "opens" and stops sending requests. After a cooldown period, it tries again ("half-open"). If the downstream recovers, it "closes" and resumes normal operation.
@@ -199,7 +206,7 @@ resilience4j:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -213,7 +220,7 @@ resilience4j:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -232,14 +239,14 @@ resilience4j:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you decide between retry, circuit breaker, and timeout? When do you use each?**
 
@@ -275,13 +282,13 @@ Request -> [Timeout 2s] -> [Retry 3x]
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Circuit Breaker. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -292,7 +299,7 @@ Request -> [Timeout 2s] -> [Retry 3x]
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -326,7 +333,7 @@ Request -> [Timeout 2s] -> [Retry 3x]
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -351,20 +358,20 @@ Request -> [Timeout 2s] -> [Retry 3x]
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Service A needs to call Service B at `http://service-b:8080`. But Service B has 5 instances with different IPs. IPs change on every deployment. Adding instances requires updating every caller's configuration.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -377,7 +384,7 @@ Service A needs to call Service B at `http://service-b:8080`. But Service B has 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -397,7 +404,7 @@ Service A needs to call Service B at `http://service-b:8080`. But Service B has 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -409,7 +416,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of hardcoding "call this IP address," services register themselves in a directory. When you need to call another service, you ask the directory "where is Service B?" and get a current list of healthy instances.
@@ -521,7 +528,7 @@ public ServiceInstanceListSupplier
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -535,7 +542,7 @@ public ServiceInstanceListSupplier
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -554,14 +561,14 @@ public ServiceInstanceListSupplier
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: In a Kubernetes environment, why might you still use Spring Cloud LoadBalancer instead of just K8s services?**
 
@@ -581,13 +588,13 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Service Discovery. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -598,7 +605,7 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -632,7 +639,7 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -657,20 +664,20 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 50 microservices each have their own `application.yml`. Changing a shared database URL requires updating 30 files across 30 repos and redeploying. No audit trail. Secrets scattered in plain text across repositories.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -683,7 +690,7 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -703,7 +710,7 @@ When NOT to use it: Simple services without special routing needs. Default K8s s
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -715,7 +722,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 One central server stores all configuration. Services ask it "what's my config for production?" at startup. Change config centrally, services pick it up without redeployment.
@@ -816,7 +823,7 @@ curl -X POST \
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -830,7 +837,7 @@ curl -X POST \
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -849,14 +856,14 @@ curl -X POST \
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -903,13 +910,13 @@ curl -X POST \
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Config Server. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -920,7 +927,7 @@ curl -X POST \
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -954,7 +961,7 @@ curl -X POST \
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -979,20 +986,20 @@ curl -X POST \
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 User reports "checkout is slow." Request crosses 8 services. Each has its own logs. No way to correlate logs across services or find which service added 2 seconds of latency. Debugging takes hours of log grepping.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1005,7 +1012,7 @@ User reports "checkout is slow." Request crosses 8 services. Each has its own lo
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1025,7 +1032,7 @@ User reports "checkout is slow." Request crosses 8 services. Each has its own lo
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1037,7 +1044,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Every request gets a unique ID that follows it across all services. You can search for that ID and see the complete journey: which services were called, how long each took, and where it failed.
@@ -1146,7 +1153,7 @@ try (Tracer.SpanInScope ws =
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1160,7 +1167,7 @@ try (Tracer.SpanInScope ws =
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1179,14 +1186,14 @@ try (Tracer.SpanInScope ws =
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: A user reports checkout takes 8 seconds. How do you use distributed tracing to diagnose it?**
 
@@ -1214,13 +1221,13 @@ Follow-up actions:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Distributed Tracing. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1231,7 +1238,7 @@ Follow-up actions:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1265,7 +1272,7 @@ Follow-up actions:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

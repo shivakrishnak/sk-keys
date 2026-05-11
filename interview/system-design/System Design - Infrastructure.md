@@ -17,26 +17,33 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Load Balancing](#load-balancing)
+- [CDN](#cdn)
+- [Leader Election](#leader-election)
+- [Bloom Filters](#bloom-filters)
+
 # Load Balancing
 
 **TL;DR** - Load balancing distributes incoming traffic across multiple servers to prevent any single server from becoming a bottleneck, improving availability, throughput, and fault tolerance.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT LOAD BALANCING:**
 One server handles all traffic. At 1000 requests/second it's fine. At 10,000 requests/second, it maxes out CPU, starts queuing requests, response times spike from 50ms to 5 seconds, and eventually crashes. You can't scale by making one server infinitely powerful (vertical scaling has limits).
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -49,7 +56,7 @@ One server handles all traffic. At 1000 requests/second it's fine. At 10,000 req
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -69,7 +76,7 @@ One server handles all traffic. At 1000 requests/second it's fine. At 10,000 req
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -81,7 +88,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -100,7 +107,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 WITHOUT:
@@ -180,7 +187,7 @@ DEEP HEALTH CHECK:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -194,7 +201,7 @@ DEEP HEALTH CHECK:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -216,14 +223,14 @@ DEEP HEALTH CHECK:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle sticky sessions with load balancing? What are the trade-offs?**
 
@@ -258,13 +265,13 @@ At 100K RPS, a single ALB handles this easily (AWS ALB scales to millions RPS). 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Load Balancing. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -275,7 +282,7 @@ At 100K RPS, a single ALB handles this easily (AWS ALB scales to millions RPS). 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -309,7 +316,7 @@ At 100K RPS, a single ALB handles this easily (AWS ALB scales to millions RPS). 
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -334,7 +341,7 @@ At 100K RPS, a single ALB handles this easily (AWS ALB scales to millions RPS). 
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Your server is in US-East. A user in Tokyo requests your web page. The request travels across the Pacific Ocean, hits your server, builds the response, and travels back. Round-trip latency: 200-300ms. For every image, CSS file, and JS bundle, add another 200ms. Page load: 3-5 seconds.
 
@@ -342,13 +349,13 @@ With a CDN edge server in Tokyo: first request is cached, subsequent requests se
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -361,7 +368,7 @@ With a CDN edge server in Tokyo: first request is cached, subsequent requests se
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -381,7 +388,7 @@ With a CDN edge server in Tokyo: first request is cached, subsequent requests se
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -393,7 +400,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -412,7 +419,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 WITHOUT CDN:
@@ -493,7 +500,7 @@ CDN ARCHITECTURE:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -507,7 +514,7 @@ CDN ARCHITECTURE:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -529,14 +536,14 @@ CDN ARCHITECTURE:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle cache invalidation for a product catalog that updates every few minutes?**
 
@@ -555,13 +562,13 @@ Layered approach:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for CDN (Content Delivery Network). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -572,7 +579,7 @@ Layered approach:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -606,7 +613,7 @@ Layered approach:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -631,19 +638,19 @@ Layered approach:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 You have 5 instances of your scheduler service. Only one should run the daily report. Without leader election, all 5 run it simultaneously. Or worse: a network partition splits the cluster, and both halves elect a leader (split-brain).
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -656,7 +663,7 @@ You have 5 instances of your scheduler service. Only one should run the daily re
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -676,7 +683,7 @@ You have 5 instances of your scheduler service. Only one should run the daily re
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -688,7 +695,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -707,7 +714,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 NORMAL OPERATION:
@@ -742,7 +749,7 @@ SPLIT-BRAIN (the nightmare):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -813,7 +820,7 @@ KEY INSIGHT:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -835,14 +842,14 @@ KEY INSIGHT:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -889,13 +896,13 @@ KEY INSIGHT:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Leader Election. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -906,7 +913,7 @@ KEY INSIGHT:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -940,7 +947,7 @@ KEY INSIGHT:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -965,7 +972,7 @@ KEY INSIGHT:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Your database has 1 billion user records. A request comes for `user_id=abc123`. To check if this user exists, you query the database. 99% of lookups are for users that DON'T exist (invalid IDs, typos, attacks). Each lookup is a wasted database round-trip.
 
@@ -973,13 +980,13 @@ A Bloom filter sits in front of the database. It uses ~1GB of memory to represen
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -992,7 +999,7 @@ A Bloom filter sits in front of the database. It uses ~1GB of memory to represen
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1012,7 +1019,7 @@ A Bloom filter sits in front of the database. It uses ~1GB of memory to represen
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1024,7 +1031,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1043,7 +1050,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 BLOOM FILTER (bit array + hash functions):
@@ -1091,7 +1098,7 @@ BLOOM FILTER (bit array + hash functions):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1105,7 +1112,7 @@ BLOOM FILTER (bit array + hash functions):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1127,14 +1134,14 @@ BLOOM FILTER (bit array + hash functions):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1181,13 +1188,13 @@ BLOOM FILTER (bit array + hash functions):
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Bloom Filters. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1198,7 +1205,7 @@ BLOOM FILTER (bit array + hash functions):
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1232,7 +1239,7 @@ BLOOM FILTER (bit array + hash functions):
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "Cloud AWS - Compute and Networking"
+parent: "Cloud AWS"
+grand_parent: "Interview Mastery"
+nav_order: 2
+permalink: /interview/cloud-aws/compute-and-networking/
 topic: Cloud AWS
 subtopic: Compute and Networking
 keywords:
@@ -14,26 +19,35 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [EC2](#ec2)
+- [Lambda](#lambda)
+- [ECS and EKS](#ecs-and-eks)
+- [ALB and NLB](#alb-and-nlb)
+- [Route 53](#route-53)
+- [API Gateway](#api-gateway)
+
 # EC2
 
 **TL;DR** - EC2 (Elastic Compute Cloud) provides resizable virtual machines in the cloud with multiple instance types optimized for different workloads, pricing models (On-Demand, Reserved, Spot), and integration with Auto Scaling for elastic capacity.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Need a server? Submit a purchase order, wait 6 weeks for hardware, rack it, install OS, configure networking. Need more capacity for a sale? Too late. Need less after? You're paying for idle hardware.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Amazon EC2 provides scalable computing capacity as virtual machine instances with configurable CPU, memory, storage, and networking. Instances are launched from AMIs (Amazon Machine Images) in specific AZs, with Auto Scaling Groups managing fleet size based on demand.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -46,7 +60,7 @@ Amazon EC2 provides scalable computing capacity as virtual machine instances wit
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -66,7 +80,7 @@ Amazon EC2 provides scalable computing capacity as virtual machine instances wit
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -78,7 +92,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -97,7 +111,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 EC2 instance families:
@@ -127,7 +141,7 @@ Auto Scaling Group (ASG):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -141,7 +155,7 @@ Auto Scaling Group (ASG):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -163,14 +177,14 @@ Auto Scaling Group (ASG):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -217,13 +231,13 @@ Auto Scaling Group (ASG):
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for EC2. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -234,7 +248,7 @@ Auto Scaling Group (ASG):
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -268,7 +282,7 @@ Auto Scaling Group (ASG):
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -293,20 +307,20 @@ Auto Scaling Group (ASG):
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 A function that runs 100 times per day still needs an EC2 instance running 24/7. You pay for 86,400 seconds of idle time to execute 100 seconds of work. Managing the server, patching OS, scaling - all for a simple function.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 AWS Lambda is a serverless compute service that runs code in response to events (HTTP requests, S3 uploads, DynamoDB streams, SQS messages) without server management. It automatically scales (0 to thousands of instances), charges per millisecond of execution, and supports multiple runtimes (Java, Python, Node.js, Go, .NET).
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -319,7 +333,7 @@ AWS Lambda is a serverless compute service that runs code in response to events 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -339,7 +353,7 @@ AWS Lambda is a serverless compute service that runs code in response to events 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -351,7 +365,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -370,7 +384,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Lambda execution model:
@@ -402,7 +416,7 @@ Cost example:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -416,7 +430,7 @@ Cost example:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -438,14 +452,14 @@ Cost example:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -492,13 +506,13 @@ Cost example:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Lambda. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -509,7 +523,7 @@ Cost example:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -543,7 +557,7 @@ Cost example:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -568,20 +582,20 @@ Cost example:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Running containers in production requires orchestration: scheduling, health checks, scaling, networking, service discovery. Building this yourself on EC2 is complex, error-prone, and a full-time job for a platform team.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 **ECS**: AWS-native container orchestration service that manages container lifecycle on EC2 instances or Fargate (serverless), using Tasks (container definitions) and Services (desired state management). **EKS**: Managed Kubernetes control plane service with AWS-managed etcd, API server, and controller manager, running worker nodes on EC2 or Fargate.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -594,7 +608,7 @@ Running containers in production requires orchestration: scheduling, health chec
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -614,7 +628,7 @@ Running containers in production requires orchestration: scheduling, health chec
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -626,7 +640,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -645,7 +659,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 ECS vs EKS decision:
@@ -680,7 +694,7 @@ Compute options (both ECS and EKS):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -694,7 +708,7 @@ Compute options (both ECS and EKS):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -716,14 +730,14 @@ Compute options (both ECS and EKS):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -770,13 +784,13 @@ Compute options (both ECS and EKS):
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for ECS and EKS. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -787,7 +801,7 @@ Compute options (both ECS and EKS):
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -821,7 +835,7 @@ Compute options (both ECS and EKS):
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -846,20 +860,20 @@ Compute options (both ECS and EKS):
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 External traffic needs to reach your backend instances. Without a load balancer: no distribution across instances, no health checks, no SSL termination, no routing by URL path or hostname.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 **ALB**: Layer 7 (HTTP/HTTPS) load balancer that routes requests based on content (host headers, URL paths, HTTP methods, query strings) to target groups, supporting sticky sessions, WebSockets, and gRPC. **NLB**: Layer 4 (TCP/UDP/TLS) load balancer optimized for extreme performance with static IPs, source IP preservation, and millions of requests per second at ultra-low latency.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -872,7 +886,7 @@ External traffic needs to reach your backend instances. Without a load balancer:
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -892,7 +906,7 @@ External traffic needs to reach your backend instances. Without a load balancer:
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -904,7 +918,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -923,7 +937,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 ALB vs NLB:
@@ -962,7 +976,7 @@ ALB routing example:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -976,7 +990,7 @@ ALB routing example:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -998,14 +1012,14 @@ ALB routing example:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1052,13 +1066,13 @@ ALB routing example:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for ALB and NLB. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1069,7 +1083,7 @@ ALB routing example:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1103,7 +1117,7 @@ ALB routing example:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1128,20 +1142,20 @@ ALB routing example:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 DNS is a single point of failure. Traditional DNS can't route based on health, geography, or latency. Failover requires manual DNS changes (with TTL propagation delays). No integration between DNS and cloud infrastructure health.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Amazon Route 53 is a highly available and scalable DNS web service providing three main functions: domain registration, DNS resolution (translating names to IPs), and health checking with traffic routing policies that direct users to optimal endpoints based on latency, geography, weights, or endpoint health.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1154,7 +1168,7 @@ Amazon Route 53 is a highly available and scalable DNS web service providing thr
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1174,7 +1188,7 @@ Amazon Route 53 is a highly available and scalable DNS web service providing thr
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1186,7 +1200,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1205,7 +1219,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Route 53 routing policies:
@@ -1236,7 +1250,7 @@ Alias records (AWS-specific):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1250,7 +1264,7 @@ Alias records (AWS-specific):
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1272,14 +1286,14 @@ Alias records (AWS-specific):
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1326,13 +1340,13 @@ Alias records (AWS-specific):
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Route 53. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1343,7 +1357,7 @@ Alias records (AWS-specific):
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1377,7 +1391,7 @@ Alias records (AWS-specific):
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1402,20 +1416,20 @@ Alias records (AWS-specific):
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every API needs: rate limiting, authentication, request validation, CORS, caching, monitoring, documentation, versioning. Building this in each microservice duplicates effort and creates inconsistency.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Amazon API Gateway is a fully managed service for creating and managing REST, HTTP, and WebSocket APIs at any scale. It handles request routing, authorization (IAM, Cognito, Lambda authorizers), throttling, caching, request/response transformation, and integrates with Lambda, HTTP endpoints, and AWS services.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1428,7 +1442,7 @@ Amazon API Gateway is a fully managed service for creating and managing REST, HT
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1448,7 +1462,7 @@ Amazon API Gateway is a fully managed service for creating and managing REST, HT
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1460,7 +1474,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1479,7 +1493,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 API Gateway types:
@@ -1514,7 +1528,7 @@ API Gateway + Lambda pattern:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1528,7 +1542,7 @@ API Gateway + Lambda pattern:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1550,14 +1564,14 @@ API Gateway + Lambda pattern:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1604,13 +1618,13 @@ API Gateway + Lambda pattern:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for API Gateway. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1621,7 +1635,7 @@ API Gateway + Lambda pattern:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1655,7 +1669,7 @@ API Gateway + Lambda pattern:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

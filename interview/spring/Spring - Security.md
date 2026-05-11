@@ -18,26 +18,34 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Security Filter Chain](#security-filter-chain)
+- [Authentication](#authentication)
+- [Authorization](#authorization)
+- [OAuth2 and JWT](#oauth2-and-jwt)
+- [CORS and CSRF](#cors-and-csrf)
+
 # Security Filter Chain
 
 **TL;DR** - Spring Security is a servlet filter chain that intercepts every HTTP request before it reaches DispatcherServlet, applying authentication, authorization, CSRF protection, and session management through a configurable pipeline of security filters.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Security logic scattered in every controller: check auth header, validate token, verify roles. Miss one endpoint and you have an unauthenticated API. No standardized way to handle login flows, session management, or security headers.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -50,7 +58,7 @@ Security logic scattered in every controller: check auth header, validate token,
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -70,7 +78,7 @@ Security logic scattered in every controller: check auth header, validate token,
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -82,7 +90,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A security checkpoint that every request passes through. It checks: "Who are you?" (authentication) and "Are you allowed to do this?" (authorization).
@@ -197,7 +205,7 @@ http.addFilterBefore(
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -211,7 +219,7 @@ http.addFilterBefore(
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -230,14 +238,14 @@ http.addFilterBefore(
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How does Spring Security handle stateless REST APIs differently from web applications?**
 
@@ -272,13 +280,13 @@ Key differences from web apps:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Security Filter Chain. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -289,7 +297,7 @@ Key differences from web apps:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -323,7 +331,7 @@ Key differences from web apps:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -348,20 +356,20 @@ Key differences from web apps:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every endpoint manually reads credentials, queries user database, checks passwords, manages sessions. No standard way to support multiple auth mechanisms (form login + OAuth + API keys) simultaneously.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -374,7 +382,7 @@ Every endpoint manually reads credentials, queries user database, checks passwor
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -394,7 +402,7 @@ Every endpoint manually reads credentials, queries user database, checks passwor
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -406,7 +414,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 The system verifies your identity: "You say you're Alice. Prove it." You provide credentials, the system checks them, and either lets you in or rejects you.
@@ -532,7 +540,7 @@ public class ApiKeyAuthProvider
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -546,7 +554,7 @@ public class ApiKeyAuthProvider
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -565,14 +573,14 @@ public class ApiKeyAuthProvider
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you implement multi-tenant authentication where each tenant has its own user store?**
 
@@ -614,13 +622,13 @@ Steps: Extract tenant from request (header, subdomain, or path) -> resolve tenan
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Authentication. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -631,7 +639,7 @@ Steps: Extract tenant from request (header, subdomain, or path) -> resolve tenan
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -665,7 +673,7 @@ Steps: Extract tenant from request (header, subdomain, or path) -> resolve tenan
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -690,20 +698,20 @@ Steps: Extract tenant from request (header, subdomain, or path) -> resolve tenan
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Manually checking `if (user.hasRole("ADMIN"))` in every service method. Miss one check and an unprivileged user can access admin data. No audit trail of authorization decisions.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -716,7 +724,7 @@ Manually checking `if (user.hasRole("ADMIN"))` in every service method. Miss one
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -736,7 +744,7 @@ Manually checking `if (user.hasRole("ADMIN"))` in every service method. Miss one
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -748,7 +756,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 After verifying who you are, the system checks what you're allowed to do. "You're Alice, but Alice can't delete other users - that requires admin access."
@@ -870,7 +878,7 @@ public void update(Document doc) { }
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -884,7 +892,7 @@ public void update(Document doc) { }
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -903,14 +911,14 @@ public void update(Document doc) { }
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you implement row-level security (user can only see their own data)?**
 
@@ -957,13 +965,13 @@ Best practice: Enforce at the lowest possible layer (database/repository) so no 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Authorization. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -974,7 +982,7 @@ Best practice: Enforce at the lowest possible layer (database/repository) so no 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1008,7 +1016,7 @@ Best practice: Enforce at the lowest possible layer (database/repository) so no 
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1033,20 +1041,20 @@ Best practice: Enforce at the lowest possible layer (database/repository) so no 
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every service validates credentials against a user database. Users must share passwords with third-party apps. No single sign-on. Token validation requires a database lookup on every request.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1059,7 +1067,7 @@ Every service validates credentials against a user database. Users must share pa
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1079,7 +1087,7 @@ Every service validates credentials against a user database. Users must share pa
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1091,7 +1099,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 OAuth2: "Let me log in with Google/Okta instead of creating another password." JWT: The proof-of-identity token that APIs validate without calling a central server.
@@ -1202,7 +1210,7 @@ Auth Server -> Client: new access_token +
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1216,7 +1224,7 @@ Auth Server -> Client: new access_token +
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1235,14 +1243,14 @@ Auth Server -> Client: new access_token +
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle JWT revocation for a "logout all devices" feature?**
 
@@ -1264,13 +1272,13 @@ Best practice: Short-lived access tokens (5 min) + refresh tokens + immediate re
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for OAuth2 and JWT. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1281,7 +1289,7 @@ Best practice: Short-lived access tokens (5 min) + refresh tokens + immediate re
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1315,7 +1323,7 @@ Best practice: Short-lived access tokens (5 min) + refresh tokens + immediate re
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1340,7 +1348,7 @@ Best practice: Short-lived access tokens (5 min) + refresh tokens + immediate re
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **CORS without configuration:** Browser blocks `fetch('https://api.example.com')` from `https://frontend.example.com` - same-origin policy.
 
@@ -1348,13 +1356,13 @@ Best practice: Short-lived access tokens (5 min) + refresh tokens + immediate re
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1367,7 +1375,7 @@ Best practice: Short-lived access tokens (5 min) + refresh tokens + immediate re
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1387,7 +1395,7 @@ Best practice: Short-lived access tokens (5 min) + refresh tokens + immediate re
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1399,7 +1407,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 CORS: "Which websites are allowed to call my API?" CSRF: "Is this request really from my user, or from a malicious site?"
@@ -1504,7 +1512,7 @@ config.setAllowedOriginPatterns(List.of("*"));
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1518,7 +1526,7 @@ config.setAllowedOriginPatterns(List.of("*"));
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1537,14 +1545,14 @@ config.setAllowedOriginPatterns(List.of("*"));
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1591,13 +1599,13 @@ config.setAllowedOriginPatterns(List.of("*"));
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for CORS and CSRF. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1608,7 +1616,7 @@ config.setAllowedOriginPatterns(List.of("*"));
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1642,7 +1650,7 @@ config.setAllowedOriginPatterns(List.of("*"));
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

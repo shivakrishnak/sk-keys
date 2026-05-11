@@ -18,13 +18,21 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Singleton](#singleton)
+- [Factory Method](#factory-method)
+- [Abstract Factory](#abstract-factory)
+- [Builder](#builder)
+- [Prototype](#prototype)
+
 # Singleton
 
 **TL;DR** - Singleton ensures a class has exactly one instance and provides a global access point to it, solving uncontrolled instantiation of shared resources.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every time your application needs a database connection pool, a logger, or a configuration manager, a new instance is created. Ten threads create ten connection pools, each opening 50 connections. The database server hits its connection limit of 100 within seconds. Memory usage spikes. Objects that should share state maintain separate, inconsistent copies.
@@ -40,13 +48,13 @@ The GoF formalized it in 1994, but the concept existed in Smalltalk before that.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Singleton is a creational design pattern that restricts the instantiation of a class to exactly one object. It provides a global point of access to that instance. The class itself is responsible for keeping track of its sole instance and ensuring that no other instance can be created.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 One instance, one access point, guaranteed by the class itself.
@@ -60,7 +68,7 @@ The key insight is not "only one instance" - it's "controlled access to shared s
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -81,7 +89,7 @@ The constructor must be private (preventing external `new`). A static method pro
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of Singleton as a government-issued ID office. There is only one office in your district. Everyone must go to the same office. The office controls who gets served and when. You can't build your own ID office.
 
@@ -94,7 +102,7 @@ Where this analogy breaks down: Unlike a government office, Singleton doesn't qu
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Singleton is a rule that says: "There can be only one." When your program needs a shared resource like a printer manager, Singleton ensures everyone uses the same manager instead of creating their own separate ones.
@@ -122,7 +130,7 @@ Singleton is the most misused pattern. The real question isn't "how to implement
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Thread A calls getInstance()     Thread B calls
@@ -150,7 +158,7 @@ The double-checked locking pattern:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -176,7 +184,7 @@ In a distributed system, each JVM has its own Singleton. With 50 microservice in
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - BAD: Broken under concurrency**
 
@@ -254,7 +262,7 @@ Use a concurrent test with `CountDownLatch` to have N threads call `getInstance(
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -276,13 +284,13 @@ Use a concurrent test with `CountDownLatch` to have N threads call `getInstance(
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Most developers think Singleton's purpose is memory savings. In reality, the GoF intended it for coordination - ensuring a single point of control. The irony is that in distributed systems, the pattern that guarantees "only one" actually creates "one per node," which is the opposite of its intent. This is why distributed singletons require entirely different mechanisms (leader election, distributed locks) that have nothing to do with the original pattern.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What are the different ways to implement Singleton in Java, and which do you recommend?**
 
@@ -411,13 +419,13 @@ The goal isn't zero Singletons - it's zero hand-coded Singletons. Let the framew
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Singleton. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -428,7 +436,7 @@ The goal isn't zero Singletons - it's zero hand-coded Singletons. Let the framew
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -462,7 +470,7 @@ The goal isn't zero Singletons - it's zero hand-coded Singletons. Let the framew
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -486,7 +494,7 @@ The goal isn't zero Singletons - it's zero hand-coded Singletons. Let the framew
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your logistics application ships products. Initially, everything goes by truck. Your `Logistics` class directly creates `Truck` objects everywhere: `new Truck()` appears in 47 places. Now the business wants to add sea freight. You need to touch all 47 locations, add conditionals, and test every code path. Every new transport type means modifying every creation site.
@@ -502,13 +510,13 @@ Factory Method was formalized by the GoF in 1994 but the concept of virtual cons
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Factory Method is a creational design pattern that defines an interface for creating an object but lets subclasses alter the type of objects that will be created. The pattern delegates instantiation to subclasses, enabling a class to defer object creation to its children while maintaining a uniform interface.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Let subclasses decide what to create while the parent defines how to use it.
@@ -522,7 +530,7 @@ Factory Method isn't about factories - it's about the Open/Closed Principle. You
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -543,7 +551,7 @@ The parent class defines the algorithm that uses the product. The "factory metho
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of Factory Method as a franchise restaurant chain. Corporate headquarters (parent class) defines the menu, service process, and quality standards. Each franchise location (subclass) sources ingredients from local suppliers (creates specific products). Customers get the same experience everywhere, but the actual products differ by location.
 
@@ -556,7 +564,7 @@ Where this analogy breaks down: In the pattern, the subclass relationship is fix
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of writing `new SpecificThing()` everywhere, you call a method that creates the right thing for you. Different situations return different things, but your code doesn't need to know which one.
@@ -578,7 +586,7 @@ The classic GoF Factory Method using subclasses is now relatively rare in modern
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Client code          Creator hierarchy
@@ -604,7 +612,7 @@ Client code          Creator hierarchy
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -629,7 +637,7 @@ At scale, factory methods are often combined with dependency injection. Spring's
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - BAD: Direct instantiation everywhere**
 
@@ -713,7 +721,7 @@ Test each factory subclass returns the correct product type. Test the template m
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -735,13 +743,13 @@ Test each factory subclass returns the correct product type. Test the template m
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Factory Method is the most common design pattern in the Java standard library, but most developers don't recognize it. Every `Collection.iterator()` call, every `DriverManager.getConnection()`, every `NumberFormat.getInstance()` is a factory method. You've been using it daily without knowing it. The pattern is so fundamental that it's invisible - it's the default way frameworks let you customize behavior.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What's the difference between Factory Method and Simple Factory?**
 
@@ -880,13 +888,13 @@ Mitigation: In modern Java, use functional factories (`Supplier<T>`, `Function<C
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Factory Method. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -897,7 +905,7 @@ Mitigation: In modern Java, use functional factories (`Supplier<T>`, `Function<C
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -931,7 +939,7 @@ Mitigation: In modern Java, use functional factories (`Supplier<T>`, `Function<C
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -955,7 +963,7 @@ Mitigation: In modern Java, use functional factories (`Supplier<T>`, `Function<C
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your UI framework needs to render buttons, text fields, and checkboxes. On Windows, they look one way. On macOS, another. On Linux, another. Each component is created independently: `new WindowsButton()`, `new MacOSTextField()`, `new LinuxCheckbox()`. A developer accidentally mixes `WindowsButton` with `MacOSTextField` in the same dialog. The UI looks broken and inconsistent.
@@ -971,13 +979,13 @@ Formalized by the GoF in 1994, inspired by systems like ET++ and InterViews. The
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Abstract Factory is a creational design pattern that provides an interface for creating families of related or dependent objects without specifying their concrete classes. It ensures that products created by a single factory are compatible with each other, enforcing consistency within a product family.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Create families of related objects that belong together, guaranteed consistent.
@@ -991,7 +999,7 @@ The key difference from Factory Method is "family." Factory Method creates one p
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1012,7 +1020,7 @@ One factory interface declares methods for creating each product type. Each conc
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a car manufacturing plant. When you set the assembly line to "Sedan," every station produces sedan parts: sedan doors, sedan engine, sedan interior. When you switch to "SUV," every station switches to SUV parts. You never get a sedan door on an SUV body.
 
@@ -1025,7 +1033,7 @@ Where this analogy breaks down: In software, switching families is instant (swap
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Abstract Factory is like choosing a theme for your entire room. When you pick "Modern," everything - furniture, lighting, decor - comes in the modern style. You can't accidentally mix vintage with modern.
@@ -1047,7 +1055,7 @@ Abstract Factory shines in exactly one scenario: when you have multiple product 
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Client -> [AbstractFactory]
@@ -1074,7 +1082,7 @@ Client -> [AbstractFactory]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -1098,7 +1106,7 @@ At scale, Abstract Factory often evolves into a registry pattern where factories
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - BAD: Mixed product families**
 
@@ -1161,7 +1169,7 @@ Create a `TestUIFactory` that returns mock products. Verify that `Dialog` calls 
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1183,13 +1191,13 @@ Create a `TestUIFactory` that returns mock products. Verify that `Dialog` calls 
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Abstract Factory is often confused with Factory Method, but they solve fundamentally different problems. Factory Method creates one product with polymorphic behavior. Abstract Factory coordinates multiple products into a consistent family. You can use Factory Method without Abstract Factory, but every Abstract Factory internally uses Factory Methods. The relationship is compositional, not hierarchical.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When would you use Abstract Factory over Factory Method?**
 
@@ -1264,13 +1272,13 @@ In my experience, if you're adding product types frequently, Abstract Factory is
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Abstract Factory. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1281,7 +1289,7 @@ In my experience, if you're adding product types frequently, Abstract Factory is
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1315,7 +1323,7 @@ In my experience, if you're adding product types frequently, Abstract Factory is
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1339,7 +1347,7 @@ In my experience, if you're adding product types frequently, Abstract Factory is
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your `User` class has 15 fields: name, email, phone, address, preferences, notification settings, roles, etc. The constructor takes 15 parameters. Callers pass `null` for optional fields. A developer swaps the phone and email parameters (both are strings), and the bug passes compilation. Telescoping constructors multiply: `User(name)`, `User(name, email)`, `User(name, email, phone)` - 10 constructor overloads.
@@ -1355,13 +1363,13 @@ The GoF Builder (1994) focused on constructing complex objects step-by-step with
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Builder is a creational design pattern that separates the construction of a complex object from its representation so that the same construction process can create different representations. It provides a step-by-step approach to building objects, allowing for fine-grained control over the construction process.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Build complex objects step by step with a readable, mistake-proof API.
@@ -1375,7 +1383,7 @@ Builder isn't just about avoiding long constructors. It's about making invalid o
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1396,7 +1404,7 @@ The builder accumulates state through method calls. Each method returns the buil
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of Builder as a meal ordering kiosk. You select items one by one: burger (required), fries (optional), drink (optional), sauce (optional). The kiosk validates your order before sending it to the kitchen. You can't order a combo without a main item. The final order is sealed and can't be modified.
 
@@ -1409,7 +1417,7 @@ Where this analogy breaks down: A kiosk allows changing your mind before submitt
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of cramming 15 settings into one confusing line, Builder lets you set each option by name, one at a time, in any order. When you're done, it creates the final object.
@@ -1431,7 +1439,7 @@ Advanced Builder patterns include: (1) **Step Builder** - compile-time enforceme
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Client code:
@@ -1455,7 +1463,7 @@ Builder internals:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -1480,7 +1488,7 @@ At scale, Builders are used to construct complex configuration objects for frame
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - BAD: Telescoping constructor**
 
@@ -1565,7 +1573,7 @@ Test that `build()` throws on invalid combinations. Test that default values wor
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1587,13 +1595,13 @@ Test that `build()` throws on invalid combinations. Test that default values wor
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Builder pattern's original GoF purpose was not about avoiding long constructors. It was about using the same construction process to create different representations - like parsing an RTF document and producing either a PDF or an ASCII text output. The "Effective Java" variant that developers use daily is a simplified adaptation that dropped the Director and focused on fluent APIs. Most "Builder pattern" interviews test a pattern that isn't quite what the GoF described.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What's the difference between the GoF Builder and the Effective Java Builder?**
 
@@ -1675,13 +1683,13 @@ The general rule: use Builder when the construction API would otherwise be confu
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Builder. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1692,7 +1700,7 @@ The general rule: use Builder when the construction API would otherwise be confu
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1726,7 +1734,7 @@ The general rule: use Builder when the construction API would otherwise be confu
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1750,7 +1758,7 @@ The general rule: use Builder when the construction API would otherwise be confu
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your game engine creates thousands of enemy objects per level. Each enemy requires loading a 3D model, parsing animation data, calculating physics bounds, and setting default stats - a process that takes 200ms per enemy. Creating 100 enemies from scratch takes 20 seconds. The level takes forever to load.
@@ -1766,13 +1774,13 @@ The GoF formalized Prototype in 1994, though the concept of cloning existed in L
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Prototype is a creational design pattern that specifies the kind of objects to create using a prototypical instance, and creates new objects by copying this prototype. It delegates the cloning process to the actual objects that are being cloned, avoiding coupling to their concrete classes.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Clone an existing object instead of building from scratch.
@@ -1786,7 +1794,7 @@ Prototype is not just about performance. It's about creating objects when you do
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1807,7 +1815,7 @@ Each clonable class implements a `clone()` method that creates a copy of itself.
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of Prototype as cell division in biology. A cell doesn't get built from scratch using a blueprint (constructor). It clones itself, creating a near-identical copy. The copy can then differentiate (be modified) for a specific purpose.
 
@@ -1820,7 +1828,7 @@ Where this analogy breaks down: Biological cells share no memory after division;
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of making something from scratch, you copy an existing one and change what's different. Like using a template instead of starting from a blank page.
@@ -1842,7 +1850,7 @@ Prototype is most powerful in systems where you don't know concrete types at com
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 [Prototype Registry]
@@ -1868,7 +1876,7 @@ Prototype is most powerful in systems where you don't know concrete types at com
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -1893,7 +1901,7 @@ At scale, prototype cloning must be thread-safe. If the prototype is mutable and
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - BAD: Expensive repeated creation**
 
@@ -1967,7 +1975,7 @@ Test that modifying a clone does not affect the original (deep copy verification
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1989,13 +1997,13 @@ Test that modifying a clone does not affect the original (deep copy verification
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Java's `Cloneable` interface is one of the most broken APIs in the language. It has no methods (it's a marker interface), but `Object.clone()` checks for it and throws `CloneNotSupportedException` if it's missing. The `clone()` method returns `Object`, requiring a cast. And the specification doesn't define whether the copy should be shallow or deep. Joshua Bloch, who helped design the Java collections framework, calls it "a moderately broken design" in Effective Java. This is why modern Java code uses copy constructors or `static CopyOf()` methods instead.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What's the difference between shallow copy and deep copy, and when does each cause problems?**
 
@@ -2080,13 +2088,13 @@ The common thread: Prototype shines when objects are "mostly the same" with smal
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Prototype. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2097,7 +2105,7 @@ The common thread: Prototype shines when objects are "mostly the same" with smal
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2131,7 +2139,7 @@ The common thread: Prototype shines when objects are "mostly the same" with smal
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

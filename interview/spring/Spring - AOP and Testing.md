@@ -16,13 +16,19 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Spring AOP](#spring-aop)
+- [Spring Testing](#spring-testing)
+- [Spring WebFlux](#spring-webflux)
+
 # Spring AOP
 
 **TL;DR** - Spring AOP provides aspect-oriented programming through proxy-based interception, enabling cross-cutting concerns like logging, security, and transactions to be separated from business logic.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT AOP:**
 Every service method has the same boilerplate: start transaction, check authorization, log entry, execute business logic, log exit, commit transaction, handle exceptions. You copy-paste this into 200 methods. When the logging format changes, you modify 200 files. Cross-cutting concerns pollute every business method.
@@ -32,7 +38,7 @@ Transaction management, security checks, logging, metrics, and caching all wrap 
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 WITHOUT AOP:
@@ -70,13 +76,13 @@ public void transferMoney(Account a, Account b) {
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -104,7 +110,7 @@ public void transferMoney(Account a, Account b) {
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -116,7 +122,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - Anyone:** AOP lets you add behavior (logging, security, transactions) to methods without modifying them. It's like a wrapper that runs code before/after your methods automatically.
 
@@ -128,7 +134,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -142,7 +148,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // BAD: Cross-cutting concerns tangled with logic
@@ -284,7 +290,7 @@ public class EmailService {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -306,7 +312,7 @@ public class EmailService {
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Explain how Spring AOP works under the hood. Why does self-invocation break @Transactional?**
 
@@ -365,19 +371,19 @@ Most likely self-invocation. If the method with `@Cacheable` is called from with
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Spring's `@Transactional` is the most widely used AOP feature, yet most developers don't realize it's AOP at all. When you see `@Transactional` silently failing, the root cause is almost always the self-invocation trap - and it's one of the top 5 most common Spring bugs in production, often going undetected for months because the code appears to work (it just doesn't have transaction boundaries where you expect them).
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Spring AOP. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -388,7 +394,7 @@ Spring's `@Transactional` is the most widely used AOP feature, yet most develope
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -422,7 +428,7 @@ Spring's `@Transactional` is the most widely used AOP feature, yet most develope
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -447,7 +453,7 @@ Spring's `@Transactional` is the most widely used AOP feature, yet most develope
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Testing a Spring application without the framework's support means manually constructing beans, wiring dependencies, setting up embedded databases, and configuring mock servers. A simple controller test would require bootstrapping the entire application context.
 
@@ -482,13 +488,13 @@ Testing a Spring application without the framework's support means manually cons
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -501,7 +507,7 @@ Testing a Spring application without the framework's support means manually cons
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -521,7 +527,7 @@ Testing a Spring application without the framework's support means manually cons
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -533,7 +539,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -559,7 +565,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -573,7 +579,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // UNIT TEST: No Spring context needed
@@ -706,7 +712,7 @@ class OrderRepositoryIT {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -728,14 +734,14 @@ class OrderRepositoryIT {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your test suite takes 15 minutes to run. How do you speed it up?**
 
@@ -766,13 +772,13 @@ Caveat: `@Transactional` test rollback only works with a single datasource and e
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Spring Testing. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -783,7 +789,7 @@ Caveat: `@Transactional` test rollback only works with a single datasource and e
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -817,7 +823,7 @@ Caveat: `@Transactional` test rollback only works with a single datasource and e
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -842,7 +848,7 @@ Caveat: `@Transactional` test rollback only works with a single datasource and e
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 A traditional Spring MVC application uses one thread per request. With 500 concurrent requests, you need 500 threads. Each thread consumes ~1MB of stack memory. At 10,000 concurrent connections (chat apps, IoT, SSE streams), you run out of threads or memory.
 
@@ -878,13 +884,13 @@ SPRING WEBFLUX (event-loop):
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -897,7 +903,7 @@ SPRING WEBFLUX (event-loop):
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -917,7 +923,7 @@ SPRING WEBFLUX (event-loop):
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -929,7 +935,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -955,7 +961,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -969,7 +975,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Spring MVC (blocking)
@@ -1010,7 +1016,7 @@ public Flux<ServerSentEvent<String>> streamEvents() {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1032,14 +1038,14 @@ public Flux<ServerSentEvent<String>> streamEvents() {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1086,13 +1092,13 @@ public Flux<ServerSentEvent<String>> streamEvents() {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Spring WebFlux. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1103,7 +1109,7 @@ public Flux<ServerSentEvent<String>> streamEvents() {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1137,7 +1143,7 @@ public Flux<ServerSentEvent<String>> streamEvents() {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

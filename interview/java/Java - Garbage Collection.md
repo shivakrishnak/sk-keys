@@ -17,13 +17,20 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [GC Algorithms](#gc-algorithms)
+- [G1 Garbage Collector](#g1-garbage-collector)
+- [ZGC](#zgc)
+- [GC Tuning](#gc-tuning)
+
 # GC Algorithms
 
 **TL;DR** - Garbage collection algorithms automatically reclaim unused heap memory by identifying and collecting objects that are no longer reachable, using strategies ranging from simple mark-sweep to generational and concurrent approaches, each with different throughput/latency trade-offs.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 In C/C++, developers manually allocate and free memory. Forgetting `free()` causes memory leaks. Calling `free()` too early causes use-after-free bugs (security vulnerabilities). Calling `free()` twice causes crashes. Memory management consumes 30-40% of C/C++ development time and is the #1 source of security vulnerabilities.
@@ -39,13 +46,13 @@ Manual memory management (C/C++) -> reference counting (COM, Objective-C, Python
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Garbage collection (GC) is the automatic process of identifying objects in the heap that are no longer reachable from GC roots (thread stacks, static fields, JNI references) and reclaiming their memory. The fundamental algorithm is mark-sweep: (1) mark all reachable objects by traversing from roots, (2) sweep unmarked objects. Modern collectors add compaction (defragmentation), generational partitioning (young/old), and concurrent operation (collect while application runs).
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 GC automatically finds and removes unused objects from memory so developers never have to manually free memory.
@@ -59,7 +66,7 @@ The generational hypothesis is the key insight behind modern GC: "most objects d
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -77,7 +84,7 @@ Because most objects die young (generational hypothesis), the heap is divided in
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -89,7 +96,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 When you create objects in Java, you never have to delete them. The garbage collector watches for objects nobody is using anymore and automatically removes them to free up memory.
@@ -197,7 +204,7 @@ GC algorithm design embodies a universal engineering trade-off triangle: through
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -211,7 +218,7 @@ GC algorithm design embodies a universal engineering trade-off triangle: through
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Monitoring GC programmatically:**
 
@@ -276,7 +283,7 @@ for (int i = 0; i < 1000000; i++) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Automatic memory reclamation strategies that find and free unreachable objects on the JVM heap
 **PROBLEM IT SOLVES:** Eliminates manual memory management (malloc/free) and its bugs: leaks, use-after-free, double-free
@@ -298,13 +305,13 @@ for (int i = 0; i < 1000000; i++) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Garbage collection can be FASTER than manual memory management. In a generational collector, allocating an object is just bumping a pointer (O(1)). In C's `malloc()`, finding a suitable free block requires searching a free list (O(n) worst case). And minor GC copies only live objects (typically 5% of young gen) - the 95% garbage costs zero to "free." The per-object cost of GC is often lower than the per-object cost of `malloc`/`free`.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Explain the generational hypothesis and why it matters for GC design.**
 
@@ -385,7 +392,7 @@ The key insight: it's not about eliminating pauses but making them O(1) with res
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Algorithm | Type | Pause Model | Best For |
 |-----------|------|-------------|---------|
@@ -397,7 +404,7 @@ The key insight: it's not about eliminating pauses but making them O(1) with res
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -408,7 +415,7 @@ The key insight: it's not about eliminating pauses but making them O(1) with res
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Premature promotion (premature tenuring)**
 **Symptom:** Old generation fills rapidly. Frequent mixed or full GC cycles. High promotion rate in GC logs.
@@ -483,7 +490,7 @@ jstat -gcutil <pid> 1000
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -511,7 +518,7 @@ jstat -gcutil <pid> 1000
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Before G1, you had two choices: Parallel GC (high throughput but long pauses proportional to heap size) or CMS (low pauses but fragmentation over time, leading to catastrophic full GC pauses). Neither could guarantee predictable pause times.
@@ -527,13 +534,13 @@ Mark-Sweep-Compact -> Parallel GC (throughput-first) -> CMS (low-pause attempt, 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 G1 (Garbage First) is a region-based, generational, concurrent garbage collector. It divides the heap into equal-sized regions (1-32MB each) that can be Eden, Survivor, Old, or Humongous. G1 tracks the amount of garbage per region and collects the regions with the most garbage first (hence "Garbage First"), optimizing for a user-specified maximum pause time target.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 G1 divides the heap into regions, collects the most garbage-filled regions first, and targets a specific maximum pause time.
@@ -547,7 +554,7 @@ G1's key innovation is the pause time target (`-XX:MaxGCPauseMillis=200`). Inste
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -567,7 +574,7 @@ G1's key innovation is the pause time target (`-XX:MaxGCPauseMillis=200`). Inste
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -579,7 +586,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 G1 is Java's default garbage collector. It breaks memory into small chunks and always cleans the chunks with the most garbage first, staying within a time budget you specify.
@@ -659,7 +666,7 @@ G1's region-based design is the JVM equivalent of database sharding: instead of 
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -673,7 +680,7 @@ G1's region-based design is the JVM equivalent of database sharding: instead of 
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Analyzing G1 GC logs:**
 
@@ -714,7 +721,7 @@ for (GarbageCollectorMXBean gc :
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Region-based, concurrent, generational GC that targets configurable pause times (default since JDK 9)
 **PROBLEM IT SOLVES:** Balances throughput and latency for general-purpose workloads with predictable pause targets
@@ -736,13 +743,13 @@ for (GarbageCollectorMXBean gc :
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 G1's region-based design means increasing heap size can actually DECREASE pause times. In traditional collectors, more heap = more to scan = longer pauses. In G1, more heap = more regions = G1 can be more selective, choosing only the most garbage-dense regions to meet its pause target. This breaks the conventional wisdom that "bigger heap = bigger pauses."
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Walk through what happens during a G1 GC cycle.**
 
@@ -819,7 +826,7 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | G1 | Parallel | ZGC |
 |--------|----|---------|-----|
@@ -832,7 +839,7 @@ _Strong answer:_
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -843,7 +850,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Humongous allocation fragmentation**
 **Symptom:** Unexpected full GCs despite low heap utilization. GC log shows "G1 Humongous Allocation" events.
@@ -921,7 +928,7 @@ jcmd <pid> GC.heap_info
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -949,7 +956,7 @@ jcmd <pid> GC.heap_info
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 G1 GC targets 200ms pauses but can spike higher under heavy allocation. For latency-sensitive applications (trading platforms, real-time bidding, interactive gaming), even 50ms pauses are unacceptable. Large heaps (>32GB) amplify the problem.
@@ -965,13 +972,13 @@ G1 (200ms target) -> Shenandoah (concurrent compaction, <10ms) -> ZGC (concurren
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 ZGC is a concurrent, region-based, compacting garbage collector designed for sub-millisecond pause times. It performs almost all GC work concurrently with the application, using colored pointers (metadata embedded in object references) and load barriers (checks when loading a reference) to achieve pauseless operation. ZGC pause times are independent of heap size, live set size, and root set size.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 ZGC achieves <1ms GC pauses at any heap size by doing all heavy work concurrently with your application.
@@ -985,7 +992,7 @@ ZGC's breakthrough is colored pointers. Every object reference in the heap carri
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1005,7 +1012,7 @@ ZGC's breakthrough is colored pointers. Every object reference in the heap carri
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1017,7 +1024,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 ZGC is a garbage collector designed for applications that cannot tolerate pauses. It keeps pauses under 1 millisecond whether your application uses 1GB or 1TB of memory.
@@ -1115,7 +1122,7 @@ ZGC represents the theoretical endpoint of concurrent GC design: sub-millisecond
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1129,7 +1136,7 @@ ZGC represents the theoretical endpoint of concurrent GC design: sub-millisecond
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Comparing G1 vs ZGC behavior:**
 
@@ -1162,7 +1169,7 @@ System.out.println("GC: " + gcName);
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Ultra-low latency concurrent GC with sub-millisecond pauses regardless of heap size (up to 16TB)
 **PROBLEM IT SOLVES:** Eliminates GC-induced latency spikes for latency-sensitive applications (APIs, trading, gaming)
@@ -1184,13 +1191,13 @@ System.out.println("GC: " + gcName);
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 ZGC can handle heaps up to 16 terabytes with the same sub-millisecond pause times as a 1GB heap. The pause time is determined only by the number of GC roots (thread stacks and static fields), not by the heap size or the number of live objects. This means ZGC's pause time is O(roots), not O(heap) or O(live_set).
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do colored pointers and load barriers work together in ZGC?**
 
@@ -1261,7 +1268,7 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Feature | ZGC | G1 | Shenandoah |
 |---------|-----|----|------------|
@@ -1274,7 +1281,7 @@ _Strong answer:_
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1285,7 +1292,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Allocation stall despite low pause times**
 **Symptom:** Application threads block waiting for GC to reclaim memory. Latency spikes >100ms but GC pauses are <1ms.
@@ -1366,7 +1373,7 @@ java -version
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -1394,7 +1401,7 @@ java -version
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Default GC settings are designed for general-purpose workloads. A high-throughput batch processor with defaults may spend too much time in GC. A low-latency service with defaults may have unacceptable pause spikes. Without tuning, you leave performance on the table.
@@ -1410,13 +1417,13 @@ Manual tuning of 100+ flags (pre-Java 9) -> ergonomic defaults (JVM auto-tunes b
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 GC tuning is the systematic process of selecting the appropriate garbage collector, sizing the heap and generations, and adjusting collector-specific parameters to meet application performance requirements. Modern tuning follows the principle: choose the right collector, size the heap correctly, and avoid over-tuning.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 GC tuning = right collector + right heap size + don't over-tune.
@@ -1430,7 +1437,7 @@ The #1 GC tuning mistake is over-tuning. Modern collectors (G1, ZGC) are designe
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1450,7 +1457,7 @@ The #1 GC tuning mistake is over-tuning. Modern collectors (G1, ZGC) are designe
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1462,7 +1469,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 GC tuning means telling Java how much memory to use and how to clean it up, so your application runs smoothly without pauses.
@@ -1585,7 +1592,7 @@ GC tuning follows the universal performance optimization principle: measure firs
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1599,7 +1606,7 @@ GC tuning follows the universal performance optimization principle: measure firs
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **GC tuning investigation script:**
 
@@ -1655,7 +1662,7 @@ for (GarbageCollectorMXBean gc :
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** The practice of configuring JVM garbage collector settings to optimize for specific workload requirements
 **PROBLEM IT SOLVES:** Default GC settings may not match application needs - wrong settings cause latency spikes or throughput loss
@@ -1677,13 +1684,13 @@ for (GarbageCollectorMXBean gc :
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 The most effective GC tuning is often not changing GC flags at all - it's reducing allocation rate in your application code. Reusing objects, using primitive types instead of boxed types, avoiding unnecessary string concatenation in hot loops, and using off-heap buffers for large data can reduce GC pressure by 10-100x, which no amount of flag tuning can match.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You have a Java service with p99 latency spikes. How do you determine if GC is the cause and fix it?**
 
@@ -1780,7 +1787,7 @@ Exception: development/testing where memory is limited - use smaller `-Xms` for 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Approach | Flags Changed | Effort | Risk |
 |----------|--------------|--------|------|
@@ -1792,7 +1799,7 @@ Exception: development/testing where memory is limited - use smaller `-Xms` for 
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1803,7 +1810,7 @@ Exception: development/testing where memory is limited - use smaller `-Xms` for 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Over-tuned configuration breaks under workload change**
 **Symptom:** Application performs well under normal load but has severe GC pauses during traffic spikes or changed request patterns.
@@ -1883,7 +1890,7 @@ jcmd <pid> VM.flags | grep "Xlog\|PrintGC"
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 

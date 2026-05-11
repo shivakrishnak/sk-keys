@@ -19,13 +19,22 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Thread and Runnable](#thread-and-runnable)
+- [Callable and Future](#callable-and-future)
+- [Executor Framework](#executor-framework)
+- [ThreadPoolExecutor](#threadpoolexecutor)
+- [ForkJoinPool](#forkjoinpool)
+- [CompletableFuture](#completablefuture)
+
 # Thread and Runnable
 
 **TL;DR** - Thread is the unit of execution in Java; Runnable is the task abstraction that separates "what to do" from "how to execute it," enabling the Executor framework and modern concurrency patterns.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without threads, a program can only do one thing at a time. A web server handles one request at a time - all other clients wait. A GUI freezes during file download. A database query blocks all other operations.
@@ -41,13 +50,13 @@ Single-threaded programs -> Thread subclassing (Java 1.0) -> Runnable interface 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A `Thread` is a lightweight process managed by the JVM, sharing heap memory with other threads but having its own stack. `Runnable` is a functional interface representing a task that can be executed by a thread. The separation of task (Runnable) from executor (Thread) is the foundation of Java's concurrency model.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Thread = the worker, Runnable = the job description. Separate them for flexible scheduling.
@@ -61,7 +70,7 @@ Never extend Thread to define work. Implement Runnable (or Callable) instead. Su
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -76,7 +85,7 @@ Never extend Thread to define work. Implement Runnable (or Callable) instead. Su
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -88,7 +97,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A thread lets your program do multiple things simultaneously - like a chef who can watch the oven while chopping vegetables.
@@ -165,7 +174,7 @@ The only legitimate uses of raw Thread in modern Java:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -179,7 +188,7 @@ The only legitimate uses of raw Thread in modern Java:
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Thread per request (doesn't scale):**
 
@@ -208,7 +217,7 @@ while (true) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -230,13 +239,13 @@ while (true) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 `Thread.start()` and `Thread.run()` are completely different. Calling `run()` directly executes the code on the current thread - no new thread is created. This is a common bug that compiles and runs without error but provides no concurrency. `start()` is what actually schedules execution on a new OS thread.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between extending Thread and implementing Runnable?**
 
@@ -387,13 +396,13 @@ However, `Thread.yield()` is the proper API for this purpose. In practice, neith
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Thread and Runnable. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -404,7 +413,7 @@ However, `Thread.yield()` is the proper API for this purpose. In practice, neith
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -438,7 +447,7 @@ However, `Thread.yield()` is the proper API for this purpose. In practice, neith
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -463,7 +472,7 @@ However, `Thread.yield()` is the proper API for this purpose. In practice, neith
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Runnable's `void run()` can't return values or throw checked exceptions. To get a result from another thread, you need shared mutable state (race conditions) and manual signaling (wait/notify). Error propagation requires custom mechanisms.
@@ -479,13 +488,13 @@ Runnable + shared state (Java 1.0) -> Callable + Future (Java 5) -> CompletableF
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 `Callable<V>` is a functional interface with a single method `V call() throws Exception` - it produces a result and can throw checked exceptions. `Future<V>` represents the result of an asynchronous computation, providing methods to check completion, wait for the result, and cancel the task.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -498,7 +507,7 @@ Runnable + shared state (Java 1.0) -> Callable + Future (Java 5) -> CompletableF
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -518,7 +527,7 @@ Runnable + shared state (Java 1.0) -> Callable + Future (Java 5) -> CompletableF
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -530,7 +539,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Callable is a task that produces an answer. Future is the receipt you get when submitting the task - you can check on it later or wait for the answer.
@@ -621,7 +630,7 @@ CompletableFuture.supplyAsync(this::fetchA)
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -635,7 +644,7 @@ CompletableFuture.supplyAsync(this::fetchA)
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Blocking main thread waiting for results:**
 
@@ -662,7 +671,7 @@ return new UserProfile(user, orders);
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -684,14 +693,14 @@ return new UserProfile(user, orders);
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What happens when you call Future.get() and the task threw an exception?**
 
@@ -797,13 +806,13 @@ String result = exec.invokeAny(List.of(
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Callable and Future. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -814,7 +823,7 @@ String result = exec.invokeAny(List.of(
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -848,7 +857,7 @@ String result = exec.invokeAny(List.of(
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -873,7 +882,7 @@ String result = exec.invokeAny(List.of(
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Creating threads manually for each task wastes resources, provides no bound on concurrency, gives no mechanism for graceful shutdown, and requires custom queuing logic for every application.
@@ -886,13 +895,13 @@ A service creates a new thread per incoming request. Under load spike (10K reque
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The Executor framework (java.util.concurrent) separates task submission from execution policy. It provides: `Executor` (basic task submission), `ExecutorService` (lifecycle management + Future support), and `ScheduledExecutorService` (delayed/periodic execution). Factory methods in `Executors` create common configurations.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -905,7 +914,7 @@ The Executor framework (java.util.concurrent) separates task submission from exe
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -925,7 +934,7 @@ The Executor framework (java.util.concurrent) separates task submission from exe
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -937,7 +946,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of creating threads yourself, you submit tasks to a managed pool of workers that handles scheduling, queuing, and cleanup for you.
@@ -1015,7 +1024,7 @@ This gives: bounded threads (50 max), bounded queue (1000), and a rejection poli
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1029,7 +1038,7 @@ This gives: bounded threads (50 max), bounded queue (1000), and a rejection poli
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Unbounded cached thread pool:**
 
@@ -1059,7 +1068,7 @@ for (Request r : requests) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1081,14 +1090,14 @@ for (Request r : requests) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What are the four rejection policies and when would you use each?**
 
@@ -1170,13 +1179,13 @@ For Spring apps: register in `@PreDestroy` or shutdown hook for graceful drain.
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Executor Framework. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1187,7 +1196,7 @@ For Spring apps: register in `@PreDestroy` or shutdown hook for graceful drain.
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1221,7 +1230,7 @@ For Spring apps: register in `@PreDestroy` or shutdown hook for graceful drain.
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1246,7 +1255,7 @@ For Spring apps: register in `@PreDestroy` or shutdown hook for graceful drain.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 `Executors.newFixedThreadPool()` uses unbounded queues (can OOM). `newCachedThreadPool()` creates unbounded threads (can OOM). Neither provides the precise control needed for production workloads.
@@ -1256,13 +1265,13 @@ For Spring apps: register in `@PreDestroy` or shutdown hook for graceful drain.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1275,7 +1284,7 @@ For Spring apps: register in `@PreDestroy` or shutdown hook for graceful drain.
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1295,7 +1304,7 @@ For Spring apps: register in `@PreDestroy` or shutdown hook for graceful drain.
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1307,7 +1316,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 ThreadPoolExecutor is the engine that powers all Java thread pools. You configure exactly how many workers, how long the queue, and what happens when overloaded.
@@ -1401,7 +1410,7 @@ Monitor with JMX:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1415,7 +1424,7 @@ Monitor with JMX:
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Production-ready pool configuration:**
 
@@ -1441,7 +1450,7 @@ public ExecutorService orderProcessingPool() {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1463,14 +1472,14 @@ public ExecutorService orderProcessingPool() {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Draw the task flow through ThreadPoolExecutor.**
 
@@ -1557,13 +1566,13 @@ Without this, 10 core threads remain alive permanently, consuming 10MB of stack 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for ThreadPoolExecutor. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1574,7 +1583,7 @@ Without this, 10 core threads remain alive permanently, consuming 10MB of stack 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1608,7 +1617,7 @@ Without this, 10 core threads remain alive permanently, consuming 10MB of stack 
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1633,7 +1642,7 @@ Without this, 10 core threads remain alive permanently, consuming 10MB of stack 
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Divide-and-conquer algorithms create many subtasks of varying duration. A fixed thread pool wastes threads waiting for slow subtasks while fast ones complete. Load imbalance reduces parallelism.
@@ -1643,13 +1652,13 @@ Divide-and-conquer algorithms create many subtasks of varying duration. A fixed 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1662,7 +1671,7 @@ Divide-and-conquer algorithms create many subtasks of varying duration. A fixed 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1682,7 +1691,7 @@ Divide-and-conquer algorithms create many subtasks of varying duration. A fixed 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1694,7 +1703,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 ForkJoinPool is a special thread pool where idle threads "steal" work from busy threads' queues, keeping all CPUs utilized even when tasks are uneven.
@@ -1776,7 +1785,7 @@ Or better: use virtual threads for I/O, ForkJoinPool for CPU-only.
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1790,7 +1799,7 @@ Or better: use virtual threads for I/O, ForkJoinPool for CPU-only.
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1812,13 +1821,13 @@ Or better: use virtual threads for I/O, ForkJoinPool for CPU-only.
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 When you call `join()` on a `ForkJoinTask`, the joining thread doesn't just sit idle waiting. It actually steals and executes other tasks from the pool while waiting for its subtask to complete. This "helping" behavior is why ForkJoinPool can use the same number of threads as CPU cores without deadlocking on recursive task dependencies.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Why shouldn't you do I/O in a parallel stream?**
 
@@ -1924,13 +1933,13 @@ This prevents the pool from stalling when tasks unexpectedly block. It's how the
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for ForkJoinPool. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1941,7 +1950,7 @@ This prevents the pool from stalling when tasks unexpectedly block. It's how the
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1975,7 +1984,7 @@ This prevents the pool from stalling when tasks unexpectedly block. It's how the
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -2000,7 +2009,7 @@ This prevents the pool from stalling when tasks unexpectedly block. It's how the
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 `Future.get()` blocks the calling thread. To compose async operations (A then B then C), you need to block between each step, wasting threads. Combining results from multiple futures requires complex coordination.
@@ -2013,13 +2022,13 @@ A service calls 3 APIs sequentially (800ms each) because Future composition requ
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 `CompletableFuture<T>` is a Future that can be explicitly completed, combined with other futures, and chained with non-blocking transformations. It provides 50+ methods for composing async operations including `thenApply`, `thenCompose`, `thenCombine`, `allOf`, `anyOf`, and exception handling.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -2032,7 +2041,7 @@ A service calls 3 APIs sequentially (800ms each) because Future composition requ
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -2052,7 +2061,7 @@ A service calls 3 APIs sequentially (800ms each) because Future composition requ
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -2064,7 +2073,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 CompletableFuture lets you say "when A finishes, do B, then C" without waiting at each step. Like setting up dominoes.
@@ -2171,7 +2180,7 @@ supplyAsync(() -> task(), ioExecutor);
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -2185,7 +2194,7 @@ supplyAsync(() -> task(), ioExecutor);
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Sequential blocking:**
 
@@ -2225,7 +2234,7 @@ return userCF.thenCombine(ordersCF,
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -2247,13 +2256,13 @@ return userCF.thenCombine(ordersCF,
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 `CompletableFuture.supplyAsync(() -> task())` without an executor runs on `ForkJoinPool.commonPool()`. Since this pool has only CPU-core threads, a single slow I/O operation in any chain can starve ALL other async operations in the entire JVM - including parallel streams. Always pass a dedicated executor for I/O work.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between thenApply and thenCompose?**
 
@@ -2422,13 +2431,13 @@ Rule: If you're just doing parallel I/O calls and collecting results, virtual th
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for CompletableFuture. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2439,7 +2448,7 @@ Rule: If you're just doing parallel I/O calls and collecting results, virtual th
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2473,7 +2482,7 @@ Rule: If you're just doing parallel I/O calls and collecting results, virtual th
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

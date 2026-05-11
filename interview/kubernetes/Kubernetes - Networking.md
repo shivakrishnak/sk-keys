@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "Kubernetes - Networking"
+parent: "Kubernetes"
+grand_parent: "Interview Mastery"
+nav_order: 3
+permalink: /interview/kubernetes/networking/
 topic: Kubernetes
 subtopic: Networking
 keywords:
@@ -14,13 +19,22 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Kubernetes Networking](#kubernetes-networking)
+- [Service](#service)
+- [Ingress](#ingress)
+- [Network Policy](#network-policy)
+- [DNS in Kubernetes](#dns-in-kubernetes)
+- [Service Mesh](#service-mesh)
+
 # Kubernetes Networking
 
 **TL;DR** - Kubernetes networking follows a flat model where every pod gets a unique IP, all pods can reach all other pods without NAT, and Services/Ingress provide stable endpoints and external access.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Containers on different nodes can't communicate. Pod IPs are ephemeral and unpredictable. External traffic has no way in. Without a networking model, your distributed system is just isolated containers.
@@ -30,13 +44,13 @@ Containers on different nodes can't communicate. Pod IPs are ephemeral and unpre
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Kubernetes networking implements a flat network model with three fundamental requirements: (1) every pod gets a unique IP, (2) all pods can communicate with all other pods without NAT, (3) the IP a pod sees itself as is the same IP others use to reach it. This is implemented by CNI (Container Network Interface) plugins.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Every pod gets an IP, every pod can reach every other pod - flat and simple.
@@ -50,7 +64,7 @@ The flat networking model means NO NAT between pods. Pod A on Node 1 reaches Pod
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -70,7 +84,7 @@ The flat networking model means NO NAT between pods. Pod A on Node 1 reaches Pod
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -82,7 +96,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -101,7 +115,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 K8s Networking Model:
@@ -127,7 +141,7 @@ Four networking problems K8s solves:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -141,7 +155,7 @@ Four networking problems K8s solves:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -163,14 +177,14 @@ Four networking problems K8s solves:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Compare Calico, Cilium, and Flannel. How do you choose a CNI?**
 
@@ -193,13 +207,13 @@ Decision:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Kubernetes Networking. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -210,7 +224,7 @@ Decision:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -244,7 +258,7 @@ Decision:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -269,7 +283,7 @@ Decision:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Pod IPs change on every restart. Your frontend hardcodes `10.244.1.5:8080` to reach the backend. Backend pod restarts with IP `10.244.2.3`. Frontend breaks. With 10 backend replicas, which IP do you use? How do you load balance?
@@ -279,13 +293,13 @@ Pod IPs change on every restart. Your frontend hardcodes `10.244.1.5:8080` to re
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A Kubernetes Service is an abstraction that defines a logical set of Pods (determined by a label selector) and a policy for accessing them - providing a stable virtual IP (ClusterIP), DNS name, and load balancing across the set of matching pods.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A Service is a stable name and IP that routes traffic to whichever pods match its selector.
@@ -299,7 +313,7 @@ Services select pods by LABELS. Any pod with matching labels gets traffic, regar
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -319,7 +333,7 @@ Services select pods by LABELS. Any pod with matching labels gets traffic, regar
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -331,7 +345,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -350,7 +364,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```yaml
 # ClusterIP Service (internal)
@@ -396,7 +410,7 @@ Service types:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -410,7 +424,7 @@ Service types:
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```bash
 # Create service
@@ -432,7 +446,7 @@ kubectl get endpoints backend
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -454,14 +468,14 @@ kubectl get endpoints backend
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When do you use ClusterIP vs NodePort vs LoadBalancer vs Ingress?**
 
@@ -486,13 +500,13 @@ Cost consideration: Each LoadBalancer Service creates a cloud LB ($20-50/month).
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Service. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -503,7 +517,7 @@ Cost consideration: Each LoadBalancer Service creates a cloud LB ($20-50/month).
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -537,7 +551,7 @@ Cost consideration: Each LoadBalancer Service creates a cloud LB ($20-50/month).
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -562,7 +576,7 @@ Cost consideration: Each LoadBalancer Service creates a cloud LB ($20-50/month).
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Each service needing external access requires its own LoadBalancer (expensive). No path-based routing (api.example.com/users vs api.example.com/products going to different services). No TLS termination at cluster level.
@@ -572,13 +586,13 @@ Each service needing external access requires its own LoadBalancer (expensive). 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 An Ingress is a Kubernetes API object that manages external HTTP/HTTPS access to services within a cluster, providing URL-based routing, TLS termination, and name-based virtual hosting. It requires an Ingress Controller (nginx, Traefik, ALB) to implement the actual routing.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -591,7 +605,7 @@ An Ingress is a Kubernetes API object that manages external HTTP/HTTPS access to
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -611,7 +625,7 @@ An Ingress is a Kubernetes API object that manages external HTTP/HTTPS access to
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -623,7 +637,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -642,7 +656,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -690,7 +704,7 @@ Traffic flow:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -704,7 +718,7 @@ Traffic flow:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -726,14 +740,14 @@ Traffic flow:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -780,13 +794,13 @@ Traffic flow:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Ingress. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -797,7 +811,7 @@ Traffic flow:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -831,7 +845,7 @@ Traffic flow:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -856,7 +870,7 @@ Traffic flow:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 By default, every pod can reach every other pod in the cluster. A compromised frontend pod can directly access the database, admin services, and other namespaces. Lateral movement is trivial.
@@ -866,13 +880,13 @@ By default, every pod can reach every other pod in the cluster. A compromised fr
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A NetworkPolicy is a Kubernetes resource that specifies how groups of pods are allowed to communicate with each other and with other network endpoints. By default all traffic is allowed; once a NetworkPolicy selects a pod, only traffic explicitly allowed by policies is permitted.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -885,7 +899,7 @@ A NetworkPolicy is a Kubernetes resource that specifies how groups of pods are a
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -905,7 +919,7 @@ A NetworkPolicy is a Kubernetes resource that specifies how groups of pods are a
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -917,7 +931,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -936,7 +950,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```yaml
 # Only allow traffic from frontend to backend
@@ -987,7 +1001,7 @@ Example architecture:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1001,7 +1015,7 @@ Example architecture:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1023,14 +1037,14 @@ Example architecture:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1077,13 +1091,13 @@ Example architecture:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Network Policy. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1094,7 +1108,7 @@ Example architecture:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1128,7 +1142,7 @@ Example architecture:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1153,20 +1167,20 @@ Example architecture:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Pods would need to know the ClusterIP of every service they communicate with. ClusterIPs are assigned randomly. Configuration becomes fragile and requires updates on every service recreation.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Kubernetes DNS (CoreDNS) automatically creates DNS records for Services and Pods. Services get `<service>.<namespace>.svc.cluster.local` A records resolving to ClusterIP. Pods get `<pod-ip-dashed>.<namespace>.pod.cluster.local` records.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1179,7 +1193,7 @@ Kubernetes DNS (CoreDNS) automatically creates DNS records for Services and Pods
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1199,7 +1213,7 @@ Kubernetes DNS (CoreDNS) automatically creates DNS records for Services and Pods
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1211,7 +1225,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1230,7 +1244,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 DNS resolution patterns:
@@ -1261,7 +1275,7 @@ How it works:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1275,7 +1289,7 @@ How it works:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1297,14 +1311,14 @@ How it works:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1351,13 +1365,13 @@ How it works:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for DNS in Kubernetes. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1368,7 +1382,7 @@ How it works:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1402,7 +1416,7 @@ How it works:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1427,7 +1441,7 @@ How it works:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every microservice implements its own retry logic, circuit breaking, mutual TLS, distributed tracing, and traffic splitting. This logic is duplicated across 50 services in 3 languages, inconsistently implemented, and impossible to manage centrally.
@@ -1437,13 +1451,13 @@ Every microservice implements its own retry logic, circuit breaking, mutual TLS,
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A service mesh is a dedicated infrastructure layer for managing service-to-service communication, typically implemented as a network of sidecar proxies (data plane) controlled by a central management component (control plane), providing mTLS, load balancing, observability, traffic management, and policy enforcement transparently.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1456,7 +1470,7 @@ A service mesh is a dedicated infrastructure layer for managing service-to-servi
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1476,7 +1490,7 @@ A service mesh is a dedicated infrastructure layer for managing service-to-servi
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1488,7 +1502,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1507,7 +1521,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Service Mesh Architecture:
@@ -1545,7 +1559,7 @@ Features:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1559,7 +1573,7 @@ Features:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1581,14 +1595,14 @@ Features:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When does a team actually need a service mesh? When is it over-engineering?**
 
@@ -1613,13 +1627,13 @@ The evolution: Istio ambient mesh (2023) removes per-pod sidecars for L4, using 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Service Mesh. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1630,7 +1644,7 @@ The evolution: Istio ambient mesh (2023) removes per-pod sidecars for L4, using 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1664,7 +1678,7 @@ The evolution: Istio ambient mesh (2023) removes per-pod sidecars for L4, using 
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

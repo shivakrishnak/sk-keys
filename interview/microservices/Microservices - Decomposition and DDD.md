@@ -19,26 +19,35 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Service Decomposition](#service-decomposition)
+- [Domain-Driven Design (DDD)](#domain-driven-design-ddd)
+- [Bounded Context](#bounded-context)
+- [Aggregate](#aggregate)
+- [Ubiquitous Language](#ubiquitous-language)
+- [Anti-Corruption Layer](#anti-corruption-layer)
+
 # Service Decomposition
 
 **TL;DR** - Service decomposition determines how to split a system into microservices. The primary heuristic is business capability alignment using DDD's Bounded Contexts, not technical layers or entity-per-service. Getting boundaries wrong is the #1 reason microservices projects fail.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Teams split services by technical layer (UI service, business logic service, data service) or by entity (UserService, OrderService, ProductService). Every feature touches every service. No team can ship independently. You built a distributed monolith.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -51,7 +60,7 @@ Teams split services by technical layer (UI service, business logic service, dat
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -71,7 +80,7 @@ Teams split services by technical layer (UI service, business logic service, dat
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -83,7 +92,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of splitting by technology (frontend/backend/database), split by what the business DOES (ordering, payments, shipping). Each team owns the full stack for their business area.
@@ -187,7 +196,7 @@ Step 5: Define interfaces
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -201,7 +210,7 @@ Step 5: Define interfaces
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -218,14 +227,14 @@ Step 5: Define interfaces
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you decide the boundaries for your first microservice extraction from a monolith?**
 
@@ -265,13 +274,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Service Decomposition. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -282,7 +291,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -316,7 +325,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -341,7 +350,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -357,13 +366,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -376,7 +385,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -396,7 +405,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -408,7 +417,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Write code using the same words the business uses. If the business says "Place Order," code has `placeOrder()`. Structure your system around business concepts, not technical ones.
@@ -489,7 +498,7 @@ Anti-Corruption   ->   API adapter/translator
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -503,7 +512,7 @@ Anti-Corruption   ->   API adapter/translator
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -520,14 +529,14 @@ Anti-Corruption   ->   API adapter/translator
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How does DDD help prevent a distributed monolith?**
 
@@ -551,13 +560,13 @@ DDD prevents distributed monoliths in three ways:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Domain-Driven Design (DDD). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -568,7 +577,7 @@ DDD prevents distributed monoliths in three ways:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -602,7 +611,7 @@ DDD prevents distributed monoliths in three ways:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -627,7 +636,7 @@ DDD prevents distributed monoliths in three ways:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -643,13 +652,13 @@ DDD prevents distributed monoliths in three ways:
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -662,7 +671,7 @@ DDD prevents distributed monoliths in three ways:
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -682,7 +691,7 @@ DDD prevents distributed monoliths in three ways:
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -694,7 +703,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A Bounded Context is a "bubble" where words have one clear meaning. Inside the "Sales" bubble, "Customer" means someone who buys. Inside the "Support" bubble, "Customer" means someone with a ticket. Same word, different meaning, different models.
@@ -759,7 +768,7 @@ in different contexts.
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -773,7 +782,7 @@ in different contexts.
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -790,14 +799,14 @@ in different contexts.
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle data that seems to belong to multiple bounded contexts?**
 
@@ -832,13 +841,13 @@ Billing Context (owns payment info):
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Bounded Context. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -849,7 +858,7 @@ Billing Context (owns payment info):
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -883,7 +892,7 @@ Billing Context (owns payment info):
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -908,7 +917,7 @@ Billing Context (owns payment info):
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -924,13 +933,13 @@ Billing Context (owns payment info):
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -943,7 +952,7 @@ Billing Context (owns payment info):
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -963,7 +972,7 @@ Billing Context (owns payment info):
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -975,7 +984,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 An Aggregate is a group of related objects that must be consistent together. You can only change them through the "boss" object (the root). Like a company: outsiders talk to the CEO (aggregate root), not to individual employees directly.
@@ -1075,7 +1084,7 @@ public class Order {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1089,7 +1098,7 @@ public class Order {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1106,14 +1115,14 @@ public class Order {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle consistency between two aggregates in the same service?**
 
@@ -1162,13 +1171,13 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Aggregate. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1179,7 +1188,7 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1213,7 +1222,7 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1238,7 +1247,7 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1254,13 +1263,13 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1273,7 +1282,7 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1293,7 +1302,7 @@ Trade-off: Eventual consistency between aggregates. If inventory reservation fai
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1305,7 +1314,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Developers and business people use the same words. If the business says "Loan Origination," code has `LoanOrigination`, not `LoanProcessingService.startLoan()`.
@@ -1355,7 +1364,7 @@ class LoanApplication {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1369,7 +1378,7 @@ class LoanApplication {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1386,14 +1395,14 @@ class LoanApplication {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How does Ubiquitous Language relate to API design in microservices?**
 
@@ -1428,13 +1437,13 @@ The API becomes the contract of the Bounded Context. When another team reads you
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Ubiquitous Language. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1445,7 +1454,7 @@ The API becomes the contract of the Bounded Context. When another team reads you
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1479,7 +1488,7 @@ The API becomes the contract of the Bounded Context. When another team reads you
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1504,7 +1513,7 @@ The API becomes the contract of the Bounded Context. When another team reads you
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1520,13 +1529,13 @@ The API becomes the contract of the Bounded Context. When another team reads you
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1539,7 +1548,7 @@ The API becomes the contract of the Bounded Context. When another team reads you
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1559,7 +1568,7 @@ The API becomes the contract of the Bounded Context. When another team reads you
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1571,7 +1580,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A translator between your clean domain model and a messy external system. Like a diplomatic interpreter: the foreign system speaks its language, your code speaks yours, the ACL translates between them.
@@ -1675,7 +1684,7 @@ As migration progresses:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1689,7 +1698,7 @@ As migration progresses:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1706,14 +1715,14 @@ As migration progresses:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You're integrating with a legacy system that returns XML with field names like `CUST_NM`, `ORD_DT`, `AMT_DUE`. How do you protect your domain model?**
 
@@ -1766,13 +1775,13 @@ public class LegacyOrderAdapter implements OrderPort {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Anti-Corruption Layer. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1783,7 +1792,7 @@ public class LegacyOrderAdapter implements OrderPort {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1817,7 +1826,7 @@ public class LegacyOrderAdapter implements OrderPort {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

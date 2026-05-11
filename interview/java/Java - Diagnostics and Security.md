@@ -16,13 +16,19 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [JVM Profiling and Diagnostic Tools](#jvm-profiling-and-diagnostic-tools)
+- [Java Security Vulnerabilities](#java-security-vulnerabilities)
+- [GC Algorithm Selection Framework](#gc-algorithm-selection-framework)
+
 # JVM Profiling and Diagnostic Tools
 
 **TL;DR** - JVM diagnostic tools (`jcmd`, `jfr`, `jmap`, `jstack`, `jstat`) let you diagnose memory leaks, CPU hotspots, thread issues, and GC problems in running production JVMs without restarting.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Your production application is slow. Is it CPU-bound? Memory-bound? GC thrashing? Thread contention? A blocked database connection? Without diagnostic tools, you're guessing. With them, you see exactly what the JVM is doing.
 
@@ -155,13 +161,13 @@ jcmd <pid> JFR.start duration=60s \
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -174,7 +180,7 @@ jcmd <pid> JFR.start duration=60s \
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -194,7 +200,7 @@ jcmd <pid> JFR.start duration=60s \
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -206,7 +212,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -232,7 +238,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -246,7 +252,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Suite of tools for profiling, monitoring, and diagnosing JVM applications (JFR, async-profiler, jmap, jstack)
 **PROBLEM IT SOLVES:** Identifies CPU bottlenecks, memory leaks, thread deadlocks, and GC issues in production
@@ -268,14 +274,14 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your Java application is consuming 8GB of heap and keeps growing. How do you find the memory leak?**
 
@@ -309,7 +315,7 @@ _Why they ask:_ Tests systematic diagnosis approach.
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Tool | Purpose | Overhead | Production Safe |
 |------|---------|----------|----------------|
@@ -322,7 +328,7 @@ _Why they ask:_ Tests systematic diagnosis approach.
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -333,7 +339,7 @@ _Why they ask:_ Tests systematic diagnosis approach.
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: SafePoint bias in profiling**
 **Symptom:** Profiler shows methods that are not actually hot. Real hotspots are invisible.
@@ -409,7 +415,7 @@ httpClient.newBuilder()
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -534,7 +540,7 @@ spring.datasource.password=${DB_PASSWORD}
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -550,13 +556,13 @@ spring.datasource.password=${DB_PASSWORD}
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -569,7 +575,7 @@ spring.datasource.password=${DB_PASSWORD}
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -589,7 +595,7 @@ spring.datasource.password=${DB_PASSWORD}
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -601,7 +607,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -627,7 +633,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -641,7 +647,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Common attack patterns against Java applications: injection, deserialization, XXE, SSRF, dependency exploits
 **PROBLEM IT SOLVES:** Understanding and preventing security breaches in Java backend systems
@@ -663,14 +669,14 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You discover one of your production services is vulnerable to Log4Shell. Walk through your response.**
 
@@ -699,7 +705,7 @@ If Java serialization is unavoidable: (1) Use `ObjectInputFilter` (Java 9+) to w
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Vulnerability | Attack Vector | Java Impact | Prevention |
 |--------------|--------------|------------|------------|
@@ -711,7 +717,7 @@ If Java serialization is unavoidable: (1) Use `ObjectInputFilter` (Java 9+) to w
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -722,7 +728,7 @@ If Java serialization is unavoidable: (1) Use `ObjectInputFilter` (Java 9+) to w
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: SQL Injection via string concatenation**
 **Symptom:** Unauthorized data access, data modification, or database compromise.
@@ -807,7 +813,7 @@ dbf.setFeature(
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -891,7 +897,7 @@ STEP 4: Only tune AFTER choosing the right GC
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -907,13 +913,13 @@ STEP 4: Only tune AFTER choosing the right GC
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -926,7 +932,7 @@ STEP 4: Only tune AFTER choosing the right GC
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -946,7 +952,7 @@ STEP 4: Only tune AFTER choosing the right GC
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -958,7 +964,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -984,7 +990,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1023,7 +1029,7 @@ java -Xms16g -Xmx16g \
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Decision framework for choosing the right JVM garbage collector based on workload characteristics
 **PROBLEM IT SOLVES:** Matching GC behavior (pause time, throughput, memory) to application requirements
@@ -1045,14 +1051,14 @@ java -Xms16g -Xmx16g \
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1099,7 +1105,7 @@ java -Xms16g -Xmx16g \
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | G1 GC | ZGC | Parallel GC | Shenandoah |
 |--------|-------|-----|------------|------------|
@@ -1112,7 +1118,7 @@ java -Xms16g -Xmx16g \
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1123,7 +1129,7 @@ java -Xms16g -Xmx16g \
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Wrong GC for latency-sensitive service**
 **Symptom:** p99 latency spikes of 200ms-2s correlated with GC pauses. SLA violations.
@@ -1201,7 +1207,7 @@ asprof -e alloc -d 30 -f alloc.html <pid>
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 

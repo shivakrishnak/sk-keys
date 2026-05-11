@@ -20,26 +20,36 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Database per Service](#database-per-service)
+- [Shared Database Anti-Pattern](#shared-database-anti-pattern)
+- [Data Isolation per Service](#data-isolation-per-service)
+- [CQRS](#cqrs)
+- [Event Sourcing](#event-sourcing)
+- [Event-Driven Microservices](#event-driven-microservices)
+- [Eventual Consistency](#eventual-consistency)
+
 # Database per Service
 
 **TL;DR** - Each microservice owns its database (or schema). No other service reads from or writes to it directly. This ensures loose coupling, independent deployment, and technology freedom. Cross-service data access happens only through APIs or events.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Five services share one database. Team A changes a table schema for their needs - breaks Teams B, C, D. Every schema migration requires coordinating all teams. Can't deploy independently. Can't choose different database technologies per service. You have a distributed monolith with extra network hops.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -52,7 +62,7 @@ Five services share one database. Team A changes a table schema for their needs 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -72,7 +82,7 @@ Five services share one database. Team A changes a table schema for their needs 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -84,7 +94,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Each service has its own private database. No other service can peek inside. If you need another service's data, you ask through its API.
@@ -166,7 +176,7 @@ Solutions:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -180,7 +190,7 @@ Solutions:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -197,14 +207,14 @@ Solutions:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle cross-service queries when using database per service?**
 
@@ -239,13 +249,13 @@ public OrderDetails getOrderDetails(String id) {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Database per Service. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -256,7 +266,7 @@ public OrderDetails getOrderDetails(String id) {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -290,7 +300,7 @@ public OrderDetails getOrderDetails(String id) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -315,7 +325,7 @@ public OrderDetails getOrderDetails(String id) {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -331,13 +341,13 @@ public OrderDetails getOrderDetails(String id) {
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -350,7 +360,7 @@ public OrderDetails getOrderDetails(String id) {
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -370,7 +380,7 @@ public OrderDetails getOrderDetails(String id) {
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -382,7 +392,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 If two services share a database, they're not really independent. Changing a table for one service can break the other. You get the complexity of microservices with none of the benefits.
@@ -464,7 +474,7 @@ Phase 4: Eliminate shared DB
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -478,7 +488,7 @@ Phase 4: Eliminate shared DB
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -495,14 +505,14 @@ Phase 4: Eliminate shared DB
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your team inherits 3 services sharing one MySQL database. How do you decouple them?**
 
@@ -524,13 +534,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Shared Database Anti-Pattern. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -541,7 +551,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -575,7 +585,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -600,7 +610,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -616,13 +626,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -635,7 +645,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -655,7 +665,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -667,7 +677,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Your service's data is like your personal diary. Others can ask you what's in it (API), but they can't read it directly (no DB access).
@@ -715,7 +725,7 @@ spec:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -729,7 +739,7 @@ spec:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -746,14 +756,14 @@ spec:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: A data analyst needs to query across Order, Product, and Customer data. How do you provide this without violating data isolation?**
 
@@ -771,13 +781,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Data Isolation per Service. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -788,7 +798,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -822,7 +832,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -847,7 +857,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -863,13 +873,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -882,7 +892,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -902,7 +912,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -914,7 +924,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Separate the "writing" part from the "reading" part. Write to a normalized database optimized for consistency. Read from a denormalized store optimized for fast queries.
@@ -1032,7 +1042,7 @@ Each read model is a materialized view of the event stream, optimized for its sp
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1046,7 +1056,7 @@ Each read model is a materialized view of the event stream, optimized for its sp
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1063,14 +1073,14 @@ Each read model is a materialized view of the event stream, optimized for its sp
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: User places an order and immediately sees "Order not found" on the order details page. What's happening and how do you fix it?**
 
@@ -1089,13 +1099,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for CQRS (Command Query Responsibility Segregation). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1106,7 +1116,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1140,7 +1150,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1165,7 +1175,7 @@ _Strong answer:_
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1181,13 +1191,13 @@ _Strong answer:_
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1200,7 +1210,7 @@ _Strong answer:_
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1220,7 +1230,7 @@ _Strong answer:_
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1232,7 +1242,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of saving "balance = $500," save every transaction: "deposited $1000, withdrew $300, deposited $200, withdrew $400." Current balance = replay all events.
@@ -1336,7 +1346,7 @@ Benefits:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1350,7 +1360,7 @@ Benefits:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1367,14 +1377,14 @@ Benefits:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle GDPR "right to be forgotten" with event sourcing where events are immutable?**
 
@@ -1408,13 +1418,13 @@ GDPR forget user 42:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Event Sourcing. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1425,7 +1435,7 @@ GDPR forget user 42:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1459,7 +1469,7 @@ GDPR forget user 42:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1484,7 +1494,7 @@ GDPR forget user 42:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1500,13 +1510,13 @@ GDPR forget user 42:
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1519,7 +1529,7 @@ GDPR forget user 42:
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1539,7 +1549,7 @@ GDPR forget user 42:
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1551,7 +1561,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of Service A calling Service B directly ("Hey B, do this!"), Service A announces "This happened" and anyone who cares can act on it.
@@ -1631,7 +1641,7 @@ Rules:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1645,7 +1655,7 @@ Rules:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1662,14 +1672,14 @@ Rules:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle event ordering when using Kafka with multiple partitions?**
 
@@ -1700,13 +1710,13 @@ Fix: Key by orderId
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Event-Driven Microservices. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1717,7 +1727,7 @@ Fix: Key by orderId
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1751,7 +1761,7 @@ Fix: Key by orderId
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1776,7 +1786,7 @@ Fix: Key by orderId
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1792,13 +1802,13 @@ Fix: Key by orderId
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1811,7 +1821,7 @@ Fix: Key by orderId
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1831,7 +1841,7 @@ Fix: Key by orderId
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1843,7 +1853,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 You post a photo on social media. Your friend in another city doesn't see it for 2 seconds. That's eventual consistency. The photo will appear everywhere eventually, just not instantly.
@@ -1908,7 +1918,7 @@ For these: Use strong consistency (single database, serializable isolation) or s
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1922,7 +1932,7 @@ For these: Use strong consistency (single database, serializable isolation) or s
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 ```
 +-------------------------------------------+
@@ -1939,14 +1949,14 @@ For these: Use strong consistency (single database, serializable isolation) or s
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your e-commerce site shows "5 items in stock" but when a user clicks "Buy," inventory is actually 0. How do you prevent this?**
 
@@ -1965,13 +1975,13 @@ _Strong answer:_
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Eventual Consistency. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1982,7 +1992,7 @@ _Strong answer:_
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2016,7 +2026,7 @@ _Strong answer:_
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

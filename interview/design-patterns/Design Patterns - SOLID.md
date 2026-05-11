@@ -18,13 +18,21 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Single Responsibility Principle (SRP)](#single-responsibility-principle-srp)
+- [Open-Closed Principle (OCP)](#open-closed-principle-ocp)
+- [Liskov Substitution Principle (LSP)](#liskov-substitution-principle-lsp)
+- [Interface Segregation Principle (ISP)](#interface-segregation-principle-isp)
+- [Dependency Inversion Principle (DIP)](#dependency-inversion-principle-dip)
+
 # Single Responsibility Principle (SRP)
 
 **TL;DR** - A class should have only one reason to change, meaning it should have only one job or responsibility.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your `UserService` class authenticates users, validates input, queries the database, sends welcome emails, generates PDF reports, and logs audit events. A change to the email template requires modifying `UserService`. A change to the database schema requires modifying `UserService`. A change to the report format requires modifying `UserService`. Six different teams modify the same class for six different reasons.
@@ -40,13 +48,13 @@ Robert C. Martin (Uncle Bob) introduced SRP as the first SOLID principle. The or
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The Single Responsibility Principle states that a class should have only one reason to change. Each class should encapsulate a single responsibility, where a "responsibility" is defined as a single axis of change driven by one actor (stakeholder or user group).
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 One class, one job, one reason to change.
@@ -60,7 +68,7 @@ SRP is not about a class doing "one thing" - it's about having "one reason to ch
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -78,7 +86,7 @@ SRP is not about a class doing "one thing" - it's about having "one reason to ch
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of SRP as departments in a company. Accounting doesn't do marketing. Marketing doesn't do legal. Each department has one domain of expertise. When tax law changes, only accounting adjusts. When ad regulations change, only marketing adjusts. Cross-functional changes (company rebrand) are coordinated, not centralized.
 
@@ -86,7 +94,7 @@ Where this analogy breaks down: Departments communicate through meetings; classe
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Each class should do one thing well. Like a toaster just toasts bread - it doesn't also brew coffee.
@@ -115,7 +123,7 @@ SRP at the macro level is the single most important factor in maintainable codeb
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -129,7 +137,7 @@ SRP at the macro level is the single most important factor in maintainable codeb
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD: Multiple responsibilities**
 
@@ -183,7 +191,7 @@ public class EmployeeReportGenerator {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -205,13 +213,13 @@ public class EmployeeReportGenerator {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Uncle Bob refined SRP years after introducing it. The original "one reason to change" was ambiguous - one developer's "reason" is another's "detail." The refined definition is "responsible to one actor." This means: if the CFO wants the payroll calculation changed and the CTO wants the database schema changed, those are different actors and different responsibilities - even if both currently live in the same class. SRP is about organizational boundaries, not code structure.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you know when a class violates SRP? What's the practical test?**
 
@@ -252,13 +260,13 @@ My rule: if two classes always change together, they should be one class. SRP is
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Single Responsibility Principle (SRP). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -269,7 +277,7 @@ My rule: if two classes always change together, they should be one class. SRP is
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -303,7 +311,7 @@ My rule: if two classes always change together, they should be one class. SRP is
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -328,7 +336,7 @@ My rule: if two classes always change together, they should be one class. SRP is
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your payment system processes credit cards. A new requirement: support PayPal. You modify the `PaymentProcessor` class, adding PayPal logic. Then Apple Pay. Then crypto. Each addition modifies the same class, risking regression in existing payment methods. Every deployment is a full regression test of all payment methods.
@@ -344,13 +352,13 @@ Bertrand Meyer introduced OCP in 1988, originally through inheritance. Robert C.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The Open-Closed Principle states that software entities (classes, modules, functions) should be open for extension but closed for modification. You should be able to add new behavior without changing existing, working code.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Add new features by writing new code, not changing old code.
@@ -364,7 +372,7 @@ OCP doesn't mean you never modify code. It means the most common change scenario
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -382,7 +390,7 @@ OCP doesn't mean you never modify code. It means the most common change scenario
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -394,7 +402,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Add a new feature by plugging in a new piece, not by rewriting what already works.
@@ -423,7 +431,7 @@ OCP is the most misapplied SOLID principle. Over-eager OCP creates "speculative 
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -437,7 +445,7 @@ OCP is the most misapplied SOLID principle. Over-eager OCP creates "speculative 
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD: Modifying existing code for each new type**
 
@@ -479,7 +487,7 @@ public record Triangle(double base, double height)
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -501,13 +509,13 @@ public record Triangle(double base, double height)
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 The `if/else` chain that OCP eliminates is often faster than polymorphic dispatch. JVM branch prediction on `instanceof` checks can outperform virtual method table lookups in hot paths. Performance-critical code (game engines, HFT systems) sometimes deliberately violates OCP with switch statements for speed. The lesson: OCP is a maintainability principle, not a performance principle. Apply it where change is frequent, not where nanoseconds matter.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you apply OCP without creating premature abstractions?**
 
@@ -526,13 +534,13 @@ Signs you need OCP now: (1) you've modified the same switch/if-else 3+ times, (2
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Open-Closed Principle (OCP). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -543,7 +551,7 @@ Signs you need OCP now: (1) you've modified the same switch/if-else 3+ times, (2
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -577,7 +585,7 @@ Signs you need OCP now: (1) you've modified the same switch/if-else 3+ times, (2
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -602,7 +610,7 @@ Signs you need OCP now: (1) you've modified the same switch/if-else 3+ times, (2
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You have a `Rectangle` class with `setWidth()` and `setHeight()`. `Square extends Rectangle`. But a square must keep width and height equal, so `Square.setWidth()` also sets height. Code that expects a `Rectangle` calls `setWidth(5); setHeight(10); assert area() == 50;`. With a `Square`, the area is 100. The subclass breaks the parent's contract.
@@ -618,13 +626,13 @@ Barbara Liskov defined the principle in 1987. It formalizes what "is-a" really m
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The Liskov Substitution Principle states that objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program. Subtypes must honor the behavioral contract of their supertypes: preconditions cannot be strengthened, postconditions cannot be weakened, and invariants must be preserved.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Subclasses must work anywhere the parent class works without surprises.
@@ -638,7 +646,7 @@ LSP is not about inheritance syntax - it's about behavioral contracts. If a meth
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -652,7 +660,7 @@ LSP is not about inheritance syntax - it's about behavioral contracts. If a meth
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -664,7 +672,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 If you promise something works a certain way, every version of it must work that way. A substitute teacher must still teach the class, not show movies all day.
@@ -693,7 +701,7 @@ LSP is the formal statement of "design by contract." In practice, I use LSP as a
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -707,7 +715,7 @@ LSP is the formal statement of "design by contract." In practice, I use LSP as a
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD: LSP violation**
 
@@ -761,7 +769,7 @@ public record Square(int side) implements Shape {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -783,13 +791,13 @@ public record Square(int side) implements Shape {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Java's `Collections.unmodifiableList()` returns a `List` that throws `UnsupportedOperationException` on `add()`. This is technically an LSP violation - callers expecting `List` semantics get an exception. The Java designers accepted this pragmatic compromise because the alternative (separate `ReadOnlyList` interface) would split the entire collection ecosystem. Sometimes a documented LSP violation is better than a perfect type hierarchy.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Give three LSP violations in the Java standard library.**
 
@@ -807,13 +815,13 @@ All three exist because the Java designers prioritized reuse over correctness. T
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Liskov Substitution Principle (LSP). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -824,7 +832,7 @@ All three exist because the Java designers prioritized reuse over correctness. T
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -858,7 +866,7 @@ All three exist because the Java designers prioritized reuse over correctness. T
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -883,7 +891,7 @@ All three exist because the Java designers prioritized reuse over correctness. T
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your `Worker` interface has methods: `work()`, `eat()`, `sleep()`. A `HumanWorker` implements all three naturally. A `RobotWorker` must implement `eat()` and `sleep()` as no-ops or throw exceptions. The robot is forced to depend on methods it doesn't need.
@@ -899,13 +907,13 @@ Uncle Bob introduced ISP as part of SOLID. It's related to SRP but applied to in
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The Interface Segregation Principle states that no client should be forced to depend on methods it does not use. Large interfaces should be split into smaller, more specific ones so that clients only know about the methods they need.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Many small interfaces are better than one large interface.
@@ -919,7 +927,7 @@ ISP is about coupling. A client that depends on 15 methods is coupled to 15 chan
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -933,7 +941,7 @@ ISP is about coupling. A client that depends on 15 methods is coupled to 15 chan
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -945,7 +953,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Don't force people to carry a toolbox when they need one screwdriver. Give them just the screwdriver.
@@ -974,7 +982,7 @@ ISP's deepest impact is on compile-time dependencies and deployment. In a monoli
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -988,7 +996,7 @@ ISP's deepest impact is on compile-time dependencies and deployment. In a monoli
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD: Fat interface**
 
@@ -1054,7 +1062,7 @@ public class PrintService {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1076,13 +1084,13 @@ public class PrintService {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Java 8's functional interfaces (`Predicate`, `Function`, `Consumer`, `Supplier`) are ISP taken to the extreme - each has exactly one method. This is why lambdas work: a lambda can implement any single-method interface. ISP and functional programming converge at the same endpoint: small, composable contracts. The difference between a "well-segregated interface" and a "functional interface" is just the degree of segregation.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How does ISP relate to microservice API design?**
 
@@ -1101,13 +1109,13 @@ This is ISP: the "fat interface" is the monolithic REST API. The "segregated int
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Interface Segregation Principle (ISP). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1118,7 +1126,7 @@ This is ISP: the "fat interface" is the monolithic REST API. The "segregated int
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1152,7 +1160,7 @@ This is ISP: the "fat interface" is the monolithic REST API. The "segregated int
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1177,7 +1185,7 @@ This is ISP: the "fat interface" is the monolithic REST API. The "segregated int
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your `OrderService` directly instantiates `MySQLOrderRepository`. To switch to PostgreSQL, you modify `OrderService`. To test without a database, you can't - the `new MySQLOrderRepository()` call is hardcoded. The business logic is welded to the infrastructure.
@@ -1193,13 +1201,13 @@ Uncle Bob introduced DIP as the "D" in SOLID. It's the theoretical foundation fo
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The Dependency Inversion Principle states: (1) High-level modules should not depend on low-level modules. Both should depend on abstractions. (2) Abstractions should not depend on details. Details should depend on abstractions. The direction of dependency is inverted: instead of high-level depending on low-level, both depend on a shared abstraction.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Depend on abstractions, not implementations.
@@ -1213,7 +1221,7 @@ The word "inversion" is key. Normally, `OrderService` (high-level) depends on `M
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1231,7 +1239,7 @@ The word "inversion" is key. Normally, `OrderService` (high-level) depends on `M
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1243,7 +1251,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Don't hardcode dependencies. Use interchangeable parts. Like a USB port that works with any USB device - you don't build the device into the computer.
@@ -1272,7 +1280,7 @@ DIP is the architectural principle that enables clean architecture, hexagonal ar
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1286,7 +1294,7 @@ DIP is the architectural principle that enables clean architecture, hexagonal ar
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD: High-level depends on low-level**
 
@@ -1352,7 +1360,7 @@ class OrderServiceTest {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1374,13 +1382,13 @@ class OrderServiceTest {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 DIP is often confused with dependency injection (DI), but they're different concepts. DIP is the principle: depend on abstractions. DI is the mechanism: a framework injects the implementation. You can follow DIP without DI (manually wire implementations). You can use DI without DIP (inject concrete classes). The principle is about direction of dependency; the framework is about object construction. Understanding this distinction separates developers who follow SOLID by principle from those who follow it by tooling.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: DIP vs DI vs IoC - what's the difference?**
 
@@ -1420,13 +1428,13 @@ The anti-pattern: Service A directly calls Service B's internal API, coupled to 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Dependency Inversion Principle (DIP). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1437,7 +1445,7 @@ The anti-pattern: Service A directly calls Service B's internal API, coupled to 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1471,7 +1479,7 @@ The anti-pattern: Service A directly calls Service B's internal API, coupled to 
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

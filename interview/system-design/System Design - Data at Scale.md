@@ -19,26 +19,35 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Sharding and Partitioning](#sharding-and-partitioning)
+- [Replication Strategies](#replication-strategies)
+- [Write-Ahead Log](#write-ahead-log)
+- [CRDTs](#crdts)
+- [Distributed Locking](#distributed-locking)
+- [Database Indexing at Scale](#database-indexing-at-scale)
+
 # Sharding and Partitioning
 
 **TL;DR** - Sharding (horizontal partitioning) distributes data across multiple database nodes so no single node holds all the data. It enables horizontal scaling of storage and throughput but introduces complexity in queries, joins, and rebalancing. The shard key choice is the most critical decision.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Single PostgreSQL server: 500GB storage, 10K writes/sec max. Your dataset is 5TB and growing 100GB/month. Vertical scaling (bigger server) is 10x more expensive and has a ceiling. You need to spread data across multiple machines.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -51,7 +60,7 @@ Single PostgreSQL server: 500GB storage, 10K writes/sec max. Your dataset is 5TB
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -71,7 +80,7 @@ Single PostgreSQL server: 500GB storage, 10K writes/sec max. Your dataset is 5TB
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -83,7 +92,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of one giant database, split the data across 10 smaller databases. Each holds a slice. Like splitting a phone book into A-F, G-L, M-R, S-Z volumes.
@@ -191,7 +200,7 @@ Rule: Exhaust single-node optimizations before sharding. Sharding is a one-way d
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -205,7 +214,7 @@ Rule: Exhaust single-node optimizations before sharding. Sharding is a one-way d
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -224,14 +233,14 @@ Rule: Exhaust single-node optimizations before sharding. Sharding is a one-way d
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You're sharding a social media database. How do you handle the "celebrity problem" (one user has 100M followers)?**
 
@@ -280,13 +289,13 @@ Detection: follower_count threshold (configurable)
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Sharding and Partitioning. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -297,7 +306,7 @@ Detection: follower_count threshold (configurable)
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -331,7 +340,7 @@ Detection: follower_count threshold (configurable)
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -356,20 +365,20 @@ Detection: follower_count threshold (configurable)
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Single database server: if it dies, your data is gone and your system is down. No copies = no fault tolerance, no read scaling, no geographic distribution.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -382,7 +391,7 @@ Single database server: if it dies, your data is gone and your system is down. N
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -402,7 +411,7 @@ Single database server: if it dies, your data is gone and your system is down. N
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -414,7 +423,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Keep copies of your data on multiple servers. If one dies, others have the data. Bonus: spread reads across copies for better performance.
@@ -530,7 +539,7 @@ Tunable:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -544,7 +553,7 @@ Tunable:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -563,14 +572,14 @@ Tunable:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Design the replication strategy for a global e-commerce platform with users in US, EU, and Asia.**
 
@@ -631,13 +640,13 @@ Reserve stock -> route to warehouse region's primary
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Replication Strategies. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -648,7 +657,7 @@ Reserve stock -> route to warehouse region's primary
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -682,7 +691,7 @@ Reserve stock -> route to warehouse region's primary
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -707,20 +716,20 @@ Reserve stock -> route to warehouse region's primary
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Database writes directly to data files. Power fails mid-write: data file is partially written (corrupted). On restart, database state is inconsistent. No way to know what was committed vs partially applied.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -733,7 +742,7 @@ Database writes directly to data files. Power fails mid-write: data file is part
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -753,7 +762,7 @@ Database writes directly to data files. Power fails mid-write: data file is part
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -765,7 +774,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Before changing the actual data, write "I'm about to do X" to a log file. If the system crashes, replay the log to see exactly what happened and finish any incomplete operations.
@@ -881,7 +890,7 @@ Why it's fast:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -895,7 +904,7 @@ Why it's fast:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -914,14 +923,14 @@ Why it's fast:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How does PostgreSQL use WAL for replication? What's the difference between physical and logical replication?**
 
@@ -983,13 +992,13 @@ Consumers build: search index, cache,
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Write-Ahead Log. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1000,7 +1009,7 @@ Consumers build: search index, cache,
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1034,7 +1043,7 @@ Consumers build: search index, cache,
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1059,20 +1068,20 @@ Consumers build: search index, cache,
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Two users edit a shared document offline. When they reconnect, changes conflict. Traditional approaches: last-write-wins (loses data), custom merge logic (complex, error-prone), or locking (requires coordination, kills availability).
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1085,7 +1094,7 @@ Two users edit a shared document offline. When they reconnect, changes conflict.
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1105,7 +1114,7 @@ Two users edit a shared document offline. When they reconnect, changes conflict.
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1117,7 +1126,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Special data structures designed so that any combination of updates, in any order, always produces the same result. Like addition: 3+5+2 = 2+3+5 = 10, regardless of order.
@@ -1233,7 +1242,7 @@ public class ORSet<T> {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1247,7 +1256,7 @@ public class ORSet<T> {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1266,14 +1275,14 @@ public class ORSet<T> {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Design a collaborative shopping cart using CRDTs that works offline.**
 
@@ -1317,13 +1326,13 @@ Both reconnect -> merge:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for CRDTs. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1334,7 +1343,7 @@ Both reconnect -> merge:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1368,7 +1377,7 @@ Both reconnect -> merge:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1393,20 +1402,20 @@ Both reconnect -> merge:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Two payment processors both read "balance = $100," both approve a $75 withdrawal, both write "balance = $25." The real balance should be $25 (one approved) or -$50 (both approved - overdraft). Without distributed locking, both processes race to corrupt data.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1419,7 +1428,7 @@ Two payment processors both read "balance = $100," both approve a $75 withdrawal
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1439,7 +1448,7 @@ Two payment processors both read "balance = $100," both approve a $75 withdrawal
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1451,7 +1460,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A "lock" that works across multiple servers. Only one server at a time can hold the lock and do the critical work. Others wait or fail fast.
@@ -1573,7 +1582,7 @@ etcd uses Raft consensus internally:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1587,7 +1596,7 @@ etcd uses Raft consensus internally:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1606,14 +1615,14 @@ etcd uses Raft consensus internally:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Design a distributed lock for deduplicating payment processing across 3 data centers.**
 
@@ -1666,13 +1675,13 @@ Crash recovery:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Distributed Locking. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1683,7 +1692,7 @@ Crash recovery:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1717,7 +1726,7 @@ Crash recovery:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1742,20 +1751,20 @@ Crash recovery:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Table with 100M rows. `SELECT * FROM users WHERE email = 'alice@example.com'` requires scanning all 100M rows. On SSD: ~100 seconds. With a B-tree index on email: ~5ms (20,000x faster).
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1768,7 +1777,7 @@ Table with 100M rows. `SELECT * FROM users WHERE email = 'alice@example.com'` re
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1788,7 +1797,7 @@ Table with 100M rows. `SELECT * FROM users WHERE email = 'alice@example.com'` re
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1800,7 +1809,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Like a book's index: instead of reading every page to find "microservices," look up "microservices" in the index to find page 42. Go directly to page 42.
@@ -1939,7 +1948,7 @@ CREATE TABLE events (
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1953,7 +1962,7 @@ CREATE TABLE events (
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1972,14 +1981,14 @@ CREATE TABLE events (
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your query `SELECT * FROM orders WHERE user_id=? AND status='pending' ORDER BY created_at DESC LIMIT 20` is slow on a 500M-row table. Design the optimal index.**
 
@@ -2026,13 +2035,13 @@ Why better:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Database Indexing at Scale. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2043,7 +2052,7 @@ Why better:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2077,7 +2086,7 @@ Why better:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

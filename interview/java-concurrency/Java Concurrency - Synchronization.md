@@ -20,13 +20,23 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [synchronized](#synchronized)
+- [volatile](#volatile)
+- [Java Memory Model](#java-memory-model)
+- [ReentrantLock](#reentrantlock)
+- [ReadWriteLock and StampedLock](#readwritelock-and-stampedlock)
+- [Atomic Variables and CAS](#atomic-variables-and-cas)
+- [ThreadLocal](#threadlocal)
+
 # synchronized
 
 **TL;DR** - The `synchronized` keyword provides mutual exclusion (only one thread at a time) and memory visibility (changes made by one thread are visible to others) through intrinsic locks (monitors) built into every Java object.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Two threads increment a counter simultaneously: both read 5, both write 6. One increment is lost. Bank balances go wrong. Data structures corrupt. Programs produce different results on different runs.
@@ -42,13 +52,13 @@ synchronized (Java 1.0) -> ReentrantLock (Java 5) -> StampedLock (Java 8) -> Vir
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 `synchronized` acquires the intrinsic lock (monitor) of an object before executing a block, releases it on exit. Only one thread can hold an object's monitor at a time. It provides two guarantees: mutual exclusion (atomicity of the block) and happens-before visibility (writes by the lock holder are visible to subsequent holders).
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 synchronized = one thread at a time, and changes are visible to the next thread.
@@ -62,7 +72,7 @@ Synchronized provides BOTH atomicity AND visibility. Using it for only one purpo
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -82,7 +92,7 @@ Synchronized provides BOTH atomicity AND visibility. Using it for only one purpo
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -94,7 +104,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A lock that ensures only one thread runs a section of code at a time, preventing data corruption from simultaneous access.
@@ -188,7 +198,7 @@ Performance reality (modern JVMs):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -202,7 +212,7 @@ Performance reality (modern JVMs):
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Over-synchronization (bottleneck):**
 
@@ -240,7 +250,7 @@ public class UserService {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -262,14 +272,14 @@ public class UserService {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between synchronized method and synchronized block?**
 
@@ -376,13 +386,13 @@ try {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for synchronized. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -393,7 +403,7 @@ try {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -427,7 +437,7 @@ try {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -452,7 +462,7 @@ try {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Thread A sets `running = false`, but Thread B never sees the change because its CPU cache still holds `true`. Thread B loops forever. The JVM is allowed to cache variables in registers/CPU cache and never re-read from main memory without explicit memory barriers.
@@ -462,13 +472,13 @@ Thread A sets `running = false`, but Thread B never sees the change because its 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The `volatile` keyword in Java ensures that reads and writes to a variable go directly to main memory (or more precisely, establish happens-before relationships). Every read of a volatile variable sees the most recent write by any thread. Additionally, volatile prevents compiler and CPU reordering of instructions around volatile accesses.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -481,7 +491,7 @@ The `volatile` keyword in Java ensures that reads and writes to a variable go di
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -501,7 +511,7 @@ The `volatile` keyword in Java ensures that reads and writes to a variable go di
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -513,7 +523,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 volatile means "always read the freshest value" - no caching tricks by the CPU or compiler.
@@ -605,7 +615,7 @@ Valid uses of volatile:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -619,7 +629,7 @@ Valid uses of volatile:
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - volatile for compound operations:**
 
@@ -645,7 +655,7 @@ public int nextSequence() {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -667,14 +677,14 @@ public int nextSequence() {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between volatile and synchronized?**
 
@@ -737,13 +747,13 @@ Another thread sees non-null `instance` at step 2 and uses a partially construct
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for volatile. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -754,7 +764,7 @@ Another thread sees non-null `instance` at step 2 and uses a partially construct
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -788,7 +798,7 @@ Another thread sees non-null `instance` at step 2 and uses a partially construct
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -813,7 +823,7 @@ Another thread sees non-null `instance` at step 2 and uses a partially construct
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without a memory model, the behavior of multithreaded programs depends on hardware (x86 vs ARM have different memory ordering), JIT compiler optimizations, and OS scheduling. Code that works on your machine silently breaks on another.
@@ -823,13 +833,13 @@ Without a memory model, the behavior of multithreaded programs depends on hardwa
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The Java Memory Model (JSR-133, revised in Java 5) specifies which values a read of a shared variable may return given the writes in the program. Its key abstraction is the "happens-before" relationship: if action A happens-before action B, then B is guaranteed to see A's effects.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -842,7 +852,7 @@ The Java Memory Model (JSR-133, revised in Java 5) specifies which values a read
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -862,7 +872,7 @@ The Java Memory Model (JSR-133, revised in Java 5) specifies which values a read
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -874,7 +884,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 The JMM is a contract between your code and the JVM: it defines when Thread B can "see" what Thread A wrote to shared memory.
@@ -946,7 +956,7 @@ x = r1;          y = r2;
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -960,7 +970,7 @@ x = r1;          y = r2;
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -982,14 +992,14 @@ x = r1;          y = r2;
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is happens-before and why does it matter?**
 
@@ -1050,13 +1060,13 @@ volatile MyObject obj;
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Java Memory Model (JMM). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1067,7 +1077,7 @@ volatile MyObject obj;
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1101,7 +1111,7 @@ volatile MyObject obj;
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1126,7 +1136,7 @@ volatile MyObject obj;
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 synchronized is all-or-nothing: you can't attempt a lock without blocking, can't time out, can't interrupt a waiting thread, can't have fair ordering, and can't have multiple wait-sets on the same lock.
@@ -1136,13 +1146,13 @@ synchronized is all-or-nothing: you can't attempt a lock without blocking, can't
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1155,7 +1165,7 @@ synchronized is all-or-nothing: you can't attempt a lock without blocking, can't
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1175,7 +1185,7 @@ synchronized is all-or-nothing: you can't attempt a lock without blocking, can't
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1187,7 +1197,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Like synchronized but with more control - you can try the lock, give up after a timeout, and have multiple waiting lines.
@@ -1282,7 +1292,7 @@ Condition notFull = lock.newCondition();
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1296,7 +1306,7 @@ Condition notFull = lock.newCondition();
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Potential deadlock with synchronized:**
 
@@ -1333,7 +1343,7 @@ while (true) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1355,14 +1365,14 @@ while (true) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When would you choose ReentrantLock over synchronized?**
 
@@ -1408,13 +1418,13 @@ Example: `synchronized hashCode()` calls `synchronized equals()` on the same obj
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for ReentrantLock. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1425,7 +1435,7 @@ Example: `synchronized hashCode()` calls `synchronized equals()` on the same obj
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1459,7 +1469,7 @@ Example: `synchronized hashCode()` calls `synchronized equals()` on the same obj
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1484,7 +1494,7 @@ Example: `synchronized hashCode()` calls `synchronized equals()` on the same obj
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 A cache is read 1000x/sec and written 1x/sec. With exclusive locking, all 1000 reads serialize behind each other even though reading is inherently safe when no write is happening.
@@ -1494,13 +1504,13 @@ A cache is read 1000x/sec and written 1x/sec. With exclusive locking, all 1000 r
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1513,7 +1523,7 @@ A cache is read 1000x/sec and written 1x/sec. With exclusive locking, all 1000 r
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1533,7 +1543,7 @@ A cache is read 1000x/sec and written 1x/sec. With exclusive locking, all 1000 r
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1545,7 +1555,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 ReadWriteLock lets multiple readers in simultaneously but makes everyone wait when a writer needs exclusive access.
@@ -1639,7 +1649,7 @@ StampedLock is not reentrant - acquiring twice deadlocks. It's a specialized too
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1653,7 +1663,7 @@ StampedLock is not reentrant - acquiring twice deadlocks. It's a specialized too
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1675,14 +1685,14 @@ StampedLock is not reentrant - acquiring twice deadlocks. It's a specialized too
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When does ReadWriteLock hurt performance?**
 
@@ -1718,13 +1728,13 @@ This is ideal for read-dominated workloads where writes are rare. The common pat
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for ReadWriteLock and StampedLock. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1735,7 +1745,7 @@ This is ideal for read-dominated workloads where writes are rare. The common pat
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1769,7 +1779,7 @@ This is ideal for read-dominated workloads where writes are rare. The common pat
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1794,7 +1804,7 @@ This is ideal for read-dominated workloads where writes are rare. The common pat
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Incrementing a counter requires a lock. Under high contention, threads spend more time waiting for the lock than doing actual work. A simple counter becomes a scalability bottleneck.
@@ -1804,13 +1814,13 @@ Incrementing a counter requires a lock. Under high contention, threads spend mor
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1823,7 +1833,7 @@ Incrementing a counter requires a lock. Under high contention, threads spend mor
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1843,7 +1853,7 @@ Incrementing a counter requires a lock. Under high contention, threads spend mor
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1855,7 +1865,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 CAS is like a conditional update: "Change this value from 5 to 6, but only if it's still 5. If someone already changed it, tell me and I'll retry."
@@ -1954,7 +1964,7 @@ long total = adder.sum(); // eventual read
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1968,7 +1978,7 @@ long total = adder.sum(); // eventual read
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Lock for simple counter:**
 
@@ -2006,7 +2016,7 @@ public long getCount() {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -2028,14 +2038,14 @@ public long getCount() {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Explain the ABA problem and how to solve it.**
 
@@ -2086,13 +2096,13 @@ Use AtomicLong for: sequences (need exact value), low-contention counters, when 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Atomic Variables and CAS. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2103,7 +2113,7 @@ Use AtomicLong for: sequences (need exact value), low-contention counters, when 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2137,7 +2147,7 @@ Use AtomicLong for: sequences (need exact value), low-contention counters, when 
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -2162,7 +2172,7 @@ Use AtomicLong for: sequences (need exact value), low-contention counters, when 
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 `SimpleDateFormat` is not thread-safe. To use it in a multi-threaded server, you either synchronize (bottleneck), create a new instance per call (expensive GC pressure), or somehow give each thread its own instance. ThreadLocal solves the third approach.
@@ -2172,13 +2182,13 @@ Use AtomicLong for: sequences (need exact value), low-contention counters, when 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -2191,7 +2201,7 @@ Use AtomicLong for: sequences (need exact value), low-contention counters, when 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -2211,7 +2221,7 @@ Use AtomicLong for: sequences (need exact value), low-contention counters, when 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -2223,7 +2233,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Each thread gets its own private copy of a variable. No sharing = no race conditions.
@@ -2310,7 +2320,7 @@ With virtual threads, you might have millions of threads. Each with a ThreadLoca
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -2324,7 +2334,7 @@ With virtual threads, you might have millions of threads. Each with a ThreadLoca
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - ThreadLocal leak in thread pool:**
 
@@ -2355,7 +2365,7 @@ executor.submit(() -> {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -2377,13 +2387,13 @@ executor.submit(() -> {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 ThreadLocal values are stored in the Thread object itself, not in the ThreadLocal variable. When a thread dies, its ThreadLocalMap is garbage collected. But in thread pools, threads never die - so ThreadLocal values accumulate indefinitely unless explicitly removed. This is the #1 cause of memory leaks in Java web applications.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How does Spring use ThreadLocal internally?**
 
@@ -2443,13 +2453,13 @@ Benefits over ThreadLocal:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for ThreadLocal. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2460,7 +2470,7 @@ Benefits over ThreadLocal:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2494,7 +2504,7 @@ Benefits over ThreadLocal:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

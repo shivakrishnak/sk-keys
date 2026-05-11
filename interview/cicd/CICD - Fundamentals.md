@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "CICD - Fundamentals"
+parent: "CI/CD"
+grand_parent: "Interview Mastery"
+nav_order: 1
+permalink: /interview/cicd/fundamentals/
 topic: CI/CD
 subtopic: Fundamentals
 keywords:
@@ -14,13 +19,22 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Continuous Integration](#continuous-integration)
+- [Continuous Delivery](#continuous-delivery)
+- [Continuous Deployment](#continuous-deployment)
+- [Pipeline Stages](#pipeline-stages)
+- [Branching Strategy](#branching-strategy)
+- [Trunk-Based Development](#trunk-based-development)
+
 # Continuous Integration
 
 **TL;DR** - CI is the practice of developers merging code to a shared mainline frequently (at least daily), with each merge triggering automated build and test - catching integration bugs within minutes instead of days.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Developers work in isolation for weeks. At "integration day," 10 branches are merged simultaneously. Conflicts everywhere. Bugs that would have been trivial to fix 2 weeks ago are now deeply embedded. Integration takes longer than development.
@@ -36,13 +50,13 @@ CI started as "merge daily" (XP practice, 1999). Added automated builds (CruiseC
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Continuous Integration is a software development practice where developers integrate code into a shared repository frequently (ideally multiple times per day), each integration verified by automated build and automated tests to detect integration errors as quickly as possible.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Merge small changes often, test automatically, fix failures immediately.
@@ -56,7 +70,7 @@ CI is a PRACTICE, not a tool. Jenkins/GitHub Actions enable CI, but you don't "h
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -76,7 +90,7 @@ CI is a PRACTICE, not a tool. Jenkins/GitHub Actions enable CI, but you don't "h
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -88,7 +102,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -107,7 +121,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 CI workflow:
@@ -135,7 +149,7 @@ CI workflow:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -149,7 +163,7 @@ CI workflow:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -171,14 +185,14 @@ CI workflow:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What's the difference between having a CI server and actually practicing CI?**
 
@@ -204,13 +218,13 @@ Maturity indicators:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Continuous Integration. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -221,7 +235,7 @@ Maturity indicators:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -255,7 +269,7 @@ Maturity indicators:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -280,7 +294,7 @@ Maturity indicators:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Code passes CI but releasing takes a week of manual steps: build release candidate, run manual regression tests, create change request, schedule maintenance window, SSH to servers, deploy, verify. Releases are rare, risky, and stressful.
@@ -290,13 +304,13 @@ Code passes CI but releasing takes a week of manual steps: build release candida
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Continuous Delivery is a software engineering approach where teams keep software in a deployable state throughout its lifecycle, enabling deployment to production at any time through a series of automated stages (build, test, staging, approval) with one-click or scheduled releases.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -309,7 +323,7 @@ Continuous Delivery is a software engineering approach where teams keep software
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -329,7 +343,7 @@ Continuous Delivery is a software engineering approach where teams keep software
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -341,7 +355,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -360,7 +374,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Continuous Delivery pipeline:
@@ -385,7 +399,7 @@ Pipeline requirements:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -399,7 +413,7 @@ Pipeline requirements:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -421,14 +435,14 @@ Pipeline requirements:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -475,13 +489,13 @@ Pipeline requirements:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Continuous Delivery. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -492,7 +506,7 @@ Pipeline requirements:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -526,7 +540,7 @@ Pipeline requirements:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -551,20 +565,20 @@ Pipeline requirements:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT (given you already have Continuous Delivery):**
 The manual approval gate becomes a bottleneck. Changes batch up waiting for approval. The person approving doesn't actually verify anything meaningful - it's just ceremony. Releases are "safe" but slow.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Continuous Deployment is the practice of automatically releasing every code change to production after it passes all stages of the automated deployment pipeline, without requiring manual approval. It requires high confidence in automated testing, observability, and rapid rollback capabilities.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -577,7 +591,7 @@ Continuous Deployment is the practice of automatically releasing every code chan
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -597,7 +611,7 @@ Continuous Deployment is the practice of automatically releasing every code chan
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -609,7 +623,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -628,7 +642,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Continuous Deployment pipeline:
@@ -654,7 +668,7 @@ Who does this:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -668,7 +682,7 @@ Who does this:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -690,14 +704,14 @@ Who does this:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -744,13 +758,13 @@ Who does this:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Continuous Deployment. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -761,7 +775,7 @@ Who does this:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -795,7 +809,7 @@ Who does this:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -820,20 +834,20 @@ Who does this:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 All checks run sequentially in random order. E2E tests run before unit tests (wasting 20 minutes before catching a typo). Security scans happen after deployment. No structure means slow feedback and missed issues.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Pipeline stages are ordered phases of a CI/CD pipeline that a code change must pass through, designed with progressive confidence: fast/cheap checks first (lint, compile), then unit tests, integration tests, security scans, and finally deployment with verification.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -846,7 +860,7 @@ Pipeline stages are ordered phases of a CI/CD pipeline that a code change must p
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -866,7 +880,7 @@ Pipeline stages are ordered phases of a CI/CD pipeline that a code change must p
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -878,7 +892,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -897,7 +911,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Optimal pipeline stage ordering:
@@ -935,7 +949,7 @@ Fail fast principle:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -949,7 +963,7 @@ Fail fast principle:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -971,14 +985,14 @@ Fail fast principle:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1025,13 +1039,13 @@ Fail fast principle:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Pipeline Stages. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1042,7 +1056,7 @@ Fail fast principle:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1076,7 +1090,7 @@ Fail fast principle:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1101,20 +1115,20 @@ Fail fast principle:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Everyone commits to main directly with no coordination. Or everyone creates long-lived branches with complex merge ceremonies. No shared convention means merge conflicts, broken builds, and release confusion.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1127,7 +1141,7 @@ Everyone commits to main directly with no coordination. Or everyone creates long
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1147,7 +1161,7 @@ Everyone commits to main directly with no coordination. Or everyone creates long
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1159,7 +1173,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1178,7 +1192,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Three main strategies:
@@ -1217,7 +1231,7 @@ Comparison:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1231,7 +1245,7 @@ Comparison:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1253,14 +1267,14 @@ Comparison:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1307,13 +1321,13 @@ Comparison:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Branching Strategy. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1324,7 +1338,7 @@ Comparison:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1358,7 +1372,7 @@ Comparison:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1383,7 +1397,7 @@ Comparison:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Feature branches live for weeks. Merging becomes a multi-day event. Integration bugs appear late. Release branches diverge. Teams spend more time managing branches than writing features.
@@ -1393,13 +1407,13 @@ Feature branches live for weeks. Merging becomes a multi-day event. Integration 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Trunk-Based Development is a source-control branching model where developers merge small, frequent updates to a core trunk (main). Optional short-lived feature branches (< 1 day) are used only for code review, with feature flags controlling visibility of incomplete features in production.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1412,7 +1426,7 @@ Trunk-Based Development is a source-control branching model where developers mer
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1432,7 +1446,7 @@ Trunk-Based Development is a source-control branching model where developers mer
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1444,7 +1458,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1463,7 +1477,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Trunk-Based Development:
@@ -1496,7 +1510,7 @@ Prerequisites:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1510,7 +1524,7 @@ Prerequisites:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1532,14 +1546,14 @@ Prerequisites:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle a feature that takes 3 weeks to build with trunk-based development?**
 
@@ -1567,13 +1581,13 @@ Key: at no point does main become undeployable. Every commit is production-safe.
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Trunk-Based Development. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1584,7 +1598,7 @@ Key: at no point does main become undeployable. Every commit is production-safe.
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1618,7 +1632,7 @@ Key: at no point does main become undeployable. Every commit is production-safe.
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

@@ -18,13 +18,21 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [IoC Container and Dependency Injection](#ioc-container-and-dependency-injection)
+- [ApplicationContext](#applicationcontext)
+- [Bean Lifecycle](#bean-lifecycle)
+- [Bean Scopes](#bean-scopes)
+- [Circular Dependencies](#circular-dependencies)
+
 # IoC Container and Dependency Injection
 
 **TL;DR** - Inversion of Control means the framework creates and wires objects (beans) instead of your code creating them. Dependency Injection is the mechanism: Spring provides dependencies to objects rather than objects fetching their own dependencies.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Every class creates its own dependencies: `new UserRepository(new DataSource(new ConnectionPool(...)))`. Changes cascade everywhere. Testing requires rewriting construction logic. Swapping implementations requires modifying every consumer.
@@ -40,7 +48,7 @@ Direct construction (new) -> Factory Pattern -> Service Locator -> Dependency In
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 **Inversion of Control (IoC):** The principle where the framework controls object creation and lifecycle, inverting the traditional flow where application code controls everything.
 
@@ -48,7 +56,7 @@ Direct construction (new) -> Factory Pattern -> Service Locator -> Dependency In
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 You declare what you need; Spring figures out how to create and provide it.
@@ -62,7 +70,7 @@ DI doesn't eliminate dependencies - it makes them explicit and externally config
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -82,7 +90,7 @@ DI doesn't eliminate dependencies - it makes them explicit and externally config
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -94,7 +102,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of building your own tools, you tell someone what tools you need and they hand them to you ready-made.
@@ -187,7 +195,7 @@ private UserRepo repo; // hard to mock in tests
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -201,7 +209,7 @@ private UserRepo repo; // hard to mock in tests
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Field injection (untestable):**
 
@@ -243,7 +251,7 @@ void testPayment() {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -265,14 +273,14 @@ void testPayment() {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What are the three types of dependency injection and which do you prefer?**
 
@@ -364,13 +372,13 @@ In practice, you always use ApplicationContext. BeanFactory is an internal abstr
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for IoC Container and Dependency Injection. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -381,7 +389,7 @@ In practice, you always use ApplicationContext. BeanFactory is an internal abstr
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -415,7 +423,7 @@ In practice, you always use ApplicationContext. BeanFactory is an internal abstr
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -440,20 +448,20 @@ In practice, you always use ApplicationContext. BeanFactory is an internal abstr
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without a central container, there's no single place that knows about all objects, their configurations, their lifecycle, and their relationships. Each component bootstraps itself, leading to scattered initialization and no unified way to configure the application.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -466,7 +474,7 @@ Without a central container, there's no single place that knows about all object
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -486,7 +494,7 @@ Without a central container, there's no single place that knows about all object
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -498,7 +506,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 ApplicationContext is Spring's "master registry" - it knows about every object in your application, how to create them, and how they connect to each other.
@@ -564,7 +572,7 @@ The context is hierarchical: child contexts can see parent beans but not vice ve
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -578,7 +586,7 @@ The context is hierarchical: child contexts can see parent beans but not vice ve
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -597,14 +605,14 @@ The context is hierarchical: child contexts can see parent beans but not vice ve
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Explain the Spring Boot startup sequence.**
 
@@ -664,13 +672,13 @@ The ONLY functional difference today: `@Repository` enables persistence exceptio
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for ApplicationContext. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -681,7 +689,7 @@ The ONLY functional difference today: `@Repository` enables persistence exceptio
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -715,7 +723,7 @@ The ONLY functional difference today: `@Repository` enables persistence exceptio
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -740,20 +748,20 @@ The ONLY functional difference today: `@Repository` enables persistence exceptio
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without lifecycle hooks, you can't run initialization logic after all dependencies are injected (constructor runs before injection), can't validate configuration, and can't clean up resources (close connections, stop schedulers) on shutdown.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -766,7 +774,7 @@ Without lifecycle hooks, you can't run initialization logic after all dependenci
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -786,7 +794,7 @@ Without lifecycle hooks, you can't run initialization logic after all dependenci
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -798,7 +806,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Beans have a birth, a life, and a death. Spring gives you hooks at each stage to run custom logic.
@@ -901,7 +909,7 @@ public class KafkaConsumer
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -915,7 +923,7 @@ public class KafkaConsumer
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -934,14 +942,14 @@ public class KafkaConsumer
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: In what order do lifecycle callbacks execute?**
 
@@ -980,13 +988,13 @@ Fix: Use `ApplicationReadyEvent` (fires after all beans and proxies are created)
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Bean Lifecycle. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -997,7 +1005,7 @@ Fix: Use `ApplicationReadyEvent` (fires after all beans and proxies are created)
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1031,7 +1039,7 @@ Fix: Use `ApplicationReadyEvent` (fires after all beans and proxies are created)
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1056,20 +1064,20 @@ Fix: Use `ApplicationReadyEvent` (fires after all beans and proxies are created)
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Some objects should exist once (database connection pool), some should be created fresh each time (form builder with state), and some should live per HTTP request (user context). Without scopes, you'd manually manage all these lifecycles.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1082,7 +1090,7 @@ Some objects should exist once (database connection pool), some should be create
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1102,7 +1110,7 @@ Some objects should exist once (database connection pool), some should be create
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1114,7 +1122,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Scope answers: "How many of these objects exist and when are they created/destroyed?"
@@ -1211,7 +1219,7 @@ The proxy (CGLIB subclass) intercepts method calls and dispatches to the correct
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1225,7 +1233,7 @@ The proxy (CGLIB subclass) intercepts method calls and dispatches to the correct
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1244,14 +1252,14 @@ The proxy (CGLIB subclass) intercepts method calls and dispatches to the correct
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What happens when a singleton bean depends on a prototype bean?**
 
@@ -1281,13 +1289,13 @@ Best practice: `ObjectFactory<T>` or `Provider<T>` - explicit, testable, no prox
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Bean Scopes. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1298,7 +1306,7 @@ Best practice: `ObjectFactory<T>` or `Provider<T>` - explicit, testable, no prox
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1332,7 +1340,7 @@ Best practice: `ObjectFactory<T>` or `Provider<T>` - explicit, testable, no prox
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1357,20 +1365,20 @@ Best practice: `ObjectFactory<T>` or `Provider<T>` - explicit, testable, no prox
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT (understanding):**
 Without understanding circular dependencies, you get cryptic startup errors (`BeanCurrentlyInCreationException`) and may "fix" them by switching to field injection - which hides the design problem rather than solving it.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1383,7 +1391,7 @@ Without understanding circular dependencies, you get cryptic startup errors (`Be
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1403,7 +1411,7 @@ Without understanding circular dependencies, you get cryptic startup errors (`Be
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1415,7 +1423,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A needs B, but B also needs A. It's a chicken-and-egg problem - which do you create first?
@@ -1516,7 +1524,7 @@ This is intentional - circular deps are almost always a design smell.
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1530,7 +1538,7 @@ This is intentional - circular deps are almost always a design smell.
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1552,14 +1560,14 @@ This is intentional - circular deps are almost always a design smell.
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How would you fix a circular dependency in production code?**
 
@@ -1590,13 +1598,13 @@ public class OrderService {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Circular Dependencies. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1607,7 +1615,7 @@ public class OrderService {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1641,7 +1649,7 @@ public class OrderService {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

@@ -20,13 +20,23 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Variables and Data Types](#variables-and-data-types)
+- [Object-Oriented Programming](#object-oriented-programming)
+- [Classes and Objects](#classes-and-objects)
+- [Interfaces and Abstract Classes](#interfaces-and-abstract-classes)
+- [Access Modifiers](#access-modifiers)
+- [String and Immutability](#string-and-immutability)
+- [Pass by Value vs Pass by Reference](#pass-by-value-vs-pass-by-reference)
+
 # Variables and Data Types
 
 **TL;DR** - Java is statically typed with 8 primitives that live on the stack and objects that live on the heap, and knowing the difference prevents half of all beginner bugs.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Imagine writing a program where any variable can hold any value at any time. Your `age` variable starts as a number, someone assigns a string to it, and downstream code that does arithmetic silently produces garbage. You discover the bug in production, three months later, from a customer report.
@@ -42,13 +52,13 @@ Early languages like FORTRAN had implicit typing by variable name prefix. C intr
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Java's type system divides all data into two categories: primitive types (8 fixed-size value types stored on the stack) and reference types (objects stored on the heap, accessed via pointers). Every variable must be declared with a type before use, and the compiler enforces type safety at compile time, preventing category errors before the program runs.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Java has 8 small value types and everything else is an object pointer.
@@ -62,7 +72,7 @@ The primitive-vs-reference distinction is not just academic - it determines equa
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -84,7 +94,7 @@ Because primitives are stack-allocated values with no identity, they use `==` fo
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Primitives are like cash in your wallet - the value is right there, you can count it instantly. Objects are like debit cards - the card itself is tiny, but it points to an account somewhere else. Two cards can point to the same account (aliasing), and if the account is closed, the card becomes useless (null pointer).
 
@@ -98,7 +108,7 @@ Where this analogy breaks down: Cash can be split (you can break a $20 into two 
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Every piece of data in Java has a type - like labeling boxes in a warehouse. Small simple values (numbers, true/false, single characters) are "primitives" and live right where you use them. Larger complex data (text, lists, custom objects) are "objects" that live in a shared storage area and you access them through a reference, like a tracking number.
@@ -123,7 +133,7 @@ The primitive/object duality in Java is an instance of a universal tension in la
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 Java's type system operates at two levels: compile-time checking and runtime representation.
 
@@ -148,7 +158,7 @@ When you write `List<Integer> list; list.add(42);`, the compiler inserts `Intege
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -174,7 +184,7 @@ At scale, the primitive vs object choice directly impacts GC pressure. A system 
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - The classic == vs .equals() trap:**
 
@@ -237,7 +247,7 @@ Use `System.identityHashCode()` to verify whether two references point to the sa
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** 8 primitive value types + reference types forming Java's static type system
 **PROBLEM IT SOLVES:** Prevents type errors at compile time, not in production
@@ -259,13 +269,13 @@ Use `System.identityHashCode()` to verify whether two references point to the sa
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Java's `Integer` cache (values -128 to 127 returning the same object for `Integer.valueOf()`) was not an optimization afterthought - it was mandated by the Java Language Specification starting in Java 5. The JLS requires that autoboxing for `boolean`, `byte`, `char` (0-127), `short`, and `int` (-128 to 127) must return cached instances. This means `Integer a = 42; Integer b = 42; a == b` is guaranteed true by specification, not by luck - but `Integer a = 200; Integer b = 200; a == b` is implementation-dependent, making `==` on boxed types one of the most subtle traps in the language.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What are the 8 primitive types in Java and why does Java have primitives at all instead of making everything an object?**
 
@@ -579,7 +589,7 @@ try {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect          | Primitives               | Reference Types             |
 | --------------- | ------------------------ | --------------------------- |
@@ -593,7 +603,7 @@ try {
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | #   | Misconception                                | Reality                                                                                                                                                                       |
 | --- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -604,7 +614,7 @@ try {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: NullPointerException on unboxing**
 **Symptom:** NPE on a line with simple arithmetic like `int x = someInteger + 1`
@@ -678,7 +688,7 @@ counts.addTo(key, 1); // no boxing
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -705,7 +715,7 @@ counts.addTo(key, 1); // no boxing
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without a clear parameter passing mechanism, calling a function with a variable becomes ambiguous. Does the function get its own copy? Can it modify the original? Can it replace the original entirely? Different answers lead to different bugs, and without knowing which model your language uses, every function call is a gamble.
@@ -721,13 +731,13 @@ FORTRAN passed everything by reference (callee could modify caller's variables).
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 In Java, all method arguments are passed by value. For primitive types, the value of the variable is copied. For reference types, the value of the reference (the memory address pointing to the object on the heap) is copied. The method receives its own local copy of the reference, which points to the same object as the caller's reference, but reassigning the local reference does not affect the caller's variable.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Java copies the variable's bits into the method - value bits for primitives, address bits for objects.
@@ -741,7 +751,7 @@ The confusion comes from conflating "I can modify the object" with "this is pass
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -762,7 +772,7 @@ Since references are copied, methods can mutate objects (add to a list, set a fi
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Imagine a TV remote (reference) that controls a TV (object). When you "pass the remote" to a function, Java makes a photocopy of the remote. The copy controls the same TV - pressing buttons (calling methods) affects the same TV. But if the function replaces their photocopy remote with one for a different TV, your original remote still controls your original TV.
 
@@ -776,7 +786,7 @@ Where this analogy breaks down: A real photocopy of a remote would not work at a
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 When you call a method in Java and pass it a variable, the method gets its own copy. For simple numbers, it is a copy of the number. For objects, it is a copy of the address that says where the object lives. The method can use the address to change the object's contents, but it cannot change your original address.
@@ -801,7 +811,7 @@ Java's pass-by-value-of-reference model is a specific instance of the ownership 
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 When a method is called, the JVM creates a new stack frame with local variable slots for each parameter. The argument values (primitive values or reference addresses) are copied from the caller's frame into the new frame.
 
@@ -833,7 +843,7 @@ When the method does `list = new ArrayList<>()`, only the method's local variabl
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -855,7 +865,7 @@ In high-throughput systems, the copy-by-value model means method calls are cheap
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - Proving Java is pass-by-value:**
 
@@ -905,7 +915,7 @@ Use `System.identityHashCode(obj)` before and after method calls to verify wheth
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Java copies the value (primitive) or reference (object pointer) into the method's local variable
 **PROBLEM IT SOLVES:** Prevents methods from reassigning the caller's variables
@@ -927,13 +937,13 @@ Use `System.identityHashCode(obj)` before and after method calls to verify wheth
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 The "is Java pass-by-value or pass-by-reference" question has been debated for over 25 years, and the confusion persists because Java's model is genuinely unusual. Most languages either fully copy (pass-by-value of the whole object, like C structs) or fully alias (pass-by-reference like C++ `&`). Java does neither - it copies the reference but shares the object, creating a third model that James Gosling called "pass by value of the reference." This hybrid behaves identically to pass-by-reference in 95% of cases (mutation works), and differently in only 5% of cases (reassignment does not propagate) - which is exactly why the confusion is so persistent and the interview question so revealing.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Is Java pass-by-value or pass-by-reference? Prove your answer with code.**
 
@@ -1067,7 +1077,7 @@ When you pass a mutable object to another thread, both threads hold references t
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Language      | Model                        | Mutation via param?      | Reassignment propagates? |
 | ------------- | ---------------------------- | ------------------------ | ------------------------ |
@@ -1080,7 +1090,7 @@ When you pass a mutable object to another thread, both threads hold references t
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | #   | Misconception                                                                 | Reality                                                                                                                                                                                                                   |
 | --- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1091,7 +1101,7 @@ When you pass a mutable object to another thread, both threads hold references t
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Method "loses" an object after reassignment**
 **Symptom:** Caller's variable is unchanged after a method that was supposed to replace it (e.g., `resetList(myList)` has no effect).
@@ -1183,7 +1193,7 @@ class Cache {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 

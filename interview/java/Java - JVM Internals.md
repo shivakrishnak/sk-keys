@@ -18,13 +18,21 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [JVM Architecture](#jvm-architecture)
+- [Class Loading](#class-loading)
+- [Memory Model](#memory-model)
+- [JIT Compilation](#jit-compilation)
+- [Bytecode](#bytecode)
+
 # JVM Architecture
 
 **TL;DR** - The JVM is a virtual machine that executes bytecode, manages memory, and provides platform independence through three core subsystems: class loading, runtime data areas, and the execution engine.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Before the JVM, compiled programs were tied to specific CPU architectures and operating systems. A program compiled for x86 Windows would not run on ARM Linux. Developers had to maintain separate codebases, build pipelines, and test matrices for each target platform.
@@ -40,13 +48,13 @@ Platform-specific compilation (C/C++) -> interpreted languages (slow) -> JVM: co
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The Java Virtual Machine (JVM) is an abstract computing machine that provides a runtime environment for executing Java bytecode. It consists of three major subsystems: (1) the Class Loader Subsystem that loads, links, and initializes classes, (2) Runtime Data Areas (heap, stack, metaspace, PC registers) that store program data, and (3) the Execution Engine (interpreter + JIT compiler + garbage collector) that executes bytecode.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 The JVM loads bytecode, manages memory, and executes your program - it's the operating system for Java programs.
@@ -60,7 +68,7 @@ The JVM is not just an interpreter. It's a sophisticated adaptive runtime that p
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -78,7 +86,7 @@ Because the JVM controls memory and execution, it can provide garbage collection
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > The JVM is a factory with three departments:
 >
@@ -90,7 +98,7 @@ Where this analogy breaks down: The JVM's JIT compiler optimizes based on runtim
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 The JVM is a program that runs your Java program. It handles all the low-level details: memory, execution, and making your code work on any computer that has a JVM installed.
@@ -209,7 +217,7 @@ The JVM is a stack-based virtual machine that provides platform independence thr
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -223,7 +231,7 @@ The JVM is a stack-based virtual machine that provides platform independence thr
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Inspecting JVM internals:**
 
@@ -256,7 +264,7 @@ System.out.println("Peak: "
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** The Java Virtual Machine - a stack-based VM that executes bytecode with JIT compilation, GC, and platform independence
 **PROBLEM IT SOLVES:** Write once, run anywhere - isolates application code from OS and hardware differences
@@ -278,13 +286,13 @@ System.out.println("Peak: "
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 The JVM often produces code FASTER than hand-written C for long-running applications. The JIT compiler uses runtime profiling to make optimizations that static compilers cannot: speculative inlining based on actual call patterns, branch prediction based on real data, and escape analysis to eliminate heap allocations. A static compiler must be conservative; the JIT can be optimistic and deoptimize if assumptions break.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Walk me through what happens when you run `java -jar app.jar`.**
 
@@ -449,7 +457,7 @@ Spring Boot 3 and Quarkus support native image out of the box.
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Component | JVM (HotSpot) | .NET CLR | V8 (JavaScript) |
 |-----------|--------------|---------|----------------|
@@ -462,7 +470,7 @@ Spring Boot 3 and Quarkus support native image out of the box.
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -473,7 +481,7 @@ Spring Boot 3 and Quarkus support native image out of the box.
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Metaspace exhaustion causing OutOfMemoryError**
 **Symptom:** `OutOfMemoryError: Metaspace`. Application fails to load new classes. Full GC doesn't help.
@@ -551,7 +559,7 @@ jcmd <pid> VM.native_memory summary
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -579,7 +587,7 @@ jcmd <pid> VM.native_memory summary
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without dynamic class loading, all code must be linked at compile time (like C). This means: no plugins, no hot-deploy, no modular applications, no loading code from the network, and no isolation between application components.
@@ -595,13 +603,13 @@ Static linking (C) -> JVM class loading with parent delegation (Java 1.0) -> cus
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Class loading is a three-phase process: (1) Loading - finding the bytecode (`.class` file, JAR, network) and creating a `Class` object, (2) Linking - verification (bytecode integrity), preparation (allocate static fields), resolution (symbolic references to direct references), and (3) Initialization - executing static initializers and `<clinit>`.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Class loading finds, validates, and initializes classes on first use, using parent-first delegation for security.
@@ -615,7 +623,7 @@ The parent-first delegation model exists for security. Without it, an attacker c
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -635,7 +643,7 @@ The parent-first delegation model exists for security. Without it, an attacker c
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -647,7 +655,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 When your code uses a class for the first time, the JVM finds it, checks it's valid, sets it up, and makes it available. This happens automatically - you just write `new MyClass()` and the JVM handles the rest.
@@ -730,7 +738,7 @@ Class loading implements the universal lazy initialization pattern at the type l
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -744,7 +752,7 @@ Class loading implements the universal lazy initialization pattern at the type l
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **GOOD - Custom class loader for plugin system:**
 
@@ -788,7 +796,7 @@ PaymentProvider p = (PaymentProvider)
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** The JVM subsystem that loads, links, and initializes classes on demand using parent-delegation hierarchy
 **PROBLEM IT SOLVES:** Lazy type resolution, namespace isolation, security boundaries, and modular class visibility
@@ -810,13 +818,13 @@ PaymentProvider p = (PaymentProvider)
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 `ClassNotFoundException` and `NoClassDefFoundError` seem similar but have fundamentally different causes. `ClassNotFoundException` means the class was never found at all (wrong classpath). `NoClassDefFoundError` means the class was found but its initialization failed (a static initializer threw an exception) - and every subsequent attempt to use the class will also get `NoClassDefFoundError`, even if the underlying cause was a transient failure.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Explain the difference between `Class.forName()` and `ClassLoader.loadClass()`.**
 
@@ -907,7 +915,7 @@ Eclipse MAT: Find the class loader, then "Path to GC Roots" to see what's retain
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | Bootstrap Loader | Platform Loader | Application Loader |
 |--------|-----------------|----------------|-------------------|
@@ -919,7 +927,7 @@ Eclipse MAT: Find the class loader, then "Path to GC Roots" to see what's retain
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -930,7 +938,7 @@ Eclipse MAT: Find the class loader, then "Path to GC Roots" to see what's retain
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: ClassNotFoundException at runtime**
 **Symptom:** `ClassNotFoundException` or `NoClassDefFoundError` when the application tries to use a class that exists in the project.
@@ -1021,7 +1029,7 @@ URL url = MyClass.class.getProtectionDomain()
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -1049,7 +1057,7 @@ URL url = MyClass.class.getProtectionDomain()
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without a memory model, multithreaded programs have undefined behavior. A write in one thread might never be seen by another thread. A compiler might reorder instructions that change the program's meaning in a multithreaded context. Different CPUs have different memory consistency models, making portable concurrent code impossible.
@@ -1065,13 +1073,13 @@ No formal model (C/C++ pre-2011, Java pre-2005) -> Java Memory Model JSR-133 (Ja
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 The Java Memory Model (JMM) is a specification that defines the conditions under which a read of a shared variable is guaranteed to see a write by another thread. It defines happens-before relationships that establish ordering guarantees, and provides primitives (`volatile`, `synchronized`, `final`) that create these relationships. Without a happens-before edge, there is no guarantee of visibility or ordering.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 The JMM defines when one thread is guaranteed to see another thread's writes to shared memory.
@@ -1085,7 +1093,7 @@ The JMM is not about locking - it's about visibility. `synchronized` provides bo
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1105,7 +1113,7 @@ The JMM is not about locking - it's about visibility. `synchronized` provides bo
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1117,7 +1125,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 When two threads share data, the JMM tells you when changes made by one thread are guaranteed to be seen by the other. Without following its rules, changes can be invisible between threads.
@@ -1219,7 +1227,7 @@ The Java Memory Model (JMM) is a formal specification of how threads interact th
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1233,7 +1241,7 @@ The Java Memory Model (JMM) is a formal specification of how threads interact th
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - No visibility guarantee:**
 
@@ -1288,7 +1296,7 @@ class SharedState {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** The formal specification (JMM/JSR-133) defining how threads interact through shared memory and the happens-before guarantee
 **PROBLEM IT SOLVES:** Defines when writes by one thread become visible to reads by another - without this, concurrent code is unpredictable
@@ -1310,13 +1318,13 @@ class SharedState {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 A correctly synchronized Java program with `volatile` and `synchronized` has STRONGER guarantees than C/C++ with `atomic` operations. The JMM guarantees sequential consistency for data-race-free programs, meaning if you follow the rules (properly synchronize shared data), the program behaves as if all operations execute in some sequential order consistent with program order. C++ exposes weaker memory orderings (relaxed, acquire/release) that have no Java equivalent.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is a happens-before relationship and why does it matter?**
 
@@ -1370,7 +1378,7 @@ Better alternative: use `static final` holder pattern or enum singleton, which l
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Mechanism | Visibility | Atomicity | Ordering |
 |-----------|-----------|----------|---------|
@@ -1382,7 +1390,7 @@ Better alternative: use `static final` holder pattern or enum singleton, which l
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1393,7 +1401,7 @@ Better alternative: use `static final` holder pattern or enum singleton, which l
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Visibility bug - stale read in loop**
 **Symptom:** Thread never sees updated value. Loop spins forever or uses stale data. Works on some CPUs (x86) but fails on others (ARM).
@@ -1480,7 +1488,7 @@ count.incrementAndGet(); // Atomic CAS operation
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -1508,7 +1516,7 @@ count.incrementAndGet(); // Atomic CAS operation
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Interpreted bytecode executes 10-100x slower than native code. Each instruction is decoded and dispatched individually. Method calls have interpreter overhead. No CPU-specific optimizations.
@@ -1524,13 +1532,13 @@ Pure interpretation (early JVMs) -> basic JIT (compile everything, slow startup)
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 JIT compilation is the process of converting JVM bytecode into native machine code at runtime. The HotSpot JVM uses tiered compilation: cold code is interpreted, warm code is compiled by the C1 compiler (fast compilation, basic optimizations), and hot code is compiled by the C2 compiler (slow compilation, aggressive optimizations). The JIT uses runtime profiling data to guide speculative optimizations.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 JIT turns your most-used code into optimized machine code at runtime, using real execution data to optimize better than any static compiler.
@@ -1544,7 +1552,7 @@ JIT's superpower is speculative optimization. If 99% of calls to `animal.speak()
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1564,7 +1572,7 @@ JIT's superpower is speculative optimization. If 99% of calls to `animal.speak()
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1576,7 +1584,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 The JIT compiler watches which parts of your code run most often and converts those parts to fast machine code automatically.
@@ -1667,7 +1675,7 @@ JIT compilation is the JVM's adaptive optimization engine that transforms byteco
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1681,7 +1689,7 @@ JIT compilation is the JVM's adaptive optimization engine that transforms byteco
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Demonstrating JIT optimization effect:**
 
@@ -1713,7 +1721,7 @@ long elapsed = System.nanoTime() - start;
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** The JVM's runtime optimizer that compiles hot bytecode to native machine code using profiling data (C1/C2 tiered compilation)
 **PROBLEM IT SOLVES:** Bytecode interpretation is slow. JIT provides native performance while retaining portability and dynamic optimization
@@ -1735,13 +1743,13 @@ long elapsed = System.nanoTime() - start;
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 JIT compilation can make the same Java code run at different speeds depending on what other code ran first. If `process(animal)` only ever sees `Dog` instances, the JIT inlines `Dog.speak()`. If a `Cat` appears later, the JIT deoptimizes and recompiles with a slower polymorphic dispatch. This means adding a new subtype to a hierarchy can slow down code that never touches the new subtype - a form of "performance coupling."
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is method inlining and why is it the most important JIT optimization?**
 
@@ -1799,7 +1807,7 @@ Disable to test impact: `-XX:-DoEscapeAnalysis`
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | C1 (Client) | C2 (Server) | Interpreter |
 |--------|------------|------------|------------|
@@ -1812,7 +1820,7 @@ Disable to test impact: `-XX:-DoEscapeAnalysis`
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1823,7 +1831,7 @@ Disable to test impact: `-XX:-DoEscapeAnalysis`
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Benchmark without warmup produces wrong results**
 **Symptom:** Method appears 10-100x slower than expected. Performance varies wildly between runs.
@@ -1913,7 +1921,7 @@ void processOrder(Order o) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -1941,7 +1949,7 @@ void processOrder(Order o) {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without an intermediate representation, Java would compile directly to machine code for each target platform, losing portability. Or it would be purely interpreted from source code, losing performance and requiring source distribution.
@@ -1957,13 +1965,13 @@ Platform-specific machine code -> p-code (UCSD Pascal) -> Java bytecode (Java 1.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Java bytecode is a set of instructions designed for the JVM, stored in `.class` files. Each instruction is one byte (hence "bytecode") followed by optional operands. The JVM is a stack-based machine: bytecode instructions push and pop values from an operand stack rather than using registers. The bytecode is verified for type safety and structural integrity before execution.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Bytecode is the "assembly language" of the JVM - platform-independent instructions that every JVM knows how to execute.
@@ -1977,7 +1985,7 @@ Bytecode is the reason 25+ languages can target the JVM. Kotlin, Scala, Groovy, 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1997,7 +2005,7 @@ Bytecode is the reason 25+ languages can target the JVM. Kotlin, Scala, Groovy, 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -2009,7 +2017,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 When you compile Java code, it doesn't become machine code. It becomes bytecode - a set of simple instructions that any JVM can understand and execute.
@@ -2097,7 +2105,7 @@ Bytecode is the JVM's instruction set - a platform-independent intermediate repr
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -2111,7 +2119,7 @@ Bytecode is the JVM's instruction set - a platform-independent intermediate repr
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Reading bytecode to understand what the compiler generates:**
 
@@ -2140,7 +2148,7 @@ Runnable r = () -> System.out.println("hi");
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** The JVM's instruction set - portable stack-based opcodes (200+) that javac compiles source code to, stored in .class files
 **PROBLEM IT SOLVES:** Platform independence - bytecode runs on any JVM regardless of OS or CPU architecture
@@ -2162,13 +2170,13 @@ Runnable r = () -> System.out.println("hi");
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Java's string concatenation `"Hello " + name` has been silently rewritten three times without changing the source code. Java 1-4: `StringBuffer`. Java 5-8: `StringBuilder`. Java 9+: `invokedynamic` with `StringConcatFactory`. Each change improved performance without requiring any code changes - because the optimization happens at the bytecode level, invisible to the developer.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between `invokevirtual`, `invokestatic`, `invokeinterface`, and `invokedynamic`?**
 
@@ -2221,7 +2229,7 @@ This is why lambdas are slightly faster than anonymous inner classes for the com
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Feature | JVM Bytecode | .NET IL | WebAssembly |
 |---------|-------------|---------|------------|
@@ -2234,7 +2242,7 @@ This is why lambdas are slightly faster than anonymous inner classes for the com
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2245,7 +2253,7 @@ This is why lambdas are slightly faster than anonymous inner classes for the com
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: VerifyError at class loading**
 **Symptom:** `java.lang.VerifyError` when class is loaded. Application fails to start or fails at runtime when the class is first used.
@@ -2324,7 +2332,7 @@ javap -c -p GeneratedProxy.class | wc -l
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 

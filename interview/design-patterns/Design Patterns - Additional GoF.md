@@ -17,25 +17,32 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Iterator](#iterator)
+- [Visitor](#visitor)
+- [Mediator](#mediator)
+- [Memento](#memento)
+
 # Iterator
 
 **TL;DR** - Iterator provides a uniform way to traverse elements of a collection without exposing its internal structure - enabling the same traversal code for arrays, lists, trees, and custom data structures.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 You have an `ArrayList`, a `HashSet`, a `TreeMap`, and a custom graph. Each has a different internal structure. Without Iterator, you'd need different traversal code for each: index-based loops for lists, bucket-walking for sets, tree-walking for maps. Adding a new collection type means new traversal code everywhere.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -48,7 +55,7 @@ You have an `ArrayList`, a `HashSet`, a `TreeMap`, and a custom graph. Each has 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -68,7 +75,7 @@ You have an `ArrayList`, a `HashSet`, a `TreeMap`, and a custom graph. Each has 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -80,7 +87,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -99,7 +106,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 WITHOUT ITERATOR:
@@ -114,7 +121,7 @@ for (Element e : anyCollection)  // works for ALL
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -128,7 +135,7 @@ for (Element e : anyCollection)  // works for ALL
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Java's Iterator pattern (built into language)
@@ -201,7 +208,7 @@ tree.stream().filter(v -> v > 10).toList();
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -223,14 +230,14 @@ tree.stream().filter(v -> v > 10).toList();
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -277,13 +284,13 @@ tree.stream().filter(v -> v > 10).toList();
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Iterator. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -294,7 +301,7 @@ tree.stream().filter(v -> v > 10).toList();
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -328,7 +335,7 @@ tree.stream().filter(v -> v > 10).toList();
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -353,19 +360,19 @@ tree.stream().filter(v -> v > 10).toList();
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 You have a document AST: `Paragraph`, `Heading`, `Image`, `Table`. You need operations: export to HTML, export to PDF, word count, spell check. Adding each operation to each class creates an explosion of methods. Adding a new operation means modifying all 4 classes. In a sealed hierarchy, you may not be able to modify the classes at all.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -378,7 +385,7 @@ You have a document AST: `Paragraph`, `Heading`, `Image`, `Table`. You need oper
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -398,7 +405,7 @@ You have a document AST: `Paragraph`, `Heading`, `Image`, `Table`. You need oper
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -410,7 +417,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -429,7 +436,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 WITHOUT VISITOR (operations mixed into classes):
@@ -449,7 +456,7 @@ CountVisitor.visit(Paragraph) visit(Heading)
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -463,7 +470,7 @@ CountVisitor.visit(Paragraph) visit(Heading)
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Element hierarchy (closed, rarely changes)
@@ -558,7 +565,7 @@ String toHTML(DocElement el) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -580,14 +587,14 @@ String toHTML(DocElement el) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -634,13 +641,13 @@ String toHTML(DocElement el) {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Visitor. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -651,7 +658,7 @@ String toHTML(DocElement el) {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -685,7 +692,7 @@ String toHTML(DocElement el) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -710,7 +717,7 @@ String toHTML(DocElement el) {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 A chat room with 10 users. Without Mediator, each user has a reference to all 9 others. User A sends a message - it directly calls B, C, D, E, F, G, H, I, J. Adding user K means modifying all 10 existing users. 10 users = 90 direct connections. 100 users = 9,900 connections.
 
@@ -718,13 +725,13 @@ With a Mediator (the chat room): User A sends a message to the chat room. The ch
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -737,7 +744,7 @@ With a Mediator (the chat room): User A sends a message to the chat room. The ch
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -757,7 +764,7 @@ With a Mediator (the chat room): User A sends a message to the chat room. The ch
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -769,7 +776,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -788,7 +795,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 WITHOUT MEDIATOR:
@@ -804,7 +811,7 @@ WITH MEDIATOR:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -818,7 +825,7 @@ WITH MEDIATOR:
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Spring's ApplicationEventPublisher is a Mediator
@@ -858,7 +865,7 @@ public class NotificationListener {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -880,14 +887,14 @@ public class NotificationListener {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -934,13 +941,13 @@ public class NotificationListener {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Mediator. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -951,7 +958,7 @@ public class NotificationListener {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -985,7 +992,7 @@ public class NotificationListener {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1010,19 +1017,19 @@ public class NotificationListener {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Your text editor needs undo/redo. You need to save the document's state at each edit so you can restore it. But the document's internal state (cursor position, formatting data, selection range) is private. You can't just expose getters for everything - that breaks encapsulation.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1035,7 +1042,7 @@ Your text editor needs undo/redo. You need to save the document's state at each 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1055,7 +1062,7 @@ Your text editor needs undo/redo. You need to save the document's state at each 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1067,7 +1074,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1086,7 +1093,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 [Originator]           [Caretaker]
@@ -1103,7 +1110,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1117,7 +1124,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Originator: the object whose state is saved
@@ -1198,7 +1205,7 @@ public class UndoManager {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1220,14 +1227,14 @@ public class UndoManager {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1274,13 +1281,13 @@ public class UndoManager {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Memento. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1291,7 +1298,7 @@ public class UndoManager {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1325,7 +1332,7 @@ public class UndoManager {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

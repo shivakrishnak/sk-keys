@@ -18,13 +18,21 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Auto-Configuration](#auto-configuration)
+- [Starters and Dependencies](#starters-and-dependencies)
+- [Properties and Profiles](#properties-and-profiles)
+- [Actuator](#actuator)
+- [Embedded Server](#embedded-server)
+
 # Auto-Configuration
 
 **TL;DR** - Spring Boot auto-configuration automatically creates beans based on classpath contents, existing beans, and properties - eliminating hundreds of lines of manual @Bean configuration while remaining fully overridable.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Configuring a Spring web application with JPA, security, and caching requires 200+ lines of XML or Java config: DataSource, EntityManagerFactory, TransactionManager, DispatcherServlet, security filter chain, cache managers. Every project repeats this boilerplate.
@@ -37,13 +45,13 @@ A new microservice requires 3 days of configuration before writing a single line
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -56,7 +64,7 @@ A new microservice requires 3 days of configuration before writing a single line
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -76,7 +84,7 @@ A new microservice requires 3 days of configuration before writing a single line
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -88,7 +96,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Spring Boot looks at what's on your classpath and automatically configures everything. Add `spring-boot-starter-web` -> you get an embedded Tomcat, a DispatcherServlet, and JSON serialization. Zero config needed.
@@ -185,7 +193,7 @@ debug=true
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -199,7 +207,7 @@ debug=true
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Overriding auto-configuration:**
 
@@ -222,7 +230,7 @@ public class CustomDataSourceConfig {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -244,14 +252,14 @@ public class CustomDataSourceConfig {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How does @SpringBootApplication work?**
 
@@ -318,13 +326,13 @@ Common exclusions:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Auto-Configuration. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -335,7 +343,7 @@ Common exclusions:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -369,7 +377,7 @@ Common exclusions:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -394,20 +402,20 @@ Common exclusions:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Database URLs, API keys, and feature flags hardcoded in source code. Deploying to production requires code changes and recompilation. Secrets leak into version control.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -420,7 +428,7 @@ Database URLs, API keys, and feature flags hardcoded in source code. Deploying t
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -440,7 +448,7 @@ Database URLs, API keys, and feature flags hardcoded in source code. Deploying t
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -452,7 +460,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Configuration values live outside your code in properties files. Different environments (dev, prod) use different files automatically.
@@ -550,7 +558,7 @@ public class DevConfig {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -564,7 +572,7 @@ public class DevConfig {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -583,14 +591,14 @@ public class DevConfig {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you handle secrets in Spring Boot?**
 
@@ -617,13 +625,13 @@ For local development: use `.env` files (gitignored) or Spring Cloud Config with
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Properties and Profiles. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -634,7 +642,7 @@ For local development: use `.env` files (gitignored) or Spring Cloud Config with
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -668,7 +676,7 @@ For local development: use `.env` files (gitignored) or Spring Cloud Config with
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -693,20 +701,20 @@ For local development: use `.env` files (gitignored) or Spring Cloud Config with
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Operations team asks: "Is the service healthy? How many requests/second? What's the memory usage? What configuration is active?" Without Actuator, you write custom health endpoints, metrics collection, and diagnostic tools for every service.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -719,7 +727,7 @@ Operations team asks: "Is the service healthy? How many requests/second? What's 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -739,7 +747,7 @@ Operations team asks: "Is the service healthy? How many requests/second? What's 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -751,7 +759,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Add one dependency and get dozens of operational endpoints: health check, metrics, environment info, thread dump, heap dump - all built in.
@@ -873,7 +881,7 @@ management:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -887,7 +895,7 @@ management:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -906,14 +914,14 @@ management:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you implement custom health checks for Kubernetes?**
 
@@ -956,13 +964,13 @@ Readiness = "can it handle traffic?" (remove from LB if failing)
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Actuator. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -973,7 +981,7 @@ Readiness = "can it handle traffic?" (remove from LB if failing)
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1007,7 +1015,7 @@ Readiness = "can it handle traffic?" (remove from LB if failing)
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1032,20 +1040,20 @@ Readiness = "can it handle traffic?" (remove from LB if failing)
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Traditional Java web apps are packaged as WAR files and deployed to external Tomcat/WebLogic/JBoss servers. DevOps must manage server installations, version compatibility, shared classpaths, and deployment scripts across environments.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1058,7 +1066,7 @@ Traditional Java web apps are packaged as WAR files and deployed to external Tom
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1078,7 +1086,7 @@ Traditional Java web apps are packaged as WAR files and deployed to external Tom
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1090,7 +1098,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Your application IS the server. `java -jar app.jar` starts everything - no separate Tomcat installation needed.
@@ -1194,7 +1202,7 @@ spring:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1208,7 +1216,7 @@ spring:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1227,14 +1235,14 @@ spring:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How would you tune Tomcat for a high-traffic API?**
 
@@ -1271,13 +1279,13 @@ Also consider: connection pooling (HikariCP sizing), response compression, keep-
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Embedded Server. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1288,7 +1296,7 @@ Also consider: connection pooling (HikariCP sizing), response compression, keep-
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1322,7 +1330,7 @@ Also consider: connection pooling (HikariCP sizing), response compression, keep-
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

@@ -389,7 +389,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### The Problem This Solves
+  ### 🔥 The Problem This Solves
 
 Structure:
   **WORLD WITHOUT IT:**
@@ -414,7 +414,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### Textbook Definition
+  ### 📘 Textbook Definition
 
 Rules:
   - 2-4 sentences
@@ -426,7 +426,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### Understand It in 30 Seconds
+  ### ⏱️ Understand It in 30 Seconds
 
 Content - exactly 3 parts:
 
@@ -445,7 +445,7 @@ Content - exactly 3 parts:
 ----------------------------------------------------------------
 
 Section header:
-  ### First Principles Explanation
+  ### 🔩 First Principles Explanation
 
 Structure:
 
@@ -476,7 +476,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### Mental Model / Analogy
+  ### 🧠 Mental Model / Analogy
 
 Rules:
   - Primary analogy in > blockquote
@@ -490,7 +490,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### Gradual Depth - Five Levels
+  ### 📶 Gradual Depth - Five Levels
 
 Exactly 5 levels:
 
@@ -531,7 +531,7 @@ Exactly 5 levels:
 ----------------------------------------------------------------
 
 Section header:
-  ### How It Works
+  ### ⚙️ How It Works
 
 PURPOSE: Complete, summarized mechanism explanation. The reader
 should understand the full lifecycle/process after reading this.
@@ -560,7 +560,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### Complete Picture - End-to-End Flow
+  ### 🔄 Complete Picture - End-to-End Flow
 
 PURPOSE: Show exactly where this concept fits in the full
 system. Summarized but complete.
@@ -588,7 +588,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### Code Example
+  ### 💻 Code Example
 
 PURPOSE: Real-time, production-grade examples. NOT toy examples.
 Each example should teach something substantial about the
@@ -616,7 +616,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### Quick Reference Card
+  ### 📌 Quick Reference Card
 
 Structure:
 
@@ -652,7 +652,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### The Surprising Truth
+  ### 💡 The Surprising Truth
 
 Rules:
   - Exactly ONE counterintuitive or perspective-shifting fact
@@ -668,7 +668,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### Interview Deep-Dive
+  ### 🎯 Interview Deep-Dive
 
 PURPOSE: This is the STAR SECTION of every entry. Bridge the
 gap between understanding and interview excellence. Real
@@ -777,7 +777,7 @@ QUALITY TESTS:
 ----------------------------------------------------------------
 
 Section header:
-  ### Comparison Table
+  ### ⚖️ Comparison Table
 
 PURPOSE: Structured decision-making aid. When 2+ named
 alternatives exist, show a side-by-side comparison that
@@ -818,7 +818,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### Common Misconceptions
+  ### ⚠️ Common Misconceptions
 
 PURPOSE: Expose the dangerous half-knowledge that interviews
 exploit. Frame as "most people think X, but actually Y" to
@@ -847,7 +847,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### Failure Modes and Diagnosis
+  ### 🚨 Failure Modes and Diagnosis
 
 PURPOSE: Production debugging knowledge that separates
 senior engineers from textbook readers. Systematic
@@ -881,7 +881,7 @@ Rules:
 ----------------------------------------------------------------
 
 Section header:
-  ### Related Keywords
+  ### 🔗 Related Keywords
 
 PURPOSE: Learning topology. Show the reader where this
 concept sits in the knowledge graph - what to learn first,
@@ -925,7 +925,8 @@ TEXT:
 HEADERS:
   - H1 (#): keyword title only (one per keyword)
   - H2 (##): never used
-  - H3 (###): section headers within a keyword
+  - H3 (###): section headers within a keyword (with emoji
+    prefix as defined in section header specs)
   - Bold text (**): sub-section labels
 
 SECTION SPACING:
@@ -951,7 +952,8 @@ FILE ENCODING:
     [System.Text.UTF8Encoding]::new($false))
   - Always use pwsh (PowerShell 7+), never powershell.exe
   - No emojis in YAML frontmatter
-  - Section headers in content body MAY use emojis
+  - Section headers in content body MUST use emoji prefixes
+    as specified in the section header definitions
 
 KEYWORD SEPARATION WITHIN A FILE:
   Between keywords, use double horizontal rule:
@@ -1105,7 +1107,7 @@ Repeat for each keyword, separated by double horizontal rules.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [Concrete pain scenario. 2-4 sentences.]
@@ -1121,12 +1123,12 @@ Repeat for each keyword, separated by double horizontal rules.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 [2-4 sentences. Formal. Technically precise. No analogies.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [15 words max. Zero jargon.]
@@ -1140,7 +1142,7 @@ Repeat for each keyword, separated by double horizontal rules.
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [Always true about this concept]
@@ -1160,7 +1162,7 @@ Repeat for each keyword, separated by double horizontal rules.
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 > [Primary analogy in blockquote.]
 
 - "[Analogy element]" -> [technical element]
@@ -1171,7 +1173,7 @@ Where this analogy breaks down: [1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [Plain English. No jargon. 2-4 sentences.]
@@ -1193,14 +1195,14 @@ Where this analogy breaks down: [1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 [Summarized but complete mechanism. Step-by-step.
  ASCII diagrams where helpful. WHY each step exists.
  Happy path + failure path.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [Input] -> [Step 1] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1214,7 +1216,7 @@ Where this analogy breaks down: [1 sentence.]
 
 ---
 
-### Code Example
+### 💻 Code Example
 [REQUIRED if programmatic. SKIP for pure theory.]
 [BAD then GOOD. Real-world examples. Max 70 chars/line.
  Minimum 2 examples. Production-grade.]
@@ -1224,7 +1226,7 @@ Where this analogy breaks down: [1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [1 sentence]
 **PROBLEM IT SOLVES:** [1 sentence]
@@ -1245,13 +1247,13 @@ Where this analogy breaks down: [1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 [2-4 sentences. One counterintuitive fact. Specific.
  Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [Conceptual question - foundational]**
 
@@ -1307,7 +1309,7 @@ Where this analogy breaks down: [1 sentence.]
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 [CONDITIONAL: include only when 2+ alternatives exist.]
 
 | Dimension    | Option A      | Option B      |
@@ -1320,7 +1322,7 @@ Need [condition]? -> Choose [option].
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1331,7 +1333,7 @@ Need [condition]? -> Choose [option].
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [name]**
 **Symptom:** [observable behavior]
@@ -1347,7 +1349,7 @@ Need [condition]? -> Choose [option].
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [Keyword] - [why needed]

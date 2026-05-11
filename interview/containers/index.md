@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "Containers"
+parent: "Interview Mastery"
+nav_order: 9
+has_children: true
+permalink: /interview/containers/
 description: Interview mastery content for Containers
 keywords_count: 30
 files_count: 5

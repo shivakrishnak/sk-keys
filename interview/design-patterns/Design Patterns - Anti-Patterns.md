@@ -18,6 +18,14 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [God Object](#god-object)
+- [Spaghetti Code](#spaghetti-code)
+- [Premature Optimization](#premature-optimization)
+- [Circular Dependencies](#circular-dependencies)
+- [Feature Envy](#feature-envy)
+
 # God Object
 
 **TL;DR** - A God Object is a class that knows too much or does too much, centralizing responsibility that should be distributed across multiple classes.
@@ -37,7 +45,7 @@ Refactoring a 5,000-line class is risky. "We'll fix it later" becomes permanent.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -53,7 +61,7 @@ Refactoring a 5,000-line class is risky. "We'll fix it later" becomes permanent.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A God Object (or God Class) is an anti-pattern where a single class has too many responsibilities, knows too much about other parts of the system, or controls too much of the application's logic. It violates SRP, makes testing difficult, creates merge conflicts, and becomes a bottleneck for team productivity.
 
@@ -130,7 +138,7 @@ public class OrderService {
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -143,7 +151,7 @@ public class OrderService {
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -163,7 +171,7 @@ public class OrderService {
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -175,7 +183,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -201,7 +209,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -215,7 +223,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -237,14 +245,14 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You inherit a 3,000-line God Object in production. How do you refactor it safely?**
 
@@ -266,13 +274,13 @@ The key: never refactor the entire God Object in one PR. Ship incremental extrac
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for God Object. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -283,7 +291,7 @@ The key: never refactor the entire God Object in one PR. Ship incremental extrac
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -317,7 +325,7 @@ The key: never refactor the entire God Object in one PR. Ship incremental extrac
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -355,7 +363,7 @@ Nobody understands the full flow well enough to refactor safely. The code "works
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -371,7 +379,7 @@ Nobody understands the full flow well enough to refactor safely. The code "works
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Spaghetti Code is an anti-pattern characterized by unstructured, intertwined, and convoluted code that is difficult to follow, understand, or maintain. It typically lacks clear separation of concerns, has excessive coupling between components, and features control flow that is difficult to trace.
 
@@ -449,7 +457,7 @@ public void process(Request req) {
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -462,7 +470,7 @@ public void process(Request req) {
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -482,7 +490,7 @@ public void process(Request req) {
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -494,7 +502,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -520,7 +528,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -534,7 +542,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -556,13 +564,13 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 The original spaghetti code was created by GOTO statements in assembly and early BASIC. Structured programming (functions, loops, conditionals) was invented specifically to eliminate it. Yet modern spaghetti code exists without a single GOTO - it's created by excessive callbacks, deeply nested promises, tangled event handlers, and complex state management. The anti-pattern survived the elimination of its original cause because spaghetti code is a symptom of unclear thinking about structure, not a specific language feature.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you prevent spaghetti code in a team?**
 
@@ -586,13 +594,13 @@ Technical prevention:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Spaghetti Code. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -603,7 +611,7 @@ Technical prevention:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -637,7 +645,7 @@ Technical prevention:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -675,7 +683,7 @@ The simple `findById()` that took 5ms now takes 3ms through cache. The 2ms impro
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -691,7 +699,7 @@ The simple `findById()` that took 5ms now takes 3ms through cache. The 2ms impro
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 "Premature optimization is the root of all evil" - Donald Knuth, 1974. It refers to the practice of optimizing code before profiling has identified actual bottlenecks, typically resulting in complex, hard-to-maintain code that solves performance problems that don't exist while making the code harder to change when real problems emerge.
 
@@ -757,7 +765,7 @@ public List<Order> getRecentOrders(String userId) {
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -770,7 +778,7 @@ public List<Order> getRecentOrders(String userId) {
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -790,7 +798,7 @@ public List<Order> getRecentOrders(String userId) {
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -802,7 +810,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -828,7 +836,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -842,7 +850,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -864,13 +872,13 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 The full Knuth quote is: "We should forget about small efficiencies, say about 97% of the time: premature optimization is the root of all evil. Yet we should not pass up our opportunities in that critical 3%." Most people quote only the middle part. Knuth was not saying "never optimize" - he was saying optimize the right 3%. The principle is about targeting effort, not avoiding performance work. Senior engineers know that architectural decisions (data model, communication patterns) are the 3% where early performance thinking matters enormously.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When IS early optimization appropriate?**
 
@@ -891,13 +899,13 @@ The rule: optimize the architecture early (cheap to change in design, expensive 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Premature Optimization. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -908,7 +916,7 @@ The rule: optimize the architecture early (cheap to change in design, expensive 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -942,7 +950,7 @@ The rule: optimize the architecture early (cheap to change in design, expensive 
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -985,7 +993,7 @@ A third service, `NotificationService`, depends on both. `OrderService` needs `N
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1001,7 +1009,7 @@ A third service, `NotificationService`, depends on both. `OrderService` needs `N
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A circular dependency is a relation between two or more modules that directly or indirectly depend on each other, creating a closed loop. It indicates a design flaw where responsibilities are not properly separated, leading to tight coupling and preventing independent compilation, testing, and deployment.
 
@@ -1110,7 +1118,7 @@ public class UserOrderService {
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1123,7 +1131,7 @@ public class UserOrderService {
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1143,7 +1151,7 @@ public class UserOrderService {
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1155,7 +1163,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1181,7 +1189,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1195,7 +1203,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1217,13 +1225,13 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Spring Boot used to allow circular dependencies by default through lazy proxy injection. Starting in Spring Boot 2.6, circular dependencies cause a startup failure by default. This was a deliberate change: the Spring team recognized that allowing circular dependencies, while convenient, encouraged poor architecture. The error message guides developers to fix the design rather than work around it. This shows that frameworks can enforce design principles - but only when the framework authors have the courage to break backward compatibility for better architecture.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you detect circular dependencies before they cause problems?**
 
@@ -1252,13 +1260,13 @@ The proactive approach: define allowed dependencies in ArchUnit at project start
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Circular Dependencies. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1269,7 +1277,7 @@ The proactive approach: define allowed dependencies in ArchUnit at project start
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1303,7 +1311,7 @@ The proactive approach: define allowed dependencies in ArchUnit at project start
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1341,7 +1349,7 @@ Feature Envy violates encapsulation. The whole point of OOP is that data and beh
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 [TODO: Concrete pain scenario. 2-4 sentences.]
@@ -1357,7 +1365,7 @@ Feature Envy violates encapsulation. The whole point of OOP is that data and beh
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Feature Envy is a code smell (introduced by Martin Fowler in "Refactoring") where a method in one class uses the data or methods of another class more than its own. The envious method should be moved to the class whose features it uses, following the principle of "put behavior close to data."
 
@@ -1438,7 +1446,7 @@ public class BillingService {
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1451,7 +1459,7 @@ public class BillingService {
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1471,7 +1479,7 @@ public class BillingService {
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1483,7 +1491,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1509,7 +1517,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1523,7 +1531,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1545,13 +1553,13 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 In an anemic domain model (common in enterprise Java), Feature Envy is everywhere by design. DTOs hold data, services hold behavior. Every service method is envious of its DTO's data. Martin Fowler considers anemic domain models an anti-pattern for exactly this reason. A rich domain model (DDD) puts behavior on entities, eliminating Feature Envy. The debate between anemic and rich domain models is essentially a debate about whether Feature Envy is acceptable architecture or an anti-pattern to eliminate.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How do you distinguish Feature Envy from legitimate service methods?**
 
@@ -1591,13 +1599,13 @@ This coordinates Customer, Cart, and Coupon. It doesn't envy any single class - 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Feature Envy. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1608,7 +1616,7 @@ This coordinates Customer, Cart, and Coupon. It doesn't envy any single class - 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1642,7 +1650,7 @@ This coordinates Customer, Cart, and Coupon. It doesn't envy any single class - 
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

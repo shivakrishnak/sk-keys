@@ -19,13 +19,22 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Lambda Expressions](#lambda-expressions)
+- [Streams API](#streams-api)
+- [Optional](#optional)
+- [Functional Interfaces](#functional-interfaces)
+- [Method References](#method-references)
+- [Default Methods](#default-methods)
+
 # Lambda Expressions
 
 **TL;DR** - Lambdas let you pass behaviour as data - a function becomes a value you can store, pass, and compose, eliminating thousands of lines of anonymous inner class boilerplate.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Before Java 8, every callback required a full anonymous inner class. Sorting a list by name meant writing 5 lines of `new Comparator<String>() { @Override public int compare(...)  { ... } }` for what is logically a one-liner. Event handlers, thread tasks, and collection operations all drowned in ceremony. Developers wrote more boilerplate than logic.
@@ -41,13 +50,13 @@ Anonymous inner classes (Java 1.1) -> lambda expressions and functional interfac
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A lambda expression is an anonymous function that can be assigned to a variable, passed as an argument, or returned from a method. In Java, lambdas implement functional interfaces (interfaces with exactly one abstract method) and are compiled to `invokedynamic` bytecode instructions rather than inner class files.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A lambda is a block of code you can pass around like a variable.
@@ -61,7 +70,7 @@ Lambdas did not add new capability to Java - anything a lambda does, an anonymou
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -83,7 +92,7 @@ Because lambdas target functional interfaces, Java 8 introduced `@FunctionalInte
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A lambda is like a recipe card. An anonymous inner class is like a full cookbook with one recipe. Both achieve the same meal, but one fits in your pocket. You can hand the recipe card to any chef (method) who knows how to read recipe cards (functional interface).
 
@@ -96,7 +105,7 @@ Where this analogy breaks down: Unlike recipe cards, lambdas can capture values 
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A lambda is a short way to write a small piece of code that you want to pass to another method. Instead of creating a whole class just to define one action, you write the action directly.
@@ -202,7 +211,7 @@ In high-throughput systems, non-capturing lambdas are preferred because they are
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Anonymous inner class for simple behavior:**
 
@@ -259,7 +268,7 @@ void lambdaCapturesEffectivelyFinal() {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Anonymous function that implements a functional interface via concise syntax
 **PROBLEM IT SOLVES:** Eliminates verbose anonymous inner class boilerplate for single-method callbacks
@@ -280,13 +289,13 @@ void lambdaCapturesEffectivelyFinal() {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Non-capturing lambdas (those that don't reference any variables from the enclosing scope) are implemented as singletons by the JVM - the same object instance is reused across every invocation. This means `list.forEach(System.out::println)` in a loop allocates zero objects after the first call, making lambdas cheaper than the anonymous inner classes they replaced.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between a lambda expression and an anonymous inner class?**
 
@@ -593,7 +602,7 @@ The practical implication: in Android or UI frameworks where listeners are regis
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | Lambda | Anonymous Class | Method Reference |
 |--------|--------|----------------|-----------------|
@@ -605,7 +614,7 @@ The practical implication: in Android or UI frameworks where listeners are regis
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -616,7 +625,7 @@ The practical implication: in Android or UI frameworks where listeners are regis
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Effectively final violation**
 **Symptom:** Compile error: "local variables referenced from a lambda expression must be final or effectively final."
@@ -692,7 +701,7 @@ list.stream().map(path -> {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -720,7 +729,7 @@ list.stream().map(path -> {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Processing a collection meant writing nested for-loops with mutable accumulators, temporary lists, and index tracking. Filtering, transforming, and aggregating required 15-20 lines of imperative code for what is logically a three-step pipeline. The code was hard to read, hard to parallelize, and easy to get wrong.
@@ -736,13 +745,13 @@ External iteration (for-each loops) -> internal iteration (Streams, Java 8) -> `
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A Stream is a sequence of elements supporting sequential and parallel aggregate operations. Streams are lazy - intermediate operations build a pipeline that executes only when a terminal operation is invoked. Streams do not store data; they pull elements from a source (collection, array, generator) and push them through a pipeline of transformations.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Streams are assembly lines for data: source in, transformations in the middle, result out.
@@ -756,7 +765,7 @@ Streams are lazy by design. Calling `.filter().map().sorted()` builds a pipeline
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -778,7 +787,7 @@ Laziness enables fusion: the JVM combines multiple intermediate operations into 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A stream is a water pipe system. The reservoir (data source) holds water, but nothing flows until you open the faucet (terminal operation). Filters and valves (intermediate operations) are installed along the pipe but don't do anything until water flows. You can't reverse the flow or run water through the same pipe twice.
 
@@ -791,7 +800,7 @@ Where this analogy breaks down: Unlike water, stream elements can be transformed
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Streams let you describe what you want to do with a list of things (filter the red ones, count them) without writing step-by-step loop instructions.
@@ -901,7 +910,7 @@ Parallel streams use the common ForkJoinPool (default threads = CPU cores - 1). 
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Imperative loop with mutable state:**
 
@@ -967,7 +976,7 @@ void streamProducesCorrectResult() {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Lazy, declarative pipeline for transforming and aggregating collections
 **PROBLEM IT SOLVES:** Replaces imperative loops with composable filter-map-reduce chains
@@ -988,13 +997,13 @@ void streamProducesCorrectResult() {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 `stream().count()` on an `ArrayList` does not iterate through the elements at all. Since `ArrayList`'s Spliterator declares the SIZED characteristic, the stream pipeline can simply call `list.size()` and return it directly. The JVM skips the entire pipeline for known-size sources with no intermediate operations that change the count.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between intermediate and terminal operations? Give examples of each type.**
 
@@ -1266,7 +1275,7 @@ The anti-pattern is catching the exception inside the lambda and silently swallo
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | Stream | For-each Loop | Iterator |
 |--------|--------|--------------|---------|
@@ -1279,7 +1288,7 @@ The anti-pattern is catching the exception inside the lambda and silently swallo
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1290,7 +1299,7 @@ The anti-pattern is catching the exception inside the lambda and silently swallo
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: IllegalStateException - stream already consumed**
 **Symptom:** `IllegalStateException: stream has already been operated upon or closed`.
@@ -1372,7 +1381,7 @@ pool.submit(() ->
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -1400,7 +1409,7 @@ pool.submit(() ->
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Methods return `null` to mean "no result found." The caller forgets to check, chains a method call on the null return, and gets a `NullPointerException` at 3 AM in production. Tony Hoare called null his "billion-dollar mistake." Every Java codebase has hundreds of defensive `if (x != null)` checks scattered through the code.
@@ -1416,13 +1425,13 @@ Null checks everywhere (pre-Java 8) -> `Optional<T>` as return type (Java 8) -> 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 `Optional<T>` is a container object that may or may not contain a non-null value. It provides methods to explicitly handle both cases (`isPresent`, `ifPresent`, `orElse`, `map`, `flatMap`) and is designed to be used as a method return type to indicate that a result may be absent.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Optional wraps a value that might not exist, forcing you to handle the missing case explicitly.
@@ -1436,7 +1445,7 @@ Optional does not prevent null - it makes absence visible in the type system. Wh
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1457,7 +1466,7 @@ Optional supports `map()` and `flatMap()` to chain transformations without expli
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Optional is like a safe deposit box with a glass window. You can see whether there is something inside without opening it (`isPresent`). If there is something, you can take it out (`get`), transform it while it stays inside (`map`), or provide a default if it's empty (`orElse`).
 
@@ -1470,7 +1479,7 @@ Where this analogy breaks down: Unlike a physical box, Optional is immutable - y
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Optional is a wrapper that says "this value might not exist." Instead of getting a surprise error when you try to use a missing value, Optional makes you handle that possibility upfront.
@@ -1594,7 +1603,7 @@ In hot paths processing millions of values, Optional creates an extra object all
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Null checks everywhere:**
 
@@ -1663,7 +1672,7 @@ List<String> names = userIds.stream()
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Container that either holds a non-null value or is explicitly empty
 **PROBLEM IT SOLVES:** Makes absence explicit in the type system, replacing null-check chains
@@ -1684,13 +1693,13 @@ List<String> names = userIds.stream()
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 In performance-critical code, Optional is slower than null checks because it allocates a heap object. But JVM escape analysis can often eliminate the allocation entirely if the Optional never leaves the method scope. In JMH benchmarks with JIT-compiled code, `Optional.ofNullable(x).map(f).orElse(default)` compiles down to the same machine code as `x != null ? f(x) : default`. The abstraction cost is zero after JIT optimization.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What are the anti-patterns when using Optional, and why does Java's design specifically discourage them?**
 
@@ -1873,7 +1882,7 @@ This is another area where Java's type system shows its age. Kotlin's `Int?` han
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | Optional | Null | Kotlin Nullable (`T?`) |
 |--------|----------|------|----------------------|
@@ -1885,7 +1894,7 @@ This is another area where Java's type system shows its age. Kotlin's `Int?` han
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1896,7 +1905,7 @@ This is another area where Java's type system shows its age. Kotlin's `Int?` han
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: NoSuchElementException from get()**
 **Symptom:** `NoSuchElementException: No value present` from `Optional.get()`.
@@ -1965,7 +1974,7 @@ User u = findCached(id)
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -1993,7 +2002,7 @@ User u = findCached(id)
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Before functional interfaces were formalized, Java had no standard way to represent "a piece of behavior" as a type. You could create interfaces with one method (like `Runnable`, `Comparator`), but there was no convention, no type safety guarantee, and no standard library of reusable behavior types.
@@ -2009,13 +2018,13 @@ Single-method interfaces (Java 1.0, e.g., `Runnable`) -> `@FunctionalInterface` 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A functional interface is any interface that has exactly one abstract method (SAM - Single Abstract Method). It may have any number of default methods and static methods. The `@FunctionalInterface` annotation is optional but provides compile-time validation that the interface maintains its single-abstract-method contract.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A functional interface is an interface with exactly one abstract method - the contract a lambda must fulfill.
@@ -2029,7 +2038,7 @@ Every lambda in Java has a type, and that type is always a functional interface.
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -2050,7 +2059,7 @@ The `java.util.function` package provides 43 standard functional interfaces orga
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Functional interfaces are like job descriptions that specify exactly one responsibility. "Someone who can compare two things" (Comparator), "someone who can test a condition" (Predicate), "someone who can transform a value" (Function). A lambda is the anonymous worker who fulfills that one job.
 
@@ -2063,7 +2072,7 @@ Where this analogy breaks down: A job description can change. A functional inter
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A functional interface is a special kind of interface that defines exactly one action. Because there is only one thing to do, Java can figure out what your lambda is supposed to implement.
@@ -2194,7 +2203,7 @@ In library design, functional interfaces are the public API for behavior injecti
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Creating unnecessary custom functional interfaces:**
 
@@ -2234,7 +2243,7 @@ interface RetryPolicy {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Interface with exactly one abstract method - the lambda target type
 **PROBLEM IT SOLVES:** Provides the type system bridge between OOP interfaces and lambda expressions
@@ -2255,13 +2264,13 @@ interface RetryPolicy {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 `Comparator<T>` has two abstract methods: `compare(T, T)` and `equals(Object)`. Yet it is a valid `@FunctionalInterface`. Why? Because `equals` is inherited from `Object` and is excluded from the SAM count. Any abstract method that overrides a public `Object` method does not count toward the single-abstract-method requirement.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Name the four core functional interfaces in java.util.function and explain when you would create a custom one instead.**
 
@@ -2391,7 +2400,7 @@ Consumer<User> process = validate
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Interface | Signature | Use Case | Example |
 |-----------|-----------|----------|--------|
@@ -2404,7 +2413,7 @@ Consumer<User> process = validate
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2415,7 +2424,7 @@ Consumer<User> process = validate
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Ambiguous lambda target type**
 **Symptom:** Compile error: "reference to method is ambiguous" when passing a lambda.
@@ -2492,7 +2501,7 @@ interface ThrowingFunction<T, R> {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -2520,7 +2529,7 @@ interface ThrowingFunction<T, R> {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Even with lambdas, you often write `x -> someMethod(x)` - a lambda whose only job is to call an existing method. This is one level of indirection that adds noise. When every stream operation wraps a named method in a lambda, the code obscures rather than reveals intent.
@@ -2536,13 +2545,13 @@ Anonymous classes (Java 1.1) -> lambda expressions (Java 8) -> method references
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A method reference is a compact syntax for a lambda expression that calls an existing method. The `::` operator separates the target (class or instance) from the method name. There are four kinds: static method references, bound instance method references, unbound instance method references, and constructor references.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Method references replace `x -> method(x)` with `Class::method` for cleaner code.
@@ -2556,7 +2565,7 @@ Method references are preferred over lambdas when the lambda simply delegates to
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -2577,7 +2586,7 @@ Four kinds exist because methods can be static or instance, and instance methods
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > A lambda is like giving someone verbal directions: "Go to the store, find the milk, pick it up." A method reference is like saying: "Go to Store::getMilk." Same destination, fewer words.
 
@@ -2589,7 +2598,7 @@ Where this analogy breaks down: Method references can be unbound (not attached t
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Instead of writing a mini-function that just calls another function, you point directly to the function you want to call using `::`.
@@ -2703,7 +2712,7 @@ Method references are preferred in codebases with style guides that emphasize re
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **BAD - Unnecessary lambdas wrapping method calls:**
 
@@ -2727,7 +2736,7 @@ list.stream()
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Shorthand for a lambda that delegates to an existing method (`Class::method`)
 **PROBLEM IT SOLVES:** Eliminates trivial pass-through lambdas that just call one method
@@ -2748,13 +2757,13 @@ list.stream()
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Constructor references can target array constructors: `int[]::new` is a valid `IntFunction<int[]>`. This is used internally by `stream.toArray(int[]::new)` to create arrays of the right size without reflection. The compiler translates `int[]::new` to `(size) -> new int[size]`.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Explain the four types of method references with examples. Which one is most commonly misunderstood?**
 
@@ -2822,7 +2831,7 @@ The general rule: if the method reference reads naturally (like `Employee::getNa
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Kind | Syntax | Lambda Equivalent | Example |
 |------|--------|-------------------|--------|
@@ -2833,7 +2842,7 @@ The general rule: if the method reference reads naturally (like `Employee::getNa
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2844,7 +2853,7 @@ The general rule: if the method reference reads naturally (like `Employee::getNa
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Ambiguous method reference for overloaded methods**
 **Symptom:** Compile error: "reference to method is ambiguous" when using `ClassName::methodName`.
@@ -2920,7 +2929,7 @@ Function<Integer, String> f =
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -2948,7 +2957,7 @@ Function<Integer, String> f =
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Before Java 8, adding a method to an interface broke every class implementing it. The `Collection` interface needed a `stream()` method, but adding it would force every custom collection implementation (thousands of third-party libraries) to implement `stream()` or fail to compile. Interfaces were frozen the moment they were published.
@@ -2964,13 +2973,13 @@ Interfaces with only abstract methods (pre-Java 8) -> default methods for interf
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A default method is a method in an interface that has a body, declared with the `default` keyword. It provides a default implementation that classes inheriting the interface can use without overriding. Classes can always override default methods to provide specialized behavior.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Default methods add behavior to interfaces without breaking existing implementations.
@@ -2984,7 +2993,7 @@ Default methods were created for library evolution, not multiple inheritance of 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -3005,7 +3014,7 @@ The conflict resolution rules follow a clear precedence: (1) class always wins o
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of an interface as a contract, and default methods as suggested clauses. "You must implement deposit() and withdraw() (abstract methods). If you don't specify how to calculate interest, here's a standard formula (default method). You can always write your own formula."
 
@@ -3017,7 +3026,7 @@ Where this analogy breaks down: In real contracts, conflicting clauses void the 
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Default methods let interfaces include pre-written methods so that classes don't have to write them if the default behavior is fine.
@@ -3145,7 +3154,7 @@ In large codebases, default methods can create "action at a distance" bugs. A li
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **GOOD - Interface evolution without breaking changes:**
 
@@ -3205,7 +3214,7 @@ class E implements A, D {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Interface method with a body - provides default implementation that classes can override
 **PROBLEM IT SOLVES:** Evolve interfaces without breaking all existing implementations
@@ -3226,13 +3235,13 @@ class E implements A, D {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Default methods can be called explicitly using `InterfaceName.super.methodName()` syntax, but only from a class that directly implements that interface. This means a class can implement two interfaces with conflicting defaults and use both implementations within its override method - composing behavior from multiple sources in a controlled way.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: How does the JVM resolve default method conflicts? Walk through the resolution algorithm.**
 
@@ -3332,7 +3341,7 @@ The general guidance: prefer interfaces with default methods for mix-in behavior
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | Default Method | Abstract Method | Static Method |
 |--------|---------------|----------------|--------------|
@@ -3344,7 +3353,7 @@ The general guidance: prefer interfaces with default methods for mix-in behavior
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -3355,7 +3364,7 @@ The general guidance: prefer interfaces with default methods for mix-in behavior
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Diamond inheritance conflict**
 **Symptom:** Compile error: "class inherits unrelated defaults for method() from types InterfaceA and InterfaceB."
@@ -3438,7 +3447,7 @@ interface Handler<T> {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 

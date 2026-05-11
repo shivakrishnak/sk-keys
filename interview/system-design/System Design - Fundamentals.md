@@ -19,13 +19,22 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [CAP Theorem and PACELC](#cap-theorem-and-pacelc)
+- [Consistency Models](#consistency-models)
+- [Consensus Algorithms](#consensus-algorithms)
+- [Distributed Transactions](#distributed-transactions)
+- [Consistent Hashing](#consistent-hashing)
+- [Back-of-Envelope Estimation](#back-of-envelope-estimation)
+
 # CAP Theorem and PACELC
 
 **TL;DR** - CAP states a distributed system can guarantee at most two of Consistency, Availability, and Partition tolerance simultaneously. Since network partitions are inevitable, the real choice is between CP (consistent but may reject requests) and AP (available but may return stale data). PACELC extends this: even without partitions, you trade latency for consistency.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Teams design distributed databases expecting to get strong consistency, 100% availability, AND partition tolerance. They're shocked when a network split causes their "highly available" system to return stale data, or their "consistent" system to reject writes.
@@ -35,13 +44,13 @@ Eric Brewer's 2000 conjecture (proven in 2002) formalized that this three-way gu
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -54,7 +63,7 @@ Eric Brewer's 2000 conjecture (proven in 2002) formalized that this three-way gu
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -74,7 +83,7 @@ Eric Brewer's 2000 conjecture (proven in 2002) formalized that this three-way gu
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -86,7 +95,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 When network connections between servers break, you must choose: either stop responding (to stay consistent) or keep responding (but risk serving outdated data).
@@ -179,7 +188,7 @@ A search engine can sacrifice harvest (return 95% of results) instead of choosin
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -193,7 +202,7 @@ A search engine can sacrifice harvest (return 95% of results) instead of choosin
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -215,14 +224,14 @@ A search engine can sacrifice harvest (return 95% of results) instead of choosin
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your system uses DynamoDB. A product manager says "I need every read to return the latest write." What do you tell them?**
 
@@ -308,13 +317,13 @@ Answer: Like counts are a textbook AP use case. Use G-Counter CRDT or per-region
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for CAP Theorem and PACELC. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -325,7 +334,7 @@ Answer: Like counts are a textbook AP use case. Use G-Counter CRDT or per-region
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -359,7 +368,7 @@ Answer: Like counts are a textbook AP use case. Use G-Counter CRDT or per-region
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -384,20 +393,20 @@ Answer: Like counts are a textbook AP use case. Use G-Counter CRDT or per-region
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Two users update the same document simultaneously. Which version wins? A user reads immediately after writing - do they see their own write? Without explicit consistency models, behavior is undefined and bugs are non-reproducible.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -410,7 +419,7 @@ Two users update the same document simultaneously. Which version wins? A user re
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -430,7 +439,7 @@ Two users update the same document simultaneously. Which version wins? A user re
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -442,7 +451,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 After writing data, how soon and from where can you read it back? Immediately from anywhere? Only from the same server? Eventually from everywhere?
@@ -535,7 +544,7 @@ db.read(query, minReadVersion: minVersion);
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -549,7 +558,7 @@ db.read(query, minReadVersion: minVersion);
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -568,14 +577,14 @@ db.read(query, minReadVersion: minVersion);
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: A user updates their profile name. They refresh and see the old name. How do you fix this without making the entire system strongly consistent?**
 
@@ -605,13 +614,13 @@ Best practice: Apply read-your-writes only to the user who wrote. Other users ca
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Consistency Models. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -622,7 +631,7 @@ Best practice: Apply read-your-writes only to the user who wrote. Other users ca
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -656,7 +665,7 @@ Best practice: Apply read-your-writes only to the user who wrote. Other users ca
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -681,20 +690,20 @@ Best practice: Apply read-your-writes only to the user who wrote. Other users ca
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 5 database replicas with no consensus: during a network partition, 2 nodes elect themselves as leader. Both accept writes. When the partition heals, you have divergent data with no way to reconcile. This is "split brain" - the worst failure mode in distributed systems.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -707,7 +716,7 @@ Best practice: Apply read-your-writes only to the user who wrote. Other users ca
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -727,7 +736,7 @@ Best practice: Apply read-your-writes only to the user who wrote. Other users ca
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -739,7 +748,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 5 servers need to agree on "who is the leader" even if 2 of them crash. Consensus protocols guarantee that all surviving servers agree on the same answer, even during failures.
@@ -823,7 +832,7 @@ Leader failure:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -837,7 +846,7 @@ Leader failure:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -856,14 +865,14 @@ Leader failure:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You need distributed locking for exactly-once payment processing. How do you implement it?**
 
@@ -942,13 +951,13 @@ Production tip: Use 5 nodes for production etcd (tolerates 2 failures). 3 nodes 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Consensus Algorithms. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -959,7 +968,7 @@ Production tip: Use 5 nodes for production etcd (tolerates 2 failures). 3 nodes 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -993,7 +1002,7 @@ Production tip: Use 5 nodes for production etcd (tolerates 2 failures). 3 nodes 
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1018,20 +1027,20 @@ Production tip: Use 5 nodes for production etcd (tolerates 2 failures). 3 nodes 
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 An order service debits inventory AND charges payment. If payment succeeds but inventory update fails, you've charged the customer with nothing to ship. Without distributed transactions, partial failures corrupt business state across services.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1044,7 +1053,7 @@ An order service debits inventory AND charges payment. If payment succeeds but i
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1064,7 +1073,7 @@ An order service debits inventory AND charges payment. If payment succeeds but i
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1076,7 +1085,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 When one business operation touches multiple databases/services, you need all of them to succeed or all of them to roll back. That coordination is a distributed transaction.
@@ -1222,7 +1231,7 @@ public void charge(String idempotencyKey,
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1236,7 +1245,7 @@ public void charge(String idempotencyKey,
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1255,14 +1264,14 @@ public void charge(String idempotencyKey,
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Design the transaction flow for an e-commerce checkout across 4 services.**
 
@@ -1316,13 +1325,13 @@ Key design decisions:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Distributed Transactions. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1333,7 +1342,7 @@ Key design decisions:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1367,7 +1376,7 @@ Key design decisions:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1392,20 +1401,20 @@ Key design decisions:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Simple modulo hashing (`key.hashCode() % N`) works until you add or remove a server. Changing N from 5 to 6 remaps ~80% of all keys. In a cache cluster with 100M keys, 80M cache misses hit simultaneously - a "cache stampede" that can take down the backend.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1418,7 +1427,7 @@ Simple modulo hashing (`key.hashCode() % N`) works until you add or remove a ser
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1438,7 +1447,7 @@ Simple modulo hashing (`key.hashCode() % N`) works until you add or remove a ser
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1450,7 +1459,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Imagine servers placed around a clock face. Each piece of data is hashed to a position on the clock, and stored on the next server clockwise. Adding a new server only steals data from its one clockwise neighbor - everything else stays put.
@@ -1553,7 +1562,7 @@ public class ConsistentHashRing<T> {
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1567,7 +1576,7 @@ public class ConsistentHashRing<T> {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1586,14 +1595,14 @@ public class ConsistentHashRing<T> {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Design a distributed cache with consistent hashing. What happens when a node dies?**
 
@@ -1634,13 +1643,13 @@ Cache stampede prevention:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Consistent Hashing. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1651,7 +1660,7 @@ Cache stampede prevention:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1685,7 +1694,7 @@ Cache stampede prevention:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1710,20 +1719,20 @@ Cache stampede prevention:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 "Design Twitter" - but how many servers? How much storage? Without estimation, you can't make informed decisions about architecture. You might design a single-server solution for a billion-user system.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1736,7 +1745,7 @@ Cache stampede prevention:
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1756,7 +1765,7 @@ Cache stampede prevention:
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1768,7 +1777,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Quickly calculate: How much data? How many servers? How much bandwidth? Using rough numbers that are close enough to make architecture decisions.
@@ -1868,7 +1877,7 @@ Servers:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1882,7 +1891,7 @@ Servers:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1901,14 +1910,14 @@ Servers:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Estimate the storage needed for a chat system serving 500M daily active users.**
 
@@ -1953,13 +1962,13 @@ Architecture implications:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Back-of-Envelope Estimation. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1970,7 +1979,7 @@ Architecture implications:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2004,7 +2013,7 @@ Architecture implications:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

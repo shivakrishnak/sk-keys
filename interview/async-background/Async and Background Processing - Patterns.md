@@ -20,13 +20,23 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Event-Driven Architecture](#event-driven-architecture)
+- [Saga Pattern](#saga-pattern)
+- [Outbox Pattern](#outbox-pattern)
+- [Backpressure](#backpressure)
+- [CQRS with Events](#cqrs-with-events)
+- [Priority Queues](#priority-queues)
+- [Async API Design](#async-api-design)
+
 # Event-Driven Architecture (EDA)
 
 **TL;DR** - Event-Driven Architecture structures applications around producing, detecting, and reacting to events, decoupling components so they communicate through events rather than direct calls.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT EDA:**
 Order service calls shipping service (HTTP). Shipping service calls inventory service. Inventory service calls notification service. Each call is synchronous. If shipping is down, order fails. If inventory is slow, everything is slow. Adding a new analytics service means modifying the order service to call it. Every service knows about every other service.
@@ -36,13 +46,13 @@ Order service calls shipping service (HTTP). Shipping service calls inventory se
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -55,7 +65,7 @@ Order service calls shipping service (HTTP). Shipping service calls inventory se
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -75,7 +85,7 @@ Order service calls shipping service (HTTP). Shipping service calls inventory se
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -87,7 +97,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -106,7 +116,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 TRADITIONAL (request-driven):
@@ -134,7 +144,7 @@ EVENT-DRIVEN:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -148,7 +158,7 @@ EVENT-DRIVEN:
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Event definition
@@ -195,7 +205,7 @@ public class AnalyticsEventHandler {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -217,14 +227,14 @@ public class AnalyticsEventHandler {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What are the challenges of Event-Driven Architecture?**
 
@@ -244,13 +254,13 @@ _Why they ask:_ Tests awareness of trade-offs beyond the happy path.
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Event-Driven Architecture (EDA). Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -261,7 +271,7 @@ _Why they ask:_ Tests awareness of trade-offs beyond the happy path.
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -295,7 +305,7 @@ _Why they ask:_ Tests awareness of trade-offs beyond the happy path.
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -320,20 +330,20 @@ _Why they ask:_ Tests awareness of trade-offs beyond the happy path.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT SAGA:**
 Order processing spans 4 services: create order, reserve inventory, charge payment, schedule shipping. If payment fails after inventory is reserved, you need to undo the reservation. In a monolith, a database transaction handles this. In microservices, there's no distributed transaction (2PC is too slow). How do you ensure all-or-nothing across services?
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -346,7 +356,7 @@ Order processing spans 4 services: create order, reserve inventory, charge payme
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -366,7 +376,7 @@ Order processing spans 4 services: create order, reserve inventory, charge payme
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -378,7 +388,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -397,7 +407,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 CHOREOGRAPHY (event-driven):
@@ -434,7 +444,7 @@ ORCHESTRATION (central coordinator):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -448,7 +458,7 @@ ORCHESTRATION (central coordinator):
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Orchestration-based Saga
@@ -487,7 +497,7 @@ public class OrderSaga {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -509,14 +519,14 @@ public class OrderSaga {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What are the failure modes of the Saga pattern?**
 
@@ -534,13 +544,13 @@ _Why they ask:_ Tests deep understanding of distributed transaction challenges.
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Saga Pattern. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -551,7 +561,7 @@ _Why they ask:_ Tests deep understanding of distributed transaction challenges.
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -585,7 +595,7 @@ _Why they ask:_ Tests deep understanding of distributed transaction challenges.
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -610,7 +620,7 @@ _Why they ask:_ Tests deep understanding of distributed transaction challenges.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **THE DUAL-WRITE PROBLEM:**
 
@@ -627,13 +637,13 @@ What if the DB write succeeds but the Kafka send fails? The order exists but no 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -646,7 +656,7 @@ What if the DB write succeeds but the Kafka send fails? The order exists but no 
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -666,7 +676,7 @@ What if the DB write succeeds but the Kafka send fails? The order exists but no 
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -678,7 +688,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -697,7 +707,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 STEP 1: Single atomic transaction
@@ -717,7 +727,7 @@ STEP 3: Cleanup
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -731,7 +741,7 @@ STEP 3: Cleanup
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Step 1: Write business data + event atomically
@@ -773,7 +783,7 @@ public void publishOutboxEvents() {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -795,14 +805,14 @@ public void publishOutboxEvents() {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -849,13 +859,13 @@ public void publishOutboxEvents() {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Outbox Pattern. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -866,7 +876,7 @@ public void publishOutboxEvents() {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -900,7 +910,7 @@ public void publishOutboxEvents() {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -925,19 +935,19 @@ public void publishOutboxEvents() {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Producer generates 10,000 events/sec. Consumer processes 5,000/sec. Without backpressure: memory fills with buffered events, GC thrashes, OOM crash. The fast producer kills the slow consumer.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -950,7 +960,7 @@ Producer generates 10,000 events/sec. Consumer processes 5,000/sec. Without back
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -970,7 +980,7 @@ Producer generates 10,000 events/sec. Consumer processes 5,000/sec. Without back
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -982,7 +992,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1001,7 +1011,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 WITHOUT BACKPRESSURE:
@@ -1024,7 +1034,7 @@ WITH BACKPRESSURE:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1038,7 +1048,7 @@ WITH BACKPRESSURE:
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Reactive Streams backpressure (Project Reactor)
@@ -1058,7 +1068,7 @@ Flux.range(1, 1_000_000)
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1080,14 +1090,14 @@ Flux.range(1, 1_000_000)
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1134,13 +1144,13 @@ Flux.range(1, 1_000_000)
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Backpressure. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1151,7 +1161,7 @@ Flux.range(1, 1_000_000)
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1185,7 +1195,7 @@ Flux.range(1, 1_000_000)
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1210,19 +1220,19 @@ Flux.range(1, 1_000_000)
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Your e-commerce system has a normalized write model (orders, line_items, products - 3 tables with JOINs). Reads need a denormalized view (order with full product details, customer info, shipping status). The same model can't be optimal for both: normalized for writes (avoid anomalies) and denormalized for reads (avoid JOINs).
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1235,7 +1245,7 @@ Your e-commerce system has a normalized write model (orders, line_items, product
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1255,7 +1265,7 @@ Your e-commerce system has a normalized write model (orders, line_items, product
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1267,7 +1277,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1286,7 +1296,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 WRITE SIDE:
@@ -1309,7 +1319,7 @@ READ SIDE:          v
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1323,7 +1333,7 @@ READ SIDE:          v
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // WRITE SIDE
@@ -1368,7 +1378,7 @@ public class OrderQueryHandler {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1390,14 +1400,14 @@ public class OrderQueryHandler {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1444,13 +1454,13 @@ public class OrderQueryHandler {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for CQRS with Events. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1461,7 +1471,7 @@ public class OrderQueryHandler {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1495,7 +1505,7 @@ public class OrderQueryHandler {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1520,7 +1530,7 @@ public class OrderQueryHandler {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Your support ticket system processes tickets first-come-first-served. A critical production outage ticket waits behind 500 password reset tickets. The outage takes 3 hours to reach a human because the queue doesn't distinguish urgency.
 
@@ -1546,13 +1556,13 @@ APPROACH 3: Weighted consumption
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1565,7 +1575,7 @@ APPROACH 3: Weighted consumption
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1585,7 +1595,7 @@ APPROACH 3: Weighted consumption
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1597,7 +1607,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1623,7 +1633,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1637,7 +1647,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Multiple queues approach (recommended)
@@ -1666,7 +1676,7 @@ public void submitTicket(Ticket ticket) {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1688,14 +1698,14 @@ public void submitTicket(Ticket ticket) {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1742,13 +1752,13 @@ public void submitTicket(Ticket ticket) {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Priority Queues. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1759,7 +1769,7 @@ public void submitTicket(Ticket ticket) {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1793,7 +1803,7 @@ public void submitTicket(Ticket ticket) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1818,19 +1828,19 @@ public void submitTicket(Ticket ticket) {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 Your API generates a financial report that takes 45 seconds. The HTTP connection times out at 30 seconds. The client gets an error even though the report was being generated. You can't make a 45-second operation synchronous.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 [TODO: 2-4 sentences. Formal. Technically precise.]
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1843,7 +1853,7 @@ Your API generates a financial report that takes 45 seconds. The HTTP connection
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1863,7 +1873,7 @@ Your API generates a financial report that takes 45 seconds. The HTTP connection
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1875,7 +1885,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1894,7 +1904,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 SYNC API (broken for slow operations):
@@ -1914,7 +1924,7 @@ POST /reports {callbackUrl: "https://me/hook"}
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1928,7 +1938,7 @@ POST /reports {callbackUrl: "https://me/hook"}
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```java
 // Async API - Submit + Poll pattern
@@ -1987,7 +1997,7 @@ public class ReportWorker {
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -2009,14 +2019,14 @@ public class ReportWorker {
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -2063,13 +2073,13 @@ public class ReportWorker {
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Async API Design. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2080,7 +2090,7 @@ public class ReportWorker {
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -2114,7 +2124,7 @@ public class ReportWorker {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

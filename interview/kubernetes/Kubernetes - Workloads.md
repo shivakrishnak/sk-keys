@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "Kubernetes - Workloads"
+parent: "Kubernetes"
+grand_parent: "Interview Mastery"
+nav_order: 2
+permalink: /interview/kubernetes/workloads/
 topic: Kubernetes
 subtopic: Workloads
 keywords:
@@ -14,13 +19,22 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Pod](#pod)
+- [Deployment](#deployment)
+- [StatefulSet](#statefulset)
+- [DaemonSet](#daemonset)
+- [Job and CronJob](#job-and-cronjob)
+- [ReplicaSet](#replicaset)
+
 # Pod
 
 **TL;DR** - A Pod is the smallest deployable unit in Kubernetes - a group of one or more containers that share network namespace (same IP), storage volumes, and lifecycle, scheduled together on the same node.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Containers are isolated by default (separate network, storage). Some applications need tightly-coupled containers (app + sidecar) that must share localhost and storage. Running them independently on different nodes breaks this coupling.
@@ -30,13 +44,13 @@ Containers are isolated by default (separate network, storage). Some application
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A Pod is a Kubernetes abstraction representing a group of one or more containers with shared storage/network resources and a specification for how to run the containers. Containers within a Pod share the same network namespace (IP and port space), IPC namespace, and can share volumes.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A Pod is one or more containers that share an IP address and storage.
@@ -50,7 +64,7 @@ Most pods have exactly ONE container. Multi-container pods exist for the sidecar
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -70,7 +84,7 @@ Most pods have exactly ONE container. Multi-container pods exist for the sidecar
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -82,7 +96,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -101,7 +115,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```yaml
 apiVersion: v1
@@ -154,7 +168,7 @@ Pod internals:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -168,7 +182,7 @@ Pod internals:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -190,14 +204,14 @@ Pod internals:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When would you put multiple containers in one Pod vs separate Pods?**
 
@@ -222,13 +236,13 @@ Rule of thumb: "Would this container make sense running on a different machine?"
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Pod. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -239,7 +253,7 @@ Rule of thumb: "Would this container make sense running on a different machine?"
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -273,7 +287,7 @@ Rule of thumb: "Would this container make sense running on a different machine?"
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -298,7 +312,7 @@ Rule of thumb: "Would this container make sense running on a different machine?"
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You manually create pods. One crashes - nobody recreates it. You need to update the image - you delete pods one by one and create new ones, hoping traffic isn't dropped. Rollback means remembering the old image tag.
@@ -308,13 +322,13 @@ You manually create pods. One crashes - nobody recreates it. You need to update 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A Deployment provides declarative updates for Pods and ReplicaSets. You describe a desired state (image, replicas, strategy), and the Deployment controller progressively changes the actual state to the desired state at a controlled rate through rolling updates.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 A Deployment ensures the right number of the right version of your app is always running.
@@ -328,7 +342,7 @@ Deployments create ReplicaSets. Each update creates a NEW ReplicaSet (keeping ol
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -348,7 +362,7 @@ Deployments create ReplicaSets. Each update creates a NEW ReplicaSet (keeping ol
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -360,7 +374,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -379,7 +393,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```yaml
 apiVersion: apps/v1
@@ -431,7 +445,7 @@ Rollback:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -445,7 +459,7 @@ Rollback:
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 ```bash
 # Deploy
@@ -481,7 +495,7 @@ kubectl rollout resume deployment/api-server
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -503,14 +517,14 @@ kubectl rollout resume deployment/api-server
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: You deploy a new version and users start seeing 500 errors. What happened and how do you handle it?**
 
@@ -564,13 +578,13 @@ In practice: 95% of deployments use RollingUpdate. Recreate is rare and usually 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Deployment. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -581,7 +595,7 @@ In practice: 95% of deployments use RollingUpdate. Recreate is rare and usually 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -615,7 +629,7 @@ In practice: 95% of deployments use RollingUpdate. Recreate is rare and usually 
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -640,7 +654,7 @@ In practice: 95% of deployments use RollingUpdate. Recreate is rare and usually 
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Your PostgreSQL cluster needs: pod-0 is always primary, pod-1 is always replica. Pods need stable DNS names that survive restarts. Each pod needs its own persistent disk that follows it. Deployments can't provide any of this.
@@ -650,13 +664,13 @@ Your PostgreSQL cluster needs: pod-0 is always primary, pod-1 is always replica.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A StatefulSet is a workload controller that manages stateful applications by providing: stable, unique network identifiers for each pod (pod-0, pod-1), stable persistent storage (per-pod PVCs), and ordered, graceful deployment, scaling, and termination.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 StatefulSet gives pods stable identity and persistent storage - essential for databases and distributed systems.
@@ -670,7 +684,7 @@ StatefulSet pods have predictable names: `myapp-0`, `myapp-1`, `myapp-2`. Each h
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -690,7 +704,7 @@ StatefulSet pods have predictable names: `myapp-0`, `myapp-1`, `myapp-2`. Each h
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -702,7 +716,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -721,7 +735,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```yaml
 apiVersion: apps/v1
@@ -770,7 +784,7 @@ StatefulSet guarantees:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -784,7 +798,7 @@ StatefulSet guarantees:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -806,14 +820,14 @@ StatefulSet guarantees:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: When would you use StatefulSet vs Deployment for a database?**
 
@@ -842,13 +856,13 @@ The operator pattern (CloudNativePG for Postgres, Strimzi for Kafka) adds automa
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for StatefulSet. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -859,7 +873,7 @@ The operator pattern (CloudNativePG for Postgres, Strimzi for Kafka) adds automa
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -893,7 +907,7 @@ The operator pattern (CloudNativePG for Postgres, Strimzi for Kafka) adds automa
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -918,20 +932,20 @@ The operator pattern (CloudNativePG for Postgres, Strimzi for Kafka) adds automa
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You need a log collector on every node to ship logs from all pods on that node. With Deployments, you'd need to manually match replicas to node count and handle node additions.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A DaemonSet ensures that all (or a subset of) nodes run a copy of a specific Pod. As nodes are added/removed from the cluster, the DaemonSet controller automatically adds/removes pods to maintain one-per-node coverage.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 DaemonSet = exactly one pod per node, automatically.
@@ -942,7 +956,7 @@ DaemonSet = exactly one pod per node, automatically.
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -962,7 +976,7 @@ DaemonSet = exactly one pod per node, automatically.
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -974,7 +988,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -993,7 +1007,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```yaml
 apiVersion: apps/v1
@@ -1047,7 +1061,7 @@ Common DaemonSet use cases:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1061,7 +1075,7 @@ Common DaemonSet use cases:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1083,14 +1097,14 @@ Common DaemonSet use cases:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1137,13 +1151,13 @@ Common DaemonSet use cases:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for DaemonSet. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1154,7 +1168,7 @@ Common DaemonSet use cases:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1188,7 +1202,7 @@ Common DaemonSet use cases:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1213,20 +1227,20 @@ Common DaemonSet use cases:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Not everything is a long-running service. Database migrations, batch reports, and nightly cleanups run once (or periodically) and exit. Deployments restart finished pods - the opposite of what you want.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A Job creates one or more Pods and ensures they successfully terminate. A CronJob creates Jobs on a repeating schedule defined by a cron expression, managing job history and concurrency policy.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 [TODO: 15 words max. Zero jargon.]
@@ -1239,7 +1253,7 @@ A Job creates one or more Pods and ensures they successfully terminate. A CronJo
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1259,7 +1273,7 @@ A Job creates one or more Pods and ensures they successfully terminate. A CronJo
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1271,7 +1285,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1290,7 +1304,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```yaml
 # One-shot Job (database migration)
@@ -1333,7 +1347,7 @@ spec:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1347,7 +1361,7 @@ spec:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1369,14 +1383,14 @@ spec:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1423,13 +1437,13 @@ spec:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for Job and CronJob. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1440,7 +1454,7 @@ spec:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1474,7 +1488,7 @@ spec:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]
@@ -1499,20 +1513,20 @@ spec:
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 You create 3 pods manually. One dies. Now you have 2. Nobody creates the replacement. You need to constantly watch and manually intervene.
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 A ReplicaSet maintains a stable set of replica Pods running at any given time by creating or deleting pods as needed to reach the desired replica count. It's identified by its selector (matching pods by labels).
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 ReplicaSet = "always have N pods matching this template running."
@@ -1522,7 +1536,7 @@ You almost NEVER create ReplicaSets directly. Deployments create and manage them
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 1. [TODO: Always true about this concept]
@@ -1542,7 +1556,7 @@ You almost NEVER create ReplicaSets directly. Deployments create and manage them
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > [TODO: Primary analogy in blockquote.]
 
@@ -1554,7 +1568,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 [TODO: Plain English. No jargon. 2-4 sentences.]
@@ -1573,7 +1587,7 @@ Where this analogy breaks down: [TODO: 1 sentence.]
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Deployment -> ReplicaSet -> Pods
@@ -1595,7 +1609,7 @@ Self-healing:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 [TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
@@ -1609,7 +1623,7 @@ Self-healing:
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** [TODO]
 **PROBLEM IT SOLVES:** [TODO]
@@ -1631,14 +1645,14 @@ Self-healing:
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 [TODO: 2-4 sentences. One counterintuitive fact.
  Specific. Makes this concept permanently memorable.]
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: [TODO: Conceptual question - foundational]**
 
@@ -1685,13 +1699,13 @@ Self-healing:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 [TODO: Include if 2+ named alternatives exist for ReplicaSet. Otherwise remove this section.]
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1702,7 +1716,7 @@ Self-healing:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: [TODO]**
 **Symptom:** [TODO]
@@ -1736,7 +1750,7 @@ Self-healing:
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 - [TODO] - [why needed]

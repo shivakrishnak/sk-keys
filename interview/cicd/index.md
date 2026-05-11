@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "CI/CD"
+parent: "Interview Mastery"
+nav_order: 11
+has_children: true
+permalink: /interview/cicd/
 description: "Continuous Integration, Continuous Delivery/Deployment pipelines, tools, strategies, and DevSecOps practices"
 keywords_count: 24
 files_count: 4

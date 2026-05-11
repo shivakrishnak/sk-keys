@@ -18,13 +18,21 @@ status: in-progress
 version: 2
 ---
 
+**Keywords covered in this file:**
+
+- [Exception Hierarchy](#exception-hierarchy)
+- [Checked vs Unchecked Exceptions](#checked-vs-unchecked-exceptions)
+- [Try-with-Resources](#try-with-resources)
+- [IO Streams](#io-streams)
+- [NIO and NIO.2](#nio-and-nio2)
+
 # Exception Hierarchy
 
 **TL;DR** - Java's exception hierarchy splits into checked (compiler-enforced) and unchecked (runtime) exceptions rooted at Throwable, and knowing which to throw and catch prevents both swallowed errors and cluttered APIs.
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without a structured exception hierarchy, error handling is ad-hoc. Some methods return -1 for errors, others return null, others set a global error flag. Callers forget to check return values, errors propagate silently, and the program crashes hours later with no trace of what originally went wrong.
@@ -40,13 +48,13 @@ C used error codes and `errno`. C++ introduced exceptions but without a forced h
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Java's exception hierarchy is a class tree rooted at `Throwable`. `Error` (subclass of Throwable) represents unrecoverable JVM-level failures (e.g., `OutOfMemoryError`). `Exception` (subclass of Throwable) represents recoverable conditions. `RuntimeException` (subclass of Exception) and its subclasses are unchecked - not enforced by the compiler. All other Exception subclasses are checked - the compiler requires they be caught or declared in the method signature.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Java forces you to handle predictable failures at compile time and lets runtime bugs crash fast.
@@ -60,7 +68,7 @@ The checked/unchecked split answers one question: "Can the caller reasonably rec
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -82,7 +90,7 @@ The compiler enforcement of checked exceptions creates a contract: the method si
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a building's safety system. Fire alarms (checked exceptions) are planned for - every floor has an evacuation route (catch block). Structural collapse (Error) means the building is done - no recovery plan, just evacuate. Someone tripping on their shoelaces (RuntimeException) is their own fault - fix the shoes, don't redesign the building.
 
@@ -95,7 +103,7 @@ Where this analogy breaks down: In real buildings, you can't prevent structural 
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 When something goes wrong in a Java program, it throws an exception. Exceptions come in types organized in a family tree. Some types the compiler forces you to handle; others it doesn't. This hierarchy keeps programs from silently failing.
@@ -120,7 +128,7 @@ Java's exception hierarchy embodies a universal error classification pattern fou
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Exception Hierarchy:
@@ -147,7 +155,7 @@ Exception Hierarchy:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -178,7 +186,7 @@ In high-throughput systems (100K+ requests/sec), exception-driven flow control b
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - Exception handling anti-patterns**
 
@@ -251,7 +259,7 @@ Use `assertThrows()` in JUnit to verify the correct exception type is thrown, ch
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Class tree rooted at Throwable with Error (system) and Exception (application) branches
 **PROBLEM IT SOLVES:** Classifies failures into recoverable errors, bugs, and system failures
@@ -273,13 +281,13 @@ Use `assertThrows()` in JUnit to verify the correct exception type is thrown, ch
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Creating an exception is 50-100x more expensive than a normal object because `fillInStackTrace()` must walk the entire thread call stack and create StackTraceElement objects for each frame. In a deep Spring Boot stack (60+ frames), this takes 5-10 microseconds per exception. Libraries like Netty override `fillInStackTrace()` to skip this for flow-control exceptions like `ChannelClosedException`, improving throughput by up to 30% in connection-heavy workloads.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What's the difference between checked and unchecked exceptions? When would you use each?**
 
@@ -512,7 +520,7 @@ Multi-catch reduces code duplication when the handling logic is identical for di
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | Checked Exception | RuntimeException | Error |
 |--------|------------------|-----------------|------|
@@ -524,7 +532,7 @@ Multi-catch reduces code duplication when the handling logic is identical for di
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -535,7 +543,7 @@ Multi-catch reduces code duplication when the handling logic is identical for di
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Catching Exception swallows everything**
 **Symptom:** Bugs silently disappear. Application produces wrong results with no errors logged.
@@ -612,7 +620,7 @@ public Throwable fillInStackTrace() { return this; }
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -639,7 +647,7 @@ public Throwable fillInStackTrace() { return this; }
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without the distinction, every exception is the same. Callers can't tell whether a failure is something they should handle (network timeout) or something that indicates a bug (null pointer). APIs don't communicate what can go wrong, so callers either over-catch everything or under-catch and crash.
@@ -655,13 +663,13 @@ Java was the first mainstream language to enforce checked exceptions at compile 
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Checked exceptions are subclasses of `Exception` (but not `RuntimeException`) that the Java compiler enforces handling for - callers must either catch them or declare them in their `throws` clause. Unchecked exceptions are subclasses of `RuntimeException` that the compiler does not enforce. The distinction encodes the designer's intent: checked = "this can reasonably fail and the caller should have a plan," unchecked = "this is a programming error."
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Checked means "expect this to fail," unchecked means "you have a bug."
@@ -675,7 +683,7 @@ The real question when designing an exception is: "Can the immediate caller do s
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -697,7 +705,7 @@ By making anticipated failures part of the method signature, the compiler forces
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Checked exceptions are like a contract clause saying "weather may delay delivery." You must acknowledge it and have a plan (accept delay, cancel order, use backup supplier). Unchecked exceptions are like the delivery truck catching fire - nobody planned for it because it shouldn't happen.
 
@@ -711,7 +719,7 @@ Where this analogy breaks down: In software, unchecked exceptions happen far mor
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Java has two kinds of errors. Some (checked) the compiler forces you to handle - like mandatory insurance. Others (unchecked) are your own fault - like tripping over your own feet.
@@ -736,7 +744,7 @@ The checked vs unchecked debate is Java's version of the fundamental error handl
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Compile-time enforcement:
@@ -773,7 +781,7 @@ Compile-time enforcement:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -801,7 +809,7 @@ In large codebases, checked exceptions create coupling: changing a low-level imp
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - The boundary pattern**
 
@@ -860,7 +868,7 @@ Test that checked exceptions are properly wrapped at boundaries (not swallowed),
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Checked: compiler-enforced handling. Unchecked: optional handling (RuntimeException subtypes)
 **PROBLEM IT SOLVES:** Forces callers to acknowledge recoverable failure scenarios at compile time
@@ -882,13 +890,13 @@ Test that checked exceptions are properly wrapped at boundaries (not swallowed),
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Java's checked exception mechanism was so controversial that the architects of C# (including Anders Hejlsberg, who also designed Turbo Pascal and Delphi) specifically studied Java's experience and decided to omit checked exceptions from C#. Their conclusion: checked exceptions work well for small programs but create significant maintenance burden in large systems because throws clauses become part of the public API contract, making internal implementation changes a breaking change.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: Your team is debating whether a new custom exception should be checked or unchecked. What's your decision framework?**
 
@@ -1076,7 +1084,7 @@ Key insight: the instinct to "catch everything" comes from fear of crashes. The 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | Checked | Unchecked |
 |--------|---------|----------|
@@ -1089,7 +1097,7 @@ Key insight: the instinct to "catch everything" comes from fear of crashes. The 
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1100,7 +1108,7 @@ Key insight: the instinct to "catch everything" comes from fear of crashes. The 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Checked exception leaking implementation details**
 **Symptom:** Service interface declares `throws SQLException` - changing the DB implementation requires changing the interface.
@@ -1191,7 +1199,7 @@ grep -rn 'RuntimeException(' src/ | grep -v ', e)\|, ex)'
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -1218,7 +1226,7 @@ grep -rn 'RuntimeException(' src/ | grep -v ', e)\|, ex)'
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Closing resources in `finally` blocks requires nested try-catch inside finally, null checks, and careful ordering. A database connection opened before a statement must be closed after the statement, but if closing the statement throws, the connection leaks. Real production code had 15+ lines of boilerplate for two resources.
@@ -1234,13 +1242,13 @@ Pre-Java 7: manual `finally` blocks. Java 7 introduced try-with-resources and th
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Try-with-resources (Java 7+) is a statement that declares one or more resources in the try header. Resources must implement `AutoCloseable`. The compiler generates code to call `close()` on each resource in reverse declaration order when the try block exits, whether normally or via exception. If both the try body and `close()` throw, the body's exception is primary and the close exception is added as a suppressed exception.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Declare resources in the try header and Java guarantees they're closed no matter what.
@@ -1254,7 +1262,7 @@ The real insight is suppressed exceptions. Before Java 7, if `close()` threw, it
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1276,7 +1284,7 @@ The compiler generates a finally block with null checks and suppressed exception
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of a self-closing door. You walk through (try body), and whether you walk out normally or run out in a panic (exception), the door closes itself behind you. If you're carrying boxes through multiple doors, they all close in reverse order.
 
@@ -1290,7 +1298,7 @@ Where this analogy breaks down: Doors don't suppress their own errors when you'r
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 A special try statement where you declare resources (files, connections, etc.) that Java automatically closes when you're done, even if something goes wrong.
@@ -1315,7 +1323,7 @@ Try-with-resources is Java's implementation of the RAII (Resource Acquisition Is
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 What you write:
@@ -1353,7 +1361,7 @@ What the compiler generates (simplified):
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -1380,7 +1388,7 @@ In high-throughput systems, resource leaks are the #1 cause of gradual degradati
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - Manual vs automatic**
 
@@ -1446,7 +1454,7 @@ Create a mock `AutoCloseable` that records `close()` calls. Verify it's called e
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Language construct that auto-closes AutoCloseable resources when scope exits
 **PROBLEM IT SOLVES:** Eliminates resource leaks from forgotten close() calls in finally blocks
@@ -1468,13 +1476,13 @@ Create a mock `AutoCloseable` that records `close()` calls. Verify it's called e
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Before Java 7, the official Sun/Oracle examples for JDBC code had resource leak bugs. The correct manual pattern requires nested try-finally blocks with null checks and exception handling - roughly 20 lines of boilerplate per pair of resources. Studies of open-source Java projects found that over 60% of resource management code had potential leaks. Try-with-resources didn't just reduce boilerplate - it eliminated an entire category of production defects.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What are suppressed exceptions and how do you access them?**
 
@@ -1687,7 +1695,7 @@ Key design decisions:
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | Try-with-Resources | Try-Finally | Manual close() |
 |--------|-------------------|------------|---------------|
@@ -1699,7 +1707,7 @@ Key design decisions:
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -1710,7 +1718,7 @@ Key design decisions:
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Resource created outside try-with-resources**
 **Symptom:** Resource leak under exception conditions. Connection pool exhaustion after hours.
@@ -1800,7 +1808,7 @@ public void close() {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -1827,7 +1835,7 @@ public void close() {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Without a unified IO abstraction, reading from a file uses one API, reading from a network socket uses another, and reading from memory uses a third. Your code is tightly coupled to the data source. Switching from file to network requires rewriting all IO logic.
@@ -1843,13 +1851,13 @@ Java 1.0 introduced `InputStream`/`OutputStream` (bytes) and `Reader`/`Writer` (
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 Java IO streams are sequential, ordered sequences of data elements. Byte streams (`InputStream`/`OutputStream`) handle raw bytes. Character streams (`Reader`/`Writer`) handle Unicode characters with encoding conversion. Both families use the Decorator pattern: concrete streams wrap other streams to add behavior (buffering, compression, encryption) without modifying the underlying source. This composition model provides a uniform API across diverse data sources.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 Streams are pipes that move data byte-by-byte or char-by-char from a source to a destination.
@@ -1863,7 +1871,7 @@ The #1 performance mistake in Java IO is forgetting to buffer. `FileInputStream.
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -1885,7 +1893,7 @@ The Decorator pattern allows combining behaviors. Need buffered, compressed, enc
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Think of an assembly line in a factory. Raw materials (bytes) enter one end and pass through stations (decorators). Each station adds something: one converts materials to products (InputStreamReader), another batches items for efficiency (BufferedReader), another counts items (monitoring). The factory owner doesn't care where raw materials come from - file, network, or another factory.
 
@@ -1898,7 +1906,7 @@ Where this analogy breaks down: Assembly lines process items in parallel; Java I
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 Java IO streams are pipes that move data from one place to another. Byte streams handle raw data. Character streams handle text. You can chain multiple streams together to add features like buffering or encoding.
@@ -1923,7 +1931,7 @@ Java's IO Streams implement the decorator pattern over byte/character sequences 
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 Decorator chain for reading a UTF-8 text file:
@@ -1949,7 +1957,7 @@ Decorator chain for reading a UTF-8 text file:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -1978,7 +1986,7 @@ For files > 1GB, `Files.readAllBytes()` causes OutOfMemoryError - use streaming 
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - Buffering matters**
 
@@ -2032,7 +2040,7 @@ Use `ByteArrayInputStream`/`ByteArrayOutputStream` for unit tests - no real file
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Byte (InputStream/OutputStream) and character (Reader/Writer) stream abstractions for IO
 **PROBLEM IT SOLVES:** Uniform API for reading/writing files, network, memory, and other byte/char sources
@@ -2054,13 +2062,13 @@ Use `ByteArrayInputStream`/`ByteArrayOutputStream` for unit tests - no real file
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 `FileWriter` and `FileReader` use the platform's default encoding, which varies by OS and locale. A file written with `FileWriter` on a Windows machine (Windows-1252) becomes garbled when read on a Linux server (UTF-8). This is why `FileWriter` and `FileReader` are effectively deprecated in practice - always use `Files.newBufferedWriter(path, StandardCharsets.UTF_8)` or `OutputStreamWriter` with an explicit charset.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between byte streams and character streams? When do you use each?**
 
@@ -2235,7 +2243,7 @@ For truly massive cardinality (billions of unique IPs), use a streaming approxim
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | InputStream/OutputStream | Reader/Writer | NIO Channel |
 |--------|------------------------|-------------|------------|
@@ -2247,7 +2255,7 @@ For truly massive cardinality (billions of unique IPs), use a streaming approxim
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2258,7 +2266,7 @@ For truly massive cardinality (billions of unique IPs), use a streaming approxim
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Charset corruption from default encoding**
 **Symptom:** Characters appear as `?`, `???`, or garbled text. Works on developer's machine but fails on server.
@@ -2334,7 +2342,7 @@ try (InputStream is = new FileInputStream(file)) {
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
@@ -2361,7 +2369,7 @@ try (InputStream is = new FileInputStream(file)) {
 
 ---
 
-### The Problem This Solves
+### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
 Classic `java.io` is blocking: one thread per connection. A chat server with 10,000 users needs 10,000 threads. Each thread uses 512KB-1MB of stack space. At 10K threads, you've consumed 5-10GB just for stacks, plus context-switching overhead brings the CPU to its knees.
@@ -2377,13 +2385,13 @@ Java 1.4 introduced NIO (channels, buffers, selectors) for non-blocking IO. Java
 
 ---
 
-### Textbook Definition
+### 📘 Textbook Definition
 
 NIO (New I/O, `java.nio`) provides channel-based, buffer-oriented I/O with optional non-blocking mode and selector-based multiplexing. Channels represent connections to I/O devices; buffers are fixed-size containers for data. `Selector` monitors multiple channels for readiness, enabling one thread to manage thousands of connections. NIO.2 (`java.nio.file`, Java 7) adds the `Path` interface replacing `File`, the `Files` utility class with 50+ static methods, and the `FileSystem` abstraction for virtual file systems.
 
 ---
 
-### Understand It in 30 Seconds
+### ⏱️ Understand It in 30 Seconds
 
 **One line:**
 NIO handles thousands of connections on few threads; NIO.2 is the modern file API.
@@ -2397,7 +2405,7 @@ NIO and NIO.2 solve different problems. NIO's non-blocking channels and selector
 
 ---
 
-### First Principles Explanation
+### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
 
@@ -2419,7 +2427,7 @@ By separating "is data available?" (Selector) from "read the data" (Channel + Bu
 
 ---
 
-### Mental Model / Analogy
+### 🧠 Mental Model / Analogy
 
 > Classic IO: a phone operator manually connecting each call (one thread per connection). NIO: a switchboard that lights up when any line has activity, and the operator handles only active lines.
 
@@ -2433,7 +2441,7 @@ Where this analogy breaks down: Modern phone switchboards are automated, while N
 
 ---
 
-### Gradual Depth - Five Levels
+### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
 NIO lets a server handle many connections without needing one thread per connection. NIO.2 is Java's modern way to work with files and directories - much better than the old `File` class.
@@ -2458,7 +2466,7 @@ NIO represents the evolution from blocking-thread-per-connection IO to non-block
 
 ---
 
-### How It Works
+### ⚙️ How It Works
 
 ```
 NIO Selector model:
@@ -2484,7 +2492,7 @@ NIO Selector model:
 
 ---
 
-### Complete Picture - End-to-End Flow
+### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
 
@@ -2515,7 +2523,7 @@ At 100K connections, a single Selector thread becomes a bottleneck. Netty uses m
 
 ---
 
-### Code Example
+### 💻 Code Example
 
 **Example 1 - NIO.2 file operations (use this daily)**
 
@@ -2578,7 +2586,7 @@ Test NIO.2 operations with `jimfs` (in-memory filesystem). Test buffer operation
 
 ---
 
-### Quick Reference Card
+### 📌 Quick Reference Card
 
 **WHAT IT IS:** Non-blocking IO with Channels, Buffers, Selectors (NIO) plus Path/Files API (NIO.2)
 **PROBLEM IT SOLVES:** Handles thousands of concurrent connections with few threads via IO multiplexing
@@ -2600,13 +2608,13 @@ Test NIO.2 operations with `jimfs` (in-memory filesystem). Test buffer operation
 
 ---
 
-### The Surprising Truth
+### 💡 The Surprising Truth
 
 Java 21's virtual threads may make NIO's non-blocking model unnecessary for most applications. With virtual threads, you write simple blocking IO code (`socket.read()`) and the JVM automatically parks the virtual thread and reuses the carrier thread - achieving NIO-like scalability with blocking-style simplicity. Internally, virtual threads use NIO under the hood. The framework does the complex event-driven programming so you don't have to.
 
 ---
 
-### Interview Deep-Dive
+### 🎯 Interview Deep-Dive
 
 **Q1: What is the difference between NIO and NIO.2?**
 
@@ -2808,7 +2816,7 @@ For new projects: start with virtual threads + blocking IO. Only drop to NIO if 
 
 ---
 
-### Comparison Table
+### ⚖️ Comparison Table
 
 | Aspect | Old IO (java.io) | NIO (java.nio) | NIO.2 (java.nio.file) |
 |--------|-----------------|----------------|---------------------|
@@ -2821,7 +2829,7 @@ For new projects: start with virtual threads + blocking IO. Only drop to NIO if 
 
 ---
 
-### Common Misconceptions
+### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
@@ -2832,7 +2840,7 @@ For new projects: start with virtual threads + blocking IO. Only drop to NIO if 
 
 ---
 
-### Failure Modes and Diagnosis
+### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: ByteBuffer flip() forgotten**
 **Symptom:** Channel.write() writes zero bytes or garbage. Buffer appears empty after filling it.
@@ -2919,7 +2927,7 @@ channel.close();
 
 ---
 
-### Related Keywords
+### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
 
