@@ -1,5 +1,10 @@
 ---
-title: Java
+layout: default
+title: "Java"
+parent: "Interview Mastery"
+nav_order: 1
+has_children: true
+permalink: /interview/java/
 description: Interview mastery content for Java - core language, JVM, collections, modern features
 keywords_count: 42
 files_count: 8

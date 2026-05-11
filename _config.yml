@@ -28,7 +28,7 @@ exclude:
   - Gemfile.lock
   - vendor/
   - tmp/
-  - interview/
+  - interview/config/
 
 # Search — disabled: 1,362 pages produce a ~25MB Lunr index
 # Re-enable once content is stable and index size is acceptable

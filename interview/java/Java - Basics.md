@@ -1,5 +1,10 @@
 ---
-title: Java - Basics
+layout: default
+title: "Java - Basics"
+parent: "Java"
+grand_parent: "Interview Mastery"
+nav_order: 1
+permalink: /interview/java/basics/
 topic: Java
 subtopic: Basics
 keywords:
