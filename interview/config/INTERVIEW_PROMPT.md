@@ -235,7 +235,7 @@ Every sub-topic file MUST begin with this frontmatter.
 No emojis, no Unicode stars, no special characters in YAML.
 
 ---
-title: Topic - Subtopic
+title: "Topic - Subtopic"
 topic: Topic
 subtopic: Subtopic
 keywords:
@@ -297,8 +297,8 @@ TOPIC index.md FORMAT
 Each topic folder MUST contain an index.md listing all files.
 
 ---
-title: Topic Name
-description: One-sentence description
+title: "Topic Name"
+description: Interview mastery content for Topic Name
 keywords_count: N
 files_count: N
 ---

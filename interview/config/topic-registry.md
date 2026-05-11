@@ -35,14 +35,14 @@
 
 | Topic                           | Folder             | Dictionary Sources | Status   | Description                                                         |
 | ------------------------------- | ------------------ | ------------------ | -------- | ------------------------------------------------------------------- |
-| Java                            | java/              | JVM, JLG           | planned  | Core Java language, OOP, collections, modern Java features          |
-| Java Concurrency                | java-concurrency/  | JCC                | planned  | Threading, synchronization, virtual threads, concurrent collections |
-| Spring                          | spring/            | SPR                | planned  | Spring Core, Boot, MVC, Security, Data, Cloud                       |
-| Hibernate                       | hibernate/         | JPH                | planned  | ORM fundamentals, JPA, entity management, performance tuning        |
+| Java                            | java/              | JVM, JLG           | complete | Core Java language, OOP, collections, modern Java features          |
+| Java Concurrency                | java-concurrency/  | JCC                | complete | Threading, synchronization, virtual threads, concurrent collections |
+| Spring                          | spring/            | SPR                | complete | Spring Core, Boot, MVC, Security, Data, Cloud, AOP, Testing         |
+| Hibernate                       | hibernate/         | JPH                | complete | ORM fundamentals, JPA, entity management, performance, locking      |
 | SQL and Databases               | sql-and-databases/ | DBF, NDB           | planned  | SQL queries, joins, indexing, transactions, NoSQL, replication      |
 | Containers                      | containers/        | CTR                | planned  | Docker fundamentals, images, networking, compose, security          |
 | Kubernetes                      | kubernetes/        | K8S                | planned  | Core resources, networking, storage, security, operations           |
-| System Design                   | system-design/     | DST, MSV, SYD, SAP | planned  | Distributed systems, microservices, architecture patterns           |
+| System Design                   | system-design/     | DST, MSV, SYD, SAP | complete | Distributed systems, microservices, architecture, infrastructure    |
 | React                           | react/             | RCT                | planned  | Components, hooks, state management, performance, testing           |
 | Security                        | security/          | SEC, IAM, CRY      | planned  | Web security, authentication, authorization, cryptography           |
 | Data Structures and Algorithms  | dsa/               | DSA                | planned  | Arrays, trees, graphs, sorting, dynamic programming                 |
@@ -50,9 +50,9 @@
 | Messaging                       | messaging/         | MSG                | planned  | Kafka, RabbitMQ, event-driven architecture, streaming               |
 | CI/CD and DevOps                | cicd-and-devops/   | CCD, GIT, OBS      | planned  | Pipelines, Git strategies, observability, SRE practices             |
 | AI and RAG                      | ai-and-rag/        | AIF, LLM, RAG      | planned  | LLM fundamentals, prompt engineering, RAG, agents, LLMOps           |
-| Design Patterns                 | design-patterns/   | DPT                | scaffold | GoF patterns, SOLID, creational, structural, behavioral             |
+| Design Patterns                 | design-patterns/   | DPT                | complete | GoF patterns, SOLID, creational, structural, behavioral, additional |
 | Microservices                   | microservices/     | MSV                | complete | Service decomposition, communication, resilience, deployment        |
-| Async and Background Processing | async-background/  | ASY                | scaffold | Message queues, brokers, event-driven, orchestration, observability |
+| Async and Background Processing | async-background/  | ASY                | complete | Message queues, brokers, event-driven, orchestration, observability |
 
 ---
 
@@ -64,28 +64,49 @@ should be self-sufficient.
 
 ### Java (java/)
 
-| File                         | Keywords (approximate)                                                                    | Source IDs              |
-| ---------------------------- | ----------------------------------------------------------------------------------------- | ----------------------- |
-| Java - Basics.md             | Variables, Data Types, Operators, Control Flow, OOP Basics, Classes, Interfaces           | JLG-001 to JLG-020      |
-| Java - Collections.md        | ArrayList, LinkedList, HashMap, TreeMap, HashSet, Queue, Iterator, Comparable             | JLG collections range   |
-| Java - Exceptions and IO.md  | Exception Hierarchy, Checked vs Unchecked, Try-with-Resources, IO Streams, NIO            | JLG exceptions/IO range |
-| Java - Java 8 Features.md    | Lambdas, Streams API, Optional, Functional Interfaces, Method References, Default Methods | JLG Java 8 range        |
-| Java - Java 11 to 17.md      | Records, Sealed Classes, Pattern Matching, Text Blocks, Switch Expressions                | JLG modern range        |
-| Java - Java 21 and Beyond.md | Virtual Threads Preview, Scoped Values, Structured Concurrency, String Templates          | JLG latest range        |
-| Java - JVM Internals.md      | JVM Architecture, Class Loading, Memory Model, JIT Compilation, GC Overview               | JVM core range          |
-| Java - Garbage Collection.md | GC Algorithms, G1, ZGC, Shenandoah, GC Tuning, Memory Leaks                               | JVM GC range            |
+| File                               | Keywords (approximate)                                                                    | Source IDs              |
+| ---------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------- |
+| Java - Basics.md                   | Variables, Data Types, Operators, Control Flow, OOP Basics, Classes, Interfaces           | JLG-001 to JLG-020      |
+| Java - Collections.md              | ArrayList, LinkedList, HashMap, TreeMap, HashSet, Queue, Iterator, Comparable             | JLG collections range   |
+| Java - Exceptions and IO.md        | Exception Hierarchy, Checked vs Unchecked, Try-with-Resources, IO Streams, NIO            | JLG exceptions/IO range |
+| Java - Java 8 Features.md          | Lambdas, Streams API, Optional, Functional Interfaces, Method References, Default Methods | JLG Java 8 range        |
+| Java - Java 11 to 17.md            | Records, Sealed Classes, Pattern Matching, Text Blocks, Switch Expressions                | JLG modern range        |
+| Java - Java 21 and Beyond.md       | Virtual Threads Preview, Scoped Values, Structured Concurrency, String Templates          | JLG latest range        |
+| Java - JVM Internals.md            | JVM Architecture, Class Loading, Memory Model, JIT Compilation, GC Overview               | JVM core range          |
+| Java - Garbage Collection.md       | GC Algorithms, G1, ZGC, Shenandoah, GC Tuning, Memory Leaks                               | JVM GC range            |
+| Java - Diagnostics and Security.md | JVM Profiling Tools, Java Security/Log4Shell, GC Selection Framework                      | JVM diagnostics range   |
 
 ### Spring (spring/)
 
-| File                     | Keywords (approximate)                                                                     |
-| ------------------------ | ------------------------------------------------------------------------------------------ |
-| Spring - Core and IoC.md | IoC Container, Dependency Injection, Bean Lifecycle, ApplicationContext, Configuration     |
-| Spring - Annotations.md  | Component Scanning, Autowiring, Qualifier, Conditional, Profile, Configuration Annotations |
-| Spring - Boot.md         | Auto-Configuration, Starters, Actuator, Properties, Embedded Server, DevTools              |
-| Spring - MVC and REST.md | DispatcherServlet, Controllers, Request Mapping, Exception Handling, Content Negotiation   |
-| Spring - Data and JPA.md | Spring Data Repositories, Query Methods, Specifications, Auditing, Transactions            |
-| Spring - Security.md     | Authentication, Authorization, OAuth2, JWT, CORS, CSRF Protection, Method Security         |
-| Spring - Cloud.md        | Service Discovery, Config Server, Circuit Breaker, API Gateway, Distributed Tracing        |
+| File                        | Keywords (approximate)                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------------------ |
+| Spring - Core and IoC.md    | IoC Container, Dependency Injection, Bean Lifecycle, ApplicationContext, Configuration     |
+| Spring - Annotations.md     | Component Scanning, Autowiring, Qualifier, Conditional, Profile, Configuration Annotations |
+| Spring - Boot.md            | Auto-Configuration, Starters, Actuator, Properties, Embedded Server, DevTools              |
+| Spring - MVC and REST.md    | DispatcherServlet, Controllers, Request Mapping, Exception Handling, Content Negotiation   |
+| Spring - Data and JPA.md    | Spring Data Repositories, Query Methods, Specifications, Auditing, Transactions            |
+| Spring - Security.md        | Authentication, Authorization, OAuth2, JWT, CORS, CSRF Protection, Method Security         |
+| Spring - Cloud.md           | Service Discovery, Config Server, Circuit Breaker, API Gateway, Distributed Tracing        |
+| Spring - AOP and Testing.md | Spring AOP, Spring Testing, Spring WebFlux                                                 |
+
+### Java Concurrency (java-concurrency/)
+
+| File                                         | Keywords (approximate)                                                              | Source IDs      |
+| -------------------------------------------- | ----------------------------------------------------------------------------------- | --------------- |
+| Java Concurrency - Thread Basics.md          | Thread, Runnable, Callable, Future, Executors, ThreadPoolExecutor, ForkJoinPool     | JCC core range  |
+| Java Concurrency - Synchronization.md        | synchronized, volatile, JMM, ReentrantLock, ReadWriteLock, StampedLock, Atomics/CAS | JCC sync range  |
+| Java Concurrency - Concurrent Collections.md | ConcurrentHashMap, CopyOnWriteArrayList, BlockingQueue, CountDownLatch, Semaphore   | JCC collections |
+| Java Concurrency - Virtual Threads.md        | Virtual Threads, Structured Concurrency, Scoped Values, Pinning, Migration          | JCC modern      |
+| Java Concurrency - Diagnostics.md            | Deadlock Detection/Thread Dumps, Testing Concurrent Code, Producer-Consumer Pattern | JCC diagnostics |
+
+### Hibernate (hibernate/)
+
+| File                         | Keywords (approximate)                                                                      | Source IDs         |
+| ---------------------------- | ------------------------------------------------------------------------------------------- | ------------------ |
+| Hibernate - Basics.md        | Session/EntityManager, Entity States, Entity Mapping, Primary Keys, Dirty Checking          | JPH basics range   |
+| Hibernate - Relationships.md | OneToMany/ManyToOne, ManyToMany, Fetch Types, Cascade Types, Bidirectional                  | JPH relation range |
+| Hibernate - Performance.md   | L1/L2 Cache, N+1 Detection, Batch/Bulk Ops, Query Optimization, Statistics                  | JPH perf range     |
+| Hibernate - Advanced.md      | Optimistic/Pessimistic Locking, Inheritance Mapping, JPQL/Criteria/Native, Schema Migration | JPH advanced       |
 
 ### Kubernetes (kubernetes/)
 
@@ -110,13 +131,14 @@ should be self-sufficient.
 
 ### System Design (system-design/)
 
-| File                             | Keywords (approximate)                                                 |
-| -------------------------------- | ---------------------------------------------------------------------- |
-| System Design - Fundamentals.md  | Scalability, Availability, Reliability, Load Balancing, CDN, DNS       |
-| System Design - Patterns.md      | Circuit Breaker, Retry, Bulkhead, Saga, CQRS, Event Sourcing           |
-| System Design - Microservices.md | Service Decomposition, API Gateway, Service Discovery, Data Ownership  |
-| System Design - Data at Scale.md | Sharding, Partitioning, Replication, Consensus, Eventual Consistency   |
-| System Design - Case Studies.md  | URL Shortener, Chat System, News Feed, Rate Limiter, Distributed Cache |
+| File                              | Keywords (approximate)                                                 |
+| --------------------------------- | ---------------------------------------------------------------------- |
+| System Design - Fundamentals.md   | Scalability, Availability, Reliability, Load Balancing, CDN, DNS       |
+| System Design - Patterns.md       | Circuit Breaker, Retry, Bulkhead, Saga, CQRS, Event Sourcing           |
+| System Design - Microservices.md  | Service Decomposition, API Gateway, Service Discovery, Data Ownership  |
+| System Design - Data at Scale.md  | Sharding, Partitioning, Replication, Consensus, Eventual Consistency   |
+| System Design - Case Studies.md   | URL Shortener, Chat System, News Feed, Rate Limiter, Distributed Cache |
+| System Design - Infrastructure.md | Load Balancing, CDN, Leader Election, Bloom Filters                    |
 
 ---
 
@@ -145,13 +167,14 @@ To add a new topic to this registry:
 
 ### Design Patterns (design-patterns/)
 
-| File                               | Keywords (approximate)                                                                  |
-| ---------------------------------- | --------------------------------------------------------------------------------------- |
-| Design Patterns - Creational.md    | Singleton, Factory Method, Abstract Factory, Builder, Prototype                         |
-| Design Patterns - Structural.md    | Adapter, Decorator, Proxy, Facade, Composite                                            |
-| Design Patterns - Behavioral.md    | Strategy, Observer, Command, Template Method, State, Chain of Responsibility            |
-| Design Patterns - SOLID.md         | SRP, OCP, LSP, ISP, DIP                                                                 |
-| Design Patterns - Anti-Patterns.md | God Object, Spaghetti Code, Premature Optimization, Circular Dependencies, Feature Envy |
+| File                                | Keywords (approximate)                                                                  |
+| ----------------------------------- | --------------------------------------------------------------------------------------- |
+| Design Patterns - Creational.md     | Singleton, Factory Method, Abstract Factory, Builder, Prototype                         |
+| Design Patterns - Structural.md     | Adapter, Decorator, Proxy, Facade, Composite                                            |
+| Design Patterns - Behavioral.md     | Strategy, Observer, Command, Template Method, State, Chain of Responsibility            |
+| Design Patterns - SOLID.md          | SRP, OCP, LSP, ISP, DIP                                                                 |
+| Design Patterns - Anti-Patterns.md  | God Object, Spaghetti Code, Premature Optimization, Circular Dependencies, Feature Envy |
+| Design Patterns - Additional GoF.md | Iterator, Visitor, Mediator, Memento                                                    |
 
 ### Microservices (microservices/)
 
