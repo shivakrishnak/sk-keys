@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React - Internals and Advanced"
+parent: "React"
+grand_parent: "Interview Mastery"
+nav_order: 8
+permalink: /interview/react/internals-and-advanced/
 topic: React
 subtopic: Internals and Advanced
 keywords:

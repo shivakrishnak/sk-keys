@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React - Hooks"
+parent: "React"
+grand_parent: "Interview Mastery"
+nav_order: 2
+permalink: /interview/react/hooks/
 topic: React
 subtopic: Hooks
 keywords:

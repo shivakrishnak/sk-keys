@@ -25,7 +25,7 @@ stop and return an error that shows the valid formats.
 
 ## MASTER SPEC
 
-The full keyword generation specification is in `KEYWORD_GENERATOR_PROMPT.md`
+The full keyword generation specification is in `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`
 (Category Keyword Generator - Master Prompt v4.0). Apply it exactly.
 
 Keep the workflow linear and scoped: validate the target, scan the current
@@ -52,7 +52,7 @@ extract the CODE from each folder name prefix, then run Phases 1-6 for each
 category sequentially. Print a tier-level summary at the end.
 
 **Step 2 — Look up registry fields** (for each category being processed)
-from the Category Code Registry in `copilot-instructions.md`:
+from the Category Code Registry in `.github/instructions/dictionary.instructions.md`:
 
 | Field         | Source                           |
 | ------------- | -------------------------------- |
@@ -115,7 +115,7 @@ Report all sync issues before proceeding.
 
 ## Phase 2 - Generate Keywords
 
-Using `KEYWORD_GENERATOR_PROMPT.md` v4.0 specification:
+Using `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` v4.0 specification:
 
 1. Set `Starting ID = CODE-{HIGHEST_ID + 1}` (or CODE-001 if new category)
 

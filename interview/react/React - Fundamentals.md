@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React - Fundamentals"
+parent: "React"
+grand_parent: "Interview Mastery"
+nav_order: 1
+permalink: /interview/react/fundamentals/
 topic: React
 subtopic: Fundamentals
 keywords:

@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React - State Management"
+parent: "React"
+grand_parent: "Interview Mastery"
+nav_order: 4
+permalink: /interview/react/state-management/
 topic: React
 subtopic: State Management
 keywords:

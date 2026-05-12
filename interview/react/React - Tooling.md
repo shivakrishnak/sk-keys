@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React - Tooling"
+parent: "React"
+grand_parent: "Interview Mastery"
+nav_order: 10
+permalink: /interview/react/tooling/
 topic: React
 subtopic: Tooling
 keywords:

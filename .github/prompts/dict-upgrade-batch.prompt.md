@@ -6,7 +6,8 @@ description: Upgrade sk-keys dictionary entries to v4.0 - scaffold + fill conten
 # Upgrade Batch - sk-keys Technical Dictionary
 
 You are upgrading sk-keys Technical Dictionary entries to **v4.0 standard**.
-The full spec is in `copilot-instructions.md` (already loaded as workspace instructions).
+The full spec is in `.github/instructions/dictionary.instructions.md` (auto-loaded for dictionary files)
+and `dictionary/_config/GENERATOR_PROMPT.md` (complete spec).
 
 ## How to invoke
 
@@ -42,7 +43,7 @@ Only files that are NOT already v4.0 complete need content filled in.
 > When writing via PowerShell PS1 scripts, ALWAYS use `pwsh` (not `powershell`) and
 > `[System.Text.Encoding]::new('utf-8')` (not `::UTF8`). Using `powershell.exe` or
 > `::UTF8` corrupts emoji (`⚡` → `âš¡`, `★` → `â˜…`) and adds a BOM that breaks
-> YAML frontmatter. See copilot-instructions.md §Encoding Safety for full details.
+> YAML frontmatter. See `.github/instructions/dictionary.instructions.md` §Encoding Safety for full details.
 
 ### Step 3 — Fill content stubs (one file at a time)
 
@@ -50,7 +51,7 @@ For each scaffolded file:
 
 1. Read the file (first 30 lines to see YAML, then skim for [FILL] stubs)
 2. Replace ALL `[FILL:...]` stubs with full v4.0 content per spec
-3. Apply copilot-instructions.md rules using this grouped checklist:
+3. Apply dictionary spec rules using this grouped checklist:
 
    **Formatting:**
    - Every `###` preceded by `---` with blank lines before and after both

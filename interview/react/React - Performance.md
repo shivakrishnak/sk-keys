@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React - Performance"
+parent: "React"
+grand_parent: "Interview Mastery"
+nav_order: 6
+permalink: /interview/react/performance/
 topic: React
 subtopic: Performance
 keywords:

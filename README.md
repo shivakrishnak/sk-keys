@@ -1,36 +1,54 @@
-﻿# 📚 Technical Dictionary
+﻿# sk-keys Technical Reference
 
-A software engineering dictionary - **1,770 keywords** across **43 categories** from CS fundamentals to AI & LLMs.
+A comprehensive software engineering reference with two content systems:
 
-## Files
+1. **Technical Dictionary** - 3,638+ keyword entries across 55 categories in 9 tiers (v4.0)
+2. **Interview Mastery Dictionary** - Interview-focused content with deep Q&A (v3.0)
 
-| File | Purpose |
-|---|---|
-| `GENERATOR_PROMPT.md` | Master prompt for generating dictionary entries |
-| `TECHNICAL_DICTIONARY.md` | Complete master keyword list (001–1770) |
-| `Update-MarkdownFrontmatter.ps1` | Recursively adds/updates GitHub Pages navigation frontmatter |
-| `_config.yml` | Jekyll / GitHub Pages configuration |
-| `docs/` | All dictionary entries, organized by category |
+## Structure
 
-## Add a New Entry
+| Folder                | Purpose                                       |
+| --------------------- | --------------------------------------------- |
+| `dictionary/`         | Dictionary entries organized by tier/category |
+| `dictionary/_config/` | Dictionary specs and generation scripts       |
+| `interview/`          | Interview mastery entries organized by topic  |
+| `interview/_config/`  | Interview specs and generation scripts        |
+| `.github/`            | Copilot instructions, prompts, and workflows  |
+| `tmp/`                | Historical utility scripts                    |
 
-```powershell
-# 1. Create file following the naming convention
-#    docs/<Category>/NNN - Keyword Name.md
+## Agents (recommended)
 
-# 2. Update navigation frontmatter
-.\Update-MarkdownFrontmatter.ps1
+Use `/dictionary` or `/interview` in VS Code Copilot chat for end-to-end content generation:
 
-# 3. Push
-git add docs/
-git commit -m "Add NNN - Keyword Name"
-git push origin main
+```
+/dictionary tier-3 JVM              Generate entries for JVM category
+/dictionary upgrade tier-1 CSF      Upgrade CSF entries to v4.0
+/dictionary new: PostgreSQL, Trino  Generate keywords + content for new topics
+/dictionary "Strong SQL skills..."  Analyze description, create keywords + content
+
+/interview Angular                  Create new interview topic with full content
+/interview React hooks              Add subtopic to existing React topic
+/interview from tier-3 JCC          Generate interview content from dictionary
+/interview "Experience with AWS.." Analyze JD, create matching interview content
 ```
 
-See `GENERATOR_PROMPT.md` for the full entry format specification.
+## Prompts
+
+```bash
+# Dictionary: @dict-generate-entries, @dict-generate-keywords, @dict-upgrade-batch
+# Interview: @interview-fill-content, @interview-scaffold
+```
+
+## Specs
+
+- Dictionary: `dictionary/_config/GENERATOR_PROMPT.md` (v4.0)
+- Interview: `interview/_config/INTERVIEW_PROMPT.md` (v3.0)
+- Keywords: `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` (shared)
+
+See `.github/copilot-instructions.md` for workspace instructions.
 
 ## Deploy to GitHub Pages
 
-1. Go to **Settings → Pages**
-2. Select `main` branch, root `/` (not `/docs`)
-3. Save - live at `https://shivakrishnak.github.io/sk-keys/`
+1. Go to **Settings -> Pages**
+2. Select `main` branch, root `/`
+3. Live at `https://shivakrishnak.github.io/sk-keys/`

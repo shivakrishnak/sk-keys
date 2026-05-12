@@ -28,309 +28,281 @@ version: 3
 
 # First-Level and Second-Level Cache
 
-**TL;DR** - First-level cache (persistence context) is per-session and automatic. Second-level cache (L2C) is shared across sessions and optional. L2C stores entities/queries across requests, reducing database roundtrips by 60-90% for read-heavy data that changes infrequently.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-Every `findById(42)` hits the database, even if 1000 requests/second ask for the same entity. Catalog data (countries, categories, config) queried repeatedly with identical results.
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why First-Level and Second-Level Cache was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **First-Level and Second-Level Cache** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-First-level: "If I already loaded this entity in the current request, don't load it again." Second-level: "If ANY request already loaded this entity recently, reuse it."
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-
-**First-level cache (automatic):**
-
-```java
-@Transactional
-public void process() {
-    // Query 1: hits DB
-    Order o1 = em.find(Order.class, 1L);
-    // Query 2: returns same object from cache!
-    Order o2 = em.find(Order.class, 1L);
-    assert o1 == o2; // true, same reference
-}
-```
-
-**Second-level cache (opt-in):**
-
-```xml
-<dependency>
-    <groupId>org.hibernate.orm</groupId>
-    <artifactId>hibernate-jcache</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.ehcache</groupId>
-    <artifactId>ehcache</artifactId>
-</dependency>
-```
-
-```java
-@Entity
-@Cache(usage = CacheConcurrencyStrategy
-    .READ_WRITE)
-public class Country {
-    @Id private String code;
-    private String name;
-}
-```
-
-```yaml
-spring:
-  jpa:
-    properties:
-      hibernate:
-        cache:
-          use_second_level_cache: true
-          region.factory_class: org.hibernate.cache.jcache.
-            JCacheRegionFactory
-```
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
-**Cache levels:**
-
-| Level                    | Scope               | Lifetime    | Shared | Eviction            |
-| ------------------------ | ------------------- | ----------- | ------ | ------------------- |
-| L1 (Persistence Context) | Session/Transaction | Request     | No     | Session close       |
-| L2 (Entity Cache)        | SessionFactory      | Application | Yes    | TTL / Size / Update |
-| Query Cache              | SessionFactory      | Application | Yes    | Table modification  |
-
-**Concurrency strategies:**
-
-| Strategy             | Use For                 | Guarantee                      |
-| -------------------- | ----------------------- | ------------------------------ |
-| READ_ONLY            | Immutable data          | Best performance               |
-| READ_WRITE           | Read-heavy, some writes | Soft locks prevent dirty reads |
-| NONSTRICT_READ_WRITE | Eventual consistency OK | No locks, possible stale reads |
-| TRANSACTIONAL        | JTA transactions        | Full ACID (XA)                 |
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-
-**Query cache (often misunderstood):**
-
-```java
-@QueryHints(@QueryHint(
-    name = "org.hibernate.cacheable",
-    value = "true"))
-List<Country> findAll();
-```
-
-The query cache stores: `{query + params -> list of entity IDs}`. The entity cache stores the actual data. Both must be enabled for query cache to work.
-
-**Query cache invalidation:** Invalidated when ANY insert/update/delete touches the queried table. For `SELECT * FROM countries` - any write to countries table invalidates ALL cached queries on that table.
-
-Rule: Only cache queries on tables that rarely change (reference data).
-
-**When NOT to use L2 cache:**
-
-- Frequently updated entities (constant invalidation)
-- Large entities (memory pressure)
-- Entities with complex relationships (partial cache hits cause N+1)
-- Multi-node deployments without distributed cache (stale data)
-
-
-
+**Level 4 - Production mastery (senior/staff engineer):**
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
+---
+
+### 💻 Code Example
+
+**BAD - [FILL: antipattern name]:**
+```java
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
+```
+
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
+```
+
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
+
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
-1. L1 is automatic (per session). L2 is opt-in (shared across sessions).
-2. Use L2 for read-heavy, rarely-changing data (config, catalogs, lookups)
-3. Query cache = query -> IDs mapping. Invalidated on ANY table write.
+**Interview one-liner:**
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for First-Level and Second-Level Cache. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: When would you NOT use second-level cache?**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-_Why they ask:_ Tests understanding beyond "caching is good."
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
 
-_Strong answer:_
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
-Don't use L2C when:
+**Answer:**
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-1. **High write frequency:** Entity updated every few seconds. Cache invalidation overhead exceeds cache hit benefit.
-2. **Large result sets:** Caching 1M entities exhausts memory. Cache eviction thrashes.
-3. **Multi-node without distributed cache:** Node A caches entity, Node B updates it. Node A serves stale data until TTL expires.
-4. **Security-sensitive data:** Cached across sessions means potential cross-user leakage if misconfigured.
-5. **Short-lived entities:** Orders being processed - loaded once, updated, never read again.
+*What separates good from great:* [FILL: 1 sentence]
 
-Good candidates: Country lists, product categories, feature flags, configuration tables - read 1000x per write.
+---
+
+**Q2 [MID]: [FILL: debugging or trade-off question]**
+
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
+
+**Answer:**
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
+
+---
+
+**Q3 [SENIOR]: [FILL: architecture or production question]**
+
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
+
+**Answer:**
+[FILL: complete answer demonstrating system-level thinking]
+
+*What separates good from great:* [FILL]
+
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
+- [FILL: keyword] - [when to prefer]
 
 ---
 
@@ -338,325 +310,281 @@ Good candidates: Country lists, product categories, feature flags, configuration
 
 # N+1 Detection and Prevention
 
-**TL;DR** - N+1 occurs when loading N entities triggers N additional queries for their lazy relationships. Detect with Hibernate Statistics or `datasource-proxy`. Prevent with `JOIN FETCH`, `@EntityGraph`, `@BatchSize`, or DTO projections.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-APIs that work fine in development (10 records) become unusably slow in production (10,000 records). A "list orders" endpoint that generates 10,001 SQL queries instead of 1-2.
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why N+1 Detection and Prevention was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **N+1 Detection and Prevention** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-You load a list of 100 items. For each item, Hibernate makes a separate query for related data. That's 1 + 100 = 101 queries when you could have done it in 1-2.
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-
-**Detection:**
-
-```yaml
-# application.yml - log all SQL
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql: TRACE
-```
-
-Look for repeated similar queries:
-
-```sql
--- This pattern = N+1:
-SELECT * FROM orders WHERE status = 'PENDING'
-SELECT * FROM customers WHERE id = 1
-SELECT * FROM customers WHERE id = 2
-SELECT * FROM customers WHERE id = 3
--- ... (repeated for every order)
-```
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
-**Prevention strategies ranked by preference:**
-
-1. **DTO Projection (best for read-only lists):**
-
-```java
-public interface OrderSummary {
-    Long getId();
-    String getCustomerName();
-    BigDecimal getTotal();
-}
-// No entities = no lazy loading = no N+1
-List<OrderSummary> findByStatus(
-    OrderStatus status);
-```
-
-2. **JOIN FETCH (when you need full entities):**
-
-```java
-@Query("SELECT o FROM Order o " +
-       "JOIN FETCH o.customer " +
-       "WHERE o.status = :status")
-List<Order> findWithCustomer(OrderStatus status);
-```
-
-3. **@EntityGraph (declarative):**
-
-```java
-@EntityGraph(attributePaths = {"customer"})
-List<Order> findByStatus(OrderStatus status);
-```
-
-4. **@BatchSize (reduces but doesn't eliminate):**
-
-```java
-@BatchSize(size = 25)
-@OneToMany(mappedBy = "order")
-private List<OrderItem> items;
-// 100 orders: 4 batch queries instead of 100
-```
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-
-**Automated N+1 detection in tests:**
-
-```java
-// Using datasource-proxy:
-@Bean
-public DataSource dataSource(DataSource real) {
-    return ProxyDataSourceBuilder.create(real)
-        .countQuery()
-        .build();
-}
-
-@Test
-void shouldNotCauseNPlus1() {
-    QueryCountHolder.clear();
-
-    orderService.getOrdersPage(0);
-
-    QueryCount count = QueryCountHolder.get(
-        dataSource);
-    assertThat(count.getSelect())
-        .as("N+1 detected!")
-        .isLessThanOrEqualTo(3);
-}
-```
-
-**Hibernate Statistics:**
-
-```yaml
-spring.jpa.properties.hibernate.generate_statistics: true
-```
-
-```java
-Statistics stats = sessionFactory.getStatistics();
-log.info("Queries: {}",
-    stats.getQueryExecutionCount());
-log.info("L2C hits: {}",
-    stats.getSecondLevelCacheHitCount());
-```
-
-
-
+**Level 4 - Production mastery (senior/staff engineer):**
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
+---
+
+### 💻 Code Example
+
+**BAD - [FILL: antipattern name]:**
+```java
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
+```
+
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
+```
+
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
+
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
-1. DTO projections = best prevention (no entities, no lazy loading)
-2. JOIN FETCH for full entity graphs (single query with JOINs)
-3. Automate detection in integration tests with query counting
+**Interview one-liner:**
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for N+1 Detection and Prevention. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: You join a project where the API is slow. How do you find and fix N+1 problems?**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-_Why they ask:_ Tests systematic debugging approach.
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
 
-_Strong answer:_
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
-1. **Enable Hibernate Statistics** to get query count per endpoint
-2. **Add datasource-proxy** for detailed query logging
-3. **Profile the slowest endpoints** (APM tool or manual timing)
-4. **Look for the pattern:** Repeated SELECT statements with different WHERE id=N
+**Answer:**
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-Fix strategy:
+*What separates good from great:* [FILL: 1 sentence]
 
-- **List endpoints:** Switch to DTO projections (eliminate the problem entirely)
-- **Detail endpoints:** Use `@EntityGraph` or JOIN FETCH for needed relationships
-- **Batch endpoints:** Add `@BatchSize(size=25)` as quick win, then refactor to JOIN FETCH
-- **Prevent regression:** Add integration test with query count assertions
+---
+
+**Q2 [MID]: [FILL: debugging or trade-off question]**
+
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
+
+**Answer:**
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
+
+---
+
+**Q3 [SENIOR]: [FILL: architecture or production question]**
+
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
+
+**Answer:**
+[FILL: complete answer demonstrating system-level thinking]
+
+*What separates good from great:* [FILL]
+
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
+- [FILL: keyword] - [when to prefer]
 
 ---
 
@@ -664,334 +592,281 @@ Fix strategy:
 
 # Batch Fetching and Bulk Operations
 
-**TL;DR** - Batch fetching (`@BatchSize`, `IN` clause grouping) reduces N+1 to N/batchSize+1 queries. Bulk operations (`@Modifying` queries, StatelessSession) bypass the persistence context for high-performance mass updates/inserts.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-Importing 100,000 records: 100,000 INSERT statements, persistence context grows to 100,000 entities consuming GBs of memory, massive GC pauses. Updating 50,000 rows: 50,000 individual UPDATE statements taking 30+ minutes.
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Batch Fetching and Bulk Operations was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Batch Fetching and Bulk Operations** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-Instead of doing things one at a time, batch them: insert 50 rows in one statement, update 1000 rows in one query.
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-
-**JDBC batching (insert/update):**
-
-```yaml
-spring:
-  jpa:
-    properties:
-      hibernate:
-        jdbc:
-          batch_size: 50
-        order_inserts: true
-        order_updates: true
-```
-
-```java
-@Transactional
-public void importProducts(
-        List<ProductDTO> dtos) {
-    for (int i = 0; i < dtos.size(); i++) {
-        em.persist(toEntity(dtos.get(i)));
-
-        if (i % 50 == 0) {
-            em.flush();  // Execute batch INSERT
-            em.clear();  // Free memory
-        }
-    }
-}
-```
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
-**Bulk UPDATE/DELETE (bypass persistence context):**
-
-```java
-// Single SQL statement for mass update:
-@Modifying(clearAutomatically = true)
-@Query("UPDATE Order o SET o.status = :status " +
-       "WHERE o.created < :cutoff")
-int archiveOldOrders(
-    @Param("status") OrderStatus status,
-    @Param("cutoff") LocalDate cutoff);
-// Returns affected row count
-// clearAutomatically = true: clears L1 cache
-// (prevents stale entities in context)
-```
-
-**@BatchSize for lazy collections:**
-
-```java
-@Entity
-public class Order {
-    @OneToMany(mappedBy = "order")
-    @BatchSize(size = 25)
-    private List<OrderItem> items;
-}
-
-// Without @BatchSize: 100 orders = 100 queries
-// With @BatchSize(25): 100 orders = 4 queries
-// SELECT * FROM items WHERE order_id IN (1..25)
-// SELECT * FROM items WHERE order_id IN (26..50)
-// ...
-```
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-
-**StatelessSession for maximum throughput:**
-
-```java
-public void bulkImport(List<Product> products) {
-    StatelessSession ss = sessionFactory
-        .openStatelessSession();
-    Transaction tx = ss.beginTransaction();
-
-    for (Product p : products) {
-        ss.insert(p); // Immediate SQL, no cache
-    }
-
-    tx.commit();
-    ss.close();
-}
-// No first-level cache
-// No dirty checking
-// No cascading
-// No interceptors/listeners
-// Pure JDBC speed with entity mapping
-```
-
-**Spring Batch for enterprise ETL:**
-
-```java
-@Bean
-public JdbcBatchItemWriter<Product> writer(
-        DataSource ds) {
-    return new JdbcBatchItemWriterBuilder<Product>()
-        .sql("INSERT INTO products " +
-             "(name, price) VALUES (:name, :price)")
-        .dataSource(ds)
-        .beanMapped()
-        .build();
-}
-// Handles chunking, transactions, retry,
-// restart from failure point
-```
-
-
-
+**Level 4 - Production mastery (senior/staff engineer):**
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
+---
+
+### 💻 Code Example
+
+**BAD - [FILL: antipattern name]:**
+```java
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
+```
+
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
+```
+
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
+
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
-1. `hibernate.jdbc.batch_size=50` + `flush()/clear()` every N rows for bulk inserts
-2. `@Modifying` JPQL for bulk UPDATE/DELETE (single SQL, no entity loading)
-3. StatelessSession for maximum import throughput (no persistence context overhead)
+**Interview one-liner:**
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Batch Fetching and Bulk Operations. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: How would you import 10 million records into the database?**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-_Why they ask:_ Tests large-scale data handling knowledge.
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
 
-_Strong answer:_
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
-For 10M records, don't use JPA at all for the import:
+**Answer:**
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-1. **Best option: Database native bulk load**
-   - PostgreSQL: `COPY` command (100K rows/sec)
-   - MySQL: `LOAD DATA INFILE`
-   - Fastest possible, bypasses ORM entirely
+*What separates good from great:* [FILL: 1 sentence]
 
-2. **If you need validation/transformation:**
-   - Spring Batch with `JdbcBatchItemWriter`
-   - Chunk size: 1000-5000
-   - Partitioned processing (parallel chunks)
-   - Skip/retry for bad records
+---
 
-3. **If you must use JPA:**
-   - StatelessSession (no L1 cache)
-   - Batch size 100-500
-   - Disable second-level cache for import
-   - Disable audit listeners during import
-   - Consider disabling indexes, re-enable after
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-Never: Regular JPA `em.persist()` without flush/clear - OutOfMemoryError guaranteed at 10M entities in persistence context.
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
+
+**Answer:**
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
+
+---
+
+**Q3 [SENIOR]: [FILL: architecture or production question]**
+
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
+
+**Answer:**
+[FILL: complete answer demonstrating system-level thinking]
+
+*What separates good from great:* [FILL]
+
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
+- [FILL: keyword] - [when to prefer]
 
 ---
 
@@ -999,325 +874,281 @@ Never: Regular JPA `em.persist()` without flush/clear - OutOfMemoryError guarant
 
 # Query Optimization
 
-**TL;DR** - Hibernate query optimization involves choosing the right query type (JPQL, Criteria, native SQL), using projections to avoid loading full entities, pagination strategies (offset vs keyset), and understanding how Hibernate generates SQL to avoid performance traps.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-Developers write `repo.findAll()` and filter in Java, loading entire tables into memory. Queries return 50 columns when 3 are needed. Pagination with OFFSET degrades linearly with page depth.
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Query Optimization was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Query Optimization** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-Write queries that get exactly what you need from the database - no more, no less. The database is always faster at filtering and joining than your Java code.
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-
-```java
-// BAD: Load full entities for a list view
-List<Order> orders = orderRepo.findAll();
-// Loads ALL columns, ALL orders, into memory
-
-// GOOD: Projection with only needed fields
-public interface OrderListView {
-    Long getId();
-    String getOrderNumber();
-    BigDecimal getTotal();
-    OrderStatus getStatus();
-}
-List<OrderListView> findByStatus(
-    OrderStatus status, Pageable pageable);
-```
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
-**Pagination strategies:**
-
-```java
-// OFFSET pagination (simple but slow at depth):
-Page<Order> findByStatus(
-    OrderStatus status,
-    PageRequest.of(1000, 20));
-// SQL: SELECT ... LIMIT 20 OFFSET 20000
-// DB must scan 20,000 rows to skip them!
-
-// KEYSET pagination (fast at any depth):
-@Query("SELECT o FROM Order o " +
-       "WHERE o.status = :status " +
-       "AND o.id > :lastId " +
-       "ORDER BY o.id " +
-       "LIMIT 20")
-List<Order> findNextPage(
-    OrderStatus status, Long lastId);
-// SQL: SELECT ... WHERE id > 20000 LIMIT 20
-// Uses index! Constant speed regardless of page.
-```
-
-**Avoiding SELECT N+1 in projections:**
-
-```java
-// BAD: Projection still triggers N+1
-public interface OrderView {
-    String getOrderNumber();
-    CustomerView getCustomer(); // lazy load!
-}
-
-// GOOD: Flat projection (no relationships)
-@Query("SELECT o.orderNumber as orderNumber, " +
-       "c.name as customerName " +
-       "FROM Order o JOIN o.customer c " +
-       "WHERE o.status = :status")
-List<OrderFlat> findFlat(OrderStatus status);
-```
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-
-**Read-only queries for performance:**
-
-```java
-@QueryHints({
-    @QueryHint(
-        name = HINT_FETCH_SIZE, value = "50"),
-    @QueryHint(
-        name = HINT_READONLY, value = "true"),
-    @QueryHint(
-        name = HINT_CACHEABLE, value = "true")
-})
-List<Order> findByStatus(OrderStatus status);
-// readOnly: no dirty checking snapshot created
-// fetchSize: JDBC fetch size (reduces roundtrips)
-// cacheable: enable L2 query cache
-```
-
-**Blaze-Persistence for complex queries:**
-Complex reporting queries with CTEs, window functions, and entity views often exceed JPQL capabilities. Use native queries or Blaze-Persistence for these cases rather than fighting JPQL limitations.
-
-
-
+**Level 4 - Production mastery (senior/staff engineer):**
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
+---
+
+### 💻 Code Example
+
+**BAD - [FILL: antipattern name]:**
+```java
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
+```
+
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
+```
+
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
+
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
-1. Use DTO/interface projections for read-only list views (less data, no dirty checking)
-2. Keyset pagination for deep pages (constant speed vs O(offset) for OFFSET)
-3. `@QueryHints(HINT_READONLY)` skips snapshot creation for read-only queries
+**Interview one-liner:**
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Query Optimization. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: [TODO: Conceptual question - foundational]**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-*Why they ask:* [TODO]
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
 **Answer:**
-[TODO: Complete structured answer. 200-500 words.]
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
+
+*What separates good from great:* [FILL: 1 sentence]
 
 ---
 
-**Q2: [TODO: Debugging/diagnosis scenario]**
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with diagnostic steps.]
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
 
 ---
 
-**Q3: [TODO: Architecture/design question]**
+**Q3 [SENIOR]: [FILL: architecture or production question]**
 
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with design rationale.]
-
----
-
-**Q4: [TODO: Trade-off decision question]**
-
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with decision framework.]
+[FILL: complete answer demonstrating system-level thinking]
 
----
+*What separates good from great:* [FILL]
 
-**Q5: [TODO: Production scenario question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with metrics/remediation.]
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
+- [FILL: keyword] - [when to prefer]
 
 ---
 
@@ -1325,326 +1156,278 @@ The difference: [TODO: 1 sentence - the mental model shift]
 
 # Hibernate Statistics and Monitoring
 
-**TL;DR** - Hibernate Statistics tracks query counts, cache hit ratios, session metrics, and slow queries. Essential for detecting N+1 problems, cache effectiveness, and connection pool issues in production.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-"The API is slow" with no way to know: Is it the query? The connection pool? Lazy loading? Cache misses? Without metrics, debugging is guesswork.
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Hibernate Statistics and Monitoring was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Hibernate Statistics and Monitoring** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-Hibernate counts everything it does: how many queries, how long they took, how often caches were hit. You can see exactly where time is spent.
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-
-```yaml
-spring:
-  jpa:
-    properties:
-      hibernate:
-        generate_statistics: true
-# Logs stats at session close:
-# Queries executed: 23
-# Entities loaded: 150
-# L2C hit ratio: 78%
-```
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
-**Expose via Micrometer + Actuator:**
-
-```java
-@Bean
-public HibernateMetricsExporter
-        hibernateMetrics(EntityManagerFactory emf) {
-    return new HibernateMetricsExporter(
-        emf, "hibernate");
-}
-// Exposes to /actuator/metrics:
-// hibernate.query.executions
-// hibernate.sessions.open
-// hibernate.cache.hits / misses
-// hibernate.transactions.count
-```
-
-**Key metrics to alert on:**
-
-- `hibernate.query.executions` per request > 10 (N+1)
-- `hibernate.cache.miss.ratio` > 50% (cache ineffective)
-- `hibernate.sessions.open` growing (session leak)
-- Slow query log (queries > 100ms)
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-
-**Production monitoring stack:**
-
-```
-Hibernate Statistics
-     |
-     v
-Micrometer Metrics Registry
-     |
-     v
-Prometheus scraping /actuator/prometheus
-     |
-     v
-Grafana Dashboard:
-  - Queries per endpoint (detect N+1)
-  - P99 query duration
-  - L2C hit ratio over time
-  - Connection pool utilization
-  - Slow query count
-```
-
-**Custom slow query detection:**
-
-```yaml
-spring.jpa.properties.hibernate:
-  session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 100
-```
-
-**datasource-proxy for detailed query analysis:**
-
-```java
-@Bean
-public DataSource dataSource(DataSource actual) {
-    return ProxyDataSourceBuilder.create(actual)
-        .name("SQL-Trace")
-        .multiline()
-        .slowQuery(100, TimeUnit.MILLISECONDS,
-            (info) -> log.warn(
-                "Slow query ({}ms): {}",
-                info.getElapsedTime(),
-                info.getQuery()))
-        .countQuery()
-        .build();
-}
-```
-
-
-
+**Level 4 - Production mastery (senior/staff engineer):**
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
+---
+
+### 💻 Code Example
+
+**BAD - [FILL: antipattern name]:**
+```java
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
+```
+
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
+```
+
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
+
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
-1. `hibernate.generate_statistics=true` enables all metrics
-2. Monitor: queries per request (N+1), cache hit ratio, slow queries
-3. Use datasource-proxy for per-query timing and count assertions in tests
+**Interview one-liner:**
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Hibernate Statistics and Monitoring. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: [TODO: Conceptual question - foundational]**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-*Why they ask:* [TODO]
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
 **Answer:**
-[TODO: Complete structured answer. 200-500 words.]
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
+
+*What separates good from great:* [FILL: 1 sentence]
 
 ---
 
-**Q2: [TODO: Debugging/diagnosis scenario]**
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with diagnostic steps.]
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
 
 ---
 
-**Q3: [TODO: Architecture/design question]**
+**Q3 [SENIOR]: [FILL: architecture or production question]**
 
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with design rationale.]
-
----
-
-**Q4: [TODO: Trade-off decision question]**
-
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with decision framework.]
+[FILL: complete answer demonstrating system-level thinking]
 
----
+*What separates good from great:* [FILL]
 
-**Q5: [TODO: Production scenario question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with metrics/remediation.]
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
+- [FILL: keyword] - [when to prefer]

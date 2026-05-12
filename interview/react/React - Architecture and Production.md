@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React - Architecture and Production"
+parent: "React"
+grand_parent: "Interview Mastery"
+nav_order: 11
+permalink: /interview/react/architecture-and-production/
 topic: React
 subtopic: Architecture and Production
 keywords:

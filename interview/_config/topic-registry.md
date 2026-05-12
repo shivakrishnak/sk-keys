@@ -8,17 +8,17 @@
 
 ## Spec References
 
-| File                                          | Purpose                                     |
-| --------------------------------------------- | ------------------------------------------- |
-| `KEYWORD_GENERATOR_PROMPT.md`                 | Master keyword generation spec (v4.0)       |
-| `.github/prompts/generate-keywords.prompt.md` | Prompt for category/tier keyword processing |
-| `interview/config/INTERVIEW_PROMPT.md`        | Master content generation spec (v3.0)       |
+| File                                               | Purpose                                     |
+| -------------------------------------------------- | ------------------------------------------- |
+| `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`   | Master keyword generation spec (v4.0)       |
+| `.github/prompts/dict-generate-keywords.prompt.md` | Prompt for category/tier keyword processing |
+| `interview/_config/INTERVIEW_PROMPT.md`            | Master content generation spec (v3.0)       |
 
 ## Design Considerations
 
-1. **New topic (no folder/index.md):** Use `KEYWORD_GENERATOR_PROMPT.md` v4.0 to generate keywords. Analyse tier placement. Create folders/files. Generate content.
-2. **Brand-new topic (e.g., Angular):** Analyse which tier it belongs to. Generate keywords via `KEYWORD_GENERATOR_PROMPT.md`. Create folders/files. Generate content.
-3. **New subtopic (e.g., React Hooks, topic exists):** Create file in existing folder. Generate keywords via `KEYWORD_GENERATOR_PROMPT.md`. Generate content.
+1. **New topic (no folder/index.md):** Use `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` v4.0 to generate keywords. Analyse tier placement. Create folders/files. Generate content.
+2. **Brand-new topic (e.g., Angular):** Analyse which tier it belongs to. Generate keywords via `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`. Create folders/files. Generate content.
+3. **New subtopic (e.g., React Hooks, topic exists):** Create file in existing folder. Generate keywords via `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`. Generate content.
 4. **Existing dictionary category (e.g., JVM, JCC):** Scan dictionary `index.md`. Analyse keywords. Check for new folder/file opportunities. Generate content.
 
 ---
@@ -33,26 +33,26 @@
 
 ## Active Topics
 
-| Topic                           | Folder             | Dictionary Sources | Status     | Description                                                         |
-| ------------------------------- | ------------------ | ------------------ | ---------- | ------------------------------------------------------------------- |
-| Java                            | java/              | JVM, JLG           | complete   | Core Java language, OOP, collections, modern Java features          |
-| Java Concurrency                | java-concurrency/  | JCC                | complete   | Threading, synchronization, virtual threads, concurrent collections |
-| Spring                          | spring/            | SPR                | complete   | Spring Core, Boot, MVC, Security, Data, Cloud, AOP, Testing         |
-| Hibernate                       | hibernate/         | JPH                | complete   | ORM fundamentals, JPA, entity management, performance, locking      |
-| SQL and Databases               | sql-and-databases/ | DBF, NDB           | planned    | SQL queries, joins, indexing, transactions, NoSQL, replication      |
-| Containers                      | containers/        | CTR                | planned    | Docker fundamentals, images, networking, compose, security          |
-| Kubernetes                      | kubernetes/        | K8S                | planned    | Core resources, networking, storage, security, operations           |
-| System Design                   | system-design/     | DST, MSV, SYD, SAP | complete   | Distributed systems, microservices, architecture, infrastructure    |
-| React                           | react/             | RCT                | scaffolded | Components, hooks, state management, performance, testing           |
-| Security                        | security/          | SEC, IAM, CRY      | planned    | Web security, authentication, authorization, cryptography           |
-| Data Structures and Algorithms  | dsa/               | DSA                | planned    | Arrays, trees, graphs, sorting, dynamic programming                 |
-| Caching                         | caching/           | CCH                | planned    | Cache patterns, Redis, CDN, invalidation, consistency               |
-| Messaging                       | messaging/         | MSG                | planned    | Kafka, RabbitMQ, event-driven architecture, streaming               |
-| CI/CD and DevOps                | cicd-and-devops/   | CCD, GIT, OBS      | planned    | Pipelines, Git strategies, observability, SRE practices             |
-| AI and RAG                      | ai-and-rag/        | AIF, LLM, RAG      | planned    | LLM fundamentals, prompt engineering, RAG, agents, LLMOps           |
-| Design Patterns                 | design-patterns/   | DPT                | complete   | GoF patterns, SOLID, creational, structural, behavioral, additional |
-| Microservices                   | microservices/     | MSV                | complete   | Service decomposition, communication, resilience, deployment        |
-| Async and Background Processing | async-background/  | ASY                | complete   | Message queues, brokers, event-driven, orchestration, observability |
+| Topic                           | Folder             | Dictionary Sources | Status     | Description                                                                   |
+| ------------------------------- | ------------------ | ------------------ | ---------- | ----------------------------------------------------------------------------- |
+| Java                            | java/              | JVM, JLG           | generating | Core Java language, OOP, collections, modern Java features, JVM internals, GC |
+| Java Concurrency                | java-concurrency/  | JCC                | generating | Threading, synchronization, virtual threads, concurrent collections           |
+| Spring                          | spring/            | SPR                | complete   | Spring Core, Boot, MVC, Security, Data, Cloud, AOP, Testing                   |
+| Hibernate                       | hibernate/         | JPH                | generating | ORM fundamentals, JPA, entity management, performance, locking                |
+| SQL and Databases               | sql-and-databases/ | DBF, NDB           | planned    | SQL queries, joins, indexing, transactions, NoSQL, replication                |
+| Containers                      | containers/        | CTR                | planned    | Docker fundamentals, images, networking, compose, security                    |
+| Kubernetes                      | kubernetes/        | K8S                | planned    | Core resources, networking, storage, security, operations                     |
+| System Design                   | system-design/     | DST, MSV, SYD, SAP | complete   | Distributed systems, microservices, architecture, infrastructure              |
+| React                           | react/             | RCT                | scaffolded | Components, hooks, state management, performance, testing                     |
+| Security                        | security/          | SEC, IAM, CRY      | planned    | Web security, authentication, authorization, cryptography                     |
+| Data Structures and Algorithms  | dsa/               | DSA                | planned    | Arrays, trees, graphs, sorting, dynamic programming                           |
+| Caching                         | caching/           | CCH                | planned    | Cache patterns, Redis, CDN, invalidation, consistency                         |
+| Messaging                       | messaging/         | MSG                | planned    | Kafka, RabbitMQ, event-driven architecture, streaming                         |
+| CI/CD and DevOps                | cicd-and-devops/   | CCD, GIT, OBS      | planned    | Pipelines, Git strategies, observability, SRE practices                       |
+| AI and RAG                      | ai-and-rag/        | AIF, LLM, RAG      | planned    | LLM fundamentals, prompt engineering, RAG, agents, LLMOps                     |
+| Design Patterns                 | design-patterns/   | DPT                | complete   | GoF patterns, SOLID, creational, structural, behavioral, additional           |
+| Microservices                   | microservices/     | MSV                | complete   | Service decomposition, communication, resilience, deployment                  |
+| Async and Background Processing | async-background/  | ASY                | complete   | Message queues, brokers, event-driven, orchestration, observability           |
 
 ---
 
@@ -64,17 +64,17 @@ should be self-sufficient.
 
 ### Java (java/)
 
-| File                               | Keywords (approximate)                                                                    | Source IDs              |
-| ---------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------- |
-| Java - Basics.md                   | Variables, Data Types, Operators, Control Flow, OOP Basics, Classes, Interfaces           | JLG-001 to JLG-020      |
-| Java - Collections.md              | ArrayList, LinkedList, HashMap, TreeMap, HashSet, Queue, Iterator, Comparable             | JLG collections range   |
-| Java - Exceptions and IO.md        | Exception Hierarchy, Checked vs Unchecked, Try-with-Resources, IO Streams, NIO            | JLG exceptions/IO range |
-| Java - Java 8 Features.md          | Lambdas, Streams API, Optional, Functional Interfaces, Method References, Default Methods | JLG Java 8 range        |
-| Java - Java 11 to 17.md            | Records, Sealed Classes, Pattern Matching, Text Blocks, Switch Expressions                | JLG modern range        |
-| Java - Java 21 and Beyond.md       | Virtual Threads Preview, Scoped Values, Structured Concurrency, String Templates          | JLG latest range        |
-| Java - JVM Internals.md            | JVM Architecture, Class Loading, Memory Model, JIT Compilation, GC Overview               | JVM core range          |
-| Java - Garbage Collection.md       | GC Algorithms, G1, ZGC, Shenandoah, GC Tuning, Memory Leaks                               | JVM GC range            |
-| Java - Diagnostics and Security.md | JVM Profiling Tools, Java Security/Log4Shell, GC Selection Framework                      | JVM diagnostics range   |
+| File                               | Keywords (approximate)                                                                                                                                                 | Source IDs                          |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| Java - Basics.md                   | Variables/Data Types, Operators/Control Flow, Classes/Objects, Inheritance, Interfaces, Access Modifiers, Enums                                                        | JLG-019 to JLG-027                  |
+| Java - Collections.md              | Collections Framework, ArrayList/LinkedList, HashMap/TreeMap, HashSet, Queue/Deque, Iterator, Comparable/Comparator, equals/hashCode                                   | JLG-029, JLG-077/078/080            |
+| Java - Exceptions and IO.md        | Exception Hierarchy, Checked vs Unchecked, Try-with-Resources, Custom Exceptions, File IO, NIO, Serialization, Logging                                                 | JLG-030/031/040/070/076             |
+| Java - Java 8 Features.md          | Lambdas, Functional Interfaces, Stream API, Optional, Method References, Default Methods, DateTime API, Collectors                                                     | JLG-035 to JLG-038, JLG-072/075/079 |
+| Java - Java 11 to 17.md            | var, Text Blocks, Switch Expressions, Records, Sealed Classes, Pattern Matching instanceof, JPMS, HttpClient                                                           | JLG-032/039/071/082/083/014         |
+| Java - Java 21 and Beyond.md       | Virtual Threads Patterns, Structured Concurrency, Scoped Values, Pattern Matching switch, Record Patterns, Sequenced Collections, String Templates, Foreign Memory API | JLG-049/097/098                     |
+| Java - JVM Internals.md            | JVM Architecture, JVM/JRE/JDK, Bytecode, Class Loading, Stack/Heap, Metaspace, JIT (C1/C2), Escape Analysis, GraalVM                                                   | JVM-001 to JVM-057                  |
+| Java - Garbage Collection.md       | GC Fundamentals, GC Roots, Generational GC, Serial/Parallel GC, G1GC, ZGC, Shenandoah, GC Tuning/Logs, Reference Types                                                 | JVM-037 to JVM-048                  |
+| Java - Diagnostics and Security.md | JFR, Thread Dumps, Heap Dumps, Performance Tuning, GC Selection Framework, Java Security, Version Migration                                                            | JVM-063 to JVM-067, JLG-015/016     |
 
 ### Spring (spring/)
 
@@ -91,13 +91,13 @@ should be self-sufficient.
 
 ### Java Concurrency (java-concurrency/)
 
-| File                                         | Keywords (approximate)                                                              | Source IDs      |
-| -------------------------------------------- | ----------------------------------------------------------------------------------- | --------------- |
-| Java Concurrency - Thread Basics.md          | Thread, Runnable, Callable, Future, Executors, ThreadPoolExecutor, ForkJoinPool     | JCC core range  |
-| Java Concurrency - Synchronization.md        | synchronized, volatile, JMM, ReentrantLock, ReadWriteLock, StampedLock, Atomics/CAS | JCC sync range  |
-| Java Concurrency - Concurrent Collections.md | ConcurrentHashMap, CopyOnWriteArrayList, BlockingQueue, CountDownLatch, Semaphore   | JCC collections |
-| Java Concurrency - Virtual Threads.md        | Virtual Threads, Structured Concurrency, Scoped Values, Pinning, Migration          | JCC modern      |
-| Java Concurrency - Diagnostics.md            | Deadlock Detection/Thread Dumps, Testing Concurrent Code, Producer-Consumer Pattern | JCC diagnostics |
+| File                                         | Keywords (approximate)                                                                                                                     | Source IDs                              |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------- |
+| Java Concurrency - Thread Basics.md          | Thread/Runnable, Callable/Future, Thread Lifecycle, Executor, ExecutorService, ThreadPoolExecutor, ForkJoinPool, CompletableFuture         | JCC-006 to JCC-017                      |
+| Java Concurrency - Synchronization.md        | synchronized, volatile, JMM/Happens-Before, ReentrantLock, ReadWriteLock, StampedLock, Atomics/CAS, ThreadLocal, wait/notify               | JCC-038/056 to JCC-064                  |
+| Java Concurrency - Concurrent Collections.md | ConcurrentHashMap, CopyOnWriteArrayList, BlockingQueue, CountDownLatch, Semaphore, CyclicBarrier, Phaser, Producer-Consumer, Lock Striping | JCC-042 to JCC-053, JCC-070/071/072/073 |
+| Java Concurrency - Virtual Threads.md        | Virtual Threads, Carrier Threads, Structured Concurrency, Scoped Values, Thread Pinning, Loom Migration, Continuations                     | JCC-067 to JCC-069, JCC-076/088/089     |
+| Java Concurrency - Diagnostics.md            | Deadlock Detection, Thread Dumps, JMH Benchmarking, Testing Concurrent Code, Lock-Free, False Sharing, ABA Problem, Work-Stealing          | JCC-023 to JCC-036                      |
 
 ### Hibernate (hibernate/)
 
@@ -148,7 +148,8 @@ To add a new topic to this registry:
 
 1. Choose a descriptive topic name and lowercase folder name
 2. Check if a dictionary category exists (look at Category Code Registry
-   in `GENERATOR_PROMPT.md` or `copilot-instructions.md`)
+   in `dictionary/_config/GENERATOR_PROMPT.md` or
+   `.github/instructions/dictionary.instructions.md`)
 3. If dictionary source exists: map category codes in "Dictionary Sources"
 4. If no dictionary source: set Dictionary Sources to "new"
 5. Plan sub-topic file splits (5-20 keywords per file, grouped by relatedness)

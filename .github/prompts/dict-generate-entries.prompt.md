@@ -10,7 +10,7 @@ tools:
 # Technical Dictionary - Entry Generator (LATEST_VERSION_LABEL)
 
 > **Version Registry** — `LATEST_VERSION` = **4** | `LATEST_VERSION_LABEL` = **v4.0** | `STUB_VERSION` = **0**
-> _To release v5: update the Version Registry in `copilot-instructions.md` and `GENERATOR_PROMPT.md`, rename `upgrade_to_v4.ps1` to `upgrade_to_v5.ps1`, then update this file's commit messages and script references._
+> _To release v5: update the Version Registry in `.github/copilot-instructions.md`, `.github/instructions/dictionary.instructions.md`, and `dictionary/_config/GENERATOR_PROMPT.md`, rename `upgrade_to_v4.ps1` to `upgrade_to_v5.ps1`, then update this file's commit messages and script references._
 
 Generate complete, spec-compliant **LATEST_VERSION_LABEL** keyword entries for stub files in either a specific **category** (e.g. `MSV`, `JVM`) or a specific **tier** (e.g. `3`, `5`) — but not both simultaneously. A category targets one folder; a tier targets all categories within that tier number.
 or upgrade existing older entries by adding missing LATEST_VERSION_LABEL sections.
@@ -74,7 +74,7 @@ Read the file to capture its exact frontmatter: `id`, `title`, `nav_order`, `per
 
 ### 2b. Generate complete v4.0 entry
 
-Apply every rule from the loaded `copilot-instructions.md`. Rules are grouped into four categories — Content, Conditional sections, Formatting, YAML — applied in that priority order. **All 24 sections are required in order.** If a conditional section's condition is not met, omit the entire section and all its subsections. For all other rules, apply them as specified without omission. Conditional section decisions follow the decision table in `copilot-instructions.md`:
+Apply every rule from `.github/instructions/dictionary.instructions.md` (auto-loaded) and `dictionary/_config/GENERATOR_PROMPT.md` (full spec). Rules are grouped into four categories - Content, Conditional sections, Formatting, YAML - applied in that priority order. **All 24 sections are required in order.** If a conditional section's condition is not met, omit the entire section and all its subsections. For all other rules, apply them as specified without omission. Conditional section decisions follow the decision table in the dictionary instructions:
 
 | #    | Section                                         | Notes                                                             |
 | ---- | ----------------------------------------------- | ----------------------------------------------------------------- |

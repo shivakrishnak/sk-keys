@@ -167,11 +167,11 @@ The output groups all stubs into numbered batches. Copy one batch block at a tim
 
 #### Option A — Agent prompt (recommended)
 
-Open Copilot Chat in **Agent mode**, attach `.github/generate-dict-entries.prompt.md`, and fill in the prompts:
+Open Copilot Chat in **Agent mode**, use `@dict-generate-entries`, and fill in the prompts:
 
 1. In VS Code, open Copilot Chat (`Ctrl+Shift+I`)
 2. Switch to **Agent** mode (top-left of chat panel)
-3. Click the paperclip icon → select `.github/generate-dict-entries.prompt.md`
+3. Type `@dict-generate-entries` or click paperclip → select `.github/prompts/dict-generate-entries.prompt.md`
 4. When prompted, enter:
    - **Target:** category code or tier number (e.g. `MSV` or `5`)
    - **Batch size:** number of entries per batch (e.g. `5`)
@@ -204,9 +204,9 @@ Follow Master Prompt v4.0 exactly.
 Copilot will read each stub, generate full v4.0 content, and write the files.
 Repeat for each batch block until all stubs are done.
 
-> **Requirement for both options:** The workspace must have `.github/copilot-instructions.md`
-> open or attached — it contains the full Master Prompt v4.0 spec that drives generation.
-> In Agent mode this is loaded automatically from the workspace.
+> **Requirement for both options:** The dictionary instructions auto-load when editing
+> `dictionary/**` files (via `.github/instructions/dictionary.instructions.md`). The full
+> Master Prompt v4.0 spec lives in `dictionary/_config/GENERATOR_PROMPT.md`.
 
 ---
 
@@ -242,9 +242,10 @@ git commit -m "feat: generate MSV-003-MSV-007 - full v4.0 entries"
 
 ## Related files
 
-| File                                      | Purpose                                        |
-| ----------------------------------------- | ---------------------------------------------- |
-| `tmp/generate_queue.py`                   | This script — stub discovery and batch output  |
-| `tmp/check_all_categories.py`             | Full audit — version and compliance check      |
-| `.github/generate-dict-entries.prompt.md` | VS Code agent prompt that drives the full loop |
-| `.github/copilot-instructions.md`         | Master Prompt v4.0 spec (loaded automatically) |
+| File                                              | Purpose                                            |
+| ------------------------------------------------- | -------------------------------------------------- |
+| `tmp/generate_queue.py`                           | This script — stub discovery and batch output      |
+| `tmp/check_all_categories.py`                     | Full audit — version and compliance check          |
+| `.github/prompts/dict-generate-entries.prompt.md` | VS Code agent prompt that drives the full loop     |
+| `.github/instructions/dictionary.instructions.md` | Auto-loaded instructions for dictionary/\*\* edits |
+| `dictionary/_config/GENERATOR_PROMPT.md`          | Master Prompt v4.0 spec (full 671-line reference)  |

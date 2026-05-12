@@ -26,347 +26,281 @@ version: 3
 
 # Optimistic vs Pessimistic Locking
 
-**TL;DR** - Optimistic locking uses version checks to detect conflicts at commit time; pessimistic locking acquires database locks upfront to prevent conflicts entirely - each trades throughput for safety.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
-**WORLD WITHOUT LOCKING:**
-Two users view the same product page. Both see "stock: 10." User A buys 3 (stock should be 7). User B buys 5 (stock should be 5). Both read stock=10, subtract independently, and write back. Final stock: either 7 or 5, depending on who writes last. Two purchases deducted from 10, but only one deduction was applied. This is the **lost update** problem.
+**WORLD WITHOUT IT:**
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Optimistic vs Pessimistic Locking was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Optimistic vs Pessimistic Locking** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-[TODO: Plain English. No jargon. 2-4 sentences.]
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-[TODO: Basic usage. Common patterns. 3-5 sentences.]
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
-[TODO: Internals. Data structures. 4-6 sentences.]
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
 **Level 4 - Production mastery (senior/staff engineer):**
-[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
-
-
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
 ### ⚙️ How It Works
 
-```
-OPTIMISTIC (version-based, conflict detected late):
-  User A: READ product (version=1, stock=10)
-  User B: READ product (version=1, stock=10)
-  User A: UPDATE stock=7 WHERE version=1
-          -> SUCCESS, version becomes 2
-  User B: UPDATE stock=5 WHERE version=1
-          -> FAIL (version is now 2)
-          -> OptimisticLockException thrown
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
 
-PESSIMISTIC (DB lock, conflict prevented early):
-  User A: SELECT ... FOR UPDATE (acquires row lock)
-  User B: SELECT ... FOR UPDATE (BLOCKS, waiting)
-  User A: UPDATE stock=7, COMMIT (releases lock)
-  User B: (unblocked) reads stock=7, UPDATE stock=2
-```
----
-
-### Comparison
-
-| Aspect                 | Optimistic                      | Pessimistic                 |
-| ---------------------- | ------------------------------- | --------------------------- |
-| Mechanism              | Version column check            | Database row lock           |
-| When conflict detected | At commit time                  | At read time (blocks)       |
-| Throughput             | High (no locks held)            | Lower (locks block readers) |
-| Conflict rate          | Good for LOW conflict           | Good for HIGH conflict      |
-| Deadlock risk          | None                            | Yes (if multiple locks)     |
-| Stale data             | Possible between read and write | No (lock held)              |
-| JPA annotation         | `@Version`                      | `@Lock(PESSIMISTIC_WRITE)`  |
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
 ---
 
 ### 💻 Code Example
 
+**BAD - [FILL: antipattern name]:**
 ```java
-// OPTIMISTIC LOCKING
-@Entity
-public class Product {
-    @Id
-    private Long id;
-    private String name;
-    private int stock;
-
-    @Version  // JPA manages this automatically
-    private int version;
-}
-
-// JPA auto-generates:
-// UPDATE product SET stock=?, version=version+1
-// WHERE id=? AND version=?
-// If 0 rows updated -> OptimisticLockException
-
-// Handling the exception
-@Service
-public class OrderService {
-    @Retryable(
-        value = OptimisticLockException.class,
-        maxAttempts = 3)
-    @Transactional
-    public void purchaseProduct(
-            Long productId, int quantity) {
-        Product p = productRepo
-            .findById(productId).orElseThrow();
-        p.setStock(p.getStock() - quantity);
-        productRepo.save(p);
-        // If version conflict -> retry
-    }
-}
-
-// PESSIMISTIC LOCKING
-public interface ProductRepository
-        extends JpaRepository<Product, Long> {
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT p FROM Product p "
-        + "WHERE p.id = :id")
-    Optional<Product> findByIdForUpdate(
-        @Param("id") Long id);
-}
-
-@Transactional
-public void purchaseProduct(
-        Long productId, int quantity) {
-    Product p = productRepo
-        .findByIdForUpdate(productId)
-        .orElseThrow();
-    // Row is locked - no one else can modify
-    p.setStock(p.getStock() - quantity);
-    // Lock released at commit
-}
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
 ```
----
 
-### Decision Framework
-
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
 ```
-Low conflict (< 5% of writes conflict):
-  -> Optimistic locking (better throughput)
 
-High conflict (> 20% of writes conflict):
-  -> Pessimistic locking (fewer retries)
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
 
-Financial transactions (must not lose updates):
-  -> Pessimistic locking (stronger guarantee)
-
-Read-heavy workload (99% reads):
-  -> Optimistic locking (no lock contention)
-
-Short transactions (< 100ms):
-  -> Either works fine
-
-Long transactions (seconds to minutes):
-  -> Optimistic (don't hold DB locks that long)
-```
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
-
-1. Optimistic = `@Version` field, detect conflict at write time, retry on failure
-2. Pessimistic = `SELECT FOR UPDATE`, block other writers, prevent conflict
-3. Default to optimistic; switch to pessimistic only for high-conflict, short-lived transactions
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
 **Interview one-liner:**
-"I default to optimistic locking with @Version for most use cases because it provides better throughput - I switch to pessimistic locking with SELECT FOR UPDATE only when conflict rates are high and transactions are short, like inventory deductions during flash sales."
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Optimistic vs Pessimistic Locking. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: A flash sale has 1000 users buying the same product simultaneously. Which locking strategy do you use and why?**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-_Why they ask:_ Tests ability to reason about concurrency under extreme conditions.
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
 
-**Answer:**
-Pessimistic locking for the critical inventory deduction step. With 1000 concurrent buyers on the same product, optimistic locking would cause massive retry storms - 999 out of 1000 requests fail on first attempt, then 998 fail on retry, etc. This creates exponential database load.
-
-With pessimistic locking: `SELECT ... FOR UPDATE` serializes access. Each buyer waits briefly, then reads the correct current stock and deducts. Total throughput is lower per second, but total success rate is much higher with zero wasted work.
-
-Optimization: Use an atomic SQL update instead of read-then-write: `UPDATE product SET stock = stock - :qty WHERE id = :id AND stock >= :qty`. This is effectively pessimistic (row lock during UPDATE) but avoids the explicit SELECT FOR UPDATE round-trip.
-
-**Q2: Your application throws OptimisticLockException frequently in production. How do you diagnose and fix it?**
-
-_Why they ask:_ Tests real production debugging experience.
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
 **Answer:**
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-1. **Identify the entity and frequency.** Log the entity type, ID, and stack trace. High frequency on a single entity = hot spot.
+*What separates good from great:* [FILL: 1 sentence]
 
-2. **Check for unnecessary writes.** If Hibernate's dirty checking triggers an update even when nothing changed (e.g., a setter called with the same value), the version increments unnecessarily. Use `@DynamicUpdate` to only update changed columns.
+---
 
-3. **Check transaction scope.** Long transactions increase the window for conflicts. Shorten the transaction: move read operations outside the transaction, do the write in a minimal transaction.
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-4. **Add retry logic.** For legitimate conflicts, use Spring Retry with `@Retryable(OptimisticLockException.class, maxAttempts = 3, backoff = @Backoff(delay = 100))`.
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
-5. **Consider switching to pessimistic for hot entities.** If one entity gets 90% of the conflicts, use `PESSIMISTIC_WRITE` for that specific query.
+**Answer:**
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
+
+---
+
+**Q3 [SENIOR]: [FILL: architecture or production question]**
+
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
+
+**Answer:**
+[FILL: complete answer demonstrating system-level thinking]
+
+*What separates good from great:* [FILL]
+
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
+- [FILL: keyword] - [when to prefer]
 
 ---
 
@@ -374,366 +308,281 @@ _Why they ask:_ Tests real production debugging experience.
 
 # JPA Inheritance Mapping
 
-**TL;DR** - JPA offers three strategies to map class hierarchies to database tables: Single Table (one table, discriminator column), Joined (one table per class, JOINs), and Table Per Class (one table per concrete class, UNION).
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
-Your domain has a `Payment` base class with `CreditCardPayment`, `BankTransferPayment`, and `CryptoPayment` subclasses. How do you store this in a relational database that has no concept of inheritance?
----
+**WORLD WITHOUT IT:**
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
 
-### Three Strategies
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
 
-```
-SINGLE TABLE (default, fastest queries):
-+----+------+---------+--------+--------+------+
-| id | type | amount  | card_no| iban   | addr |
-+----+------+---------+--------+--------+------+
-| 1  | CC   | 100.00  | 4111.. | NULL   | NULL |
-| 2  | BT   | 250.00  | NULL   | DE89.. | NULL |
-| 3  | CR   | 50.00   | NULL   | NULL   | 0x.. |
-+----+------+---------+--------+--------+------+
-  One table, NULL columns for non-applicable fields
+**THE INVENTION MOMENT:**
+"This is exactly why JPA Inheritance Mapping was created."
 
-JOINED (normalized, slower queries):
-[payment]            [credit_card_payment]
-+----+--------+      +----+---------+
-| id | amount |      | id | card_no |
-+----+--------+      +----+---------+
-| 1  | 100.00 |      | 1  | 4111..  |
-| 2  | 250.00 |
-                     [bank_transfer_payment]
-                     +----+--------+
-                     | id | iban   |
-                     +----+--------+
-                     | 2  | DE89.. |
-  JOIN required to load any entity
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
 
-TABLE PER CLASS (no JOINs, no shared table):
-[credit_card_payment]  [bank_transfer_payment]
-+----+--------+------+ +----+--------+------+
-| id | amount | card | | id | amount | iban |
-+----+--------+------+ +----+--------+------+
-| 1  | 100.00 | 4111 | | 2  | 250.00 | DE89 |
-  UNION ALL needed for polymorphic queries
-```
----
-
-### Comparison
-
-| Aspect              | Single Table                     | Joined               | Table Per Class  |
-| ------------------- | -------------------------------- | -------------------- | ---------------- |
-| Query speed         | Fastest (no JOINs)               | Slower (JOINs)       | Slow (UNION ALL) |
-| Null columns        | Yes (many)                       | No                   | No               |
-| Normalization       | Poor                             | Good                 | Good             |
-| Schema evolution    | Easy (add column)                | Moderate (add table) | Hard             |
-| Polymorphic query   | Fast                             | Moderate             | Slow             |
-| NOT NULL constraint | Can't enforce on subclass fields | Can enforce          | Can enforce      |
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **JPA Inheritance Mapping** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-[TODO: Plain English. No jargon. 2-4 sentences.]
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-[TODO: Basic usage. Common patterns. 3-5 sentences.]
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
-[TODO: Internals. Data structures. 4-6 sentences.]
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
 **Level 4 - Production mastery (senior/staff engineer):**
-[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
-
-
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
 ---
 
 ### 💻 Code Example
 
+**BAD - [FILL: antipattern name]:**
 ```java
-// SINGLE TABLE (recommended default)
-@Entity
-@Inheritance(strategy = SINGLE_TABLE)
-@DiscriminatorColumn(name = "payment_type")
-public abstract class Payment {
-    @Id @GeneratedValue
-    private Long id;
-    private BigDecimal amount;
-}
-
-@Entity
-@DiscriminatorValue("CC")
-public class CreditCardPayment extends Payment {
-    private String cardNumber;
-    private String expiryDate;
-}
-
-@Entity
-@DiscriminatorValue("BT")
-public class BankTransferPayment extends Payment {
-    private String iban;
-    private String bic;
-}
-
-// JOINED
-@Entity
-@Inheritance(strategy = JOINED)
-public abstract class Payment {
-    @Id @GeneratedValue
-    private Long id;
-    private BigDecimal amount;
-}
-// Subclasses get their own tables with FK to payment
-
-// TABLE PER CLASS
-@Entity
-@Inheritance(strategy = TABLE_PER_CLASS)
-public abstract class Payment {
-    @Id @GeneratedValue(strategy = TABLE)
-    private Long id;  // Can't use IDENTITY
-    private BigDecimal amount;
-}
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
 ```
----
 
-### Decision Framework
-
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
 ```
-Few subclasses (2-5), query by base class often:
-  -> SINGLE_TABLE (fastest, simplest)
 
-Many subclass-specific fields, data integrity needed:
-  -> JOINED (normalized, NOT NULL works)
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
 
-Rarely query by base class, subclasses are independent:
-  -> TABLE_PER_CLASS (avoid, usually worst option)
-
-Default recommendation:
-  -> SINGLE_TABLE unless you have a strong reason not to
-```
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
-
-1. SINGLE_TABLE is the default and usually best - one table with discriminator column
-2. JOINED normalizes but adds JOINs for every query on the base type
-3. TABLE_PER_CLASS is almost never the right choice (UNION ALL is slow, can't use IDENTITY)
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
 **Interview one-liner:**
-"I default to SINGLE_TABLE inheritance for simplicity and performance, accepting NULL columns as the trade-off - I only switch to JOINED when I have many subclass-specific columns that need NOT NULL constraints and polymorphic queries are infrequent."
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for JPA Inheritance Mapping. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: [TODO: Conceptual question - foundational]**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-*Why they ask:* [TODO]
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
 **Answer:**
-[TODO: Complete structured answer. 200-500 words.]
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
+
+*What separates good from great:* [FILL: 1 sentence]
 
 ---
 
-**Q2: [TODO: Debugging/diagnosis scenario]**
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with diagnostic steps.]
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
 
 ---
 
-**Q3: [TODO: Architecture/design question]**
+**Q3 [SENIOR]: [FILL: architecture or production question]**
 
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with design rationale.]
-
----
-
-**Q4: [TODO: Trade-off decision question]**
-
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with decision framework.]
+[FILL: complete answer demonstrating system-level thinking]
 
----
+*What separates good from great:* [FILL]
 
-**Q5: [TODO: Production scenario question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with metrics/remediation.]
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
+- [FILL: keyword] - [when to prefer]
 
 ---
 
@@ -741,639 +590,560 @@ Default recommendation:
 
 # JPQL vs Criteria API vs Native Queries
 
-**TL;DR** - JPQL is HQL-like object-oriented queries, Criteria API builds type-safe queries programmatically, and native SQL gives full database-specific control - choose based on query complexity and dynamism.
----
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
 
-### Comparison
-
-| Aspect          | JPQL                   | Criteria API              | Native SQL            |
-| --------------- | ---------------------- | ------------------------- | --------------------- |
-| Syntax          | String-based, SQL-like | Java API, builder pattern | Raw SQL string        |
-| Type safety     | No (strings)           | Yes (metamodel)           | No                    |
-| Dynamic queries | Messy concatenation    | Clean builder pattern     | Messy concatenation   |
-| DB portability  | Yes (JPA abstracts)    | Yes                       | No (DB-specific)      |
-| Complex queries | Good for simple/medium | Good for dynamic filters  | Best for complex      |
-| Learning curve  | Low (SQL-like)         | High (verbose API)        | Low (if you know SQL) |
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-[TODO: Concrete pain scenario. 2-4 sentences.]
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
 
 **THE BREAKING POINT:**
-[TODO: Specific failure. 1-2 sentences.]
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
 
 **THE INVENTION MOMENT:**
 "This is exactly why JPQL vs Criteria API vs Native Queries was created."
 
 **EVOLUTION:**
-[TODO: predecessor -> current form -> future.]
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **JPQL vs Criteria API vs Native Queries** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-[TODO: Plain English. No jargon. 2-4 sentences.]
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-[TODO: Basic usage. Common patterns. 3-5 sentences.]
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
-[TODO: Internals. Data structures. 4-6 sentences.]
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
 **Level 4 - Production mastery (senior/staff engineer):**
-[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
-
-
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
 ---
 
 ### 💻 Code Example
 
+**BAD - [FILL: antipattern name]:**
 ```java
-// JPQL: Simple, readable, best for static queries
-@Query("SELECT o FROM Order o "
-    + "WHERE o.status = :status "
-    + "AND o.createdAt > :since")
-List<Order> findByStatusSince(
-    @Param("status") String status,
-    @Param("since") LocalDateTime since);
-
-// CRITERIA API: Type-safe, best for dynamic queries
-public List<Order> findOrders(OrderFilter filter) {
-    CriteriaBuilder cb =
-        em.getCriteriaBuilder();
-    CriteriaQuery<Order> cq =
-        cb.createQuery(Order.class);
-    Root<Order> root = cq.from(Order.class);
-
-    List<Predicate> predicates = new ArrayList<>();
-    if (filter.getStatus() != null) {
-        predicates.add(cb.equal(
-            root.get("status"),
-            filter.getStatus()));
-    }
-    if (filter.getMinAmount() != null) {
-        predicates.add(cb.greaterThan(
-            root.get("amount"),
-            filter.getMinAmount()));
-    }
-    cq.where(predicates.toArray(new Predicate[0]));
-    return em.createQuery(cq).getResultList();
-}
-
-// NATIVE SQL: Full DB power, best for complex/specific
-@Query(value = "SELECT * FROM orders o "
-    + "WHERE o.status = :status "
-    + "AND o.created_at > NOW() - INTERVAL '7 days' "
-    + "ORDER BY o.amount DESC "
-    + "LIMIT 100",
-    nativeQuery = true)
-List<Order> findRecentHighValue(
-    @Param("status") String status);
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
 ```
----
 
-### Decision Guide
-
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
 ```
-Static query, few parameters:
-  -> JPQL (simple, readable)
 
-Dynamic query with optional filters:
-  -> Criteria API (type-safe, no string concat)
-  -> Or: Spring Data Specifications
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
 
-Complex query with DB-specific features:
-  -> Native SQL (window functions, CTEs, hints)
-
-Reporting/analytics:
-  -> Native SQL (performance matters most)
-```
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
-
-1. JPQL for simple static queries, Criteria API for dynamic filter queries, Native SQL for complex/DB-specific
-2. Never concatenate user input into JPQL or native queries - always use parameters (`:paramName`)
-3. Spring Data Specifications wraps Criteria API for cleaner dynamic queries
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
 **Interview one-liner:**
-"I use JPQL for simple static queries, Criteria API or Spring Data Specifications for dynamic filter-based queries, and native SQL only for complex DB-specific operations like window functions - always with parameterized queries for security."
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for JPQL vs Criteria API vs Native Queries. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: [TODO: Conceptual question - foundational]**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-*Why they ask:* [TODO]
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
 **Answer:**
-[TODO: Complete structured answer. 200-500 words.]
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
+
+*What separates good from great:* [FILL: 1 sentence]
 
 ---
 
-**Q2: [TODO: Debugging/diagnosis scenario]**
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with diagnostic steps.]
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
 
 ---
 
-**Q3: [TODO: Architecture/design question]**
+**Q3 [SENIOR]: [FILL: architecture or production question]**
 
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with design rationale.]
-
----
-
-**Q4: [TODO: Trade-off decision question]**
-
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with decision framework.]
+[FILL: complete answer demonstrating system-level thinking]
 
----
+*What separates good from great:* [FILL]
 
-**Q5: [TODO: Production scenario question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with metrics/remediation.]
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
+- [FILL: keyword] - [when to prefer]
 
 ---
 
 ---
 
-# Schema Migration (Flyway / Liquibase)
+# Schema Migration
 
-**TL;DR** - Schema migration tools version-control your database schema changes, applying them in order across all environments - Flyway uses SQL scripts, Liquibase uses XML/YAML/JSON changesets.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
-Without schema migration: developer A adds a column locally, developer B doesn't know. Production schema drifts from staging. Deploying requires a manual SQL script run by a DBA. Rolling back a bad migration means writing reverse SQL by hand. Nobody knows what schema version production is on.
----
+**WORLD WITHOUT IT:**
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
 
-### Flyway vs Liquibase
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
 
-| Aspect           | Flyway                 | Liquibase             |
-| ---------------- | ---------------------- | --------------------- |
-| Migration format | SQL scripts            | XML/YAML/JSON/SQL     |
-| Philosophy       | Convention-over-config | Flexible, explicit    |
-| Rollback         | Manual (write undo)    | Auto-generated (some) |
-| Diff tool        | No                     | Yes (compare DBs)     |
-| Learning curve   | Very low               | Moderate              |
-| Spring Boot      | Auto-configured        | Auto-configured       |
-| Best for         | Most projects          | Complex multi-DB      |
+**THE INVENTION MOMENT:**
+"This is exactly why Schema Migration was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Schema Migration** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-[TODO: Plain English. No jargon. 2-4 sentences.]
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-[TODO: Basic usage. Common patterns. 3-5 sentences.]
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
-[TODO: Internals. Data structures. 4-6 sentences.]
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
 **Level 4 - Production mastery (senior/staff engineer):**
-[TODO: Design decisions. Cross-system reasoning. 5-8 sentences.]
-
-
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics. 3-5 sentences.]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
 ---
 
-### Code Example (Flyway)
+### 💻 Code Example
 
-```sql
--- V1__create_users_table.sql
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    name VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-);
-
--- V2__add_phone_to_users.sql
-ALTER TABLE users
-    ADD COLUMN phone VARCHAR(20);
-
--- V3__create_orders_table.sql
-CREATE TABLE orders (
-    id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT REFERENCES users(id),
-    amount DECIMAL(10,2) NOT NULL,
-    status VARCHAR(20) DEFAULT 'PENDING'
-);
+**BAD - [FILL: antipattern name]:**
+```java
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
 ```
 
-```yaml
-# application.yml
-spring:
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
-    baseline-on-migrate: true
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
 ```
 
-**Naming convention:** `V{version}__{description}.sql`
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
 
-- `V1__create_users.sql` - versioned migration
-- `R__seed_data.sql` - repeatable migration
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
-
-1. Flyway: SQL-based, convention-driven, simplest for most Spring Boot projects
-2. Never modify an already-applied migration - create a new one
-3. Spring Boot auto-runs migrations on startup - just drop SQL files in `db/migration`
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
 **Interview one-liner:**
-"I use Flyway for database schema versioning - SQL migration scripts named V1\_\_description.sql run automatically on Spring Boot startup, ensuring every environment has the same schema without manual intervention."
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Schema Migration (Flyway / Liquibase). Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: [TODO: Conceptual question - foundational]**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-*Why they ask:* [TODO]
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
 **Answer:**
-[TODO: Complete structured answer. 200-500 words.]
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
+
+*What separates good from great:* [FILL: 1 sentence]
 
 ---
 
-**Q2: [TODO: Debugging/diagnosis scenario]**
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with diagnostic steps.]
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
 
 ---
 
-**Q3: [TODO: Architecture/design question]**
+**Q3 [SENIOR]: [FILL: architecture or production question]**
 
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with design rationale.]
-
----
-
-**Q4: [TODO: Trade-off decision question]**
-
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with decision framework.]
+[FILL: complete answer demonstrating system-level thinking]
 
----
+*What separates good from great:* [FILL]
 
-**Q5: [TODO: Production scenario question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with metrics/remediation.]
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
+- [FILL: keyword] - [when to prefer]

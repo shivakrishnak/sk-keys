@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React"
+parent: "Interview Mastery"
+nav_order: 16
+has_children: true
+permalink: /interview/react/
 description: Interview mastery content for React
 keywords_count: 78
 files_count: 11

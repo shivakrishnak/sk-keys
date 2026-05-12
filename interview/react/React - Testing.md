@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React - Testing"
+parent: "React"
+grand_parent: "Interview Mastery"
+nav_order: 7
+permalink: /interview/react/testing/
 topic: React
 subtopic: Testing
 keywords:

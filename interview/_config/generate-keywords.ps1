@@ -5,14 +5,14 @@
     Generates keyword lists for interview topics, groups them into
     sub-topic files, and creates folder/index/stub structure.
 
-    Uses KEYWORD_GENERATOR_PROMPT.md (Category Keyword Generator v4.0)
+    Uses dictionary/_config/KEYWORD_GENERATOR_PROMPT.md (Category Keyword Generator v4.0)
     as the master specification for all keyword generation. The prompt
-    file at .github/prompts/generate-keywords.prompt.md orchestrates
+    file at .github/prompts/dict-generate-keywords.prompt.md orchestrates
     this process for dictionary categories and tiers.
 
     Supports four flows:
     1. New topic from scratch (generates keywords via
-       KEYWORD_GENERATOR_PROMPT.md v4.0 spec)
+       dictionary/_config/KEYWORD_GENERATOR_PROMPT.md v4.0 spec)
     2. New topic from existing dictionary category
     3. Add subtopic to existing topic
     4. Scan existing dictionary category to find new
@@ -20,29 +20,29 @@
 
     DESIGN CONSIDERATIONS:
     - For new topics without an index.md, use
-      KEYWORD_GENERATOR_PROMPT.md to generate a comprehensive
+      dictionary/_config/KEYWORD_GENERATOR_PROMPT.md to generate a comprehensive
       keyword list, then apply folder/file rules and generate
       file content.
     - For topics like Angular that do not exist yet, analyse
       where the topic belongs (which tier/category), generate
-      keywords via KEYWORD_GENERATOR_PROMPT.md, create folders
+      keywords via dictionary/_config/KEYWORD_GENERATOR_PROMPT.md, create folders
       and files, and generate content.
     - For new subtopics (e.g., React Hooks) where the main
       topic already exists, create the file in the existing
       topic folder, apply file rules, generate keywords via
-      KEYWORD_GENERATOR_PROMPT.md, and generate content.
+      dictionary/_config/KEYWORD_GENERATOR_PROMPT.md, and generate content.
     - For existing dictionary categories (e.g., JVM, JCC),
       scan the dictionary index.md, analyse keywords, check
       for new folder/file opportunities, and generate content.
 
     ALWAYS use pwsh (PowerShell 7+):
-      pwsh -ExecutionPolicy Bypass -File interview/config/generate-keywords.ps1
+      pwsh -ExecutionPolicy Bypass -File interview/_config/generate-keywords.ps1
 
     REFERENCES:
-    - KEYWORD_GENERATOR_PROMPT.md: Master keyword generation spec
-    - .github/prompts/generate-keywords.prompt.md: Prompt file
+    - dictionary/_config/KEYWORD_GENERATOR_PROMPT.md: Master keyword generation spec
+    - .github/prompts/dict-generate-keywords.prompt.md: Prompt file
       for category/tier keyword processing
-    - interview/config/INTERVIEW_PROMPT.md: Content generation spec
+    - interview/_config/INTERVIEW_PROMPT.md: Content generation spec
 
 .PARAMETER Topic
     Topic name (e.g., "Java", "Angular", "Kubernetes")
@@ -346,8 +346,8 @@ if ($Subtopic) {
         Write-Host "`nProvide keywords with -Keywords parameter:" -ForegroundColor Yellow
         Write-Host "  -Keywords 'Keyword1,Keyword2,Keyword3'"
         Write-Host "`nOr use AI to generate keywords:" -ForegroundColor Yellow
-        Write-Host "`nSPEC: Apply KEYWORD_GENERATOR_PROMPT.md v4.0"
-        Write-Host "PROMPT: .github/prompts/generate-keywords.prompt.md"
+        Write-Host "`nSPEC: Apply dictionary/_config/KEYWORD_GENERATOR_PROMPT.md v4.0"
+        Write-Host "PROMPT: .github/prompts/dict-generate-keywords.prompt.md"
         Write-Host ""
         Write-Host @"
 
@@ -355,7 +355,7 @@ Generate a keyword list for interview mastery:
   Topic: $Topic
   Subtopic: $Subtopic
 
-Spec reference: KEYWORD_GENERATOR_PROMPT.md v4.0
+Spec reference: dictionary/_config/KEYWORD_GENERATOR_PROMPT.md v4.0
 
 Requirements:
 - 5-15 keywords covering the subtopic comprehensively
@@ -467,7 +467,7 @@ if (Test-Path $topicPath) {
 # Output AI prompt for keyword generation
 Write-Host "┌─────────────────────────────────────────────┐" -ForegroundColor Green
 Write-Host "│ USE THIS PROMPT TO GENERATE KEYWORDS        │" -ForegroundColor Green
-Write-Host "│ Spec: KEYWORD_GENERATOR_PROMPT.md v4.0      │" -ForegroundColor Green
+Write-Host "│ Spec: dictionary/_config/KEYWORD_GENERATOR_PROMPT.md v4.0      │" -ForegroundColor Green
 Write-Host "│ Prompt: .github/prompts/generate-keywords    │" -ForegroundColor Green
 Write-Host "└─────────────────────────────────────────────┘" -ForegroundColor Green
 Write-Host ""
@@ -475,9 +475,9 @@ Write-Host ""
 $kwPrompt = @"
 Generate a comprehensive keyword list for interview mastery on: $Topic
 
-SPEC REFERENCE: Apply KEYWORD_GENERATOR_PROMPT.md (Category
+SPEC REFERENCE: Apply dictionary/_config/KEYWORD_GENERATOR_PROMPT.md (Category
 Keyword Generator v4.0) rules for keyword generation. Use
-.github/prompts/generate-keywords.prompt.md for the full
+.github/prompts/dict-generate-keywords.prompt.md for the full
 generation workflow.
 
 DESIGN CONSIDERATIONS:
@@ -485,7 +485,7 @@ DESIGN CONSIDERATIONS:
   (tier-1 through tier-9) and place it accordingly
 - Generate keywords covering all applicable knowledge levels:
   L0 (Orientation) through L5 (Creator) + META
-- Apply all 22 rules from KEYWORD_GENERATOR_PROMPT.md Section 2
+- Apply all 22 rules from dictionary/_config/KEYWORD_GENERATOR_PROMPT.md Section 2
 - Use all 12 output components from Section 3
 - Run all 17 quality checks from Section 4
 
@@ -519,7 +519,7 @@ Output format:
 ...
 
 After generating, run:
-  pwsh -File interview/config/generate-keywords.ps1 \`
+  pwsh -File interview/_config/generate-keywords.ps1 \`
     -Topic '$Topic' -Subtopic '[Name]' \`
     -Keywords 'Keyword1,Keyword2,Keyword3'
 

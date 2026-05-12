@@ -28,326 +28,281 @@ version: 3
 
 # OneToMany and ManyToOne
 
-**TL;DR** - `@ManyToOne` is the owning side (has the foreign key column), `@OneToMany` is the inverse side (mapped by). The owning side controls the relationship in the database. Always define both sides for bidirectional relationships but maintain consistency through helper methods.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-Manual JOIN queries, manual foreign key management, no object graph navigation. `order.getItems()` impossible without explicit query code.
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why OneToMany and ManyToOne was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **OneToMany and ManyToOne** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-One Order has Many Items. Each Item belongs to One Order. This is the most common relationship in any application.
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-
-```java
-@Entity
-public class Order {
-    @Id @GeneratedValue
-    private Long id;
-
-    @OneToMany(mappedBy = "order",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true)
-    private List<OrderItem> items =
-        new ArrayList<>();
-
-    // Helper method for consistency:
-    public void addItem(OrderItem item) {
-        items.add(item);
-        item.setOrder(this);
-    }
-
-    public void removeItem(OrderItem item) {
-        items.remove(item);
-        item.setOrder(null);
-    }
-}
-
-@Entity
-public class OrderItem {
-    @Id @GeneratedValue
-    private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id",
-        nullable = false)
-    private Order order;
-
-    private String productName;
-    private int quantity;
-}
-```
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
-**Owning side vs inverse side:**
-
-- **Owning side (`@ManyToOne`):** Has the `@JoinColumn` (FK in DB). Changes to THIS side are persisted.
-- **Inverse side (`@OneToMany(mappedBy=...)`):** Mirror. Changes to THIS side alone are NOT persisted!
-
-```java
-// BAD: Only set inverse side
-order.getItems().add(item);
-// item.order is null -> FK not set in DB!
-
-// GOOD: Set owning side (or use helper method)
-item.setOrder(order);
-order.getItems().add(item); // for in-memory consistency
-```
-
-**Unidirectional @OneToMany (avoid!):**
-
-```java
-// Without mappedBy - creates JOIN TABLE!
-@OneToMany
-private List<OrderItem> items;
-// Creates: order_items(order_id, items_id)
-// 3 tables instead of 2. Performance disaster.
-
-// Fix: Always use bidirectional with mappedBy
-```
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-
-**orphanRemoval vs CascadeType.REMOVE:**
-
-```java
-// orphanRemoval = true:
-order.getItems().remove(item);
-// Item deleted from DB (orphan = no parent)
-
-// CascadeType.REMOVE (without orphanRemoval):
-order.getItems().remove(item);
-// Item NOT deleted! Only deleted if order is deleted
-
-// Both together = items deleted when:
-// 1. Removed from collection (orphanRemoval)
-// 2. Parent order deleted (CASCADE REMOVE)
-```
-
-**Performance: @ManyToOne EAGER is rarely correct:**
-
-```java
-// Default: @ManyToOne is EAGER (loads parent)
-// If you load 1000 items, each loads its Order
-
-// Fix: Always set LAZY on @ManyToOne
-@ManyToOne(fetch = FetchType.LAZY)
-private Order order;
-```
-
-
-
+**Level 4 - Production mastery (senior/staff engineer):**
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
+---
+
+### 💻 Code Example
+
+**BAD - [FILL: antipattern name]:**
+```java
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
+```
+
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
+```
+
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
+
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
-1. Owning side (@ManyToOne + @JoinColumn) controls the FK - set THIS side
-2. Always use `mappedBy` on @OneToMany (avoids join table anti-pattern)
-3. Use helper methods (addItem/removeItem) to maintain both sides in sync
+**Interview one-liner:**
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for OneToMany and ManyToOne. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What happens if you only set the inverse side of a bidirectional relationship?**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-_Why they ask:_ Tests fundamental Hibernate understanding.
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
 
-_Strong answer:_
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
-If you only add to the @OneToMany collection without setting the @ManyToOne side:
+**Answer:**
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-```java
-order.getItems().add(newItem);
-// newItem.order is still null!
-```
+*What separates good from great:* [FILL: 1 sentence]
 
-Result: The foreign key column (`order_id`) in the `order_item` table remains NULL. The relationship is not persisted because Hibernate only looks at the owning side (@ManyToOne) to determine what SQL to generate.
+---
 
-Fix: Always use helper methods that set both sides:
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-```java
-public void addItem(OrderItem item) {
-    items.add(item);         // inverse side
-    item.setOrder(this);     // owning side
-}
-```
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
-This is the #1 most common Hibernate bug in codebases.
+**Answer:**
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
+
+---
+
+**Q3 [SENIOR]: [FILL: architecture or production question]**
+
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
+
+**Answer:**
+[FILL: complete answer demonstrating system-level thinking]
+
+*What separates good from great:* [FILL]
+
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
+- [FILL: keyword] - [when to prefer]
 
 ---
 
@@ -355,335 +310,281 @@ This is the #1 most common Hibernate bug in codebases.
 
 # ManyToMany
 
-**TL;DR** - `@ManyToMany` creates a join table to model N:M relationships. In practice, prefer mapping the join table as an entity (`@Entity`) with two `@ManyToOne` relationships when you need extra columns or better control over queries and performance.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-Manual join table management: INSERT into join table, DELETE from join table, query with JOINs. No object navigation like `student.getCourses()`.
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why ManyToMany was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **ManyToMany** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-A Student can enroll in many Courses. A Course can have many Students. The database needs a middle table to track which students are in which courses.
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-
-```java
-// Simple @ManyToMany:
-@Entity
-public class Student {
-    @Id @GeneratedValue
-    private Long id;
-
-    @ManyToMany
-    @JoinTable(
-        name = "student_course",
-        joinColumns = @JoinColumn(
-            name = "student_id"),
-        inverseJoinColumns = @JoinColumn(
-            name = "course_id"))
-    private Set<Course> courses = new HashSet<>();
-}
-
-@Entity
-public class Course {
-    @Id @GeneratedValue
-    private Long id;
-
-    @ManyToMany(mappedBy = "courses")
-    private Set<Student> students = new HashSet<>();
-}
-```
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
-**Why use Set, not List:**
-
-```java
-// BAD: List causes DELETE ALL + RE-INSERT ALL
-@ManyToMany
-private List<Course> courses;
-// Remove 1 course:
-// DELETE FROM student_course WHERE student_id=1
-// INSERT student_course (1, 2)
-// INSERT student_course (1, 3)
-// INSERT student_course (1, 4)
-// ... re-inserts ALL remaining!
-
-// GOOD: Set does targeted DELETE
-@ManyToMany
-private Set<Course> courses;
-// Remove 1 course:
-// DELETE FROM student_course
-//   WHERE student_id=1 AND course_id=5
-// Only 1 statement!
-```
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-
-**The correct pattern: Map join table as entity:**
-
-```java
-// When join table needs extra columns
-// (enrolled_at, grade, role):
-@Entity
-@Table(name = "enrollment")
-public class Enrollment {
-    @EmbeddedId
-    private EnrollmentId id;
-
-    @ManyToOne(fetch = LAZY)
-    @MapsId("studentId")
-    private Student student;
-
-    @ManyToOne(fetch = LAZY)
-    @MapsId("courseId")
-    private Course course;
-
-    private LocalDate enrolledAt;
-    private String grade;
-}
-
-@Embeddable
-public record EnrollmentId(
-    Long studentId,
-    Long courseId) implements Serializable {}
-```
-
-Benefits over @ManyToMany:
-
-- Extra columns (date, status, metadata)
-- Direct queries on the relationship
-- Better pagination control
-- No surprise DELETE ALL + RE-INSERT
-
-
-
+**Level 4 - Production mastery (senior/staff engineer):**
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
+---
+
+### 💻 Code Example
+
+**BAD - [FILL: antipattern name]:**
+```java
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
+```
+
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
+```
+
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
+
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
-1. Always use `Set` (not `List`) for @ManyToMany collections
-2. If the join table needs extra columns -> map as entity with two @ManyToOne
-3. Prefer explicit join entity for production code (more control, better queries)
+**Interview one-liner:**
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for ManyToMany. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: [TODO: Conceptual question - foundational]**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-*Why they ask:* [TODO]
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
 **Answer:**
-[TODO: Complete structured answer. 200-500 words.]
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
+
+*What separates good from great:* [FILL: 1 sentence]
 
 ---
 
-**Q2: [TODO: Debugging/diagnosis scenario]**
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with diagnostic steps.]
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
 
 ---
 
-**Q3: [TODO: Architecture/design question]**
+**Q3 [SENIOR]: [FILL: architecture or production question]**
 
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with design rationale.]
-
----
-
-**Q4: [TODO: Trade-off decision question]**
-
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with decision framework.]
+[FILL: complete answer demonstrating system-level thinking]
 
----
+*What separates good from great:* [FILL]
 
-**Q5: [TODO: Production scenario question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with metrics/remediation.]
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
+- [FILL: keyword] - [when to prefer]
 
 ---
 
@@ -691,320 +592,281 @@ The difference: [TODO: 1 sentence - the mental model shift]
 
 # Fetch Types
 
-**TL;DR** - LAZY loading defers relationship loading until first access (proxy object). EAGER loads immediately with the parent. Default: `@OneToMany`/`@ManyToMany` = LAZY, `@ManyToOne`/`@OneToOne` = EAGER. Best practice: make everything LAZY, then fetch eagerly where needed via JOIN FETCH.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-Load one Order and Hibernate also loads all its Items, the Customer, the Customer's Address, and all of the Customer's other Orders. A simple `findById` triggers 20 JOINs and returns half the database.
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Fetch Types was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Fetch Types** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-LAZY: "Don't load related data until I ask for it." EAGER: "Load everything right now, whether I need it or not."
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-
-```java
-@Entity
-public class Order {
-
-    // LAZY: items NOT loaded with order
-    // Loaded when order.getItems() is called
-    @OneToMany(mappedBy = "order",
-        fetch = FetchType.LAZY)
-    private List<OrderItem> items;
-
-    // EAGER: customer loaded WITH order always
-    // (This is the default for @ManyToOne!)
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Customer customer;
-}
-```
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
-**How LAZY works (proxies):**
-
-```java
-Order order = em.find(Order.class, 1L);
-// SQL: SELECT * FROM orders WHERE id=1
-// order.items = LazyInitializationProxy (no SQL yet)
-
-order.getItems().size();
-// NOW: SELECT * FROM order_items WHERE order_id=1
-// Proxy triggers the actual query
-```
-
-**The correct approach - everything LAZY, fetch as needed:**
-
-```java
-// Entity: all relationships LAZY
-@ManyToOne(fetch = FetchType.LAZY)
-private Customer customer;
-
-// Repository: fetch eagerly when needed
-@Query("SELECT o FROM Order o " +
-       "JOIN FETCH o.customer " +
-       "JOIN FETCH o.items " +
-       "WHERE o.id = :id")
-Optional<Order> findWithDetails(Long id);
-
-// Different use case, different fetch:
-@Query("SELECT o FROM Order o " +
-       "WHERE o.status = :s")
-List<Order> findByStatus(OrderStatus s);
-// No customer/items loaded - fast list view!
-```
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-
-**@OneToOne LAZY doesn't work without bytecode enhancement:**
-
-```java
-@OneToOne(fetch = LAZY)
-private UserProfile profile;
-// Hibernate can't proxy: it needs to know
-// if profile is null or not (requires query!)
-// So it always loads eagerly.
-
-// Fix 1: @MapsId (shared PK)
-@OneToOne(fetch = LAZY)
-@MapsId
-private UserProfile profile;
-// Same PK = Hibernate knows it exists
-
-// Fix 2: Bytecode enhancement
-// hibernate.enhancer.enableLazyInitialization=true
-```
-
-**@EntityGraph for declarative fetching:**
-
-```java
-@EntityGraph(attributePaths = {
-    "customer", "items", "items.product"})
-Optional<Order> findById(Long id);
-// Generates LEFT JOIN FETCH for all three
-```
-
-
-
+**Level 4 - Production mastery (senior/staff engineer):**
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
+---
+
+### 💻 Code Example
+
+**BAD - [FILL: antipattern name]:**
+```java
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
+```
+
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
+```
+
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
+
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
-1. Make ALL relationships LAZY (including @ManyToOne!)
-2. Use JOIN FETCH or @EntityGraph to eagerly load when needed per use case
-3. @OneToOne LAZY requires @MapsId or bytecode enhancement to actually work
+**Interview one-liner:**
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Fetch Types. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between JOIN FETCH and @EntityGraph?**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-_Why they ask:_ Tests practical JPA knowledge.
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
 
-_Strong answer:_
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
-Both solve the same problem (eager loading specific relationships) but differ:
+**Answer:**
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-**JOIN FETCH (JPQL):**
+*What separates good from great:* [FILL: 1 sentence]
 
-- In the query string: `JOIN FETCH o.items`
-- INNER JOIN by default (excludes orders with no items)
-- Full JPQL control (WHERE, ORDER BY, etc.)
-- Cannot be combined with `Pageable` without issues
+---
 
-**@EntityGraph:**
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-- Annotation on repository method
-- LEFT JOIN by default (includes orders with no items)
-- Works with derived query methods (`findByStatus`)
-- Can be combined with `Pageable` (but beware in-memory paging)
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
-```java
-// JOIN FETCH - INNER JOIN
-@Query("SELECT o FROM Order o " +
-       "JOIN FETCH o.items")
-List<Order> findWithItems();
-// Orders with no items are EXCLUDED
+**Answer:**
+[FILL: complete answer with production depth]
 
-// @EntityGraph - LEFT JOIN
-@EntityGraph(attributePaths = "items")
-List<Order> findByStatus(OrderStatus s);
-// Orders with no items are INCLUDED
-```
+*What separates good from great:* [FILL]
+
+---
+
+**Q3 [SENIOR]: [FILL: architecture or production question]**
+
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
+
+**Answer:**
+[FILL: complete answer demonstrating system-level thinking]
+
+*What separates good from great:* [FILL]
+
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
+- [FILL: keyword] - [when to prefer]
 
 ---
 
@@ -1012,320 +874,281 @@ List<Order> findByStatus(OrderStatus s);
 
 # Cascade Types
 
-**TL;DR** - Cascade types propagate EntityManager operations from parent to child entities: `PERSIST` (save child with parent), `MERGE` (update child with parent), `REMOVE` (delete child with parent). Use `CascadeType.ALL` only on true parent-child compositions where the child cannot exist without the parent.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-When saving an Order with 5 new Items, you must explicitly persist each Item before or after the Order. Forget one and get `TransientObjectException`. Delete an Order and orphan Items remain in the database.
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Cascade Types was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Cascade Types** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-"When I save/delete the parent, automatically save/delete the children too." Like deleting a folder also deletes all files inside it.
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-
-```java
-@Entity
-public class Order {
-    @OneToMany(mappedBy = "order",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true)
-    private List<OrderItem> items =
-        new ArrayList<>();
-}
-
-// Now this works:
-Order order = new Order();
-order.addItem(new OrderItem("Widget", 3));
-order.addItem(new OrderItem("Gadget", 1));
-em.persist(order);
-// Items are automatically persisted!
-// 1 INSERT for order + 2 INSERTs for items
-```
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
-**Cascade types:**
-
-| Type    | Cascades... | Use when...                              |
-| ------- | ----------- | ---------------------------------------- |
-| PERSIST | persist()   | New children saved with new parent       |
-| MERGE   | merge()     | Updated children merged with parent      |
-| REMOVE  | remove()    | Children deleted with parent             |
-| REFRESH | refresh()   | Children refreshed with parent           |
-| DETACH  | detach()    | Children detached with parent            |
-| ALL     | All above   | True composition (child owned by parent) |
-
-**When NOT to use CASCADE:**
-
-```java
-// DANGEROUS: User -> Orders with CASCADE ALL
-@OneToMany(cascade = ALL)
-private List<Order> orders;
-// Deleting user deletes ALL their orders!
-// Orders might need to be archived, not deleted
-
-// SAFE: Only cascade what makes sense
-@OneToMany(cascade = {PERSIST, MERGE})
-private List<Order> orders;
-// Orders are persisted/merged with user
-// But NOT deleted when user is deleted
-```
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-
-**orphanRemoval vs CascadeType.REMOVE (precise difference):**
-
-```java
-// CascadeType.REMOVE:
-// Triggered when: em.remove(parent)
-// Effect: All children also removed
-
-// orphanRemoval = true:
-// Triggered when: child removed from collection
-// OR when parent is removed
-// Effect: "Orphaned" child deleted from DB
-
-// Example:
-order.getItems().remove(item);
-// With orphanRemoval=true: DELETE item
-// Without orphanRemoval: item stays in DB
-//   with FK = null (or constraint violation)
-```
-
-**Rule of thumb for cascade decisions:**
-
-- Is the child a VALUE OBJECT of the parent? (OrderItem, Address) -> `cascade = ALL, orphanRemoval = true`
-- Is the child an independent entity that references the parent? (User's Orders, Department's Employees) -> No cascade on REMOVE, maybe PERSIST/MERGE
-
-
-
+**Level 4 - Production mastery (senior/staff engineer):**
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
+---
+
+### 💻 Code Example
+
+**BAD - [FILL: antipattern name]:**
+```java
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
+```
+
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
+```
+
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
+
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
-1. `CascadeType.ALL` = only for true compositions (child can't exist alone)
-2. `orphanRemoval = true` deletes children removed from collection
-3. Never cascade REMOVE on relationships where children should survive parent deletion
+**Interview one-liner:**
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Cascade Types. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: [TODO: Conceptual question - foundational]**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-*Why they ask:* [TODO]
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
 **Answer:**
-[TODO: Complete structured answer. 200-500 words.]
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
+
+*What separates good from great:* [FILL: 1 sentence]
 
 ---
 
-**Q2: [TODO: Debugging/diagnosis scenario]**
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with diagnostic steps.]
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
 
 ---
 
-**Q3: [TODO: Architecture/design question]**
+**Q3 [SENIOR]: [FILL: architecture or production question]**
 
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with design rationale.]
-
----
-
-**Q4: [TODO: Trade-off decision question]**
-
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with decision framework.]
+[FILL: complete answer demonstrating system-level thinking]
 
----
+*What separates good from great:* [FILL]
 
-**Q5: [TODO: Production scenario question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with metrics/remediation.]
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
-
+- [FILL: keyword] - [when to prefer]
 
 ---
 
@@ -1333,352 +1156,278 @@ The difference: [TODO: 1 sentence - the mental model shift]
 
 # Bidirectional Relationships
 
-**TL;DR** - Bidirectional relationships have both sides mapped (`@ManyToOne` + `@OneToMany(mappedBy=...)`). The owning side (with `@JoinColumn`) controls persistence. Both sides must be synchronized in Java code via helper methods to prevent inconsistencies.
+**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-You can navigate from Order to Items but not from Item to Order (or vice versa) without writing additional queries. Unidirectional @OneToMany creates a performance-killing join table.
+[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+
+**THE BREAKING POINT:**
+[FILL: 1-2 sentences. What crashes/slows/breaks.]
+
+**THE INVENTION MOMENT:**
+"This is exactly why Bidirectional Relationships was created."
+
+**EVOLUTION:**
+[FILL: 2-3 sentences. predecessor -> current -> future direction]
+
 ---
 
 ### 📘 Textbook Definition
 
-[TODO: 2-4 sentences. Formal. Technically precise.]
+[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Bidirectional Relationships** on first mention.]
+
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:**
-[TODO: 15 words max. Zero jargon.]
+**One line:** [FILL: max 15 words, zero jargon]
 
 **One analogy:**
-> [TODO: 2-3 sentence real-world analogy.]
+> [FILL: 2-3 sentence real-world analogy]
 
-**One insight:**
-[TODO: What separates knowing the name from understanding it.]
+**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
-1. [TODO: Always true about this concept]
-2. [TODO: Always true about this concept]
-3. [TODO: Always true about this concept]
+1. [FILL: always true about this concept]
+2. [FILL: always true about this concept]
+3. [FILL: always true about this concept]
 
 **DERIVED DESIGN:**
-[TODO: How the invariants force the design.]
+[FILL: how invariants force the design. 2-4 sentences.]
 
 **THE TRADE-OFFS:**
-**Gain:** [TODO]
-**Cost:** [TODO]
+**Gain:** [FILL: what you get]
+**Cost:** [FILL: what you sacrifice]
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [TODO]
-**Accidental:** [TODO]
+**Essential:** [FILL: inherent to the problem]
+**Accidental:** [FILL: from current tooling/ecosystem]
+
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [TODO: Primary analogy in blockquote.]
+> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
 
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
-- "[TODO: Analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
+- "[FILL: analogy element]" -> [technical element]
 
-Where this analogy breaks down: [TODO: 1 sentence.]
+Where this analogy breaks down: [FILL: 1 sentence]
+
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-Both sides know about each other. An Order knows its Items, and each Item knows its Order. You can navigate the relationship from either direction.
+[FILL: plain English, no jargon, 2-4 sentences]
 
 **Level 2 - How to use it (junior developer):**
-
-```java
-// The CORRECT bidirectional pattern:
-@Entity
-public class Order {
-    @OneToMany(mappedBy = "order",
-        cascade = ALL, orphanRemoval = true)
-    private List<OrderItem> items =
-        new ArrayList<>();
-
-    // ALWAYS use helper methods:
-    public void addItem(OrderItem item) {
-        items.add(item);
-        item.setOrder(this);
-    }
-}
-
-@Entity
-public class OrderItem {
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;  // OWNING SIDE
-}
-```
+[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
 
 **Level 3 - How it works (mid-level engineer):**
+[FILL: internals, data structures, algorithms. 4-6 sentences]
 
-**Why `mappedBy` is essential:**
-
-```java
-// Without mappedBy: TWO separate relationships!
-// Hibernate creates: order_items join table
-// AND: order_id FK on order_item table
-// Double the SQL, double the confusion
-
-// With mappedBy: ONE relationship, two navigation paths
-// Only order_id FK on order_item table
-// Hibernate knows they're the same relationship
-```
-
-**Equality and hashCode for collections:**
-
-```java
-@Entity
-public class OrderItem {
-    @Id @GeneratedValue
-    private Long id;
-
-    // For Set<OrderItem> to work correctly:
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof OrderItem other))
-            return false;
-        // Use natural key, not generated ID!
-        return Objects.equals(
-            productName, other.productName)
-            && Objects.equals(
-                order, other.order);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(productName);
-    }
-}
-```
-
-**Level 4 - Mastery (senior/staff+ engineer):**
-
-**toString() infinite loop:**
-
-```java
-// BAD: Both sides include each other
-@Entity class Order {
-    @Override
-    public String toString() {
-        return "Order{items=" + items + "}";
-        // calls OrderItem.toString()
-    }
-}
-@Entity class OrderItem {
-    @Override
-    public String toString() {
-        return "Item{order=" + order + "}";
-        // calls Order.toString() -> INFINITE LOOP
-    }
-}
-
-// GOOD: Exclude parent from child toString
-@Entity class OrderItem {
-    @Override
-    public String toString() {
-        return "Item{id=" + id +
-            ", product=" + productName + "}";
-    }
-}
-```
-
-Same issue with Jackson serialization:
-
-```java
-@JsonManagedReference // on parent (serialized)
-private List<OrderItem> items;
-
-@JsonBackReference // on child (not serialized)
-private Order order;
-
-// Or better: use DTOs and don't serialize entities
-```
-
-
-
+**Level 4 - Production mastery (senior/staff engineer):**
+[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[TODO: What a competent senior would say]"
-A Staff says: "[TODO: What demonstrates next-level abstraction]"
-The difference: [TODO: 1 sentence - the mental model shift]
+A Senior says: "[FILL: correct but conventional understanding]"
+A Staff says: "[FILL: next-level abstraction or cross-system insight]"
+The difference: [FILL: 1 sentence - the mental model shift]
 
 **Level 5 - Distinguished (expert thinking):**
-[TODO: Cross-domain pattern recognition. Expert heuristics.
- What would you change if redesigning today?
- How does this compose at extreme scale?]
+[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+
 ---
 
-### How It Works (Mechanism)
+### ⚙️ How It Works
 
-[TODO: Internal mechanics. Data flow. Key steps.
- 4-8 sentences covering implementation details.]
+[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[TODO] -> [TODO] -> [THIS CONCEPT <- YOU ARE HERE]
-       -> [TODO]
+[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
 
 **FAILURE PATH:**
-[TODO: cascade -> observable symptom]
+[FILL: cascade when this fails -> observable symptom]
 
 **WHAT CHANGES AT SCALE:**
-[TODO: 2-3 sentences on behaviour at 10x/100x/1000x load.]
+[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+
+---
+
+### 💻 Code Example
+
+**BAD - [FILL: antipattern name]:**
+```java
+// BAD: [FILL: why this fails]
+[FILL: code, max 70 chars/line]
+```
+
+**GOOD - [FILL: correct pattern name]:**
+```java
+// GOOD: [FILL: why this works]
+[FILL: code, max 70 chars/line]
+```
+
+**How to test / verify correctness:**
+[FILL: 1-3 sentences on testing strategy]
+
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [TODO]
-**PROBLEM IT SOLVES:** [TODO]
-**KEY INSIGHT:** [TODO]
-**USE WHEN:** [TODO]
-**AVOID WHEN:** [TODO]
-**ANTI-PATTERN:** [TODO]
-**TRADE-OFF:** [TODO]
-**ONE-LINER:** [TODO]
-**KEY NUMBERS:** [TODO: 2-3 critical thresholds/defaults/limits]
-**TRIGGER PHRASE:** [TODO: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [TODO: First sentence showing immediate depth]
+**WHAT IT IS:** [FILL: 1 sentence]
+**PROBLEM IT SOLVES:** [FILL: 1 sentence]
+**KEY INSIGHT:** [FILL: 1 sentence]
+**USE WHEN:** [FILL: conditions]
+**AVOID WHEN:** [FILL: conditions]
+**ANTI-PATTERN:** [FILL: common misuse]
+**TRADE-OFF:** [FILL: gain vs cost]
+**ONE-LINER:** [FILL: memorable metaphor]
+**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
+**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
+**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
 
 **If you remember only 3 things:**
+1. [FILL: most important insight]
+2. [FILL: key trade-off or constraint]
+3. [FILL: production gotcha that bites everyone]
 
-1. Always use `mappedBy` on the inverse side (@OneToMany) - prevents join table
-2. Always set BOTH sides via helper methods - persistence only reads owning side
-3. Watch for infinite loops: toString(), JSON serialization, equals()
+**Interview one-liner:**
+"[FILL: 30-second interview explanation showing depth]"
+
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
-1. **EXPLAIN:** [TODO: Teach to a junior in 2 min without notes]
-2. **DEBUG:** [TODO: Diagnose a specific failure from symptoms]
-3. **DECIDE:** [TODO: Choose this vs alternative under pressure]
-4. **BUILD:** [TODO: Implement/configure in production context]
-5. **EXTEND:** [TODO: Apply principle to a different domain]---
+1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
+2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
+3. **DECIDE:** [FILL: choose this vs alternative under pressure]
+4. **BUILD:** [FILL: implement/configure in production context]
+5. **EXTEND:** [FILL: apply principle to different domain]
+
+---
 
 ### 💡 The Surprising Truth
 
-[TODO: 2-4 sentences. One counterintuitive fact.
- Specific. Makes this concept permanently memorable.]
----
+[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
 
-### ⚖️ Comparison Table
-
-[TODO: Include if 2+ named alternatives exist for Bidirectional Relationships. Otherwise remove this section.]
 ---
 
 ### ⚠️ Common Misconceptions
 
 | # | Misconception | Reality |
 |---|---------------|---------|
-| 1 | [TODO] | [TODO] |
-| 2 | [TODO] | [TODO] |
-| 3 | [TODO] | [TODO] |
-| 4 | [TODO] | [TODO] |
+| 1 | [FILL: dangerous wrong belief] | [FILL: actual truth] |
+| 2 | [FILL: wrong belief] | [FILL: actual truth] |
+| 3 | [FILL: wrong belief] | [FILL: actual truth] |
+| 4 | [FILL: wrong belief] | [FILL: actual truth] |
+
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 1: [FILL: name]**
+**Symptom:** [FILL: observable in production]
+**Root Cause:** [FILL: why it happens]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL: BAD then GOOD approach]
+**Prevention:** [FILL: how to prevent]
 
-**Failure Mode 2: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 2: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
 
-**Failure Mode 3: [TODO]**
-**Symptom:** [TODO]
-**Root Cause:** [TODO]
+**Failure Mode 3: [FILL: name]**
+**Symptom:** [FILL]
+**Root Cause:** [FILL]
 **Diagnostic:**
 ```
-[TODO: real diagnostic command]
+[FILL: real diagnostic command]
 ```
-**Fix:** [TODO: BAD then GOOD]
-**Prevention:** [TODO]
+**Fix:** [FILL]
+**Prevention:** [FILL]
+
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: [TODO: Conceptual question - foundational]**
+| Question Type | Target Duration | Signals |
+|---------------|-----------------|---------|
+| Conceptual | 45-90 seconds | Direct, confident |
+| Debugging | 90-150 seconds | Systematic diagnosis |
+| Architecture | 120-180 seconds | Trade-off exploration |
+| Trade-off | 60-120 seconds | Decision framework |
+| Behavioral | 60-120 seconds | Clear STAR structure |
 
-*Why they ask:* [TODO]
+**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+
+*Why they ask:* [FILL: what skill this probes]
+*Likely follow-up:* [FILL: what they ask next]
 
 **Answer:**
-[TODO: Complete structured answer. 200-500 words.]
+[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
+
+*What separates good from great:* [FILL: 1 sentence]
 
 ---
 
-**Q2: [TODO: Debugging/diagnosis scenario]**
+**Q2 [MID]: [FILL: debugging or trade-off question]**
 
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with diagnostic steps.]
+[FILL: complete answer with production depth]
+
+*What separates good from great:* [FILL]
 
 ---
 
-**Q3: [TODO: Architecture/design question]**
+**Q3 [SENIOR]: [FILL: architecture or production question]**
 
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with design rationale.]
-
----
-
-**Q4: [TODO: Trade-off decision question]**
-
-*Why they ask:* [TODO]
+*Why they ask:* [FILL]
+*Likely follow-up:* [FILL]
 
 **Answer:**
-[TODO: Complete answer with decision framework.]
+[FILL: complete answer demonstrating system-level thinking]
 
----
+*What separates good from great:* [FILL]
 
-**Q5: [TODO: Production scenario question]**
-
-*Why they ask:* [TODO]
-
-**Answer:**
-[TODO: Complete answer with metrics/remediation.]
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
-- [TODO] - [why needed]
-- [TODO] - [why needed]
+- [FILL: keyword] - [why needed]
+- [FILL: keyword] - [why needed]
 
 **Builds on this (learn these next):**
-- [TODO] - [what it adds]
-- [TODO] - [what it adds]
+- [FILL: keyword] - [what it adds]
+- [FILL: keyword] - [what it adds]
 
 **Alternatives / Comparisons:**
-- [TODO] - [when to prefer it]
-- [TODO] - [when to prefer it]
+- [FILL: keyword] - [when to prefer]

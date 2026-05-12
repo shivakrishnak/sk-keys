@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React - Component Patterns"
+parent: "React"
+grand_parent: "Interview Mastery"
+nav_order: 3
+permalink: /interview/react/component-patterns/
 topic: React
 subtopic: Component Patterns
 keywords:

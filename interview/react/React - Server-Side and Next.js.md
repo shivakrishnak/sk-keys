@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React - Server-Side and Next.js"
+parent: "React"
+grand_parent: "Interview Mastery"
+nav_order: 9
+permalink: /interview/react/server-side-and-nextjs/
 topic: React
 subtopic: Server-Side and Next.js
 keywords:

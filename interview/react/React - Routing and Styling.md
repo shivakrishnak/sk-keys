@@ -1,5 +1,10 @@
 ---
+layout: default
 title: "React - Routing and Styling"
+parent: "React"
+grand_parent: "Interview Mastery"
+nav_order: 5
+permalink: /interview/react/routing-and-styling/
 topic: React
 subtopic: Routing and Styling
 keywords:

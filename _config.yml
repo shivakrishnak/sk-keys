@@ -1,5 +1,5 @@
 title: Dictionary
-description: comprehensive, categorized keyword list — covering every layer of the stack a senior/staff engineer should deeply know.
+description: comprehensive, categorized keyword list - covering every layer of the stack a senior/staff engineer should deeply know.
 url: https://shivakrishnak.github.io
 baseurl: /sk-keys
 permalink: pretty
@@ -16,19 +16,12 @@ plugins:
 # Exclude non-page files from Jekyll build
 exclude:
   - README.md
-  - Update-MarkdownFrontmatter.ps1
-  - GENERATOR_PROMPT.md
-  - KEYWORD_GENERATOR_PROMPT.md
-  - SINGLE_CATEGORY_GENERATOR_PROMPT.md
-  - TECHNICAL_DICTIONARY.md
-  - Prompt.md
-  - upgrade_b1a.py
-  - upgrade_batch1.ps1
   - Gemfile
   - Gemfile.lock
   - vendor/
   - tmp/
-  - interview/config/
+  - dictionary/_config/
+  - interview/_config/
 
 # Search — disabled: 1,362 pages produce a ~25MB Lunr index
 # Re-enable once content is stable and index size is acceptable
