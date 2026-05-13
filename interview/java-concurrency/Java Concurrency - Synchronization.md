@@ -274,15 +274,25 @@ Use multiple threads incrementing a counter concurrently. Verify final count equ
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Language keyword providing mutual exclusion and memory visibility via intrinsic monitors
+
 **PROBLEM IT SOLVES:** Race conditions on shared mutable state
+
 **KEY INSIGHT:** Provides two guarantees: mutual exclusion AND happens-before memory visibility
+
 **USE WHEN:** Low contention, simple locking needs, no timeout/interrupt requirement
+
 **AVOID WHEN:** High contention, need tryLock/timeout, virtual threads (pins carrier), need fairness
+
 **ANTI-PATTERN:** Synchronizing on `this` in public classes, large synchronized blocks, inconsistent lock ordering
+
 **TRADE-OFF:** Simplicity (automatic release, language support) vs flexibility (no tryLock, no fairness, VT pinning)
+
 **ONE-LINER:** "Bathroom lock - one person at a time, guaranteed to unlock when you leave"
+
 **KEY NUMBERS:** Monitor per object, reentrant, no fairness, BLOCKED threads cannot be interrupted
+
 **TRIGGER PHRASE:** "synchronized monitor mutex lock visibility"
+
 **OPENING SENTENCE:** "synchronized provides mutual exclusion and memory visibility. Use a private final lock object, minimize critical section scope, and prefer ReentrantLock when you need tryLock, timeout, or virtual thread compatibility."
 
 **If you remember only 3 things:**
@@ -836,15 +846,25 @@ Volatile visibility bugs are nearly impossible to reproduce in unit tests becaus
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Field modifier ensuring visibility and ordering across threads without locking
+
 **PROBLEM IT SOLVES:** CPU cache staleness - threads not seeing each other's writes
+
 **KEY INSIGHT:** Provides visibility and ordering but NOT atomicity for compound operations
+
 **USE WHEN:** Simple flags, status variables, safe publication of immutable objects, one-writer patterns
+
 **AVOID WHEN:** Counters (read-modify-write), compound check-then-act, mutable objects needing multi-field updates
+
 **ANTI-PATTERN:** `volatile int counter; counter++` (lost updates - read-increment-write is not atomic)
+
 **TRADE-OFF:** Cheap visibility without locking vs no atomicity for compound operations
+
 **ONE-LINER:** "Shared whiteboard - everyone reads from the board, never from personal notes"
+
 **KEY NUMBERS:** Volatile read ~1ns (x86), volatile write ~20-50ns (StoreLoad barrier), no thread blocking
+
 **TRIGGER PHRASE:** "volatile visibility cache flush happens-before barrier"
+
 **OPENING SENTENCE:** "volatile guarantees visibility through memory barriers but provides no atomicity. Use it for flags and safe publication, never for compound operations like counter++."
 
 **If you remember only 3 things:**
@@ -1504,15 +1524,25 @@ Use JCStress (OpenJDK's Java Concurrency Stress tests) to verify happens-before 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Formal specification defining when one thread's writes are guaranteed visible to another thread
+
 **PROBLEM IT SOLVES:** Platform-independent reasoning about concurrent memory visibility and instruction reordering
+
 **KEY INSIGHT:** Visibility is guaranteed ONLY through happens-before chains, not by timing, CPU speed, or "common sense"
+
 **USE WHEN:** Reasoning about any code where multiple threads access shared mutable state
+
 **AVOID WHEN:** Single-threaded code, thread-confined data, or immutable objects (already safe)
+
 **ANTI-PATTERN:** Assuming writes are visible without establishing happens-before ("it works on my machine")
+
 **TRADE-OFF:** Allows aggressive JVM/CPU optimization vs requires developer to explicitly establish visibility
+
 **ONE-LINER:** "Contract law for threads - no contract, no guarantees"
+
 **KEY NUMBERS:** 6 core hb rules, transitivity, data race = undefined behavior
+
 **TRIGGER PHRASE:** "happens-before visibility memory model ordering"
+
 **OPENING SENTENCE:** "The JMM guarantees visibility only through happens-before relationships. Without one, the JVM may serve stale cached values, reorder instructions, and eliminate reads - all legally."
 
 **If you remember only 3 things:**
@@ -2241,15 +2271,25 @@ Write concurrent tests that deliberately interleave lock acquisition. Use JFR to
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Explicit mutual exclusion lock with tryLock, timeout, fairness, and multiple Conditions
+
 **PROBLEM IT SOLVES:** Inflexibility of synchronized - no timeout, no tryLock, no fairness, no multiple wait sets
+
 **KEY INSIGHT:** The power is not in locking (same as synchronized) but in handling lock unavailability
+
 **USE WHEN:** Need tryLock, timed lock, fairness, multiple Conditions, or virtual thread compatibility
+
 **AVOID WHEN:** Simple block-scoped locking where synchronized suffices (less boilerplate, auto-release)
+
 **ANTI-PATTERN:** Locking without try-finally (lock leak on exception)
+
 **TRADE-OFF:** Flexibility + virtual thread support vs verbose try-finally boilerplate
+
 **ONE-LINER:** "Smart lock vs dumb latch - same security, more options when the door is busy"
+
 **KEY NUMBERS:** Non-fair 5-10x faster than fair under contention. lock()/unlock() ~50-200ns uncontended.
+
 **TRIGGER PHRASE:** "tryLock timeout fairness condition reentrant"
+
 **OPENING SENTENCE:** "ReentrantLock provides the same mutual exclusion as synchronized but adds tryLock, timed acquisition, interruptibility, fairness, and multiple Conditions. Critical for virtual threads since synchronized pins the carrier."
 
 **If you remember only 3 things:**
@@ -3066,15 +3106,25 @@ Use JCStress to verify that optimistic reads never return inconsistent data (e.g
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Locks that allow concurrent reads while ensuring exclusive writes
+
 **PROBLEM IT SOLVES:** Unnecessary serialization of readers under an exclusive lock in read-heavy workloads
+
 **KEY INSIGHT:** StampedLock's optimistic read has ZERO contention cost - just two volatile reads, no CAS
+
 **USE WHEN:** Read:write ratio is 10:1 or higher and data is accessed frequently
+
 **AVOID WHEN:** Write-heavy workload (overhead wasted), recursive locking needed (StampedLock not reentrant)
+
 **ANTI-PATTERN:** Using StampedLock data without calling validate() (inconsistent reads)
+
 **TRADE-OFF:** Higher read throughput vs more complex API and potential writer starvation (ReadWriteLock)
+
 **ONE-LINER:** "Museum visitors can all look at once - only the restorer needs the room empty"
+
 **KEY NUMBERS:** Max 65535 concurrent readers (RRWL). Optimistic read ~2ns (two volatile reads). Write lock ~50ns.
+
 **TRIGGER PHRASE:** "read-write lock optimistic stamp validate concurrent readers"
+
 **OPENING SENTENCE:** "ReadWriteLock allows concurrent reads with exclusive writes. StampedLock adds optimistic reads with zero contention for the common read-heavy case. Choose by read:write ratio."
 
 **If you remember only 3 things:**
@@ -3827,15 +3877,25 @@ Run N threads each incrementing M times. Expected final value = N \* M. Compare 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Lock-free thread-safe operations using hardware compare-and-swap instructions
+
 **PROBLEM IT SOLVES:** Lock overhead and contention for simple single-variable atomic operations
+
 **KEY INSIGHT:** CAS lets all threads attempt simultaneously - no waiting, no blocking, losers retry
+
 **USE WHEN:** Counters, flags, reference swaps, lock-free data structures, any single-variable atomic operation
+
 **AVOID WHEN:** Multi-variable atomicity needed (use locks), extremely high contention on one variable (use LongAdder)
+
 **ANTI-PATTERN:** CAS loop without backoff under high contention (CPU spin-waste)
+
 **TRADE-OFF:** No blocking + no deadlocks vs CPU spin on retry + single-variable limitation
+
 **ONE-LINER:** "Optimistic edit-and-verify instead of pessimistic lock-and-work"
+
 **KEY NUMBERS:** CAS ~10ns uncontended, ~50-100ns moderate contention, LongAdder ~100M ops/sec write-heavy
+
 **TRIGGER PHRASE:** "compare-and-swap atomic lock-free CAS retry"
+
 **OPENING SENTENCE:** "Atomic classes use hardware CAS instructions for lock-free thread-safe operations. CAS reads, computes, and writes atomically via CMPXCHG. Failed CAS retries in a loop. For write-heavy counters, LongAdder stripes across cells."
 
 **If you remember only 3 things:**
@@ -4623,15 +4683,25 @@ Test ThreadLocal cleanup by running multiple tasks on the same thread and verify
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Per-thread private storage that eliminates sharing and synchronization
+
 **PROBLEM IT SOLVES:** Thread-unsafe objects shared across threads (DateFormat, connections, user context)
+
 **KEY INSIGHT:** Thread safety by eliminating sharing entirely - no sharing = no synchronization needed
+
 **USE WHEN:** Thread-unsafe objects in thread pools, per-request context, per-thread caching
+
 **AVOID WHEN:** Virtual threads (use ScopedValue), when explicit parameter passing is feasible
+
 **ANTI-PATTERN:** ThreadLocal without remove() in thread pools (memory leak + data leakage)
+
 **TRADE-OFF:** Zero contention vs memory per thread + leak risk + invisible state coupling
+
 **ONE-LINER:** "Personal locker - same number, different contents per person"
+
 **KEY NUMBERS:** ThreadLocalMap uses open addressing. 200 threads x 50 leaked TLs x 1MB = 10GB leak.
+
 **TRIGGER PHRASE:** "per-thread private copy confinement remove cleanup"
+
 **OPENING SENTENCE:** "ThreadLocal achieves thread safety by eliminating sharing - each thread gets its own copy. The critical rule: always call remove() in a finally block when using thread pools, or you get memory leaks and data leakage between requests."
 
 **If you remember only 3 things:**
@@ -5424,15 +5494,25 @@ Test with multiple producers and consumers, verifying that all items are consume
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Multiple wait sets per lock for precise thread signaling
+
 **PROBLEM IT SOLVES:** notifyAll() waking all waiters regardless of condition - unnecessary context switches
+
 **KEY INSIGHT:** Separate wait queues let you signal() only the threads waiting for the specific event that occurred
+
 **USE WHEN:** Bounded buffers, producer-consumer, state machines - any pattern with multiple wait reasons on one lock
+
 **AVOID WHEN:** Simple wait/signal with one condition (use wait/notify or just a single Condition)
+
 **ANTI-PATTERN:** Using if instead of while around await() (misses spurious wakeups)
+
 **TRADE-OFF:** Precise signaling (O(1) wakeup) vs more complex code than wait/notify
+
 **ONE-LINER:** "Separate waiting rooms - wake only the patients the doctor needs"
+
 **KEY NUMBERS:** signal() wakes 1 thread (O(1)), signalAll() wakes N (O(n)). Always loop: while(!pred) await().
+
 **TRIGGER PHRASE:** "condition await signal separate wait queue"
+
 **OPENING SENTENCE:** "Condition provides per-lock wait sets. Unlike wait/notify which has one wait set per monitor, Condition lets you create multiple queues - signal only the right threads. Always await() in a while loop due to spurious wakeups."
 
 **If you remember only 3 things:**
@@ -6194,15 +6274,25 @@ Use jcstress for systematic concurrency testing. Run with many threads (100+) hi
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Two distinct concurrency bugs - race conditions (logic) and data races (memory model)
+
 **PROBLEM IT SOLVES:** Understanding and classifying concurrent bugs to apply the right fix
+
 **KEY INSIGHT:** Synchronization fixes data races but not race conditions. They require different solutions.
+
 **USE WHEN:** Diagnosing any concurrency bug - first classify as data race, race condition, or both
+
 **AVOID WHEN:** Single-threaded code, immutable data, thread-confined state (no shared mutation = no bugs)
+
 **ANTI-PATTERN:** Using synchronized everywhere without checking the logic still races (check-then-act across sync blocks)
+
 **TRADE-OFF:** Correctness (eliminating races) vs performance (synchronization overhead) vs simplicity (avoiding shared state)
+
 **ONE-LINER:** "Data race = no lock on shared write. Race condition = wrong logic even with locks."
+
 **KEY NUMBERS:** count++ is 3 operations (read, increment, write). HashMap concurrent resize -> infinite loop (Java 7) or data loss (Java 8+).
+
 **TRIGGER PHRASE:** "check-then-act shared mutable state interleaving"
+
 **OPENING SENTENCE:** "Race conditions and data races are distinct bugs. A data race is a JMM violation - no happens-before between concurrent accesses. A race condition is a logic bug where correctness depends on timing. You can fix all data races with synchronized and still have race conditions."
 
 **If you remember only 3 things:**
@@ -6971,15 +7061,25 @@ Verify immutability: attempt to modify after construction (should fail to compil
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Objects whose state cannot change after construction - thread-safe by design
+
 **PROBLEM IT SOLVES:** Eliminates all data races and most race conditions on shared objects without locks
+
 **KEY INSIGHT:** final fields have special JMM semantics - visible to all threads after construction without volatile
+
 **USE WHEN:** Configuration, value objects, events, DTOs, cache entries, map keys, messages between threads
+
 **AVOID WHEN:** Objects with inherently mutable state (database connections, running counters, session state)
+
 **ANTI-PATTERN:** "Immutable" class with a mutable List field that is not defensively copied
+
 **TRADE-OFF:** Zero synchronization overhead vs new object per state change (GC pressure)
+
 **ONE-LINER:** "If it cannot change, it cannot race"
+
 **KEY NUMBERS:** 0 locks needed. List.copyOf() is O(n). Record = immutable by default (Java 16+).
+
 **TRIGGER PHRASE:** "final fields thread-safe no synchronization"
+
 **OPENING SENTENCE:** "Immutable objects are the strongest thread-safety guarantee in Java. Final fields get special JMM treatment - they are visible to all threads without volatile or synchronized. I use records for value objects and AtomicReference for swapping versions."
 
 **If you remember only 3 things:**
@@ -7750,15 +7850,25 @@ Test with multiple producers and consumers. Verify all items are consumed exactl
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Built-in monitor methods on every Java object for inter-thread coordination
+
 **PROBLEM IT SOLVES:** Threads waiting for state changes without busy-waiting
+
 **KEY INSIGHT:** wait() atomically releases the lock AND suspends - this atomicity prevents missed signals
+
 **USE WHEN:** Legacy code maintenance, simple single-condition producer-consumer with synchronized
+
 **AVOID WHEN:** New code (prefer BlockingQueue, Condition, CompletableFuture), virtual threads (pins carrier)
+
 **ANTI-PATTERN:** Using if instead of while around wait() (spurious wakeup bug)
+
 **TRADE-OFF:** Simple API but single wait set per monitor; only works with synchronized (not ReentrantLock)
+
 **ONE-LINER:** "Sleep until someone shouts - then check if they were shouting at you"
+
 **KEY NUMBERS:** wait(0) = wait forever (not zero timeout). notify() wakes 1, notifyAll() wakes all. Always while, never if.
+
 **TRIGGER PHRASE:** "synchronized wait while condition notify"
+
 **OPENING SENTENCE:** "wait/notify provides monitor-based thread coordination on every Java object. wait() atomically releases the monitor and suspends the thread. I always use while-loops around wait because of spurious wakeups and signal-and-continue semantics. For new code, I prefer Condition or BlockingQueue."
 
 **If you remember only 3 things:**

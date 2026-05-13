@@ -248,15 +248,25 @@ Lambdas are testable by extracting to method references or named methods. For co
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Anonymous functions implementing a single abstract method of a functional interface
+
 **PROBLEM IT SOLVES:** Eliminates verbose anonymous inner class boilerplate for passing behavior
+
 **KEY INSIGHT:** Compiled via invokedynamic (not inner classes), with effectively-final captures for thread safety
+
 **USE WHEN:** Callbacks, event handlers, stream operations, any method accepting a functional interface
+
 **AVOID WHEN:** Complex multi-line logic (extract to a named method), when you need to throw checked exceptions
+
 **ANTI-PATTERN:** Deeply nested lambdas, mutating external state in lambdas, lambdas longer than 3 lines
+
 **TRADE-OFF:** Conciseness vs debuggability (lambda stack traces are cryptic)
+
 **ONE-LINER:** "Sticky notes for behavior - write the instruction, skip the ceremony"
+
 **KEY NUMBERS:** Non-capturing: singleton instance (zero allocation). Capturing: one object per invocation. invokedynamic bootstrap: once per call-site.
+
 **TRIGGER PHRASE:** "functional interface, effectively final, invokedynamic, method reference"
+
 **OPENING SENTENCE:** "Lambda expressions implement a functional interface's single abstract method inline, compiled via invokedynamic (not anonymous inner classes) for JVM-optimized creation, with effectively-final capture semantics for thread safety."
 
 **If you remember only 3 things:**
@@ -768,15 +778,25 @@ Test functional interfaces by invoking their SAM: `assertTrue(predicate.test(inp
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Interface with exactly one abstract method - the type system for lambdas and method references
+
 **PROBLEM IT SOLVES:** Provides standardized, type-safe function types for Java's functional programming model
+
 **KEY INSIGHT:** @FunctionalInterface is documentation, not magic - any SAM interface is functional, including Runnable and Comparator
+
 **USE WHEN:** Accepting behavior as a parameter, enabling functional composition, defining reusable predicates/transformations
+
 **AVOID WHEN:** Multiple responsibilities (not a functional interface), need to throw checked exceptions (standard ones cannot)
+
 **ANTI-PATTERN:** Creating custom interfaces when standard ones exist; forgetting primitive specializations; interfaces with 2+ abstract methods
+
 **TRADE-OFF:** Type safety and standardization vs nominal typing verbosity (Function<A, Function<B, C>> for currying)
+
 **ONE-LINER:** "Standard power outlets for lambdas - Predicate tests, Function transforms, Consumer acts, Supplier creates"
+
 **KEY NUMBERS:** 43 interfaces in java.util.function. 4 core types + 15 primitive specializations + 24 variants.
+
 **TRIGGER PHRASE:** "Predicate, Function, Consumer, Supplier, SAM, @FunctionalInterface, composition"
+
 **OPENING SENTENCE:** "Functional interfaces define the type system for lambdas - each is a SAM (single abstract method) interface, with the four core types (Predicate/Function/Consumer/Supplier) covering test/transform/act/create, enriched with default composition methods (and/or/andThen/compose)."
 
 **If you remember only 3 things:**
@@ -1316,15 +1336,25 @@ Test with empty collections, single elements, and boundary cases. Verify orderin
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Declarative pipeline for processing sequences - filter, transform, aggregate without writing loops
+
 **PROBLEM IT SOLVES:** Eliminates boilerplate loops, makes data transformations composable and parallelizable
+
 **KEY INSIGHT:** Streams are lazy - intermediate operations build a recipe; only the terminal operation triggers execution
+
 **USE WHEN:** Collection processing with filter/map/reduce, aggregations, transformations, parallel data processing
+
 **AVOID WHEN:** Simple single-element operations, I/O-bound operations in parallelStream, small collections (< 100 elements for parallel)
+
 **ANTI-PATTERN:** Reusing a stream after terminal operation; mutating external state in forEach; parallelStream for I/O
+
 **TRADE-OFF:** Readability and parallelism vs debugging difficulty and overhead for trivial operations
+
 **ONE-LINER:** "Assembly line for data - describe the stations, the factory runs the line"
+
 **KEY NUMBERS:** parallelStream default threads = CPU cores - 1. Parallel pays off at ~10K+ elements. sorted() buffers ALL elements.
+
 **TRIGGER PHRASE:** "filter map collect, lazy pipeline, parallel stream, Spliterator"
+
 **OPENING SENTENCE:** "Streams are lazy, single-use pipelines that separate the what (filter/map/reduce) from the how (sequential vs parallel, loop fusion, short-circuiting), with intermediate operations building a recipe that only executes when a terminal operation triggers it."
 
 **If you remember only 3 things:**
@@ -1832,15 +1862,25 @@ Test both paths: `assertThat(findByEmail("exists@test.com")).isPresent()` and `a
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** A container for an optional value - explicitly represents "value or nothing" in the type system
+
 **PROBLEM IT SOLVES:** Eliminates NullPointerException by making absence explicit in method signatures
+
 **KEY INSIGHT:** Optional is an API design tool for return types, not a general null replacement
+
 **USE WHEN:** Method return types where "no result" is a valid outcome (findById, lookup, search)
+
 **AVOID WHEN:** Fields, method parameters, collection elements, primitive values (use OptionalInt/Long/Double)
+
 **ANTI-PATTERN:** Optional.get() without checking, Optional as field/parameter, Optional.of(null)
+
 **TRADE-OFF:** Explicit absence handling vs object allocation overhead and API verbosity
+
 **ONE-LINER:** "A box that says 'I might be empty' - forcing you to plan for both cases"
+
 **KEY NUMBERS:** Optional.empty() = singleton (0 allocation). Optional.of() = 1 object. get() on empty = NoSuchElementException.
+
 **TRIGGER PHRASE:** "Optional return type, map flatMap orElse, no null checks"
+
 **OPENING SENTENCE:** "Optional is a return-type container that makes absence explicit in the API contract, enabling fluent map/flatMap/orElse chains instead of nested null checks, with orElseGet for lazy defaults and flatMap for chaining Optional-returning methods."
 
 **If you remember only 3 things:**
@@ -2364,15 +2404,25 @@ Method references are compile-time verified - if the signature does not match, i
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Shorthand syntax (::) for lambdas that delegate to a single existing method
+
 **PROBLEM IT SOLVES:** Reduces visual noise when a lambda just calls one method
+
 **KEY INSIGHT:** Method references compile to identical bytecode as lambdas - zero performance difference
+
 **USE WHEN:** Lambda body is a single method call with no transformation or added logic
+
 **AVOID WHEN:** Lambda needs parameter manipulation, null checks, logging, or multi-step logic
+
 **ANTI-PATTERN:** Forcing method references when a lambda is clearer; using bound references to mutable objects
+
 **TRADE-OFF:** Conciseness and intent clarity vs beginner readability and inability to add inline logic
+
 **ONE-LINER:** "Speed dial for methods - same call, less dialing"
+
 **KEY NUMBERS:** 4 kinds (static, bound, unbound, constructor). 0 performance overhead vs lambda.
+
 **TRIGGER PHRASE:** "double colon, four kinds, syntactic sugar for lambdas"
+
 **OPENING SENTENCE:** "Method references use :: to point to an existing method instead of writing a lambda - four kinds (static ClassName::method, bound instance::method, unbound ClassName::instanceMethod, constructor ClassName::new) that compile to identical invokedynamic bytecode as their lambda equivalents."
 
 **If you remember only 3 things:**
@@ -2884,15 +2934,25 @@ Test default method behavior on a minimal implementing class. Test override beha
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Methods with implementations in interfaces, using the `default` keyword
+
 **PROBLEM IT SOLVES:** Enables adding methods to existing interfaces without breaking implementations
+
 **KEY INSIGHT:** Class methods always win over default methods - adding a default never changes existing class behavior
+
 **USE WHEN:** Evolving APIs, providing composable utility methods, building mix-in-style behavior
+
 **AVOID WHEN:** Need state (use abstract class), creating "god interfaces" with too many defaults
+
 **ANTI-PATTERN:** Using default methods as abstract class replacement (no fields), creating diamond conflicts carelessly
+
 **TRADE-OFF:** API evolution freedom vs diamond problem complexity and interface bloat risk
+
 **ONE-LINER:** "Firmware updates for interfaces - new features without breaking existing devices"
+
 **KEY NUMBERS:** Resolution order: class > sub-interface > super-interface. Diamond = compile error. Java 9 added private methods.
+
 **TRIGGER PHRASE:** "default keyword, API evolution, diamond problem, class wins over interface"
+
 **OPENING SENTENCE:** "Default methods enable backward-compatible interface evolution by providing method implementations that existing classes inherit automatically, with resolution rules (class > sub-interface > super-interface) and mandatory override for diamond conflicts."
 
 **If you remember only 3 things:**
@@ -3457,15 +3517,25 @@ Use `Clock.fixed()` for deterministic tests. Test DST boundaries explicitly (spr
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Immutable, thread-safe date/time library with separate types for dates, times, zones, and durations
+
 **PROBLEM IT SOLVES:** Replaces broken java.util.Date/Calendar with type-safe, immutable, thread-safe alternatives
+
 **KEY INSIGHT:** Choose the type by domain need: LocalDate for dates, Instant for timestamps, ZonedDateTime for scheduling
+
 **USE WHEN:** Any date/time operation in Java 8+. Always prefer over java.util.Date/Calendar.
+
 **AVOID WHEN:** Never - java.time is always the right choice. Convert legacy Date at system boundaries.
+
 **ANTI-PATTERN:** Storing LocalDateTime for absolute times (loses zone), using ZoneOffset instead of ZoneId (loses DST)
+
 **TRADE-OFF:** More types to learn vs type safety that prevents entire categories of bugs
+
 **ONE-LINER:** "Right tool for the job: LocalDate for calendars, Instant for clocks, ZonedDateTime for meetings"
+
 **KEY NUMBERS:** 6 core types. Instant precision: nanoseconds. ~600 time zones in IANA database.
+
 **TRIGGER PHRASE:** "LocalDate, Instant, ZonedDateTime, immutable, thread-safe, UTC storage"
+
 **OPENING SENTENCE:** "java.time replaces Date/Calendar with immutable types matched to use cases: LocalDate for dates, Instant for machine timestamps, ZonedDateTime for DST-aware scheduling - all thread-safe, with Clock injection for testability."
 
 **If you remember only 3 things:**
@@ -4019,15 +4089,25 @@ Test with empty streams (should return empty collection/identity). Test grouping
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Terminal operations that aggregate stream elements into collections, maps, strings, or single values
+
 **PROBLEM IT SOLVES:** Replaces manual loops for grouping, counting, summing, joining, and collecting results
+
 **KEY INSIGHT:** Collectors compose - groupingBy(key, downstream) encodes complex aggregations as nested declarations
+
 **USE WHEN:** Collecting stream results into Lists, Maps, grouping by key, computing statistics, joining strings
+
 **AVOID WHEN:** Simple count/sum (use stream.count(), mapToInt().sum()), single element (use findFirst, reduce)
+
 **ANTI-PATTERN:** toMap without merge function (crashes on duplicates), forEach + mutable collection instead of collect
+
 **TRADE-OFF:** Declarative expressiveness vs verbose type signatures and learning curve for composition
+
 **ONE-LINER:** "Excel pivot tables for streams - group, count, sum, join in one declaration"
+
 **KEY NUMBERS:** ~37 factory methods in Collectors. toList() (Java 16) returns unmodifiable. teeing() (Java 12) for dual aggregation.
+
 **TRIGGER PHRASE:** "groupingBy, toList, toMap, joining, reduce, downstream collector"
+
 **OPENING SENTENCE:** "Collectors are composable aggregation recipes: groupingBy(classifier, downstream) encodes 'group by X, then for each group compute Y' - with counting(), averaging(), mapping(), and summarizing() as downstream collectors, plus teeing() for dual aggregation in one pass."
 
 **If you remember only 3 things:**
@@ -4581,15 +4661,25 @@ Test predicates directly: `assertTrue(valid.test("a@b.com"))`. Test functions: `
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Four standard functional interfaces: Predicate (test), Function (transform), Consumer (consume), Supplier (produce)
+
 **PROBLEM IT SOLVES:** Eliminates dozens of custom single-method interfaces, provides standard lambda types
+
 **KEY INSIGHT:** Standardization enables composition and interoperability - any Predicate works in any filter, any Function in any map
+
 **USE WHEN:** Accepting behavior as parameter, building composable pipelines, strategy pattern without class hierarchies
+
 **AVOID WHEN:** Need checked exceptions (use custom ThrowingFunction), need more than 2 parameters (define custom interface)
+
 **ANTI-PATTERN:** Creating custom functional interfaces that duplicate Predicate/Function/Consumer/Supplier signatures
+
 **TRADE-OFF:** Standardized vocabulary (fewer types) vs expressiveness (custom interface names are more descriptive)
+
 **ONE-LINER:** "Four standard plugs for lambdas: test, transform, consume, produce"
+
 **KEY NUMBERS:** 4 core interfaces, 43 total in java.util.function (including primitive specializations and Bi- variants)
+
 **TRIGGER PHRASE:** "Predicate test, Function apply, Consumer accept, Supplier get"
+
 **OPENING SENTENCE:** "The four core functional interfaces - Predicate (T->boolean), Function (T->R), Consumer (T->void), Supplier (()->T) - are the standard vocabulary for lambdas. They support composition (and/or/andThen/compose), power the entire Stream API, and replace custom single-method interfaces."
 
 **If you remember only 3 things:**
@@ -5145,15 +5235,25 @@ Write tests for both old and new code paths during migration. Verify null-return
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** The comprehensive adoption of Java 8 features (lambdas, streams, Optional, java.time) in existing codebases
+
 **PROBLEM IT SOLVES:** Eliminates boilerplate, null bugs, thread-unsafe date handling, and imperative complexity
+
 **KEY INSIGHT:** Migration is a paradigm shift (imperative to functional), not just syntax changes
+
 **USE WHEN:** Any codebase on Java 8+ that still uses pre-8 patterns extensively
+
 **AVOID WHEN:** Do not force-migrate stable, well-tested code that is rarely changed
+
 **ANTI-PATTERN:** Half-migration: some methods return Optional, others return null for the same concept
+
 **TRADE-OFF:** Cleaner code and fewer bugs vs learning curve and mixed codebase during transition
+
 **ONE-LINER:** "Java 8 migration is a mindset change: from 'how to loop' to 'what to compute'"
+
 **KEY NUMBERS:** Java 8 released 2014. ~43 functional interfaces. 6 core java.time types. Stream API adds ~5% overhead for small collections.
+
 **TRIGGER PHRASE:** "lambdas, streams, Optional, java.time, functional migration"
+
 **OPENING SENTENCE:** "Java 8 migration is primarily a paradigm shift from imperative to functional: replacing anonymous classes with lambdas, loops with streams, null with Optional, and Date/Calendar with java.time. The hardest part is not the syntax but changing how developers think about data transformation."
 
 **If you remember only 3 things:**

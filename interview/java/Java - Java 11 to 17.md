@@ -238,15 +238,25 @@ No special testing needed - var is compile-time only. If code compiles, var reso
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Compiler-inferred local variable types from initializer expressions (Java 10+)
+
 **PROBLEM IT SOLVES:** Reduces verbose generic type declarations while maintaining static typing
+
 **KEY INSIGHT:** var is a readability tool, not a typing shortcut - use when the type is obvious, avoid when it is not
+
 **USE WHEN:** Constructor calls, factory methods, literals, long generic types, for-each loops
+
 **AVOID WHEN:** Method calls with unclear return types, null initializers, when interface vs implementation matters
+
 **ANTI-PATTERN:** `var result = process()` where the method name does not reveal the type
+
 **TRADE-OFF:** Less verbosity vs less explicit type documentation at the variable level
+
 **ONE-LINER:** "var is a pronoun - clear when the subject (type) is obvious, confusing when it is not"
+
 **KEY NUMBERS:** Java 10 (locals), Java 11 (lambda params). Zero runtime overhead. Cannot use for fields/params/returns.
+
 **TRIGGER PHRASE:** "var, local type inference, compile-time, initializer"
+
 **OPENING SENTENCE:** "var is compile-time syntactic sugar that infers local variable types from the initializer. The bytecode is identical to explicit types - zero runtime overhead. Use when the type is self-evident from the right-hand side; avoid when it obscures meaning."
 
 **If you remember only 3 things:**
@@ -719,15 +729,25 @@ Assert the resulting string matches expected content. Verify indentation by chec
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Multi-line string literals with triple quotes, automatic indentation stripping, and line ending normalization
+
 **PROBLEM IT SOLVES:** Eliminates escape sequences and concatenation for JSON, SQL, HTML, and other multi-line text
+
 **KEY INSIGHT:** The closing `"""` position controls indentation stripping - it determines the "left margin"
+
 **USE WHEN:** JSON, SQL, HTML, XML, email templates, test fixtures, any multi-line string
+
 **AVOID WHEN:** Single-line strings, strings needing interpolation (combine with .formatted()), very large templates
+
 **ANTI-PATTERN:** Forgetting that trailing whitespace is stripped (use `\s` to preserve)
+
 **TRADE-OFF:** Readable multi-line strings vs no built-in interpolation
+
 **ONE-LINER:** "Triple quotes: paste your SQL/JSON as-is, the compiler handles the rest"
+
 **KEY NUMBERS:** Java 13 (preview), Java 15 (final). `\s` preserves space. `\` continues line.
+
 **TRIGGER PHRASE:** "text block, triple quotes, indentation stripping, multi-line"
+
 **OPENING SENTENCE:** "Text blocks use triple quotes for multi-line strings with automatic indentation stripping. The closing delimiter position controls the left margin. They produce standard Strings - combine with .formatted() for parameterization."
 
 **If you remember only 3 things:**
@@ -1213,15 +1233,25 @@ Test each case explicitly. For enums, test all values. After adding new enum val
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Enhanced switch that returns values, uses arrow syntax without fall-through, and enforces exhaustiveness
+
 **PROBLEM IT SOLVES:** Eliminates fall-through bugs, missing-case runtime errors, and switch-as-statement verbosity
+
 **KEY INSIGHT:** Omitting default on sealed types/enums turns missing cases into compile errors when new values are added
+
 **USE WHEN:** Enum/sealed type mapping, multi-way value computation, replacing if-else chains
+
 **AVOID WHEN:** Simple boolean conditions (use if/else), complex logic with many side effects
+
 **ANTI-PATTERN:** Adding default to enum switches (hides new enum values from compiler checking)
+
 **TRADE-OFF:** Compile-time safety vs default branch convenience
+
 **ONE-LINER:** "Each button delivers exactly one item, and the machine rejects incomplete product lines"
+
 **KEY NUMBERS:** Java 12 (preview), Java 14 (final). Arrow `->` = no fall-through. `yield` = value from block.
+
 **TRIGGER PHRASE:** "switch expression, arrow syntax, exhaustive, yield, sealed"
+
 **OPENING SENTENCE:** "Switch expressions return values with arrow syntax (no fall-through) and enforce exhaustiveness. With sealed types and enums, omitting default turns missing cases into compile errors - the compiler becomes your safety net when adding new variants."
 
 **If you remember only 3 things:**
@@ -1741,15 +1771,25 @@ Test equals/hashCode with identical and different component values. Test compact
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Immutable data carrier with auto-generated constructor, accessors, equals, hashCode, and toString
+
 **PROBLEM IT SOLVES:** Eliminates 50+ lines of boilerplate per data class and guarantees correct equals/hashCode
+
 **KEY INSIGHT:** Records declare that a class IS its data - the header is the complete contract
+
 **USE WHEN:** DTOs, value objects, API responses, event payloads, configuration, map keys
+
 **AVOID WHEN:** JPA entities (need no-arg constructor + mutability), classes requiring inheritance, mutable state
+
 **ANTI-PATTERN:** Putting mutable objects (List, Map) in record components without defensive copying
+
 **TRADE-OFF:** Immutability and correctness vs flexibility (no inheritance, no mutable fields)
+
 **ONE-LINER:** "Declare the columns, get the spreadsheet row for free"
+
 **KEY NUMBERS:** Java 14 (preview), Java 16 (final). Zero boilerplate. Accessors: name() not getName().
+
 **TRIGGER PHRASE:** "immutable data carrier, auto equals hashCode, component accessors"
+
 **OPENING SENTENCE:** "Records (Java 16) are immutable data carriers where the compiler generates constructor, accessors, equals, hashCode, and toString from the component list. The record header IS the contract - what you see is the complete state, enabling pattern matching and transparent data reasoning."
 
 **If you remember only 3 things:**
@@ -2267,15 +2307,25 @@ Add a new permitted subtype and verify the compiler catches all non-exhaustive s
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Type modifier restricting which classes can extend/implement, enabling compiler-checked exhaustive dispatch
+
 **PROBLEM IT SOLVES:** Open hierarchies where unknown implementations break assumptions and switches cannot be exhaustive
+
 **KEY INSIGHT:** Sealed types are sum types - they model "one of N" relationships with compile-time verification
+
 **USE WHEN:** Domain models with fixed variants (payment results, AST nodes, events), algebraic data types
+
 **AVOID WHEN:** Hierarchies that genuinely need open extension (plugin systems, SPI)
+
 **ANTI-PATTERN:** Using `non-sealed` everywhere, defeating the purpose of sealing
+
 **TRADE-OFF:** Compile-time exhaustiveness vs open extension flexibility
+
 **ONE-LINER:** "Enum for types - fixed set of implementations with different data"
+
 **KEY NUMBERS:** Java 15 (preview), Java 17 (final). 3 modifiers: final, sealed, non-sealed. Same package/module.
+
 **TRIGGER PHRASE:** "sealed permits, exhaustive switch, sum type, controlled hierarchy"
+
 **OPENING SENTENCE:** "Sealed types (Java 17) restrict which classes can extend a type using a `permits` clause. The compiler knows all subtypes, enabling exhaustive switch expressions without default. Adding a new permitted subtype forces compile errors everywhere the type is not handled - turning a runtime problem into a compile-time guarantee."
 
 **If you remember only 3 things:**
@@ -2786,15 +2836,25 @@ Test with correct type, wrong type, and null. Verify pattern variable is not acc
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Enhanced instanceof that tests type and binds a pattern variable in one atomic expression
+
 **PROBLEM IT SOLVES:** Eliminates redundant casts after instanceof checks, preventing ClassCastException from mismatched casts
+
 **KEY INSIGHT:** Flow scoping means the pattern variable only exists where the compiler proves the match succeeded
+
 **USE WHEN:** equals() methods, type-dispatching if/else chains, null-safe type checks, generic type extraction
+
 **AVOID WHEN:** You need the variable in both branches (use regular instanceof + cast)
+
 **ANTI-PATTERN:** Reassigning the pattern variable or using it outside its flow scope
+
 **TRADE-OFF:** Conciseness and safety vs learning flow scoping rules
+
 **ONE-LINER:** "One question: Is it a passport? Here, call it doc."
+
 **KEY NUMBERS:** Java 14 (preview), Java 16 (final). 0 new bytecodes. Null returns false (null-safe).
+
 **TRIGGER PHRASE:** "instanceof pattern variable, flow scoping, atomic check-and-cast"
+
 **OPENING SENTENCE:** "Pattern matching for instanceof (Java 16) combines type checking and variable binding in one expression: `obj instanceof String s`. The pattern variable `s` is only in scope where the compiler can prove the match succeeded (flow scoping), making mismatched casts impossible."
 
 **If you remember only 3 things:**
@@ -3299,15 +3359,25 @@ Compile with `--module-source-path` and verify non-exported packages are inacces
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Platform-level module system with explicit dependencies (requires), API surfaces (exports), and reflective access (opens)
+
 **PROBLEM IT SOLVES:** Flat classpath with no encapsulation, runtime dependency failures, bloated JRE distributions
+
 **KEY INSIGHT:** Encapsulation is enforced at both compile time AND runtime - reflection cannot bypass it without opens
+
 **USE WHEN:** Library design, custom runtimes (jlink), enforcing architecture boundaries, containerized microservices
+
 **AVOID WHEN:** Small applications with few dependencies, legacy codebases with heavy reflection and split packages
+
 **ANTI-PATTERN:** Adding `--add-opens` for everything instead of properly declaring opens in module-info
+
 **TRADE-OFF:** Strong encapsulation and smaller runtimes vs migration complexity and framework compatibility
+
 **ONE-LINER:** "Locked filing cabinets with signs listing which drawers are shared"
+
 **KEY NUMBERS:** JDK has ~70 modules. jlink saves 40-60% image size. module-info.java in source root.
+
 **TRIGGER PHRASE:** "module-info, requires, exports, opens, jlink, strong encapsulation"
+
 **OPENING SENTENCE:** "JPMS (Java 9) adds platform-level modules with explicit dependencies (requires), API surfaces (exports), and controlled reflective access (opens). Non-exported packages are inaccessible at both compile time and runtime. `jlink` creates custom runtimes with only needed modules, reducing container images by 40-60%."
 
 **If you remember only 3 things:**
@@ -3847,15 +3917,25 @@ Use a mock HTTP server (WireMock) for integration tests. Verify status codes, he
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Modern built-in HTTP client with HTTP/2, sync/async, and fluent builders
+
 **PROBLEM IT SOLVES:** Replaces verbose HttpURLConnection and reduces need for third-party HTTP libraries
+
 **KEY INSIGHT:** Create one immutable, thread-safe HttpClient and share it - it manages connections internally
+
 **USE WHEN:** HTTP calls in non-Spring projects, when you need HTTP/2 multiplexing, or low-level HTTP control
+
 **AVOID WHEN:** Spring Boot (use RestClient/WebClient), need built-in retry/circuit-breaking (use Resilience4j)
+
 **ANTI-PATTERN:** Creating a new HttpClient per request (wastes connection pool and resources)
+
 **TRADE-OFF:** Built-in simplicity vs third-party features (interceptors, metrics, retry)
+
 **ONE-LINER:** "One shipping office for all packages, with express and standard delivery"
+
 **KEY NUMBERS:** Java 11 (standard). HTTP/2 default. send() = sync. sendAsync() = CompletableFuture.
+
 **TRIGGER PHRASE:** "HttpClient builder, HTTP/2, sendAsync CompletableFuture, BodyHandlers"
+
 **OPENING SENTENCE:** "Java 11's HttpClient is an immutable, thread-safe HTTP client supporting HTTP/2 with automatic protocol negotiation. Create one instance, share across threads. Use send() for synchronous calls, sendAsync() for CompletableFuture-based async. BodyHandlers control response conversion (String, byte[], File)."
 
 **If you remember only 3 things:**
@@ -4376,15 +4456,25 @@ Write a test that triggers NPE on a chained call and assert `e.getMessage()` con
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Enhanced NPE messages that identify the exact null reference and the failed operation
+
 **PROBLEM IT SOLVES:** Eliminates guesswork when debugging NullPointerExceptions with chained method calls
+
 **KEY INSIGHT:** Analysis happens lazily at exception time via bytecode inspection - zero overhead for normal execution
+
 **USE WHEN:** Always (enabled by default in Java 15+, no code changes needed)
+
 **AVOID WHEN:** Security-sensitive environments where local variable names should not leak (rare)
+
 **ANTI-PATTERN:** Relying on helpful NPEs instead of preventing nulls (use Optional, @NonNull, null checks)
+
 **TRADE-OFF:** Better diagnostics vs slightly larger exception messages
+
 **ONE-LINER:** "The fire alarm now tells you which coffee machine is on fire"
+
 **KEY NUMBERS:** Java 14 (opt-in), Java 15 (default). Zero overhead until NPE occurs. Lazy message generation.
+
 **TRIGGER PHRASE:** "helpful NPE, exact null source, bytecode analysis, JEP 358"
+
 **OPENING SENTENCE:** "Helpful NullPointerExceptions (Java 14/15) enhance NPE messages to identify exactly which reference was null. The JVM performs bytecode analysis at the point of failure and generates messages like 'Cannot invoke Address.getCity() because User.getAddress() is null.' Zero overhead until an NPE occurs; analysis is lazy."
 
 **If you remember only 3 things:**

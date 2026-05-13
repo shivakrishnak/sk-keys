@@ -253,15 +253,25 @@ Run with `-Xlog:gc*` to verify GC behavior. Use `jconsole` or VisualVM to monito
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Three-layer virtual machine: class loader + runtime data areas + execution engine
+
 **PROBLEM IT SOLVES:** Platform dependence, manual memory management, unsafe code execution
+
 **KEY INSIGHT:** The JIT compiler makes Java faster over time - long-running apps can match native performance
+
 **USE WHEN:** Running any JVM-based application (Java, Kotlin, Scala)
+
 **AVOID WHEN:** Extreme startup time requirements (consider GraalVM native image instead)
+
 **ANTI-PATTERN:** Using default JVM settings in production without sizing heap, GC, and monitoring
+
 **TRADE-OFF:** Platform independence + safety vs startup time + memory overhead
+
 **ONE-LINER:** "A universal game console - one cartridge (bytecode) works on every TV (platform)"
+
 **KEY NUMBERS:** 5 memory areas. 5 JIT tiers. Default stack 512KB-1MB per thread. Heap default 1/4 of physical RAM.
+
 **TRIGGER PHRASE:** "class loader heap stack JIT GC bytecode"
+
 **OPENING SENTENCE:** "The JVM has three subsystems: the Class Loader (loads/verifies/initializes classes), Runtime Data Areas (heap, method area, stacks, PC registers), and Execution Engine (interpreter + JIT + GC). Understanding their interaction is key to performance tuning and debugging."
 
 **If you remember only 3 things:**
@@ -734,15 +744,25 @@ Run `java -version` in the container to verify JVM version. Run `which javac` to
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Three nested layers - JVM (engine) inside JRE (runtime) inside JDK (development kit)
+
 **PROBLEM IT SOLVES:** Separates runtime needs from development needs for smaller, secure deployments
+
 **KEY INSIGHT:** Since Java 11, no standalone JRE - use jlink to create custom runtimes
+
 **USE WHEN:** Choosing what to install (dev: JDK), deploy (jlink custom runtime), or configure
+
 **AVOID WHEN:** N/A - this is foundational knowledge, always relevant
+
 **ANTI-PATTERN:** Deploying full JDK to production when only runtime is needed
+
 **TRADE-OFF:** Full JDK (convenient, large) vs jlink runtime (minimal, requires module analysis)
+
 **ONE-LINER:** "JVM is the engine, JRE is the car, JDK is the garage with all the tools"
+
 **KEY NUMBERS:** JDK ~300MB. jlink custom runtime ~40-60MB. Old JRE was ~80MB. Java 11 removed standalone JRE.
+
 **TRIGGER PHRASE:** "JVM JRE JDK jlink custom runtime modules"
+
 **OPENING SENTENCE:** "JVM is the execution engine (class loader, memory, JIT, GC). JRE wraps JVM with standard libraries. JDK wraps JRE with dev tools (javac, jdb). Since Java 11, no standalone JRE exists - use jlink for minimal custom runtimes."
 
 **If you remember only 3 things:**
@@ -1239,15 +1259,25 @@ Use `javap -c ClassName` to inspect bytecode. Use `-XX:+PrintCompilation` to see
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Two-phase execution: javac to bytecode (portable), JVM to native code (fast, at runtime)
+
 **PROBLEM IT SOLVES:** Platform dependence - same bytecode runs on any JVM implementation
+
 **KEY INSIGHT:** JIT with runtime profiling can outperform AOT compilers for polymorphic code
+
 **USE WHEN:** Understanding Java performance, warmup behavior, and optimization
+
 **AVOID WHEN:** N/A - this is how all Java code runs
+
 **ANTI-PATTERN:** Benchmarking without JIT warmup, ignoring code cache limits
+
 **TRADE-OFF:** Portability + adaptive optimization vs startup latency + memory overhead
+
 **ONE-LINER:** "Esperanto book (bytecode) that translators (JVM) turn into fast native speech (JIT)"
+
 **KEY NUMBERS:** ~10K invocations for C2 JIT. Code cache default 240MB. 5 tiered compilation levels. 30-60s warmup.
+
 **TRIGGER PHRASE:** "javac bytecode interpreter JIT C1 C2 native"
+
 **OPENING SENTENCE:** "Java code runs in two phases: javac compiles source to platform-independent bytecode, then the JVM executes it - initially via interpreter, then JIT-compiles hot methods (C1 for quick compile, C2 for optimized native code). The JIT uses runtime profiling data unavailable to AOT compilers."
 
 **If you remember only 3 things:**
@@ -1792,15 +1822,25 @@ Use `-verbose:class` to trace class loading. Use `Class.getClassLoader()` to ver
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** JVM mechanism that loads classes lazily using parent-first delegation across three loaders
+
 **PROBLEM IT SOLVES:** Security (prevents core class replacement), isolation (namespace separation), efficiency (lazy loading)
+
 **KEY INSIGHT:** Class identity = fully qualified name + class loader - same class from different loaders are different types
+
 **USE WHEN:** Debugging ClassNotFoundException, understanding app server isolation, building plugin systems
+
 **AVOID WHEN:** N/A - class loading is always active in the JVM
+
 **ANTI-PATTERN:** Breaking parent-first delegation without understanding the security implications
+
 **TRADE-OFF:** Security + isolation vs complexity + class loader leak risk
+
 **ONE-LINER:** "A chain of command - always ask the general (Bootstrap) before the private (App) acts"
+
 **KEY NUMBERS:** 3 built-in class loaders. 3 loading phases (load, link, initialize). Classes loaded lazily on first use.
+
 **TRIGGER PHRASE:** "bootstrap platform application delegation parent-first lazy"
+
 **OPENING SENTENCE:** "The JVM loads classes lazily using parent-first delegation: Application -> Platform -> Bootstrap. The Bootstrap loader handles java.base. A class's identity includes its loader, enabling namespace isolation. This guarantees core classes cannot be overridden by application code."
 
 **If you remember only 3 things:**
@@ -2322,15 +2362,25 @@ Use `-XX:+PrintEscapeAnalysis` (debug JDK) to verify escape analysis. Use `jstat
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Two memory areas - stack (per-thread, LIFO, auto-freed) and heap (shared, GC-managed)
+
 **PROBLEM IT SOLVES:** Separates thread-private method state from shared object storage
+
 **KEY INSIGHT:** Stack is thread-safe by construction; heap sharing is why you need synchronization
+
 **USE WHEN:** Understanding memory layout, debugging OOM, sizing JVM memory
+
 **AVOID WHEN:** N/A - fundamental to all Java programs
+
 **ANTI-PATTERN:** Creating 1000+ threads with default stack size without calculating total memory
+
 **TRADE-OFF:** Stack (fast but fixed-size, short-lived) vs heap (flexible but GC-managed)
+
 **ONE-LINER:** "Notepad on your desk (stack) vs shared filing cabinet (heap)"
+
 **KEY NUMBERS:** Stack default 512KB-1MB per thread. 1000 threads = 1GB stack memory. Escape analysis can put heap objects on stack.
+
 **TRIGGER PHRASE:** "stack frame local variables heap objects GC thread-private"
+
 **OPENING SENTENCE:** "Stack is per-thread LIFO memory for method frames (locals, operand stack) - auto-freed on return. Heap is shared, GC-managed storage for all objects. Primitives and references live on the stack; the objects they point to live on the heap. Escape analysis can blur this boundary."
 
 **If you remember only 3 things:**
@@ -2810,15 +2860,25 @@ Monitor with `jstat -gc <pid>` (MC/MU columns). Use `jcmd <pid> VM.native_memory
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Native memory area storing class metadata (definitions, methods, constants), replacing PermGen since Java 8
+
 **PROBLEM IT SOLVES:** Eliminates fixed-size PermGen sizing headaches with auto-growing native memory
+
 **KEY INSIGHT:** Metaspace is freed per class loader (bulk), not per class - class loader leaks prevent deallocation
+
 **USE WHEN:** Configuring JVM memory, diagnosing class-related OOM, sizing containers
+
 **AVOID WHEN:** N/A - always present in Java 8+
+
 **ANTI-PATTERN:** Not setting MaxMetaspaceSize in production (allows unbounded growth)
+
 **TRADE-OFF:** Auto-growing (no PermGen sizing) vs risk of unbounded native memory consumption
+
 **ONE-LINER:** "Expandable warehouse for class blueprints - grows until you set a limit"
+
 **KEY NUMBERS:** Default initial threshold ~20MB. Set MaxMetaspaceSize 256m-512m. Compressed class space capped at 1GB.
+
 **TRIGGER PHRASE:** "native memory class metadata PermGen replacement loader"
+
 **OPENING SENTENCE:** "Metaspace replaced PermGen in Java 8, storing class metadata in native memory that auto-grows. It is allocated per class loader and freed in bulk when the loader is GC'd. Always set MaxMetaspaceSize in production as a safety limit."
 
 **If you remember only 3 things:**
@@ -3315,15 +3375,25 @@ Use `jcmd <pid> VM.native_memory summary` to verify all areas fit within budget.
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Five JVM runtime data areas: Heap, Method Area, Stack, PC Register, Native Stack
+
 **PROBLEM IT SOLVES:** Clean separation of objects, class metadata, execution state, and native code per their lifecycle
+
 **KEY INSIGHT:** Most developers only budget heap and stack, missing Method Area (100-300MB) and Code Cache (up to 240MB)
+
 **USE WHEN:** Memory budgeting, debugging OOM errors, understanding JVM architecture
+
 **AVOID WHEN:** N/A - fundamental to all JVM operation
+
 **ANTI-PATTERN:** Only setting -Xmx and ignoring Metaspace, Code Cache, and thread stacks
+
 **TRADE-OFF:** Clean separation vs complexity of monitoring five independent areas
+
 **ONE-LINER:** "Five rooms in the JVM building: warehouse, library, cubicles, bookmarks, and phone booths"
+
 **KEY NUMBERS:** 5 areas. Method Area 100-300MB typical. Code Cache max ~240MB. PC Register: few bytes per thread.
+
 **TRIGGER PHRASE:** "heap method area stack PC register native stack"
+
 **OPENING SENTENCE:** "The JVM spec defines five runtime data areas: Heap and Method Area are shared; Stack, PC Register, and Native Method Stack are per-thread. The Method Area (Metaspace) stores class metadata and is the third largest memory consumer after heap and stacks."
 
 **If you remember only 3 things:**
@@ -3811,15 +3881,25 @@ Use `javap -v` to see the full constant pool and version. Compare bytecode outpu
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** JVM's platform-independent instruction set (~200 stack-based opcodes) and its disassembly tool
+
 **PROBLEM IT SOLVES:** Platform independence (compile once, run anywhere) and inspectability (see what the compiler actually generates)
+
 **KEY INSIGHT:** javap reveals the truth about what your Java code becomes - string concat, lambdas, autoboxing, type erasure all become visible
+
 **USE WHEN:** Debugging performance issues, understanding compiler behavior, verifying framework proxies, diagnosing version errors
+
 **AVOID WHEN:** N/A - bytecode is always the intermediate format
+
 **ANTI-PATTERN:** Writing bytecode-level optimizations in source code instead of trusting the JIT
+
 **TRADE-OFF:** Platform independence vs interpretation overhead (mitigated by JIT)
+
 **ONE-LINER:** "Sheet music for the JVM - javap lets you read the score"
+
 **KEY NUMBERS:** ~200 opcodes. Class major versions: Java 8=52, 11=55, 17=61, 21=65. 5 invoke opcodes.
+
 **TRIGGER PHRASE:** "class file bytecode javap disassemble invokedynamic"
+
 **OPENING SENTENCE:** "Bytecode is the JVM's stack-based instruction set stored in .class files. javap disassembles them. Use javap -c to see instructions, -v for the full constant pool. Understanding bytecode reveals compiler behavior: string concat uses invokedynamic in Java 9+, lambdas use invokedynamic with LambdaMetafactory, and type erasure removes generics."
 
 **If you remember only 3 things:**
@@ -4370,15 +4450,25 @@ Use `-XX:+PrintCompilation` to see which methods are compiled and at what level.
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Runtime compiler that translates hot bytecode to optimized native code using C1 (fast) and C2 (aggressive)
+
 **PROBLEM IT SOLVES:** Closes the performance gap between interpreted bytecode and native code
+
 **KEY INSIGHT:** JIT uses runtime profiling to make optimizations impossible for static compilers (speculative devirtualization, branch prediction)
+
 **USE WHEN:** Understanding warm-up behavior, diagnosing performance, sizing Code Cache
+
 **AVOID WHEN:** N/A - JIT is always active (unless using GraalVM Native Image)
+
 **ANTI-PATTERN:** Benchmarking without JIT warm-up, filling Code Cache without monitoring
+
 **TRADE-OFF:** Warm-up time + CPU overhead vs near-native peak performance
+
 **ONE-LINER:** "Highway construction: local roads first (interpreter), then expressway (C1), then highway (C2)"
+
 **KEY NUMBERS:** 5 compilation levels. Code Cache default ~240MB. C2 inlining threshold ~325 bytes. Warm-up 10-60 seconds.
+
 **TRIGGER PHRASE:** "C1 C2 tiered compilation warm-up deoptimization Code Cache"
+
 **OPENING SENTENCE:** "The JIT compiler uses tiered compilation: interpreter -> C1 (fast, profiling) -> C2 (aggressive optimization). C2 uses runtime profiling for speculative optimizations: devirtualization, inlining, escape analysis, loop unrolling. Warm-up takes 10-60 seconds. Code Cache stores compiled code (~240MB default)."
 
 **If you remember only 3 things:**
@@ -4870,15 +4960,25 @@ Use JFR `jdk.ObjectAllocationInNewTLAB` to track allocation rates. Use `-XX:+Pri
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** C2 optimization that proves objects do not escape methods and replaces them with local scalar fields
+
 **PROBLEM IT SOLVES:** Eliminates unnecessary heap allocations and GC pressure for short-lived objects
+
 **KEY INSIGHT:** Inlining is the prerequisite - without it, C2 cannot see the allocation scope
+
 **USE WHEN:** Understanding GC pressure, optimizing hot paths, designing allocation-efficient code
+
 **AVOID WHEN:** N/A - it is automatic; design code to be friendly to it
+
 **ANTI-PATTERN:** Passing method-local objects to logging, collections, or non-inlineable methods in hot paths
+
 **TRADE-OFF:** Zero allocation for non-escaping objects vs fragile (easily broken by code changes)
+
 **ONE-LINER:** "If the object never leaves the room, the JVM does not bother building it"
+
 **KEY NUMBERS:** Requires C2 (Level 4). Works on objects up to ~64 fields. Inlining limit ~325 bytes.
+
 **TRIGGER PHRASE:** "escape analysis scalar replacement stack allocation NoEscape"
+
 **OPENING SENTENCE:** "Escape analysis is a C2 optimization that determines if an object is accessible outside its allocating method. If not (NoEscape), scalar replacement decomposes it into register/stack variables - zero heap allocation. Requires inlining first. Fragile: logging, collections, or non-inlineable calls break it."
 
 **If you remember only 3 things:**
@@ -5435,15 +5535,25 @@ Run the tracing agent during integration tests: `java -agentlib:native-image-age
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** AOT compiler that produces standalone native executables from Java applications (no JVM needed)
+
 **PROBLEM IT SOLVES:** Eliminates JVM startup time, reduces memory footprint, enables serverless and CLI use cases
+
 **KEY INSIGHT:** Closed-world assumption: all code must be known at build time (no dynamic class loading)
+
 **USE WHEN:** Serverless (cold start SLA), CLI tools, high-density microservices, container-optimized deployment
+
 **AVOID WHEN:** Long-running services where peak throughput matters more than startup, heavy reflection/dynamic proxy usage
+
 **ANTI-PATTERN:** Building native without running the tracing agent on all code paths (missing reflection configs)
+
 **TRADE-OFF:** Instant startup + low memory vs longer build time + potentially lower peak throughput + closed-world constraints
+
 **ONE-LINER:** "Download the movie instead of streaming it - instant playback, no buffering"
+
 **KEY NUMBERS:** Startup ~50ms (vs 1-10s JVM). Memory ~50MB (vs 200-400MB). Build time 2-10 minutes.
+
 **TRIGGER PHRASE:** "native-image AOT closed-world Substrate VM instant startup"
+
 **OPENING SENTENCE:** "GraalVM Native Image AOT-compiles Java to standalone binaries using closed-world analysis. Startup ~50ms, memory ~50MB, no JVM needed. The trade-off: no JIT (lower peak throughput), reflection needs explicit configuration, and all code must be reachable at build time."
 
 **If you remember only 3 things:**
@@ -6014,15 +6124,25 @@ Compare p50/p99 latency, throughput, and GC pause time before and after flag cha
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Command-line options controlling JVM memory, GC, JIT, and diagnostics; tuning is the practice of optimizing them
+
 **PROBLEM IT SOLVES:** Adapts JVM behavior to specific workload requirements (latency, throughput, memory)
+
 **KEY INSIGHT:** Measure first, tune second. The ideal number of non-default flags is zero.
+
 **USE WHEN:** Diagnosing performance issues, meeting specific SLAs, containerized deployments
+
 **AVOID WHEN:** No measured problem exists (defaults are good for most workloads)
+
 **ANTI-PATTERN:** Cargo-cult tuning (copying flags from blog posts without understanding them)
+
 **TRADE-OFF:** Precise control vs complexity and maintenance burden
+
 **ONE-LINER:** "Tuning is like seasoning food - measure first, add sparingly, taste after each change"
+
 **KEY NUMBERS:** ~700 flags total. -Xmx (heap), -XX:MaxGCPauseMillis (GC), -XX:ReservedCodeCacheSize (JIT).
+
 **TRIGGER PHRASE:** "Xmx UseG1GC UseZGC MaxGCPauseMillis HeapDump flags"
+
 **OPENING SENTENCE:** "JVM flags configure memory (-Xmx), GC (-XX:+UseZGC), JIT (-XX:CICompilerCount), and diagnostics (-XX:+HeapDumpOnOutOfMemoryError). Tuning is data-driven: measure with JFR/jstat, identify the bottleneck, change one flag, re-measure. The best tuning is minimal tuning - ergonomic defaults improve every JDK release."
 
 **If you remember only 3 things:**

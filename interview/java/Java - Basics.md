@@ -233,15 +233,25 @@ Write unit tests that assert exact values for financial calculations using `BigD
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Named, typed memory locations for storing values in Java
+
 **PROBLEM IT SOLVES:** Prevents type confusion bugs that cause crashes and security vulnerabilities
+
 **KEY INSIGHT:** The 8 primitives have fixed sizes across all platforms - this IS "write once, run anywhere"
+
 **USE WHEN:** Always - every Java program uses variables and types
+
 **AVOID WHEN:** Avoid primitives in generic contexts (use wrappers); avoid `double` for money
+
 **ANTI-PATTERN:** Using `==` to compare wrapper objects (`Integer`, `Double`) instead of `.equals()`
+
 **TRADE-OFF:** Static typing adds verbosity but catches bugs at compile time instead of production
+
 **ONE-LINER:** "Primitives are fast stack values; wrappers are heap objects with a 16-byte tax"
+
 **KEY NUMBERS:** `int` range: -2^31 to 2^31-1 (about +/-2.1 billion). Integer cache: -128 to 127. `double` precision: ~15-17 significant digits.
+
 **TRIGGER PHRASE:** "Primitives on stack, references to heap, autoboxing costs GC"
+
 **OPENING SENTENCE:** "Java has 8 platform-independent primitive types stored on the stack and reference types that point to heap objects, with autoboxing bridging the two at the cost of allocation overhead."
 
 **If you remember only 3 things:**
@@ -616,15 +626,25 @@ Use `-Xlint:all` to catch some precedence issues. Write unit tests for boundary 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Operators compute values; control flow directs execution path
+
 **PROBLEM IT SOLVES:** Enables branching, looping, and complex logic in programs
+
 **KEY INSIGHT:** Operator precedence bugs are silent - the code compiles but does the wrong thing
+
 **USE WHEN:** Every program uses these - the question is which style (imperative vs functional)
+
 **AVOID WHEN:** Deeply nested if/else chains - use polymorphism, strategy pattern, or switch expressions instead
+
 **ANTI-PATTERN:** Old-style `switch` without `break` causing unintended fall-through
+
 **TRADE-OFF:** Readability of imperative style vs composability of Stream/functional style
+
 **ONE-LINER:** "Operators are the verbs, control flow is the grammar - get precedence wrong and the sentence means something else"
+
 **KEY NUMBERS:** `tableswitch` is O(1), `lookupswitch` is O(log n). Branch misprediction penalty: ~15 CPU cycles.
+
 **TRIGGER PHRASE:** "Precedence, short-circuit, branch prediction, switch expressions"
+
 **OPENING SENTENCE:** "Java's operators follow strict precedence rules and control flow compiles to branch bytecodes that the JIT optimizes through profiling - the key gotcha is that precedence bugs are completely silent."
 
 **If you remember only 3 things:**
@@ -1007,15 +1027,25 @@ Use EqualsVerifier library: `EqualsVerifier.forClass(User.class).verify()` catch
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** A class defines a type; an object is a heap-allocated instance
+
 **PROBLEM IT SOLVES:** Bundles related state and behavior with enforced invariants
+
 **KEY INSIGHT:** Identity (==) and equality (equals) are different - confusing them causes the most subtle bugs
+
 **USE WHEN:** Modeling any entity or value in your domain
+
 **AVOID WHEN:** Simple data carriers with no behavior - use records instead (Java 16+)
+
 **ANTI-PATTERN:** God class with 50+ fields and 100+ methods that does everything
+
 **TRADE-OFF:** Encapsulation safety vs heap allocation cost and GC pressure
+
 **ONE-LINER:** "A class is a contract enforced by the compiler; an object is that contract in action on the heap"
+
 **KEY NUMBERS:** Object header: 12-16 bytes. TLAB allocation: ~10 CPU instructions. Compressed oops ref: 4 bytes.
+
 **TRIGGER PHRASE:** "Blueprint, heap instance, identity vs equality, encapsulation"
+
 **OPENING SENTENCE:** "Every Java object carries a 12-16 byte header for GC metadata, lock state, and class identity - understanding this overhead is what separates memory-aware engineers from textbook programmers."
 
 **If you remember only 3 things:**
@@ -1426,15 +1456,25 @@ Write contract tests that verify LSP: any test that passes for the parent must a
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Inheritance shares type+behavior via extends; polymorphism dispatches to actual type at runtime
+
 **PROBLEM IT SOLVES:** Code reuse and type substitutability without copy-paste
+
 **KEY INSIGHT:** Inheritance is about types (IS-A), not code reuse - composition handles reuse better
+
 **USE WHEN:** True IS-A relationship, framework extension points, sealed type hierarchies
+
 **AVOID WHEN:** Code reuse without IS-A relationship - use composition instead
+
 **ANTI-PATTERN:** Deep inheritance hierarchy (>3 levels) used for code sharing
+
 **TRADE-OFF:** Extensibility and type uniformity vs tight coupling and fragile base class
+
 **ONE-LINER:** "Inherit the contract, compose the implementation"
+
 **KEY NUMBERS:** vtable dispatch: ~1-3ns. Megamorphic (3+ types): ~5-10ns. JIT devirtualizes monomorphic sites to 0ns.
+
 **TRIGGER PHRASE:** "vtable dispatch, LSP, composition over inheritance, sealed"
+
 **OPENING SENTENCE:** "Polymorphism in Java works through vtable dispatch - the JVM resolves the actual method at runtime based on the object's class, not the reference type, and the JIT can devirtualize monomorphic sites to zero-overhead direct calls."
 
 **If you remember only 3 things:**
@@ -1884,15 +1924,25 @@ Write contract tests against the interface type (`Repository<T>`), not the abstr
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Two abstraction mechanisms - abstract classes share state and code via single inheritance; interfaces define capability contracts with multiple inheritance
+
 **PROBLEM IT SOLVES:** Separating "what" (contract) from "how" (implementation) while allowing flexible type composition
+
 **KEY INSIGHT:** Since Java 8, the only unique advantage of abstract classes is instance state - everything else can be done with interfaces
+
 **USE WHEN:** Interface: public API, multiple type conformance, sealed hierarchies. Abstract class: shared mutable state between related implementations.
+
 **AVOID WHEN:** Abstract class as API type (wastes the single inheritance slot of consumers)
+
 **ANTI-PATTERN:** Deep abstract class hierarchy used as the public API type
+
 **TRADE-OFF:** Interfaces: flexibility + multiple inheritance vs no shared state. Abstract classes: shared state vs single inheritance lock-in.
+
 **ONE-LINER:** "Program to an interface, implement with a skeletal abstract class"
+
 **KEY NUMBERS:** 1 parent class max. Unlimited interfaces. Default method resolution: class wins, then most-specific interface.
+
 **TRIGGER PHRASE:** "interface for API, abstract class for shared state"
+
 **OPENING SENTENCE:** "Since Java 8, interfaces can have default methods, static methods, and private methods - the only remaining advantage of abstract classes is holding instance state, which makes the decision straightforward: use interfaces for all public contracts and reserve abstract classes for skeletal implementations that share mutable state."
 
 **If you remember only 3 things:**
@@ -2390,15 +2440,25 @@ Test through public methods only. Verify that `isValid()` returns false after ex
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Four visibility levels controlling which code can access fields, methods, and classes
+
 **PROBLEM IT SOLVES:** Encapsulation - separating public contract from internal implementation to enable safe evolution
+
 **KEY INSIGHT:** Package-private (default, no keyword) is the most underused and most valuable modifier for internal cohesion
+
 **USE WHEN:** Always. Every member should have an explicit access decision.
+
 **AVOID WHEN:** Never skip the decision. Defaulting to `public` because it is easier is a design debt.
+
 **ANTI-PATTERN:** Public fields, or making everything public "for testing"
+
 **TRADE-OFF:** Stronger encapsulation vs more boilerplate (getters/setters) and testing friction
+
 **ONE-LINER:** "Start private, widen only when forced"
+
 **KEY NUMBERS:** 4 levels: private < default < protected < public. JPMS adds module-level on top.
+
 **TRIGGER PHRASE:** "minimum visibility, package-private, encapsulation boundary"
+
 **OPENING SENTENCE:** "Java has four access levels - private, package-private, protected, and public - and the most important design habit is starting at private and widening only when the public contract demands it, because every bit of exposed API becomes a maintenance commitment."
 
 **If you remember only 3 things:**
@@ -2825,15 +2885,25 @@ Configure IDE (IntelliJ: Settings > Code Style > Java > Imports) to never use wi
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Packages = namespaces for classes; imports = shortcuts to use classes by simple name
+
 **PROBLEM IT SOLVES:** Naming collisions, code organization, and access control scoping
+
 **KEY INSIGHT:** Sub-packages are NOT nested - `com.a` and `com.a.b` are completely independent
+
 **USE WHEN:** Always. Every class should be in an explicit package (never the default package).
+
 **AVOID WHEN:** Never avoid packages. Avoid wildcard imports in production code.
+
 **ANTI-PATTERN:** Layer-based packaging (all services in one package, all repos in another) instead of feature-based
+
 **TRADE-OFF:** Namespace isolation vs directory structure verbosity and refactoring cost
+
 **ONE-LINER:** "Package name = directory path = namespace = encapsulation boundary"
+
 **KEY NUMBERS:** 0 performance cost for imports (resolved at compile time). Split packages are illegal in JPMS.
+
 **TRIGGER PHRASE:** "namespace, classpath, FQCN, package-private boundary"
+
 **OPENING SENTENCE:** "Java packages serve three purposes: namespacing to prevent collisions, access control scoping for package-private visibility, and organizational structure that maps 1:1 to the directory hierarchy - and sub-packages are completely independent at the language level, which surprises most developers."
 
 **If you remember only 3 things:**
@@ -3279,15 +3349,25 @@ Test that the constructor rejects invalid inputs: null parameters should throw `
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Special method (same name as class, no return type) that initializes objects at creation time
+
 **PROBLEM IT SOLVES:** Guarantees every object starts in a valid, fully initialized state
+
 **KEY INSIGHT:** Constructors are invariant enforcement points - after construction, the object must be guaranteed valid
+
 **USE WHEN:** Always. Every non-trivial class should have an explicit constructor with validation.
+
 **AVOID WHEN:** Telescoping constructors (5+ params) - use Builder pattern instead
+
 **ANTI-PATTERN:** Default constructor + setters (JavaBean style) for objects that should be immutable
+
 **TRADE-OFF:** Strict validation at construction vs flexibility of post-construction configuration
+
 **ONE-LINER:** "Make illegal states unrepresentable at construction time"
+
 **KEY NUMBERS:** Default no-arg constructor generated only if NO constructors declared. `super()` implicitly added if not explicit.
+
 **TRIGGER PHRASE:** "constructor injection, final fields, invariant enforcement"
+
 **OPENING SENTENCE:** "A constructor's job is not just field assignment - it is invariant enforcement. After the constructor completes, the object must be in a valid state, and if validation is thorough, no method ever needs to re-check those invariants."
 
 **If you remember only 3 things:**
@@ -3748,15 +3828,25 @@ Test overloaded methods with every parameter type combination, including null, a
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Overloading: same name, different params, compile-time. Overriding: same signature in subclass, runtime.
+
 **PROBLEM IT SOLVES:** Overloading: clean API naming. Overriding: polymorphic behavior.
+
 **KEY INSIGHT:** They are resolved at completely different phases - overloading at compile time, overriding at runtime - and interact in subtle ways
+
 **USE WHEN:** Overloading: 2-3 related parameter variants. Overriding: customizing inherited behavior.
+
 **AVOID WHEN:** Overloading: >3 variants or autoboxing ambiguity. Overriding: breaking parent contract (LSP violation).
+
 **ANTI-PATTERN:** Overloading with `int` and `Integer` parameters - autoboxing makes dispatch confusing
+
 **TRADE-OFF:** API convenience (overloading) vs dispatch clarity (distinct names)
+
 **ONE-LINER:** "Overloading chooses the method at compile time; overriding chooses at runtime"
+
 **KEY NUMBERS:** 3 overload resolution phases (exact, autobox, varargs). vtable dispatch ~1-3ns. Megamorphic ~5-10ns.
+
 **TRIGGER PHRASE:** "static dispatch, dynamic dispatch, invokevirtual, @Override"
+
 **OPENING SENTENCE:** "Overloading is resolved by the compiler based on the declared parameter types, while overriding is resolved by the JVM at runtime based on the actual object type via vtable dispatch - and the most common bug is confusing which mechanism is in play."
 
 **If you remember only 3 things:**
@@ -4255,15 +4345,25 @@ Verify that `static final` constants are truly constant via bytecode inspection 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** `static` = class-level member; `final` = cannot reassign/override/extend
+
 **PROBLEM IT SOLVES:** `static`: shared state and utility methods without instances. `final`: immutability, safety, design intent.
+
 **KEY INSIGHT:** `final` only prevents reference reassignment, not object mutation - `final List` can still be modified
+
 **USE WHEN:** `static final` for constants. `final` on all fields by default. `static` for pure factory methods.
+
 **AVOID WHEN:** `static` mutable state (global shared state). `final` on Spring bean classes if CGLIB proxying is needed.
+
 **ANTI-PATTERN:** Static mutable state used as a singleton - use DI instead
+
 **TRADE-OFF:** `final`: thread safety + optimization vs reduced flexibility for mocking/subclassing
+
 **ONE-LINER:** "`final` means the reference is welded; the object behind it can still move"
+
 **KEY NUMBERS:** `static final` primitives/Strings inlined at compile time (zero runtime cost). Final field store-store barrier: ~0 cost on x86.
+
 **TRIGGER PHRASE:** "class-level, compile-time constant, JMM final field semantics"
+
 **OPENING SENTENCE:** "`static` and `final` serve orthogonal purposes - `static` controls where a member lives (class vs instance), while `final` controls whether it can change - and the most critical insight is that `final` on a reference prevents reassignment but not mutation of the object behind it."
 
 **If you remember only 3 things:**
@@ -4763,15 +4863,25 @@ Test every constant's behavior individually. Test state transitions (next()). Te
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** A class type with a fixed set of singleton instances, each with optional fields, methods, and behavior
+
 **PROBLEM IT SOLVES:** Type-safe constants that cannot be invalid, with compile-time exhaustiveness checking
+
 **KEY INSIGHT:** Java enums are full objects, not named integers - they can implement interfaces and carry behavior
+
 **USE WHEN:** Fixed set of values known at compile time (statuses, types, strategies, config options)
+
 **AVOID WHEN:** Open sets that grow at runtime - use sealed interfaces instead
+
 **ANTI-PATTERN:** Using `ordinal()` for persistence or API contracts
+
 **TRADE-OFF:** Type safety + exhaustive checking vs compile-time fixed set (no runtime extension)
+
 **ONE-LINER:** "Enums are singleton strategy objects, not magic integers"
+
 **KEY NUMBERS:** EnumSet: 1 long for <=64 constants (O(1) all operations). values() clones array on every call.
+
 **TRIGGER PHRASE:** "type-safe constants, singleton, ordinal danger, strategy pattern"
+
 **OPENING SENTENCE:** "Java enums are full-blown singleton objects with fields, methods, and interface implementations - not named integers. They are the ideal mechanism for the Strategy and State patterns when the set of variants is fixed, and EnumSet/EnumMap provide O(1) operations via bit-vector implementation."
 
 **If you remember only 3 things:**
@@ -5246,15 +5356,25 @@ Compile with `-Xlint:unchecked` to catch raw type usage. Use `-Xlint:rawtypes` f
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Type parameters on classes/methods checked at compile time, erased at runtime
+
 **PROBLEM IT SOLVES:** Eliminates ClassCastException from unchecked casts and enables type-safe reusable code
+
 **KEY INSIGHT:** Generics are a compile-time illusion - type erasure means no generic info at runtime
+
 **USE WHEN:** Any reusable data structure, utility method, or API that operates on multiple types
+
 **AVOID WHEN:** You need runtime type information (use Class<T> tokens), or primitive performance (use arrays)
+
 **ANTI-PATTERN:** Using raw types (`List` instead of `List<?>` or `List<String>`)
+
 **TRADE-OFF:** Compile-time safety vs no runtime type info, no primitives, complex wildcard syntax
+
 **ONE-LINER:** "Generics move ClassCastException from Friday night production to Monday morning compile"
+
 **KEY NUMBERS:** Type erasure: 0 runtime cost. Boxing overhead: ~16 bytes per Integer vs 4 bytes for int.
+
 **TRIGGER PHRASE:** "type erasure, PECS, bounded wildcards, bridge methods"
+
 **OPENING SENTENCE:** "Java generics provide compile-time type safety through parameterized types, but due to type erasure, all generic information is removed in bytecode - understanding this single fact explains every limitation: no `new T()`, no `instanceof List<String>`, and no `List<int>`."
 
 **If you remember only 3 things:**

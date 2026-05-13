@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: "Run interview scaffold generator for a topic - creates [FILL:...] stub files"
+description: "Run interview scaffold generator for a topic - creates [FILL:...] stub files (optional - not required for content generation)"
 tools:
   - run_in_terminal
   - read_file
@@ -8,11 +8,16 @@ tools:
   - file_search
 ---
 
-# Interview Scaffold Generator
+# Interview Scaffold Generator (optional)
 
-Run the scaffold generator to create `[FILL:...]` stub files for an interview topic.
-The scaffold pre-builds all 19 sections per keyword with placeholder markers, reducing
-content generation token usage by ~50%.
+> **Scaffolding is optional.** The `/interview` agent and
+> `@interview-generate-entries` prompt read keywords directly from
+> frontmatter and generate content without scaffolding. Use this
+> only to preview file structure before generating content.
+
+Run the scaffold generator to create `[FILL:...]` stub files for an
+interview topic. The scaffold pre-builds all 19 sections per keyword
+with placeholder markers.
 
 ## Usage
 
@@ -37,8 +42,12 @@ content generation token usage by ~50%.
 
 ## Post-Scaffold
 
-After scaffolding, use `@interview-fill-content` to replace `[FILL:...]` stubs
-with real content one keyword at a time.
+After scaffolding, use `@interview-generate-entries` or
+`@interview-fill-content` to generate real content for each keyword.
+
+Alternatively, skip scaffolding entirely and use the agent or prompts
+directly - they read keywords from frontmatter and generate content
+without needing scaffold stubs.
 
 ## Notes
 

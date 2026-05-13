@@ -93,7 +93,7 @@ param(
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $InterviewRoot = Join-Path $WorkspaceRoot "interview"
-$ConfigDir     = Join-Path $InterviewRoot "config"
+$ConfigDir     = Join-Path $InterviewRoot "_config"
 $DictionaryRoot = Join-Path $WorkspaceRoot "dictionary"
 $PromptFile    = Join-Path $ConfigDir "INTERVIEW_PROMPT.md"
 $RegistryFile  = Join-Path $ConfigDir "topic-registry.md"
@@ -312,7 +312,7 @@ function Update-TopicIndex {
 
     # Calculate nav_order for this topic index
     $existingTopics = Get-ChildItem -Path $InterviewRoot -Directory |
-        Where-Object { $_.Name -ne "config" } |
+        Where-Object { $_.Name -ne "_config" } |
         Sort-Object Name
     $topicNavOrder = 1
     for ($idx = 0; $idx -lt $existingTopics.Count; $idx++) {
@@ -365,7 +365,7 @@ function Build-GenerationPrompt {
     $kwList = ($batchKeywords | ForEach-Object { "      - $_" }) -join "`n"
 
     $prompt = @"
-Generate interview mastery content following INTERVIEW_PROMPT.md v1.0 exactly.
+Generate interview mastery content following INTERVIEW_PROMPT.md v3.0 exactly.
 
 SPEC REFERENCES:
 - Content spec: interview/_config/INTERVIEW_PROMPT.md
@@ -380,14 +380,14 @@ $kwList
 
 Rules:
 - Follow the complete skeleton from Section 6 of INTERVIEW_PROMPT.md
-- Each keyword gets all 14 required sections
-- Interview Deep-Dive: minimum 5 questions per keyword with COMPLETE answers
+- Each keyword gets all 19 required sections
+- Interview Deep-Dive: question count scales by difficulty (easy: 7, medium: 9, hard: 12)
 - Answers must show learning progression and demonstrate depth
 - BAD pattern before GOOD pattern in all code examples
 - Code lines max 70 chars, ASCII diagrams max 59 chars wide
 - Every ### preceded by --- with blank lines
 - Separate keywords with double horizontal rules (--- then ---)
-- No emojis in any output (encoding safety for file writing)
+- Section headers use emoji per spec (no emoji in YAML frontmatter)
 - Production-grade examples, not toy code
 - UTF-8 without BOM
 
@@ -686,7 +686,7 @@ function Invoke-NewMode {
         # Create minimal index
         $topicSlug = Get-TopicFolder $Topic
         $existingTopics = Get-ChildItem -Path $InterviewRoot -Directory |
-            Where-Object { $_.Name -ne "config" }
+            Where-Object { $_.Name -ne "_config" }
         $navOrder = $existingTopics.Count + 1
 
         $indexContent = @"

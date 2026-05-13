@@ -235,15 +235,25 @@ Test with empty collections, single-element, and large datasets. Verify concurre
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Unified interfaces + implementations + algorithms for object groups in `java.util`
+
 **PROBLEM IT SOLVES:** Eliminates hand-rolled data structures, provides interoperable APIs
+
 **KEY INSIGHT:** Code to interfaces (`List`, `Map`), not implementations (`ArrayList`, `HashMap`)
+
 **USE WHEN:** Storing, retrieving, or processing any group of objects
+
 **AVOID WHEN:** Primitive-heavy hot paths (use arrays or Eclipse Collections to avoid boxing)
+
 **ANTI-PATTERN:** Coding to implementation type (`ArrayList<>` in method signatures instead of `List<>`)
+
 **TRADE-OFF:** Abstraction + interoperability vs boxing overhead for primitives
+
 **ONE-LINER:** "The framework is the interfaces; implementations are swappable strategies"
+
 **KEY NUMBERS:** HashMap default load factor: 0.75. ArrayList growth: 50%. HashSet = HashMap with dummy values.
+
 **TRIGGER PHRASE:** "interface hierarchy, implementation swap, fail-fast iterator"
+
 **OPENING SENTENCE:** "The Collections Framework is built on interface-implementation separation: you program against `List`, `Set`, and `Map` interfaces, and swap implementations based on access patterns, concurrency needs, and memory constraints."
 
 **If you remember only 3 things:**
@@ -672,15 +682,25 @@ Benchmark with JMH at realistic sizes (1K, 10K, 100K). Measure iteration time, r
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Two List implementations: array-backed (ArrayList) vs node-backed (LinkedList)
+
 **PROBLEM IT SOLVES:** Choosing the right internal structure for your access pattern
+
 **KEY INSIGHT:** Cache locality makes ArrayList faster than LinkedList for almost all operations in practice
+
 **USE WHEN:** ArrayList: always (default). LinkedList: almost never (use ArrayDeque for deque operations).
+
 **AVOID WHEN:** LinkedList for random access. ArrayList without presizing when size is known.
+
 **ANTI-PATTERN:** Choosing LinkedList because "insertions are O(1)" without considering traversal cost
+
 **TRADE-OFF:** ArrayList: wasted capacity (up to 50%) vs LinkedList: 48 bytes/node overhead
+
 **ONE-LINER:** "ArrayList wins on cache; LinkedList wins on whiteboards"
+
 **KEY NUMBERS:** ArrayList growth: 50%. LinkedList node: 48 bytes. Cache line: 64 bytes (fits ~16 refs).
+
 **TRIGGER PHRASE:** "cache locality, contiguous memory, amortized O(1) append"
+
 **OPENING SENTENCE:** "In nearly every real-world benchmark, ArrayList outperforms LinkedList - even for mid-list insertions at typical sizes - because CPU cache locality and JIT vectorization give contiguous arrays a constant-factor advantage that dominates Big O differences."
 
 **If you remember only 3 things:**
@@ -1121,15 +1141,25 @@ Verify `hashCode()`/`equals()` contract with unit tests. Test with adversarial k
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Two Map implementations: hash-based O(1) lookup vs tree-based O(log n) sorted lookup
+
 **PROBLEM IT SOLVES:** Efficient key-value storage with different ordering guarantees
+
 **KEY INSIGHT:** HashMap for speed, TreeMap for sorted access - choose based on iteration and query needs, not just put/get speed
+
 **USE WHEN:** HashMap: all point-lookup scenarios (95%+ of cases). TreeMap: sorted iteration, range queries, floor/ceiling.
+
 **AVOID WHEN:** HashMap for sorted iteration. TreeMap for pure point lookups (3-10x slower than HashMap).
+
 **ANTI-PATTERN:** Using mutable objects as HashMap keys; using TreeMap when you only need sorted output once
+
 **TRADE-OFF:** HashMap: O(1) speed but no ordering. TreeMap: O(log n) but sorted keys + range queries.
+
 **ONE-LINER:** "HashMap is a phone's contact search; TreeMap is the contacts sorted A-Z"
+
 **KEY NUMBERS:** HashMap default capacity: 16, load factor: 0.75, treeify threshold: 8. TreeMap: log2(n) comparisons per op.
+
 **TRIGGER PHRASE:** "hash buckets, Red-Black tree, sorted keys, range query"
+
 **OPENING SENTENCE:** "HashMap stores entries in a hash table for O(1) average-case access; TreeMap stores them in a Red-Black tree for O(log n) access with sorted key iteration - the choice depends on whether you need ordering or just point lookups."
 
 **If you remember only 3 things:**
@@ -1591,15 +1621,25 @@ Unit test `equals()`/`hashCode()` contract: equal objects must have equal hashes
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Set implementations ensuring element uniqueness via hashing (HashSet) or sorting (TreeSet)
+
 **PROBLEM IT SOLVES:** Duplicate elimination and fast membership testing
+
 **KEY INSIGHT:** HashSet delegates to HashMap; TreeSet delegates to TreeMap - understand the map, understand the set
+
 **USE WHEN:** HashSet: deduplication, membership checks. TreeSet: sorted unique elements, range queries.
+
 **AVOID WHEN:** HashSet when you need ordering. TreeSet when you only need contains().
+
 **ANTI-PATTERN:** Using HashSet with classes that do not override `hashCode()`/`equals()`
+
 **TRADE-OFF:** HashSet: O(1) but unordered. TreeSet: O(log n) but sorted + ranges.
+
 **ONE-LINER:** "HashSet is a HashMap with no values; TreeSet is a TreeMap with no values"
+
 **KEY NUMBERS:** HashSet: 48 bytes/element, load factor 0.75. TreeSet: 64 bytes/element, O(log n) = ~20 comparisons at 1M.
+
 **TRIGGER PHRASE:** "uniqueness invariant, hashCode contract, sorted navigation"
+
 **OPENING SENTENCE:** "HashSet and TreeSet both enforce uniqueness but through different mechanisms - HashSet via `hashCode()`/`equals()` for O(1) operations, TreeSet via `compareTo()` for O(log n) sorted access - and both are thin wrappers around their Map counterparts."
 
 **If you remember only 3 things:**
@@ -2067,15 +2107,25 @@ Test FIFO order: offer A, B, C then poll should return A, B, C. Test LIFO: push 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Queue (FIFO interface) and Deque (double-ended queue extending Queue) with ArrayDeque as the standard implementation
+
 **PROBLEM IT SOLVES:** Ordered processing of elements with efficient add/remove at ends
+
 **KEY INSIGHT:** ArrayDeque replaces LinkedList (as queue), Stack class (as stack), and LinkedList (as deque) - one implementation for three patterns
+
 **USE WHEN:** Any FIFO or LIFO processing, BFS traversal, task scheduling, undo/redo
+
 **AVOID WHEN:** Need random access by index (use ArrayList), need priority ordering (use PriorityQueue), need concurrent access (use BlockingQueue)
+
 **ANTI-PATTERN:** Using `Stack` class or `LinkedList` as a queue
+
 **TRADE-OFF:** ArrayDeque: O(1) amortized, cache-friendly, but no null elements. BlockingQueue: thread-safe but adds contention overhead.
+
 **ONE-LINER:** "ArrayDeque is the Swiss Army knife of queues and stacks"
+
 **KEY NUMBERS:** ArrayDeque default capacity: 16 (grows by 2x). Null elements: not allowed. LinkedList overhead: 48 bytes/node vs ArrayDeque 4 bytes/slot.
+
 **TRIGGER PHRASE:** "FIFO, LIFO, circular array, offer/poll, push/pop"
+
 **OPENING SENTENCE:** "Queue provides FIFO semantics with a dual API (throwing vs null-returning), Deque extends it with both-end access, and ArrayDeque is the recommended implementation for both - it uses a resizable circular array that outperforms LinkedList in every benchmark."
 
 **If you remember only 3 things:**
@@ -2550,15 +2600,25 @@ Test that `ConcurrentModificationException` is thrown when modifying during for-
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Iterable = interface for producing Iterators; Iterator = cursor for sequential element access
+
 **PROBLEM IT SOLVES:** Decouples traversal from collection structure; enables for-each loops and safe removal
+
 **KEY INSIGHT:** for-each is syntactic sugar for Iterator - understanding this explains ConcurrentModificationException
+
 **USE WHEN:** Any sequential traversal, safe element removal during iteration, custom data source traversal
+
 **AVOID WHEN:** Need parallel processing (use Spliterator/Stream), need indexed access (use List.get()), need backward traversal (use ListIterator)
+
 **ANTI-PATTERN:** Modifying a collection during for-each loop (triggers ConcurrentModificationException)
+
 **TRADE-OFF:** Uniform traversal API vs forward-only single-use cursor
+
 **ONE-LINER:** "Iterable is the promise; Iterator is the delivery"
+
 **KEY NUMBERS:** modCount checked on every next() call. remove() allowed once per next(). Fail-fast is best-effort, not guaranteed.
+
 **TRIGGER PHRASE:** "for-each desugars to iterator, fail-fast modCount"
+
 **OPENING SENTENCE:** "Iterable produces Iterators; Iterator provides a fail-fast cursor with hasNext()/next()/remove() - and the for-each loop is just syntactic sugar that calls iterator() under the hood, which is why modifying the collection during for-each throws ConcurrentModificationException."
 
 **If you remember only 3 things:**
@@ -3060,15 +3120,25 @@ Test reflexivity (`compare(a,a)==0`), antisymmetry, and transitivity. Test with 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Two interfaces for defining element ordering: Comparable (intrinsic) and Comparator (extrinsic)
+
 **PROBLEM IT SOLVES:** Enables sorting and ordered collections for custom objects
+
 **KEY INSIGHT:** Comparator.comparing() chains are the modern Java way - composable, safe, no class modification needed
+
 **USE WHEN:** Comparable: value types with one obvious natural order (dates, money). Comparator: everything else.
+
 **AVOID WHEN:** Comparable for classes with multiple valid orderings. Manual compareTo with integer subtraction.
+
 **ANTI-PATTERN:** Using `a - b` for integer comparison (overflow risk); implementing Comparable when multiple orderings exist
+
 **TRADE-OFF:** Comparable: automatic but inflexible (one ordering). Comparator: explicit but unlimited orderings.
+
 **ONE-LINER:** "Comparable is who you are; Comparator is how others see you"
+
 **KEY NUMBERS:** TimSort: O(n log n). compareTo return: negative/zero/positive. thenComparing: unlimited chain depth.
+
 **TRIGGER PHRASE:** "natural ordering, comparing chain, consistent with equals"
+
 **OPENING SENTENCE:** "Comparable defines a single natural ordering baked into the class via compareTo(), while Comparator provides external, composable ordering strategies via comparing()/thenComparing() - modern Java strongly favors Comparator because it separates ordering concern from domain logic."
 
 **If you remember only 3 things:**
@@ -3583,15 +3653,25 @@ Test reflexivity: `a.equals(a)`. Test symmetry: `a.equals(b) == b.equals(a)`. Te
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** A mandatory contract between equals() and hashCode() required for hash-based collections to work
+
 **PROBLEM IT SOLVES:** Ensures objects can be found in HashMap/HashSet after being stored
+
 **KEY INSIGHT:** hashCode selects the bucket; equals finds the match within it. Different hashes = different buckets = object lost.
+
 **USE WHEN:** Any class used as HashMap key or HashSet element with value-based equality
+
 **AVOID WHEN:** Entity objects where identity (reference) equality is desired - keep the Object defaults
+
 **ANTI-PATTERN:** Overriding equals() without hashCode(); using mutable fields in hashCode()
+
 **TRADE-OFF:** Structural equality requires maintaining the contract vs identity equality is free but less useful
+
 **ONE-LINER:** "Equal objects, equal hashes - or your HashMap becomes a black hole"
+
 **KEY NUMBERS:** Prime multiplier 31 in hash computation. Objects.hash() uses Arrays.hashCode internally. Hash collision is normal; hash inconsistency is fatal.
+
 **TRIGGER PHRASE:** "equals implies same hashCode, bucket lookup, contract"
+
 **OPENING SENTENCE:** "The equals/hashCode contract is simple - equal objects must have equal hash codes - but violating it causes silent data loss in HashMap and HashSet because the lookup searches the wrong bucket, and the compiler gives you zero warning."
 
 **If you remember only 3 things:**
@@ -4118,15 +4198,25 @@ Test that returned collections throw `UnsupportedOperationException` on mutation
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Static utility methods in `java.util.Collections` and factory methods on `List`/`Set`/`Map` interfaces
+
 **PROBLEM IT SOLVES:** Standardized algorithms (sort, search) and collection wrappers (immutable, synchronized)
+
 **KEY INSIGHT:** `List.of()` is truly immutable; `unmodifiableList()` is a view that can be mutated through the original
+
 **USE WHEN:** Sorting, searching, creating immutable collections, defensive copying
+
 **AVOID WHEN:** `synchronizedList` for concurrent access (use java.util.concurrent). `unmodifiableList` for true immutability (use List.copyOf).
+
 **ANTI-PATTERN:** Returning mutable internal collections; using `unmodifiableList` thinking it prevents all mutation
+
 **TRADE-OFF:** Convenience vs the need to understand wrapper semantics (view vs copy vs truly immutable)
+
 **ONE-LINER:** "Collections utility = toolbox for every collection type"
+
 **KEY NUMBERS:** TimSort: O(n log n). List.of(): 0-element shared singleton, optimized for 1-2 elements. binarySearch: O(log n) on sorted list only.
+
 **TRIGGER PHRASE:** "sort, binarySearch, unmodifiable, List.of, defensive copy"
+
 **OPENING SENTENCE:** "`java.util.Collections` provides algorithm methods (sort, binarySearch, min, max) and wrapper methods (unmodifiable, synchronized) that work on any collection type - but in modern Java, `List.of()`/`List.copyOf()` have superseded many of these for immutability, and `java.util.concurrent` has replaced synchronized wrappers."
 
 **If you remember only 3 things:**
@@ -4657,15 +4747,25 @@ Benchmark with JMH at realistic data sizes (not just 10 items). Verify with prof
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Selecting the optimal Java collection implementation based on access pattern, ordering, uniqueness, and concurrency needs
+
 **PROBLEM IT SOLVES:** Prevents O(n) operations where O(1) or O(log n) is available
+
 **KEY INSIGHT:** The "best" collection depends on your most frequent operation, not your data type
+
 **USE WHEN:** Every time you declare a collection variable - it is always a conscious decision
+
 **AVOID WHEN:** Premature optimization at tiny sizes (< 100 elements); any collection works fine
+
 **ANTI-PATTERN:** Using ArrayList for everything; using LinkedList without benchmarking; using synchronizedList in concurrent code
+
 **TRADE-OFF:** Time complexity vs memory overhead vs ordering guarantees vs thread safety
+
 **ONE-LINER:** "Match the O(1) to your hottest operation"
+
 **KEY NUMBERS:** HashMap entry ~48 bytes overhead. ArrayList resize at 1.5x. TreeMap/TreeSet O(log n) always. HashSet/HashMap O(1) average, O(log n) worst (treeified at 8+ collisions).
+
 **TRIGGER PHRASE:** "access pattern, time complexity, List vs Set vs Map decision"
+
 **OPENING SENTENCE:** "Choosing the right collection starts with identifying your dominant access pattern - random access, uniqueness checks, sorted iteration, or FIFO processing - then selecting the implementation whose O(1) operation matches that pattern."
 
 **If you remember only 3 things:**

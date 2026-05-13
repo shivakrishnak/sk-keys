@@ -255,15 +255,25 @@ Test with high concurrency (10,000+ tasks) to verify scalability. Use `-Djdk.tra
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Lightweight JVM-managed threads that unmount during blocking I/O, enabling millions of concurrent tasks
+
 **PROBLEM IT SOLVES:** OS thread limits cap concurrency; reactive programming adds complexity to work around it
+
 **KEY INSIGHT:** Virtual threads do not make code faster - they make blocking code scalable by freeing carriers during I/O wait
+
 **USE WHEN:** I/O-bound workloads (web servers, microservices, batch processing with external calls)
+
 **AVOID WHEN:** CPU-bound computation (no blocking to unmount), real-time latency requirements
+
 **ANTI-PATTERN:** Pooling virtual threads (defeats purpose), using ThreadLocal extensively (memory at scale)
+
 **TRADE-OFF:** Simple blocking code at massive scale vs pinning risks and shifted bottleneck to downstream resources
+
 **ONE-LINER:** "Ride-sharing for threads - the driver picks up another passenger while you are in the store"
+
 **KEY NUMBERS:** ~1 KB per VT (vs ~1 MB platform thread). Default carrier pool = CPU count. Millions of VTs per JVM.
+
 **TRIGGER PHRASE:** "virtual thread, unmount carrier, thread-per-request, no pooling, pinning"
+
 **OPENING SENTENCE:** "Virtual threads (Java 21) are JVM-managed threads that unmount from carrier threads during blocking I/O. They enable millions of concurrent tasks with simple synchronous code. Write blocking code, create one VT per task (never pool), and the JVM handles scheduling. The bottleneck shifts from thread count to downstream resources."
 
 **If you remember only 3 things:**
@@ -749,15 +759,25 @@ Test failure paths: mock one task to throw, verify other tasks are cancelled and
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** API that treats concurrent tasks as a scoped unit with automatic lifecycle management
+
 **PROBLEM IT SOLVES:** Thread leaks, orphan tasks, incomplete cancellation, scattered error handling
+
 **KEY INSIGHT:** Tasks cannot outlive their scope - structured concurrency is to threads what structured programming was to goto
+
 **USE WHEN:** Forking multiple concurrent tasks that should succeed/fail together
+
 **AVOID WHEN:** Fire-and-forget background tasks, long-running daemon threads
+
 **ANTI-PATTERN:** Forking tasks without joining, ignoring throwIfFailed(), not using try-with-resources
+
 **TRADE-OFF:** Clean lifecycle management vs less flexibility for escaped/background work
+
 **ONE-LINER:** "Try-with-resources for threads - all child tasks end when the scope closes"
+
 **KEY NUMBERS:** Preview since Java 19. ShutdownOnFailure, ShutdownOnSuccess built-in. Custom policies via extension.
+
 **TRIGGER PHRASE:** "scope fork join cancel, no task outlives parent"
+
 **OPENING SENTENCE:** "Structured concurrency (JEP 462) treats concurrent tasks as a single unit of work within a scope. Tasks are forked, joined, and automatically cancelled on failure. No task can outlive its scope."
 
 **If you remember only 3 things:**
@@ -1261,15 +1281,25 @@ Test that `KEY.get()` returns bound value within scope. Test that `KEY.get()` th
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Immutable, scope-bound values that replace ThreadLocal for context propagation
+
 **PROBLEM IT SOLVES:** ThreadLocal memory leaks, mutation bugs, and expensive inheritance with virtual threads
+
 **KEY INSIGHT:** Immutability + scope lifetime = no leaks, no synchronization, efficient inheritance
+
 **USE WHEN:** Passing read-only context (user, trace ID, tenant) through a call chain with virtual threads
+
 **AVOID WHEN:** You need mutable per-thread state (caches, buffers) - keep ThreadLocal for those
+
 **ANTI-PATTERN:** Calling get() outside a bound scope, trying to mutate (there is no set())
+
 **TRADE-OFF:** Immutable safety vs inability to update value mid-scope (must rebind in nested scope)
+
 **ONE-LINER:** "A laminated badge collected when you leave the room - read-only, auto-cleaned, zero-copy inherited"
+
 **KEY NUMBERS:** ~0 bytes per inheriting VT (pointer copy). Preview since Java 20 (JEP 429). get() faster than ThreadLocal.get().
+
 **TRIGGER PHRASE:** "scoped value immutable auto-cleanup scope-bound inheritance"
+
 **OPENING SENTENCE:** "ScopedValues bind immutable context to a lexical scope. No remove() needed - values are cleaned up automatically. Child threads inherit via pointer copy, not deep clone. They replace ThreadLocal for virtual thread workloads."
 
 **If you remember only 3 things:**
@@ -1794,15 +1824,25 @@ Test each type branch with representative inputs. Test null input explicitly. Fo
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Switch that matches types, applies guards, handles null, with compiler-enforced exhaustiveness
+
 **PROBLEM IT SOLVES:** Verbose instanceof chains, missing casts, no compile-time completeness checking
+
 **KEY INSIGHT:** With sealed types, adding a new subtype forces every switch to update at compile time
+
 **USE WHEN:** Dispatching on runtime types, handling polymorphic data, processing sealed hierarchies
+
 **AVOID WHEN:** Simple constant switching (int, String, enum) where traditional switch suffices
+
 **ANTI-PATTERN:** Putting general patterns before specific ones (dominance error), using default with sealed types
+
 **TRADE-OFF:** Type-safe exhaustive dispatch vs pattern ordering rules and new syntax to learn
+
 **ONE-LINER:** "A customs checkpoint that identifies, inspects, and routes every traveler type with no one slipping through"
+
 **KEY NUMBERS:** Finalized in Java 21 (JEP 441). Preview since Java 17. Supports type, guarded, null, and record patterns.
+
 **TRIGGER PHRASE:** "switch type pattern guard sealed exhaustive"
+
 **OPENING SENTENCE:** "Pattern matching for switch (Java 21) lets you match types, apply guard conditions, and handle null directly in switch. With sealed types, the compiler enforces exhaustiveness - adding a new subtype flags every incomplete switch."
 
 **If you remember only 3 things:**
@@ -2344,15 +2384,25 @@ Test each record type branch with representative data. Verify nested deconstruct
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Deconstruction patterns for records that extract components directly in pattern matching
+
 **PROBLEM IT SOLVES:** Verbose accessor chains after type matching, especially for nested records
+
 **KEY INSIGHT:** Match by structure, not by type-then-access - the pattern IS the extraction
+
 **USE WHEN:** Processing sealed record hierarchies, nested data structures, API responses
+
 **AVOID WHEN:** Non-record classes, very deep nesting (3+ levels), simple single-field access
+
 **ANTI-PATTERN:** Deep nesting that is hard to read, using record patterns on types that should not be records
+
 **TRADE-OFF:** Concise deconstruction vs readability of deeply nested patterns
+
 **ONE-LINER:** "Open the envelope and spread all pages on the table in one motion"
+
 **KEY NUMBERS:** Finalized Java 21 (JEP 440). Works in switch + instanceof. Unnamed patterns (\_) in Java 22+.
+
 **TRIGGER PHRASE:** "record pattern deconstruct nested components bind"
+
 **OPENING SENTENCE:** "Record patterns (Java 21) deconstruct records in switch and instanceof, extracting components directly in the pattern. Nested patterns deconstruct inner records recursively. Combined with sealed types, they enable exhaustive algebraic data type processing."
 
 **If you remember only 3 things:**
@@ -2875,15 +2925,25 @@ Test getFirst()/getLast() on empty collections (expect NoSuchElementException). 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Three new interfaces providing uniform first/last/reverse API for ordered collections
+
 **PROBLEM IT SOLVES:** Inconsistent methods for first/last access across List, Deque, SortedSet
+
 **KEY INSIGHT:** Encounter order is now a type-level concept - SequencedCollection expresses "this has order"
+
 **USE WHEN:** Any method needing first/last elements or reverse iteration regardless of collection type
+
 **AVOID WHEN:** Working with unordered collections (HashSet, HashMap) - they do not implement these interfaces
+
 **ANTI-PATTERN:** Copying a collection just to reverse it instead of using reversed() view
+
 **TRADE-OFF:** Unified API vs additional interfaces in an already complex hierarchy
+
 **ONE-LINER:** "A universal remote for ordered collections - First, Last, Reverse buttons work on every brand"
+
 **KEY NUMBERS:** 3 new interfaces. reversed() is O(1) view. Retrofitted into 10+ existing classes.
+
 **TRIGGER PHRASE:** "sequenced first last reversed view uniform"
+
 **OPENING SENTENCE:** "Sequenced Collections (Java 21, JEP 431) add SequencedCollection, SequencedSet, and SequencedMap interfaces with uniform getFirst(), getLast(), and reversed() methods. Existing classes are retrofitted. reversed() returns an O(1) view, not a copy."
 
 **If you remember only 3 things:**
@@ -3376,15 +3436,25 @@ For current code, verify PreparedStatements are used (not concatenation). For fu
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Expression interpolation in strings with pluggable processors for domain-specific safety
+
 **PROBLEM IT SOLVES:** Verbose concatenation, format string errors, injection vulnerabilities
+
 **KEY INSIGHT:** The processor abstraction makes safety a compile-time guarantee, not a runtime convention
+
 **USE WHEN:** Building SQL, HTML, JSON, or any structured text with dynamic values (when API stabilizes)
+
 **AVOID WHEN:** API is still being redesigned - use PreparedStatements and template engines for now
+
 **ANTI-PATTERN:** Using STR processor for SQL/HTML (no safety), treating templates as just "nicer concatenation"
+
 **TRADE-OFF:** Safe, readable interpolation vs preview/withdrawn status, new syntax, processor learning curve
+
 **ONE-LINER:** "A prescription pad with validation - fill in values, the processor ensures safety"
+
 **KEY NUMBERS:** Preview Java 21 (JEP 430), re-previewed Java 22 (JEP 459), withdrawn for redesign.
+
 **TRIGGER PHRASE:** "template processor STR interpolation safety withdrawn"
+
 **OPENING SENTENCE:** "String templates (preview, withdrawn) add expression interpolation with processor-based safety. STR does simple concat. Custom processors can produce PreparedStatement (SQL) or encoded HTML, preventing injection by construction. The API is being redesigned."
 
 **If you remember only 3 things:**
@@ -3874,15 +3944,25 @@ Test with known native functions (strlen, abs). Verify Arena cleanup with try-wi
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Pure-Java API for calling native C/C++ functions and managing off-heap memory safely
+
 **PROBLEM IT SOLVES:** JNI complexity, Unsafe deprecation, unsafe native memory management
+
 **KEY INSIGHT:** Describe the C signature in Java - the JVM generates the bridge at runtime
+
 **USE WHEN:** Calling native libraries (OpenSSL, zlib, CUDA), managing large off-heap buffers, replacing JNI
+
 **AVOID WHEN:** Pure Java alternatives exist (e.g., Java crypto instead of OpenSSL bindings)
+
 **ANTI-PATTERN:** Not closing Arenas (memory leak), using shared Arena when confined suffices
+
 **TRADE-OFF:** Safety + pure Java vs learning curve + bounds-checking overhead
+
 **ONE-LINER:** "A universal translator - speak Java, the JVM handles the native conversation"
+
 **KEY NUMBERS:** Finalized Java 22 (JEP 454). No size limit on MemorySegment (vs 2GB DirectByteBuffer). 3 Arena types.
+
 **TRIGGER PHRASE:** "foreign function memory arena linker JNI replacement"
+
 **OPENING SENTENCE:** "The Foreign Function and Memory API (JEP 454, Java 22) replaces JNI and sun.misc.Unsafe with a pure-Java approach. Linker + FunctionDescriptor create MethodHandles for native functions. Arena + MemorySegment manage off-heap memory with deterministic deallocation and bounds checking."
 
 **If you remember only 3 things:**

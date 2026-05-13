@@ -288,15 +288,25 @@ Use `Thread.getAllStackTraces()` or jstack to verify thread count stays bounded.
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Thread is Java's execution context; Runnable is the task interface
+
 **PROBLEM IT SOLVES:** Enables concurrent execution for parallelism and I/O overlap
+
 **KEY INSIGHT:** Separate the task (Runnable) from the execution mechanism (Thread/pool)
+
 **USE WHEN:** You need concurrent execution - I/O overlap, parallel computation, background tasks
+
 **AVOID WHEN:** Task is trivial and synchronous execution is acceptable
+
 **ANTI-PATTERN:** Extending Thread instead of implementing Runnable; creating raw threads instead of using pools
+
 **TRADE-OFF:** Concurrency vs complexity (shared state, race conditions, debugging difficulty)
+
 **ONE-LINER:** "Runnable is the recipe card; Thread is the chef; ExecutorService is the kitchen manager"
+
 **KEY NUMBERS:** ~1MB stack per platform thread, ~1-10us context switch, N_cpu threads for CPU-bound work
+
 **TRIGGER PHRASE:** "thread runnable concurrent execution pool"
+
 **OPENING SENTENCE:** "Always implement Runnable instead of extending Thread because it separates the task from the execution mechanism, enabling reuse with thread pools, executors, and virtual threads."
 
 **If you remember only 3 things:**
@@ -826,15 +836,25 @@ Test with `Executors.newSingleThreadExecutor()` for deterministic ordering. Test
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Callable produces a typed result; Future is the handle to retrieve it
+
 **PROBLEM IT SOLVES:** Type-safe async result retrieval with exception propagation, timeout, and cancellation
+
 **KEY INSIGHT:** Future decouples submission from retrieval, enabling parallel execution of independent tasks
+
 **USE WHEN:** You need a result from an async task with error handling and timeouts
+
 **AVOID WHEN:** You do not need the result (use Runnable), or you need composition/chaining (use CompletableFuture)
+
 **ANTI-PATTERN:** Calling get() without timeout (indefinite blocking), ignoring ExecutionException
+
 **TRADE-OFF:** Simple API vs blocking retrieval (no built-in composition)
+
 **ONE-LINER:** "Callable is the order, Future is the receipt - check isDone or wait with get"
+
 **KEY NUMBERS:** get() blocks indefinitely without timeout. cancel(true) only sets interrupt flag. FutureTask uses volatile state field.
+
 **TRIGGER PHRASE:** "callable future get submit result async"
+
 **OPENING SENTENCE:** "Callable returns a typed result and throws checked exceptions, unlike Runnable. Future is the handle: get() blocks until complete, get(timeout) adds a deadline, cancel() attempts cancellation."
 
 **If you remember only 3 things:**
@@ -1366,15 +1386,25 @@ Use `jstack <pid>` to capture thread dumps and verify expected states. Use `Thre
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Six states (NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED) defining thread behavior
+
 **PROBLEM IT SOLVES:** Enables precise diagnosis of thread hangs, deadlocks, and contention
+
 **KEY INSIGHT:** BLOCKED = waiting for lock (automatic resume), WAITING = waiting for signal (must be notified)
+
 **USE WHEN:** Diagnosing hangs, deadlocks, performance bottlenecks via thread dumps
+
 **AVOID WHEN:** N/A - thread states are always relevant for concurrent debugging
+
 **ANTI-PATTERN:** Polling with Thread.sleep() instead of proper wait/notify
+
 **TRADE-OFF:** State model complexity vs precise diagnostic capability
+
 **ONE-LINER:** "BLOCKED = waiting for a lock; WAITING = waiting for a signal; RUNNABLE = ready or running"
+
 **KEY NUMBERS:** 6 states, RUNNABLE includes both ready and running, TERMINATED is final
+
 **TRIGGER PHRASE:** "thread state blocked waiting runnable lifecycle"
+
 **OPENING SENTENCE:** "Java defines six thread states: NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED. The critical diagnostic distinction is BLOCKED (waiting for a monitor lock - automatic resume when released) vs WAITING (waiting for notify/unpark - requires explicit signal)."
 
 **If you remember only 3 things:**
@@ -1941,15 +1971,25 @@ Monitor `pool.getActiveCount()`, `pool.getQueue().size()`, and `pool.getComplete
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Standardized API for managed thread pools that decouple task submission from execution
+
 **PROBLEM IT SOLVES:** Eliminates raw thread creation, provides bounded concurrency, reuse, and lifecycle management
+
 **KEY INSIGHT:** Executors factory methods hide dangerous defaults - always create ThreadPoolExecutor directly in production
+
 **USE WHEN:** Any concurrent workload that needs managed threads (servers, batch processing, async tasks)
+
 **AVOID WHEN:** Single sequential tasks, or when virtual threads eliminate the need for pooling (I/O-bound, Java 21+)
+
 **ANTI-PATTERN:** newCachedThreadPool for server workloads (unbounded threads), newFixedThreadPool without monitoring (unbounded queue)
+
 **TRADE-OFF:** Managed execution vs configuration complexity (pool size, queue, rejection policy)
+
 **ONE-LINER:** "Post office, not postal workers - submit tasks to a managed pool, not raw threads"
+
 **KEY NUMBERS:** Core pool stays alive, max pool for burst, queue buffers overflow, keep-alive kills idle extras
+
 **TRIGGER PHRASE:** "executor pool submit queue rejection shutdown"
+
 **OPENING SENTENCE:** "The Executor Framework replaces raw thread creation with managed pools. In production, create ThreadPoolExecutor directly with bounded queue and CallerRunsPolicy - never use Executors factory methods because they hide dangerous defaults like unbounded queues."
 
 **If you remember only 3 things:**
@@ -2490,15 +2530,25 @@ Test shutdown: verify `awaitTermination` returns true after shutdown. Test rejec
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** ExecutorService = lifecycle API; ThreadPoolExecutor = configurable pool implementation
+
 **PROBLEM IT SOLVES:** Complete task lifecycle: submit, cancel, collect results, bulk operations, graceful shutdown
+
 **KEY INSIGHT:** Queue type determines pool scaling behavior more than maxPoolSize does
+
 **USE WHEN:** Any production application needing managed concurrent execution
+
 **AVOID WHEN:** Simple fire-and-forget with virtual threads (Java 21+) where no pool is needed
+
 **ANTI-PATTERN:** Using execute() instead of submit() (loses exceptions), ignoring shutdown (JVM hang)
+
 **TRADE-OFF:** Configuration control vs complexity (7 interacting parameters)
+
 **ONE-LINER:** "ExecutorService is the API; ThreadPoolExecutor is the engine with knobs"
+
 **KEY NUMBERS:** execute() vs submit() exception behavior, shutdown() vs shutdownNow(), core -> queue -> max -> reject order
+
 **TRIGGER PHRASE:** "executorservice threadpoolexecutor submit shutdown lifecycle"
+
 **OPENING SENTENCE:** "The critical difference: execute() throws on the worker thread (exception lost); submit() stores it in the Future (exception observed). In production, always use submit() for exception visibility."
 
 **If you remember only 3 things:**
@@ -3078,15 +3128,25 @@ Use `scheduleAtFixedRate` with a short period (100ms) in tests. Count executions
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** ExecutorService with delayed and periodic task scheduling backed by a priority queue
+
 **PROBLEM IT SOLVES:** Replaces fragile Timer/TimerTask with multi-threaded, exception-isolated scheduling
+
 **KEY INSIGHT:** Periodic tasks stop silently on exception - always wrap in try-catch
+
 **USE WHEN:** Cache refresh, heartbeats, metric flushing, delayed task execution, polling
+
 **AVOID WHEN:** Distributed scheduling across JVMs (use Quartz/ShedLock), cron-like scheduling (use CronScheduler)
+
 **ANTI-PATTERN:** Letting exceptions propagate in periodic tasks (silently kills the schedule)
+
 **TRADE-OFF:** Convenience of periodic scheduling vs silent failure on exception
+
 **ONE-LINER:** "Alarm clock app - multiple independent alarms on a shared thread pool"
+
 **KEY NUMBERS:** fixedRate = start-to-start, fixedDelay = end-to-start, nanoTime (monotonic, not wall clock)
+
 **TRIGGER PHRASE:** "scheduled periodic delay fixedrate exception silent"
+
 **OPENING SENTENCE:** "ScheduledExecutorService replaces Timer with a pool-backed scheduler. The critical gotcha: if a periodic task throws an uncaught exception, it stops silently - no log, no retry, no notification."
 
 **If you remember only 3 things:**
@@ -3676,15 +3736,25 @@ Verify results match sequential computation. Benchmark with JMH varying parallel
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Specialized thread pool with per-thread deques and work-stealing for recursive parallelism
+
 **PROBLEM IT SOLVES:** Recursive tasks that deadlock on fixed thread pools; automatic load balancing
+
 **KEY INSIGHT:** Work-stealing: LIFO for owner (cache locality), FIFO for stealer (large tasks first)
+
 **USE WHEN:** CPU-bound divide-and-conquer (merge sort, parallel streams, recursive computation)
+
 **AVOID WHEN:** I/O-bound tasks (use virtual threads), non-recursive tasks (use ThreadPoolExecutor)
+
 **ANTI-PATTERN:** Blocking I/O in fork-join tasks (starves the common pool)
+
 **TRADE-OFF:** Automatic load balancing vs per-task object overhead and complexity
+
 **ONE-LINER:** "Idle workers steal from busy workers - no one sits idle while work remains"
+
 **KEY NUMBERS:** Default parallelism = available processors, threshold should yield 100us-10ms leaf tasks
+
 **TRIGGER PHRASE:** "forkjoin workstealing deque parallel stream commonpool"
+
 **OPENING SENTENCE:** "ForkJoinPool uses work-stealing with per-thread deques to execute recursive tasks efficiently. The common pool is shared by parallel streams and CompletableFuture - blocking I/O in either starves both."
 
 **If you remember only 3 things:**
@@ -4253,15 +4323,25 @@ Test with `CompletableFuture.completedFuture(value)` for synchronous unit tests.
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Composable async primitive supporting non-blocking chaining, combination, and error handling
+
 **PROBLEM IT SOLVES:** Eliminates blocking Future.get() calls and enables declarative async pipelines
+
 **KEY INSIGHT:** Non-async methods run on the completing thread; always specify an executor for async methods
+
 **USE WHEN:** Async request-response, parallel fan-out/fan-in, pipeline composition, timeout handling
+
 **AVOID WHEN:** Stream processing with backpressure (use reactive), simple sequential I/O (use virtual threads + blocking)
+
 **ANTI-PATTERN:** Using join()/get() inside a stage (deadlock risk), relying on common pool (starvation)
+
 **TRADE-OFF:** Non-blocking composition vs debugging complexity (cross-thread stack traces)
+
 **ONE-LINER:** "Pizza tracker - define what happens next without waiting at the restaurant"
+
 **KEY NUMBERS:** thenApply = map, thenCompose = flatMap, thenCombine = zip, allOf = join all, anyOf = race
+
 **TRIGGER PHRASE:** "completablefuture thenApply thenCompose exceptionally async"
+
 **OPENING SENTENCE:** "CompletableFuture shifts from pull (Future.get blocks) to push (stages trigger automatically). In production, always specify an executor - the default common pool is shared with parallel streams."
 
 **If you remember only 3 things:**
@@ -4848,15 +4928,25 @@ Submit tasks with known delays (100ms, 500ms, 1000ms). Verify take() returns the
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Wrapper that delivers completed Futures in completion order via a BlockingQueue
+
 **PROBLEM IT SOLVES:** Eliminates blocking on slow tasks while fast results wait unprocessed
+
 **KEY INSIGHT:** Transforms N-future polling into single-queue consumption
+
 **USE WHEN:** Processing multiple parallel results as they arrive (progressive rendering, price comparison, hedging)
+
 **AVOID WHEN:** Only need the first result (use CompletableFuture.anyOf()), need non-blocking chaining (use CompletableFuture)
+
 **ANTI-PATTERN:** Not consuming all results (memory leak in completion queue)
+
 **TRADE-OFF:** Completion ordering vs need to track submitted Futures separately for cancellation
+
 **ONE-LINER:** "Baggage carousel - results arrive in the order they finish, not the order you submitted"
+
 **KEY NUMBERS:** take() blocks, poll() returns null, poll(timeout) waits up to timeout
+
 **TRIGGER PHRASE:** "completionservice take poll completion order results"
+
 **OPENING SENTENCE:** "CompletionService delivers results in completion order, not submission order. It transforms N-future polling into single-queue dequeuing. Use it for progressive processing, hedged requests, and latency-sensitive fan-out."
 
 **If you remember only 3 things:**
@@ -5456,15 +5546,25 @@ Verify daemon thread does not prevent JVM exit by calling main() and checking pr
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Daemon = background thread killed on JVM exit; Priority = scheduling hint (1-10)
+
 **PROBLEM IT SOLVES:** Daemon threads prevent JVM from hanging due to background threads
+
 **KEY INSIGHT:** Daemon threads get no cleanup - finally blocks are not guaranteed to run
+
 **USE WHEN:** Daemon: monitoring, heartbeats, cache eviction (expendable work). Priority: almost never.
+
 **AVOID WHEN:** Daemon: any critical work (file I/O, DB writes, message publishing). Priority: any correctness requirement.
+
 **ANTI-PATTERN:** Using daemon threads for database writes or file I/O (data loss on shutdown)
+
 **TRADE-OFF:** Automatic JVM exit vs no cleanup guarantee for daemon threads
+
 **ONE-LINER:** "Janitors go home when the office closes - even if they're mid-task"
+
 **KEY NUMBERS:** setDaemon() before start(), inherits from parent, virtual threads always daemon
+
 **TRIGGER PHRASE:** "daemon non-daemon shutdown priority JVM exit"
+
 **OPENING SENTENCE:** "Daemon threads are killed when all non-daemon threads exit. Never use them for critical work because finally blocks are not guaranteed to run. Thread priority is a suggestion that modern OS schedulers mostly ignore."
 
 **If you remember only 3 things:**
@@ -6066,15 +6166,25 @@ Start a task in a thread. Call `thread.interrupt()`. Verify the task stops withi
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Cooperative cancellation protocol using interrupt flag and InterruptedException
+
 **PROBLEM IT SOLVES:** Safe, clean cancellation of blocking and running tasks without corrupting state
+
 **KEY INSIGHT:** InterruptedException clears the flag - you must re-interrupt or propagate, never swallow
+
 **USE WHEN:** Cancelling tasks submitted to thread pools, implementing shutdown, timeout handling
+
 **AVOID WHEN:** Cancelling non-interruptible I/O (close the resource instead)
+
 **ANTI-PATTERN:** Empty catch block for InterruptedException (kills the cancellation signal)
+
 **TRADE-OFF:** Safe cooperative cancellation vs requirement that all code handle interrupts properly
+
 **ONE-LINER:** "Fire alarm - asks you to leave, does not push you out, but you should listen"
+
 **KEY NUMBERS:** interrupted() clears flag, isInterrupted() preserves flag, catch IE always re-interrupts or propagates
+
 **TRIGGER PHRASE:** "interrupt interruptedexception cancel cooperative shutdown"
+
 **OPENING SENTENCE:** "Thread interruption is cooperative - interrupt() requests, the thread decides. The cardinal rule: never swallow InterruptedException. Either propagate it or re-set the flag with Thread.currentThread().interrupt()."
 
 **If you remember only 3 things:**

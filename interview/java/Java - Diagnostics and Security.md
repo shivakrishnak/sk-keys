@@ -255,15 +255,25 @@ Start a recording, run a workload, open the `.jfr` file in JMC. Verify: CPU samp
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Built-in JVM event recorder for continuous production profiling with < 1% overhead
+
 **PROBLEM IT SOLVES:** Production diagnostics without reproducing issues or attaching external profilers
+
 **KEY INSIGHT:** Always-on recording means the data already exists when incidents happen
+
 **USE WHEN:** Production profiling, latency investigation, GC analysis, lock contention, allocation profiling
+
 **AVOID WHEN:** N/A - always enable in production (overhead is negligible)
+
 **ANTI-PATTERN:** Only profiling in development/staging (production behavior differs)
+
 **TRADE-OFF:** Near-zero overhead vs learning curve for JMC analysis
+
 **ONE-LINER:** "Airplane black box for your JVM - always recording, check after the incident"
+
 **KEY NUMBERS:** Overhead: < 1%. Default sample interval: ~10ms. Free since Java 11.
+
 **TRIGGER PHRASE:** "JFR flight recorder JMC continuous profiling production"
+
 **OPENING SENTENCE:** "JFR is a built-in JVM event recorder with <1% overhead, designed for always-on production use. It captures CPU samples, GC phases, lock contention, allocations, and I/O - all with thread-local buffers to avoid contention."
 
 **If you remember only 3 things:**
@@ -768,15 +778,25 @@ Create a deliberate deadlock with two threads acquiring locks in reverse order. 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Point-in-time snapshot of all thread stack traces, states, and lock ownership
+
 **PROBLEM IT SOLVES:** Diagnoses deadlocks, hangs, thread starvation, and lock contention in live JVMs
+
 **KEY INSIGHT:** Multiple dumps (3-5, 5-10s apart) show progress vs stuck - single dumps are insufficient
+
 **USE WHEN:** Application hangs, high latency, CPU at 0% or 100%, thread pool exhaustion
+
 **AVOID WHEN:** Memory leaks (use heap dump), CPU profiling (use JFR/async-profiler)
+
 **ANTI-PATTERN:** Taking one dump, analyzing in isolation, then restarting (destroys evidence)
+
 **TRADE-OFF:** Zero code change diagnostics vs point-in-time only (not continuous)
+
 **ONE-LINER:** "Freeze-frame of every thread in the JVM - where they are, what they are waiting for"
+
 **KEY NUMBERS:** Take 3-5 dumps, 5-10 seconds apart. Safepoint pause: < 100ms. States: RUNNABLE, BLOCKED, WAITING, TIMED_WAITING.
+
 **TRIGGER PHRASE:** "thread dump jstack jcmd deadlock blocked waiting"
+
 **OPENING SENTENCE:** "A thread dump captures the stack trace, state, and lock ownership of every thread in the JVM at one point in time. I always take 3-5 dumps, 5-10 seconds apart, to distinguish stuck threads from slow ones."
 
 **If you remember only 3 things:**
@@ -1314,15 +1334,25 @@ Intentionally create a memory leak (add objects to a list in a loop). Set a smal
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Binary snapshot of every object in the JVM heap with full reference graph
+
 **PROBLEM IT SOLVES:** Diagnoses memory leaks, identifies what consumes memory, and explains OOM
+
 **KEY INSIGHT:** Retained size (not shallow size) reveals true memory impact - follow the dominator tree
+
 **USE WHEN:** OOM, memory growth over time, high GC overhead from large live set
+
 **AVOID WHEN:** CPU issues (use JFR), thread hangs (use thread dump), intermittent problems (use JFR)
+
 **ANTI-PATTERN:** Not enabling HeapDumpOnOutOfMemoryError in production (losing OOM evidence)
+
 **TRADE-OFF:** Complete memory visibility vs large file size and capture pause
+
 **ONE-LINER:** "Forensic photograph of every object in memory - what it is, how big, who keeps it alive"
+
 **KEY NUMBERS:** Dump size ~1-1.5x heap. Capture causes full GC pause. MAT needs ~1.5x dump size in RAM.
+
 **TRIGGER PHRASE:** "heap dump OOM retained size dominator tree MAT"
+
 **OPENING SENTENCE:** "A heap dump captures every live object in the JVM heap with its full reference graph. I always enable HeapDumpOnOutOfMemoryError in production, then use Eclipse MAT's dominator tree and retained size to trace from the largest retention to the root cause."
 
 **If you remember only 3 things:**
@@ -1859,15 +1889,25 @@ Create a JMH benchmark for the hot path. Run before and after the optimization. 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Systematic, measurement-driven JVM performance optimization cycle
+
 **PROBLEM IT SOLVES:** Eliminates guesswork, targets the actual bottleneck, delivers measurable improvement
+
 **KEY INSIGHT:** Profile first - the bottleneck is almost always surprising. 80% of time is in 20% of code.
+
 **USE WHEN:** p99 exceeds SLO, throughput insufficient, GC overhead too high
+
 **AVOID WHEN:** Performance is within SLO (premature optimization is the root of all evil)
+
 **ANTI-PATTERN:** Tuning JVM flags before profiling application code
+
 **TRADE-OFF:** Discipline and tooling investment vs fast but wrong guesswork
+
 **ONE-LINER:** "Do not guess. Measure, profile, fix the top bottleneck, measure again."
+
 **KEY NUMBERS:** Fix the top 1-2 bottlenecks for 80% improvement. Algorithmic fixes = 10-100x. Flag tuning = 10-30%.
+
 **TRIGGER PHRASE:** "profile measure bottleneck SLO JFR async-profiler"
+
 **OPENING SENTENCE:** "Java performance tuning follows a strict cycle: define SLOs, profile to find the actual bottleneck, apply a targeted fix, measure. The bottleneck is almost always surprising - I have seen teams spend weeks tuning GC when the real issue was a single regex in the hot path."
 
 **If you remember only 3 things:**
@@ -2435,15 +2475,25 @@ Run the same load test (Gatling/k6) with each GC collector. Compare p50, p99, p9
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Decision framework for selecting the right JVM garbage collector based on workload requirements
+
 **PROBLEM IT SOLVES:** Eliminates guesswork in GC selection by matching collector characteristics to workload needs
+
 **KEY INSIGHT:** The pause time budget is the primary selection criteria - it narrows to 1-2 candidates immediately
+
 **USE WHEN:** New service deployment, GC-related SLO violations, Java version upgrade, performance tuning
+
 **AVOID WHEN:** Application is within SLO with default G1 (do not fix what is not broken)
+
 **ANTI-PATTERN:** Copying GC flags from the internet without measuring impact on your specific workload
+
 **TRADE-OFF:** Low pause time (ZGC) vs maximum throughput (Parallel) vs balanced (G1)
+
 **ONE-LINER:** "Choosing the right vehicle for the road: bicycle (Serial), truck (Parallel), SUV (G1), bullet train (ZGC)"
+
 **KEY NUMBERS:** G1 default pause target: 200ms. ZGC pause: < 1ms. Parallel: 0 pause target (maximize throughput).
+
 **TRIGGER PHRASE:** "GC selection G1 ZGC Parallel pause throughput heap"
+
 **OPENING SENTENCE:** "GC selection starts with your pause time budget. If you can tolerate 200ms pauses, G1 maximizes throughput. If you need < 10ms, use ZGC. If throughput is all that matters (batch jobs), use Parallel. Start with G1 (the default), switch only when GC logs show it cannot meet your SLO."
 
 **If you remember only 3 things:**
@@ -3002,15 +3052,25 @@ Use OWASP ZAP or Burp Suite for DAST (dynamic application security testing). Run
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Security practices for Java applications covering input validation, crypto, serialization, and dependency management
+
 **PROBLEM IT SOLVES:** Prevents OWASP Top 10 vulnerabilities: injection, XSS, insecure deserialization, known CVEs
+
 **KEY INSIGHT:** 80% of Java vulns come from 3 patterns: string concat in SQL, native serialization, outdated dependencies
+
 **USE WHEN:** Always - security is not optional for any production application
+
 **AVOID WHEN:** N/A - never skip security
+
 **ANTI-PATTERN:** String concatenation in SQL queries, native Java serialization with untrusted data, hardcoded secrets
+
 **TRADE-OFF:** Security robustness vs development velocity (but secure patterns become habitual)
+
 **ONE-LINER:** "Every input is hostile, every dependency is a liability, every serialization is a risk"
+
 **KEY NUMBERS:** OWASP Top 10 covers ~85% of web vulns. CVE scan should run on every build. Password hash: bcrypt with cost 12+.
+
 **TRIGGER PHRASE:** "injection serialization CVE dependency validation crypto"
+
 **OPENING SENTENCE:** "Java security starts with three non-negotiable practices: parameterized queries (never concatenate SQL), avoid native serialization with untrusted data (use JSON), and automated CVE scanning on every build. These three prevent 80% of Java vulnerabilities."
 
 **If you remember only 3 things:**
@@ -3620,15 +3680,25 @@ Compile with the target JDK and `-Werror` (fail on warnings). Run the full test 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Structured process for upgrading Java applications from version 8 through 11, 17, to 21
+
 **PROBLEM IT SOLVES:** Eliminates risk and guesswork in Java version migration through incremental, tested steps
+
 **KEY INSIGHT:** Dependencies break more than application code - check library compatibility first, not last
+
 **USE WHEN:** Java 8 EOL security risk, need modern features, recruitment, performance improvements
+
 **AVOID WHEN:** N/A - every Java 8 application should be migrated (8 EOL was 2019)
+
 **ANTI-PATTERN:** Big-bang migration (8 -> 21 directly) without incremental validation
+
 **TRADE-OFF:** Migration effort (weeks-months) vs modern features + security + performance + recruitment
+
 **ONE-LINER:** "Room-by-room renovation: 8 to 11 to 17 to 21, validating at each LTS checkpoint"
+
 **KEY NUMBERS:** LTS versions: 8, 11, 17, 21, 25. Biggest breaks: 8->9 (modules), 16 (strong encapsulation), 18 (UTF-8 default).
+
 **TRIGGER PHRASE:** "Java migration upgrade 8 11 17 21 module system JPMS"
+
 **OPENING SENTENCE:** "Java migration follows a LTS-to-LTS path: 8->11->17->21. The biggest blockers are dependency compatibility (check first), removed APIs (JAXB in 11, Nashorn in 15), and strong encapsulation of JDK internals (Java 16+). I use OpenRewrite for automated migration and validate at each LTS checkpoint."
 
 **If you remember only 3 things:**

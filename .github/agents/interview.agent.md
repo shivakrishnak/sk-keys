@@ -8,27 +8,52 @@ You are the **Interview Content Agent** for the sk-keys Technical Reference.
 Your job is to generate, scaffold, and scale Interview Mastery Dictionary
 content under `interview/` following the v3.0 spec exactly.
 
-## Generation Strategy - FILE-LEVEL (mandatory)
+## Generation Strategy - KEYWORD-BATCH (mandatory)
 
-Generate content ONE COMPLETE FILE at a time, NOT keyword-by-keyword.
-For each subtopic file, generate ALL keywords in a single pass:
+Generate content **1-3 keywords at a time**, appending each batch to
+the file. This replaces the old file-level approach that attempted all
+keywords in one pass (causing timeouts on files with 5-12 keywords).
 
-1. **Plan**: list all keywords in the file (from scaffold or keyword list)
-2. **Generate**: produce complete 19-section content for EVERY keyword
-   in the file, in order, in a single output
-3. **Write**: write or replace the entire file content at once
-4. **Verify**: grep for `[FILL:` to confirm zero stubs remain
-5. **Report**: log file completion, then move to the next file
+### Workflow Per File
 
-**Why file-level:** Keyword-by-keyword requires re-reading the file,
-re-grepping line numbers (which shift after each replacement), and
-re-matching scaffold format for every keyword. File-level generation
-avoids all of this - one read, one write, done.
+1. **Read frontmatter**: extract the `keywords:` list and `difficulty_range:`
+2. **Detect progress**: scan file for `# KEYWORD NAME` headings that have
+   real content below them (not `[TODO:]` or `[FILL:]` stubs). Identify
+   which keywords are already complete vs still pending.
+3. **Pick next batch**: select 1-3 unfilled keywords based on difficulty:
+   - hard keywords: **1 keyword per batch** (deep-dive alone is 12+ Qs)
+   - medium keywords: **1-2 keywords per batch**
+   - easy keywords: **2-3 keywords per batch**
+4. **Generate**: produce complete 19-section content for the batch keywords
+5. **Write**: append generated content to the file after the last completed
+   keyword (or after frontmatter if this is the first keyword). Use
+   double horizontal rules (`---` then `---`) between keywords.
+6. **Report**: `Completed keyword N of M: [name]` - then auto-continue
+7. **Repeat** steps 3-6 until all keywords in the file are complete
+8. **Verify**: grep for `[TODO:` and `[FILL:` to confirm zero stubs remain
 
-**File-level does NOT mean lower quality.** Every keyword still gets
-all 19 sections, full Interview Deep-Dive with proper question counts,
-BAD-before-GOOD code, and all formatting rules. The only difference
-is batching the output per file instead of per keyword.
+### Why keyword-batch (not file-level)
+
+- **5-10x less output per pass**: 3,000-5,000 words vs 36,000-60,000
+- **No timeouts**: each batch completes well within model output limits
+- **Resume-safe**: if interrupted, next invocation picks up from the
+  next unfilled keyword (step 2 detects progress automatically)
+- **No scaffold needed**: reads keywords from frontmatter, generates
+  content directly - eliminates the scaffold-then-fill double-pass
+
+### Handling existing files
+
+- **New files** (frontmatter only): generate keywords in order, appending
+- **Files with [TODO:]/[FILL:] stubs**: read file, identify unfilled
+  keywords, replace stub content for next 1-3 keywords, write file
+- **Partially complete files**: detect completed keywords by checking
+  for real content under `# KEYWORD NAME` headings, skip them
+
+### Quality is identical
+
+Every keyword still gets all 19 sections, full Interview Deep-Dive
+with proper question counts (7/9/12), BAD-before-GOOD code, and all
+formatting rules. The only change is batch size, not depth.
 
 ## Quality Standard - MASTERCLASS (non-negotiable)
 
@@ -73,11 +98,15 @@ content that a Staff/Principal engineer would respect and learn from.
 
 | File                                             | Purpose                                   | When to read                                   |
 | ------------------------------------------------ | ----------------------------------------- | ---------------------------------------------- |
-| `interview/_config/INTERVIEW_PROMPT.md`          | Master generation spec v3.0 (19 sections) | ALWAYS - before generating any content         |
+| `interview/_config/INTERVIEW_PROMPT.md`          | Master generation spec v3.0 (19 sections) | ONCE per session - first keyword only          |
 | `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` | Keyword list generator v4.0               | When generating NEW keyword lists for any mode |
 | `interview/_config/topic-registry.md`            | Topic-to-folder mapping                   | When checking existing topics                  |
 | `interview/index.md`                             | Navigation root with all topics           | ALWAYS - to understand current structure       |
-| `interview/_config/interview_scaffold.py`        | Scaffold generator script                 | When scaffolding new files                     |
+
+> **After reading the full spec once**, use the condensed generation
+> rules in `.github/instructions/interview.instructions.md` (auto-loaded
+> when editing `interview/**` files) for all subsequent keywords. This
+> keeps context lean while preserving all quality rules.
 
 ## Mode Detection
 
@@ -108,9 +137,12 @@ in `interview/`
    permalink: /interview/{topic-name}/
    ---
    ```
-9. Create subtopic files with scaffold stubs ([FILL:...] placeholders)
-10. Generate full content ONE FILE at a time (all keywords in each file)
-    per INTERVIEW_PROMPT.md - see Generation Strategy above
+9. Create subtopic files with frontmatter listing keywords (no scaffold
+   needed - just YAML frontmatter with `keywords:` list and a heading)
+10. Generate content using keyword-batch strategy (see Generation Strategy)
+    - Process each file: read keywords from frontmatter, generate 1-3
+      at a time, append to file, auto-continue until file complete
+    - Then move to next file
 11. Update `interview/index.md` navigation table with new topic row
 12. Update `interview/_config/topic-registry.md` if it exists
 13. Track completed files; commit per batch rules (see Commit Strategy)
@@ -127,8 +159,7 @@ Trigger: user names a subtopic like "React hooks" where the parent topic
 5. **Run Keyword Cross-Verification** (see section below)
 6. Create the subtopic file: `interview/{topic}/{Topic} - {Subtopic}.md`
    with proper frontmatter (match existing files in the folder)
-7. Generate full content ONE FILE at a time (all keywords in the file)
-   per INTERVIEW_PROMPT.md - see Generation Strategy above
+7. Generate content using keyword-batch strategy (see Generation Strategy)
 8. Update the topic's `index.md` to list the new file
 9. Update `interview/index.md` (increment file count and keyword count)
 10. Track completed files; commit per batch rules (see Commit Strategy)
@@ -150,8 +181,7 @@ Trigger: user mentions a dictionary tier (tier-3) or category code
 7. For new keyword opportunities:
    - If an interview topic folder exists: add new subtopic files
    - If no matching topic exists: create a new topic (Mode 1 flow)
-8. Generate content ONE FILE at a time (all keywords per file)
-   per INTERVIEW_PROMPT.md - see Generation Strategy above
+8. Generate content using keyword-batch strategy (see Generation Strategy)
 9. Update all relevant `index.md` files
 10. Track completed files; commit per batch rules (see Commit Strategy)
 
@@ -172,8 +202,7 @@ like "Strong SQL skills and experience with relational databases..."
 7. Map keywords to existing or new topics:
    - If topic folder exists: check for gaps, add new subtopic files
    - If topic is new: create folder + files (Mode 1 flow)
-8. Generate content ONE FILE at a time (all keywords per file)
-   per INTERVIEW_PROMPT.md - see Generation Strategy above
+8. Generate content using keyword-batch strategy (see Generation Strategy)
 9. Update all relevant `index.md` files
 10. Track completed files; commit per batch rules (see Commit Strategy)
 
@@ -249,16 +278,15 @@ Only stop when:
 
 - NEVER modify files under `dictionary/` - systems are completely separate
   (only READ dictionary files for cross-reference in Mode 3)
-- NEVER skip reading `INTERVIEW_PROMPT.md` before generating content
-- Generate ONE COMPLETE FILE at a time - all keywords in a file get
-  full 19-section content in a single pass, then move to the next file
-- For files with existing [FILL:...] stubs: read the entire file, generate
-  all filled content, write the complete file at once (not keyword-by-keyword
-  replacements that require re-reading after each line-number shift)
+- NEVER skip reading `INTERVIEW_PROMPT.md` before generating the FIRST
+  keyword in a session (subsequent keywords use condensed rules)
+- Generate **1-3 keywords per batch** (see Generation Strategy for sizing)
+- For files with existing [FILL:...] or [TODO:] stubs: detect unfilled
+  keywords, generate content for next batch, write to file
 - ALWAYS follow the 19-section structure in exact order for every keyword
 - ALWAYS use BAD-before-GOOD code pattern in examples
 - ALWAYS include complete, detailed answers for every interview question
-  in Section 18 (see Interview Deep-Dive Rules below)
+  (see Interview Deep-Dive Rules in auto-loaded instructions)
 - File naming: `{Topic} - {Subtopic}.md` (SPACE-HYPHEN-SPACE, never em dash)
 - Folder naming: lowercase with hyphens (e.g., `java-concurrency/`)
 - Code lines: max 70 characters
@@ -270,64 +298,18 @@ Only stop when:
 - Python: `$env:USERPROFILE\.local\bin\python3.14.exe`
 - Do NOT `git push`
 
-## Interview Deep-Dive Rules (Section 18)
+## Interview Deep-Dive Rules
 
-This is the CAPSTONE SECTION - the most critical part of each keyword.
-Enforce ALL of these rules without exception:
-
-### Question Count (mandatory minimums)
-
-- easy keywords: minimum 7 questions
-- medium keywords: minimum 9 questions
-- hard keywords: minimum 12 questions
-- NO CAP on question count - more is better
-
-### Question Categories (cover at least 5 of 9 per keyword)
-
-1. CONCEPTUAL: "What is X and why does it matter?"
-2. DEBUGGING: "You see symptom Y in production. Walk me through diagnosis."
-3. ARCHITECTURE: "Design a system that uses X to solve problem P."
-4. TRADE-OFF: "When would you choose X over Y?"
-5. PRODUCTION: "Your X is degrading under load. 3 most likely causes?"
-6. HANDS-ON: "Implement/configure X for scenario S."
-7. SYSTEM DESIGN: "How does X interact with Y at scale?"
-8. COMPARISON: "Compare X vs Y vs Z for use case U."
-9. BEHAVIORAL: "Tell me about a time you used X in production." (STAR format)
-
-### Mandatory Per Keyword
-
-- At least 1 DEBUGGING question (non-negotiable)
-- At least 1 TRADE-OFF question (non-negotiable)
-- At least 1 BEHAVIORAL question for medium/hard keywords (non-negotiable)
-- Questions ordered: foundational -> advanced -> expert
-
-### Question Tags
-
-- Tag each question: `[JUNIOR]` `[MID]` `[SENIOR]` `[STAFF]`
-- Questions must test working experience, not definitions
-- Must NOT duplicate questions from other keywords in the same file
-
-### Answer Requirements
-
-- Every question MUST have a COMPLETE, DETAILED answer (200-500 words)
-- Answer flow: opening thesis -> detailed explanation -> key insight
-- Include code snippets, diagnostic commands, real metrics where applicable
-- End every answer with `*What separates good from great:*`
-- Add `*Likely follow-up:*` after each `*Why they ask:*`
-- Answers should demonstrate natural learning progression:
-  surface -> mechanism -> trade-offs -> production reality
-
-### Answer Timing Table (include at section start)
-
-```
-| Question Type | Target Duration | Signals               |
-|---------------|-----------------|-----------------------|
-| Conceptual    | 45-90 seconds   | Direct, confident     |
-| Debugging     | 90-150 seconds  | Systematic diagnosis  |
-| Architecture  | 120-180 seconds | Trade-off exploration |
-| Trade-off     | 60-120 seconds  | Decision framework    |
-| Behavioral    | 60-120 seconds  | Clear STAR structure  |
-```
+> Full rules are in `.github/instructions/interview.instructions.md`
+> (auto-loaded for `interview/**` files). Key points:
+>
+> - Question minimums: easy=7, medium=9, hard=12 (no cap)
+> - Cover at least 5 of 9 question categories per keyword
+> - Mandatory: 1 DEBUGGING + 1 TRADE-OFF per keyword
+> - Mandatory: 1 BEHAVIORAL for medium/hard keywords
+> - Every answer: 200-500 words, complete and structured
+> - End each answer with `*What separates good from great:*`
+> - Include timing table at section start
 
 ## Index Update Rules
 
@@ -339,46 +321,43 @@ When adding new topics, subtopics, or keywords:
 3. Preserve existing Jekyll frontmatter (`layout`, `title`, `nav_order`, etc.)
 4. `nav_order` for new topics: next available number after existing topics
 
-## Scaffold Command (optional)
+## Scaffold Command (optional - not required for generation)
 
-To scaffold a new topic with [FILL:...] stubs before filling content:
+Scaffolding is **optional**. The keyword-batch strategy reads keywords
+directly from frontmatter and generates content without scaffolding.
+Use scaffold only to preview file structure before generating:
 
 ```pwsh
 & "$env:USERPROFILE\.local\bin\python3.14.exe" `
   interview/_config/interview_scaffold.py {topic}
 ```
 
-## Filling Existing Scaffold Files
+## Handling Existing Files (with stubs or partial content)
 
-When a file already contains [FILL:...] stubs from a prior scaffold:
+When a file already contains [FILL:...] or [TODO:] stubs, or has some
+keywords completed and others pending:
 
-1. **Read the entire file** - understand frontmatter, keyword list, and
-   scaffold format (some files use `*italic*`, others use `_italic_`;
-   some use `| --- |`, others `|---|`)
-2. **List all keywords** by grepping for `^# ` headings in the file
-3. **Generate complete content** for ALL keywords, matching the exact
-   scaffold format of that file (preserve existing formatting style)
-4. **Write the complete file** with all [FILL:...] stubs replaced
-5. **Verify** by grepping for `[FILL:` - must return zero matches
-6. **Commit** per the batch commit strategy
+1. **Read the file** - extract frontmatter keywords list
+2. **Detect completed keywords**: scan for `# KEYWORD NAME` headings
+   that have real content (not just stubs) below them
+3. **Identify next unfilled keywords** - pick 1-3 based on difficulty
+4. **Generate complete 19-section content** for the batch
+5. **Write to file**: replace stub sections or append after last
+   completed keyword
+6. **Auto-continue** to next batch until all keywords are complete
+7. **Verify** by grepping for `[TODO:` and `[FILL:` - must return zero
 
-Key lessons from production use:
+## Output After Each Keyword Batch
 
-- Line numbers shift after each keyword replacement. File-level
-  generation avoids this entirely by writing the whole file at once.
-- Different files (even in the same folder) may use different scaffold
-  formats. Always read the file first and match its style.
-- Interview Deep-Dive timing table: use the full 5-row format
-  (Conceptual, Debugging, Architecture, Trade-off, Behavioral) matching
-  the spec. The question count rules (7/9/12 minimum) apply to the
-  actual Q&A entries below the table, not to the table rows.
+After generating each batch of keywords, report:
 
-## Output After Each File
+- Keywords completed: `[name1]`, `[name2]` (N of M total in this file)
+- File: `{path}`
+- Remaining keywords in this file: list
+- Then auto-continue to next batch without asking
 
-After generating each complete file, report:
+After completing all keywords in a file, report:
 
-- File name and path
-- Keywords completed in this file (N keywords)
-- Current progress (N of M files in this batch)
-- What files remain in the overall batch
+- File complete: `{path}` (M keywords)
+- Files remaining in batch: N
 - Then proceed to the next file automatically

@@ -239,15 +239,25 @@ Test that specific exceptions are thrown with `assertThrows(SpecificException.cl
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Java's class tree of throwable types rooted at Throwable, branching into Error (fatal) and Exception (recoverable)
+
 **PROBLEM IT SOLVES:** Structured, type-safe error handling with compile-time enforcement for checked exceptions
+
 **KEY INSIGHT:** The class you extend determines compiler enforcement: Error = never catch, checked = must catch, unchecked = may catch
+
 **USE WHEN:** Defining custom exceptions, deciding what to catch, designing error handling strategy
+
 **AVOID WHEN:** Using exceptions for control flow (expensive); catching Error (unrecoverable)
+
 **ANTI-PATTERN:** `catch (Exception e) {}` (swallow all); `catch (Throwable t)` (catches Error too)
+
 **TRADE-OFF:** Checked exceptions force handling but add boilerplate; unchecked are clean but can be missed
+
 **ONE-LINER:** "Error = building on fire, Exception = broken pipe, RuntimeException = your fault"
+
 **KEY NUMBERS:** Stack trace capture: 1-5 microseconds. Exception object: ~200 bytes. Catch block matching: O(depth) of call stack.
+
 **TRIGGER PHRASE:** "Throwable, Error, Exception, checked vs unchecked hierarchy"
+
 **OPENING SENTENCE:** "Java's exception hierarchy is a class tree rooted at Throwable that splits into Error (unrecoverable JVM failures you must never catch) and Exception (recoverable conditions), where the checked/unchecked distinction determines whether the compiler forces you to handle or declare the exception."
 
 **If you remember only 3 things:**
@@ -768,15 +778,25 @@ Test that the unchecked wrapper preserves the original cause. Test that the glob
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Java's compile-time distinction between exceptions requiring mandatory handling (checked) and optional handling (unchecked)
+
 **PROBLEM IT SOLVES:** Forces developers to address recoverable errors (I/O, network) while allowing programming errors (NPE) to propagate freely
+
 **KEY INSIGHT:** The distinction is purely a compiler feature - the JVM treats all exceptions identically at runtime
+
 **USE WHEN:** Checked: true I/O boundaries with concrete recovery strategies. Unchecked: business rules, programming errors, domain exceptions.
+
 **AVOID WHEN:** Checked: in business logic, lambdas/streams, interface evolution. Unchecked: when you genuinely need compile-time enforcement.
+
 **ANTI-PATTERN:** Empty catch blocks; wrapping unchecked in checked; `throws Exception` on every method
+
 **TRADE-OFF:** Compile-time safety vs boilerplate, lambda compatibility, and interface flexibility
+
 **ONE-LINER:** "Checked = mandatory insurance. Unchecked = fix the root cause."
+
 **KEY NUMBERS:** ~40 checked exception types in java.io. 0 checked exceptions in modern Spring APIs. Kotlin/Scala/C# = 0 checked exceptions by design.
+
 **TRIGGER PHRASE:** "checked compile-time, unchecked runtime, throws clause, lambda incompatible"
+
 **OPENING SENTENCE:** "Checked exceptions force compile-time handling via the throws clause, but the JVM makes no distinction at runtime - it is purely a javac feature, which is why Kotlin, Scala, and C# all chose to omit it."
 
 **If you remember only 3 things:**
@@ -1277,15 +1297,25 @@ Test that resources are closed by mocking `AutoCloseable.close()` and verifying 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Java 7+ syntax for automatic resource cleanup via `try (Resource r = ...) { ... }`
+
 **PROBLEM IT SOLVES:** Guarantees `close()` is called even on exceptions, prevents resource leaks
+
 **KEY INSIGHT:** Suppressed exceptions preserve the root cause - unlike finally blocks that replace the original exception
+
 **USE WHEN:** Any time you open a file, connection, stream, reader, or any AutoCloseable resource
+
 **AVOID WHEN:** Resources managed by a framework (Spring JdbcTemplate, JPA EntityManager in container-managed mode)
+
 **ANTI-PATTERN:** Manual finally blocks for resource cleanup; returning resources from inside try-with-resources
+
 **TRADE-OFF:** Scoped resource lifetime vs flexibility (resource cannot be used after try block)
+
 **ONE-LINER:** "Open it in try(), forget about closing - Java handles it."
+
 **KEY NUMBERS:** ~15 lines of decompiled bytecode per resource. Resources closed in reverse order. Suppressed exceptions accessible via `getSuppressed()`.
+
 **TRIGGER PHRASE:** "AutoCloseable, auto-close, suppressed exception, resource scope"
+
 **OPENING SENTENCE:** "Try-with-resources guarantees `close()` on any `AutoCloseable` resource when the try block exits, and uniquely solves the 'both throw' problem by attaching close exceptions as suppressed rather than replacing the original."
 
 **If you remember only 3 things:**
@@ -1822,15 +1852,25 @@ Test with `assertThrows(OrderNotFoundException.class, ...)`. Verify HTTP status 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Application-specific exception classes that encode domain errors with structured data
+
 **PROBLEM IT SOLVES:** Enables type-safe catch blocks, structured error responses, and clean exception-to-HTTP mapping
+
 **KEY INSIGHT:** The value is type-safe dispatch in catch blocks, not just carrying a message
+
 **USE WHEN:** Domain-specific error conditions that require different handling (different HTTP status, different recovery)
+
 **AVOID WHEN:** Generic programming errors (use IllegalArgumentException, NullPointerException). One-off errors that do not need specific handling.
+
 **ANTI-PATTERN:** One exception class per error message; catching generic RuntimeException and parsing getMessage()
+
 **TRADE-OFF:** Type safety and clarity vs class proliferation (one class per error type)
+
 **ONE-LINER:** "Custom exceptions are error codes you can catch by type"
+
 **KEY NUMBERS:** Aim for 5-15 custom exception types per bounded context. Exception construction with stack trace: ~1-5 microseconds.
+
 **TRIGGER PHRASE:** "domain exception hierarchy, error code, HTTP mapping, type-safe catch"
+
 **OPENING SENTENCE:** "Custom exceptions encode domain errors as typed classes with structured fields (error code, HTTP status), enabling type-safe catch blocks and consistent API error responses through @ExceptionHandler."
 
 **If you remember only 3 things:**
@@ -2385,15 +2425,25 @@ Use temporary files in tests (`Files.createTempFile`). Assert file contents with
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Java's original stream-based I/O package for reading/writing bytes and characters
+
 **PROBLEM IT SOLVES:** Platform-independent file access with composable stream decorators
+
 **KEY INSIGHT:** The decorator pattern - wrap streams to add buffering, encoding, formatting
+
 **USE WHEN:** Stream processing (wrapping InputStream/OutputStream), legacy code, simple file reads
+
 **AVOID WHEN:** File system operations (use java.nio.file), non-blocking I/O (use NIO channels), large file random access (use memory-mapped files)
+
 **ANTI-PATTERN:** Using FileReader without explicit encoding; not buffering; not closing streams
+
 **TRADE-OFF:** Simplicity and composability vs blocking model and verbose syntax
+
 **ONE-LINER:** "Pipes with filters - wrap to add capabilities"
+
 **KEY NUMBERS:** Default buffer: 8KB. Max file descriptors: ~4096 (Linux default). BufferedReader.readLine() max: Integer.MAX_VALUE chars.
+
 **TRIGGER PHRASE:** "stream decorator, byte to char, BufferedReader, close resource"
+
 **OPENING SENTENCE:** "java.io provides stream-based, blocking I/O using the decorator pattern - InputStream/OutputStream for bytes, Reader/Writer for characters, composed by wrapping."
 
 **If you remember only 3 things:**
@@ -2911,15 +2961,25 @@ Load test with 10K concurrent connections. Monitor thread count (should stay con
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Java's modern I/O package with Channels/Buffers/Selectors (network) and Path/Files (filesystem)
+
 **PROBLEM IT SOLVES:** Scalable non-blocking I/O without thread-per-connection, plus modern file operations
+
 **KEY INSIGHT:** Two halves - network NIO (selectors, rarely used directly) and NIO.2 (Files/Path, used daily)
+
 **USE WHEN:** High-connection-count servers, memory-mapped large files, modern file operations, zero-copy transfers
+
 **AVOID WHEN:** Simple file reads (use `Files.readString()`), few concurrent connections (java.io + virtual threads is simpler)
+
 **ANTI-PATTERN:** Using raw selectors instead of Netty; forgetting buffer.flip(); leaking DirectByteBuffer
+
 **TRADE-OFF:** Scalability and performance vs complexity (buffer management, selector ceremony)
+
 **ONE-LINER:** "One thread, many channels - the switchboard operator pattern"
+
 **KEY NUMBERS:** Default direct buffer max: 64MB (-XX:MaxDirectMemorySize). Selector can handle 100K+ channels. ByteBuffer default: heap-allocated.
+
 **TRIGGER PHRASE:** "channel, buffer, selector, non-blocking, Path, Files, memory-mapped"
+
 **OPENING SENTENCE:** "Java NIO provides channel-based, buffer-oriented I/O that lets one thread handle thousands of connections via selectors, plus the NIO.2 Path/Files API that replaces java.io.File with immutable, encoding-safe file operations."
 
 **If you remember only 3 things:**
@@ -3423,15 +3483,25 @@ Serialize then deserialize and assert equality. Test with missing fields, extra 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Converting objects to byte streams and back for persistence or network transfer
+
 **PROBLEM IT SOLVES:** Enables objects to survive beyond JVM lifetime and cross JVM boundaries
+
 **KEY INSIGHT:** Java's built-in serialization bypasses constructors, creating a massive security attack surface
+
 **USE WHEN:** Persisting objects, sending between services, caching - but use Jackson/Protobuf, not java.io.Serializable
+
 **AVOID WHEN:** Never use Java native serialization with untrusted input. Never make domain objects Serializable.
+
 **ANTI-PATTERN:** Implementing Serializable on domain objects; deserializing untrusted data without filters
+
 **TRADE-OFF:** Convenience of auto-serialization vs security risk of bypassed constructors
+
 **ONE-LINER:** "Objects to bytes and back - but Java's way is a loaded gun"
+
 **KEY NUMBERS:** Java serialization overhead: ~5-10x slower than Protobuf. Jackson JSON: ~2-3x slower than Protobuf. Deserialization CVEs: hundreds in Java ecosystem.
+
 **TRIGGER PHRASE:** "Serializable, transient, serialVersionUID, Jackson, Protobuf, gadget chain"
+
 **OPENING SENTENCE:** "Java's built-in serialization (Serializable + ObjectOutputStream) converts object graphs to bytes, but bypasses constructors during deserialization, creating the attack surface behind hundreds of CVEs - modern practice uses Jackson (JSON) or Protobuf (binary) which call constructors and validate input."
 
 **If you remember only 3 things:**
@@ -3960,15 +4030,25 @@ Use `ListAppender` (Logback test utility) to capture log events in tests. Assert
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** SLF4J = logging API facade; Logback = native implementation with appenders, levels, and configuration
+
 **PROBLEM IT SOLVES:** Consistent, leveled, configurable logging across all libraries and application code
+
 **KEY INSIGHT:** API (SLF4J) separate from implementation (Logback) - libraries depend on API only, app owner picks backend
+
 **USE WHEN:** All production applications (always - there is no alternative to structured logging)
+
 **AVOID WHEN:** Never avoid logging. But avoid: DEBUG level in production, logging sensitive data, synchronous logging in hot paths.
+
 **ANTI-PATTERN:** System.out.println() for logging; string concatenation in log statements; catching and logging but not rethrowing or handling
+
 **TRADE-OFF:** Observability and debuggability vs log volume costs and performance overhead
+
 **ONE-LINER:** "SLF4J is the plug, Logback is the socket - code to the plug, configure the socket"
+
 **KEY NUMBERS:** Log levels: TRACE(5) < DEBUG(10) < INFO(20) < WARN(30) < ERROR(40). AsyncAppender default queue: 256 events. Default Logback buffer: 8KB.
+
 **TRIGGER PHRASE:** "SLF4J facade, Logback appender, MDC, log level, structured JSON"
+
 **OPENING SENTENCE:** "SLF4J provides the logging API facade (so libraries never force a framework choice), and Logback is its native implementation with hierarchical levels, configurable appenders, MDC for request context, and async support for production throughput."
 
 **If you remember only 3 things:**

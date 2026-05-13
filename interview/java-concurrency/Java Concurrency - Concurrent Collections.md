@@ -275,15 +275,25 @@ Stress test with 100 threads adding orders for the same customer. Verify no orde
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Thread-safe hash map with lock-free reads and bucket-level write locking
+
 **PROBLEM IT SOLVES:** HashMap breaks under concurrent access; Hashtable/synchronizedMap create a global lock bottleneck
+
 **KEY INSIGHT:** Reads are lock-free (volatile), writes lock only the affected bucket - 99% of the map remains accessible
+
 **USE WHEN:** Any concurrent key-value access. Default choice for shared maps.
+
 **AVOID WHEN:** Single-threaded code (HashMap is faster), need null keys/values, need atomic size()
+
 **ANTI-PATTERN:** Using containsKey() then put() instead of computeIfAbsent() (race condition)
+
 **TRADE-OFF:** High concurrency vs no nulls, approximate size(), weakly consistent iterators
+
 **ONE-LINER:** "Everyone reads freely; writers lock only their own room"
+
 **KEY NUMBERS:** Default capacity 16. Treeify at 8 entries per bucket. size() uses LongAdder-style counting. No null keys/values.
+
 **TRIGGER PHRASE:** "lock-free reads bucket-level write lock"
+
 **OPENING SENTENCE:** "ConcurrentHashMap provides lock-free reads via volatile Node fields and per-bucket write locks. I always use computeIfAbsent for check-then-act patterns and keep compute lambdas fast since they hold the bucket lock."
 
 **If you remember only 3 things:**
@@ -974,15 +984,25 @@ Run concurrent iteration and modification: one thread adds/removes listeners whi
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Thread-safe list using full array copy on every write for lock-free snapshot reads
+
 **PROBLEM IT SOLVES:** ConcurrentModificationException during iteration and read-lock contention
+
 **KEY INSIGHT:** Writes pay O(n) so reads pay O(1) with zero synchronization
+
 **USE WHEN:** Read-heavy, write-rare: listener lists, config registries, routing tables. Small to medium lists.
+
 **AVOID WHEN:** Write-heavy workloads, large lists with frequent modifications
+
 **ANTI-PATTERN:** Using CopyOnWriteArrayList for a work queue or frequently-modified collection
+
 **TRADE-OFF:** Lock-free reads + snapshot iteration vs O(n) write cost
+
 **ONE-LINER:** "Print a new menu every time it changes; readers keep their old copy"
+
 **KEY NUMBERS:** Write = O(n) array copy. Read = O(1) no lock. Iterator = snapshot, never CME.
+
 **TRIGGER PHRASE:** "copy array on write snapshot iterator"
+
 **OPENING SENTENCE:** "CopyOnWriteArrayList copies the entire backing array on every write, giving readers a stable, lock-free snapshot. I use it for listener lists and config registries where writes are rare and reads are constant."
 
 **If you remember only 3 things:**
@@ -1447,15 +1467,25 @@ Stress test with producers 2x faster than consumers. Verify: (1) no data loss, (
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Queue interface with blocking put/take for safe producer-consumer coordination
+
 **PROBLEM IT SOLVES:** Producer-consumer decoupling without busy-waiting or manual synchronization
+
 **KEY INSIGHT:** Bounded queues provide natural backpressure - producers slow down automatically
+
 **USE WHEN:** Decoupling producer and consumer threads, work queues, task pipelines
+
 **AVOID WHEN:** Single-threaded code, when latency of blocking is unacceptable (use lock-free)
+
 **ANTI-PATTERN:** Using unbounded LinkedBlockingQueue (default capacity = Integer.MAX_VALUE)
+
 **TRADE-OFF:** Clean decoupling + backpressure vs blocking latency + queue sizing complexity
+
 **ONE-LINER:** "A kitchen window between chef and waiter - full means wait, empty means wait"
+
 **KEY NUMBERS:** ArrayBlockingQueue: 1 lock. LinkedBlockingQueue: 2 locks. SynchronousQueue: 0 capacity.
+
 **TRIGGER PHRASE:** "bounded blocking queue backpressure producer consumer"
+
 **OPENING SENTENCE:** "BlockingQueue is the foundation of producer-consumer in Java - put() blocks when full, take() blocks when empty. I always use bounded queues for backpressure and monitor queue depth as a system health metric."
 
 **If you remember only 3 things:**
@@ -1920,15 +1950,25 @@ Use the starting-gate pattern: a CountDownLatch(1) holds all workers at the gate
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** One-shot barrier that releases all waiters when a count reaches zero
+
 **PROBLEM IT SOLVES:** Coordinating main thread to wait for N async events
+
 **KEY INSIGHT:** Decouples events (countDown) from waiters (await) - any thread can do either
+
 **USE WHEN:** Fan-out/fan-in, waiting for N tasks, starting-gate for concurrent tests
+
 **AVOID WHEN:** Need reusable barrier (use CyclicBarrier) or dynamic participants (use Phaser)
+
 **ANTI-PATTERN:** await() without timeout and countDown() without finally
+
 **TRADE-OFF:** Simplicity and correctness vs one-shot limitation
+
 **ONE-LINER:** "A launch countdown - when all systems report GO, we proceed"
+
 **KEY NUMBERS:** Count is set at construction. Cannot increase. Zero means open forever.
+
 **TRIGGER PHRASE:** "one-shot barrier wait for N events"
+
 **OPENING SENTENCE:** "CountDownLatch blocks waiters until a count reaches zero. I always use it with a timeout and countDown in a finally block to prevent hangs."
 
 **If you remember only 3 things:**
@@ -2196,41 +2236,41 @@ _What separates good from great:_ Providing the decision framework and mentionin
 
 # Semaphore
 
-**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+**TL;DR** - Counting permit that limits how many threads can access a resource concurrently, enabling rate limiting and resource pooling.
 
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+You have a database connection pool with 10 connections and 100 request threads. Without a semaphore, all 100 threads try to acquire a connection simultaneously. The pool throws "no connections available" exceptions or creates too many connections, overwhelming the database. You could use synchronized, but that limits access to ONE thread at a time - you need exactly 10 concurrent accessors.
 
 **THE BREAKING POINT:**
-[FILL: 1-2 sentences. What crashes/slows/breaks.]
+The database crashes under 100 simultaneous connections. Or synchronized serializes all requests to one at a time, killing throughput on a 10-connection pool.
 
 **THE INVENTION MOMENT:**
 "This is exactly why Semaphore was created."
 
 **EVOLUTION:**
-[FILL: 2-3 sentences. predecessor -> current -> future direction]
+Dijkstra invented semaphores in 1965 as P()/V() operations for OS process synchronization. Java 5 introduced java.util.concurrent.Semaphore with fair/unfair modes and AQS-based implementation. The concept extends to distributed semaphores (Redis-based, ZooKeeper-based) for cross-process coordination. Modern alternatives include Resilience4j rate limiters and Guava RateLimiter for time-based throttling.
 
 ---
 
 ### 📘 Textbook Definition
 
-[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Semaphore** on first mention.]
+A **Semaphore** maintains a set of permits. Threads call acquire() to obtain a permit (blocking if none are available) and release() to return a permit. Unlike a lock, a semaphore does not have ownership - any thread can release a permit, not just the one that acquired it. Semaphore supports both fair (FIFO) and unfair (barging) modes. A binary semaphore (permits=1) behaves like a mutual exclusion lock but without ownership semantics.
 
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:** [FILL: max 15 words, zero jargon]
+**One line:** A counter of available permits - acquire blocks when zero, release increments.
 
 **One analogy:**
 
-> [FILL: 2-3 sentence real-world analogy]
+> A Semaphore is like a parking garage with a fixed number of spaces. The sign shows "5 spaces available." Each car entering decrements the count. When count is 0, cars queue at the entrance. Each car leaving increments the count. The garage does not care which car leaves - any departure frees a space.
 
-**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+**One insight:** A Semaphore is NOT a lock. Locks have ownership (only the locker can unlock). Semaphores have no ownership - thread A can acquire and thread B can release. This makes semaphores perfect for resource pools but dangerous if misused as mutual exclusion.
 
 ---
 
@@ -2238,121 +2278,197 @@ _What separates good from great:_ Providing the decision framework and mentionin
 
 **CORE INVARIANTS:**
 
-1. [FILL: always true about this concept]
-2. [FILL: always true about this concept]
-3. [FILL: always true about this concept]
+1. Available permits are always >= 0 (acquire blocks, never goes negative)
+2. No ownership - any thread can release permits, even without acquiring
+3. Fair mode guarantees FIFO ordering; unfair mode allows barging for throughput
 
 **DERIVED DESIGN:**
-[FILL: how invariants force the design. 2-4 sentences.]
+Because there is no ownership, semaphore permits are interchangeable. Because acquire blocks at zero, the semaphore naturally limits concurrency. Because release can be called by any thread, semaphores can implement asymmetric producer-consumer coordination (one thread fills the pool, another drains it).
 
 **THE TRADE-OFFS:**
-**Gain:** [FILL: what you get]
-**Cost:** [FILL: what you sacrifice]
+**Gain:** Limits concurrency to exactly N threads. Simple, correct, reusable.
+**Cost:** No ownership means accidental double-release or release-without-acquire corrupts the permit count.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [FILL: inherent to the problem]
-**Accidental:** [FILL: from current tooling/ecosystem]
+**Essential:** Bounding concurrent access to a finite resource requires some counting mechanism
+**Accidental:** The lack of ownership is both a feature (flexibility) and a footgun (no safety net for misuse)
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
+> A Semaphore is like a coat check at a theater. There are 10 hooks. Each patron takes a numbered tag (acquire). When all tags are taken, the next patron waits. When a patron returns their coat, the tag is reused (release). The coat check does not care who returns the tag.
 
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
+- "10 hooks" -> semaphore permits (new Semaphore(10))
+- "Take a tag" -> acquire() - blocks if no tags left
+- "Return a tag" -> release() - any thread can return
+- "Queue of waiting patrons" -> AQS wait queue
 
-Where this analogy breaks down: [FILL: 1 sentence]
+Where this analogy breaks down: In a real coat check, you return YOUR tag. In a semaphore, any thread can release - there is no tag matching.
 
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-[FILL: plain English, no jargon, 2-4 sentences]
+A semaphore is a counter that controls how many threads can do something at the same time. Think of it as a bouncer who counts people entering a club. When the club is full, the bouncer makes people wait in line. When someone leaves, the next person in line can enter.
 
 **Level 2 - How to use it (junior developer):**
-[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
+
+```java
+Semaphore sem = new Semaphore(5);
+
+// Each thread:
+sem.acquire(); // blocks if 0 permits
+try {
+    useResource(); // max 5 concurrent
+} finally {
+    sem.release(); // always release!
+}
+```
+
+Always release in a finally block. Use tryAcquire(timeout) in production to avoid indefinite blocking.
 
 **Level 3 - How it works (mid-level engineer):**
-[FILL: internals, data structures, algorithms. 4-6 sentences]
+Semaphore is built on AQS (AbstractQueuedSynchronizer). The AQS state represents available permits. acquire() calls acquireSharedInterruptibly() which uses CAS to decrement state. If state < 0, the thread is parked in the CLH wait queue. release() increments state via CAS and unparks the first waiter. Fair mode processes waiters in FIFO order. Unfair mode allows a newly arriving thread to acquire before queued threads (barging).
 
 **Level 4 - Production mastery (senior/staff engineer):**
-[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
+(1) **Connection pool guarding:** Wrap connection pool access with a semaphore matching pool size. This prevents "pool exhausted" exceptions. (2) **Rate limiting:** Semaphore limits concurrent requests. Combine with a scheduled release (ScheduledExecutorService) for time-window rate limiting. (3) **Fair vs unfair:** Fair mode prevents starvation but reduces throughput by 20-40% under high contention. Default is unfair. (4) **Permit leak detection:** If a thread acquires but never releases (exception, bug), permits leak. Monitor availablePermits() and alert when below threshold. (5) **Bulk acquire:** acquire(n) acquires n permits atomically. Useful for weighted resource allocation (large queries need 3 permits, small queries need 1).
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[FILL: correct but conventional understanding]"
-A Staff says: "[FILL: next-level abstraction or cross-system insight]"
-The difference: [FILL: 1 sentence - the mental model shift]
+A Senior says: "I use Semaphore(10) to limit concurrent database connections to 10."
+A Staff says: "I use Semaphore as a concurrency limiter integrated with circuit breakers. When availablePermits() drops to zero for sustained periods, it signals the system is at capacity. I combine this with metrics to auto-scale consumer capacity and with timeouts to fail fast rather than queue indefinitely."
+The difference: Using semaphore permit count as a system health signal, not just a limiter.
 
 **Level 5 - Distinguished (expert thinking):**
-[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+Dijkstra's semaphore is the fundamental synchronization primitive - all other primitives (mutex, condition variable, barrier) can be built from semaphores. In OS design, semaphores coordinate process access to shared resources (file descriptors, IPC channels). In distributed systems, the pattern extends to Redis SETNX-based semaphores, ZooKeeper ephemeral nodes, and database row locks. The key insight is that semaphores solve the "bounded resources" problem generically. Understanding this lets you recognize semaphore patterns in rate limiters (token bucket), connection pools, and bulkhead isolation (Hystrix/Resilience4j).
 
 ---
 
 ### ⚙️ How It Works
 
-[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+```
+Semaphore(3) - 3 permits:
+
+  State: permits = 3
+
+  T1: acquire() -> permits = 2  OK
+  T2: acquire() -> permits = 1  OK
+  T3: acquire() -> permits = 0  OK
+  T4: acquire() -> permits = 0
+      BLOCKED! (waits in AQS queue)
+      <- YOU ARE HERE
+
+  T1: release() -> permits = 1
+      T4 unparked, acquires
+      permits = 0
+
+  Internal (AQS):
+  acquire: CAS(state, state-1)
+    if fail: park in CLH queue
+  release: CAS(state, state+1)
+    unpark first waiter
+```
 
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
+
+```
+Request Threads     Semaphore(5)    Resource
+  T1 ----\                         /-- Pool
+  T2 -----\                       /
+  T3 ------+-> [permits=5] -----+--- DB
+  T4 -----/    acquire/release   \
+  T5 ----/     <- YOU ARE HERE    \-- Pool
+  T6 WAITS     permits=0          (5 max)
+  T7 WAITS
+```
 
 **FAILURE PATH:**
-[FILL: cascade when this fails -> observable symptom]
+Thread acquires but throws before release() -> permit leaked -> availablePermits() decrements permanently -> eventually all permits leak -> all threads block -> system hangs. Observable: thread dump shows all threads WAITING at Semaphore.acquire(). availablePermits() returns 0 despite no active usage.
 
 **WHAT CHANGES AT SCALE:**
-[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+At 10 threads / 5 permits: minimal contention. At 1000 threads / 5 permits: AQS queue grows large but is efficient (CLH linked queue). At 100K threads: unfair mode dramatically outperforms fair mode because barging avoids thread scheduling overhead. Consider sharding into multiple semaphores for extreme contention.
 
 ---
 
 ### 💻 Code Example
 
-**BAD - [FILL: antipattern name]:**
+**BAD - missing finally and no timeout:**
 
 ```java
-// BAD: [FILL: why this fails]
-[FILL: code, max 70 chars/line]
+// BAD: permit leak on exception
+Semaphore sem = new Semaphore(10);
+
+sem.acquire();
+Connection conn = pool.getConn();
+conn.execute(query);
+sem.release();
+// If execute() throws,
+// release() never called!
+// Permit leaked forever.
 ```
 
-**GOOD - [FILL: correct pattern name]:**
+**GOOD - finally block with timeout:**
 
 ```java
-// GOOD: [FILL: why this works]
-[FILL: code, max 70 chars/line]
+// GOOD: timeout + finally
+Semaphore sem = new Semaphore(10);
+
+boolean acquired = sem.tryAcquire(
+    5, TimeUnit.SECONDS);
+if (!acquired) {
+    throw new TimeoutException(
+        "Resource unavailable");
+}
+try {
+    Connection conn = pool.getConn();
+    conn.execute(query);
+} finally {
+    sem.release(); // always release
+}
 ```
 
 **How to test / verify correctness:**
-[FILL: 1-3 sentences on testing strategy]
+Verify concurrent access limit: start 20 threads, semaphore(5), track max concurrent active threads with AtomicInteger. Assert max never exceeds 5. Test exception path: verify permit is released even when work throws.
 
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [FILL: 1 sentence]
-**PROBLEM IT SOLVES:** [FILL: 1 sentence]
-**KEY INSIGHT:** [FILL: 1 sentence]
-**USE WHEN:** [FILL: conditions]
-**AVOID WHEN:** [FILL: conditions]
-**ANTI-PATTERN:** [FILL: common misuse]
-**TRADE-OFF:** [FILL: gain vs cost]
-**ONE-LINER:** [FILL: memorable metaphor]
-**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
-**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
+**WHAT IT IS:** Counting permit that limits concurrent access to a bounded resource
+
+**PROBLEM IT SOLVES:** Bounding concurrency to exactly N without mutual exclusion
+
+**KEY INSIGHT:** No ownership - any thread can release. This is both power and danger.
+
+**USE WHEN:** Connection pools, rate limiting, bounded resource access, bulkhead isolation
+
+**AVOID WHEN:** Need mutual exclusion (use ReentrantLock) or need reentrancy
+
+**ANTI-PATTERN:** Using Semaphore(1) as a lock (no ownership = no deadlock detection)
+
+**TRADE-OFF:** Flexible concurrency control vs risk of permit leak from missing release()
+
+**ONE-LINER:** "A parking garage counter - enter when spaces available, wait when full"
+
+**KEY NUMBERS:** Fair mode: 20-40% throughput reduction. Default: unfair. Permits can exceed initial count via extra release() calls.
+
+**TRIGGER PHRASE:** "counting permit bounded concurrency resource pool"
+
+**OPENING SENTENCE:** "Semaphore limits concurrent access to N permits. I always release in finally, use tryAcquire with timeout, and monitor availablePermits() as a capacity health signal."
 
 **If you remember only 3 things:**
 
-1. [FILL: most important insight]
-2. [FILL: key trade-off or constraint]
-3. [FILL: production gotcha that bites everyone]
+1. Always release() in a finally block - permit leak = system death
+2. No ownership - any thread can release (unlike ReentrantLock)
+3. Use tryAcquire(timeout) in production, never bare acquire()
 
 **Interview one-liner:**
-"[FILL: 30-second interview explanation showing depth]"
+"Semaphore controls concurrency via counting permits. I use it for connection pool guarding and rate limiting, always with finally-block release and timeout-based acquire. I monitor availablePermits() as a leading indicator of resource exhaustion."
 
 ---
 
@@ -2360,68 +2476,82 @@ The difference: [FILL: 1 sentence - the mental model shift]
 
 **You've mastered this when you can:**
 
-1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
-2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
-3. **DECIDE:** [FILL: choose this vs alternative under pressure]
-4. **BUILD:** [FILL: implement/configure in production context]
-5. **EXTEND:** [FILL: apply principle to different domain]
+1. **EXPLAIN:** How Semaphore differs from ReentrantLock (no ownership, multiple permits)
+2. **DEBUG:** Diagnose permit leaks from thread dumps and availablePermits() monitoring
+3. **DECIDE:** When to use Semaphore vs ReentrantLock vs rate limiter
+4. **BUILD:** Implement a bounded connection pool wrapper with fair Semaphore and timeout
+5. **EXTEND:** Map the permit pattern to distributed rate limiting (Redis, token bucket)
 
 ---
 
 ### 💡 The Surprising Truth
 
-[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
+You can release() more permits than you acquired, and even more than the initial count. If you create Semaphore(5) and call release() without a prior acquire(), availablePermits() becomes 6. There is no built-in protection against this. This means a bug that calls release() twice per acquire() will gradually increase the permit count, allowing more concurrent access than intended. This is by design (flexibility for asymmetric use cases) but is a common source of subtle concurrency bugs.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| #   | Misconception                  | Reality              |
-| --- | ------------------------------ | -------------------- |
-| 1   | [FILL: dangerous wrong belief] | [FILL: actual truth] |
-| 2   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 3   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 4   | [FILL: wrong belief]           | [FILL: actual truth] |
+| #   | Misconception                                              | Reality                                                                                                         |
+| --- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| 1   | "Semaphore is a lock with multiple permits"                | Semaphore has NO ownership. Any thread can release. Locks track which thread holds them and support reentrancy. |
+| 2   | "release() can only be called by the thread that acquired" | Any thread can call release(). This is intentional but dangerous if misused.                                    |
+| 3   | "Semaphore(1) is equivalent to ReentrantLock"              | Binary semaphore has no ownership, no reentrancy, no deadlock detection. ReentrantLock has all three.           |
+| 4   | "availablePermits() is a reliable snapshot"                | It is a point-in-time read. By the time you act on it, another thread may have acquired or released permits.    |
 
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [FILL: name]**
-**Symptom:** [FILL: observable in production]
-**Root Cause:** [FILL: why it happens]
+**Failure Mode 1: Permit leak from missing release()**
+**Symptom:** System gradually stops processing. All threads WAITING at acquire(). availablePermits() = 0 despite no active usage.
+**Root Cause:** Exception thrown between acquire() and release() without finally block. Permit permanently lost.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+jstack <pid> | grep -c "acquire"
+# All threads waiting at acquire
+# But no thread in the critical section
+# availablePermits() should be > 0
+# if it's 0: permits leaked
 ```
 
-**Fix:** [FILL: BAD then GOOD approach]
-**Prevention:** [FILL: how to prevent]
+**Fix:** BAD: restart the application. GOOD: Always wrap in try/finally. Add a scheduled health check that compares availablePermits() against expected active count.
+**Prevention:** Code review rule: every acquire() must have a corresponding release() in finally. Static analysis tools can detect this pattern.
 
-**Failure Mode 2: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 2: Permit inflation from double-release**
+**Symptom:** More threads accessing the resource than the semaphore should allow. Resource overload.
+**Root Cause:** Bug calling release() twice per acquire(). Permits grow beyond initial count.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+# Monitor permits over time:
+while true; do
+  echo "$(date): permits = \
+    $(jcmd <pid> Thread.print | \
+    grep -c 'avail')"
+  sleep 5
+done
+# If permits > initial count: BUG
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: ignoring the symptom. GOOD: Track acquire/release counts per thread with a wrapper class. Assert release count <= acquire count.
+**Prevention:** Create a SafeSemaphore wrapper that tracks per-thread acquire count and prevents double-release.
 
-**Failure Mode 3: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 3: Starvation under unfair mode**
+**Symptom:** Some threads never acquire permits while others acquire repeatedly. Latency spikes for specific requests.
+**Root Cause:** Unfair mode allows barging. Under high contention, newly arriving threads steal permits from queued threads.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+# Per-thread acquire latency histogram:
+# Add timing around tryAcquire():
+# If P99 >> P50: starvation likely
+# Switch to fair mode and compare
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: increasing permits (hides starvation). GOOD: Use Semaphore(permits, true) for fair mode. Accept the throughput reduction (20-40%) to guarantee FIFO ordering.
+**Prevention:** Use fair mode when latency consistency matters more than throughput.
 
 ---
 
@@ -2435,39 +2565,145 @@ The difference: [FILL: 1 sentence - the mental model shift]
 | Trade-off     | 60-120 seconds  | Decision framework    |
 | Behavioral    | 60-120 seconds  | Clear STAR structure  |
 
-**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+**Q1 [JUNIOR]: What is the difference between Semaphore and ReentrantLock?**
 
-_Why they ask:_ [FILL: what skill this probes]
-_Likely follow-up:_ [FILL: what they ask next]
+_Why they ask:_ Tests understanding of ownership semantics.
+_Likely follow-up:_ "When would you use Semaphore(1) instead of a lock?"
 
 **Answer:**
-[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-_What separates good from great:_ [FILL: 1 sentence]
+The key differences are ownership, reentrancy, and permit count:
+
+| Feature       | ReentrantLock | Semaphore     |
+| ------------- | ------------- | ------------- |
+| Ownership     | Yes (thread)  | No            |
+| Reentrancy    | Yes           | No            |
+| Permits       | 1 (binary)    | N (counting)  |
+| Deadlock det. | Yes           | No            |
+| Use case      | Mutual excl.  | Resource pool |
+
+**ReentrantLock:** "Only the thread that locked can unlock. The same thread can lock again (reentrant). One thread at a time."
+
+**Semaphore:** "Anyone can release. No reentrancy. N threads at a time."
+
+```java
+// Lock: exclusive access
+ReentrantLock lock = new ReentrantLock();
+lock.lock();
+try { criticalSection(); }
+finally { lock.unlock(); }
+
+// Semaphore: bounded access
+Semaphore sem = new Semaphore(5);
+sem.acquire();
+try { usePool(); } // 5 concurrent
+finally { sem.release(); }
+```
+
+Use Semaphore when you need to limit concurrency to N > 1. Use ReentrantLock when you need mutual exclusion with ownership guarantees.
+
+_What separates good from great:_ Explaining the ownership difference and why Semaphore(1) is NOT a safe replacement for ReentrantLock.
 
 ---
 
-**Q2 [MID]: [FILL: debugging or trade-off question]**
+**Q2 [MID]: Your service is leaking semaphore permits. How do you find and fix the leak?**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests production debugging of concurrency primitives.
+_Likely follow-up:_ "How would you prevent this in the future?"
 
 **Answer:**
-[FILL: complete answer with production depth]
 
-_What separates good from great:_ [FILL]
+**Symptoms:** Gradually increasing request latency. Eventually all requests timeout. Thread dump shows all threads WAITING at `Semaphore.acquire()`.
+
+**Diagnosis:**
+
+```bash
+# Step 1: Confirm permit exhaustion
+jcmd <pid> Thread.print | \
+  grep -c "Semaphore"
+# All threads waiting = permits gone
+
+# Step 2: Find the leak
+# Add JMX metric for permits:
+metrics.gauge("sem.available",
+    sem::availablePermits);
+# Watch it decrease over time
+# without recovery = leak
+```
+
+**Root cause pattern:** Exception thrown between acquire() and release() without finally block. Even ONE missed release per hour drains a Semaphore(10) in 10 hours.
+
+**Fix:**
+
+```java
+// BAD: leak-prone
+sem.acquire();
+doWork(); // throws!
+sem.release(); // skipped!
+
+// GOOD: leak-proof
+sem.acquire();
+try {
+    doWork();
+} finally {
+    sem.release();
+}
+```
+
+**Prevention:** (1) Static analysis rule: every acquire() must have try/finally/release(). (2) Wrapper class that auto-releases on close: implement AutoCloseable. (3) Scheduled health check: if availablePermits() < threshold for 5 minutes with no active work, log alert.
+
+_What separates good from great:_ Calculating the drain rate (1 leak/hour drains 10 permits in 10 hours) and proposing an AutoCloseable wrapper.
 
 ---
 
-**Q3 [SENIOR]: [FILL: architecture or production question]**
+**Q3 [SENIOR]: How would you implement a rate limiter using Semaphore?**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests creative application of concurrency primitives.
+_Likely follow-up:_ "What are the limitations vs a proper rate limiter?"
 
 **Answer:**
-[FILL: complete answer demonstrating system-level thinking]
 
-_What separates good from great:_ [FILL]
+A semaphore alone limits concurrency (N at a time), not rate (N per second). To add time-based rate limiting, combine a semaphore with a scheduled replenishment:
+
+```java
+class SemaphoreRateLimiter {
+    private final Semaphore sem;
+    private final int permitsPerSec;
+
+    SemaphoreRateLimiter(int rps) {
+        this.permitsPerSec = rps;
+        this.sem = new Semaphore(rps);
+        ScheduledExecutorService sched =
+            Executors
+            .newSingleThreadScheduled();
+        sched.scheduleAtFixedRate(
+            this::replenish,
+            1, 1, TimeUnit.SECONDS);
+    }
+
+    void replenish() {
+        int deficit = permitsPerSec
+            - sem.availablePermits();
+        if (deficit > 0) {
+            sem.release(deficit);
+        }
+    }
+
+    boolean tryAcquire() {
+        return sem.tryAcquire();
+    }
+}
+```
+
+**Limitations vs proper rate limiter:**
+
+1. **Bursty:** All permits available at start of each second. A proper token bucket smooths over time.
+2. **No sliding window:** A request at T=0.9s and T=1.1s uses 2 permits from 2 different windows. Sliding window would count both.
+3. **Permit inflation risk:** If replenish runs while threads hold permits, permits can exceed the limit.
+
+**Better alternative:** Guava RateLimiter (token bucket, smooth rate). But Semaphore-based is simple and good enough for basic use cases.
+
+_What separates good from great:_ Identifying the bursty behavior limitation and comparing to token bucket algorithms.
 
 ---
 
@@ -2475,17 +2711,17 @@ _What separates good from great:_ [FILL]
 
 **Prerequisites (understand these first):**
 
-- [FILL: keyword] - [why needed]
-- [FILL: keyword] - [why needed]
+- Atomic Classes and CAS - Semaphore uses CAS internally via AQS for permit manipulation
+- ReentrantLock - understanding lock ownership helps contrast with Semaphore's no-ownership design
 
 **Builds on this (learn these next):**
 
-- [FILL: keyword] - [what it adds]
-- [FILL: keyword] - [what it adds]
+- CountDownLatch - AQS-based coordination primitive (one-shot vs reusable)
+- CyclicBarrier - reusable barrier that combines counting with coordination
 
 **Alternatives / Comparisons:**
 
-- [FILL: keyword] - [when to prefer]
+- ReentrantLock - prefer when you need mutual exclusion with ownership semantics
 
 ---
 
@@ -2493,41 +2729,41 @@ _What separates good from great:_ [FILL]
 
 # CyclicBarrier
 
-**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+**TL;DR** - Reusable synchronization point where a fixed set of threads wait for each other before proceeding together to the next phase.
 
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+You have a parallel matrix computation where 4 threads each process a row. After each iteration, all threads must wait until every thread finishes before starting the next iteration (because row N+1 depends on all row N results). Without CyclicBarrier, you coordinate using CountDownLatch - but CountDownLatch is one-shot, so you create a new latch per iteration. Managing latch lifecycle, visibility, and reset is fragile and error-prone.
 
 **THE BREAKING POINT:**
-[FILL: 1-2 sentences. What crashes/slows/breaks.]
+One thread proceeds to iteration N+1 before another finishes iteration N, reading stale data. The computation produces incorrect results silently, with no exception to catch.
 
 **THE INVENTION MOMENT:**
 "This is exactly why CyclicBarrier was created."
 
 **EVOLUTION:**
-[FILL: 2-3 sentences. predecessor -> current -> future direction]
+Before Java 5, developers used wait/notify loops with shared counters. Java 5 introduced CyclicBarrier as a reusable barrier with an optional barrier action. Java 7 added Phaser for dynamic party counts. CyclicBarrier remains the best choice for fixed-party, multi-phase algorithms where all threads must synchronize between phases.
 
 ---
 
 ### 📘 Textbook Definition
 
-[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **CyclicBarrier** on first mention.]
+**CyclicBarrier** is a synchronization primitive that allows a fixed number of threads (parties) to wait for each other at a barrier point. When the last party arrives, all threads are released simultaneously and the barrier resets for reuse. An optional barrier action (Runnable) executes after the last party arrives but before any thread is released. If any party is interrupted or times out, the barrier is broken and all waiting parties receive BrokenBarrierException.
 
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:** [FILL: max 15 words, zero jargon]
+**One line:** All N threads must arrive before any can proceed; reusable across rounds.
 
 **One analogy:**
 
-> [FILL: 2-3 sentence real-world analogy]
+> CyclicBarrier is like a group of hikers who agree to wait at each checkpoint until everyone arrives. Nobody continues alone. Once all arrive, they proceed together to the next checkpoint. If anyone drops out, the group is "broken" and everyone stops.
 
-**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+**One insight:** CyclicBarrier is fundamentally about mutual waiting. Unlike CountDownLatch (where some threads count down and others wait), in CyclicBarrier every participant both counts down AND waits. All parties are symmetric. This makes it perfect for iterative parallel algorithms.
 
 ---
 
@@ -2535,121 +2771,217 @@ _What separates good from great:_ [FILL]
 
 **CORE INVARIANTS:**
 
-1. [FILL: always true about this concept]
-2. [FILL: always true about this concept]
-3. [FILL: always true about this concept]
+1. All parties must arrive before any proceed - no early exit
+2. The barrier resets automatically after each trip - reusable without reconstruction
+3. A broken barrier (timeout, interrupt) releases ALL waiters with BrokenBarrierException
 
 **DERIVED DESIGN:**
-[FILL: how invariants force the design. 2-4 sentences.]
+Because all parties must arrive, the barrier enforces a happens-before between phases. Because it resets automatically, iterative algorithms do not need lifecycle management. Because a broken barrier cascades to all waiters, failure is explicit and immediate - no silent corruption.
 
 **THE TRADE-OFFS:**
-**Gain:** [FILL: what you get]
-**Cost:** [FILL: what you sacrifice]
+**Gain:** Reusable synchronization point, barrier action for per-phase aggregation
+**Cost:** Fixed party count (set at construction), broken barrier cascades to all parties
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [FILL: inherent to the problem]
-**Accidental:** [FILL: from current tooling/ecosystem]
+**Essential:** Phase-synchronized parallel computation requires all participants to reach a sync point
+**Accidental:** The fixed party count forces knowing the parallelism degree at construction time
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
+> CyclicBarrier is like a relay race with synchronized lap starts. 4 runners must all complete their current lap before any starts the next lap. A coordinator (barrier action) records lap times between rounds.
 
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
+- "4 runners" -> parties (new CyclicBarrier(4))
+- "Complete lap" -> thread calls await()
+- "All finish = next lap starts" -> barrier trips, all released
+- "Record lap times" -> barrier action Runnable
 
-Where this analogy breaks down: [FILL: 1 sentence]
+Where this analogy breaks down: In a relay race, one slow runner delays everyone; in CyclicBarrier, that is the intended design, not a flaw.
 
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-[FILL: plain English, no jargon, 2-4 sentences]
+CyclicBarrier is a waiting point. A group of threads works in rounds. At the end of each round, everyone waits for the slowest one. Once everyone arrives, a new round starts. This repeats until the work is done.
 
 **Level 2 - How to use it (junior developer):**
-[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
+
+```java
+CyclicBarrier barrier =
+    new CyclicBarrier(4, () ->
+        System.out.println("Phase done")
+    );
+
+// 4 worker threads:
+for (int i = 0; i < 4; i++) {
+    executor.submit(() -> {
+        for (int phase = 0;
+             phase < 10; phase++) {
+            processRow(phase);
+            barrier.await(); // wait all
+        }
+    });
+}
+```
+
+The barrier resets after each await cycle. The barrier action runs once per phase.
 
 **Level 3 - How it works (mid-level engineer):**
-[FILL: internals, data structures, algorithms. 4-6 sentences]
+CyclicBarrier uses a ReentrantLock with a Condition (trip). An internal counter starts at parties. Each await() decrements the counter. When it reaches 0, the barrier action runs (if provided), a new "generation" is created, all waiting threads are signaled via trip.signalAll(), and the counter resets to parties. If any thread is interrupted, the barrier is "broken" - all waiters get BrokenBarrierException and the barrier cannot be used again without reset().
 
 **Level 4 - Production mastery (senior/staff engineer):**
-[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
+(1) **Barrier action:** Runs in the last arriving thread's context. Use for per-phase aggregation (merge partial results, swap buffers). (2) **BrokenBarrierException:** If one thread dies, all waiters get this exception. Always handle it: clean up, abort computation, log. (3) **Timeout:** await(timeout, unit) prevents indefinite waiting. If timeout fires, the barrier breaks. (4) **reset():** Forces a barrier reset. All waiting threads get BrokenBarrierException. Use cautiously. (5) **Performance:** Under low contention, CyclicBarrier is faster than creating new CountDownLatch instances per phase because there is no object allocation per phase. Under high contention (100+ parties), the single lock becomes a bottleneck. Consider Phaser for large party counts.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[FILL: correct but conventional understanding]"
-A Staff says: "[FILL: next-level abstraction or cross-system insight]"
-The difference: [FILL: 1 sentence - the mental model shift]
+A Senior says: "I use CyclicBarrier for phased parallel computation where all threads must sync between phases."
+A Staff says: "I evaluate whether the work per phase is balanced across parties. If one party consistently takes longer, the barrier becomes a load-balancing bottleneck. I profile per-party phase duration, consider work-stealing within phases, and use the barrier action for monitoring rather than just aggregation."
+The difference: Recognizing that the barrier's efficiency depends on work balance, not just correctness.
 
 **Level 5 - Distinguished (expert thinking):**
-[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+CyclicBarrier implements bulk synchronous parallel (BSP) computation. In BSP, processors compute locally, then synchronize globally, then proceed. This pattern appears in MPI_Barrier, MapReduce shuffle barriers, and GPU warp synchronization (\_\_syncthreads()). The fundamental trade-off is synchronization granularity: too frequent barriers waste time waiting; too few barriers allow data staleness. The optimal barrier frequency is when the computation-to-synchronization ratio maximizes throughput - a decision that depends on workload, hardware, and data dependencies.
 
 ---
 
 ### ⚙️ How It Works
 
-[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+```
+CyclicBarrier(3, mergeAction):
+
+  Phase 1:
+  T1: await()  count=2 (waits)
+  T2: await()  count=1 (waits)
+  T3: await()  count=0 (last!)
+    -> mergeAction.run()
+    -> signalAll() - all released
+    -> reset count=3 (new gen)
+    <- YOU ARE HERE
+
+  Phase 2:
+  T2: await()  count=2 (waits)
+  T3: await()  count=1 (waits)
+  T1: await()  count=0 (last!)
+    -> mergeAction.run()
+    -> all released again
+
+  Internal: ReentrantLock + Condition
+  Generation object tracks breaks
+```
 
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
+
+```
+T1   T2   T3   Barrier(3)
+ |    |    |
+work work work   Phase 1
+ |    |    |
+await await await
+ +----+----+-> mergeAction()
+ |    |    |   <- YOU ARE HERE
+work work work   Phase 2
+ |    |    |
+await await await
+ +----+----+-> mergeAction()
+ ...repeats...
+```
 
 **FAILURE PATH:**
-[FILL: cascade when this fails -> observable symptom]
+T2 throws exception before calling await() -> T1 and T3 wait forever (or until timeout). If T1 uses await(timeout), timeout fires, barrier breaks, T3 gets BrokenBarrierException. All three threads now receive BrokenBarrierException on subsequent await() calls.
 
 **WHAT CHANGES AT SCALE:**
-[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+At 4 parties: minimal contention, barrier overhead negligible. At 100 parties: the single ReentrantLock becomes a bottleneck during the await() stampede. At 1000 parties: consider Phaser (which uses a tree structure to reduce contention) or partition work into smaller barrier groups.
 
 ---
 
 ### 💻 Code Example
 
-**BAD - [FILL: antipattern name]:**
+**BAD - no broken barrier handling:**
 
 ```java
-// BAD: [FILL: why this fails]
-[FILL: code, max 70 chars/line]
+// BAD: ignores broken barrier
+CyclicBarrier barrier =
+    new CyclicBarrier(4);
+
+executor.submit(() -> {
+    for (int i = 0; i < 100; i++) {
+        process(i);
+        barrier.await(); // throws!
+        // If another thread dies,
+        // BrokenBarrierException here
+        // but we don't handle it.
+    }
+});
 ```
 
-**GOOD - [FILL: correct pattern name]:**
+**GOOD - proper exception handling and timeout:**
 
 ```java
-// GOOD: [FILL: why this works]
-[FILL: code, max 70 chars/line]
+// GOOD: timeout + broken barrier
+CyclicBarrier barrier =
+    new CyclicBarrier(4, () ->
+        mergeResults());
+
+executor.submit(() -> {
+    try {
+        for (int i = 0; i < 100; i++) {
+            process(i);
+            barrier.await(
+                30, TimeUnit.SECONDS);
+        }
+    } catch (BrokenBarrierException e) {
+        log.error("Barrier broken "
+            + "- aborting", e);
+        cleanup();
+    } catch (TimeoutException e) {
+        log.error("Barrier timeout "
+            + "at phase {}", i);
+        cleanup();
+    }
+});
 ```
 
 **How to test / verify correctness:**
-[FILL: 1-3 sentences on testing strategy]
+Use AtomicInteger to count how many threads are in each phase. Assert that no thread enters phase N+1 before all threads complete phase N. Use barrier action to verify phase completion counts.
 
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [FILL: 1 sentence]
-**PROBLEM IT SOLVES:** [FILL: 1 sentence]
-**KEY INSIGHT:** [FILL: 1 sentence]
-**USE WHEN:** [FILL: conditions]
-**AVOID WHEN:** [FILL: conditions]
-**ANTI-PATTERN:** [FILL: common misuse]
-**TRADE-OFF:** [FILL: gain vs cost]
-**ONE-LINER:** [FILL: memorable metaphor]
-**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
-**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
+**WHAT IT IS:** Reusable barrier where N threads wait for each other, then all proceed together
+
+**PROBLEM IT SOLVES:** Multi-phase parallel computation requiring synchronized phase transitions
+
+**KEY INSIGHT:** All parties are symmetric - everyone waits AND counts. Unlike CountDownLatch.
+
+**USE WHEN:** Iterative parallel algorithms, phased computation, multi-step simulations
+
+**AVOID WHEN:** One-shot coordination (use CountDownLatch) or dynamic parties (use Phaser)
+
+**ANTI-PATTERN:** Not handling BrokenBarrierException - leaving other parties hanging
+
+**TRADE-OFF:** Reusable coordination vs fixed party count and broken-barrier cascade
+
+**ONE-LINER:** "Hikers waiting at checkpoints - no one moves until everyone arrives"
+
+**KEY NUMBERS:** Fixed parties at construction. Single ReentrantLock. BrokenBarrierException cascades to all.
+
+**TRIGGER PHRASE:** "reusable barrier all parties await phase"
+
+**OPENING SENTENCE:** "CyclicBarrier synchronizes N threads at a reusable barrier point, with an optional action between phases. I always use timeout and handle BrokenBarrierException."
 
 **If you remember only 3 things:**
 
-1. [FILL: most important insight]
-2. [FILL: key trade-off or constraint]
-3. [FILL: production gotcha that bites everyone]
+1. Reusable - unlike CountDownLatch, automatically resets after each phase
+2. Broken barrier cascades - if one thread fails, ALL waiting threads get BrokenBarrierException
+3. Barrier action runs in the last arriving thread before any are released
 
 **Interview one-liner:**
-"[FILL: 30-second interview explanation showing depth]"
+"CyclicBarrier is a reusable rendezvous for N threads. All must arrive before any proceeds. I use it for iterative parallel algorithms with a barrier action for per-phase aggregation. For dynamic parties, I upgrade to Phaser."
 
 ---
 
@@ -2657,68 +2989,79 @@ The difference: [FILL: 1 sentence - the mental model shift]
 
 **You've mastered this when you can:**
 
-1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
-2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
-3. **DECIDE:** [FILL: choose this vs alternative under pressure]
-4. **BUILD:** [FILL: implement/configure in production context]
-5. **EXTEND:** [FILL: apply principle to different domain]
+1. **EXPLAIN:** How CyclicBarrier differs from CountDownLatch (symmetric vs asymmetric, reusable vs one-shot)
+2. **DEBUG:** Diagnose BrokenBarrierException and identify which party failed
+3. **DECIDE:** When to use CyclicBarrier vs CountDownLatch vs Phaser
+4. **BUILD:** Implement a multi-phase parallel matrix computation with barrier-action aggregation
+5. **EXTEND:** Map the BSP pattern to distributed barriers (MPI, MapReduce shuffle)
 
 ---
 
 ### 💡 The Surprising Truth
 
-[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
+The barrier action runs in the LAST thread to arrive, not in a special coordinator thread. This means the barrier action's execution time adds to the synchronization latency for ALL other parties (they are already waiting). If the barrier action is expensive (e.g., merging large result sets), it should be kept minimal or delegated to a background executor to avoid blocking the next phase.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| #   | Misconception                  | Reality              |
-| --- | ------------------------------ | -------------------- |
-| 1   | [FILL: dangerous wrong belief] | [FILL: actual truth] |
-| 2   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 3   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 4   | [FILL: wrong belief]           | [FILL: actual truth] |
+| #   | Misconception                                           | Reality                                                                                                                                               |
+| --- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | "CyclicBarrier and CountDownLatch are interchangeable"  | CyclicBarrier requires ALL parties to call await (symmetric). CountDownLatch separates counters from waiters (asymmetric). CyclicBarrier is reusable. |
+| 2   | "BrokenBarrierException only affects the failed thread" | It cascades to ALL waiting threads. If one party fails, everyone is notified immediately.                                                             |
+| 3   | "The barrier action runs in a separate thread"          | It runs in the LAST arriving thread, before any thread is released.                                                                                   |
+| 4   | "You can change the party count after construction"     | Party count is fixed at construction. For dynamic counts, use Phaser.                                                                                 |
 
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [FILL: name]**
-**Symptom:** [FILL: observable in production]
-**Root Cause:** [FILL: why it happens]
+**Failure Mode 1: Barrier broken by exception in one party**
+**Symptom:** All threads throw BrokenBarrierException. Computation aborts.
+**Root Cause:** One party threw an exception or was interrupted before calling await().
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+jstack <pid> | grep "Broken"
+# Find BrokenBarrierException in
+# thread stack traces
+# The thread WITHOUT BrokenBarrier
+# is the one that failed first
 ```
 
-**Fix:** [FILL: BAD then GOOD approach]
-**Prevention:** [FILL: how to prevent]
+**Fix:** BAD: catching and ignoring BrokenBarrierException. GOOD: Handle it by cleaning up state and restarting the computation. Use barrier.reset() if the failed party can be restarted.
+**Prevention:** Wrap each party's work in try-catch. Log failures with party ID before the exception propagates.
 
-**Failure Mode 2: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 2: Deadlock from wrong party count**
+**Symptom:** All threads block forever on await(). No BrokenBarrierException. Thread dump shows threads WAITING at CyclicBarrier.await().
+**Root Cause:** Party count set higher than actual thread count. E.g., CyclicBarrier(5) but only 4 threads call await().
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+jstack <pid> | grep "await"
+# Count threads waiting at barrier
+# If count < parties: missing party
+# Barrier will never trip
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: increasing thread count to match. GOOD: Set party count from actual thread count: `new CyclicBarrier(threads.size())`.
+**Prevention:** Derive party count from the thread pool or worker list. Never hardcode.
 
-**Failure Mode 3: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 3: Barrier action exception breaks barrier**
+**Symptom:** BrokenBarrierException on the NEXT await() call after the barrier action throws.
+**Root Cause:** The barrier action (Runnable) threw an exception. The current generation is broken.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+# Check logs for barrier action error:
+grep -i "barrier.*action\|merge"  \
+  application.log
+# The barrier action exception is
+# logged by the last-arriving thread
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: letting the barrier action throw unchecked. GOOD: Wrap barrier action in try-catch: `() -> { try { merge(); } catch (Exception e) { log.error(...); } }`.
+**Prevention:** Always wrap barrier actions in try-catch. A failing merge should not break the entire barrier.
 
 ---
 
@@ -2732,39 +3075,151 @@ The difference: [FILL: 1 sentence - the mental model shift]
 | Trade-off     | 60-120 seconds  | Decision framework    |
 | Behavioral    | 60-120 seconds  | Clear STAR structure  |
 
-**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+**Q1 [JUNIOR]: What is the difference between CyclicBarrier and CountDownLatch?**
 
-_Why they ask:_ [FILL: what skill this probes]
-_Likely follow-up:_ [FILL: what they ask next]
+_Why they ask:_ Tests understanding of symmetric vs asymmetric coordination.
+_Likely follow-up:_ "Can you reuse CountDownLatch?"
 
 **Answer:**
-[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-_What separates good from great:_ [FILL: 1 sentence]
+| Feature  | CountDownLatch | CyclicBarrier  |
+| -------- | -------------- | -------------- |
+| Reusable | No (one-shot)  | Yes (cyclic)   |
+| Parties  | Asymmetric     | Symmetric      |
+| Action   | None           | Barrier action |
+| Reset    | No             | Automatic      |
+
+**CountDownLatch:** Asymmetric. Some threads count down (producers), other threads wait (consumers). One-shot: once zero, done forever.
+
+```java
+// CountDownLatch: "wait for N events"
+CountDownLatch latch = new CDL(3);
+// Workers: latch.countDown()
+// Main: latch.await()
+```
+
+**CyclicBarrier:** Symmetric. ALL threads both count and wait. Reusable: resets after each phase.
+
+```java
+// CyclicBarrier: "meet then proceed"
+CyclicBarrier bar = new CB(3);
+// All workers: bar.await()
+// All released together, repeats
+```
+
+Use CountDownLatch for "wait for N events to happen." Use CyclicBarrier for "all N threads synchronize between phases."
+
+_What separates good from great:_ Explaining the symmetric vs asymmetric distinction and giving a concrete use case for each.
 
 ---
 
-**Q2 [MID]: [FILL: debugging or trade-off question]**
+**Q2 [MID]: One thread in your CyclicBarrier group keeps failing. How does this affect the other threads?**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests understanding of broken barrier cascade.
+_Likely follow-up:_ "How would you recover?"
 
 **Answer:**
-[FILL: complete answer with production depth]
 
-_What separates good from great:_ [FILL]
+When one party fails, the barrier breaks and ALL waiting parties receive BrokenBarrierException:
+
+```
+T1: await() -> WAITING
+T2: await() -> WAITING
+T3: throws before await()
+
+Result:
+T1: BrokenBarrierException
+T2: BrokenBarrierException
+T3: never reached await()
+
+All subsequent await() calls also
+throw BrokenBarrierException until
+barrier.reset() is called.
+```
+
+**Recovery strategy:**
+
+```java
+try {
+    barrier.await(30, SECONDS);
+} catch (BrokenBarrierException e) {
+    log.error("Barrier broken");
+    // Option 1: abort
+    return;
+    // Option 2: reset and retry
+    barrier.reset();
+    // But ALL parties must coordinate
+    // the retry - complex!
+}
+```
+
+**The hard truth:** Recovery from a broken barrier is difficult because ALL parties must agree to retry. In practice, most systems treat BrokenBarrierException as fatal for the current computation: abort, log, and restart the entire parallel job.
+
+_What separates good from great:_ Explaining that recovery requires coordinating all parties to retry, making it practically infeasible for most use cases.
 
 ---
 
-**Q3 [SENIOR]: [FILL: architecture or production question]**
+**Q3 [SENIOR]: Design a multi-phase parallel matrix computation using CyclicBarrier.**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests practical application of barrier synchronization.
+_Likely follow-up:_ "How would you handle load imbalance?"
 
 **Answer:**
-[FILL: complete answer demonstrating system-level thinking]
 
-_What separates good from great:_ [FILL]
+```java
+class ParallelMatrix {
+    final double[][] matrix;
+    final double[][] next;
+    final CyclicBarrier barrier;
+
+    ParallelMatrix(double[][] m,
+                   int threads) {
+        this.matrix = m;
+        this.next = new double
+            [m.length][m[0].length];
+        this.barrier =
+            new CyclicBarrier(threads,
+                this::swapBuffers);
+    }
+
+    void swapBuffers() {
+        // Barrier action: runs once
+        // per phase in last thread
+        System.arraycopy(next, 0,
+            matrix, 0, matrix.length);
+    }
+
+    void workerLoop(int startRow,
+                    int endRow,
+                    int phases) {
+        for (int p = 0; p < phases;
+             p++) {
+            for (int r = startRow;
+                 r < endRow; r++) {
+                computeRow(r, matrix,
+                    next);
+            }
+            try {
+                barrier.await(
+                    60, SECONDS);
+            } catch (Exception e) {
+                log.error("Phase {} "
+                    + "failed", p, e);
+                return;
+            }
+        }
+    }
+}
+```
+
+**Design decisions:**
+
+1. **Double buffering:** Read from matrix, write to next. Barrier action swaps. No data races.
+2. **Equal row partitioning:** Each thread gets `rows/threads` rows. If rows are unequal cost, use work-stealing.
+3. **Barrier action for swap:** Runs once per phase. Atomic from all threads' perspective.
+4. **Load imbalance:** Monitor per-thread phase duration. If one thread is consistently last to arrive, its rows are more expensive. Redistribute rows based on profiling.
+
+_What separates good from great:_ Using double buffering to eliminate data races and addressing load imbalance as a production concern.
 
 ---
 
@@ -2772,17 +3227,17 @@ _What separates good from great:_ [FILL]
 
 **Prerequisites (understand these first):**
 
-- [FILL: keyword] - [why needed]
-- [FILL: keyword] - [why needed]
+- CountDownLatch - simpler one-shot barrier; understanding it first makes CyclicBarrier clearer
+- ReentrantLock - CyclicBarrier uses ReentrantLock internally for coordination
 
 **Builds on this (learn these next):**
 
-- [FILL: keyword] - [what it adds]
-- [FILL: keyword] - [what it adds]
+- Phaser - dynamic party count barrier for fork-join style work
+- Producer-Consumer Pattern - alternative coordination model for asymmetric workloads
 
 **Alternatives / Comparisons:**
 
-- [FILL: keyword] - [when to prefer]
+- CountDownLatch - prefer for one-shot fan-in coordination (simpler, no broken-barrier semantics)
 
 ---
 
@@ -2790,41 +3245,41 @@ _What separates good from great:_ [FILL]
 
 # Phaser
 
-**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+**TL;DR** - Flexible, reusable barrier with dynamic party registration and deregistration, generalizing both CountDownLatch and CyclicBarrier.
 
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+You have a fork-join computation where the number of parallel tasks changes per phase. Phase 1 has 4 workers. Phase 2 splits into 8. Phase 3 merges back to 4. CyclicBarrier requires a fixed party count at construction. You would need to create a new CyclicBarrier per phase or maintain a complex wrapper that manages registration and deregistration. CountDownLatch is one-shot, so you need a new one per phase as well.
 
 **THE BREAKING POINT:**
-[FILL: 1-2 sentences. What crashes/slows/breaks.]
+A worker spawns subtasks in phase 2, but the barrier still expects 4 parties. The subtasks are ignored by the barrier, causing data races. Or the barrier deadlocks because it waits for parties that no longer exist.
 
 **THE INVENTION MOMENT:**
 "This is exactly why Phaser was created."
 
 **EVOLUTION:**
-[FILL: 2-3 sentences. predecessor -> current -> future direction]
+CountDownLatch (Java 5) is one-shot with fixed count. CyclicBarrier (Java 5) is reusable but with fixed parties. Phaser (Java 7) combines both features and adds dynamic registration. Phaser also supports tiered (tree) structures for scalability beyond 64K parties. It is the most general-purpose synchronization barrier in java.util.concurrent.
 
 ---
 
 ### 📘 Textbook Definition
 
-[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Phaser** on first mention.]
+**Phaser** is a reusable synchronization barrier that supports a dynamic number of parties. Threads register via register() and deregister via arriveAndDeregister(). Each synchronization round is called a phase, identified by an incrementing phase number. Threads call arriveAndAwaitAdvance() to signal arrival and wait for all registered parties. The phaser advances to the next phase when all registered parties have arrived. Phaser supports tiered construction (parent phaser) for scaling to thousands of parties.
 
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:** [FILL: max 15 words, zero jargon]
+**One line:** Dynamic barrier where threads can join and leave between phases.
 
 **One analogy:**
 
-> [FILL: 2-3 sentence real-world analogy]
+> Phaser is like a tour group with a flexible attendance policy. Before each stop, the guide counts who is still in the group. Anyone can join or leave between stops. The bus waits only for registered members. When all present members check in, the tour moves on.
 
-**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+**One insight:** Phaser subsumes both CountDownLatch and CyclicBarrier. CountDownLatch = Phaser with parties that arrive but never await. CyclicBarrier = Phaser with fixed parties that arrive and await. Phaser adds the ability to change party count between phases. This makes it the most versatile barrier primitive.
 
 ---
 
@@ -2832,121 +3287,209 @@ _What separates good from great:_ [FILL]
 
 **CORE INVARIANTS:**
 
-1. [FILL: always true about this concept]
-2. [FILL: always true about this concept]
-3. [FILL: always true about this concept]
+1. Phase advances when ALL registered parties have arrived (not more, not fewer)
+2. Parties can register and deregister between phases dynamically
+3. Phase number is monotonically increasing (or negative when terminated)
 
 **DERIVED DESIGN:**
-[FILL: how invariants force the design. 2-4 sentences.]
+Because parties are dynamic, fork-join tasks can register subtasks mid-computation. Because the phase number tracks progress, threads can check which phase the group is in. Because tiered phasers distribute the synchronization state, scaling to thousands of parties is efficient.
 
 **THE TRADE-OFFS:**
-**Gain:** [FILL: what you get]
-**Cost:** [FILL: what you sacrifice]
+**Gain:** Dynamic parties, reusable, subsumes CountDownLatch and CyclicBarrier
+**Cost:** More complex API surface, harder to reason about correctness
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [FILL: inherent to the problem]
-**Accidental:** [FILL: from current tooling/ecosystem]
+**Essential:** Dynamic-party phase synchronization inherently requires registration management
+**Accidental:** The API complexity (arrive, arriveAndAwaitAdvance, arriveAndDeregister, register, bulkRegister) is the cost of generality
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
+> Phaser is like a conference with breakout sessions. Between each session (phase), some attendees leave (deregister) and new ones join (register). The organizer (phaser) waits for all current attendees to check in before starting the next session. The schedule adapts to whoever is present.
 
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
+- "Attendee checks in" -> arriveAndAwaitAdvance()
+- "Attendee leaves" -> arriveAndDeregister()
+- "New attendee joins" -> register()
+- "Session starts" -> phase advances
 
-Where this analogy breaks down: [FILL: 1 sentence]
+Where this analogy breaks down: A real conference does not require ALL attendees to check in; a phaser strictly requires all registered parties.
 
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-[FILL: plain English, no jargon, 2-4 sentences]
+Phaser is a flexible waiting point for a group. People can join and leave the group. At each checkpoint, the group waits until all current members arrive. Then everyone proceeds to the next checkpoint. This repeats until the work is done.
 
 **Level 2 - How to use it (junior developer):**
-[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
+
+```java
+Phaser phaser = new Phaser(1);
+// Register main thread as party
+
+for (int i = 0; i < 4; i++) {
+    phaser.register(); // +1 party
+    executor.submit(() -> {
+        for (int p = 0; p < 3; p++) {
+            doWork(p);
+            phaser.arriveAndAwaitAdvance();
+        }
+        phaser.arriveAndDeregister();
+    });
+}
+
+// Main coordinates:
+phaser.arriveAndDeregister();
+```
+
+Key API: register() to join, arriveAndAwaitAdvance() to sync, arriveAndDeregister() to leave.
 
 **Level 3 - How it works (mid-level engineer):**
-[FILL: internals, data structures, algorithms. 4-6 sentences]
+Phaser uses a single long (64-bit) state variable packed with phase number (bits 32-62), unarrived count (bits 0-15), and parties count (bits 16-31). CAS operations update this state. When unarrived reaches 0, the phase advances. For tiered phasers, child phasers register as a single party in the parent, reducing contention. The onAdvance() method is called when a phase completes - override it to control termination.
 
 **Level 4 - Production mastery (senior/staff engineer):**
-[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
+(1) **Override onAdvance() for termination:** Return true from onAdvance() to terminate the phaser. E.g., `return phase >= maxPhases || registeredParties == 0`. (2) **Tiered phasers:** For > 64 parties, use tiered phasers to reduce CAS contention on the state variable: `new Phaser(parent, parties)`. (3) **Arrival without waiting:** arrive() signals arrival but does not wait. Use for asymmetric coordination where some parties are fire-and-forget. (4) **Phase monitoring:** getPhase() returns the current phase number. Use for progress monitoring. A negative phase means the phaser is terminated. (5) **Replacing CountDownLatch:** Phaser with arrive() (no await) by workers and awaitAdvance() by the coordinator replaces CountDownLatch with reusability.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[FILL: correct but conventional understanding]"
-A Staff says: "[FILL: next-level abstraction or cross-system insight]"
-The difference: [FILL: 1 sentence - the mental model shift]
+A Senior says: "I use Phaser when I need dynamic parties because CyclicBarrier has a fixed party count."
+A Staff says: "I use Phaser as a coordination backbone for adaptive parallel algorithms. I override onAdvance() for phase-aware termination, use tiered phasers for scalability, and monitor phase progression as a liveness indicator."
+The difference: Using Phaser's extensibility (onAdvance, tiering) rather than just its dynamic parties feature.
 
 **Level 5 - Distinguished (expert thinking):**
-[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+Phaser is Java's implementation of a fuzzy barrier - a concept from parallel computing where the barrier can be "partially arrived." The arrive-then-await separation allows overlapping computation with synchronization. This is the same idea as non-blocking barriers in MPI (MPI_Ibarrier) and split-phase barriers in Cilk. At the extreme, Phaser with arrive() enables pipelining: phase N's output can be consumed by downstream tasks before all phase N parties arrive, as long as the specific producer has arrived. Understanding this enables building pipeline-parallel systems within Java.
 
 ---
 
 ### ⚙️ How It Works
 
-[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+```
+Phaser with dynamic parties:
+
+Phase 0: parties=3
+  T1: arriveAndAwait  unarrived=2
+  T2: arriveAndAwait  unarrived=1
+  T3: arriveAndAwait  unarrived=0
+  -> phase advances to 1
+  <- YOU ARE HERE
+
+Phase 1: T3 deregisters, T4 registers
+  parties=3 (T1, T2, T4)
+  T1: arriveAndAwait  unarrived=2
+  T4: arriveAndAwait  unarrived=1
+  T2: arriveAndAwait  unarrived=0
+  -> phase advances to 2
+
+State variable (64-bit long):
+  [phase(31b)|parties(16b)|unarr(16b)]
+  CAS updates atomically
+```
 
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
+
+```
+Workers   Phaser       Phase
+T1 T2 T3  parties=3     0
+ |  |  |
+work work work
+ |  |  |
+arrive+await (3->2->1->0)
+ +--+--+-> onAdvance(0)
+ |  |  |   <- YOU ARE HERE
+ |  |  deregister (parties=2)
+ |  |  T4 register  (parties=3)
+T1 T2 T4  parties=3     1
+ |  |  |
+work work work
+ ...repeats...
+```
 
 **FAILURE PATH:**
-[FILL: cascade when this fails -> observable symptom]
+A registered party never arrives -> phaser never advances -> all other parties block forever on arriveAndAwaitAdvance(). Observable: phaser.getUnarrivedParties() > 0 indefinitely. Fix: use awaitAdvanceInterruptibly(phase, timeout) or have the missing party deregister in a finally block.
 
 **WHAT CHANGES AT SCALE:**
-[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+At 4 parties: single CAS on state is fast. At 100 parties: CAS contention increases. At 1000+ parties: use tiered phasers (parent/child) to partition the state variable. Each child manages ~32-64 parties and registers as 1 party in the parent.
 
 ---
 
 ### 💻 Code Example
 
-**BAD - [FILL: antipattern name]:**
+**BAD - CyclicBarrier with changing worker count:**
 
 ```java
-// BAD: [FILL: why this fails]
-[FILL: code, max 70 chars/line]
+// BAD: fixed parties, workers change
+CyclicBarrier barrier =
+    new CyclicBarrier(4);
+// Phase 2 spawns subtasks
+// barrier still expects 4
+// Subtasks not coordinated!
 ```
 
-**GOOD - [FILL: correct pattern name]:**
+**GOOD - Phaser with dynamic registration:**
 
 ```java
-// GOOD: [FILL: why this works]
-[FILL: code, max 70 chars/line]
+// GOOD: dynamic parties
+Phaser phaser = new Phaser(1);
+
+void forkJoinWork(int depth) {
+    phaser.register();
+    try {
+        doWork();
+        if (depth > 0) {
+            // Spawn subtask
+            phaser.register();
+            executor.submit(() ->
+                forkJoinWork(depth - 1)
+            );
+        }
+        phaser.arriveAndAwaitAdvance();
+    } finally {
+        phaser.arriveAndDeregister();
+    }
+}
 ```
 
 **How to test / verify correctness:**
-[FILL: 1-3 sentences on testing strategy]
+Verify phase progression: assert getPhase() increments after each round. Verify dynamic parties: register mid-phase, confirm party count changes. Verify termination: override onAdvance() to terminate after N phases, confirm isTerminated() returns true.
 
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [FILL: 1 sentence]
-**PROBLEM IT SOLVES:** [FILL: 1 sentence]
-**KEY INSIGHT:** [FILL: 1 sentence]
-**USE WHEN:** [FILL: conditions]
-**AVOID WHEN:** [FILL: conditions]
-**ANTI-PATTERN:** [FILL: common misuse]
-**TRADE-OFF:** [FILL: gain vs cost]
-**ONE-LINER:** [FILL: memorable metaphor]
-**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
-**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
+**WHAT IT IS:** Reusable barrier with dynamic party registration, generalizing CountDownLatch and CyclicBarrier
+
+**PROBLEM IT SOLVES:** Phase synchronization when the number of participants changes between phases
+
+**KEY INSIGHT:** Parties can register and deregister between phases - unlike fixed-party CyclicBarrier
+
+**USE WHEN:** Fork-join algorithms, adaptive parallelism, multi-phase with changing worker count
+
+**AVOID WHEN:** Fixed parties (use CyclicBarrier, simpler) or one-shot (use CountDownLatch)
+
+**ANTI-PATTERN:** Not deregistering completed parties (phaser waits forever for missing arrivals)
+
+**TRADE-OFF:** Maximum flexibility vs API complexity and reasoning difficulty
+
+**ONE-LINER:** "A tour group where people join and leave at each stop"
+
+**KEY NUMBERS:** Max 65535 parties (16 bits). Tiered phasers for more. Phase number = 31 bits.
+
+**TRIGGER PHRASE:** "dynamic parties reusable barrier phase advance"
+
+**OPENING SENTENCE:** "Phaser generalizes both CountDownLatch and CyclicBarrier with dynamic party registration. I use it for adaptive parallel algorithms where worker count changes between phases."
 
 **If you remember only 3 things:**
 
-1. [FILL: most important insight]
-2. [FILL: key trade-off or constraint]
-3. [FILL: production gotcha that bites everyone]
+1. Parties can register/deregister between phases - the key differentiator from CyclicBarrier
+2. Override onAdvance() for custom termination logic (return true to terminate)
+3. Use tiered phasers for > 64 parties to reduce CAS contention
 
 **Interview one-liner:**
-"[FILL: 30-second interview explanation showing depth]"
+"Phaser is a dynamic, reusable barrier. I use it when worker counts change between phases. I override onAdvance() for termination, use tiered phasers for scalability, and always deregister completed parties to prevent hangs."
 
 ---
 
@@ -2954,68 +3497,80 @@ The difference: [FILL: 1 sentence - the mental model shift]
 
 **You've mastered this when you can:**
 
-1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
-2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
-3. **DECIDE:** [FILL: choose this vs alternative under pressure]
-4. **BUILD:** [FILL: implement/configure in production context]
-5. **EXTEND:** [FILL: apply principle to different domain]
+1. **EXPLAIN:** How Phaser subsumes both CountDownLatch and CyclicBarrier patterns
+2. **DEBUG:** Diagnose a hung phaser by checking getUnarrivedParties() and registered parties
+3. **DECIDE:** When to use Phaser vs CyclicBarrier vs CountDownLatch based on party dynamics
+4. **BUILD:** Implement an adaptive fork-join computation with dynamic Phaser registration
+5. **EXTEND:** Apply tiered phasers for large-scale parallel frameworks
 
 ---
 
 ### 💡 The Surprising Truth
 
-[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
+Phaser can replace CountDownLatch with zero code change in semantics. Create a Phaser(N), have N workers call arrive() (not arriveAndAwait), and have the coordinator call awaitAdvance(0). This behaves exactly like CountDownLatch - but the Phaser is reusable. You can repeat the pattern for multiple rounds without creating new objects. This is why some codebases use Phaser exclusively, eliminating CountDownLatch and CyclicBarrier entirely.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| #   | Misconception                  | Reality              |
-| --- | ------------------------------ | -------------------- |
-| 1   | [FILL: dangerous wrong belief] | [FILL: actual truth] |
-| 2   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 3   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 4   | [FILL: wrong belief]           | [FILL: actual truth] |
+| #   | Misconception                                 | Reality                                                                                                                               |
+| --- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | "Phaser is just a reusable CountDownLatch"    | Phaser supports dynamic parties, arrival without waiting, tiered construction, and custom onAdvance logic. It is far more general.    |
+| 2   | "All parties must call arriveAndAwaitAdvance" | arrive() signals without waiting. arriveAndDeregister() signals and leaves. Only arriveAndAwaitAdvance() blocks.                      |
+| 3   | "Phaser is thread-safe for unlimited parties" | Max 65535 parties (16-bit unarrived count). Use tiered phasers for more.                                                              |
+| 4   | "Phaser automatically detects stuck parties"  | If a party never arrives, the phaser blocks forever. You must use awaitAdvanceInterruptibly(phase, timeout) or ensure deregistration. |
 
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [FILL: name]**
-**Symptom:** [FILL: observable in production]
-**Root Cause:** [FILL: why it happens]
+**Failure Mode 1: Hang from missing party arrival**
+**Symptom:** All threads blocked on arriveAndAwaitAdvance(). Phase never advances.
+**Root Cause:** A registered party never arrived (threw exception, was never started, or forgot to call arrive).
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+jstack <pid> | grep "Phaser"
+# Find threads waiting at arrive
+# phaser.getUnarrivedParties() > 0
+# phaser.getRegisteredParties() vs
+# actual running threads
 ```
 
-**Fix:** [FILL: BAD then GOOD approach]
-**Prevention:** [FILL: how to prevent]
+**Fix:** BAD: restarting the application. GOOD: Always deregister in finally. Use awaitAdvanceInterruptibly(phase, timeout, unit) for bounded waiting.
+**Prevention:** Wrap arrive/deregister in try/finally. Monitor unarrived count with JMX.
 
-**Failure Mode 2: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 2: Premature phase advance from double-arrive**
+**Symptom:** Phase advances before all work is complete. Data corruption.
+**Root Cause:** A party calls arrive() twice in one phase. Unarrived decrements below the correct count.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+# Add assertion:
+int phase = phaser.arrive();
+assert phase == expectedPhase :
+    "Double arrive detected!";
+# Phase mismatch = double arrival
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: ignoring phase number return value. GOOD: Track per-thread arrival with phase number. arrive() returns the phase number; validate it matches expected.
+**Prevention:** Use arriveAndAwaitAdvance() which blocks - preventing the thread from arriving again before the phase advances.
 
-**Failure Mode 3: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 3: Tiered phaser state inconsistency**
+**Symptom:** Parent phaser and child phaser show different phase numbers. Deadlock or incorrect coordination.
+**Root Cause:** Child phaser advanced independently of parent (possible with direct state manipulation or bugs in custom onAdvance).
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+# Log phase numbers:
+log.info("Child phase: {}, Parent: {}",
+    child.getPhase(),
+    parent.getPhase());
+# Mismatch = state corruption
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: forcing phase numbers manually. GOOD: Let the phaser manage tiering internally. Do not override state manipulation in tiered setups.
+**Prevention:** Use tiered phasers only via the constructor: `new Phaser(parent, parties)`. Do not mix manual state operations.
 
 ---
 
@@ -3029,39 +3584,134 @@ The difference: [FILL: 1 sentence - the mental model shift]
 | Trade-off     | 60-120 seconds  | Decision framework    |
 | Behavioral    | 60-120 seconds  | Clear STAR structure  |
 
-**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+**Q1 [JUNIOR]: How does Phaser differ from CyclicBarrier?**
 
-_Why they ask:_ [FILL: what skill this probes]
-_Likely follow-up:_ [FILL: what they ask next]
+_Why they ask:_ Tests understanding of dynamic vs fixed barrier semantics.
+_Likely follow-up:_ "When would you use each?"
 
 **Answer:**
-[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-_What separates good from great:_ [FILL: 1 sentence]
+The key difference is dynamic parties:
+
+| Feature     | CyclicBarrier | Phaser           |
+| ----------- | ------------- | ---------------- |
+| Parties     | Fixed at ctor | Dynamic          |
+| Register    | No            | register()       |
+| Deregister  | No            | arriveAndDereg() |
+| Termination | No            | onAdvance()      |
+| Tiering     | No            | Yes (parent)     |
+
+```java
+// CyclicBarrier: fixed 4 parties
+CyclicBarrier cb = new CB(4);
+// Cannot add/remove parties!
+
+// Phaser: dynamic parties
+Phaser ph = new Phaser();
+ph.register();   // party joins
+// ...
+ph.arriveAndDeregister(); // leaves
+```
+
+**When to use:**
+
+- Fixed parties, simple phases -> CyclicBarrier (simpler API)
+- Dynamic parties, fork-join -> Phaser
+- One-shot wait -> CountDownLatch
+
+_What separates good from great:_ Explaining that Phaser subsumes both and providing a clear decision framework.
 
 ---
 
-**Q2 [MID]: [FILL: debugging or trade-off question]**
+**Q2 [MID]: How would you use Phaser's onAdvance() for controlled termination?**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests understanding of Phaser extensibility.
+_Likely follow-up:_ "What happens to waiting threads when terminated?"
 
 **Answer:**
-[FILL: complete answer with production depth]
 
-_What separates good from great:_ [FILL]
+Override onAdvance() to control when the Phaser terminates. Return true to terminate, false to continue:
+
+```java
+class TerminatingPhaser extends Phaser {
+    final int maxPhases;
+
+    TerminatingPhaser(int parties,
+                      int maxPhases) {
+        super(parties);
+        this.maxPhases = maxPhases;
+    }
+
+    @Override
+    protected boolean onAdvance(
+            int phase,
+            int registeredParties) {
+        // Terminate if:
+        // 1. Max phases reached
+        // 2. No parties registered
+        return phase >= maxPhases
+            || registeredParties == 0;
+    }
+}
+```
+
+**When terminated:**
+
+- isTerminated() returns true
+- getPhase() returns negative
+- arriveAndAwaitAdvance() returns immediately with negative phase
+- New register() calls have no effect
+
+**Common termination patterns:**
+
+1. Phase limit: `phase >= MAX`
+2. All workers done: `registeredParties == 0`
+3. External signal: check a volatile flag in onAdvance()
+4. Result found: a worker sets a flag, onAdvance checks it
+
+_What separates good from great:_ Listing multiple termination patterns and explaining what happens to waiting threads post-termination.
 
 ---
 
-**Q3 [SENIOR]: [FILL: architecture or production question]**
+**Q3 [SENIOR]: When would you use tiered Phasers and how do they work?**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests knowledge of scalability patterns for synchronization primitives.
+_Likely follow-up:_ "What is the maximum number of parties?"
 
 **Answer:**
-[FILL: complete answer demonstrating system-level thinking]
 
-_What separates good from great:_ [FILL]
+**Problem:** Phaser uses CAS on a single 64-bit state variable. With 1000+ parties calling arrive() concurrently, CAS contention causes massive retry loops and throughput collapse.
+
+**Solution: Tiered Phasers**
+
+```java
+// Parent coordinates 4 children
+Phaser parent = new Phaser();
+
+// Each child manages 250 parties
+for (int i = 0; i < 4; i++) {
+    Phaser child =
+        new Phaser(parent, 250);
+    // child registers as 1 party
+    // in parent automatically
+    assignWorkersToChild(child, 250);
+}
+// parent has 4 parties (children)
+// Each child has 250 parties
+// Total: 1000 parties, contention
+// only on 250-party groups
+```
+
+**How it works:**
+
+1. Each child phaser registers as 1 party in the parent
+2. When all child parties arrive, the child arrives at the parent
+3. When all children arrive at the parent, the phase advances globally
+4. CAS contention is limited to each child's 250 parties, not 1000
+
+**Sizing:** Max 65535 parties per phaser (16-bit). With 4 tiers of 64 children: 64^4 = ~16M parties theoretically. In practice, 2 tiers handles most workloads.
+
+_What separates good from great:_ Explaining the CAS contention problem that motivates tiering and providing concrete sizing guidance.
 
 ---
 
@@ -3069,17 +3719,17 @@ _What separates good from great:_ [FILL]
 
 **Prerequisites (understand these first):**
 
-- [FILL: keyword] - [why needed]
-- [FILL: keyword] - [why needed]
+- CyclicBarrier - fixed-party barrier; understanding it first makes Phaser's additions clear
+- CountDownLatch - one-shot barrier; Phaser generalizes it
 
 **Builds on this (learn these next):**
 
-- [FILL: keyword] - [what it adds]
-- [FILL: keyword] - [what it adds]
+- Producer-Consumer Pattern - alternative coordination for asymmetric workloads
+- Lock Striping - similar partitioning idea applied to lock contention
 
 **Alternatives / Comparisons:**
 
-- [FILL: keyword] - [when to prefer]
+- CyclicBarrier - prefer when party count is fixed and API simplicity matters
 
 ---
 
@@ -3087,41 +3737,41 @@ _What separates good from great:_ [FILL]
 
 # Producer-Consumer Pattern
 
-**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+**TL;DR** - Decouples data generation from processing using a shared buffer, enabling independent scaling of producers and consumers.
 
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+You have a web server receiving HTTP requests and a processing engine handling them. Without a buffer, the server must call the processor synchronously. If the processor is slow, the server blocks and cannot accept new requests. If the server is fast, it overwhelms the processor. Tight coupling means you cannot scale them independently.
 
 **THE BREAKING POINT:**
-[FILL: 1-2 sentences. What crashes/slows/breaks.]
+A traffic spike hits: 1000 requests/sec, processor handles 200/sec. Without a buffer, 800 requests/sec are rejected. Or the server thread pool is exhausted, and the entire application becomes unresponsive.
 
 **THE INVENTION MOMENT:**
 "This is exactly why Producer-Consumer Pattern was created."
 
 **EVOLUTION:**
-[FILL: 2-3 sentences. predecessor -> current -> future direction]
+The pattern predates modern computing - it is the assembly line from manufacturing (1913, Ford). In computing, it appears as Unix pipes (1973), message queues (IBM MQ, 1993), and in-process BlockingQueues (Java 5, 2004). Modern evolution: reactive streams (Project Reactor, RxJava) add backpressure semantics. Distributed: Kafka partitions are producer-consumer with persistence.
 
 ---
 
 ### 📘 Textbook Definition
 
-[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Producer-Consumer Pattern** on first mention.]
+The **Producer-Consumer Pattern** is a concurrency design pattern where producer threads generate data and place it into a shared buffer, and consumer threads take data from the buffer and process it. The buffer (typically a BlockingQueue) decouples producers from consumers, allows them to run at different speeds, and provides natural backpressure when bounded. This pattern is the foundation of work queues, task pipelines, and event-driven architectures.
 
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:** [FILL: max 15 words, zero jargon]
+**One line:** Producers put work into a shared queue; consumers take and process it independently.
 
 **One analogy:**
 
-> [FILL: 2-3 sentence real-world analogy]
+> Producer-Consumer is like a restaurant kitchen. Waiters (producers) place orders on a ticket rail (queue). Chefs (consumers) pick tickets and cook. The rail decouples order-taking from cooking. If the rail is full, waiters wait. If empty, chefs wait. You can add more chefs without changing waiters.
 
-**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+**One insight:** The buffer is not just storage - it is a rate absorber. It smooths out bursts: producers can spike temporarily if consumers are slower, as long as the average rates balance. The bounded buffer adds backpressure: when full, producers slow down naturally. This is the most important property for system stability.
 
 ---
 
@@ -3129,121 +3779,208 @@ _What separates good from great:_ [FILL]
 
 **CORE INVARIANTS:**
 
-1. [FILL: always true about this concept]
-2. [FILL: always true about this concept]
-3. [FILL: always true about this concept]
+1. Producers and consumers are independently schedulable - no direct coupling
+2. The buffer maintains ordering (FIFO in most implementations)
+3. Bounded buffers provide backpressure; unbounded buffers risk memory exhaustion
 
 **DERIVED DESIGN:**
-[FILL: how invariants force the design. 2-4 sentences.]
+Because producers and consumers are decoupled, you can scale each independently (add more consumers when processing is slow). Because the buffer absorbs bursts, temporary rate mismatches do not cause failures. Because the buffer is shared state, it must be thread-safe (BlockingQueue provides this).
 
 **THE TRADE-OFFS:**
-**Gain:** [FILL: what you get]
-**Cost:** [FILL: what you sacrifice]
+**Gain:** Decoupling, independent scaling, burst absorption, backpressure
+**Cost:** Added latency (buffering delay), memory usage (buffer), complexity (queue management, poison pills)
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [FILL: inherent to the problem]
-**Accidental:** [FILL: from current tooling/ecosystem]
+**Essential:** Coordinating different-speed producers and consumers requires some form of buffering
+**Accidental:** Queue sizing, poison pill shutdown protocol, and error handling add implementation complexity
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
+> Producer-Consumer is a conveyor belt in a factory. Workers at the start (producers) place items on the belt. Workers at the end (consumers) pick items off. The belt speed and length determine throughput and buffering.
 
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
+- "Conveyor belt" -> BlockingQueue (shared bounded buffer)
+- "Workers at start" -> producer threads calling put()
+- "Workers at end" -> consumer threads calling take()
+- "Belt length" -> queue capacity (backpressure threshold)
 
-Where this analogy breaks down: [FILL: 1 sentence]
+Where this analogy breaks down: A conveyor belt has a fixed speed; a BlockingQueue's throughput depends on producer/consumer rates and lock contention.
 
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-[FILL: plain English, no jargon, 2-4 sentences]
+Producer-Consumer is a pattern where one group creates work and another group processes it. They communicate through a shared container. This lets them work at their own speed. If the container fills up, creators slow down. If it empties, processors wait.
 
 **Level 2 - How to use it (junior developer):**
-[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
+
+```java
+BlockingQueue<Task> queue =
+    new ArrayBlockingQueue<>(100);
+
+// Producer thread:
+queue.put(new Task("work"));
+
+// Consumer thread:
+Task t = queue.take();
+t.process();
+```
+
+Use ArrayBlockingQueue for bounded buffering. Start multiple consumer threads for parallel processing. Use a poison pill (special sentinel value) to signal shutdown.
 
 **Level 3 - How it works (mid-level engineer):**
-[FILL: internals, data structures, algorithms. 4-6 sentences]
+The pattern consists of three components: producers (generate work), buffer (BlockingQueue), and consumers (process work). Producers call put() which blocks when full. Consumers call take() which blocks when empty. The BlockingQueue handles all synchronization internally using locks and conditions. The decoupling means producers do not know about consumers and vice versa. Shutdown requires a protocol: typically a poison pill (a special object) placed by each producer signals consumers to stop.
 
 **Level 4 - Production mastery (senior/staff engineer):**
-[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
+(1) **Queue sizing:** Too small = excessive blocking. Too large = memory waste + latency. Rule of thumb: capacity = (producer_rate - consumer_rate) \* acceptable_latency. (2) **Poison pill shutdown:** Each producer places one poison pill. Consumers check for poison pill on every take(). With N consumers, you need N poison pills. (3) **Batch processing:** Consumers use drainTo() to process batches - reduces lock acquisition overhead. (4) **Monitoring:** Queue depth is the single most important metric. Rising depth = consumers too slow. Zero depth = consumers over-provisioned. (5) **Error handling:** Consumer exceptions must not kill the consumer thread. Wrap process() in try-catch. Log and continue. (6) **Multiple queues:** For priority: use PriorityBlockingQueue. For isolation: separate queues per task type with dedicated consumer pools.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[FILL: correct but conventional understanding]"
-A Staff says: "[FILL: next-level abstraction or cross-system insight]"
-The difference: [FILL: 1 sentence - the mental model shift]
+A Senior says: "I use BlockingQueue to decouple producers and consumers."
+A Staff says: "I design the producer-consumer system as a pipeline with observable metrics. I size the queue based on rate differentials, monitor depth as a leading capacity indicator, implement circuit breakers when depth exceeds thresholds, and use drainTo for batch processing. I distinguish between transient bursts (queue absorbs) and sustained overload (need more consumers)."
+The difference: Treating the queue as an observable system component with operational characteristics, not just a data structure.
 
 **Level 5 - Distinguished (expert thinking):**
-[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+Producer-Consumer is the in-process analog of a message broker. Kafka partitions are producer-consumer with persistence and replay. RabbitMQ queues add routing. SQS adds distributed durability. The pattern scales from in-process BlockingQueue to planetary-scale event streaming. The fundamental insight: every distributed system has a producer-consumer boundary at every async handoff. Understanding backpressure at this boundary (bounded queue, reactive streams, TCP flow control) is the key to building systems that degrade gracefully under load instead of failing catastrophically.
 
 ---
 
 ### ⚙️ How It Works
 
-[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+```
+Producer-Consumer with BlockingQueue:
+
+  Producers         Queue[cap=5]
+  P1 -> put() --\   [T1,T2,T3,_,_]
+  P2 -> put() ---+->     |
+  P3 -> put() --/    <- YOU ARE HERE
+                      |
+  Consumers        take()
+  C1 <- take() <--+
+  C2 <- take() <--+
+  C3 <- take() <--+
+
+  Backpressure:
+  Queue full  -> put() BLOCKS P1,P2,P3
+  Queue empty -> take() BLOCKS C1,C2,C3
+
+  Shutdown (poison pill):
+  P1: put(POISON) -> C1: take()=POISON
+                      C1: exits loop
+```
 
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
+
+```
+HTTP       Producer   Queue    Consumer
+Request -> Thread --> [BQ] --> Thread
+  |          |        cap=    process()
+  |        put()      100      take()
+  |          |     <- YOU      |
+  |          |      ARE HERE   |
+  v          v                 v
+Response  (async)           (async)
+```
 
 **FAILURE PATH:**
-[FILL: cascade when this fails -> observable symptom]
+Consumers crash (uncaught exception) -> queue fills to capacity -> producers block on put() -> upstream requests timeout -> cascading failure. Observable: queue.size() == capacity, producer threads in WAITING state, upstream 503 errors.
 
 **WHAT CHANGES AT SCALE:**
-[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+At 10 req/sec: single producer, single consumer, queue rarely used. At 1000 req/sec: multiple producers, multiple consumers, queue absorbs bursts. At 100K req/sec: single BlockingQueue becomes a bottleneck (lock contention). Shard into multiple queues with partitioning (hash on request ID). Or switch to Disruptor for lock-free ring buffer.
 
 ---
 
 ### 💻 Code Example
 
-**BAD - [FILL: antipattern name]:**
+**BAD - tight coupling without buffer:**
 
 ```java
-// BAD: [FILL: why this fails]
-[FILL: code, max 70 chars/line]
+// BAD: synchronous, no decoupling
+class RequestHandler {
+    void handle(Request req) {
+        // Blocks until processed
+        process(req); // slow!
+        // Cannot accept new requests
+        // during processing
+    }
+}
 ```
 
-**GOOD - [FILL: correct pattern name]:**
+**GOOD - decoupled with bounded queue:**
 
 ```java
-// GOOD: [FILL: why this works]
-[FILL: code, max 70 chars/line]
+// GOOD: decoupled, bounded, monitored
+class AsyncHandler {
+    final BlockingQueue<Request> queue =
+        new ArrayBlockingQueue<>(1000);
+
+    // Producer (HTTP thread):
+    void handle(Request req) {
+        boolean ok = queue.offer(
+            req, 1, TimeUnit.SECONDS);
+        if (!ok) {
+            metrics.inc("queue.reject");
+            throw new ServiceUnavailable();
+        }
+    }
+
+    // Consumer (worker thread):
+    void consumeLoop() {
+        while (!Thread.interrupted()) {
+            try {
+                Request r = queue.take();
+                process(r);
+            } catch (Exception e) {
+                log.error("Failed", e);
+                // Continue! Don't die.
+            }
+        }
+    }
+}
 ```
 
 **How to test / verify correctness:**
-[FILL: 1-3 sentences on testing strategy]
+Stress test: producers at 2x consumer rate. Verify: (1) no data loss when queue not full, (2) backpressure activates when full, (3) consumer exceptions do not kill consumer thread. Test shutdown: send poison pill, verify all consumers exit cleanly.
 
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [FILL: 1 sentence]
-**PROBLEM IT SOLVES:** [FILL: 1 sentence]
-**KEY INSIGHT:** [FILL: 1 sentence]
-**USE WHEN:** [FILL: conditions]
-**AVOID WHEN:** [FILL: conditions]
-**ANTI-PATTERN:** [FILL: common misuse]
-**TRADE-OFF:** [FILL: gain vs cost]
-**ONE-LINER:** [FILL: memorable metaphor]
-**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
-**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
+**WHAT IT IS:** Concurrency pattern decoupling data producers from consumers via a shared buffer
+
+**PROBLEM IT SOLVES:** Rate mismatch between data generation and processing, tight coupling
+
+**KEY INSIGHT:** The bounded buffer provides natural backpressure - producers slow when consumers lag
+
+**USE WHEN:** Async processing, work queues, event pipelines, rate smoothing
+
+**AVOID WHEN:** Work must be processed synchronously, or latency of buffering is unacceptable
+
+**ANTI-PATTERN:** Unbounded queue (OOM) or consumer that dies on exception (silent data loss)
+
+**TRADE-OFF:** Decoupling + burst absorption vs added latency + buffer memory
+
+**ONE-LINER:** "A kitchen ticket rail between waiters and chefs"
+
+**KEY NUMBERS:** Queue depth = leading capacity indicator. Size = rate_diff \* acceptable_latency.
+
+**TRIGGER PHRASE:** "decouple produce consume bounded queue backpressure"
+
+**OPENING SENTENCE:** "Producer-Consumer decouples data generation from processing via a bounded buffer. I size the queue based on rate differentials and monitor depth as a leading indicator of system overload."
 
 **If you remember only 3 things:**
 
-1. [FILL: most important insight]
-2. [FILL: key trade-off or constraint]
-3. [FILL: production gotcha that bites everyone]
+1. Always use bounded queues - unbounded = OOM risk
+2. Monitor queue depth as the primary system health metric
+3. Consumer exceptions must not kill the consumer thread - catch, log, continue
 
 **Interview one-liner:**
-"[FILL: 30-second interview explanation showing depth]"
+"Producer-Consumer decouples work creation from processing via a BlockingQueue. I always use bounded queues for backpressure, size based on rate differential, monitor depth for capacity planning, and use drainTo for batch efficiency."
 
 ---
 
@@ -3251,68 +3988,78 @@ The difference: [FILL: 1 sentence - the mental model shift]
 
 **You've mastered this when you can:**
 
-1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
-2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
-3. **DECIDE:** [FILL: choose this vs alternative under pressure]
-4. **BUILD:** [FILL: implement/configure in production context]
-5. **EXTEND:** [FILL: apply principle to different domain]
+1. **EXPLAIN:** How bounded buffers provide natural backpressure without explicit rate limiting
+2. **DEBUG:** Diagnose a system where producers are blocking (queue full, slow consumers)
+3. **DECIDE:** When to use in-process BlockingQueue vs external message broker (Kafka/SQS)
+4. **BUILD:** Implement a complete producer-consumer with graceful shutdown via poison pills
+5. **EXTEND:** Map the pattern to distributed systems (Kafka partitions, SQS queues)
 
 ---
 
 ### 💡 The Surprising Truth
 
-[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
+The optimal queue size is often much smaller than developers expect. For most systems, a queue of 10-100 is sufficient. Large queues (10K+) hide problems: they absorb sustained overload for minutes, masking the need for more consumers. When the queue finally fills, the system fails catastrophically. A small queue fails fast, alerting you to the rate imbalance immediately. Netflix's Hystrix uses queue size 5-10 as a deliberate choice to force fast failure and circuit-breaking.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| #   | Misconception                  | Reality              |
-| --- | ------------------------------ | -------------------- |
-| 1   | [FILL: dangerous wrong belief] | [FILL: actual truth] |
-| 2   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 3   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 4   | [FILL: wrong belief]           | [FILL: actual truth] |
+| #   | Misconception                                         | Reality                                                                                                            |
+| --- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| 1   | "Bigger queue = better performance"                   | Bigger queue = more latency + hides overload longer. Small queues fail fast and expose rate imbalances.            |
+| 2   | "Producer-Consumer is only for concurrency"           | It is fundamentally about decoupling. Even single-threaded event loops (Node.js) use the pattern via event queues. |
+| 3   | "Consumer threads should exit on exception"           | Consumers must catch, log, and continue. A dying consumer means unprocessed work and gradual capacity loss.        |
+| 4   | "You need the same number of producers and consumers" | The whole point is independent scaling. Typically you have many more consumers than producers (or vice versa).     |
 
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [FILL: name]**
-**Symptom:** [FILL: observable in production]
-**Root Cause:** [FILL: why it happens]
+**Failure Mode 1: Silent data loss from unbounded queue + OOM**
+**Symptom:** OutOfMemoryError. All queued work lost. Application crashes.
+**Root Cause:** Unbounded LinkedBlockingQueue fills until heap is exhausted. No backpressure to slow producers.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+jmap -histo:live <pid> | head -20
+# Look for LinkedBlockingQueue$Node
+# dominating the heap
+# Millions of nodes = unbounded queue
 ```
 
-**Fix:** [FILL: BAD then GOOD approach]
-**Prevention:** [FILL: how to prevent]
+**Fix:** BAD: increasing heap size. GOOD: Use bounded ArrayBlockingQueue with offer(timeout). Handle rejection explicitly (503, drop, redirect).
+**Prevention:** Ban unbounded queues in code review. Monitor queue.size() with alerting thresholds.
 
-**Failure Mode 2: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 2: Consumer thread death from uncaught exception**
+**Symptom:** Queue fills up despite adequate consumer count. Some consumer threads disappeared.
+**Root Cause:** Consumer thread threw an uncaught exception and terminated. No replacement was spawned.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+jstack <pid> | grep "Consumer"
+# Count active consumer threads
+# If count < expected: threads died
+# Check application logs for the
+# uncaught exception
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: restarting the application. GOOD: Wrap consumer loop body in try-catch. Use ExecutorService with uncaughtExceptionHandler that logs and restarts the consumer.
+**Prevention:** Every consumer loop: `while(!interrupted()) { try { process(take()); } catch (Exception e) { log.error(...); } }`.
 
-**Failure Mode 3: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 3: Shutdown hang from missing poison pills**
+**Symptom:** Application shutdown hangs. Consumer threads blocked on take() forever.
+**Root Cause:** Producers stopped but did not send poison pills. Consumers wait forever for more work.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+jstack <pid> | grep "take"
+# Consumer threads WAITING at take()
+# Queue is empty, no poison pills
+# Application in shutdown state
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: System.exit() (ungraceful). GOOD: Use ExecutorService.shutdownNow() which interrupts consumers. Or send N poison pills for N consumers.
+**Prevention:** Always implement clean shutdown: interrupt consumers, use take() with timeout in consumers, or use sentinel values.
 
 ---
 
@@ -3326,39 +4073,135 @@ The difference: [FILL: 1 sentence - the mental model shift]
 | Trade-off     | 60-120 seconds  | Decision framework    |
 | Behavioral    | 60-120 seconds  | Clear STAR structure  |
 
-**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+**Q1 [JUNIOR]: How does the Producer-Consumer pattern work with BlockingQueue?**
 
-_Why they ask:_ [FILL: what skill this probes]
-_Likely follow-up:_ [FILL: what they ask next]
+_Why they ask:_ Tests understanding of the fundamental concurrency pattern.
+_Likely follow-up:_ "How do you stop the consumers?"
 
 **Answer:**
-[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-_What separates good from great:_ [FILL: 1 sentence]
+The pattern has three components:
+
+```java
+// 1. Buffer (bounded queue)
+BlockingQueue<String> queue =
+    new ArrayBlockingQueue<>(100);
+
+// 2. Producer (generates work)
+Runnable producer = () -> {
+    while (hasWork()) {
+        String item = generateWork();
+        queue.put(item); // blocks full
+    }
+    queue.put("POISON"); // shutdown
+};
+
+// 3. Consumer (processes work)
+Runnable consumer = () -> {
+    while (true) {
+        String item = queue.take();
+        if ("POISON".equals(item)) {
+            queue.put("POISON"); // pass
+            break;
+        }
+        process(item);
+    }
+};
+```
+
+**Key behaviors:**
+
+1. put() blocks when queue is full (backpressure)
+2. take() blocks when queue is empty (no busy-waiting)
+3. Producers and consumers are decoupled - scale independently
+4. Poison pill signals shutdown (one per consumer)
+
+The bounded queue is critical: it prevents OOM and provides natural rate limiting.
+
+_What separates good from great:_ Explaining the poison pill shutdown pattern and the importance of bounded capacity.
 
 ---
 
-**Q2 [MID]: [FILL: debugging or trade-off question]**
+**Q2 [MID]: How would you size the queue and decide how many consumer threads to use?**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests system design thinking for production systems.
+_Likely follow-up:_ "How would you monitor this system?"
 
 **Answer:**
-[FILL: complete answer with production depth]
 
-_What separates good from great:_ [FILL]
+**Queue sizing formula:**
+`capacity = (P_rate - C_rate) * burst_duration`
+
+Where P_rate = peak producer rate, C_rate = per-consumer processing rate, burst_duration = how long the burst lasts.
+
+Example: 1000 req/sec peak, each consumer processes 200 req/sec, bursts last 5 seconds:
+
+- Rate gap: 1000 - (5 consumers \* 200) = 0 (balanced)
+- Queue absorbs: 0 \* 5 = 0 (no queue needed if balanced)
+- But if you have 4 consumers: gap = 1000 - 800 = 200/sec \* 5sec = 1000 queue capacity
+
+**Consumer count formula:**
+`consumers = P_rate / C_rate_per_consumer * safety_factor`
+
+Example: 1000 req/sec, each consumer does 200/sec:
+
+- Minimum: 1000/200 = 5 consumers
+- With 1.5x safety: 8 consumers
+
+**Monitoring:**
+
+```
+queue.size()           -> capacity used
+queue.remainingCap()   -> headroom
+producer block count   -> backpressure
+consumer idle ratio    -> over-provisioned
+```
+
+**Queue depth alert thresholds:**
+
+- 50% capacity: warn (trending full)
+- 80% capacity: critical (near blocking)
+- 100% + producers blocking: page (system overloaded)
+
+_What separates good from great:_ Providing the formulas for queue sizing AND consumer count, plus monitoring thresholds as a production readiness checklist.
 
 ---
 
-**Q3 [SENIOR]: [FILL: architecture or production question]**
+**Q3 [SENIOR]: When would you use an in-process BlockingQueue vs an external message broker like Kafka?**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests architectural judgment for distributed vs in-process trade-offs.
+_Likely follow-up:_ "How would you migrate from one to the other?"
 
 **Answer:**
-[FILL: complete answer demonstrating system-level thinking]
 
-_What separates good from great:_ [FILL]
+| Dimension     | BlockingQueue    | Kafka              |
+| ------------- | ---------------- | ------------------ |
+| Persistence   | None (in-memory) | Durable (disk)     |
+| Process scope | Single JVM       | Cross-process      |
+| Replay        | No               | Yes (offset reset) |
+| Throughput    | ~10M msg/sec     | ~1M msg/sec        |
+| Latency       | Microseconds     | Milliseconds       |
+| Ordering      | FIFO (strict)    | Per-partition      |
+| Scaling       | Add threads      | Add partitions     |
+
+**Use BlockingQueue when:**
+
+1. Single process, low latency required
+2. Data loss acceptable on crash
+3. Simple work distribution within a service
+4. No need for replay or audit trail
+
+**Use Kafka when:**
+
+1. Cross-service communication
+2. Data durability required (crash recovery)
+3. Need to replay events (debugging, new consumer)
+4. Multiple consumer groups reading same data
+5. Decoupling deployment of producer and consumer
+
+**Migration path:** Start with BlockingQueue. When you need durability or cross-service communication, extract the queue interface and swap in a Kafka-backed implementation. Keep the same producer-consumer semantics.
+
+_What separates good from great:_ Quantifying the trade-offs (latency, throughput) and providing a practical migration path.
 
 ---
 
@@ -3366,17 +4209,17 @@ _What separates good from great:_ [FILL]
 
 **Prerequisites (understand these first):**
 
-- [FILL: keyword] - [why needed]
-- [FILL: keyword] - [why needed]
+- BlockingQueue Variants - the concrete implementations used for the buffer
+- synchronized Keyword - understanding thread coordination fundamentals
 
 **Builds on this (learn these next):**
 
-- [FILL: keyword] - [what it adds]
-- [FILL: keyword] - [what it adds]
+- Liveness Issues (Livelock and Starvation) - failure modes in producer-consumer systems
+- Lock Striping - technique for scaling concurrent data structures
 
 **Alternatives / Comparisons:**
 
-- [FILL: keyword] - [when to prefer]
+- ConcurrentLinkedQueue - lock-free alternative for non-blocking producer-consumer (no backpressure)
 
 ---
 
@@ -3384,41 +4227,41 @@ _What separates good from great:_ [FILL]
 
 # Liveness Issues (Livelock and Starvation)
 
-**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+**TL;DR** - Livelock means threads are active but make no progress; starvation means a thread never gets the resource it needs.
 
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+You have learned about deadlock - threads block each other in a circular wait. But there are two other liveness failures that are harder to detect. In livelock, threads keep retrying an operation but interfere with each other, so none makes progress. In starvation, a thread is perpetually denied CPU time or lock access because higher-priority or unfair scheduling always preempts it. Both failures are silent - no exception, no stack trace, just no progress.
 
 **THE BREAKING POINT:**
-[FILL: 1-2 sentences. What crashes/slows/breaks.]
+Two threads retry a lock in response to each other, creating an infinite retry loop. Or a low-priority thread never processes its queue because high-priority threads monopolize the CPU. In both cases: no exception, no deadlock detection, no obvious symptom.
 
 **THE INVENTION MOMENT:**
 "This is exactly why Liveness Issues (Livelock and Starvation) was created."
 
 **EVOLUTION:**
-[FILL: 2-3 sentences. predecessor -> current -> future direction]
+Liveness theory dates to Dijkstra's semaphore work (1965). The dining philosophers problem illustrates all three: deadlock (circular lock wait), livelock (philosophers simultaneously pick up and put down forks), and starvation (one philosopher never gets both forks). Modern solutions: lock ordering (prevents deadlock), random backoff (prevents livelock), fair locks (prevents starvation).
 
 ---
 
 ### 📘 Textbook Definition
 
-[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Liveness Issues (Livelock and Starvation)** on first mention.]
+**Liveness Issues** are conditions where a concurrent program fails to make progress despite threads being active and resources being available. **Livelock** occurs when threads continuously change state in response to each other without making progress - like two people in a corridor who keep stepping aside in the same direction. **Starvation** occurs when a thread is perpetually denied access to a shared resource because scheduling or priority policies favor other threads. Unlike deadlock (blocked threads), livelocked threads are RUNNING and starving threads are RUNNABLE - making both harder to detect.
 
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:** [FILL: max 15 words, zero jargon]
+**One line:** Threads are alive but stuck - either retrying endlessly (livelock) or perpetually denied access (starvation).
 
 **One analogy:**
 
-> [FILL: 2-3 sentence real-world analogy]
+> Two people in a narrow corridor. Both step left to let the other pass. Then both step right. Then left again. They are moving (not blocked!) but never pass each other. That is livelock. A person who always gets pushed to the back of the line and never reaches the counter is starvation.
 
-**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+**One insight:** Deadlock is easy to detect (thread dump shows BLOCKED with circular wait). Livelock is nearly invisible: threads are RUNNABLE, CPU is busy, but throughput is zero. Starvation is gradual: latency for the starved thread climbs while others are fine. You need metrics, not thread dumps, to detect these.
 
 ---
 
@@ -3426,121 +4269,224 @@ _What separates good from great:_ [FILL]
 
 **CORE INVARIANTS:**
 
-1. [FILL: always true about this concept]
-2. [FILL: always true about this concept]
-3. [FILL: always true about this concept]
+1. Livelock: threads are active (CPU consumed) but output is zero - state changes without progress
+2. Starvation: at least one thread makes no progress while others succeed
+3. Both are liveness violations - the program is "alive" but not making useful progress
 
 **DERIVED DESIGN:**
-[FILL: how invariants force the design. 2-4 sentences.]
+Because livelocked threads are RUNNABLE (not BLOCKED), thread dump analysis alone cannot detect it. Because starvation is about relative progress, you need per-thread throughput metrics. Solutions involve breaking symmetry: random backoff prevents livelock, fair locks prevent starvation.
 
 **THE TRADE-OFFS:**
-**Gain:** [FILL: what you get]
-**Cost:** [FILL: what you sacrifice]
+**Gain:** Understanding liveness lets you build systems that make progress under contention
+**Cost:** Fair scheduling (prevents starvation) reduces overall throughput by 20-40%
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [FILL: inherent to the problem]
-**Accidental:** [FILL: from current tooling/ecosystem]
+**Essential:** Multiple threads competing for shared resources will always have scheduling trade-offs
+**Accidental:** Java's default unfair lock semantics (ReentrantLock, synchronized) make starvation possible but unlikely
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
+> Liveness issues are like traffic problems. Deadlock = gridlock (everyone blocked). Livelock = two cars at a four-way stop, each waving the other to go, neither moving. Starvation = a side street car that can never enter the highway because traffic never has a gap.
 
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
+- "Gridlock" -> deadlock (circular blocking)
+- "Both waving" -> livelock (mutual courtesy, no progress)
+- "Side street wait" -> starvation (perpetually denied access)
+- "Traffic light" -> fair lock (guarantees everyone gets a turn)
 
-Where this analogy breaks down: [FILL: 1 sentence]
+Where this analogy breaks down: Traffic is physical; thread scheduling is discrete and can be completely fair with the right algorithm.
 
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-[FILL: plain English, no jargon, 2-4 sentences]
+Sometimes programs get stuck even though nothing is broken. In livelock, two parts keep reacting to each other but neither finishes - like two people who keep dodging the same way in a corridor. In starvation, one part never gets a turn because others always go first. Both are hard to notice because the program looks busy.
 
 **Level 2 - How to use it (junior developer):**
-[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
+Recognize livelock: threads are running, CPU is high, but output is zero. Common cause: retry loops that react to the same condition simultaneously.
+
+Recognize starvation: one thread's tasks pile up while others complete normally. Common cause: unfair lock where some threads always win.
+
+```java
+// Livelock example:
+// Both threads try to yield to each
+// other in a loop
+// Fix: random backoff
+
+// Starvation example:
+// Thread.MIN_PRIORITY thread never
+// scheduled when MAX_PRIORITY threads
+// are running
+// Fix: same priority or fair lock
+```
 
 **Level 3 - How it works (mid-level engineer):**
-[FILL: internals, data structures, algorithms. 4-6 sentences]
+**Livelock mechanism:** Thread A detects conflict, backs off, retries. Thread B detects conflict, backs off, retries. Both retry at the same time, detect conflict again, back off again - forever. The fix is randomized backoff: each thread waits a random duration before retrying, breaking the symmetry. This is the same approach used in Ethernet CSMA/CD collision resolution.
+
+**Starvation mechanism:** With unfair ReentrantLock, a thread that releases and re-acquires the lock can "barge" ahead of threads waiting in the queue. Under high contention, some threads starve because newly arriving threads steal the lock. Fair lock (ReentrantLock(true)) prevents this with FIFO ordering but reduces throughput.
 
 **Level 4 - Production mastery (senior/staff engineer):**
-[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
+(1) **Detecting livelock:** Monitor per-thread progress. If CPU usage is high but completion rate is zero, suspect livelock. Use JFR (Java Flight Recorder) to profile thread state transitions: RUNNABLE with no useful method calls = livelock. (2) **Detecting starvation:** Monitor per-thread latency P99. If one thread's P99 grows unboundedly while others are stable, that thread is starved. (3) **CAS livelock:** compare-and-swap loops can livelock under extreme contention: all threads read the same value, all CAS fail, all retry. Fix: exponential backoff or fallback to lock. (4) **Reader-writer starvation:** ReadWriteLock can starve writers if readers never release. StampedLock's optimistic read helps by not blocking writers. (5) **Thread priority starvation:** Never use thread priorities for correctness. OS schedulers may ignore them. Use fair locks or fair queues instead.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[FILL: correct but conventional understanding]"
-A Staff says: "[FILL: next-level abstraction or cross-system insight]"
-The difference: [FILL: 1 sentence - the mental model shift]
+A Senior says: "I use fair locks to prevent starvation and random backoff to prevent livelock."
+A Staff says: "I instrument per-thread throughput and latency to detect liveness issues before they become critical. Fair locks are a last resort because they reduce throughput by 20-40%. I prefer work-stealing queues (ForkJoinPool) which distribute load evenly without fairness overhead."
+The difference: Detecting liveness issues through metrics rather than waiting for symptoms, and choosing architectural solutions over lock-level fixes.
 
 **Level 5 - Distinguished (expert thinking):**
-[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+Liveness properties are formally defined in concurrent systems theory. Safety says "nothing bad happens." Liveness says "something good eventually happens." A system is live if every request eventually gets a response. Starvation-freedom is a stronger property than deadlock-freedom. Lock-freedom (every step makes global progress) is stronger than starvation-freedom. Wait-freedom (every thread makes progress) is the strongest. ConcurrentHashMap operations are lock-free but not wait-free. Understanding this hierarchy lets you choose the right concurrency strategy based on required guarantees.
 
 ---
 
 ### ⚙️ How It Works
 
-[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+```
+LIVELOCK:
+  T1: tryLock(A) ok, tryLock(B) fail
+      -> unlock(A), retry
+  T2: tryLock(B) ok, tryLock(A) fail
+      -> unlock(B), retry
+  T1: tryLock(A) ok, tryLock(B) fail
+      -> unlock(A), retry
+  ... forever, both RUNNABLE
+  <- YOU ARE HERE
+
+FIX: Random backoff
+  T1: fail -> sleep(random 10-50ms)
+  T2: fail -> sleep(random 10-50ms)
+  Different sleep -> one succeeds
+
+STARVATION:
+  Lock (unfair): T1 T2 T3 competing
+  T1: acquire, release, acquire...
+  T2: acquire, release, acquire...
+  T3: always in queue, never wins
+  <- T3 is STARVED
+```
 
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
+
+```
+        Liveness spectrum:
+
+Deadlock   Livelock   Starvation
+  |          |           |
+BLOCKED   RUNNABLE   RUNNABLE
+no CPU    CPU busy   CPU idle(wait)
+visible   invisible  gradual
+  |          |           |
+Detection: Detection:  Detection:
+jstack    metrics     P99 latency
+           <- YOU ARE HERE
+```
 
 **FAILURE PATH:**
-[FILL: cascade when this fails -> observable symptom]
+Livelock: CPU 100%, throughput 0. Thread dump shows RUNNABLE threads in retry loops. No deadlock detected. System appears "busy but stuck." Starvation: One service's P99 climbs from 10ms to 10s over hours. Others are fine. No errors logged. The starved thread's queue grows unboundedly.
 
 **WHAT CHANGES AT SCALE:**
-[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+At low contention: livelock and starvation are extremely rare. At high contention (100+ threads on one lock): starvation probability increases significantly with unfair locks. At extreme contention (CAS-heavy): livelock from CAS retry storms becomes the dominant failure mode.
 
 ---
 
 ### 💻 Code Example
 
-**BAD - [FILL: antipattern name]:**
+**BAD - polite livelock:**
 
 ```java
-// BAD: [FILL: why this fails]
-[FILL: code, max 70 chars/line]
+// BAD: both threads politely yield
+// creating infinite retry loop
+while (true) {
+    if (lock1.tryLock()) {
+        try {
+            if (lock2.tryLock()) {
+                try {
+                    doWork();
+                    return;
+                } finally {
+                    lock2.unlock();
+                }
+            }
+        } finally {
+            lock1.unlock();
+        }
+    }
+    // Both threads reach here
+    // simultaneously, retry together
+    // -> LIVELOCK!
+}
 ```
 
-**GOOD - [FILL: correct pattern name]:**
+**GOOD - random backoff breaks symmetry:**
 
 ```java
-// GOOD: [FILL: why this works]
-[FILL: code, max 70 chars/line]
+// GOOD: random backoff
+Random rand = ThreadLocalRandom
+    .current();
+
+while (true) {
+    if (lock1.tryLock()) {
+        try {
+            if (lock2.tryLock()) {
+                try {
+                    doWork();
+                    return;
+                } finally {
+                    lock2.unlock();
+                }
+            }
+        } finally {
+            lock1.unlock();
+        }
+    }
+    // Random backoff breaks symmetry
+    Thread.sleep(
+        rand.nextInt(10, 50));
+}
 ```
 
 **How to test / verify correctness:**
-[FILL: 1-3 sentences on testing strategy]
+For livelock: Run two threads contending for the same locks. Monitor throughput (operations/sec). Without backoff: throughput = 0 under contention. With backoff: throughput > 0. For starvation: Run N threads with unfair lock. Track per-thread completion count. If any thread's count is 0 after 10 seconds: starvation detected.
 
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [FILL: 1 sentence]
-**PROBLEM IT SOLVES:** [FILL: 1 sentence]
-**KEY INSIGHT:** [FILL: 1 sentence]
-**USE WHEN:** [FILL: conditions]
-**AVOID WHEN:** [FILL: conditions]
-**ANTI-PATTERN:** [FILL: common misuse]
-**TRADE-OFF:** [FILL: gain vs cost]
-**ONE-LINER:** [FILL: memorable metaphor]
-**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
-**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
+**WHAT IT IS:** Liveness failures where threads are active but make no progress (livelock) or never get access (starvation)
+
+**PROBLEM IT SOLVES:** Understanding why a system with no deadlocks can still be stuck
+
+**KEY INSIGHT:** Livelocked threads are RUNNABLE, not BLOCKED - thread dumps do not show the problem
+
+**USE WHEN:** Diagnosing systems with high CPU but zero throughput, or one thread's latency growing unboundedly
+
+**AVOID WHEN:** N/A - these are failure modes to prevent, not patterns to use
+
+**ANTI-PATTERN:** Using tryLock without random backoff (causes livelock) or unfair locks under high contention (causes starvation)
+
+**TRADE-OFF:** Fair locks prevent starvation but reduce throughput by 20-40%
+
+**ONE-LINER:** "Deadlock is gridlock; livelock is two people dodging the same way; starvation is never getting a turn"
+
+**KEY NUMBERS:** Fair lock: 20-40% throughput reduction. Random backoff: 10-50ms range typical.
+
+**TRIGGER PHRASE:** "active but no progress runnable livelock starvation"
+
+**OPENING SENTENCE:** "Livelock and starvation are liveness failures where threads are active but unproductive. I detect them through per-thread throughput metrics, not thread dumps."
 
 **If you remember only 3 things:**
 
-1. [FILL: most important insight]
-2. [FILL: key trade-off or constraint]
-3. [FILL: production gotcha that bites everyone]
+1. Livelock = threads RUNNABLE but throughput zero. Fix: random backoff.
+2. Starvation = one thread perpetually denied access. Fix: fair locks or work-stealing.
+3. Thread dumps detect deadlock but NOT livelock or starvation - use metrics.
 
 **Interview one-liner:**
-"[FILL: 30-second interview explanation showing depth]"
+"Livelock is mutual courtesy without progress - threads retry in lockstep. Starvation is unfair scheduling denying one thread access. I detect both through per-thread throughput metrics, fix livelock with random backoff, and fix starvation with fair locks."
 
 ---
 
@@ -3548,68 +4494,80 @@ The difference: [FILL: 1 sentence - the mental model shift]
 
 **You've mastered this when you can:**
 
-1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
-2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
-3. **DECIDE:** [FILL: choose this vs alternative under pressure]
-4. **BUILD:** [FILL: implement/configure in production context]
-5. **EXTEND:** [FILL: apply principle to different domain]
+1. **EXPLAIN:** The difference between deadlock, livelock, and starvation to a non-technical stakeholder
+2. **DEBUG:** Diagnose livelock from CPU and throughput metrics when thread dumps show no deadlock
+3. **DECIDE:** When to use fair locks (starvation risk) vs unfair locks (throughput priority)
+4. **BUILD:** Implement retry logic with exponential random backoff to prevent livelock
+5. **EXTEND:** Map liveness properties to distributed systems (consensus liveness, partition tolerance)
 
 ---
 
 ### 💡 The Surprising Truth
 
-[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
+Livelock is more common than deadlock in modern Java applications. Why? Because developers learned to use tryLock() to avoid deadlock. But tryLock() without random backoff creates livelock when two threads contend for the same locks in opposite order. The cure for deadlock becomes the cause of livelock. The fix is simple: add random backoff to every tryLock retry loop. This is the same principle used in Ethernet collision detection (CSMA/CD) since 1980.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| #   | Misconception                  | Reality              |
-| --- | ------------------------------ | -------------------- |
-| 1   | [FILL: dangerous wrong belief] | [FILL: actual truth] |
-| 2   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 3   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 4   | [FILL: wrong belief]           | [FILL: actual truth] |
+| #   | Misconception                                    | Reality                                                                                                                                  |
+| --- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | "Thread dumps detect all concurrency issues"     | Thread dumps detect deadlock (BLOCKED state). Livelock shows RUNNABLE. Starvation shows RUNNABLE or WAITING with no deadlock cycle.      |
+| 2   | "High CPU usage means the system is working"     | Livelock burns 100% CPU with zero throughput. High CPU + zero output = livelock.                                                         |
+| 3   | "Starvation only happens with thread priorities" | Unfair locks, biased scheduling, and reader-writer locks can all cause starvation without explicit priority settings.                    |
+| 4   | "Livelock is just a rare theoretical problem"    | tryLock-based deadlock avoidance without backoff creates livelock in production. CAS retry storms under extreme contention are livelock. |
 
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [FILL: name]**
-**Symptom:** [FILL: observable in production]
-**Root Cause:** [FILL: why it happens]
+**Failure Mode 1: tryLock livelock**
+**Symptom:** CPU at 100%. Throughput drops to zero. No deadlock detected. Thread dump shows threads RUNNABLE in a tryLock loop.
+**Root Cause:** Two threads call tryLock on two locks in opposite order. Both fail, release, retry simultaneously.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+# High CPU, no progress:
+top -H -p <pid>
+# Threads consuming CPU but
+# application throughput = 0
+jstack <pid> | grep "tryLock"
+# Multiple threads in tryLock loops
 ```
 
-**Fix:** [FILL: BAD then GOOD approach]
-**Prevention:** [FILL: how to prevent]
+**Fix:** BAD: adding Thread.yield() (still synchronous, likely same result). GOOD: Add ThreadLocalRandom backoff: `Thread.sleep(ThreadLocalRandom.current().nextInt(10, 50))`.
+**Prevention:** Every tryLock retry loop must include random backoff. Code review rule.
 
-**Failure Mode 2: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 2: Writer starvation with ReadWriteLock**
+**Symptom:** Write operations take seconds or minutes. Read operations complete normally. Write queue grows.
+**Root Cause:** Under sustained read load, readers hold the read lock continuously. Writers wait for all readers to release. New readers keep arriving before all existing readers finish.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+jstack <pid> | grep "WriteLock"
+# Writer threads WAITING at
+# writeLock.lock()
+# While reader threads are RUNNABLE
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: increasing writer thread priority. GOOD: Use ReentrantReadWriteLock(true) for fair mode. Or switch to StampedLock with optimistic reads that do not block writers.
+**Prevention:** Use fair read-write locks or StampedLock when write latency is critical.
 
-**Failure Mode 3: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 3: CAS retry storm (livelock)**
+**Symptom:** AtomicInteger/AtomicReference operations take milliseconds instead of nanoseconds. Throughput collapses under high contention.
+**Root Cause:** Many threads CAS the same variable simultaneously. Most fail, retry, fail again. The retry loop burns CPU without progress.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+# Profile with JFR or async-profiler:
+async-profiler -e cpu -d 10 \
+  -f flame.html <pid>
+# Look for hot compareAndSwap methods
+# If CAS dominates: contention storm
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: retrying faster. GOOD: Use LongAdder instead of AtomicLong for counters (stripes across multiple cells). For complex operations, fall back to a lock under high contention.
+**Prevention:** Use LongAdder for hot counters. Use Striped64-based classes. Avoid CAS loops on hot variables with > 8 threads contending.
 
 ---
 
@@ -3623,39 +4581,136 @@ The difference: [FILL: 1 sentence - the mental model shift]
 | Trade-off     | 60-120 seconds  | Decision framework    |
 | Behavioral    | 60-120 seconds  | Clear STAR structure  |
 
-**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+**Q1 [JUNIOR]: What is the difference between deadlock, livelock, and starvation?**
 
-_Why they ask:_ [FILL: what skill this probes]
-_Likely follow-up:_ [FILL: what they ask next]
+_Why they ask:_ Tests breadth of concurrency knowledge.
+_Likely follow-up:_ "Which is hardest to detect?"
 
 **Answer:**
-[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-_What separates good from great:_ [FILL: 1 sentence]
+| Issue      | Thread State | CPU  | Progress | Detection   |
+| ---------- | ------------ | ---- | -------- | ----------- |
+| Deadlock   | BLOCKED      | Low  | None     | Thread dump |
+| Livelock   | RUNNABLE     | High | None     | Metrics     |
+| Starvation | RUNNABLE     | Low  | Partial  | P99 latency |
+
+**Deadlock:** Circular lock wait. All involved threads BLOCKED. Detected by `jstack` deadlock detection. Fix: lock ordering.
+
+**Livelock:** Threads actively retry but interfere with each other. All RUNNABLE. CPU burns with zero throughput. Fix: random backoff.
+
+**Starvation:** One thread never gets the resource. Other threads succeed. The starved thread's latency grows unboundedly. Fix: fair locks.
+
+```
+Deadlock:  T1 -> lock A -> wait B
+           T2 -> lock B -> wait A
+Livelock:  T1: tryA ok, tryB fail, undo
+           T2: tryB ok, tryA fail, undo
+           (repeat forever)
+Starvation: T1,T2,T3 compete for lock
+           T3 always last, never wins
+```
+
+**Hardest to detect:** Livelock. No exception, no deadlock, threads look active. Only detectable through throughput metrics.
+
+_What separates good from great:_ Comparing thread states and detection methods across all three, and identifying livelock as the hardest to detect.
 
 ---
 
-**Q2 [MID]: [FILL: debugging or trade-off question]**
+**Q2 [MID]: Your system has 100% CPU usage but zero throughput. No deadlocks detected. What do you suspect and how do you diagnose it?**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests diagnostic reasoning for non-obvious concurrency issues.
+_Likely follow-up:_ "How would you fix it?"
 
 **Answer:**
-[FILL: complete answer with production depth]
 
-_What separates good from great:_ [FILL]
+**Suspect:** Livelock or CAS retry storm.
+
+**Step 1: Confirm no deadlock.**
+
+```bash
+jstack <pid> | grep "deadlock"
+# No deadlock found
+```
+
+**Step 2: Identify hot threads.**
+
+```bash
+top -H -p <pid>
+# Find threads consuming most CPU
+# Note their IDs (convert to hex)
+```
+
+**Step 3: Match to stack traces.**
+
+```bash
+jstack <pid> | grep -A 10 "0x<hex>"
+# Look for patterns:
+# - tryLock retry loop = livelock
+# - compareAndSet loop = CAS storm
+# - spin loop = busy wait
+```
+
+**Step 4: Profile with async-profiler.**
+
+```bash
+async-profiler -e cpu -d 10 \
+  -f flame.html <pid>
+# Flame graph shows where CPU burns
+# If dominated by CAS/tryLock: livelock
+```
+
+**Fixes by root cause:**
+
+- tryLock livelock: add random backoff
+- CAS storm: use LongAdder or striped classes
+- Spin wait: replace with parking (LockSupport.park)
+
+_What separates good from great:_ The systematic 4-step diagnosis and matching thread IDs between top and jstack.
 
 ---
 
-**Q3 [SENIOR]: [FILL: architecture or production question]**
+**Q3 [SENIOR]: How do you design a system that is free from all three liveness issues?**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests architectural thinking about liveness guarantees.
+_Likely follow-up:_ "What are the throughput costs?"
 
 **Answer:**
-[FILL: complete answer demonstrating system-level thinking]
 
-_What separates good from great:_ [FILL]
+**Deadlock prevention:**
+
+1. **Lock ordering:** Always acquire locks in a consistent global order. E.g., by object hash or ID.
+2. **Lock timeout:** Use tryLock(timeout) instead of lock(). If timeout fires, release all locks and retry.
+3. **Single lock:** Avoid multiple lock acquisition when possible.
+
+**Livelock prevention:**
+
+1. **Random backoff:** Every retry loop includes `Thread.sleep(random)`.
+2. **Exponential backoff:** Double the backoff range on each failure: 10ms, 20ms, 40ms, up to a cap.
+3. **CAS fallback:** Under high contention, fall back from CAS to lock-based approach.
+
+**Starvation prevention:**
+
+1. **Fair locks:** ReentrantLock(true) guarantees FIFO.
+2. **Work-stealing:** ForkJoinPool distributes work evenly without explicit fairness.
+3. **Same priority:** Do not use thread priorities for scheduling.
+
+**Throughput costs:**
+
+- Fair locks: 20-40% reduction
+- Random backoff: 5-15% overhead from sleep
+- Lock ordering: zero overhead (design-time decision)
+
+**Monitoring requirements:**
+
+```
+per-thread throughput    -> starvation
+per-lock contention rate -> livelock
+thread state histogram   -> deadlock
+```
+
+The key insight: liveness and throughput are fundamentally in tension. Maximum throughput uses unfair, aggressive scheduling. Maximum liveness uses fair, ordered scheduling. The production choice is a calibrated trade-off.
+
+_What separates good from great:_ Quantifying the throughput cost of each prevention strategy and framing liveness vs throughput as an explicit trade-off.
 
 ---
 
@@ -3663,17 +4718,17 @@ _What separates good from great:_ [FILL]
 
 **Prerequisites (understand these first):**
 
-- [FILL: keyword] - [why needed]
-- [FILL: keyword] - [why needed]
+- ReentrantLock - understanding lock acquisition and fairness modes
+- synchronized Keyword - fundamental lock semantics that can cause all three liveness issues
 
 **Builds on this (learn these next):**
 
-- [FILL: keyword] - [what it adds]
-- [FILL: keyword] - [what it adds]
+- Lock Striping - technique to reduce contention and prevent starvation
+- Atomic Classes and CAS - understanding CAS retry storms as a livelock variant
 
 **Alternatives / Comparisons:**
 
-- [FILL: keyword] - [when to prefer]
+- ReadWriteLock and StampedLock - writer starvation is a common liveness issue with read-write locks
 
 ---
 
@@ -3681,41 +4736,41 @@ _What separates good from great:_ [FILL]
 
 # Lock Striping
 
-**TL;DR** - [FILL: one sentence, max 25 words. What + why, zero jargon.]
+**TL;DR** - Partitions a single lock into multiple independent locks (stripes) so different threads can access different partitions concurrently.
 
 ---
 
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-[FILL: 2-4 sentences. Concrete scenario showing the pain.]
+You have a HashMap protected by a single synchronized lock. All 100 threads contend on that one lock. Even though threads access different keys in different buckets, they all wait in line. Throughput is effectively single-threaded. The lock is the bottleneck, not the data structure.
 
 **THE BREAKING POINT:**
-[FILL: 1-2 sentences. What crashes/slows/breaks.]
+At 64 cores and 100 threads, only one thread accesses the map at a time. 99 threads are BLOCKED. CPU utilization is 1%. The single lock serializes all operations, negating the benefit of multi-core hardware.
 
 **THE INVENTION MOMENT:**
 "This is exactly why Lock Striping was created."
 
 **EVOLUTION:**
-[FILL: 2-3 sentences. predecessor -> current -> future direction]
+Before lock striping, concurrent data structures used a single global lock (Hashtable, Collections.synchronizedMap). Java 5's ConcurrentHashMap introduced lock striping with 16 segments, each with its own lock. Java 8 replaced segments with per-node CAS + synchronized on individual buckets (finer-grained striping). Guava's Striped class provides general-purpose lock striping. LongAdder uses the same principle for counters (Striped64).
 
 ---
 
 ### 📘 Textbook Definition
 
-[FILL: 2-4 sentences. Formal, precise, technically complete. Bold **Lock Striping** on first mention.]
+**Lock Striping** is a concurrency technique that replaces a single lock protecting a data structure with an array of locks, each guarding a partition (stripe) of the data. Operations determine which stripe they belong to (typically via hash of the key) and only acquire that stripe's lock. This allows operations on different stripes to proceed concurrently. The number of stripes determines the maximum parallelism: N stripes allow up to N concurrent operations on different partitions.
 
 ---
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:** [FILL: max 15 words, zero jargon]
+**One line:** Split one lock into many locks, each protecting a portion of the data.
 
 **One analogy:**
 
-> [FILL: 2-3 sentence real-world analogy]
+> Lock striping is like a post office with 8 service windows instead of 1. With one window, all customers queue in one line. With 8 windows, customers go to window (name hash % 8). Eight customers are served simultaneously. The post office is 8x faster.
 
-**One insight:** [FILL: what separates knowing the name from understanding it. 2-3 sentences.]
+**One insight:** The key insight is that most concurrent operations on a data structure access DIFFERENT parts of it. A single lock serializes all of them unnecessarily. Lock striping exploits this independence: operations on different stripes never contend with each other. The parallelism scales with the number of stripes.
 
 ---
 
@@ -3723,121 +4778,204 @@ _What separates good from great:_ [FILL]
 
 **CORE INVARIANTS:**
 
-1. [FILL: always true about this concept]
-2. [FILL: always true about this concept]
-3. [FILL: always true about this concept]
+1. Each stripe's lock protects only its partition - operations on different stripes are independent
+2. Stripe selection must be deterministic - same key always maps to same stripe
+3. Global operations (size(), iteration) must acquire ALL stripe locks
 
 **DERIVED DESIGN:**
-[FILL: how invariants force the design. 2-4 sentences.]
+Because stripes are independent, N stripes allow N-way parallelism. Because stripe selection is hash-based, key distribution determines load balance. Because global operations need all locks, they are expensive and should be avoided on the hot path.
 
 **THE TRADE-OFFS:**
-**Gain:** [FILL: what you get]
-**Cost:** [FILL: what you sacrifice]
+**Gain:** N-way parallelism, reduced contention, linear throughput scaling
+**Cost:** Global operations are expensive, memory for N locks, complexity
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
-**Essential:** [FILL: inherent to the problem]
-**Accidental:** [FILL: from current tooling/ecosystem]
+**Essential:** Concurrent access to shared data requires some form of synchronization
+**Accidental:** The number of stripes and hash function quality add tuning complexity
 
 ---
 
 ### 🧠 Mental Model / Analogy
 
-> [FILL: primary analogy in blockquote. Concrete everyday object/process.]
+> Lock striping is like dividing a library into sections, each with its own librarian. Instead of one librarian handling all requests (bottleneck), each section's librarian works independently. Two people borrowing books from different sections never wait for each other.
 
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
-- "[FILL: analogy element]" -> [technical element]
+- "Library sections" -> stripes (partitions of the data)
+- "Section librarian" -> per-stripe lock
+- "Borrow from section A" -> acquire stripe A's lock
+- "Catalog search" -> global operation (needs all locks)
 
-Where this analogy breaks down: [FILL: 1 sentence]
+Where this analogy breaks down: Library sections are physically separate; lock stripes share the same memory space and hash collisions can cause uneven distribution.
 
 ---
 
 ### 📶 Gradual Depth - Five Levels
 
 **Level 1 - What it is (anyone can understand):**
-[FILL: plain English, no jargon, 2-4 sentences]
+Instead of one lock for everything, lock striping uses many smaller locks, each protecting a portion of the data. If two people need different portions, they can work at the same time. Only people accessing the same portion need to wait for each other.
 
 **Level 2 - How to use it (junior developer):**
-[FILL: basic usage, common patterns. 3-5 sentences + code if applicable]
+
+```java
+// Guava Striped: 16 lock stripes
+Striped<Lock> stripes =
+    Striped.lock(16);
+
+void update(String key, String val) {
+    Lock lock = stripes.get(key);
+    lock.lock();
+    try {
+        map.put(key, val);
+    } finally {
+        lock.unlock();
+    }
+}
+```
+
+Stripe count determines max parallelism. 16 stripes = up to 16 concurrent operations. Choose stripe count based on expected concurrency level.
 
 **Level 3 - How it works (mid-level engineer):**
-[FILL: internals, data structures, algorithms. 4-6 sentences]
+Lock striping works by maintaining an array of locks and mapping each operation to a specific lock via hashing. For a data structure with keys, the stripe index is `hash(key) % numStripes`. Each stripe's lock protects only the subset of keys that hash to that stripe. ConcurrentHashMap (Java 7) used 16 Segment objects, each a mini-HashMap with its own ReentrantLock. ConcurrentHashMap (Java 8) went further: it uses synchronized on individual Node objects (bucket-level locking) plus CAS for reads, eliminating the fixed segment count.
 
 **Level 4 - Production mastery (senior/staff engineer):**
-[FILL: design decisions, edge cases, cross-system reasoning. 5-8 sentences]
+(1) **Stripe count selection:** Too few stripes = contention. Too many = memory waste + cache line bouncing. Rule of thumb: stripes = 2x expected concurrent threads. ConcurrentHashMap defaults to 16. (2) **Hash quality:** Poor hash functions cluster keys into few stripes, creating hot stripes. Use well-distributed hashes. (3) **Global operations are O(stripes):** size(), isEmpty(), containsValue() must acquire all stripe locks. ConcurrentHashMap avoids this by using approximate counts (baseCount + counterCells). (4) **LongAdder principle:** LongAdder applies striping to a counter: N cells, each independently incremented. sum() aggregates all cells. This eliminates CAS contention on a single AtomicLong. (5) **Resizing:** ConcurrentHashMap Java 8 supports concurrent resizing with transfer() - multiple threads can help resize simultaneously by working on different stripe ranges.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "[FILL: correct but conventional understanding]"
-A Staff says: "[FILL: next-level abstraction or cross-system insight]"
-The difference: [FILL: 1 sentence - the mental model shift]
+A Senior says: "ConcurrentHashMap uses lock striping with 16 segments for concurrent access."
+A Staff says: "Java 8's ConcurrentHashMap replaced segment-level striping with bucket-level CAS + synchronized, eliminating the fixed segment count. I choose stripe count based on the Amdahl's law: with N stripes, max speedup is N/(1 + (N-1)\*s) where s is the fraction of global operations. If global operations are frequent, more stripes help less."
+The difference: Understanding striping as a scaling law with diminishing returns based on the ratio of local to global operations.
 
 **Level 5 - Distinguished (expert thinking):**
-[FILL: cross-domain pattern recognition, what would you redesign, expert heuristics. 3-5 sentences]
+Lock striping is an instance of the partition-and-conquer principle used throughout distributed systems. Database sharding is lock striping at the storage level. Kafka partitions are lock striping at the messaging level. CPU caches use set-associative striping. Network load balancers use consistent hashing for request striping. The fundamental pattern is: when a single access point becomes a bottleneck, partition it and distribute load. The trade-off is always the same: local operations become parallel but global operations become expensive. The art is choosing the right partition granularity.
 
 ---
 
 ### ⚙️ How It Works
 
-[FILL: step-by-step technical walkthrough. Include ASCII diagram if 3+ steps. Max 59 chars wide.]
+```
+Lock Striping (4 stripes):
+
+  Single lock (before):
+  [  GLOBAL LOCK  ]
+  [A B C D E F G H] all serialized
+
+  Striped (after):
+  Stripe 0    Stripe 1
+  [Lock 0]    [Lock 1]
+  [A, E]      [B, F]
+
+  Stripe 2    Stripe 3
+  [Lock 2]    [Lock 3]
+  [C, G]      [D, H]
+
+  stripe = hash(key) % 4
+  <- YOU ARE HERE
+
+  T1: put(A) -> Lock 0
+  T2: put(B) -> Lock 1  (parallel!)
+  T3: put(C) -> Lock 2  (parallel!)
+  T4: put(A) -> Lock 0  (waits T1)
+```
 
 ---
 
 ### 🔄 Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
-[FILL: ASCII flow diagram. Mark THIS concept with <- YOU ARE HERE. Max 59 chars wide.]
+
+```
+Thread     Hash   Stripe   Lock    Map
+T1:put(K1) h=3   3%4=3   Lock[3]  OK
+T2:put(K2) h=7   7%4=3   Lock[3]  WAIT
+T3:put(K3) h=5   5%4=1   Lock[1]  OK
+T4:get(K4) h=0   0%4=0   Lock[0]  OK
+                  <- YOU ARE HERE
+Global:
+  size() -> Lock[0]+[1]+[2]+[3]
+            (expensive!)
+```
 
 **FAILURE PATH:**
-[FILL: cascade when this fails -> observable symptom]
+Hot stripe: many keys hash to the same stripe -> that stripe becomes a single-lock bottleneck while other stripes are idle. Observable: one lock has high contention, others have near-zero. Fix: improve hash function or increase stripe count.
 
 **WHAT CHANGES AT SCALE:**
-[FILL: 2-3 sentences on behavior at 10x/100x/1000x load]
+At 4 threads / 16 stripes: almost no contention, near-linear scaling. At 64 threads / 16 stripes: ~4 threads per stripe on average, moderate contention. At 1000 threads / 16 stripes: back to high contention per stripe. Need more stripes or finer-grained approach (ConcurrentHashMap Java 8 bucket-level locking).
 
 ---
 
 ### 💻 Code Example
 
-**BAD - [FILL: antipattern name]:**
+**BAD - single lock for entire map:**
 
 ```java
-// BAD: [FILL: why this fails]
-[FILL: code, max 70 chars/line]
+// BAD: single lock, all serialized
+Map<String, Data> map = new HashMap<>();
+final Object lock = new Object();
+
+void put(String key, Data val) {
+    synchronized (lock) {
+        map.put(key, val);
+    }
+    // 100 threads: only 1 at a time!
+}
 ```
 
-**GOOD - [FILL: correct pattern name]:**
+**GOOD - lock striping with Guava:**
 
 ```java
-// GOOD: [FILL: why this works]
-[FILL: code, max 70 chars/line]
+// GOOD: 32 stripes, 32x parallelism
+Map<String, Data> map = new HashMap<>();
+Striped<Lock> stripes =
+    Striped.lock(32);
+
+void put(String key, Data val) {
+    Lock stripe = stripes.get(key);
+    stripe.lock();
+    try {
+        map.put(key, val);
+    } finally {
+        stripe.unlock();
+    }
+    // 100 threads: up to 32 parallel!
+}
 ```
 
 **How to test / verify correctness:**
-[FILL: 1-3 sentences on testing strategy]
+Run N threads incrementing per-key counters. Verify: (1) no lost updates (final count matches expected), (2) throughput scales with stripe count (measure ops/sec at 1, 4, 16, 32 stripes). Use JMH for accurate benchmarking.
 
 ---
 
 ### 📌 Quick Reference Card
 
-**WHAT IT IS:** [FILL: 1 sentence]
-**PROBLEM IT SOLVES:** [FILL: 1 sentence]
-**KEY INSIGHT:** [FILL: 1 sentence]
-**USE WHEN:** [FILL: conditions]
-**AVOID WHEN:** [FILL: conditions]
-**ANTI-PATTERN:** [FILL: common misuse]
-**TRADE-OFF:** [FILL: gain vs cost]
-**ONE-LINER:** [FILL: memorable metaphor]
-**KEY NUMBERS:** [FILL: 2-3 critical thresholds/defaults]
-**TRIGGER PHRASE:** [FILL: 5-7 words activating full mental model]
-**OPENING SENTENCE:** [FILL: first sentence showing immediate depth]
+**WHAT IT IS:** Array of locks, each protecting a partition of the data for parallel access
+
+**PROBLEM IT SOLVES:** Single-lock bottleneck on concurrent data structures
+
+**KEY INSIGHT:** Most concurrent operations access different parts - lock only the part you touch
+
+**USE WHEN:** High-contention data structures with independent key-based operations
+
+**AVOID WHEN:** Most operations are global (size, iteration) or data structure is small
+
+**ANTI-PATTERN:** Too few stripes (back to single lock) or too many (memory + false sharing)
+
+**TRADE-OFF:** N-way parallelism for local operations vs expensive global operations
+
+**ONE-LINER:** "A post office with 8 windows instead of 1"
+
+**KEY NUMBERS:** Default stripes: 16 (CHM). Rule of thumb: 2x concurrent threads. Global ops: O(stripes).
+
+**TRIGGER PHRASE:** "partition lock stripe parallel hash bucket"
+
+**OPENING SENTENCE:** "Lock striping replaces one lock with N locks, each guarding a partition. ConcurrentHashMap uses this to achieve parallel reads and writes across different segments."
 
 **If you remember only 3 things:**
 
-1. [FILL: most important insight]
-2. [FILL: key trade-off or constraint]
-3. [FILL: production gotcha that bites everyone]
+1. Stripe count determines max parallelism - too few = bottleneck, too many = waste
+2. Global operations (size, iteration) are expensive - they need all stripe locks
+3. ConcurrentHashMap Java 8 evolved from segment striping to bucket-level CAS + synchronized
 
 **Interview one-liner:**
-"[FILL: 30-second interview explanation showing depth]"
+"Lock striping partitions a single lock into N independent locks, each guarding a stripe. ConcurrentHashMap uses this for parallel access. I size stripes at 2x expected concurrency and avoid global operations on the hot path."
 
 ---
 
@@ -3845,68 +4983,80 @@ The difference: [FILL: 1 sentence - the mental model shift]
 
 **You've mastered this when you can:**
 
-1. **EXPLAIN:** [FILL: teach to junior in 2 min without notes]
-2. **DEBUG:** [FILL: diagnose specific failure from symptoms]
-3. **DECIDE:** [FILL: choose this vs alternative under pressure]
-4. **BUILD:** [FILL: implement/configure in production context]
-5. **EXTEND:** [FILL: apply principle to different domain]
+1. **EXPLAIN:** How ConcurrentHashMap evolved from segment striping (Java 7) to bucket-level CAS (Java 8)
+2. **DEBUG:** Diagnose a hot stripe from uneven lock contention profiles
+3. **DECIDE:** When lock striping helps (independent key access) vs when it does not (global operations)
+4. **BUILD:** Implement a custom striped data structure using Guava Striped or manual stripe array
+5. **EXTEND:** Apply the striping principle to distributed systems (database sharding, Kafka partitions)
 
 ---
 
 ### 💡 The Surprising Truth
 
-[FILL: exactly ONE counterintuitive fact. 2-4 sentences. Specific, accurate, memorable.]
+ConcurrentHashMap's size() method does NOT acquire any locks. It uses a combination of baseCount (CAS-updated) and a counterCells array (LongAdder-style striping) to maintain an approximate count. This means size() returns an estimate, not an exact count. In a concurrent program, the "exact size" is meaningless anyway - by the time you read it, another thread may have changed it. This design decision eliminates the O(stripes) cost of locking all segments for a global count and is a masterclass in designing APIs around the reality of concurrency.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| #   | Misconception                  | Reality              |
-| --- | ------------------------------ | -------------------- |
-| 1   | [FILL: dangerous wrong belief] | [FILL: actual truth] |
-| 2   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 3   | [FILL: wrong belief]           | [FILL: actual truth] |
-| 4   | [FILL: wrong belief]           | [FILL: actual truth] |
+| #   | Misconception                                       | Reality                                                                                                                                   |
+| --- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | "More stripes is always better"                     | Too many stripes waste memory and cause false sharing (adjacent locks on the same cache line). Optimal is 2x expected concurrency.        |
+| 2   | "ConcurrentHashMap still uses 16 segments"          | Java 8 replaced segments with per-bucket CAS + synchronized. No fixed segment count.                                                      |
+| 3   | "Lock striping makes all operations parallel"       | Only operations on DIFFERENT stripes are parallel. Same-stripe operations are serialized. Global operations need all locks.               |
+| 4   | "Lock striping and sharding are different concepts" | They are the same principle at different scales. Striping = in-process. Sharding = distributed. Both partition data to reduce contention. |
 
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: [FILL: name]**
-**Symptom:** [FILL: observable in production]
-**Root Cause:** [FILL: why it happens]
+**Failure Mode 1: Hot stripe from poor hash distribution**
+**Symptom:** One lock has high contention; others are idle. Throughput does not scale with stripe count.
+**Root Cause:** Keys cluster into few stripes due to poor hash function or correlated key patterns.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+# Profile lock contention:
+async-profiler -e lock \
+  -d 30 -f lock.html <pid>
+# If one lock dominates: hot stripe
+# Check key distribution:
+# histogram of hash(key) % stripes
 ```
 
-**Fix:** [FILL: BAD then GOOD approach]
-**Prevention:** [FILL: how to prevent]
+**Fix:** BAD: increasing stripe count (does not fix distribution). GOOD: Improve hash function. Use smash/spread function: `(h ^ (h >>> 16))` like ConcurrentHashMap does.
+**Prevention:** Test key distribution across stripes before production. Use well-tested hash functions.
 
-**Failure Mode 2: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 2: False sharing between adjacent stripe locks**
+**Symptom:** Adding more stripes does not improve throughput. Cache miss rate is high.
+**Root Cause:** Adjacent Lock objects share the same CPU cache line (64 bytes). When one thread writes to its lock, it invalidates the cache line for threads using adjacent locks.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+# perf stat shows high L1 cache misses:
+perf stat -e cache-misses,cache-refs \
+  -p <pid> sleep 10
+# High miss ratio with many stripes
+# = false sharing
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: reducing stripes. GOOD: Pad lock objects to 64 bytes to avoid cache-line sharing. Java's @Contended annotation adds padding. Guava's Striped.lock() handles this internally.
+**Prevention:** Use Guava Striped or @Contended. If manual: pad objects to cache line boundaries.
 
-**Failure Mode 3: [FILL: name]**
-**Symptom:** [FILL]
-**Root Cause:** [FILL]
+**Failure Mode 3: Deadlock from acquiring multiple stripes**
+**Symptom:** Classic deadlock. Thread A holds stripe 3, waits for stripe 7. Thread B holds stripe 7, waits for stripe 3.
+**Root Cause:** A multi-key operation acquires stripe locks in key-hash order, which is not globally consistent.
 **Diagnostic:**
 
-```
-[FILL: real diagnostic command]
+```bash
+jstack <pid> | grep "deadlock"
+# Found deadlock between stripe locks
+# Thread 1: locked stripe[3], waits [7]
+# Thread 2: locked stripe[7], waits [3]
 ```
 
-**Fix:** [FILL]
-**Prevention:** [FILL]
+**Fix:** BAD: using tryLock (livelock risk). GOOD: Always acquire stripe locks in ascending stripe index order. Sort stripe indices before acquisition.
+**Prevention:** For multi-key operations: `int[] indices = sort(hash(k1)%N, hash(k2)%N); lock(indices[0]); lock(indices[1]);`.
 
 ---
 
@@ -3920,39 +5070,137 @@ The difference: [FILL: 1 sentence - the mental model shift]
 | Trade-off     | 60-120 seconds  | Decision framework    |
 | Behavioral    | 60-120 seconds  | Clear STAR structure  |
 
-**Q1 [JUNIOR]: [FILL: scenario-based conceptual question]**
+**Q1 [JUNIOR]: What is lock striping and why does ConcurrentHashMap use it?**
 
-_Why they ask:_ [FILL: what skill this probes]
-_Likely follow-up:_ [FILL: what they ask next]
+_Why they ask:_ Tests understanding of concurrent data structure internals.
+_Likely follow-up:_ "How many stripes does it use?"
 
 **Answer:**
-[FILL: complete structured answer. 200-500 words. Include code/diagrams as needed.]
 
-_What separates good from great:_ [FILL: 1 sentence]
+Lock striping splits one lock into multiple locks, each protecting a portion of the data:
+
+```
+Single lock (Hashtable):
+  [   GLOBAL LOCK   ]
+  [A B C D E F G H I]
+  All operations serialize!
+
+Lock striping (ConcurrentHashMap):
+  [Lock 0] [Lock 1] [Lock 2] [Lock 3]
+  [A,E,I]  [B,F]    [C,G]    [D,H]
+  4-way parallelism!
+```
+
+ConcurrentHashMap uses this because most map operations access a single key. If two threads access keys in different stripes, they never contend. With 16 stripes, up to 16 operations can proceed in parallel.
+
+**Java 7 vs Java 8:**
+
+- Java 7: 16 Segment objects, each a mini-HashMap with ReentrantLock
+- Java 8: Per-bucket CAS for reads, synchronized on bucket head for writes. No fixed segment count.
+
+Java 8's approach is finer-grained: every bucket is an independent stripe. Reads are lock-free (CAS). Writes lock only the specific bucket.
+
+_What separates good from great:_ Explaining the Java 7 to Java 8 evolution and why per-bucket locking is superior to fixed segments.
 
 ---
 
-**Q2 [MID]: [FILL: debugging or trade-off question]**
+**Q2 [MID]: How would you choose the number of stripes for a custom striped data structure?**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests understanding of the performance trade-offs.
+_Likely follow-up:_ "What about false sharing?"
 
 **Answer:**
-[FILL: complete answer with production depth]
 
-_What separates good from great:_ [FILL]
+**Factors:**
+
+1. **Expected concurrency:** Stripes >= concurrent threads. If 32 threads: at least 32 stripes.
+
+2. **Memory cost:** Each stripe = 1 Lock object (~32-48 bytes). 1024 stripes = ~48KB. Usually negligible.
+
+3. **Diminishing returns:** Amdahl's law applies. If 10% of operations are global (size, iteration): max speedup is 10x regardless of stripe count.
+
+```
+Stripe count | Max parallelism | Overhead
+4            | 4x              | 192 bytes
+16           | 16x (default)   | 768 bytes
+64           | 64x             | 3 KB
+256          | 256x            | 12 KB
+```
+
+**Rule of thumb:** `stripes = nextPowerOf2(2 * maxConcurrentThreads)`. Power of 2 makes modulo fast (bitwise AND).
+
+**False sharing mitigation:**
+
+```java
+// Bad: adjacent locks share cache line
+Lock[] locks = new Lock[N];
+
+// Good: pad to 64-byte cache lines
+@Contended // JDK internal
+Lock[] locks = new Lock[N];
+// Or use Guava Striped.lock(N)
+```
+
+Guava's Striped handles padding internally. For manual implementations, pad lock objects to cache line boundaries.
+
+_What separates good from great:_ Providing the power-of-2 sizing rule, quantifying memory cost, and addressing false sharing.
 
 ---
 
-**Q3 [SENIOR]: [FILL: architecture or production question]**
+**Q3 [SENIOR]: How does ConcurrentHashMap Java 8's approach differ from Java 7's segment striping, and why is it better?**
 
-_Why they ask:_ [FILL]
-_Likely follow-up:_ [FILL]
+_Why they ask:_ Tests deep knowledge of concurrent data structure evolution.
+_Likely follow-up:_ "How does concurrent resizing work?"
 
 **Answer:**
-[FILL: complete answer demonstrating system-level thinking]
 
-_What separates good from great:_ [FILL]
+**Java 7 (Segment-based):**
+
+```
+16 Segments, each with:
+  - Own ReentrantLock
+  - Own hash table
+  - Own count
+size() = sum of 16 counts (lock all)
+```
+
+Fixed granularity: 16 segments regardless of map size. If map has 1M entries: ~62K entries per segment. Operations on different entries in the same segment still contend.
+
+**Java 8 (Node-based):**
+
+```
+Per-bucket concurrency:
+  - Read: volatile read, no lock
+  - Write: synchronized on bucket head
+  - CAS for simple insertions
+  - TreeBin for long chains (>8)
+```
+
+**Why Java 8 is better:**
+
+1. **Finer granularity:** Each bucket is an independent lock target. With 1M buckets, 1M-way parallelism (vs 16).
+
+2. **Lock-free reads:** get() uses volatile reads on Node.val. No lock acquisition. Java 7 required a lock for reads in some cases.
+
+3. **Concurrent resizing:** Multiple threads help resize. Each claims a range of buckets (transferIndex) and moves them to the new table. ForwardingNode redirects lookups to the new table during resize.
+
+4. **Better size():** Uses LongAdder-style counters (baseCount + counterCells). No locking for approximate count.
+
+```java
+// Java 8 put():
+Node<K,V> f = tabAt(tab, i);
+if (f == null) {
+    // CAS insert (lock-free)
+    casTabAt(tab, i, null, node);
+} else {
+    synchronized (f) {
+        // Lock bucket head only
+        // Other buckets unaffected
+    }
+}
+```
+
+_What separates good from great:_ Explaining concurrent resizing with transferIndex and ForwardingNode, and the LongAdder-style size() implementation.
 
 ---
 
@@ -3960,14 +5208,14 @@ _What separates good from great:_ [FILL]
 
 **Prerequisites (understand these first):**
 
-- [FILL: keyword] - [why needed]
-- [FILL: keyword] - [why needed]
+- ConcurrentHashMap - the primary production example of lock striping in Java
+- ReentrantLock - the lock type used per stripe in Java 7 ConcurrentHashMap
 
 **Builds on this (learn these next):**
 
-- [FILL: keyword] - [what it adds]
-- [FILL: keyword] - [what it adds]
+- Atomic Classes and CAS - Java 8 ConcurrentHashMap uses CAS for lock-free reads
+- Liveness Issues (Livelock and Starvation) - lock striping reduces contention but multi-stripe deadlocks are possible
 
 **Alternatives / Comparisons:**
 
-- [FILL: keyword] - [when to prefer]
+- CopyOnWriteArrayList - alternative concurrency strategy (copy entire structure vs partition)

@@ -1,12 +1,14 @@
 ---
 applyTo: "interview/**"
-description: "Rules for generating and editing Interview Mastery Dictionary v3.0 content - 19 sections, scaffold workflow, Q&A format"
+description: "Rules for generating and editing Interview Mastery Dictionary v3.0 content - 19 sections, keyword-batch generation, Q&A format"
 ---
 
 # Interview Mastery Dictionary - Auto-Loaded Instructions
 
 > These instructions auto-attach when editing files under `interview/`.
 > Full generation spec: `interview/_config/INTERVIEW_PROMPT.md` (v3.0)
+> This file contains condensed generation rules sufficient for producing
+> content after reading the full spec once per session.
 
 ## Relationship to Main Dictionary
 
@@ -37,10 +39,11 @@ interview/
 
 ## Prompts (in .github/prompts/)
 
-| Prompt                    | Purpose                                 |
-| ------------------------- | --------------------------------------- |
-| `@interview-fill-content` | Fill [FILL:...] stubs with real content |
-| `@interview-scaffold`     | Run scaffold generator for a topic      |
+| Prompt                        | Purpose                                       |
+| ----------------------------- | --------------------------------------------- |
+| `@interview-generate-entries` | Generate keyword content (keyword-batch mode) |
+| `@interview-fill-content`     | Fill stubs or generate next keywords          |
+| `@interview-scaffold`         | Run scaffold generator (optional)             |
 
 ## Content Structure - 19 Sections per Keyword
 
@@ -110,11 +113,15 @@ version: 3
 ---
 ```
 
-## Scaffold Workflow
+## Scaffold Workflow (optional)
 
-1. **Scaffold:** `& "$env:USERPROFILE\.local\bin\python3.14.exe" interview/_config/interview_scaffold.py <topic>`
-2. **Fill content:** Use `@interview-fill-content` prompt or manually replace `[FILL:...]` stubs
-3. **One keyword at a time:** Read scaffold block, replace with complete content, move to next
+Scaffolding is no longer required for content generation. The agent
+reads keywords from frontmatter and generates content directly.
+Use scaffold only to preview file structure:
+
+1. **Scaffold (optional):** `& "$env:USERPROFILE\.local\bin\python3.14.exe" interview/_config/interview_scaffold.py <topic>`
+2. **Generate content:** Use `@interview-generate-entries` prompt or `/interview` agent
+3. **Keyword-batch:** Agent generates 1-3 keywords per pass, appends to file, auto-continues
 
 ## Generation Workflows
 
@@ -132,4 +139,189 @@ version: 3
 - Each file contains 5-20 related keywords
 - Separator in filenames: SPACE-HYPHEN-SPACE (never em dash)
 
-> For the complete 1050-line generation spec with all section rules, see `interview/_config/INTERVIEW_PROMPT.md`.
+---
+
+## Condensed Generation Reference
+
+> This section contains all rules needed to generate content after
+> reading `INTERVIEW_PROMPT.md` once. It replaces the need to re-read
+> the 1,860-line spec for every keyword.
+
+### Voice
+
+Precise like Josh Bloch. Clear like Martin Fowler. Intuitive like
+Feynman. Production-scarred like a senior systems architect.
+Interview-ready like a FAANG bar raiser.
+
+### Keyword Separator
+
+Between keywords in a file, use double horizontal rules:
+
+```
+[blank line]
+---
+[blank line]
+---
+[blank line]
+```
+
+### Section-by-Section Rules
+
+**1. Title** - `# KEYWORD NAME` (H1, plain name, no ID prefix)
+
+**2. TL;DR** - `**TL;DR** - [max 25 words. What + why. Zero jargon.]`
+
+**3. The Problem This Solves** - `### 🔥 The Problem This Solves`
+
+- Structure: WORLD WITHOUT IT (2-4 sentences) -> BREAKING POINT
+  (1-2 sentences) -> INVENTION MOMENT ("This is exactly why
+  [KEYWORD] was created.") -> EVOLUTION (2-3 sentences)
+- 100-200 words. Show real pain, not abstract.
+
+**4. Textbook Definition** - `### 📘 Textbook Definition`
+
+- 2-4 sentences. Formal, precise. No analogies.
+
+**5. Understand in 30 Seconds** - `### ⏱️ Understand It in 30 Seconds`
+
+- **One line:** max 15 words, zero jargon
+- **One analogy:** 2-3 sentences in `>` blockquote
+- **One insight:** 2-3 sentences, what separates knowing vs understanding
+
+**6. First Principles** - `### 🔩 First Principles Explanation`
+
+- CORE INVARIANTS (3 numbered) -> DERIVED DESIGN (2-4 sentences)
+  -> TRADE-OFFS (Gain/Cost) -> ESSENTIAL vs ACCIDENTAL complexity
+- 150-400 words. Build from axioms to design.
+
+**7. Mental Model** - `### 🧠 Mental Model / Analogy`
+
+- `>` blockquote analogy -> bullet mapping (`"X" -> Y`) -> "Where
+  this analogy breaks down: [1 sentence]"
+- 100-200 words.
+
+**8. Five Levels** - `### 📶 Gradual Depth - Five Levels`
+
+- L1 anyone (2-4 sent) / L2 junior (3-5) / L3 mid (4-6) /
+  L4 senior-staff (5-8) / L5 distinguished (3-5)
+- **Senior-to-Staff Leap** (required): `A Senior says: "..."` /
+  `A Staff says: "..."` / `The difference: [1 sentence]`
+
+**9. How It Works** - `### ⚙️ How It Works`
+
+- Step-by-step mechanism. ASCII diagrams encouraged (max 59 chars).
+  Happy path + failure path. Summarized but complete.
+
+**10. End-to-End Flow** - `### 🔄 Complete Picture - End-to-End Flow`
+
+- NORMAL FLOW (ASCII with `<- YOU ARE HERE` marker) -> FAILURE PATH
+  -> WHAT CHANGES AT SCALE (2-3 sentences at 10x/100x/1000x)
+
+**11. Code Example** - `### 💻 Code Example` (CONDITIONAL: if programmatic)
+
+- BAD then GOOD. Min 2 examples. Max 70 chars/line. Production-grade.
+- End with: `**How to test / verify correctness:**` (1-3 sentences)
+
+**12. Quick Reference Card** - `### 📌 Quick Reference Card`
+
+- 11 fields: WHAT IT IS / PROBLEM IT SOLVES / KEY INSIGHT / USE WHEN
+  / AVOID WHEN / ANTI-PATTERN / TRADE-OFF / ONE-LINER / KEY NUMBERS
+  / TRIGGER PHRASE / OPENING SENTENCE
+- **If you remember only 3 things:** (numbered)
+- **Interview one-liner:** (quoted)
+
+**13. Mastery Checklist** - `### ✅ Mastery Checklist`
+
+- 5 indicators exactly: EXPLAIN / DEBUG / DECIDE / BUILD / EXTEND
+- Each specific to THIS concept. 50-100 words total.
+
+**14. Surprising Truth** - `### 💡 The Surprising Truth`
+
+- ONE counterintuitive fact. 2-4 sentences. Genuinely surprising.
+
+**15. Comparison Table** - `### ⚖️ Comparison Table`
+(CONDITIONAL: only when 2+ alternatives exist)
+
+- Min 4 comparison dimensions + "Best for" row
+- Decision framework + Rapid Decision Tree (30 seconds)
+
+**16. Misconceptions** - `### ⚠️ Common Misconceptions`
+
+- Table: min 4 rows. Danger-ordered (most harmful first).
+- Frame as "candidates confidently state X, but actually Y"
+
+**17. Failure Modes** - `### 🚨 Failure Modes and Diagnosis`
+
+- Min 3 modes. Each: Symptom / Root Cause / Diagnostic (REAL
+  command: jcmd, kubectl, docker stats, etc.) / Fix (BAD->GOOD)
+  / Prevention. At least 1 security mode if applicable.
+
+**18. Interview Deep-Dive** - `### 🎯 Interview Deep-Dive` (CAPSTONE)
+
+- Timing table at section start (5-row)
+- Question count by difficulty: easy=7, medium=9, hard=12 (no cap)
+- Cover at least 5 of 9 categories: CONCEPTUAL, DEBUGGING,
+  ARCHITECTURE, TRADE-OFF, PRODUCTION, HANDS-ON, SYSTEM DESIGN,
+  COMPARISON, BEHAVIORAL
+- Mandatory per keyword: 1 DEBUGGING + 1 TRADE-OFF
+- Mandatory for medium/hard: 1 BEHAVIORAL (STAR format)
+- Tag each: `[JUNIOR]` `[MID]` `[SENIOR]` `[STAFF]`
+- Order: foundational -> advanced -> expert
+- Each Q: `*Why they ask:*` + `*Likely follow-up:*`
+- Each A: 200-500 words, complete structured answer
+- End each A: `*What separates good from great:*`
+- No duplicate questions across keywords in same file
+
+**19. Related Keywords** - `### 🔗 Related Keywords`
+
+- Prerequisites (2-3 with why) / Builds on this (2-3) /
+  Alternatives (2-3 with when to prefer)
+
+### Conditional Section Decision Table
+
+| Section              | Include when...                    |
+| -------------------- | ---------------------------------- |
+| 11. Code Example     | Concept has programmatic interface |
+| 15. Comparison Table | 2+ named alternatives exist        |
+
+All other sections (1-10, 12-14, 16-19) are always required.
+
+### Depth Calibration by Difficulty
+
+| Aspect             | Easy          | Medium      | Hard                     |
+| ------------------ | ------------- | ----------- | ------------------------ |
+| Level emphasis     | L1-3          | L2-4        | L3-5                     |
+| Code examples min  | 2             | 3           | 4                        |
+| Failure modes min  | 3             | 3           | 4                        |
+| Misconceptions min | 4             | 5           | 6                        |
+| Interview Qs min   | 7             | 9           | 12                       |
+| Senior-Staff Leap  | encouraged    | required    | required                 |
+| Comparison table   | if applicable | recommended | required if alternatives |
+| BEHAVIORAL Q       | optional      | required    | required                 |
+
+### Sizing Guide (words per keyword)
+
+| Concept Type                  | Target Words |
+| ----------------------------- | ------------ |
+| Tiny (single-purpose, atomic) | 600-1,000    |
+| Medium (one mechanism)        | 1,200-2,500  |
+| Foundational (multi-faceted)  | 3,000-5,000  |
+
+### Quality Anti-Patterns (NEVER)
+
+- Generic placeholder text or textbook definitions
+- Toy code examples (counter++, hello world)
+- Vague failure modes ("it might cause issues")
+- Interview answers as bullet summaries (must be structured narrative)
+- Shallow Level 5 that repeats Level 4 with bigger words
+- "It depends" without specifying exactly on what
+- Fabricated benchmarks, metrics, or incident stories
+
+### Knowledge Deduplication (multi-keyword files)
+
+- Each keyword answers: "What NEW understanding does THIS entry provide?"
+- Reference earlier keywords by name, don't re-explain
+- Ensure Interview Deep-Dive Qs are unique across keywords in same file
+
+> Full spec with teaching philosophy, validation checklists, and
+> skeleton: `interview/_config/INTERVIEW_PROMPT.md`

@@ -235,15 +235,25 @@ Monitor heap usage with `jstat -gcutil <pid> 1000`. If Old Gen usage trends upwa
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Automatic heap memory reclamation for unreachable objects
+
 **PROBLEM IT SOLVES:** Eliminates manual memory management bugs (leaks, dangling pointers, double-free)
+
 **KEY INSIGHT:** GC tracks liveness (reachability from roots), not death - circular references are handled automatically
+
 **USE WHEN:** Always active in Java - understanding it guides allocation strategy and performance optimization
+
 **AVOID WHEN:** N/A - GC is fundamental to Java
+
 **ANTI-PATTERN:** Calling `System.gc()` manually, relying on `finalize()`, keeping unnecessary references in static collections
+
 **TRADE-OFF:** Programmer productivity vs runtime pauses and CPU overhead
+
 **ONE-LINER:** "City garbage truck: you create trash, it picks it up - you never visit the dump"
+
 **KEY NUMBERS:** Young GC: 1-10ms (G1). Full GC: 100ms-seconds. ZGC pause: <1ms.
+
 **TRIGGER PHRASE:** "mark sweep compact roots reachability generational stop-the-world"
+
 **OPENING SENTENCE:** "GC finds unreachable objects by traversing from GC roots (stacks, statics, JNI). Everything not marked as reachable is collected. The generational hypothesis (most objects die young) drives the young/old generation split. Choose the collector based on your latency SLA: G1 for general, ZGC for sub-ms, Parallel for throughput."
 
 **If you remember only 3 things:**
@@ -810,15 +820,25 @@ Use Eclipse MAT on a heap dump: right-click an object -> "Path to GC Roots" -> "
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** The starting points (stacks, statics, JNI) from which GC traces to determine live objects
+
 **PROBLEM IT SOLVES:** Gives GC a correct, well-defined way to distinguish live objects from garbage
+
 **KEY INSIGHT:** Reachability from roots, not reference counting - circular references are handled automatically
+
 **USE WHEN:** Understanding memory leaks, analyzing heap dumps, diagnosing GC pauses
+
 **AVOID WHEN:** N/A - roots are implicit in all Java programs
+
 **ANTI-PATTERN:** Holding references in static fields or collections that grow unbounded
+
 **TRADE-OFF:** Root scanning cost grows with thread count and stack depth vs accuracy of live set
+
 **ONE-LINER:** "GC roots are the electrical outlets - only objects plugged into the grid stay powered"
+
 **KEY NUMBERS:** 5 root types (stacks, statics, JNI, monitors, internals). Root scan is part of STW pause.
+
 **TRIGGER PHRASE:** "GC roots reachability transitive tracing static field leak"
+
 **OPENING SENTENCE:** "GC roots are the references the JVM knows are definitely live: thread stacks, static fields, JNI globals, monitors, and internals. GC traces transitively from these roots to mark all reachable objects. Anything not reachable is garbage. This is why circular references are not a problem and why static collections cause leaks."
 
 **If you remember only 3 things:**
@@ -1355,15 +1375,25 @@ Monitor with `jstat -gcutil <pid> 1000`. Check: E (Eden) refill rate, S0/S1 usag
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Heap split into Young (Eden + 2 Survivors) and Old generation, collected at different frequencies
+
 **PROBLEM IT SOLVES:** Exploits the generational hypothesis to collect 90%+ of garbage cheaply in young gen
+
 **KEY INSIGHT:** Young GC is fast because most objects in Eden are dead - only live objects are copied (small fraction)
+
 **USE WHEN:** Understanding GC pauses, sizing heap, diagnosing promotion issues
+
 **AVOID WHEN:** N/A - all major JVM GCs are generational
+
 **ANTI-PATTERN:** Undersizing young gen (causes premature promotion and expensive old gen collection)
+
 **TRADE-OFF:** Fast young GC vs cross-generation reference tracking overhead (card tables/remembered sets)
+
 **ONE-LINER:** "Hospital triage: ER (Eden) for new patients, recovery (Survivor) for those still healing, permanent ward (Old) for long-term"
+
 **KEY NUMBERS:** Eden default ~33% of heap. Max tenuring threshold: 15. Young GC: 1-10ms. Full GC: 500ms+.
+
 **TRIGGER PHRASE:** "Eden Survivor Old promotion tenuring threshold young GC"
+
 **OPENING SENTENCE:** "Generational GC splits the heap into young (Eden + 2 Survivors) and old gen, based on the hypothesis that most objects die young. Young GC copies only live objects from Eden (typically <10%) - fast and frequent. Objects surviving N cycles (tenuring threshold) are promoted to old gen for less frequent collection."
 
 **If you remember only 3 things:**
@@ -1905,15 +1935,25 @@ For Parallel: check throughput with `jstat -gcutil` (GC time / total time < targ
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Two STW generational collectors: Serial (1 thread) and Parallel (N threads, throughput-optimized)
+
 **PROBLEM IT SOLVES:** Serial: minimal GC overhead for small heaps. Parallel: maximum throughput for multi-core systems.
+
 **KEY INSIGHT:** Parallel GC maximizes throughput (% time not in GC), not minimizes pause time
+
 **USE WHEN:** Serial: 1 CPU, <256MB heap, containers. Parallel: batch jobs, data pipelines, throughput workloads.
+
 **AVOID WHEN:** Latency-sensitive services (use G1 or ZGC instead)
+
 **ANTI-PATTERN:** Using Parallel GC for a REST API with a latency SLA
+
 **TRADE-OFF:** Maximum throughput (Parallel) vs long STW pauses; Minimum overhead (Serial) vs single-threaded
+
 **ONE-LINER:** "Serial: one janitor. Parallel: a cleaning crew. Both close the building."
+
 **KEY NUMBERS:** Parallel threads = CPU count. GCTimeRatio=19 targets 95% throughput. Full GC: 100ms-10s STW.
+
 **TRIGGER PHRASE:** "Serial Parallel throughput STW UseParallelGC GCTimeRatio"
+
 **OPENING SENTENCE:** "Serial GC (1 thread) and Parallel GC (N threads) are fully STW generational collectors. Parallel maximizes throughput (5-10% better than G1) with multi-threaded mark-copy (young) and mark-compact (old). Use Serial for 1-CPU containers, Parallel for batch/throughput workloads, G1/ZGC for latency-sensitive services."
 
 **If you remember only 3 things:**
@@ -2420,15 +2460,25 @@ Monitor GC logs for: (1) no "Pause Full" entries (no Full GC fallback), (2) mixe
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Region-based generational collector that collects highest-garbage regions first for predictable pauses
+
 **PROBLEM IT SOLVES:** Predictable pause times without fragmentation (Parallel: long pauses, CMS: fragmentation)
+
 **KEY INSIGHT:** Incremental old gen collection via region selection - collect only the worst regions per pause
+
 **USE WHEN:** General-purpose workloads, services with moderate latency requirements (p99 < 200ms)
+
 **AVOID WHEN:** Ultra-low-latency (< 1ms) - use ZGC. Pure throughput (batch) - use Parallel.
+
 **ANTI-PATTERN:** Not monitoring for Full GC fallback (G1's Full GC is its worst failure mode)
+
 **TRADE-OFF:** Predictable pauses vs ~5-10% throughput overhead compared to Parallel
+
 **ONE-LINER:** "City cleaning crew: survey all blocks, clean the dirtiest first, stay within shift budget"
+
 **KEY NUMBERS:** Default pause: 200ms. IHOP: ~45%. Region: 1-32 MB. Humongous: > 50% region size.
+
 **TRIGGER PHRASE:** "G1 regions mixed GC IHOP concurrent marking"
+
 **OPENING SENTENCE:** "G1GC divides the heap into fixed-size regions and collects incrementally, prioritizing regions with the most garbage. Concurrent marking identifies per-region liveness. Mixed GCs evacuate young plus selected old regions within a pause target. This gives predictable pauses without fragmentation."
 
 **If you remember only 3 things:**
@@ -2935,15 +2985,25 @@ Check GC logs for: (1) all "Pause" entries < 1ms, (2) no "Allocation Stall" entr
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Ultra-low-latency concurrent GC using colored pointers and load barriers, sub-ms pauses
+
 **PROBLEM IT SOLVES:** Eliminates GC as a source of latency - pauses are <1ms regardless of heap size
+
 **KEY INSIGHT:** Load barriers on every reference load enable concurrent relocation - no STW evacuation needed
+
 **USE WHEN:** Strict latency SLAs (<5ms p99), large heaps (8 GB - 16 TB), latency > throughput
+
 **AVOID WHEN:** Pure throughput (use Parallel), small heap on 1 CPU (use Serial), Java < 15
+
 **ANTI-PATTERN:** Not monitoring allocation stalls (the real failure mode, not GC pauses)
+
 **TRADE-OFF:** Sub-ms pauses vs 3-5% throughput overhead from load barriers + 10-20% memory overhead
+
 **ONE-LINER:** "Renovate the building while everyone keeps working - forwarding notes handle the moves"
+
 **KEY NUMBERS:** Pause: <1ms. Heap: up to 16 TB. Throughput: ~85-90% of Parallel. 64-bit only.
+
 **TRIGGER PHRASE:** "ZGC colored pointers load barrier concurrent relocation sub-ms"
+
 **OPENING SENTENCE:** "ZGC delivers sub-millisecond pauses by performing marking and relocation concurrently using colored pointers and load barriers. The only STW work is root scanning (O(threads)), so pauses do not scale with heap size. Generational ZGC (Java 21+) adds young/old separation for better throughput."
 
 **If you remember only 3 things:**
@@ -3490,15 +3550,25 @@ Check GC logs for: (1) all "Pause" entries <10ms, (2) no "Degenerated GC" entrie
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Low-latency concurrent GC using Brooks forwarding pointers, developed by Red Hat for OpenJDK
+
 **PROBLEM IT SOLVES:** Sub-10ms pauses for OpenJDK users who cannot use ZGC (Oracle JDK)
+
 **KEY INSIGHT:** Brooks pointer (extra word per object) enables concurrent evacuation with compressed oops support
+
 **USE WHEN:** Low-latency services on OpenJDK, need compressed oops, reference-heavy workloads
+
 **AVOID WHEN:** Oracle JDK (not available), pure throughput (use Parallel), very large heaps >32 GB (ZGC may be better)
+
 **ANTI-PATTERN:** Not monitoring degenerated GC (the fallback mode indicating collection cannot keep up)
+
 **TRADE-OFF:** Sub-10ms pauses vs 8 bytes/object overhead + 5-10% throughput cost from barriers
+
 **ONE-LINER:** "Library re-shelving: forwarding cards in each book redirect readers while shelves are reorganized"
+
 **KEY NUMBERS:** Pauses: 1-10ms. Per-object overhead: 8 bytes. Available: OpenJDK 12+ (backported to 8u/11u).
+
 **TRIGGER PHRASE:** "Shenandoah Brooks pointer concurrent evacuation OpenJDK"
+
 **OPENING SENTENCE:** "Shenandoah GC uses Brooks forwarding pointers (extra word per object) and load/write barriers to perform concurrent marking and evacuation. Pauses are O(root set) at 1-10ms. It is the OpenJDK alternative to ZGC, with the advantage of compressed oops support."
 
 **If you remember only 3 things:**
@@ -4030,15 +4100,25 @@ Compare before/after GC logs for: pause p99, Full GC count, GC time ratio. Use `
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** The practice of analyzing GC logs and adjusting JVM flags to optimize collection behavior
+
 **PROBLEM IT SOLVES:** Data-driven GC optimization instead of guesswork - identify and fix the actual bottleneck
+
 **KEY INSIGHT:** Most GC problems are application problems (allocation rate, leaks) - logs reveal the root cause
+
 **USE WHEN:** Latency spikes, high GC overhead (>5%), Full GC events, capacity planning
+
 **AVOID WHEN:** GC is already meeting SLA (do not tune what is not broken)
+
 **ANTI-PATTERN:** Random flag changes without measurement ("cargo cult tuning")
+
 **TRADE-OFF:** Time invested in analysis vs risk of wrong optimization
+
 **ONE-LINER:** "Car dashboard gauges: read them before turning knobs"
+
 **KEY NUMBERS:** Always-on logging overhead: ~1%. Target GC ratio: <5%. Max production flags: 3-5.
+
 **TRIGGER PHRASE:** "Xlog gc jstat gcutil pause promotion allocation rate"
+
 **OPENING SENTENCE:** "GC tuning starts with data: enable `-Xlog:gc*`, analyze pause times and heap sizes, identify the bottleneck (allocation rate, promotion, Full GC), change ONE flag, re-measure. Most issues need 1-2 flag changes, not 10."
 
 **If you remember only 3 things:**
@@ -4615,15 +4695,25 @@ For WeakReference: create ref, clear strong ref, call `System.gc()`, verify `ref
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Four reference strengths (Strong > Soft > Weak > Phantom) controlling GC eligibility
+
 **PROBLEM IT SOLVES:** Enables memory-sensitive caches, prevents canonicalizing map leaks, safe post-mortem cleanup
+
 **KEY INSIGHT:** Soft = cleared under memory pressure (cache). Weak = cleared every GC (map). Phantom = post-mortem notification.
+
 **USE WHEN:** Caches (prefer Caffeine), canonicalizing maps (WeakHashMap), native resource cleanup (Cleaner)
+
 **AVOID WHEN:** Normal object lifecycle (strong refs are fine). Do not use Soft for large-scale caches.
+
 **ANTI-PATTERN:** Using SoftReference for unbounded caches (adds GC overhead, unpredictable eviction)
+
 **TRADE-OFF:** Flexible GC cooperation vs complexity and GC overhead
+
 **ONE-LINER:** "Library books: checked out (strong), on hold shelf (soft), bookmarked (weak), discarded notice (phantom)"
+
 **KEY NUMBERS:** SoftRefLRUPolicyMSPerMB default: 1000. WeakRef cleared every GC. PhantomRef.get() always null.
+
 **TRIGGER PHRASE:** "SoftReference WeakReference PhantomReference ReferenceQueue cache cleanup"
+
 **OPENING SENTENCE:** "Java has four reference types: Strong (default, prevents GC), Soft (cleared under memory pressure, for caches), Weak (cleared every GC, for canonicalizing maps like WeakHashMap), and Phantom (post-mortem notification via ReferenceQueue, for resource cleanup via Cleaner)."
 
 **If you remember only 3 things:**

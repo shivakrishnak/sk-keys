@@ -13,7 +13,7 @@ A condensed, interview-focused technical reference with deep Q&A for every conce
 | Topic                                              | Files | Keywords | Status     |
 | -------------------------------------------------- | ----- | -------- | ---------- |
 | [Java](/interview/java/)                           | 9     | 45       | complete   |
-| [Java Concurrency](/interview/java-concurrency/)   | 5     | 26       | complete   |
+| [Java Concurrency](/interview/java-concurrency/)   | 5     | 48       | complete   |
 | [Spring](/interview/spring/)                       | 8     | 37       | complete   |
 | [Hibernate](/interview/hibernate/)                 | 4     | 19       | complete   |
 | [System Design](/interview/system-design/)         | 6     | 33       | complete   |
