@@ -3,7 +3,7 @@ layout: default
 title: "Spring - Data and JPA"
 parent: "Spring"
 grand_parent: "Interview Mastery"
-nav_order: 5
+nav_order: 12
 permalink: /interview/spring/data-and-jpa/
 topic: Spring
 subtopic: Data and JPA

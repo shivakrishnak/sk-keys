@@ -3,7 +3,7 @@ layout: default
 title: "Spring - Cloud"
 parent: "Spring"
 grand_parent: "Interview Mastery"
-nav_order: 7
+nav_order: 11
 permalink: /interview/spring/cloud/
 topic: Spring
 subtopic: Cloud

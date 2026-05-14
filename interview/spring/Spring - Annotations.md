@@ -3,7 +3,7 @@ layout: default
 title: "Spring - Annotations"
 parent: "Spring"
 grand_parent: "Interview Mastery"
-nav_order: 4
+nav_order: 9
 permalink: /interview/spring/annotations/
 topic: Spring
 subtopic: Annotations
