@@ -3,7 +3,7 @@ layout: default
 title: "Spring - MVC and REST"
 parent: "Spring"
 grand_parent: "Interview Mastery"
-nav_order: 3
+nav_order: 5
 permalink: /interview/spring/mvc-and-rest/
 topic: Spring
 subtopic: MVC and REST

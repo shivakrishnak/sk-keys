@@ -98,21 +98,61 @@ interview/
 - Python: `$env:USERPROFILE\.local\bin\python3.14.exe`
 - No emojis in YAML frontmatter
 
-## File Frontmatter Format
+## File Frontmatter Format (Jekyll/GitHub Pages - MANDATORY)
+
+Every content file MUST have ALL of these fields:
 
 ```yaml
 ---
-title: Topic - Subtopic
+layout: default
+title: "Topic - Subtopic"
+parent: "Topic Name"
+grand_parent: "Interview Mastery"
+nav_order: N
+permalink: /interview/{topic}/{slug}/
 topic: Topic
 subtopic: Subtopic
 keywords:
   - Keyword One
   - Keyword Two
-difficulty_range: easy | medium | hard | mixed
-status: draft | in-progress | complete
+difficulty_range: easy | medium | hard
+status: in-progress | complete
 version: 3
 ---
 ```
+
+Every topic `index.md` MUST have ALL of these fields:
+
+```yaml
+---
+layout: default
+title: "Topic Name"
+parent: "Interview Mastery"
+has_children: true
+nav_order: N
+permalink: /interview/{topic-name}/
+---
+```
+
+### Frontmatter Rules (enforced)
+
+- `layout` - always `default`
+- `title` - always quoted, matches filename stem
+- `parent` - always quoted, matches topic `index.md` title
+- `grand_parent` - always `"Interview Mastery"` for content files
+- `nav_order` - integer, unique within scope
+- `permalink` - lowercase, hyphens, ends with `/`
+- `keywords` - list of 3-5 items, must match `# KEYWORD` headings
+- `status` - `complete` when all keywords filled, else `in-progress`
+- `version` - always `3`
+- File starts at byte 0 with `---` (no BOM, no whitespace)
+
+### Pre-Commit Verification (MANDATORY)
+
+Before every `git commit`, verify ALL modified `interview/**/*.md`
+files pass frontmatter checks. See full verification command and
+rules in `.github/agents/interview.agent.md` section
+"Pre-Commit Frontmatter Verification". Any missing field = block commit.
 
 ## Scaffold Workflow (optional)
 

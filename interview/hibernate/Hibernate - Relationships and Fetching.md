@@ -3,7 +3,7 @@ layout: default
 title: "Hibernate - Relationships and Fetching"
 parent: "Hibernate"
 grand_parent: "Interview Mastery"
-nav_order: 2
+nav_order: 4
 permalink: /interview/hibernate/relationships-and-fetching/
 topic: Hibernate
 subtopic: Relationships and Fetching

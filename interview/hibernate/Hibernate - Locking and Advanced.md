@@ -3,7 +3,7 @@ layout: default
 title: "Hibernate - Locking and Advanced"
 parent: "Hibernate"
 grand_parent: "Interview Mastery"
-nav_order: 5
+nav_order: 7
 permalink: /interview/hibernate/locking-and-advanced/
 topic: Hibernate
 subtopic: Locking and Advanced

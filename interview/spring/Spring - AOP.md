@@ -3,7 +3,7 @@ layout: default
 title: "Spring - AOP"
 parent: "Spring"
 grand_parent: "Interview Mastery"
-nav_order: 6
+nav_order: 8
 permalink: /interview/spring/aop/
 topic: Spring
 subtopic: AOP

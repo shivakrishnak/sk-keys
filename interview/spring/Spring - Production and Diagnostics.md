@@ -1,5 +1,10 @@
 ---
-title: Spring - Production and Diagnostics
+layout: default
+title: "Spring - Production and Diagnostics"
+parent: "Spring"
+grand_parent: "Interview Mastery"
+nav_order: 11
+permalink: /interview/spring/production-and-diagnostics/
 topic: Spring
 subtopic: Production and Diagnostics
 keywords:

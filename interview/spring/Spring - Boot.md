@@ -3,7 +3,7 @@ layout: default
 title: "Spring - Boot"
 parent: "Spring"
 grand_parent: "Interview Mastery"
-nav_order: 2
+nav_order: 4
 permalink: /interview/spring/boot/
 topic: Spring
 subtopic: Boot

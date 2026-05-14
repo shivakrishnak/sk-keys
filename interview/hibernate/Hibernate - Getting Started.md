@@ -1,5 +1,10 @@
 ---
-title: Hibernate - Getting Started
+layout: default
+title: "Hibernate - Getting Started"
+parent: "Hibernate"
+grand_parent: "Interview Mastery"
+nav_order: 2
+permalink: /interview/hibernate/getting-started/
 topic: Hibernate
 subtopic: Getting Started
 keywords:
@@ -19,6 +24,7 @@ framework integration, and first CRUD operations.
 ---
 
 ---
+
 # Configuration and Schema Generation
 
 **TL;DR** - JPA configuration controls how Hibernate connects

@@ -3,7 +3,7 @@ layout: default
 title: "Hibernate - Core Concepts"
 parent: "Hibernate"
 grand_parent: "Interview Mastery"
-nav_order: 1
+nav_order: 3
 permalink: /interview/hibernate/core-concepts/
 topic: Hibernate
 subtopic: Core Concepts

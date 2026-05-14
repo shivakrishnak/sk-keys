@@ -3,7 +3,7 @@ layout: default
 title: "Spring - Security"
 parent: "Spring"
 grand_parent: "Interview Mastery"
-nav_order: 5
+nav_order: 7
 permalink: /interview/spring/security/
 topic: Spring
 subtopic: Security

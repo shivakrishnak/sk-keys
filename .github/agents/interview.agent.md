@@ -40,7 +40,10 @@ level band produces more than 5 keywords, split into multiple files.
    double horizontal rules (`---` then `---`) between keywords.
 6. **Report**: `Completed keyword N of M: [name]` - then auto-continue
 7. **Repeat** steps 3-6 until all keywords in the file are complete
-8. **Verify**: grep for `[TODO:` and `[FILL:` to confirm zero stubs remain
+8. **Verify content**: grep for `[TODO:` and `[FILL:` to confirm zero stubs remain
+9. **Verify frontmatter**: run Pre-Commit Frontmatter Verification
+   to confirm all required Jekyll/GitHub Pages fields are present
+   and correct (see Pre-Commit Frontmatter Verification section)
 
 ### Batch Completion Per File
 
@@ -350,6 +353,112 @@ This step is NON-NEGOTIABLE. Never skip it, even for Mode 2 (subtopic)
 or Mode 4 (description). For Modes 1/2/4 where no dictionary category
 maps directly, use the closest matching category or skip step 1 only.
 
+## Pre-Commit Frontmatter Verification (MANDATORY)
+
+Before EVERY commit, verify that ALL modified or created `interview/`
+files have correct Jekyll/GitHub Pages frontmatter. This is a hard gate -
+do NOT commit until all files pass.
+
+### Required Frontmatter Fields - Content Files
+
+Every `interview/{topic}/{Topic} - {Subtopic}.md` file MUST have:
+
+```yaml
+---
+layout: default # REQUIRED - always "default"
+title: "{Topic} - {Subtopic}" # REQUIRED - quoted, matches filename
+parent: "{Topic Name}" # REQUIRED - matches topic index title
+grand_parent: "Interview Mastery" # REQUIRED - always this value
+nav_order: N # REQUIRED - integer, unique within topic
+permalink: /interview/{topic}/{slug}/ # REQUIRED - lowercase, hyphens
+topic: { Topic } # REQUIRED - unquoted topic name
+subtopic: { Subtopic } # REQUIRED - unquoted subtopic name
+keywords: # REQUIRED - list, min 3, max 5
+  - Keyword One
+  - Keyword Two
+difficulty_range: easy|medium|hard # REQUIRED - one of three values
+status: in-progress|complete # REQUIRED - in-progress or complete
+version: 3 # REQUIRED - always 3 for v3.0
+---
+```
+
+### Required Frontmatter Fields - Topic Index Files
+
+Every `interview/{topic}/index.md` file MUST have:
+
+```yaml
+---
+layout: default # REQUIRED
+title: "{Topic Name}" # REQUIRED - quoted
+parent: "Interview Mastery" # REQUIRED - always this value
+has_children: true # REQUIRED - always true
+nav_order: N # REQUIRED - unique across topics
+permalink: /interview/{topic-name}/ # REQUIRED - lowercase, hyphens
+---
+```
+
+### Verification Command (run before every commit)
+
+```pwsh
+# Check all staged/modified interview files for frontmatter
+Get-ChildItem -Path interview -Recurse -Filter *.md |
+  ForEach-Object {
+    $lines = Get-Content $_.FullName -First 25
+    $isIndex = $_.Name -eq 'index.md'
+    $missing = @()
+    if ($lines[0] -ne '---') {
+      $missing += 'YAML open'
+    }
+    $fm = ($lines | Select-String -Pattern '^[a-z_]+:' |
+      ForEach-Object { ($_ -split ':')[0].Trim() })
+    # Content files
+    if (-not $isIndex) {
+      @('layout','title','parent','grand_parent',
+        'nav_order','permalink','topic','subtopic',
+        'keywords','difficulty_range','status',
+        'version') | ForEach-Object {
+        if ($_ -notin $fm) { $missing += $_ }
+      }
+    }
+    # Index files
+    else {
+      @('layout','title','parent','has_children',
+        'nav_order','permalink') | ForEach-Object {
+        if ($_ -notin $fm) { $missing += $_ }
+      }
+    }
+    if ($missing.Count -gt 0) {
+      Write-Host "FAIL: $($_.FullName)" `
+        -ForegroundColor Red
+      Write-Host "  Missing: $($missing -join ', ')"
+    }
+  }
+```
+
+### Verification Rules
+
+1. **Run the check** against all `interview/**/*.md` files in the
+   commit scope (not just new files - edits can break frontmatter)
+2. **Any FAIL = block commit.** Fix the file first, then re-verify.
+3. **Title must be quoted** if it contains `: ` (colon + space) -
+   but quote ALL titles for consistency
+4. **`permalink` must end with `/`** and use lowercase with hyphens
+5. **`nav_order` must be unique** within its scope (within a topic
+   for content files, across topics for index files)
+6. **`status`** must be `complete` when all keywords are filled,
+   `in-progress` when stubs remain
+7. **`version`** must be `3` (current spec version)
+8. **File must start at byte 0** with `---` (no BOM, no whitespace)
+9. **`keywords` list** must match the actual `# KEYWORD NAME`
+   headings in the file content
+
+### When to Run
+
+- After completing all keywords in a file (before marking file complete)
+- After creating any new file (index.md or content file)
+- After any frontmatter edit (nav_order renumbering, status update)
+- As the FINAL step before `git commit`
+
 ## Commit Strategy
 
 Batch commits to reduce noise - commit after every **3 or more completed
@@ -362,6 +471,7 @@ git commit -m "feat: add interview content ({list of files})"
 
 - Include short file names in the commit message (e.g., `Basics, Collections, Exceptions`)
 - If fewer than 3 files remain at the end, commit all remaining at once
+- **Run Pre-Commit Frontmatter Verification** before every commit (see above)
 - Do NOT `git push` - commit is sufficient
 
 ## Auto-Continue Loop

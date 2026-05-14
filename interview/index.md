@@ -14,7 +14,7 @@ A condensed, interview-focused technical reference with deep Q&A for every conce
 | -------------------------------------------------- | ----- | -------- | ---------- |
 | [Java](/interview/java/)                           | 9     | 45       | complete   |
 | [Java Concurrency](/interview/java-concurrency/)   | 5     | 48       | complete   |
-| [Spring](/interview/spring/)                       | 11    | 55       | complete   |
+| [Spring](/interview/spring/)                       | 12    | 60       | complete   |
 | [Hibernate](/interview/hibernate/)                 | 8     | 38       | complete   |
 | [System Design](/interview/system-design/)         | 6     | 33       | complete   |
 | [Design Patterns](/interview/design-patterns/)     | 6     | 30       | complete   |

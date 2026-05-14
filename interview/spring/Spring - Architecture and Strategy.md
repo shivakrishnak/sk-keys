@@ -1,5 +1,10 @@
 ---
-title: Spring - Architecture and Strategy
+layout: default
+title: "Spring - Architecture and Strategy"
+parent: "Spring"
+grand_parent: "Interview Mastery"
+nav_order: 12
+permalink: /interview/spring/architecture-and-strategy/
 topic: Spring
 subtopic: Architecture and Strategy
 keywords:

@@ -1,5 +1,10 @@
 ---
-title: Hibernate - Foundations
+layout: default
+title: "Hibernate - Foundations"
+parent: "Hibernate"
+grand_parent: "Interview Mastery"
+nav_order: 1
+permalink: /interview/hibernate/foundations/
 topic: Hibernate
 subtopic: Foundations
 keywords:

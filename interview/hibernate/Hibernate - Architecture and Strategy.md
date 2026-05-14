@@ -1,5 +1,10 @@
 ---
-title: Hibernate - Architecture and Strategy
+layout: default
+title: "Hibernate - Architecture and Strategy"
+parent: "Hibernate"
+grand_parent: "Interview Mastery"
+nav_order: 8
+permalink: /interview/hibernate/architecture-and-strategy/
 topic: Hibernate
 subtopic: Architecture and Strategy
 keywords:

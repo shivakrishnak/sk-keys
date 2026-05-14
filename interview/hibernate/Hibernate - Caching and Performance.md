@@ -3,7 +3,7 @@ layout: default
 title: "Hibernate - Caching and Performance"
 parent: "Hibernate"
 grand_parent: "Interview Mastery"
-nav_order: 3
+nav_order: 5
 permalink: /interview/hibernate/caching-and-performance/
 topic: Hibernate
 subtopic: Caching and Performance

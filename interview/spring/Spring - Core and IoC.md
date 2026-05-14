@@ -3,7 +3,7 @@ layout: default
 title: "Spring - Core and IoC"
 parent: "Spring"
 grand_parent: "Interview Mastery"
-nav_order: 1
+nav_order: 2
 permalink: /interview/spring/core-and-ioc/
 topic: Spring
 subtopic: Core and IoC

@@ -1,5 +1,10 @@
 ---
-title: Spring - Foundations
+layout: default
+title: "Spring - Foundations"
+parent: "Spring"
+grand_parent: "Interview Mastery"
+nav_order: 1
+permalink: /interview/spring/foundations/
 topic: Spring
 subtopic: Foundations
 keywords:

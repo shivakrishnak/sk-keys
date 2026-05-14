@@ -3,7 +3,7 @@ layout: default
 title: "Spring - Data Access"
 parent: "Spring"
 grand_parent: "Interview Mastery"
-nav_order: 4
+nav_order: 6
 permalink: /interview/spring/data-access/
 topic: Spring
 subtopic: Data Access

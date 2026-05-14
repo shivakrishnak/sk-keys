@@ -3,7 +3,7 @@ layout: default
 title: "Hibernate - Queries and Projections"
 parent: "Hibernate"
 grand_parent: "Interview Mastery"
-nav_order: 4
+nav_order: 6
 permalink: /interview/hibernate/queries-and-projections/
 topic: Hibernate
 subtopic: Queries and Projections
