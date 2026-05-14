@@ -11,7 +11,7 @@
 > | Constant       | Value  | Meaning                                      |
 > | -------------- | ------ | -------------------------------------------- |
 > | `SPEC_VERSION` | `3`    | Integer written to `version:` in all entries |
-> | `SPEC_LABEL`   | `v3.0`   | Human-readable label for headers/commits     |
+> | `SPEC_LABEL`   | `v3.0` | Human-readable label for headers/commits     |
 
 ---
 
@@ -269,7 +269,7 @@ FOLDER STRUCTURE
     - Format: {Topic} - {Subtopic}.md
     - Separator: space + HYPHEN + space ( - )
     - NEVER use em dash
-    - Each file contains 5-20 related keywords
+    - Each file contains 3-5 related keywords (max 5, min 3)
     - Files are self-sufficient
 
 ----------------------------------------------------------------
@@ -553,12 +553,15 @@ Exactly 5 levels:
    application. 5-8 sentences.]
 
   **The Senior-to-Staff Leap (what separates them):**
-  A Senior says: "[What a competent senior would say about
-   this concept - correct but conventional]"
-  A Staff says: "[What demonstrates the next level of
+
+  **A Senior says:** "[What a competent senior would say
+   about this concept - correct but conventional]"
+
+  **A Staff says:** "[What demonstrates the next level of
    abstraction, cross-system thinking, or novel insight]"
-  The difference: [1 sentence explaining the conceptual gap
-   - what mental model shift occurs at the staff level]
+
+  **The difference:** [1 sentence explaining the conceptual
+   gap - what mental model shift occurs at the staff level]
 
   **Level 5 - Distinguished (expert thinking):**
   [Cross-domain pattern recognition. What would you change
@@ -574,6 +577,13 @@ Exactly 5 levels:
       over alternatives?
     - How does this concept compose with other concepts
       at scale?
+
+Rules:
+  - Senior-to-Staff Leap: labels (**A Senior says:**,
+    **A Staff says:**, **The difference:**) MUST be bold
+    and separated by blank lines. Jekyll renders
+    consecutive lines as one paragraph
+  - Each level heading must be bold with the level number
 
 ----------------------------------------------------------------
 3.9  HOW IT WORKS  [REQUIRED]
@@ -667,22 +677,32 @@ Rules:
 Section header:
   ### 📌 Quick Reference Card
 
-Structure:
+Structure (blank line between each **LABEL:** field):
 
   **WHAT IT IS:** [1 sentence]
+
   **PROBLEM IT SOLVES:** [1 sentence]
+
   **KEY INSIGHT:** [1 sentence]
+
   **USE WHEN:** [conditions - 1-2 sentences]
+
   **AVOID WHEN:** [conditions - 1-2 sentences]
+
   **ANTI-PATTERN:** [common misuse - 1 sentence]
+
   **TRADE-OFF:** [gain vs cost - 1 sentence]
+
   **ONE-LINER:** [memorable metaphor - 1 sentence]
+
   **KEY NUMBERS:** [2-3 critical thresholds, defaults,
     or limits engineers must know - e.g., "default
     pool: 200", "99p target: <100ms"]
+
   **TRIGGER PHRASE:** [5-7 words that activate your full
     mental model of this concept - what you'd whisper to
     yourself before answering an interview question]
+
   **OPENING SENTENCE:** [The first sentence you'd say if
     asked "explain [CONCEPT]" - must show immediate depth,
     not a textbook definition]
@@ -698,6 +718,8 @@ Structure:
 
 Rules:
   - No ASCII box (encoding-safe)
+  - BLANK LINE between every **LABEL:** field (Jekyll
+    renders consecutive bold-label lines as one paragraph)
   - The 11 fields give instant recall under pressure
   - The 3 things must be genuinely the most important
   - Interview one-liner must demonstrate working knowledge,
@@ -843,19 +865,32 @@ senior engineers from textbook readers. Systematic
 diagnostic thinking for interview scenarios and real
 incidents.
 
-Structure (repeat for each mode):
+Structure (blank line between each label - repeat per mode):
 
   **Failure Mode N: [name]**
+
   **Symptom:** [What you observe - logs, metrics, behavior]
+
   **Root Cause:** [Why it happens - 1-2 sentences]
+
   **Diagnostic:** [Real command to investigate]
+
     ```
     [actual diagnostic command]
     ```
-  **Fix:** [BAD then GOOD pattern]
+
+  **Fix:**
+
+  BAD: [wrong approach]
+
+  GOOD: [correct approach]
+
   **Prevention:** [1 sentence - how to prevent recurrence]
 
 Rules:
+  - BLANK LINE between every bold label (**Symptom:**,
+    **Root Cause:**, etc.) and between BAD/GOOD lines.
+    Jekyll renders consecutive lines as one paragraph
   - Minimum 3 failure modes per keyword
   - Each must include a REAL diagnostic command (jcmd,
     kubectl, docker stats, curl, jstat, etc.)

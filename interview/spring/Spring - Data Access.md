@@ -80,7 +80,9 @@ Spring Data does not replace JPA - it sits on top of it. The generated implement
 From invariant 1: no boilerplate DAO code. From invariant 2: query correctness is validated at startup, not runtime. From invariant 3: choose the interface level based on what methods you need.
 
 **THE TRADE-OFFS:**
+
 **Gain:** 80-90% less data access code. Queries validated at startup.
+
 **Cost:** Complex queries are hard to express as method names. Performance tuning requires understanding the generated SQL.
 
 ---
@@ -201,8 +203,10 @@ List<UserSummary> findByDepartment(
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use Spring Data JPA repositories to avoid writing DAOs."
-A Staff says: "I choose the right query strategy per use case: derived queries for simple lookups, `@Query` for complex joins, Specifications for dynamic search, and native SQL for analytics. I use projections to avoid fetching unnecessary columns and `@EntityGraph` to control eager/lazy loading per query."
+
+**A Senior says:** "Use Spring Data JPA repositories to avoid writing DAOs."
+
+**A Staff says:** "I choose the right query strategy per use case: derived queries for simple lookups, `@Query` for complex joins, Specifications for dynamic search, and native SQL for analytics. I use projections to avoid fetching unnecessary columns and `@EntityGraph` to control eager/lazy loading per query."
 
 **Level 5 - Distinguished:**
 Spring Data's repository abstraction works across data stores: JPA, MongoDB, Redis, Elasticsearch, Cassandra - same interface pattern, different implementations. This is the Repository pattern from DDD applied at the framework level. At scale, the N+1 query problem is the most common performance issue: fix with `@EntityGraph`, `JOIN FETCH` in `@Query`, or batch fetching.
@@ -274,12 +278,19 @@ public interface UserRepository
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Generated repository implementations from interface definitions.
+
 **PROBLEM IT SOLVES:** Eliminates 80-90% of boilerplate data access code.
+
 **KEY INSIGHT:** Method names are parsed into queries. Typos fail at startup (fail-fast).
+
 **USE WHEN:** Any JPA-based data access layer.
+
 **AVOID WHEN:** Complex analytics queries (use native SQL or JOOQ).
+
 **ANTI-PATTERN:** Fetching entire entities when you need 2 columns (use projections).
+
 **ONE-LINER:** "Interface + method name = generated query."
+
 **TRIGGER PHRASE:** "Repository pattern with query derivation."
 
 **If you remember only 3 things:**
@@ -362,7 +373,9 @@ _What separates good from great:_ The 80/20 split and specific alternatives for 
 ### 🔗 Related Keywords
 
 **Prerequisites:** IoC Container, Transaction Management
+
 **Builds on:** Hibernate, JPA
+
 **Alternatives:** JOOQ, MyBatis, Spring JDBC
 
 ---
@@ -423,7 +436,9 @@ Put `@Transactional` on a method and Spring handles begin, commit, and rollback 
 From invariant 1: self-invocation bypasses the proxy (no transaction). From invariant 2: you must specify `rollbackFor = Exception.class` if you want checked exception rollback. From invariant 3: `REQUIRES_NEW` creates an independent transaction; `REQUIRED` joins the existing one.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Clean business logic. No manual transaction code.
+
 **Cost:** Proxy-based magic causes self-invocation bug. Transaction boundaries not visible in code.
 
 ---
@@ -549,8 +564,10 @@ public List<User> findActive() {
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Put `@Transactional` on service methods."
-A Staff says: "I design transaction boundaries at the service layer, use `readOnly = true` for queries (enables read replica routing), specify `rollbackFor = Exception.class` for checked exceptions, and use `REQUIRES_NEW` only when I need independent commit (audit logs). I know the self-invocation trap and always call through the proxy."
+
+**A Senior says:** "Put `@Transactional` on service methods."
+
+**A Staff says:** "I design transaction boundaries at the service layer, use `readOnly = true` for queries (enables read replica routing), specify `rollbackFor = Exception.class` for checked exceptions, and use `REQUIRES_NEW` only when I need independent commit (audit logs). I know the self-invocation trap and always call through the proxy."
 
 **Level 5 - Distinguished:**
 Spring's transaction abstraction (`PlatformTransactionManager`) supports JPA, JDBC, JTA, and reactive transactions through a single API. At distributed scale, `@Transactional` covers single-database transactions. Cross-service transactions require saga patterns or event-driven eventual consistency - `@Transactional` is the wrong tool for distributed systems.
@@ -616,10 +633,15 @@ public void transfer(Long from, Long to,
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** AOP proxy-based declarative transaction management.
+
 **PROBLEM IT SOLVES:** Eliminates manual begin/commit/rollback code.
+
 **KEY INSIGHT:** Self-invocation bypasses the proxy = no transaction. Always call through the proxy.
+
 **ANTI-PATTERN:** Missing `rollbackFor` on checked exceptions. Self-invocation.
+
 **ONE-LINER:** "@Transactional = proxy wraps with begin/commit/rollback."
+
 **TRIGGER PHRASE:** "Proxy-based, self-invocation trap."
 
 **If you remember only 3 things:**
@@ -702,7 +724,9 @@ public void auditLog(String event) {
 ### 🔗 Related Keywords
 
 **Prerequisites:** IoC Container, AOP Proxies
+
 **Builds on:** Spring Data JPA
+
 **Alternatives:** Programmatic TransactionTemplate, JTA for distributed
 
 ---
@@ -838,8 +862,10 @@ spring:
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Set the pool size to 50 for safety."
-A Staff says: "I calculate pool size based on CPU cores and query duration. I monitor pool utilization via Actuator metrics (`hikaricp.connections.active`). I set `maxLifetime` below the database's connection timeout to avoid stale connections. Small pools with fast queries outperform large pools."
+
+**A Senior says:** "Set the pool size to 50 for safety."
+
+**A Staff says:** "I calculate pool size based on CPU cores and query duration. I monitor pool utilization via Actuator metrics (`hikaricp.connections.active`). I set `maxLifetime` below the database's connection timeout to avoid stale connections. Small pools with fast queries outperform large pools."
 
 ---
 
@@ -872,9 +898,13 @@ spring:
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Pre-established, reusable database connections managed by HikariCP.
+
 **KEY INSIGHT:** Small pool + fast queries >> large pool. 10 connections handle thousands of requests.
+
 **ANTI-PATTERN:** Setting `maximumPoolSize` to 200 "just in case."
+
 **ONE-LINER:** "Pool size = (cores \* 2) + spindles. Monitor, do not guess."
+
 **TRIGGER PHRASE:** "HikariCP, right-sized pool."
 
 **If you remember only 3 things:**
@@ -912,7 +942,9 @@ Monitor with Actuator: `hikaricp.connections.active`, `hikaricp.connections.pend
 ### 🔗 Related Keywords
 
 **Prerequisites:** JDBC, DataSource
+
 **Builds on:** Transaction Management (transactions hold connections)
+
 **Alternatives:** Apache DBCP2, C3P0 (HikariCP is faster)
 
 ---
@@ -1008,8 +1040,10 @@ When to use each:
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use JPA for everything."
-A Staff says: "I use JPA for domain CRUD (80%) and JdbcTemplate for reporting queries and bulk operations (20%). Same DataSource and transaction manager. The key is knowing when ORM overhead matters and when it does not."
+
+**A Senior says:** "Use JPA for everything."
+
+**A Staff says:** "I use JPA for domain CRUD (80%) and JdbcTemplate for reporting queries and bulk operations (20%). Same DataSource and transaction manager. The key is knowing when ORM overhead matters and when it does not."
 
 ---
 
@@ -1038,7 +1072,9 @@ Best practice: use both. JPA for domain, JDBC for analytics.
 ### 🔗 Related Keywords
 
 **Prerequisites:** JDBC, JPA, SQL
+
 **Builds on:** Spring Data JPA, Connection Pooling
+
 **Alternatives:** JOOQ (type-safe SQL), MyBatis (XML SQL mapping)
 
 ---
@@ -1173,8 +1209,10 @@ public Product findById(Long id) {
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Add `@Cacheable` to reduce database calls."
-A Staff says: "I design the caching strategy: Caffeine for local high-throughput caching, Redis for distributed cache shared across instances. I set TTL based on data freshness requirements, use `@CacheEvict` on writes to prevent stale data, and monitor cache hit ratios via Micrometer. I never cache user-specific or security-sensitive data without careful TTL."
+
+**A Senior says:** "Add `@Cacheable` to reduce database calls."
+
+**A Staff says:** "I design the caching strategy: Caffeine for local high-throughput caching, Redis for distributed cache shared across instances. I set TTL based on data freshness requirements, use `@CacheEvict` on writes to prevent stale data, and monitor cache hit ratios via Micrometer. I never cache user-specific or security-sensitive data without careful TTL."
 
 ---
 
@@ -1210,9 +1248,13 @@ public Product findById(Long id) {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** AOP-based method result caching via `@Cacheable`, `@CacheEvict`, `@CachePut`.
+
 **KEY INSIGHT:** Same self-invocation trap as `@Transactional`. Proxy-based.
+
 **ANTI-PATTERN:** Caching without eviction strategy (stale data). Caching mutable objects.
+
 **ONE-LINER:** "@Cacheable = memoization via AOP proxy."
+
 **TRIGGER PHRASE:** "Cache-aside with eviction strategy."
 
 **If you remember only 3 things:**
@@ -1248,5 +1290,7 @@ AOP proxy intercepts method calls. On first call with key (derived from paramete
 ### 🔗 Related Keywords
 
 **Prerequisites:** IoC Container, AOP Proxies
+
 **Builds on:** Spring Data JPA (caching query results)
+
 **Alternatives:** Caffeine (standalone), Redis (standalone), Hazelcast

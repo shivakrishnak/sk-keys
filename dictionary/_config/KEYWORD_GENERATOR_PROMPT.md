@@ -26,7 +26,7 @@ VERSION HISTORY:
     + 6 new Quality Checks (11-16)
 
   v2.0 (2025-09)
-    + 7 knowledge levels (was 5) - L0 Orientation + L4.5 Architect
+    + 7 knowledge levels (was 5) - L0 Orientation + L5 Architect
     + Meta-Skills layer + Sub-topic clustering + Level Milestones
     + Confusion Pairs Index + 7 mandatory rules (10-16)
 
@@ -162,8 +162,8 @@ LEVEL OVERVIEW:
   L2   ★★☆   Working          - Correct usage in real projects
   L3   ★★☆+  Intermediate     - Design decisions and trade-offs
   L4   ★★★   Expert           - Production ownership and diagnosis
-  L4.5 🔥    Architect        - System-level innovation and governance
-  L5   🔬    Creator          - Theory, specification, and invention
+  L5   🔥    Architect        - System-level innovation and governance
+  L6   🔬    Creator          - Theory, specification, and invention
   META 🧠    Meta-Skills      - Transferable god-level thinking patterns
 
 ─────────────────────────────────────────────────────────────────────────
@@ -508,14 +508,14 @@ LEVEL 5 - CREATOR / DESIGNER  🔬
   EXPECTED KEYWORD COUNT: 10–20
 
 ─────────────────────────────────────────────────────────────────────────
-META-SKILLS LAYER  🧠  (Appended after L5)
+META-SKILLS LAYER  🧠  (Appended after L6)
 ─────────────────────────────────────────────────────────────────────────
 
   NEW IN v2.0
 
   WHO:
     Not a standard keyword level - a supplementary
-    layer appended after L5. Captures the THINKING
+    layer appended after L6. Captures the THINKING
     PATTERNS that emerge from deep mastery of the domain.
 
   WHAT IT COVERS:
@@ -528,7 +528,7 @@ META-SKILLS LAYER  🧠  (Appended after L5)
       from one technology to another)
 
   HOW TO USE:
-    After generating L5 keywords, add a META-SKILLS
+    After generating L6 keywords, add a META-SKILLS
     section with 3–5 keywords capturing transferable
     thinking patterns unique to mastery of this domain.
 
@@ -591,8 +591,8 @@ RULE 3: DIFFICULTY AND LEVEL COLUMNS ARE BOTH REQUIRED
     L2    - Working
     L3    - Intermediate
     L4    - Expert
-    L4.5  - Architect
-    L5    - Creator
+    L5    - Architect
+    L6    - Creator
     META  - Meta-Skills
 
   DIFFICULTY COLUMN (maps to dictionary entry field):
@@ -601,14 +601,14 @@ RULE 3: DIFFICULTY AND LEVEL COLUMNS ARE BOTH REQUIRED
     L2          →  ★★☆
     L3          →  ★★☆   (same stars as L2; Level column disambiguates)
     L4          →  ★★★
-    L4.5        →  🔥
-    L5          →  🔬
+    L5        →  🔥
+    L6          →  🔬
 
   In the dictionary entry YAML frontmatter:
     L0, L1      →  difficulty: ★☆☆
     L2, L3      →  difficulty: ★★☆
-    L4, L4.5    →  difficulty: ★★★
-    L5          →  difficulty: ★★★
+    L4, L5    →  difficulty: ★★★
+    L6          →  difficulty: ★★★
 
 ─────────────────────────────────────────────────────────────────────────
 RULE 4: KEYWORDS BUILD ON EACH OTHER
@@ -616,7 +616,7 @@ RULE 4: KEYWORDS BUILD ON EACH OTHER
 
   Each level assumes complete knowledge of all levels below.
   The list MUST be learnable in strict order:
-  L0 → L1 → L2 → L3 → L4 → L4.5 → L5 → META.
+  L0 → L1 → L2 → L3 → L4 → L5 → L6 → META.
 
   No L3 keyword should require L4 knowledge to understand.
   No L2 keyword should require L3 knowledge to understand.
@@ -655,7 +655,7 @@ RULE 5: INCLUDE ALL TEN KNOWLEDGE DIMENSIONS  [EXPANDED v3.0]
     What came before, why things evolved, turning points.
     Example: "The Heartbleed Vulnerability (2014)"
     Example: "Why Callbacks Led to Promises"
-    At least 1 per category at L3, 2+ at L4, 3+ at L5.
+    At least 1 per category at L3, 2+ at L4, 3+ at L6.
 
   DIMENSION 7 - MENTAL MODEL:  [NEW v3.0]
     Analogies, maps, and intuition builders that make
@@ -683,7 +683,7 @@ RULE 5: INCLUDE ALL TEN KNOWLEDGE DIMENSIONS  [EXPANDED v3.0]
     on each other to create real, production-grade artifacts.
     Example: "Build a REST API (L2) -> Add Caching (L3)
               -> Add Observability (L4) -> Design for
-              Multi-Region (L4.5)"
+              Multi-Region (L5)"
     At least 1 project keyword per level at L1+.
     Projects at higher levels MUST extend lower-level projects.
 
@@ -779,8 +779,8 @@ RULE 11: TOOLING KEYWORDS MANDATORY AT EVERY LEVEL  [NEW v2.0]
     L2:   Daily-use tools (debuggers, formatters, linters)
     L3:   Profiling and analysis tools
     L4:   Production observability and forensics tools
-    L4.5: Evaluation, governance, and platform tooling
-    L5:   Specification authoring and research tooling
+    L5: Evaluation, governance, and platform tooling
+    L6:   Specification authoring and research tooling
 
   Prefer open-source, widely-used tools over vendor-specific.
   For category-defining vendor tools, include them and note
@@ -947,8 +947,8 @@ RULE 18: DELIBERATE PRACTICE KEYWORDS MANDATORY  [NEW v3.0]
     L2: "Build a CRUD REST API Exercise"
     L3: "Performance Tuning Kata (Find the Bottleneck)"
     L4: "Production Incident Simulation Exercise"
-    L4.5: "Architecture Decision Record (ADR) Workshop"
-    L5: "Design a Garbage Collector from Scratch"
+    L5: "Architecture Decision Record (ADR) Workshop"
+    L6: "Design a Garbage Collector from Scratch"
 
   Practice keywords are tagged with 🏋️ in the output table.
 
@@ -978,14 +978,14 @@ RULE 19: PROJECT EVOLUTION KEYWORDS MANDATORY  [NEW v3.0]
       L2: "Multi-Container App with Compose - Phase 2"
       L3: "Production Docker with Multi-Stage Builds - Phase 3"
       L4: "Container Security Hardening - Phase 4"
-      L4.5: "Container Platform Design - Phase 5 (Strategy)"
+      L5: "Container Platform Design - Phase 5 (Strategy)"
 
     Security category:
       L1: "Secure a Static Site - Phase 1 (HTTPS)"
       L2: "Add Auth to a REST API - Phase 2 (JWT)"
       L3: "OAuth 2.0 Integration - Phase 3 (Identity)"
       L4: "Security Audit & Pen Test - Phase 4 (Diagnosis)"
-      L4.5: "Zero Trust Architecture - Phase 5 (Strategy)"
+      L5: "Zero Trust Architecture - Phase 5 (Strategy)"
 
   Project evolution keywords are tagged with 🔨 in the
   output table.
@@ -1018,8 +1018,8 @@ RULE 20: TEACHING ABILITY KEYWORDS AT L3+  [NEW v3.0]
   Examples:
     L3: "Explain Database Indexing at Every Level"
     L4: "Teaching GC Tuning - The 5 Questions Juniors Ask"
-    L4.5: "Architecture Review Facilitation"
-    L5: "Writing a Technical RFC for [Technology]"
+    L5: "Architecture Review Facilitation"
+    L6: "Writing a Technical RFC for [Technology]"
 
   Teaching keywords are tagged with 🎓 in the output table.
 
@@ -1076,7 +1076,7 @@ RULE 22: INTERVIEW READINESS KEYWORDS AT EVERY LEVEL  [NEW v3.0]
   At L2:  "[Category] Interview Essentials - Working Level"
   At L3:  "[Category] System Design Interview Patterns"
   At L4:  "[Category] Deep-Dive Interview Questions"
-  At L4.5: "[Category] Staff-Level Interview Scenarios"
+  At L5: "[Category] Staff-Level Interview Scenarios"
 
   Interview keywords are tagged with 🎯 in the output table.
 
@@ -1103,7 +1103,7 @@ SECTION 3: OUTPUT FORMAT - 12 COMPONENTS
   CODE:      [3-letter code]
   TIER:      [tier-N-name]
   FOLDER:    [CODE-folder-name]
-  LEVELS:    L0 + L1 + L2 + L3 + L4 + L4.5 + L5 + META
+  LEVELS:    L0 + L1 + L2 + L3 + L4 + L5 + L6 + META
   TOTAL:     [N] keywords across 8 components
   GENERATED: v4.0
   ════════════════════════════════════════════════════════
@@ -1135,7 +1135,7 @@ SECTION 3: OUTPUT FORMAT - 12 COMPONENTS
     ⚫  1+ month    (continuous practice, mastery, ongoing skill)
 
   Default by level if unsure:
-    L0: 🟢  |  L1: 🟢  |  L2: 🟡  |  L3: 🟡  |  L4: 🟠  |  L4.5: 🔴  |  L5: 🔴
+    L0: 🟢  |  L1: 🟢  |  L2: 🟡  |  L3: 🟡  |  L4: 🟠  |  L5: 🔴  |  L6: 🔴
 
   TAGS COLUMN - use one or more symbols per row:
     🎯  ivw   = High-frequency interview topic
@@ -1235,8 +1235,8 @@ SECTION 3: OUTPUT FORMAT - 12 COMPONENTS
   | L2    | Working           | N     | [CODE]-0NN–0NN    |
   | L3    | Intermediate      | N     | [CODE]-0NN–0NN    |
   | L4    | Expert            | N     | [CODE]-0NN–0NN    |
-  | L4.5  | Architect         | N     | [CODE]-0NN–0NN    |
-  | L5    | Creator/Designer  | N     | [CODE]-0NN–0NN    |
+  | L5  | Architect         | N     | [CODE]-0NN–0NN    |
+  | L6    | Creator/Designer  | N     | [CODE]-0NN–0NN    |
   | META  | Meta-Skills       | N     | [CODE]-0NN–0NN    |
   | TOTAL |                   | N     | [CODE]-001–0NN    |
 
@@ -1301,9 +1301,9 @@ SECTION 3: OUTPUT FORMAT - 12 COMPONENTS
   ESTIMATED TIME BY TRACK:
   | Track                        | Keywords | Est. Time         |
   |------------------------------|----------|-------------------|
-  | Full journey (L0-L5 + META)  |   N      | [X] weeks @ 10h/w |
+  | Full journey (L0-L6 + META)  |   N      | [X] weeks @ 10h/w |
   | Practitioner (L2-L4)         |   N      | [Y] weeks @ 10h/w |
-  | Expert fast-track (L3-L5)    |   N      | [Z] weeks @ 10h/w |
+  | Expert fast-track (L3-L6)    |   N      | [Z] weeks @ 10h/w |
   | Triage/Incident (🚨 only)    |   N      | [W] hours          |
 
   SPECIFIC PREREQUISITE KEYWORDS FROM OTHER CATEGORIES:
@@ -1359,7 +1359,7 @@ SECTION 3: OUTPUT FORMAT - 12 COMPONENTS
 3.9 META-SKILLS ADDENDUM  (NEW in v2.0)
 ─────────────────────────────────────────────────────────────────────────
 
-  After L5, add:
+  After L6, add:
 
   ════════════════════════════════════════════════════════
   META-SKILLS - GOD-LEVEL THINKING PATTERNS
@@ -1640,9 +1640,9 @@ to use this in a real project?
 to make design decisions?
 ☐ L4: Does list cover what an expert needs
 to diagnose production incidents?
-☐ L4.5: Does list cover what an architect needs
+☐ L5: Does list cover what an architect needs
 to design organisational strategy?
-☐ L5: Does list cover what a creator needs
+☐ L6: Does list cover what a creator needs
 to redesign or extend the technology?
 ☐ META: Are 3–5 transferable thinking patterns captured?
 
@@ -1713,7 +1713,7 @@ are complete and accurate
 CHECK 9 - PRACTICAL vs THEORETICAL BALANCE:
 ☐ L0–L2: At least 70% practical keywords
 (real things you do or use, not pure theory)
-☐ L4–L5: At least 30% theoretical keywords
+☐ L4–L6: At least 30% theoretical keywords
 (internals, algorithms, research)
 ☐ L3: Roughly equal practical and theoretical
 
@@ -1798,8 +1798,8 @@ L1 - Foundational (★☆☆)
 L2 - Working (★★☆)
 L3 - Intermediate (★★☆+)
 L4 - Expert (★★★)
-L4.5 - Architect (🔥)
-L5 - Creator (🔬)
+L5 - Architect (🔥)
+L6 - Creator (🔬)
 META - Meta-Skills (🧠)
 
 Follow Category Keyword Generator v4.0 exactly.
@@ -1865,7 +1865,7 @@ Upgrade existing v1.0 keyword list to v2.0:
 
 [paste existing v1.0 keyword list here]
 
-Tasks: 1. Add L0 Orientation keywords (5–10 new) 2. Add L4.5 Architect keywords (10–20 new) 3. Add META-SKILLS section (3–5 new) 4. Retrofit Rule tags to existing keywords:
+Tasks: 1. Add L0 Orientation keywords (5–10 new) 2. Add L5 Architect keywords (10–20 new) 3. Add META-SKILLS section (3–5 new) 4. Retrofit Rule tags to existing keywords:
 ⚠️ anti, 🔧 tool, 🔴 inc, 🔄 mig, 📋 cpl, 🎯 ivw 5. Add Level column to all existing tables 6. Add Level Milestones (Section 3.4) for each level 7. Add Confusion Pairs Index (Section 3.8) 8. Add Sub-Topic Clustering (Section 3.3)
 for levels with 20+ keywords
 
@@ -1884,7 +1884,7 @@ Audit existing keyword list for:
 
 Find: - Which major version migrations are undocumented? - Which deprecated features are unlisted? - What breaking changes between versions
 are missing from the list? - What migration keywords should be added and at
-which level (L3 / L4 / L4.5)?
+which level (L3 / L4 / L5)?
 
 Output: migration keyword gaps + suggested new IDs.
 
@@ -2002,10 +2002,10 @@ L3 Intermediate: 25–40 keywords
 L4 Expert: 25–40 keywords
 (production, scale, failure modes, incidents)
 
-L4.5 Architect: 10–20 keywords
+L5 Architect: 10–20 keywords
 (strategy, governance, migration, extension)
 
-L5 Creator: 10–20 keywords
+L6 Creator: 10–20 keywords
 (theory, specification, research)
 
 META Meta-Skills: 3–5 keywords
@@ -2026,7 +2026,7 @@ LEVEL DISTRIBUTION BY CATEGORY TYPE:
 ─────────────────────────────────────────────────────────────────────────
 
 RUNTIME / ENGINE (JVM, V8, Node.js):
-L4 and L5 are largest; L4.5 is substantial
+L4 and L6 are largest; L5 is substantial
 (deep internals + fleet architecture dominate)
 
 FRAMEWORK (Spring, React, Angular):
@@ -2034,19 +2034,19 @@ L2 and L3 are largest
 (usage patterns and design choices dominate)
 
 PROTOCOL / STANDARD (HTTP, TCP, SQL):
-L1 and L5 are largest
+L1 and L6 are largest
 (fundamentals + specification dominate)
 
 INFRASTRUCTURE (Docker, K8s, Terraform):
-L2 and L4 are largest; L4.5 is significant
+L2 and L4 are largest; L5 is significant
 (setup patterns + production ops + strategy dominate)
 
 DOMAIN (Financial Services, AI Agents):
-L3 and L4 are largest; L4.5 is significant
+L3 and L4 are largest; L5 is significant
 (design decisions + production + governance dominate)
 
 SECURITY (as meta-domain):
-All levels roughly equal; L4.5 is the largest
+All levels roughly equal; L5 is the largest
 (security governance is uniquely organisational)
 
 ═══════════════════════════════════════════════════════════════════════════
@@ -2071,7 +2071,7 @@ CATEGORY: Security
 CODE: SEC
 TIER: tier-2-networking-security
 FOLDER: SEC-security
-LEVELS: L0 + L1 + L2 + L3 + L4 + L4.5 + L5 + META
+LEVELS: L0 + L1 + L2 + L3 + L4 + L5 + L6 + META
 TOTAL: ~148 keywords across 8 components
 GENERATED: v4.0
 ════════════════════════════════════════════════════════
@@ -2144,7 +2144,7 @@ LEVEL 1 - FOUNDATIONAL ★☆☆
 | SEC-025 | Hardcoded Credentials Anti-Pattern| L1 | ★☆☆ | ⚠️ |
 | SEC-026 | Security Through Obscurity | L1 | ★☆☆ | ⚠️ |
 
-[... L2, L4, L4.5, L5 tables continue in same format ...]
+[... L2, L4, L5, L6 tables continue in same format ...]
 
 ── CLUSTER: OAuth & Identity (L3 example) ───────────
 | ID | Keyword | Lv | Diff | Tags |
@@ -2194,8 +2194,8 @@ SUMMARY
 | L2    | Working          | 22    | SEC-027 – SEC-048 |
 | L3    | Intermediate     | 35    | SEC-049 – SEC-083 |
 | L4    | Expert           | 34    | SEC-084 – SEC-117 |
-| L4.5  | Architect        | 15    | SEC-118 – SEC-132 |
-| L5    | Creator/Designer | 11    | SEC-133 – SEC-143 |
+| L5  | Architect        | 15    | SEC-118 – SEC-132 |
+| L6    | Creator/Designer | 11    | SEC-133 – SEC-143 |
 | META  | Meta-Skills      | 5     | SEC-144 – SEC-148 |
 | TOTAL |                  | 148   | SEC-001 – SEC-148 |
 
@@ -2309,7 +2309,7 @@ Kubernetes:
 RULES FOR TRIAGE KEYWORDS:
 ─────────────────────────────────────────────────────────────────────────
 
-1. MUST be at L3 or L4 (L4.5/L5 are too strategic for triage)
+1. MUST be at L3 or L4 (L5/L6 are too strategic for triage)
 2. MUST NOT require reading documentation to understand
 3. MUST be scannable in under 30 seconds
 4. Each triage keyword SHOULD reference 1-2 lower-level keywords
@@ -2357,7 +2357,7 @@ Tier: tier-3-java
 Folder: JVM-java-jvm-internals
 Starting ID: JVM-001
 
-Cover ALL levels: L0, L1, L2, L3, L4, L4.5, L5, META.
+Cover ALL levels: L0, L1, L2, L3, L4, L5, L6, META.
 Follow Category Keyword Generator v4.0 exactly.
 Apply all 22 rules. Use all 12 output components.
 Run all 17 quality checks.

@@ -10,9 +10,17 @@ content under `interview/` following the v3.0 spec exactly.
 
 ## Generation Strategy - KEYWORD-BATCH (mandatory)
 
-Generate content **1-3 keywords at a time**, appending each batch to
-the file. This replaces the old file-level approach that attempted all
-keywords in one pass (causing timeouts on files with 5-12 keywords).
+Generate content in keyword batches, appending each batch to the file.
+This replaces the old file-level approach that attempted all keywords
+in one pass (causing timeouts).
+
+### File Size Rule (HARD CAP)
+
+**Maximum 5 keywords per file. Minimum 3.** No exceptions.
+
+This keeps files under ~3,400 lines, reduces context window pressure
+when appending, and allows predictable batch completion. If a topic
+level band produces more than 5 keywords, split into multiple files.
 
 ### Workflow Per File
 
@@ -20,11 +28,13 @@ keywords in one pass (causing timeouts on files with 5-12 keywords).
 2. **Detect progress**: scan file for `# KEYWORD NAME` headings that have
    real content below them (not `[TODO:]` or `[FILL:]` stubs). Identify
    which keywords are already complete vs still pending.
-3. **Pick next batch**: select 1-3 unfilled keywords based on difficulty:
-   - hard keywords: **1 keyword per batch** (deep-dive alone is 12+ Qs)
-   - medium keywords: **1-2 keywords per batch**
-   - easy keywords: **2-3 keywords per batch**
-4. **Generate**: produce complete 19-section content for the batch keywords
+3. **Pick next batch**: select unfilled keywords based on difficulty:
+   - hard keywords: **1 keyword per batch**
+   - medium keywords: **2 keywords per batch**
+   - easy keywords: **3 keywords per batch**
+4. **Generate**: produce complete 19-section content for ALL keywords in
+   the batch in a single output block (all sections per keyword, then
+   next keyword). Never generate section-by-section.
 5. **Write**: append generated content to the file after the last completed
    keyword (or after frontmatter if this is the first keyword). Use
    double horizontal rules (`---` then `---`) between keywords.
@@ -32,20 +42,42 @@ keywords in one pass (causing timeouts on files with 5-12 keywords).
 7. **Repeat** steps 3-6 until all keywords in the file are complete
 8. **Verify**: grep for `[TODO:` and `[FILL:` to confirm zero stubs remain
 
+### Batch Completion Per File
+
+| Difficulty | Keywords/Batch | Batches for 5-kw file |
+| ---------- | -------------- | --------------------- |
+| Easy       | 3              | 2 (3+2)               |
+| Medium     | 2              | 3 (2+2+1)             |
+| Hard       | 1              | 5                     |
+
+### Performance Rules (token/call optimization)
+
+1. **Scaffold upfront**: create file with frontmatter + all `# KEYWORD`
+   title lines (no content) before filling. This eliminates guessing
+   append points.
+2. **Append-only reads**: when filling a keyword, read only the last
+   30 lines of the file to find the anchor text. Do NOT re-read the
+   entire file - previous keywords are irrelevant context.
+3. **No spec re-reads mid-file**: the interview instructions (auto-loaded
+   for interview/\*\* edits) contain all generation rules. Do NOT re-read
+   `INTERVIEW_PROMPT.md` after the first keyword in a session.
+4. **Single-pass generation**: produce all 19 sections for each keyword
+   in one continuous output. Never split across multiple tool calls.
+
 ### Why keyword-batch (not file-level)
 
-- **5-10x less output per pass**: 3,000-5,000 words vs 36,000-60,000
+- **Less output per pass**: 3,000-5,000 words vs 15,000-25,000
 - **No timeouts**: each batch completes well within model output limits
 - **Resume-safe**: if interrupted, next invocation picks up from the
   next unfilled keyword (step 2 detects progress automatically)
-- **No scaffold needed**: reads keywords from frontmatter, generates
-  content directly - eliminates the scaffold-then-fill double-pass
+- **No scaffold needed for content**: reads keywords from frontmatter,
+  generates content directly
 
 ### Handling existing files
 
 - **New files** (frontmatter only): generate keywords in order, appending
 - **Files with [TODO:]/[FILL:] stubs**: read file, identify unfilled
-  keywords, replace stub content for next 1-3 keywords, write file
+  keywords, replace stub content for next batch, write file
 - **Partially complete files**: detect completed keywords by checking
   for real content under `# KEYWORD NAME` headings, skip them
 
@@ -108,6 +140,75 @@ content that a Staff/Principal engineer would respect and learn from.
 > when editing `interview/**` files) for all subsequent keywords. This
 > keeps context lean while preserving all quality rules.
 
+## Keyword Level Coverage Framework (MANDATORY - ALL MODES)
+
+When generating keyword lists for ANY interview topic, you MUST ensure
+coverage across ALL knowledge levels from `KEYWORD_GENERATOR_PROMPT.md`.
+This is NON-NEGOTIABLE. A topic missing L0/L1 (foundations) or
+L5/L6/META (architecture and theory) is INCOMPLETE.
+
+### Level Requirements (topic-wide minimums)
+
+| Level | Icon | Name         | What It Covers                            | Min Keywords |
+| ----- | ---- | ------------ | ----------------------------------------- | ------------ |
+| L0    | 🌱   | Orientation  | Why it exists, ecosystem map, before it   | 3-5          |
+| L1    | ★☆☆  | Foundational | Core vocabulary, building blocks, setup   | 4-6          |
+| L2    | ★★☆  | Working      | Common patterns, daily usage, idioms      | 5-8          |
+| L3    | ★★☆+ | Intermediate | Design decisions, trade-offs, internals   | 5-10         |
+| L4    | ★★★  | Expert       | Production diagnostics, failure modes     | 5-10         |
+| L5    | 🔥   | Architect    | Strategy, migration, governance, at-scale | 3-5          |
+| L6    | 🔬   | Creator      | Theory, specification, research           | 2-3          |
+| META  | 🧠   | Meta-Skills  | Transferable god-level thinking patterns  | 2-3          |
+
+**Total per topic: 30-50 keywords minimum** (varies by topic breadth).
+**Max 5 keywords per file, min 3.** Split levels across multiple files
+when a level has more than 5 keywords.
+
+### File Organization by Level
+
+Group keywords into files by level bands:
+
+| File Pattern                             | Levels        | Purpose                       |
+| ---------------------------------------- | ------------- | ----------------------------- |
+| `{Topic} - Foundations.md`               | L0 + L1       | Orientation + foundational    |
+| `{Topic} - Getting Started.md`           | L1 (overflow) | Setup + first steps (if >5)   |
+| `{Topic} - {Subtopic}.md`                | L2 + L3       | Working knowledge + decisions |
+| `{Topic} - {Subtopic}.md`                | L3 + L4       | Deep internals + production   |
+| `{Topic} - Architecture and Strategy.md` | L5+L6+META    | Strategy + theory + patterns  |
+
+This ensures every topic has:
+
+- A **Foundations** file for beginners and context
+- Core **working files** for practitioners (L2-L4)
+- An **Architecture** file for strategic/theoretical depth
+
+### Level Coverage Verification (after keyword generation)
+
+Before generating content, verify the keyword list covers:
+
+1. **L0 exists?** At least 2 orientation keywords (why, what, ecosystem)
+2. **L1 exists?** At least 3 foundational keywords (vocabulary, setup)
+3. **L2-L3 balanced?** Working + intermediate keywords present (5 each)
+4. **L4 present?** Production diagnostics, failure modes, tuning (5)
+5. **L5 present?** Architecture decisions, migration strategies (2-3)
+6. **L6 present?** Theory, specification, research foundations (1-2)
+7. **META present?** At least 1 transferable thinking pattern
+8. **File cap?** Every file has 3-5 keywords (never more than 5)
+
+If ANY level is missing: add keywords before generating content.
+
+### Mandatory Keyword Types per KEYWORD_GENERATOR_PROMPT.md
+
+At L3+, the keyword list MUST include:
+
+- At least 1 **anti-pattern** keyword (what NOT to do)
+- At least 1 **decision framework** keyword (how to choose)
+- At least 1 **security** keyword (domain-specific risks)
+- At least 1 **production diagnostic** keyword (real commands)
+- At least 1 **failure mode** keyword (what breaks, how to fix)
+
+---
+
 ## Mode Detection
 
 Analyze the user's input to determine the workflow mode:
@@ -122,8 +223,12 @@ in `interview/`
 3. Scan `interview/` folder to confirm topic does not exist
 4. Analyze where this topic belongs (determine logical grouping)
 5. Generate keyword list using KEYWORD_GENERATOR_PROMPT.md:
-   - Group keywords into subtopic files (5-20 keywords per file)
-   - Name files: `{Topic} - {Subtopic}.md`
+   - Cover ALL knowledge levels: L0 through L6 + META
+   - Group keywords into subtopic files (3-5 keywords per file, max 5)
+   - Include a `{Topic} - Foundations.md` file (L0+L1 keywords, max 5)
+   - Include a `{Topic} - Architecture and Strategy.md` file (L5+L6+META)
+   - Name other files: `{Topic} - {Subtopic}.md` (L2-L4 keywords)
+   - Verify level coverage using the Level Coverage Framework above
 6. **Run Keyword Cross-Verification** (see section below)
 7. Create the topic folder: `interview/{topic-name}/` (lowercase, hyphens)
 8. Create `index.md` for the topic folder with Jekyll frontmatter:
@@ -156,6 +261,8 @@ Trigger: user names a subtopic like "React hooks" where the parent topic
 2. Read `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` (keyword gen spec)
 3. Scan `interview/{topic}/` to see existing subtopic files
 4. Generate keyword list for the new subtopic using KEYWORD_GENERATOR_PROMPT.md
+   - Verify the subtopic keywords fill gaps in the topic's level coverage
+   - Check if the topic is missing L0/L1 or L5/L6/META keywords
 5. **Run Keyword Cross-Verification** (see section below)
 6. Create the subtopic file: `interview/{topic}/{Topic} - {Subtopic}.md`
    with proper frontmatter (match existing files in the folder)

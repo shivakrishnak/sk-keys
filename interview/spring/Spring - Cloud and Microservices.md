@@ -148,16 +148,21 @@ spring:
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use Eureka for service discovery."
-A Staff says: "In Kubernetes, I skip Eureka entirely - K8s provides DNS-based discovery and server-side load balancing. For non-K8s environments, I use Eureka with client-side load balancing. I configure health checks, graceful shutdown (deregister before stopping), and zone-aware routing for multi-AZ deployments."
+
+**A Senior says:** "Use Eureka for service discovery."
+
+**A Staff says:** "In Kubernetes, I skip Eureka entirely - K8s provides DNS-based discovery and server-side load balancing. For non-K8s environments, I use Eureka with client-side load balancing. I configure health checks, graceful shutdown (deregister before stopping), and zone-aware routing for multi-AZ deployments."
 
 ---
 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Services register and discover each other by name, with automatic load balancing.
+
 **KEY INSIGHT:** In Kubernetes, built-in DNS replaces Eureka. No extra infrastructure needed.
+
 **ANTI-PATTERN:** Hardcoded service URLs. Running Eureka in Kubernetes (redundant).
+
 **ONE-LINER:** "Register by name, discover by name, load-balance automatically."
 
 **If you remember only 3 things:**
@@ -182,7 +187,9 @@ In Kubernetes: DNS resolves service names to cluster IPs. `kube-proxy` handles l
 ### 🔗 Related Keywords
 
 **Prerequisites:** Microservices Architecture, HTTP
+
 **Builds on:** API Gateway, Circuit Breaker
+
 **Alternatives:** Consul, Kubernetes DNS, HashiCorp Nomad
 
 ---
@@ -329,16 +336,21 @@ spring:
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use Spring Cloud Gateway for routing."
-A Staff says: "I design the gateway as a thin routing layer - no business logic. Authentication is delegated to an OAuth2 provider. Rate limiting uses Redis for distributed state. I separate gateway concerns (routing, auth, rate limiting) from service concerns (business logic). Circuit breakers on gateway routes prevent cascading failures."
+
+**A Senior says:** "Use Spring Cloud Gateway for routing."
+
+**A Staff says:** "I design the gateway as a thin routing layer - no business logic. Authentication is delegated to an OAuth2 provider. Rate limiting uses Redis for distributed state. I separate gateway concerns (routing, auth, rate limiting) from service concerns (business logic). Circuit breakers on gateway routes prevent cascading failures."
 
 ---
 
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Reactive API gateway for routing, filtering, and cross-cutting concerns.
+
 **KEY INSIGHT:** Single entry point. Thin layer. No business logic in gateway.
+
 **ANTI-PATTERN:** Business logic in gateway filters. Gateway as a monolith.
+
 **ONE-LINER:** "Route by path, filter centrally, balance load automatically."
 
 **If you remember only 3 things:**
@@ -363,7 +375,9 @@ Benefits: clients know one URL. Centralized security. Easy to add/remove service
 ### 🔗 Related Keywords
 
 **Prerequisites:** Service Discovery, Spring WebFlux
+
 **Builds on:** Circuit Breaker, OAuth2
+
 **Alternatives:** Kong, Envoy, AWS API Gateway, Netflix Zuul (deprecated)
 
 ---
@@ -511,8 +525,10 @@ GET /actuator/circuitbreakers
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Add `@CircuitBreaker` with a fallback."
-A Staff says: "I design resilience as a layered strategy: timeout (TimeLimiter) -> retry (transient failures) -> circuit breaker (sustained failures) -> bulkhead (isolate failure domains). Fallbacks return degraded responses, not errors. I monitor circuit breaker state via Actuator/Grafana and alert on state transitions. I tune thresholds based on SLOs."
+
+**A Senior says:** "Add `@CircuitBreaker` with a fallback."
+
+**A Staff says:** "I design resilience as a layered strategy: timeout (TimeLimiter) -> retry (transient failures) -> circuit breaker (sustained failures) -> bulkhead (isolate failure domains). Fallbacks return degraded responses, not errors. I monitor circuit breaker state via Actuator/Grafana and alert on state transitions. I tune thresholds based on SLOs."
 
 ---
 
@@ -558,8 +574,11 @@ private CompletableFuture<Data> cachedData(
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** State machine that stops calls to failing services and provides fallbacks.
+
 **KEY INSIGHT:** Fail fast instead of waiting. Prevent cascading failures.
+
 **ANTI-PATTERN:** No fallback (circuit breaker returns error). Not monitoring state transitions.
+
 **ONE-LINER:** "CLOSED -> failures -> OPEN (fail fast) -> wait -> HALF-OPEN -> test -> CLOSED."
 
 **If you remember only 3 things:**
@@ -600,7 +619,9 @@ Layered approach:
 ### 🔗 Related Keywords
 
 **Prerequisites:** Microservices, Distributed Systems
+
 **Builds on:** Service Discovery, API Gateway
+
 **Alternatives:** Istio (service mesh circuit breaking), Envoy proxy
 
 ---
@@ -736,8 +757,10 @@ spring:
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use Config Server for centralized config."
-A Staff says: "I use Config Server for non-sensitive properties and HashiCorp Vault for secrets. Kubernetes deployments use ConfigMaps + Secrets instead of Config Server. I implement `@RefreshScope` for runtime changes and Spring Cloud Bus for broadcast refresh across instances."
+
+**A Senior says:** "Use Config Server for centralized config."
+
+**A Staff says:** "I use Config Server for non-sensitive properties and HashiCorp Vault for secrets. Kubernetes deployments use ConfigMaps + Secrets instead of Config Server. I implement `@RefreshScope` for runtime changes and Spring Cloud Bus for broadcast refresh across instances."
 
 In Kubernetes: ConfigMaps and Secrets replace Config Server. Volume mounts or env vars inject config. No extra infrastructure needed.
 
@@ -746,8 +769,11 @@ In Kubernetes: ConfigMaps and Secrets replace Config Server. Volume mounts or en
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Centralized configuration management for microservices.
+
 **KEY INSIGHT:** In Kubernetes, ConfigMaps + Secrets replace Config Server.
+
 **ANTI-PATTERN:** Secrets in Git. Config baked into JARs.
+
 **ONE-LINER:** "Git-backed config, fetched at startup, refreshable at runtime."
 
 **If you remember only 3 things:**
@@ -772,7 +798,9 @@ Properties are merged: generic (`application.yml`) + service-specific (`order-se
 ### 🔗 Related Keywords
 
 **Prerequisites:** Spring Boot Externalized Configuration
+
 **Builds on:** Service Discovery (Config Server registered)
+
 **Alternatives:** Kubernetes ConfigMaps/Secrets, HashiCorp Consul, AWS Parameter Store
 
 ---
@@ -953,8 +981,10 @@ management:
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Add Actuator and Prometheus."
-A Staff says: "I design the observability stack: Micrometer metrics -> Prometheus -> Grafana for dashboards and alerting. OpenTelemetry traces -> Tempo/Jaeger for distributed tracing. Structured JSON logs with trace-id for log correlation. 10% sampling in production, 100% for errors. Custom `Observation` API for business metrics + traces in one call. SLO-based alerting (latency p99, error rate)."
+
+**A Senior says:** "Add Actuator and Prometheus."
+
+**A Staff says:** "I design the observability stack: Micrometer metrics -> Prometheus -> Grafana for dashboards and alerting. OpenTelemetry traces -> Tempo/Jaeger for distributed tracing. Structured JSON logs with trace-id for log correlation. 10% sampling in production, 100% for errors. Custom `Observation` API for business metrics + traces in one call. SLO-based alerting (latency p99, error rate)."
 
 ---
 
@@ -988,8 +1018,11 @@ public Order place(OrderReq req) {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Micrometer = metrics facade. Tracing = distributed trace IDs. Together = observability.
+
 **KEY INSIGHT:** Trace ID correlates metrics, traces, and logs across all services.
+
 **ANTI-PATTERN:** No tracing in production. 100% sampling (expensive). Metrics without alerting.
+
 **ONE-LINER:** "Micrometer for metrics, OpenTelemetry for traces, trace-id for correlation."
 
 **If you remember only 3 things:**
@@ -1029,5 +1062,7 @@ Correlation: Grafana links metrics -> traces -> logs via trace-id. SLO-based ale
 ### 🔗 Related Keywords
 
 **Prerequisites:** Spring Boot Actuator, HTTP Headers
+
 **Builds on:** API Gateway (trace starts at gateway)
+
 **Alternatives:** Datadog, New Relic, AWS X-Ray

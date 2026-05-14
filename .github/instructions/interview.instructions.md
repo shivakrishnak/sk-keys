@@ -88,6 +88,7 @@ interview/
 - Every `###` heading preceded by `---` with blank lines
 - Keywords within a file separated by double horizontal rules
 - No em dashes anywhere - use regular hyphens only
+- Bold-label lines (`**LABEL:** value`) must each be separated by a blank line - consecutive bold-label lines merge into one paragraph on Jekyll
 
 ## Encoding Rules
 
@@ -138,6 +139,33 @@ Use scaffold only to preview file structure:
 - Sub-topic files: `{Topic} - {Subtopic}.md`
 - Each file contains 5-20 related keywords
 - Separator in filenames: SPACE-HYPHEN-SPACE (never em dash)
+
+## Keyword Level Coverage (MANDATORY)
+
+Every interview topic MUST cover ALL knowledge levels from
+`dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`:
+
+| Level | Icon | Name         | Min KW | What It Covers                          |
+| ----- | ---- | ------------ | ------ | --------------------------------------- |
+| L0    | 🌱   | Orientation  | 3-5    | Why it exists, ecosystem, before it     |
+| L1    | ★☆☆  | Foundational | 4-6    | Core vocabulary, building blocks, setup |
+| L2    | ★★☆  | Working      | 5-8    | Patterns, daily usage, idioms           |
+| L3    | ★★☆+ | Intermediate | 5-10   | Design decisions, trade-offs, internals |
+| L4    | ★★★  | Expert       | 5-10   | Production diagnostics, failure modes   |
+| L5    | 🔥   | Architect    | 3-5    | Strategy, migration, governance         |
+| L6    | 🔬   | Creator      | 2-3    | Theory, specification, research         |
+| META  | 🧠   | Meta-Skills  | 2-3    | Transferable thinking patterns          |
+
+**Max 5 keywords per file, min 3.** Split into multiple files if a
+level has more than 5 keywords.
+
+**File structure per topic:**
+
+- `{Topic} - Foundations.md` for L0 + L1 keywords (max 5)
+- Core working files for L2-L4 keywords (5 each)
+- `{Topic} - Architecture and Strategy.md` for L5 + L6 + META (max 5)
+
+A topic missing any level is INCOMPLETE. Always verify before generating.
 
 ---
 

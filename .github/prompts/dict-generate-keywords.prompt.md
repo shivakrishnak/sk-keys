@@ -129,7 +129,7 @@ Using `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` v4.0 specification:
 2. Generate the complete keyword list for all applicable levels based on the category/tier.
    Include every level that is relevant to this technology domain:
    L0 (Orientation), L1 (Foundational), L2 (Working), L3 (Intermediate),
-   L4 (Expert), L4.5 (Architect), L5 (Creator), META (Meta-Skills).
+   L4 (Expert), L5 (Architect), L6 (Creator), META (Meta-Skills).
    **Relevance criteria:** Include a level if it has at least 3 meaningful keywords
    that a practitioner in this domain would need to know. Omit a level only if it
    produces fewer than 3 meaningful keywords for this specific category.
@@ -274,7 +274,7 @@ Rules for stub files:
 - `grand_parent:` MUST be exactly `"Technical Dictionary"`
 - `nav_order:` = the NNN sequence number (integer, no zero-padding)
 - `permalink:` = lowercase, hyphens only, no special characters
-- `difficulty:` = map from level (L0/L1 -> ★☆☆, L2/L3 -> ★★☆, L4/L4.5/L5 -> ★★★)
+- `difficulty:` = map from level (L0/L1 -> ★☆☆, L2/L3 -> ★★☆, L4/L5/L6 -> ★★★)
 - `tags:` from approved taxonomy only
 - `version:` = `0` (STUB_VERSION - never `1`; stubs have no generated body)
 - `status: draft` (always draft for stubs)

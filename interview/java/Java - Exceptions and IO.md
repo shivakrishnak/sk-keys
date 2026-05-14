@@ -84,11 +84,15 @@ The **Exception Hierarchy** in Java is a class inheritance tree rooted at `java.
 The compiler enforces the checked exception contract: any method that can throw a checked exception must either catch it or declare it with `throws`. This forces callers up the call stack to handle or propagate. Unchecked exceptions (`RuntimeException`) bypass this because they represent programming errors (null pointer, index out of bounds) that should be fixed, not caught. `Error` bypasses it because catching a JVM failure is meaningless.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Compile-time verification that recoverable errors are handled; type-safe catch blocks; structured error propagation up the call stack.
+
 **Cost:** Checked exceptions add boilerplate; they leak implementation details in method signatures; they do not compose well with lambdas and functional interfaces.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Programs must distinguish between recoverable and unrecoverable failures
+
 **Accidental:** Java's checked exception mechanism forces `throws` declarations that clutter every method signature and do not work with generics/lambdas
 
 ---
@@ -135,9 +139,12 @@ When `throw new X()` executes, the JVM searches the call stack for a matching `c
 In production systems, define an exception hierarchy per domain: `OrderException` -> `OrderNotFoundException`, `OrderAlreadyExistsException`. Map exceptions to HTTP status codes at the controller layer (`@ExceptionHandler` in Spring). Use unchecked exceptions for business rule violations and programming errors. Reserve checked exceptions for truly recoverable I/O operations where the caller can meaningfully retry. Never use exceptions for control flow (performance cost: stack trace capture is expensive, ~1-5 microseconds). Log the full cause chain. Use `@ResponseStatus` or `ProblemDetail` (RFC 7807) for API error responses.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Catch specific exceptions and log them properly."
-A Staff says: "I design the exception hierarchy as part of the domain model. Business exceptions are unchecked and map to HTTP status codes. Infrastructure exceptions are caught at boundaries and translated. I never let implementation details (JDBC, Hibernate) leak through exception types in my API. And I use structured error responses (RFC 7807) for all API errors."
-The difference: Staff engineers design exception taxonomies; seniors react to exceptions.
+
+**A Senior says:** "Catch specific exceptions and log them properly."
+
+**A Staff says:** "I design the exception hierarchy as part of the domain model. Business exceptions are unchecked and map to HTTP status codes. Infrastructure exceptions are caught at boundaries and translated. I never let implementation details (JDBC, Hibernate) leak through exception types in my API. And I use structured error responses (RFC 7807) for all API errors."
+
+**The difference:** Staff engineers design exception taxonomies; seniors react to exceptions.
 
 **Level 5 - Distinguished (expert thinking):**
 The checked vs unchecked debate reflects a deeper language design tension: static vs dynamic error handling. Haskell uses algebraic types (`Either`, `Maybe`) to encode errors in the type system without exceptions. Rust uses `Result<T, E>` with the `?` operator. Go uses multiple return values. Java's checked exceptions were an attempt at static error handling but failed because they do not compose (lambdas, generics, streams). Modern Java effectively uses unchecked exceptions plus global exception handlers, converging with C#/Kotlin's model. The exception hierarchy remains valuable for categorization even when the checked mechanism is not used.
@@ -303,8 +310,11 @@ At runtime, the JVM makes no distinction between checked and unchecked exception
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Exception swallowing with broad catch**
+
 **Symptom:** Application behaves incorrectly but no errors in logs. Data corruption without any exception trace. Bugs are "invisible."
+
 **Root Cause:** `catch (Exception e) {}` or `catch (Exception e) { log.warn("error"); }` without rethrowing. Catches RuntimeExceptions that indicate bugs.
+
 **Diagnostic:**
 
 ```java
@@ -316,11 +326,15 @@ grep -rn "catch.*Exception" --include="*.java"
 ```
 
 **Fix:** BAD: adding more logging to the catch block. GOOD: catch only the specific checked exceptions expected. Let RuntimeExceptions propagate to the global handler.
+
 **Prevention:** Code review rule: no `catch (Exception e)` without justification. Linting with ArchUnit or ErrorProne.
 
 **Failure Mode 2: Checked exception leaking implementation details**
+
 **Symptom:** Service interface declares `throws SQLException`. Changing the database requires changing all callers. Interface and implementation are coupled.
+
 **Root Cause:** Checked exceptions in method signatures expose the implementation technology.
+
 **Diagnostic:**
 
 ```java
@@ -332,11 +346,15 @@ interface UserRepository {
 ```
 
 **Fix:** BAD: wrapping in a generic `throws Exception`. GOOD: catch the implementation exception at the boundary and wrap in a domain exception: `catch (SQLException e) { throw new DataAccessException(e); }`.
+
 **Prevention:** Define domain exceptions. Catch infrastructure exceptions at the repository/adapter layer. Never let JDBC, Hibernate, or filesystem exceptions cross domain boundaries.
 
 **Failure Mode 3: Losing the root cause in exception chains**
+
 **Symptom:** Log shows "OrderProcessingException: order failed" with no indication of the actual cause. Debugging requires reproducing the exact scenario.
+
 **Root Cause:** Wrapping exceptions without preserving the cause: `throw new OrderException("failed")` instead of `throw new OrderException("failed", originalException)`.
+
 **Diagnostic:**
 
 ```java
@@ -353,6 +371,7 @@ catch (PaymentException e) {
 ```
 
 **Fix:** BAD: adding more log statements before rethrowing. GOOD: always pass the original exception as the cause parameter.
+
 **Prevention:** Custom exception constructors must accept `Throwable cause`. Code review: every `throw new X()` inside a catch block must pass the caught exception.
 
 ---
@@ -624,11 +643,15 @@ Java 1.0 introduced the checked exception mechanism - unique among mainstream la
 The compiler scans every method body for thrown checked exceptions. If a checked exception can be thrown (directly or from a called method), the compiler requires either a surrounding try-catch or a `throws` declaration. This creates a chain: every caller must handle or propagate. Unchecked exceptions bypass this chain because they represent bugs (fix the code) or fatal errors (cannot recover).
 
 **THE TRADE-OFFS:**
+
 **Gain:** Compile-time guarantee that recoverable errors are addressed. Method signatures document failure modes.
+
 **Cost:** `throws` clauses pollute method signatures. Checked exceptions do not work with lambdas/streams. Developers write empty catch blocks to satisfy the compiler, making code worse.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Programs need to distinguish between "can recover" and "bug in code" failures
+
 **Accidental:** Java's specific mechanism (compile-time throws clause) creates friction with generics, lambdas, and interface evolution
 
 ---
@@ -675,9 +698,12 @@ The `javac` compiler maintains a set of checked exceptions that can be thrown fr
 In modern Java, the community consensus has shifted toward unchecked exceptions for application code. Spring wraps all JDBC `SQLException` (checked) in `DataAccessException` (unchecked). Jakarta EE switched from checked to unchecked in many APIs. The pattern: catch checked exceptions at the infrastructure boundary and wrap in unchecked domain exceptions. This keeps business logic clean. For APIs, use `UncheckedIOException` to wrap `IOException` in stream operations. Lombok's `@SneakyThrows` can bypass checked exceptions in legacy code that cannot be refactored.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Checked exceptions must be caught, unchecked do not."
-A Staff says: "I treat checked exceptions as an infrastructure concern - they are caught at the adapter layer and translated to unchecked domain exceptions. My business logic never declares `throws`. I use checked exceptions only at true system boundaries (file I/O, network calls) where the caller has a concrete recovery strategy (retry, fallback). The 95% case in modern Java is unchecked."
-The difference: Staff engineers use checked exceptions strategically at boundaries, not everywhere.
+
+**A Senior says:** "Checked exceptions must be caught, unchecked do not."
+
+**A Staff says:** "I treat checked exceptions as an infrastructure concern - they are caught at the adapter layer and translated to unchecked domain exceptions. My business logic never declares `throws`. I use checked exceptions only at true system boundaries (file I/O, network calls) where the caller has a concrete recovery strategy (retry, fallback). The 95% case in modern Java is unchecked."
+
+**The difference:** Staff engineers use checked exceptions strategically at boundaries, not everywhere.
 
 **Level 5 - Distinguished (expert thinking):**
 Java's checked exception experiment has influenced all subsequent language design - by being a cautionary tale. C# considered and rejected them. Kotlin, Scala, Groovy, and Clojure (all JVM languages) deliberately chose unchecked-only. The fundamental issue: checked exceptions do not compose. You cannot add a checked exception to an interface method without breaking all implementations. Functional interfaces cannot declare `throws`, making streams/lambdas painful with checked exceptions. The Result/Either pattern (Rust, Scala, Kotlin Arrow) achieves the same goal (force handling at compile time) without these composition problems.
@@ -842,8 +868,11 @@ You can throw a checked exception without declaring it in `throws` and without c
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Empty catch block to satisfy compiler**
+
 **Symptom:** Application fails silently. No error in logs. Data is missing or corrupted but no exception trace.
+
 **Root Cause:** Developer added `catch (IOException e) {}` or `catch (Exception e) { /* ignore */ }` to make the code compile without thinking about handling.
+
 **Diagnostic:**
 
 ```java
@@ -855,11 +884,15 @@ grep -rn "catch.*{" --include="*.java" |
 ```
 
 **Fix:** BAD: adding `e.printStackTrace()`. GOOD: wrap in unchecked and rethrow: `throw new UncheckedIOException(e)`. Or handle meaningfully (retry, fallback, user message).
+
 **Prevention:** Linting rule: no empty catch blocks. Code review flag: every catch must either rethrow, log+rethrow, or have a documented recovery strategy.
 
 **Failure Mode 2: throws Exception on every method**
+
 **Symptom:** Every method in the codebase declares `throws Exception`. Callers cannot distinguish between different failure types.
+
 **Root Cause:** Laziness or unfamiliarity - using `throws Exception` as a blanket solution instead of specific types.
+
 **Diagnostic:**
 
 ```java
@@ -869,11 +902,15 @@ grep -rn "throws Exception" \
 ```
 
 **Fix:** BAD: removing all `throws` and catching `Exception`. GOOD: replace with specific checked exceptions or convert to unchecked domain exceptions.
+
 **Prevention:** Code style rule: never declare `throws Exception` or `throws Throwable`. Declare specific types or use unchecked.
 
 **Failure Mode 3: Checked exception leaking through lambda**
+
 **Symptom:** Compilation error in stream/lambda code: "Unhandled exception type IOException."
+
 **Root Cause:** Functional interfaces (`Function`, `Consumer`, `Supplier`) do not declare `throws`. Checked exceptions inside lambdas cannot propagate.
+
 **Diagnostic:**
 
 ```java
@@ -885,6 +922,7 @@ list.stream()
 ```
 
 **Fix:** BAD: wrapping every lambda in try-catch. GOOD: use `UncheckedIOException`, create a utility method, or use Lombok `@SneakyThrows` for legacy code.
+
 **Prevention:** Design APIs with unchecked exceptions. If using checked, provide unchecked wrapper methods.
 
 ---
@@ -1122,11 +1160,15 @@ Java 7 introduced try-with-resources with the `AutoCloseable` interface. Before 
 The compiler transforms try-with-resources into a try-finally with null checks and suppressed exception handling. This generates ~15 lines of bytecode per resource that developers would otherwise have to write manually (and usually get wrong). The `AutoCloseable` interface has a single `close()` method, making any class resource-manageable by implementing it.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Guaranteed resource cleanup, preserved exception chains, concise syntax.
+
 **Cost:** Resources must implement `AutoCloseable`. Scope of the resource is limited to the try block (cannot be used after).
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Resources that hold external state (files, sockets, DB connections) must be explicitly released
+
 **Accidental:** Java 7's requirement to re-declare effectively-final variables in the try clause (fixed in Java 9)
 
 ---
@@ -1198,9 +1240,12 @@ This handles four cases: normal exit (close normally), body exception (close and
 In production, every external resource should use try-with-resources: JDBC connections, HTTP clients, input/output streams, file channels, locks (`Lock` does not implement `AutoCloseable` but you can wrap it). For Spring, `JdbcTemplate` handles connection management internally, but raw `DataSource.getConnection()` must use try-with-resources. Custom classes that hold resources should implement `AutoCloseable` and document their close behavior. Use `@Override` on `close()` to make intent clear. Never return a resource from inside a try-with-resources block (it will be closed before the caller can use it).
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use try-with-resources for all AutoCloseable resources."
-A Staff says: "I think about resource ownership and lifecycle. If my method creates a resource, it should close it (try-with-resources). If a resource is passed in, the caller owns it - do not close it. I design custom resource holders with AutoCloseable and ensure the close contract is documented (idempotent? thread-safe? flush before close?). And I use resource-management frameworks (Spring's template pattern, HikariCP's connection pooling) to avoid manual resource management entirely."
-The difference: Staff engineers design resource lifecycle ownership, not just cleanup syntax.
+
+**A Senior says:** "Use try-with-resources for all AutoCloseable resources."
+
+**A Staff says:** "I think about resource ownership and lifecycle. If my method creates a resource, it should close it (try-with-resources). If a resource is passed in, the caller owns it - do not close it. I design custom resource holders with AutoCloseable and ensure the close contract is documented (idempotent? thread-safe? flush before close?). And I use resource-management frameworks (Spring's template pattern, HikariCP's connection pooling) to avoid manual resource management entirely."
+
+**The difference:** Staff engineers design resource lifecycle ownership, not just cleanup syntax.
 
 **Level 5 - Distinguished (expert thinking):**
 The try-with-resources pattern is Java's version of RAII (Resource Acquisition Is Initialization), a C++ concept where resource lifetime is tied to scope. Rust's ownership system achieves the same guarantee at compile time with zero runtime cost. Python's `with` statement, C#'s `using`, and Go's `defer` are equivalent patterns. The suppressed exception mechanism was specifically designed to solve a problem unique to Java's exception model - in RAII languages, destructors run silently. The `Cleaner` API (Java 9) provides a safety net for resources that escape their scope, similar to C++ shared_ptr destructor behavior.
@@ -1361,8 +1406,11 @@ Java 9 added a subtle but important improvement: you can use effectively-final v
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Resource leak from not using try-with-resources**
+
 **Symptom:** Application slows down or hangs under sustained load. Connection pool reports "no available connections." `lsof` shows thousands of open file descriptors.
+
 **Root Cause:** Resources (JDBC connections, file handles, HTTP client connections) opened but never closed due to missing try-with-resources or manual close.
+
 **Diagnostic:**
 
 ```java
@@ -1374,11 +1422,15 @@ Java 9 added a subtle but important improvement: you can use effectively-final v
 ```
 
 **Fix:** BAD: increasing pool size or file handle limits. GOOD: wrap all resource acquisitions in try-with-resources. Use IDE inspections to find unclosed resources.
+
 **Prevention:** IDE inspection: "AutoCloseable used without try-with-resources." SonarQube rule S2095: "Resources should be closed." Code review checklist: every `new FileInputStream`, `getConnection()`, etc. must be in try().
 
 **Failure Mode 2: Returning resource from inside try-with-resources**
+
 **Symptom:** `IOException: Stream closed` or `SQLException: Connection is closed` when the caller tries to use the returned resource.
+
 **Root Cause:** Resource is declared in try-with-resources, but a reference is returned from the method. The resource is closed when the try block exits, before the caller can use it.
+
 **Diagnostic:**
 
 ```java
@@ -1392,11 +1444,15 @@ public InputStream getStream() {
 ```
 
 **Fix:** BAD: removing try-with-resources entirely. GOOD: either read all data inside the try block and return the data, or document that the caller is responsible for closing and do not use try-with-resources.
+
 **Prevention:** Never return an AutoCloseable from inside try-with-resources. If the caller must manage the resource, use a factory method pattern and document ownership.
 
 **Failure Mode 3: Suppressed exception hiding important close failures**
+
 **Symptom:** Database transaction appears committed but data is missing. Close exception during commit is suppressed by the body exception.
+
 **Root Cause:** Connection's close() triggers commit, but the commit fails. The close exception is suppressed and not logged.
+
 **Diagnostic:**
 
 ```java
@@ -1413,6 +1469,7 @@ try {
 ```
 
 **Fix:** BAD: ignoring suppressed exceptions. GOOD: always log suppressed exceptions in global exception handlers. Explicitly commit/rollback before close.
+
 **Prevention:** Global exception handler should iterate `getSuppressed()` and log all. Use explicit `connection.commit()` or `connection.rollback()` in the try body, not in close().
 
 ---
@@ -1661,11 +1718,15 @@ Java's exception hierarchy has always supported custom exceptions. Early Java ap
 A well-designed custom exception hierarchy has a base class (e.g., `DomainException`) that carries common fields (error code, HTTP status). Specific exceptions extend it (e.g., `OrderNotFoundException extends DomainException`). The global exception handler maps the base type to an HTTP response. This creates a clean separation: business logic throws domain exceptions, the controller layer translates them.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Type-safe error handling, structured error responses, clean separation of concerns.
+
 **Cost:** Class proliferation if overused. Each exception is a new class file. Balance between too few (not enough type safety) and too many (class explosion).
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Different error conditions require different handling - type-safe dispatch is the cleanest way
+
 **Accidental:** Java requires a full class definition for each exception type (no inline exception types or sealed exception hierarchies before Java 17)
 
 ---
@@ -1738,9 +1799,12 @@ class OrderNotFoundException
 Use `@RestControllerAdvice` to map the base type to RFC 7807 `ProblemDetail`. Include error codes (not messages) for API clients. Never expose stack traces in API responses. Suppress stack trace capture for high-frequency business exceptions by overriding `fillInStackTrace()`. Use sealed classes (Java 17) to restrict the hierarchy.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Create a custom exception for each error case."
-A Staff says: "I design the exception hierarchy as part of the API contract. Each exception maps to an HTTP status code, carries a machine-readable error code, and the hierarchy is sealed to prevent unauthorized extensions. I separate business exceptions (expected, no stack trace needed) from system exceptions (unexpected, full stack trace). And I document the error catalog as part of the API spec."
-The difference: Staff engineers treat the exception hierarchy as a first-class API design artifact.
+
+**A Senior says:** "Create a custom exception for each error case."
+
+**A Staff says:** "I design the exception hierarchy as part of the API contract. Each exception maps to an HTTP status code, carries a machine-readable error code, and the hierarchy is sealed to prevent unauthorized extensions. I separate business exceptions (expected, no stack trace needed) from system exceptions (unexpected, full stack trace). And I document the error catalog as part of the API spec."
+
+**The difference:** Staff engineers treat the exception hierarchy as a first-class API design artifact.
 
 **Level 5 - Distinguished (expert thinking):**
 Custom exceptions intersect with DDD (Domain-Driven Design). Domain exceptions live in the domain layer and express ubiquitous language ("InsufficientFundsException," not "NegativeBalanceException"). Application layer exceptions express use-case failures. Infrastructure exceptions are translated at anti-corruption layers. In functional approaches (Kotlin Arrow, Vavr), exceptions are replaced by sealed result types: `sealed class OrderResult { data class Success(...); data class NotFound(...); data class Declined(...) }`. This makes error handling exhaustive (the compiler verifies all cases are handled) without exception overhead.
@@ -1916,8 +1980,11 @@ Creating an exception in Java is expensive not because of the `throw` itself, bu
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Exception class explosion**
+
 **Symptom:** 100+ exception classes in the project. Most are identical in structure. Developers are unsure which to throw. New developers create duplicates.
+
 **Root Cause:** One class per error condition instead of using error codes with a base class.
+
 **Diagnostic:**
 
 ```bash
@@ -1927,11 +1994,15 @@ find src -name "*Exception.java" | wc -l
 ```
 
 **Fix:** BAD: combining all into one generic exception. GOOD: consolidate into a base class with error code enum. Keep specific types only for errors needing different catch-block handling.
+
 **Prevention:** Rule: create a new exception class only if a catch block needs to handle it differently from existing types. Otherwise, use the base class with a different error code.
 
 **Failure Mode 2: Stack trace overhead in high-throughput APIs**
+
 **Symptom:** CPU profiling shows `Throwable.fillInStackTrace()` as a top hotspot. Exception creation rate is >10K/second.
+
 **Root Cause:** Business exceptions (validation failures, 404s) capture full stack traces that are never read (API returns error code, not stack trace).
+
 **Diagnostic:**
 
 ```java
@@ -1953,8 +2024,11 @@ public Throwable fillInStackTrace() {
 **Prevention:** Design business exceptions as "lightweight" (no stack trace). System exceptions keep full stack trace.
 
 **Failure Mode 3: Exposing stack traces in API responses**
+
 **Symptom:** API error responses contain Java class names, line numbers, and internal package paths. Security scanners flag the endpoint.
+
 **Root Cause:** Default Spring error handler or `e.toString()` in response body exposes internals.
+
 **Diagnostic:**
 
 ```json
@@ -1965,6 +2039,7 @@ public Throwable fillInStackTrace() {
 ```
 
 **Fix:** BAD: stripping class names from the response. GOOD: use ProblemDetail with only client-safe fields (code, title, detail). Never serialize the exception directly.
+
 **Prevention:** Global exception handler returns only ProblemDetail. Security review: no stack traces in non-dev profiles.
 
 ---
@@ -2248,11 +2323,15 @@ java.io has existed since Java 1.0 (1996), providing the foundational stream-bas
 Because streams are unidirectional, you need separate objects for reading and writing. Because bytes and characters are different concerns, there are two parallel hierarchies (byte and character). Because features like buffering and encoding are orthogonal, the decorator pattern lets you compose them independently. This creates a flexible but verbose API.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Composable, extensible, platform-independent file access with clear separation of bytes vs characters.
+
 **Cost:** Verbose construction (multiple wrapper layers), blocking I/O (thread per stream), no random access in streams (sequential only).
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Bytes must be decoded to characters using an encoding. Buffering is needed for performance. Blocking is the simplest model.
+
 **Accidental:** The verbose decorator syntax (`new BufferedReader(new InputStreamReader(...))`) - Java 7's Files class eliminates this.
 
 ---
@@ -2320,9 +2399,12 @@ Character streams:
 In production: always specify encoding explicitly (`new InputStreamReader(is, StandardCharsets.UTF_8)`) because `FileReader` uses the platform default encoding which varies between Windows (Windows-1252) and Linux (UTF-8). Use `Files.newBufferedReader(path)` (Java 7+) which defaults to UTF-8 and eliminates the verbose decorator chain. For large files, use streaming (line-by-line) instead of `Files.readAllLines()` to avoid OutOfMemoryError. Set buffer size explicitly for performance-critical paths: `new BufferedInputStream(fis, 64 * 1024)`. For concurrent file writes, use `FileOutputStream` with append mode and external synchronization - java.io streams are not thread-safe.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use BufferedReader for text files, BufferedInputStream for binary files."
-A Staff says: "I choose the I/O strategy based on file size, access pattern, and concurrency. Small files: `Files.readString()`. Large files: streaming with `Files.lines()`. Memory-mapped: NIO for random access. I know that java.io is blocking, so under high concurrency I switch to NIO or virtual threads. And I always specify encoding explicitly because platform-default encoding has caused production incidents."
-The difference: Staff engineers choose I/O strategies based on constraints, not defaults.
+
+**A Senior says:** "Use BufferedReader for text files, BufferedInputStream for binary files."
+
+**A Staff says:** "I choose the I/O strategy based on file size, access pattern, and concurrency. Small files: `Files.readString()`. Large files: streaming with `Files.lines()`. Memory-mapped: NIO for random access. I know that java.io is blocking, so under high concurrency I switch to NIO or virtual threads. And I always specify encoding explicitly because platform-default encoding has caused production incidents."
+
+**The difference:** Staff engineers choose I/O strategies based on constraints, not defaults.
 
 **Level 5 - Distinguished (expert thinking):**
 java.io's decorator pattern was one of the first real-world applications of the GoF Decorator pattern. The design is elegant but has a fundamental limitation: it only supports sequential, blocking access. This led to NIO (channels + buffers + selectors for non-blocking I/O) and NIO.2 (Path/Files for modern file operations). In modern Java, java.io is best understood as the "stream processing" layer (wrapping any InputStream/OutputStream), while java.nio.file handles file system operations. The dichotomy mirrors Unix's distinction between file descriptors (streams) and the filesystem API (paths, directories).
@@ -2489,8 +2571,11 @@ Use temporary files in tests (`Files.createTempFile`). Assert file contents with
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: File descriptor exhaustion**
+
 **Symptom:** `java.io.IOException: Too many open files`. Application cannot open new files, sockets, or database connections.
+
 **Root Cause:** Streams opened but never closed. Each unclosed stream holds an OS file descriptor. Linux default limit is 4096 per process.
+
 **Diagnostic:**
 
 ```bash
@@ -2503,11 +2588,15 @@ ulimit -n
 ```
 
 **Fix:** BAD: increasing ulimit (treats symptom). GOOD: wrap all stream creation in try-with-resources. Run FindBugs/SpotBugs rule `OS_OPEN_STREAM` to find unclosed streams.
+
 **Prevention:** Code review rule: every `new FileInputStream/FileOutputStream/FileReader/FileWriter` must be in try-with-resources.
 
 **Failure Mode 2: Encoding mismatch (mojibake)**
+
 **Symptom:** Non-ASCII characters display as garbage (e.g., `Ã©` instead of `e`). File contents appear correct in one environment but corrupted in another.
+
 **Root Cause:** FileReader/FileWriter uses platform default encoding. File written on Windows (Windows-1252) read on Linux (UTF-8) or vice versa.
+
 **Diagnostic:**
 
 ```java
@@ -2520,11 +2609,15 @@ System.out.println(
 ```
 
 **Fix:** BAD: setting JVM `-Dfile.encoding=UTF-8` globally. GOOD: specify encoding explicitly at every read/write point: `new InputStreamReader(fis, StandardCharsets.UTF_8)` or `Files.newBufferedReader(path, StandardCharsets.UTF_8)`.
+
 **Prevention:** Ban `FileReader`/`FileWriter` in code review. Use `Files.newBufferedReader/Writer` which default to UTF-8.
 
 **Failure Mode 3: OutOfMemoryError from reading entire file**
+
 **Symptom:** `java.lang.OutOfMemoryError: Java heap space` when reading a large file.
+
 **Root Cause:** Using `Files.readAllLines()` or `Files.readString()` on a multi-GB file. The entire file is loaded into memory.
+
 **Diagnostic:**
 
 ```java
@@ -2536,6 +2629,7 @@ if (size > 100_000_000) { // 100 MB
 ```
 
 **Fix:** BAD: increasing heap size. GOOD: use streaming: `Files.lines(path)` returns a lazy `Stream<String>` that reads line by line. For binary files, use `InputStream` with a fixed-size buffer.
+
 **Prevention:** Rule: never use `readAllLines`/`readString` without a file size check. Default to streaming for any file that could be large.
 
 ---
@@ -2766,11 +2860,15 @@ Java 1.4 (2002) introduced NIO with Channels, Buffers, and Selectors - enabling 
 Because data goes through buffers, NIO can do scatter/gather I/O (reading into multiple buffers) and direct memory allocation (bypassing JVM heap for zero-copy). Because selectors multiplex channels, one thread can handle thousands of connections. Because Path is an immutable object (not a file reference like `java.io.File`), it can represent non-existent paths, relative paths, and file system-independent paths.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Scalable non-blocking I/O, memory-mapped files, zero-copy transfers, modern file API.
+
 **Cost:** Complex buffer state management (flip/clear mistakes), difficult selector-based programming, higher learning curve than java.io.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Non-blocking I/O requires explicit state management - you must track what data has been read and what is pending
+
 **Accidental:** Buffer flip/clear/compact ceremony - this is NIO's API design flaw that Netty's ByteBuf and modern abstractions eliminate
 
 ---
@@ -2841,9 +2939,12 @@ In production, you rarely use raw NIO selectors - Netty, Vert.x, and other frame
 - **DirectByteBuffer** vs heap buffer: Direct buffers live outside the JVM heap, avoiding one copy for I/O. But allocation is expensive - pool and reuse them.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use NIO for non-blocking I/O and Files for file operations."
-A Staff says: "I choose the I/O strategy based on the problem. For network multiplexing: Netty (NIO under the hood). For file operations: NIO.2 Files/Path. For large file random access: memory-mapped files. For high-throughput file serving: zero-copy with FileChannel.transferTo. With virtual threads (Java 21), I re-evaluate whether NIO-style multiplexing is still needed - virtual threads give you the simplicity of blocking I/O with the scalability of non-blocking."
-The difference: Staff engineers select I/O strategies from a toolkit, not a default.
+
+**A Senior says:** "Use NIO for non-blocking I/O and Files for file operations."
+
+**A Staff says:** "I choose the I/O strategy based on the problem. For network multiplexing: Netty (NIO under the hood). For file operations: NIO.2 Files/Path. For large file random access: memory-mapped files. For high-throughput file serving: zero-copy with FileChannel.transferTo. With virtual threads (Java 21), I re-evaluate whether NIO-style multiplexing is still needed - virtual threads give you the simplicity of blocking I/O with the scalability of non-blocking."
+
+**The difference:** Staff engineers select I/O strategies from a toolkit, not a default.
 
 **Level 5 - Distinguished (expert thinking):**
 NIO's design mirrors the Unix `select()`/`epoll()`/`kqueue()` system calls. The JVM's selector implementation uses `epoll` on Linux, `kqueue` on macOS, and `IOCP` on Windows. The Reactor pattern (one selector loop dispatching events) became the foundation for Netty, Node.js, and Nginx. Java 21's virtual threads fundamentally change the calculus: instead of one real thread per connection (java.io) or one selector per thousand connections (NIO), you get one virtual thread per connection with kernel-level efficiency. NIO remains relevant for zero-copy, memory-mapped files, and the Files API, but network multiplexing via selectors is increasingly replaced by virtual threads with blocking I/O.
@@ -3025,8 +3126,11 @@ The "N" in NIO officially stands for "New" I/O, not "Non-blocking" I/O, even tho
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Selector spin (100% CPU)**
+
 **Symptom:** Application consumes 100% CPU on one core. `select()` returns immediately with 0 ready keys in a tight loop.
+
 **Root Cause:** Linux epoll bug: a cancelled or broken connection causes `select()` to return immediately instead of blocking. Known JDK bug (JDK-6670302).
+
 **Diagnostic:**
 
 ```bash
@@ -3037,11 +3141,15 @@ jstack <pid> | grep -A5 "Selector"
 ```
 
 **Fix:** BAD: adding `Thread.sleep()` in the selector loop. GOOD: Netty's workaround: detect rapid `select()` returns (>512 in quick succession) and rebuild the selector. Use Netty instead of raw selectors.
+
 **Prevention:** Use Netty or a framework that handles this bug. If using raw NIO, implement the rebuild-selector strategy.
 
 **Failure Mode 2: DirectByteBuffer memory leak**
+
 **Symptom:** `OutOfMemoryError: Direct buffer memory`. Native memory grows even though heap is stable. Application crashes after hours of operation.
+
 **Root Cause:** `ByteBuffer.allocateDirect()` allocates off-heap memory. It is freed when the ByteBuffer is GC'd (via Cleaner/PhantomReference), but GC does not track direct memory pressure. Rapid allocation without GC triggers exhausts the direct memory limit.
+
 **Diagnostic:**
 
 ```bash
@@ -3054,11 +3162,15 @@ jcmd <pid> VM.native_memory summary
 ```
 
 **Fix:** BAD: increasing MaxDirectMemorySize indefinitely. GOOD: pool and reuse direct buffers (Netty's PooledByteBufAllocator). Explicitly clean with `((DirectBuffer) buf).cleaner().clean()` (internal API, use carefully).
+
 **Prevention:** Always pool direct buffers in high-throughput code. Monitor direct memory with JMX `BufferPoolMXBean`.
 
 **Failure Mode 3: ByteBuffer flip/clear confusion**
+
 **Symptom:** Read returns 0 bytes even though data was written. Data appears corrupted or truncated. `BufferOverflowException` or `BufferUnderflowException`.
+
 **Root Cause:** Forgetting to call `flip()` after writing to a buffer before reading from it, or using `clear()` when `compact()` is needed.
+
 **Diagnostic:**
 
 ```java
@@ -3076,6 +3188,7 @@ buffer.compact(); // keep unwritten data
 ```
 
 **Fix:** BAD: randomly calling flip/clear until it works. GOOD: understand the state machine: write mode (put) -> flip() -> read mode (get/write) -> clear()/compact() -> write mode.
+
 **Prevention:** Use Netty's ByteBuf which has separate read and write indexes, eliminating flip/clear entirely.
 
 ---
@@ -3312,11 +3425,15 @@ Java's built-in serialization (`Serializable` + `ObjectOutputStream`) was introd
 Because deserialization bypasses constructors, validation logic in constructors is skipped. This means deserialized objects can be in states that the constructor would never allow. Because the entire object graph is serialized, a reference to one `Serializable` object pulls in all reachable objects. Because `serialVersionUID` is auto-generated from class structure, any field change breaks compatibility unless explicitly managed.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Automatic deep serialization of complex object graphs with cycle detection.
+
 **Cost:** Security vulnerabilities, version fragility, Java-only format, performance overhead, bypassed constructors.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Converting in-memory object graphs to byte streams requires handling references, cycles, and type information
+
 **Accidental:** Java's choice to bypass constructors during deserialization (Kotlin, Rust, and Protocol Buffers all validate during deserialization)
 
 ---
@@ -3367,9 +3484,12 @@ Java's `ObjectOutputStream.writeObject()` walks the object graph via reflection.
 In production: never accept Java serialized data from untrusted sources. Use serialization filters (Java 9+ `ObjectInputFilter`) if you must use Java serialization (legacy RMI, JMS). Prefer Jackson for JSON APIs, Protobuf for internal service communication, Avro for event streaming (schema registry). For caching (Redis, Hazelcast), use JSON or Protobuf - not Java serialization (vendor lock-in, version fragility). When migrating from Java serialization: implement `writeReplace()`/`readResolve()` as a bridge. For DTOs, use Java records (Java 16+) with Jackson - immutable, no serialization overhead.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use Jackson for JSON, mark fields transient for exclusion."
-A Staff says: "I design serialization as an explicit API contract. DTOs define the wire format (JSON Schema, Protobuf IDL). Domain objects are never serializable. Schema evolution is planned from day one (Avro schema registry, Protobuf field numbers). I treat serialization format as a public API with backward compatibility requirements, not an implementation detail."
-The difference: Staff engineers design serialization as an API contract with versioning strategy.
+
+**A Senior says:** "Use Jackson for JSON, mark fields transient for exclusion."
+
+**A Staff says:** "I design serialization as an explicit API contract. DTOs define the wire format (JSON Schema, Protobuf IDL). Domain objects are never serializable. Schema evolution is planned from day one (Avro schema registry, Protobuf field numbers). I treat serialization format as a public API with backward compatibility requirements, not an implementation detail."
+
+**The difference:** Staff engineers design serialization as an API contract with versioning strategy.
 
 **Level 5 - Distinguished (expert thinking):**
 Java's serialization design violates a fundamental security principle: it allows untrusted input to control object construction. This is the root cause of every deserialization CVE. Languages designed later learned from this: Rust's serde requires explicit `Deserialize` implementations. Protocol Buffers generate code with validation. JSON libraries like Jackson use constructors (or `@JsonCreator`), not `Unsafe` allocation. The JEP 290 serialization filter and Project Amber's work on "serialization 2.0" aim to retrofit safety, but the community consensus is clear: avoid `java.io.Serializable` in new code.
@@ -3547,8 +3667,11 @@ Java deserialization does not call the constructor of the serialized class. It a
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Remote Code Execution via deserialization**
+
 **Symptom:** Server compromise, unauthorized access, cryptocurrency miners appearing on servers. Often detected by WAF/IDS as unusual outbound connections.
+
 **Root Cause:** Application deserializes untrusted Java objects. Attacker sends crafted byte stream containing a gadget chain (e.g., Commons Collections `InvokerTransformer`) that executes arbitrary commands during deserialization.
+
 **Diagnostic:**
 
 ```bash
@@ -3574,8 +3697,11 @@ ois.setObjectInputFilter(filter);
 **Prevention:** Never expose Java serialization endpoints. Use JSON/Protobuf for all external interfaces. Scan dependencies for known gadget libraries.
 
 **Failure Mode 2: InvalidClassException from UID mismatch**
+
 **Symptom:** `InvalidClassException: local class incompatible: stream classdesc serialVersionUID = X, local class serialVersionUID = Y`
+
 **Root Cause:** Class was modified (field added/removed) without declaring explicit `serialVersionUID`. Auto-generated UID changed.
+
 **Diagnostic:**
 
 ```java
@@ -3586,11 +3712,15 @@ serialver com.app.User
 ```
 
 **Fix:** BAD: deleting all serialized data. GOOD: add explicit `serialVersionUID` matching the stream UID. Implement `readObject()` to handle missing fields with defaults.
+
 **Prevention:** Always declare `private static final long serialVersionUID = 1L;`. Increment when intentionally breaking compatibility.
 
 **Failure Mode 3: NotSerializableException for nested objects**
+
 **Symptom:** `java.io.NotSerializableException: com.app.Address` when serializing a `User` that contains an `Address` field.
+
 **Root Cause:** `User implements Serializable` but `Address` does not. Java serialization traverses the entire object graph - every reachable object must be Serializable.
+
 **Diagnostic:**
 
 ```java
@@ -3602,6 +3732,7 @@ serialver com.app.User
 ```
 
 **Fix:** BAD: making everything Serializable. GOOD: make `Address` Serializable, or mark the field `transient` and reconstruct in `readObject()`, or switch to Jackson which handles non-Serializable objects via reflection/constructors.
+
 **Prevention:** Use Jackson or Protobuf instead of Java serialization. If using Java serialization, test serialization of every class that implements Serializable.
 
 ---
@@ -3861,11 +3992,15 @@ Java's logging history: `System.out.println()` (1996) -> java.util.logging (JUL,
 Because the API is separate from implementation, libraries do not force a logging framework on their users. Because levels are hierarchical, a single threshold controls verbosity. Because configuration is external (logback.xml), production logging can be tuned without code changes or redeployment. Logback even supports auto-reloading configuration changes.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Consistent logging across all libraries, runtime-configurable verbosity, structured output for log aggregation.
+
 **Cost:** Classpath complexity (binding conflicts), configuration learning curve, performance overhead if misused (string concatenation in hot paths).
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Applications need leveled, configurable, structured output for production observability
+
 **Accidental:** The proliferation of logging frameworks (JUL, Log4j 1, Log4j 2, Logback, commons-logging) and their bridging libraries
 
 ---
@@ -3925,9 +4060,12 @@ SLF4J binds to exactly one implementation at startup. The classpath must contain
 In production: use JSON-structured logging for ELK/Splunk/Datadog (`logstash-logback-encoder`). Configure MDC (Mapped Diagnostic Context) with request IDs, user IDs, and trace IDs for distributed tracing correlation. Use `AsyncAppender` to prevent logging from blocking request threads. Configure `RollingFileAppender` with time-based and size-based policies. Set root level to INFO in production, DEBUG only for specific packages. Use Logback's `<turboFilter>` for dynamic level changes without restart. Never log sensitive data (passwords, tokens, PII). Spring Boot's logging configuration: `application.yml` for levels, `logback-spring.xml` for appenders and patterns.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use SLF4J for logging, configure appropriate levels, add MDC context."
-A Staff says: "I design the logging strategy as part of the observability platform. Logs are structured JSON with correlation IDs (traceId, spanId) for distributed tracing. Log levels are tunable per-service via centralized configuration (Spring Cloud Config, Kubernetes ConfigMap). I size log volume to stay within the log aggregation budget (ELK costs scale with ingest volume). And I distinguish between operational logs (for alerting), diagnostic logs (for debugging), and audit logs (for compliance) - each with different retention and access policies."
-The difference: Staff engineers design logging as an observability strategy, not just a debugging tool.
+
+**A Senior says:** "Use SLF4J for logging, configure appropriate levels, add MDC context."
+
+**A Staff says:** "I design the logging strategy as part of the observability platform. Logs are structured JSON with correlation IDs (traceId, spanId) for distributed tracing. Log levels are tunable per-service via centralized configuration (Spring Cloud Config, Kubernetes ConfigMap). I size log volume to stay within the log aggregation budget (ELK costs scale with ingest volume). And I distinguish between operational logs (for alerting), diagnostic logs (for debugging), and audit logs (for compliance) - each with different retention and access policies."
+
+**The difference:** Staff engineers design logging as an observability strategy, not just a debugging tool.
 
 **Level 5 - Distinguished (expert thinking):**
 The SLF4J facade pattern solved a real ecosystem problem: Java had four competing logging frameworks, and libraries choosing one forced that choice on all applications using them. SLF4J's solution - a thin API with pluggable backends - became the standard pattern for framework abstraction. The same pattern appears in JDBC (database facade), JPA (ORM facade), and Jakarta EE (CDI facade). The Log4Shell incident (CVE-2021-44228) exposed the danger of JNDI lookups in log message processing - a feature-turned-vulnerability in Log4j 2 that did not affect Logback (which does not support JNDI in message patterns).
@@ -4094,8 +4232,11 @@ SLF4J's `{}` placeholder is not just syntactic sugar for string concatenation. W
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Multiple SLF4J bindings on classpath**
+
 **Symptom:** Warning at startup: `SLF4J: Class path contains multiple SLF4J bindings`. Logging may go to unexpected destination or fail silently.
+
 **Root Cause:** Multiple dependencies pull in different SLF4J bindings (logback-classic AND slf4j-log4j12 AND slf4j-jdk14).
+
 **Diagnostic:**
 
 ```bash
@@ -4126,8 +4267,11 @@ gradle dependencies | grep "slf4j"
 **Prevention:** Run `mvn dependency:tree` and resolve SLF4J binding conflicts before merging. Use `maven-enforcer-plugin` to ban duplicate bindings.
 
 **Failure Mode 2: Disk full from excessive logging**
+
 **Symptom:** Application crashes with disk full errors. Monitoring shows disk usage at 100%. Log files are gigabytes.
+
 **Root Cause:** DEBUG level enabled in production, no rolling policy, or rolling policy with unlimited total size.
+
 **Diagnostic:**
 
 ```bash
@@ -4155,8 +4299,11 @@ curl localhost:8080/actuator/loggers/root
 **Prevention:** Always set `totalSizeCap`. Set production root level to INFO. Monitor disk usage with alerts.
 
 **Failure Mode 3: Logging sensitive data (PII, secrets)**
+
 **Symptom:** Security audit finds passwords, credit card numbers, or personal data in log files. GDPR/PCI compliance violation.
+
 **Root Cause:** Logging entire request bodies, user objects, or exception messages that contain sensitive fields.
+
 **Diagnostic:**
 
 ```bash
@@ -4168,6 +4315,7 @@ grep -ri "password\|credit_card\|ssn" \
 ```
 
 **Fix:** BAD: encrypting log files (does not address the root cause). GOOD: exclude sensitive fields from `toString()` (use `@ToString.Exclude` in Lombok). Use Logback's `replace` conversion to mask patterns. Never log request/response bodies without sanitization.
+
 **Prevention:** Security review logging statements. Use `@ToString.Exclude` on sensitive fields. Configure Logback pattern masking for known formats (credit cards, SSNs).
 
 ---

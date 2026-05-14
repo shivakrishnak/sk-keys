@@ -80,11 +80,15 @@ DI does not eliminate dependencies - it externalizes them. Your class still NEED
 From invariant 1: all objects are container-managed beans, enabling proxy interception (AOP, transactions). From invariant 2: swapping implementations requires only configuration, not code changes. From invariant 3: production never encounters a missing-dependency error after a successful startup.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Loose coupling, testability (inject mocks via constructor), runtime flexibility (swap beans via profiles).
+
 **Cost:** Indirection (hard to trace "who created this?"), startup time (entire graph resolved eagerly), hidden magic (annotations obscure wiring from newcomers).
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Any non-trivial application needs a central registry of objects and their relationships - something must wire collaborators.
+
 **Accidental:** XML configuration (Spring 1.x/2.x) was accidental complexity eliminated by annotations and Java config. Component scanning magic is accidental but widely accepted.
 
 ---
@@ -178,9 +182,12 @@ Resolution algorithm:
 - By type first -> if ambiguous: `@Qualifier` -> then name -> `@Primary` wins -> else startup fails
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Always use constructor injection because it makes beans immutable and testable."
-A Staff says: "I design module boundaries around DI contexts. Each bounded context owns a `@Configuration`, exposes only interface-typed beans, and I use `@ComponentScan` filters to enforce architectural layering. For serverless, I switch to programmatic registration or Spring AOT to cut reflection."
-The difference: Staff engineers wield DI as an architectural boundary tool, not just a wiring convenience.
+
+**A Senior says:** "Always use constructor injection because it makes beans immutable and testable."
+
+**A Staff says:** "I design module boundaries around DI contexts. Each bounded context owns a `@Configuration`, exposes only interface-typed beans, and I use `@ComponentScan` filters to enforce architectural layering. For serverless, I switch to programmatic registration or Spring AOT to cut reflection."
+
+**The difference:** Staff engineers wield DI as an architectural boundary tool, not just a wiring convenience.
 
 **Level 5 - Distinguished (expert thinking):**
 DI containers are the Hollywood Principle ("don't call us, we'll call you") recurring across all frameworks: React props flow down, Kubernetes controllers reconcile desired state, event-driven handlers register rather than poll. If redesigning Spring today, compile-time DI (Dagger, Micronaut) would replace reflection entirely - type safety and startup speed outweigh minor flexibility loss. At extreme scale (5000+ beans), custom `BeanFactoryPostProcessor`s enforce naming conventions, detect unused beans, and auto-wire cross-cutting concerns without polluting business code.
@@ -342,15 +349,25 @@ Write a `@SpringBootTest` that asserts the correct bean is injected. For unit te
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** A container that creates, wires, and manages all application objects using dependency injection.
+
 **PROBLEM IT SOLVES:** Eliminates hard-coded `new` calls, making code loosely coupled and testable.
+
 **KEY INSIGHT:** DI externalizes dependencies - classes declare needs without knowing implementations.
+
 **USE WHEN:** Any Spring application. It is the default architecture.
+
 **AVOID WHEN:** Tiny scripts or performance-critical hot paths where container overhead matters.
+
 **ANTI-PATTERN:** Field injection - hides dependencies, prevents `final` fields, breaks testability.
+
 **TRADE-OFF:** Loose coupling and testability vs. indirection and startup cost.
+
 **ONE-LINER:** "Declare what you need; the container provides it."
+
 **KEY NUMBERS:** Singleton scope default. Auto-wired single constructor since 4.3. ~1ms/bean startup.
+
 **TRIGGER PHRASE:** "Framework creates and wires all dependencies."
+
 **OPENING SENTENCE:** "IoC inverts object creation from your code to the Spring container, which uses DI to inject collaborators at construction time - enabling loose coupling, testability, and runtime flexibility."
 
 **If you remember only 3 things:**
@@ -415,8 +432,11 @@ ELSE IF minimal standalone DI -> Guice
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: NoSuchBeanDefinitionException**
+
 **Symptom:** Startup fails: `No qualifying bean of type 'com.app.UserRepo'`.
+
 **Root Cause:** Class not annotated with `@Component`/`@Repository`, or outside `@ComponentScan` base package.
+
 **Diagnostic:**
 
 ```bash
@@ -426,13 +446,19 @@ curl localhost:8080/actuator/beans | \
 ```
 
 **Fix:**
+
 BAD: `@ComponentScan("")` scanning everything.
+
 GOOD: Add `@Repository` to the class, or move it under the main app's package.
+
 **Prevention:** Keep all classes under or below the `@SpringBootApplication` class package.
 
 **Failure Mode 2: NoUniqueBeanDefinitionException**
+
 **Symptom:** `expected single matching bean but found 2: stripeGw, paypalGw`.
+
 **Root Cause:** Two beans implement the same interface, no disambiguation configured.
+
 **Diagnostic:**
 
 ```bash
@@ -443,13 +469,19 @@ curl localhost:8080/actuator/beans | \
 ```
 
 **Fix:**
+
 BAD: Removing one implementation.
+
 GOOD: `@Primary` on the default, `@Qualifier` at specific injection points.
+
 **Prevention:** Always designate a `@Primary` when multiple implementations exist.
 
 **Failure Mode 3: BeanCurrentlyInCreationException**
+
 **Symptom:** `Requested bean is currently in creation: Is there an unresolvable circular reference?`
+
 **Root Cause:** Bean A's constructor needs B, B's constructor needs A.
+
 **Diagnostic:**
 
 ```bash
@@ -460,8 +492,11 @@ GOOD: `@Primary` on the default, `@Qualifier` at specific injection points.
 ```
 
 **Fix:**
+
 BAD: `@Lazy` on one injection point (hides design flaw).
+
 GOOD: Extract shared logic into a third bean both depend on.
+
 **Prevention:** Circular deps signal a design problem. Break the cycle architecturally.
 
 ---
@@ -677,6 +712,7 @@ _Why they ask:_ Tests real experience vs textbook knowledge (behavioral).
 _Likely follow-up:_ "What did you change to prevent recurrence?"
 
 **Answer:**
+
 **Situation:** After a deployment, our order service started failing with `NoUniqueBeanDefinitionException` for `PaymentGateway`.
 
 **Task:** Diagnose why the bean resolution broke when it worked before the deploy.
@@ -768,11 +804,15 @@ ApplicationContext is not just a bean container - it is the application's runtim
 From invariant 1: all creation goes through the context, enabling proxying and lifecycle hooks. From invariant 2: all wiring errors surface at startup, never at runtime. From invariant 3: the app operates on a fixed, validated object graph.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Centralized management, fail-fast validation, rich services (events, environment, resources), AOP integration.
+
 **Cost:** Startup time grows with bean count. Eager init means slow starts for large apps. Context holds references to all singletons (memory).
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Any application needs a registry of components and relationships - ApplicationContext makes this explicit.
+
 **Accidental:** Hierarchical contexts (parent/child from Spring MVC) were accidental complexity that Boot simplified away.
 
 ---
@@ -843,9 +883,12 @@ Common implementations:
 The context is hierarchical: child sees parent beans, not vice versa. Used in Spring MVC (root + servlet context).
 
 **The Senior-to-Staff Leap:**
-A Senior says: "ApplicationContext manages beans and provides DI."
-A Staff says: "I use the context lifecycle to orchestrate application behavior - `BeanFactoryPostProcessor`s for dynamic definition, `ApplicationEvent`s for decoupled module communication, and context hierarchies for module isolation in modular monoliths."
-The difference: Staff engineers leverage the context as an architectural orchestration tool, not just a bean factory.
+
+**A Senior says:** "ApplicationContext manages beans and provides DI."
+
+**A Staff says:** "I use the context lifecycle to orchestrate application behavior - `BeanFactoryPostProcessor`s for dynamic definition, `ApplicationEvent`s for decoupled module communication, and context hierarchies for module isolation in modular monoliths."
+
+**The difference:** Staff engineers leverage the context as an architectural orchestration tool, not just a bean factory.
 
 **Level 5 - Distinguished (expert thinking):**
 ApplicationContext implements Service Locator + Event Bus + Config Server combined. At extreme scale, split into hierarchies or use Spring Modulith's module-scoped contexts. If redesigning today: lazy initialization default (like Micronaut) with compile-time resolution (Spring AOT). The event system is the embryo of event-driven architecture - teams mastering `ApplicationEvent` naturally evolve toward Kafka/event sourcing.
@@ -1012,15 +1055,25 @@ public class InventoryListener {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Spring's central IoC container managing all beans plus enterprise services.
+
 **PROBLEM IT SOLVES:** Centralizes object management, configuration, events, and lifecycle.
+
 **KEY INSIGHT:** Not just DI - it is the runtime backbone (events, environment, resources, AOP).
+
 **USE WHEN:** Every Spring app. Boot creates it automatically via `SpringApplication.run()`.
+
 **AVOID WHEN:** Serverless functions where startup speed is critical (consider Micronaut/Quarkus).
+
 **ANTI-PATTERN:** Calling `getBean()` in application code (Service Locator pattern).
+
 **TRADE-OFF:** Rich services and fail-fast validation vs. startup cost and eager memory allocation.
+
 **ONE-LINER:** "The backbone that knows every bean and validates the entire graph at startup."
+
 **KEY NUMBERS:** 12 steps in `refresh()`. Singleton cache is ConcurrentHashMap. ~1-50ms/bean depending on proxies.
+
 **TRIGGER PHRASE:** "Central container managing all beans and lifecycle."
+
 **OPENING SENTENCE:** "ApplicationContext extends BeanFactory with enterprise services - eager singleton init, event publication, environment abstraction, and AOP proxy creation - serving as the runtime backbone of every Spring application."
 
 **If you remember only 3 things:**
@@ -1083,8 +1136,11 @@ ELSE IF minimal DI only -> BeanFactory (almost never)
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: UnsatisfiedDependencyException at startup**
+
 **Symptom:** `Error creating bean 'orderService': Unsatisfied dependency through constructor parameter 0`.
+
 **Root Cause:** Required bean missing - not annotated or outside scan path.
+
 **Diagnostic:**
 
 ```bash
@@ -1094,13 +1150,19 @@ curl localhost:8080/actuator/beans | \
 ```
 
 **Fix:**
+
 BAD: `@ComponentScan("")` to scan everything.
+
 GOOD: Add `@Repository` annotation, or ensure package is under main app class.
+
 **Prevention:** Keep all app classes under `@SpringBootApplication` package hierarchy.
 
 **Failure Mode 2: Self-invocation bypasses proxy**
+
 **Symptom:** `@Transactional` does not roll back. `@Cacheable` misses. `@Async` runs synchronously.
+
 **Root Cause:** Bean calls its own method internally - bypasses the AOP proxy.
+
 **Diagnostic:**
 
 ```java
@@ -1112,13 +1174,19 @@ log.info("Type: {}",
 ```
 
 **Fix:**
+
 BAD: `@Autowired Service self` (self-injection hack).
+
 GOOD: Extract the annotated method into a separate bean.
+
 **Prevention:** Never call `@Transactional`/`@Async` methods from within the same class.
 
 **Failure Mode 3: Slow startup (30+ seconds)**
+
 **Symptom:** Deployment health checks time out. Pods killed by Kubernetes liveness probe.
+
 **Root Cause:** Too many beans (1000+), expensive `@PostConstruct`, or broad classpath scanning.
+
 **Diagnostic:**
 
 ```bash
@@ -1132,8 +1200,11 @@ java -jar app.jar \
 ```
 
 **Fix:**
+
 BAD: Increasing health check timeout to mask the problem.
+
 GOOD: Spring AOT for compile-time resolution, `@Lazy` for non-critical beans, split into modules.
+
 **Prevention:** Monitor startup time in CI. Set a budget (< 10s) and alert on regression.
 
 ---
@@ -1411,11 +1482,15 @@ Beans have a birth, a life, and a death - Spring gives you hooks at each stage.
 From invariant 1: constructor + injection + init is atomic from the consumer's perspective. From invariant 2: shutdown is safe - a service is destroyed before its database connection pool. From invariant 3: `@PostConstruct` sees the raw object, not the proxy - explaining the `@Transactional`-from-init trap.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Predictable ordering, clean resource management, extensibility via `BeanPostProcessor`.
+
 **Cost:** Complex callback sequence (12 steps), easy to misorder. `@PostConstruct` vs `ApplicationReadyEvent` confusion.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Any managed object system needs creation, init, and cleanup hooks.
+
 **Accidental:** Having three ways to define init (`@PostConstruct`, `InitializingBean`, custom method) is historical baggage from Spring's evolution.
 
 ---
@@ -1528,9 +1603,12 @@ public class KafkaConsumer
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use `@PostConstruct` for initialization and `@PreDestroy` for cleanup."
-A Staff says: "I design shutdown ordering using `SmartLifecycle` phases - consumers stop before producers, producers drain before connection pools close. And I never put transactional logic in `@PostConstruct` because proxies are not yet active."
-The difference: Staff engineers think about lifecycle as an orchestration problem across multiple beans, not just per-bean init/cleanup.
+
+**A Senior says:** "Use `@PostConstruct` for initialization and `@PreDestroy` for cleanup."
+
+**A Staff says:** "I design shutdown ordering using `SmartLifecycle` phases - consumers stop before producers, producers drain before connection pools close. And I never put transactional logic in `@PostConstruct` because proxies are not yet active."
+
+**The difference:** Staff engineers think about lifecycle as an orchestration problem across multiple beans, not just per-bean init/cleanup.
 
 **Level 5 - Distinguished (expert thinking):**
 The bean lifecycle is an instance of the Template Method pattern applied at the container level. The same pattern appears in Servlet lifecycle (`init`/`service`/`destroy`), Android Activity lifecycle, and React component lifecycle (`mount`/`update`/`unmount`). If redesigning today, a single `@Lifecycle` annotation with phase enum would replace the three overlapping init mechanisms. At extreme scale, `SmartLifecycle` ordering becomes critical for zero-downtime deployments: graceful shutdown must drain requests, deregister from service discovery, stop consumers, then close pools - all in precise order.
@@ -1686,15 +1764,25 @@ Use `@SpringBootTest` with `ConfigurableApplicationContext.close()` to trigger s
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** The 12-step sequence every Spring bean passes through from creation to destruction.
+
 **PROBLEM IT SOLVES:** Provides predictable init/cleanup hooks and extensibility via BeanPostProcessors.
+
 **KEY INSIGHT:** Proxies are created AFTER `@PostConstruct` - transactional methods called from init have no TX.
+
 **USE WHEN:** Any bean needing post-injection setup (cache warming, connection opening) or cleanup (resource release).
+
 **AVOID WHEN:** Simple stateless beans with no resources to manage - do not add empty lifecycle methods.
+
 **ANTI-PATTERN:** Heavy initialization in `@PostConstruct` blocking startup; `@Transactional` inside `@PostConstruct`.
+
 **TRADE-OFF:** Structured lifecycle management vs. complexity of a 12-step callback sequence.
+
 **ONE-LINER:** "Birth, setup, work, cleanup - hooks at every stage, proxies created after init."
+
 **KEY NUMBERS:** 12 lifecycle steps. `@PostConstruct` at step 7, proxy at step 10. Destroy in reverse order.
+
 **TRIGGER PHRASE:** "PostConstruct runs before proxies exist."
+
 **OPENING SENTENCE:** "Spring beans follow a 12-step lifecycle where BeanPostProcessors intercept between initialization and proxy creation, which is why @PostConstruct cannot leverage @Transactional and why SmartLifecycle ordering is critical for graceful shutdown."
 
 **If you remember only 3 things:**
@@ -1740,8 +1828,11 @@ Use `@SpringBootTest` with `ConfigurableApplicationContext.close()` to trigger s
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: @Transactional ignored in @PostConstruct**
+
 **Symptom:** Data not persisted during startup init. No rollback on exception.
+
 **Root Cause:** `@PostConstruct` runs before AOP proxy wrapping (step 7 vs step 10).
+
 **Diagnostic:**
 
 ```java
@@ -1754,13 +1845,19 @@ void init() {
 ```
 
 **Fix:**
+
 BAD: Calling `@Transactional` from `@PostConstruct`.
+
 GOOD: Use `@EventListener(ApplicationReadyEvent.class)` which fires after all proxies are active.
+
 **Prevention:** Rule: never call proxied methods from lifecycle callbacks.
 
 **Failure Mode 2: Bean destruction order causes NPE on shutdown**
+
 **Symptom:** `NullPointerException` in `@PreDestroy` when accessing a dependency that is already destroyed.
+
 **Root Cause:** Custom destroy logic accesses a bean that was destroyed earlier due to incorrect ordering.
+
 **Diagnostic:**
 
 ```bash
@@ -1772,13 +1869,19 @@ logging.level.org.springframework\
 ```
 
 **Fix:**
+
 BAD: Adding null checks in `@PreDestroy` (masking the ordering bug).
+
 GOOD: Implement `SmartLifecycle` with correct phase ordering so the dependent bean shuts down first.
+
 **Prevention:** Design shutdown with explicit phase ordering via `SmartLifecycle`.
 
 **Failure Mode 3: Startup blocked by expensive @PostConstruct**
+
 **Symptom:** Application takes 60+ seconds to start. Health check times out.
+
 **Root Cause:** `@PostConstruct` method doing expensive work (loading large cache, connecting to slow external service).
+
 **Diagnostic:**
 
 ```bash
@@ -1789,8 +1892,11 @@ java -jar app.jar \
 ```
 
 **Fix:**
+
 BAD: Increasing health check timeout.
+
 GOOD: Move heavy init to `@Async @EventListener(ApplicationReadyEvent.class)` so startup completes and heavy work runs in background.
+
 **Prevention:** Set a startup time budget. CI fails if exceeded.
 
 ---
@@ -1940,6 +2046,7 @@ _Why they ask:_ Tests real experience (behavioral).
 _Likely follow-up:_ "What safeguard did you add?"
 
 **Answer:**
+
 **Situation:** Our payment service silently processed orders without saving audit records during a 2-hour window after deployment.
 
 **Task:** Audit records were written by a `@PostConstruct` method that called `auditService.initialize()` which was `@Transactional`.
@@ -2027,11 +2134,15 @@ The trap: injecting a shorter-lived bean into a longer-lived one. A prototype in
 From invariant 1: singletons must be stateless or thread-safe (shared across requests). From invariant 2: prototype beans that hold resources require manual cleanup. From invariant 3: request-scoped beans injected into singletons must use scoped proxies.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Flexible instance management without manual lifecycle code.
+
 **Cost:** Scope mismatch bugs are silent and subtle. Prototype has no auto-destruction.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Applications need different instance lifetimes (shared service vs per-request state).
+
 **Accidental:** The scoped proxy mechanism (`ScopedProxyMode.TARGET_CLASS`) is a workaround for a type-system limitation.
 
 ---
@@ -2142,9 +2253,12 @@ public class RequestContext {
 Spring Cloud's `@RefreshScope` re-creates the bean when `/actuator/refresh` is called - useful for dynamic config without restart.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use singleton for stateless services and prototype for stateful objects."
-A Staff says: "I design scope boundaries around data ownership. Request scope for per-request audit context, `@RefreshScope` for dynamic configuration, and custom scopes for tenant isolation in multi-tenant systems. I enforce statelessness in singletons via code review and architecture tests."
-The difference: Staff engineers design custom scope strategies aligned with business boundaries, not just picking from the default list.
+
+**A Senior says:** "Use singleton for stateless services and prototype for stateful objects."
+
+**A Staff says:** "I design scope boundaries around data ownership. Request scope for per-request audit context, `@RefreshScope` for dynamic configuration, and custom scopes for tenant isolation in multi-tenant systems. I enforce statelessness in singletons via code review and architecture tests."
+
+**The difference:** Staff engineers design custom scope strategies aligned with business boundaries, not just picking from the default list.
 
 **Level 5 - Distinguished (expert thinking):**
 Bean scopes are the container's answer to the same lifetime management problem that exists everywhere: React `useState` (component scope), database connection pools (application scope), thread-local variables (thread scope). Custom scopes in Spring (e.g., tenant scope for multi-tenancy) are implemented via the `Scope` interface - just `get()`, `remove()`, and a backing store (usually `ThreadLocal` or `ConcurrentHashMap` keyed by tenant ID). At extreme scale, session scope becomes problematic (sticky sessions break horizontal scaling) - replaced by external session stores (Redis) or stateless JWT tokens.
@@ -2296,15 +2410,25 @@ For prototype: assert `ctx.getBean(T.class) != ctx.getBean(T.class)`. For reques
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Controls how many bean instances exist and how long they live.
+
 **PROBLEM IT SOLVES:** Eliminates manual singleton management and enables HTTP-bound state.
+
 **KEY INSIGHT:** Injecting a shorter-scoped bean into a longer-scoped one silently breaks - use `ObjectProvider` or scoped proxies.
+
 **USE WHEN:** Stateful per-request data (audit context), per-session state (cart), or fresh instances (prototype).
+
 **AVOID WHEN:** Making everything prototype "for safety" - singletons are correct for stateless services and far more efficient.
+
 **ANTI-PATTERN:** Mutable state in singleton beans (shared across threads without synchronization).
+
 **TRADE-OFF:** Flexible lifetime management vs. subtle scope mismatch bugs.
+
 **ONE-LINER:** "Singleton = one for all; prototype = fresh each time; request = one per HTTP request."
+
 **KEY NUMBERS:** Singleton is default. Prototype has no `@PreDestroy`. 5 built-in scopes + custom.
+
 **TRIGGER PHRASE:** "Scope mismatch: shorter into longer breaks silently."
+
 **OPENING SENTENCE:** "Bean scope controls instance count and lifetime - singleton (default, one per context), prototype (new each time, no auto-destroy), and web scopes (request, session) - with the critical gotcha that injecting a shorter-scoped bean into a longer-scoped one silently defeats the scope unless you use ObjectProvider or scoped proxies."
 
 **If you remember only 3 things:**
@@ -2369,8 +2493,11 @@ ELSE IF per-user across requests -> session scope (or Redis + stateless)
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Scope mismatch - stale prototype in singleton**
+
 **Symptom:** Data from a previous call leaks into the current call. Users see each other's data.
+
 **Root Cause:** Prototype bean injected directly into singleton via constructor - created once, never replaced.
+
 **Diagnostic:**
 
 ```java
@@ -2380,13 +2507,19 @@ log.info("Cart identity: {}",
 ```
 
 **Fix:**
+
 BAD: Making the singleton prototype-scoped too (creates everything fresh, wasteful).
+
 GOOD: Inject `ObjectProvider<ShoppingCart>` and call `getObject()` per request.
+
 **Prevention:** Code review rule: never inject `@Scope("prototype")` directly into singleton.
 
 **Failure Mode 2: IllegalStateException - no request context**
+
 **Symptom:** `No thread-bound request found` when accessing request-scoped bean from async thread.
+
 **Root Cause:** Request-scoped beans are bound to the HTTP thread via `ThreadLocal`. Async threads have no request context.
+
 **Diagnostic:**
 
 ```java
@@ -2397,13 +2530,19 @@ log.info("Has request: {}", hasCtx);
 ```
 
 **Fix:**
+
 BAD: Propagating `RequestAttributes` to async threads manually (fragile).
+
 GOOD: Copy needed data from request-scoped bean into the async task before launching.
+
 **Prevention:** Never pass request-scoped beans to `@Async` methods. Pass the data values instead.
 
 **Failure Mode 3: Thread-safety bug in singleton**
+
 **Symptom:** Intermittent wrong results. Race conditions under load. Data corruption.
+
 **Root Cause:** Singleton bean with mutable instance fields accessed by concurrent requests.
+
 **Diagnostic:**
 
 ```bash
@@ -2416,8 +2555,11 @@ jcmd <pid> JFR.start duration=30s \
 ```
 
 **Fix:**
+
 BAD: Adding `synchronized` to every method (kills throughput).
+
 GOOD: Make the bean stateless (no mutable fields) or use `ThreadLocal` / request scope for per-thread state.
+
 **Prevention:** Enforce rule: singleton beans must have only `final` fields pointing to other singletons or immutable values.
 
 ---
@@ -2692,11 +2834,15 @@ Circular dependencies are never a framework problem - they are always a design p
 From invariant 1: constructor injection makes cycles immediately visible (fail-fast). From invariant 2: the cycle must be broken by removing one edge in the dependency graph. From invariant 3: `@Lazy` is a band-aid that masks a design problem.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Constructor injection + strict cycle detection forces clean architecture.
+
 **Cost:** Requires refactoring coupled classes, which takes more upfront design effort.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Some domains have inherently bidirectional relationships (order <-> inventory). The complexity of decoupling them is essential.
+
 **Accidental:** Spring's historical allowance of setter-based cycles gave teams a false sense that cycles were acceptable. Boot 2.6 corrected this by disallowing them.
 
 ---
@@ -2813,9 +2959,12 @@ OrderService(@Lazy InventoryService i){}
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Add `@Lazy` to break the cycle."
-A Staff says: "A circular dependency means these two classes have entangled responsibilities. I analyze which direction of the dependency is essential and which is incidental, then extract the incidental coupling into an event or a mediator service."
-The difference: Staff engineers treat cycles as architecture feedback, not framework problems.
+
+**A Senior says:** "Add `@Lazy` to break the cycle."
+
+**A Staff says:** "A circular dependency means these two classes have entangled responsibilities. I analyze which direction of the dependency is essential and which is incidental, then extract the incidental coupling into an event or a mediator service."
+
+**The difference:** Staff engineers treat cycles as architecture feedback, not framework problems.
 
 **Level 5 - Distinguished (expert thinking):**
 Circular dependencies in code mirror circular dependencies in team organization (Conway's Law). Two teams whose services depend on each other bidirectionally will have coordination overhead proportional to the coupling. The architectural fix (events, mediator) reduces team coupling too. At extreme scale, all bidirectional dependencies should become unidirectional via events - this is the fundamental insight behind event-driven architecture and CQRS.
@@ -2958,15 +3107,25 @@ Run the ArchUnit test in CI. It fails if any package-level dependency cycle exis
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Two or more beans that depend on each other, forming an unresolvable cycle.
+
 **PROBLEM IT SOLVES:** Spring detects cycles at startup and fails fast instead of silently injecting partial objects.
+
 **KEY INSIGHT:** Circular deps are always a design problem, never a framework limitation.
+
 **USE WHEN:** N/A - you never want circular dependencies. Detect and eliminate them.
+
 **AVOID WHEN:** N/A - always avoid.
+
 **ANTI-PATTERN:** Using `@Lazy` to suppress the cycle without fixing the underlying coupling.
+
 **TRADE-OFF:** Strict detection (constructor injection, Boot 2.6+ defaults) vs. workarounds that hide design issues.
+
 **ONE-LINER:** "If two beans need each other, extract the shared logic into a third."
+
 **KEY NUMBERS:** Boot 2.6+ disallows by default. `@Lazy` defers but does not resolve.
+
 **TRIGGER PHRASE:** "Design problem, not framework problem."
+
 **OPENING SENTENCE:** "A circular dependency is a cycle in the bean graph where A needs B and B needs A - unresolvable with constructor injection. The fix is never @Lazy or setter injection; it is extracting shared logic into a third service or decoupling via events."
 
 **If you remember only 3 things:**
@@ -3012,8 +3171,11 @@ Spring Boot 2.6 changed the default to disallow ALL circular references - includ
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: BeanCurrentlyInCreationException**
+
 **Symptom:** Startup fails: `Error creating bean 'orderService': Requested bean 'inventoryService' is currently in creation`.
+
 **Root Cause:** Direct constructor cycle: OrderService -> InventoryService -> OrderService.
+
 **Diagnostic:**
 
 ```bash
@@ -3025,13 +3187,19 @@ Spring Boot 2.6 changed the default to disallow ALL circular references - includ
 ```
 
 **Fix:**
+
 BAD: `@Lazy` on one constructor parameter.
+
 GOOD: Extract shared logic (`StockChecker`) that both depend on. Or decouple via `ApplicationEvent`.
+
 **Prevention:** ArchUnit cycle detection test in CI.
 
 **Failure Mode 2: Transitive cycle not obvious**
+
 **Symptom:** Same exception, but the cycle involves 3+ beans: A -> B -> C -> A.
+
 **Root Cause:** Indirect coupling through intermediate beans.
+
 **Diagnostic:**
 
 ```bash
@@ -3044,13 +3212,19 @@ GOOD: Extract shared logic (`StockChecker`) that both depend on. Or decouple via
 ```
 
 **Fix:**
+
 BAD: Adding `@Lazy` to one link.
+
 GOOD: Identify which edge in the cycle is incidental (not essential) and replace it with an event or mediator.
+
 **Prevention:** `slices().should().beFreeOfCycles()` in ArchUnit.
 
 **Failure Mode 3: Cycle hidden by @Lazy in legacy code**
+
 **Symptom:** No startup failure, but mysterious NPEs or stale data. The `@Lazy` proxy resolves too late or in unexpected order.
+
 **Root Cause:** `@Lazy` was added to suppress `BeanCurrentlyInCreationException` without fixing the design.
+
 **Diagnostic:**
 
 ```bash
@@ -3061,8 +3235,11 @@ grep -rn "@Lazy" src/main/java/ | \
 ```
 
 **Fix:**
+
 BAD: Leaving `@Lazy` in place.
+
 GOOD: Remove `@Lazy`, let the cycle surface, then refactor (extract or use events).
+
 **Prevention:** Ban `@Lazy` on constructor parameters via custom ArchUnit rule.
 
 ---

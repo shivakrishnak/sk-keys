@@ -90,11 +90,15 @@ A **Virtual Thread** is a lightweight thread managed by the JVM rather than the 
 These invariants mean you can create one virtual thread per task (even per HTTP request) without pooling. Blocking is free - it does not waste an OS thread. The JVM scheduler (a `ForkJoinPool`) handles multiplexing automatically. Code reads as simple sequential logic while achieving the throughput of async frameworks.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Millions of concurrent tasks with simple blocking code. No callback hell. No reactive operators. Thread-per-request model scales to high concurrency.
+
 **Cost:** CPU-bound work sees no benefit (carrier threads are still limited to CPU count). `synchronized` blocks and native methods can pin the virtual thread to its carrier, reducing scalability. ThreadLocal usage may need migration to ScopedValues for memory efficiency.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Multiplexing M virtual threads onto N carriers requires a scheduler and unmounting/mounting mechanism - this is inherent to any green thread system
+
 **Accidental:** Pinning on `synchronized` is a Java-specific limitation from the 25-year-old monitor implementation. Other languages (Go, Erlang) do not have this issue because they never had OS-level mutual exclusion primitives.
 
 ---
@@ -128,9 +132,12 @@ Virtual threads are scheduled by a dedicated `ForkJoinPool` (the default schedul
 Virtual threads change how you think about concurrency architecture. You no longer need thread pools for I/O-bound work - create one virtual thread per request/task. Connection pools become the bottleneck: 10,000 virtual threads all requesting database connections simultaneously overwhelm a 50-connection HikariCP pool. You need to pair virtual threads with `Semaphore` to limit concurrent access to scarce resources. Monitor pinning with `-Djdk.tracePinnedThreads=short` or JFR `jdk.VirtualThreadPinned` events. In production, watch for: (1) `synchronized` blocks that pin carriers during I/O, (2) `ThreadLocal` abuse creating per-virtual-thread state for millions of threads (use `ScopedValue` instead), (3) CPU-bound work on virtual threads gaining nothing but adding scheduling overhead.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I replace `Executors.newFixedThreadPool(200)` with `Executors.newVirtualThreadPerTaskExecutor()` for better scalability."
-A Staff says: "I evaluate whether the workload is I/O-bound before adopting virtual threads. For I/O-bound services, I adopt virtual threads and restructure resource access with semaphores. For CPU-bound pipelines, I keep `ForkJoinPool`. For mixed workloads, I separate I/O and CPU stages with different execution strategies."
-The difference: Staff engineers treat virtual threads as one tool in a concurrency toolkit, not a universal replacement.
+
+**A Senior says:** "I replace `Executors.newFixedThreadPool(200)` with `Executors.newVirtualThreadPerTaskExecutor()` for better scalability."
+
+**A Staff says:** "I evaluate whether the workload is I/O-bound before adopting virtual threads. For I/O-bound services, I adopt virtual threads and restructure resource access with semaphores. For CPU-bound pipelines, I keep `ForkJoinPool`. For mixed workloads, I separate I/O and CPU stages with different execution strategies."
+
+**The difference:** Staff engineers treat virtual threads as one tool in a concurrency toolkit, not a universal replacement.
 
 **Level 5 - Distinguished (expert thinking):**
 Virtual threads are the JVM's answer to the colored function problem. In async/reactive frameworks, functions are either "async" or "sync" and cannot freely compose - `Mono<T>` and `T` are different types. Virtual threads eliminate this bifurcation: all code is synchronous, all blocking is cheap. Distinguished engineers recognize that this reunification of the programming model is more important than the raw performance gain. They also understand that virtual threads shift the bottleneck from thread management to resource management (connection pools, file descriptors, memory). They design systems where the limiting resource is explicit (semaphore-bounded) rather than implicit (thread-pool-bounded).
@@ -419,8 +426,11 @@ ELSE platform thread pool
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Carrier thread pinning (synchronized + I/O)**
+
 **Symptom:** Throughput degrades under load despite low CPU usage. Latency spikes when concurrency exceeds carrier count. JFR shows `jdk.VirtualThreadPinned` events.
+
 **Root Cause:** Virtual threads enter `synchronized` blocks containing I/O operations. The `synchronized` implementation uses OS monitors which cannot unmount the virtual thread. The carrier is blocked for the entire I/O duration.
+
 **Diagnostic:**
 
 ```bash
@@ -437,13 +447,19 @@ jfr print --events jdk.VirtualThreadPinned \
 ```
 
 **Fix:**
+
 BAD: Increasing carrier thread count (`-Djdk.virtualThreadScheduler.parallelism=64`).
+
 GOOD: Replace `synchronized` with `ReentrantLock` for any critical section containing I/O.
+
 **Prevention:** Code review rule: no I/O inside `synchronized`. Static analysis to detect `synchronized` blocks calling I/O methods.
 
 **Failure Mode 2: Connection pool exhaustion**
+
 **Symptom:** `ConnectionTimeoutException` from HikariCP or similar pool. Thread dumps show thousands of virtual threads waiting on pool. Database connections are all in use.
+
 **Root Cause:** 10,000 virtual threads all request database connections simultaneously. The connection pool (50 connections) is overwhelmed. Unlike platform thread pools, virtual threads do not limit concurrency.
+
 **Diagnostic:**
 
 ```bash
@@ -459,13 +475,19 @@ hikariPool.getHikariPoolMXBean()
 ```
 
 **Fix:**
+
 BAD: Increasing connection pool size to match virtual thread count (database cannot handle 10,000 connections).
+
 GOOD: Use `Semaphore(maxConnections)` to limit concurrent database access to match pool size.
+
 **Prevention:** Always pair virtual threads with semaphore-bounded access to scarce resources (DB connections, file descriptors, API rate limits).
 
 **Failure Mode 3: ThreadLocal memory explosion**
+
 **Symptom:** `OutOfMemoryError: Java heap space`. Heap dump shows millions of `ThreadLocal.ThreadLocalMap` entries. Each virtual thread has its own ThreadLocal storage.
+
 **Root Cause:** Libraries using ThreadLocal for caching (e.g., `SimpleDateFormat`, connection caches) allocate per-thread storage. With 1 million virtual threads, a 1KB ThreadLocal entry becomes 1GB of heap.
+
 **Diagnostic:**
 
 ```bash
@@ -477,13 +499,19 @@ jcmd <pid> GC.heap_dump dump.hprof
 ```
 
 **Fix:**
+
 BAD: Increasing heap size indefinitely.
+
 GOOD: Replace `ThreadLocal` with `ScopedValue` for request-scoped data. For caching, use a shared pool with `Semaphore` or a single shared cache.
+
 **Prevention:** Audit all ThreadLocal usage before migrating to virtual threads. Libraries like Netty and Jackson have been updated to minimize ThreadLocal usage.
 
 **Failure Mode 4: CPU-bound work on virtual threads (no benefit)**
+
 **Symptom:** No throughput improvement after migrating to virtual threads. CPU utilization is already at 100%. Response times unchanged or slightly worse.
+
 **Root Cause:** The workload is CPU-bound (computation, serialization, encryption). Virtual threads add scheduling overhead (unmount/mount on the ForkJoinPool) without any benefit because there is no I/O to unmount from.
+
 **Diagnostic:**
 
 ```bash
@@ -501,8 +529,11 @@ jfr print --events \
 ```
 
 **Fix:**
+
 BAD: Creating more virtual threads (CPU is already saturated).
+
 GOOD: Use `ForkJoinPool` with work-stealing for CPU-bound parallelism. Virtual threads are not appropriate for this workload.
+
 **Prevention:** Profile the workload before migrating. Virtual threads help only when threads spend significant time waiting on I/O.
 
 ---
@@ -868,6 +899,7 @@ _Why they ask:_ Behavioral question testing practical migration experience.
 _Likely follow-up:_ "What would you do differently?"
 
 **Answer:**
+
 **Situation:** Our order processing service handled 5,000 concurrent requests using a Tomcat thread pool of 200 platform threads. During flash sales, requests queued for 3-5 seconds waiting for a thread. P99 latency exceeded 8 seconds. The service was I/O-bound: each request made 3 external calls (inventory, payment, shipping) averaging 50ms each.
 
 **Task:** Migrate to Java 21 virtual threads to eliminate thread pool bottleneck and handle 10,000+ concurrent requests.
@@ -1139,11 +1171,15 @@ The concept of structured concurrency was formalized by Martin Sustrik (2016, li
 These invariants create a tree of tasks where lifetime is hierarchical. The parent outlives its children. Resources allocated in the parent are safe to use in children (they cannot outlive the parent). Thread dumps can show the full parent-child tree, making debugging feasible.
 
 **THE TRADE-OFFS:**
+
 **Gain:** No thread leaks, automatic cancellation, clear error propagation, debuggable thread relationships.
+
 **Cost:** Subtasks cannot outlive their scope. Long-running background tasks require a different pattern (a top-level scope or a dedicated service). Slightly more code than fire-and-forget `executor.submit()`.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Binding task lifetime to a scope requires join semantics and cancellation propagation - this is inherent to any structured concurrency system
+
 **Accidental:** Java's `StructuredTaskScope` API is still in preview, and the policy customization (ShutdownOnFailure, ShutdownOnSuccess) is limited. Custom policies require subclassing.
 
 ---
@@ -1190,9 +1226,12 @@ try (var scope = new StructuredTaskScope
 Structured concurrency changes how you design service fan-out. Instead of `CompletableFuture.allOf()` with manual cancellation, you get guaranteed cleanup. Key production patterns: (1) **Timeout**: `scope.joinUntil(Instant.now().plusMillis(500))` enforces a deadline, cancelling all subtasks that exceed it. (2) **Nested scopes**: inner scopes for retries, outer scope for the overall operation. (3) **ScopedValue integration**: bind request context once, all forked VTs inherit it automatically. (4) **Custom policies**: subclass `StructuredTaskScope` to implement quorum (return when N of M succeed) or priority-based selection.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use StructuredTaskScope to manage concurrent subtasks with automatic cancellation."
-A Staff says: "I design my service layer so that every concurrent fan-out is a structured scope, propagating deadlines via joinUntil, binding request context via ScopedValue, and ensuring that no subtask can outlive its request. This eliminates an entire class of thread-leak and resource-leak bugs."
-The difference: Staff engineers make structured concurrency the architectural default, not a point solution.
+
+**A Senior says:** "I use StructuredTaskScope to manage concurrent subtasks with automatic cancellation."
+
+**A Staff says:** "I design my service layer so that every concurrent fan-out is a structured scope, propagating deadlines via joinUntil, binding request context via ScopedValue, and ensuring that no subtask can outlive its request. This eliminates an entire class of thread-leak and resource-leak bugs."
+
+**The difference:** Staff engineers make structured concurrency the architectural default, not a point solution.
 
 **Level 5 - Distinguished (expert thinking):**
 Structured concurrency is the concurrent analogue of structured programming. Just as `goto` elimination made control flow analyzable by humans and compilers, structured concurrency makes task lifetimes analyzable. Distinguished engineers recognize that this enables new capabilities: the JVM can show parent-child thread relationships in thread dumps (impossible with unstructured ExecutorService), static analysis tools can verify no thread outlives its scope, and observability systems can trace request trees automatically. They also see the tension: some patterns (background caches, periodic schedulers, event listeners) do not fit the structured model and require careful escape hatches.
@@ -1444,8 +1483,11 @@ ELSE ExecutorService
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Subtask ignores interruption (cancellation does not work)**
+
 **Symptom:** `scope.join()` hangs after `shutdown()` is called. Thread dump shows subtask threads still running (not in INTERRUPTED state).
+
 **Root Cause:** Subtask code catches `InterruptedException` and continues, or performs a long computation without checking `Thread.interrupted()`.
+
 **Diagnostic:**
 
 ```bash
@@ -1456,13 +1498,19 @@ jcmd <pid> Thread.dump_to_file \
 ```
 
 **Fix:**
+
 BAD: Increasing timeout and hoping subtasks finish.
+
 GOOD: Ensure subtask code respects interruption. CPU-bound loops should check `Thread.interrupted()`. I/O operations naturally throw `InterruptedException` or `ClosedByInterruptException`.
+
 **Prevention:** Code review rule: every subtask callable must handle interruption cooperatively.
 
 **Failure Mode 2: scope.close() throws IllegalStateException**
+
 **Symptom:** `IllegalStateException: Owner did not join` from `close()`.
+
 **Root Cause:** The code calls `scope.close()` (via try-with-resources) without calling `scope.join()` or `scope.joinUntil()` first.
+
 **Diagnostic:**
 
 ```bash
@@ -1472,13 +1520,19 @@ GOOD: Ensure subtask code respects interruption. CPU-bound loops should check `T
 ```
 
 **Fix:**
+
 BAD: Catching and ignoring IllegalStateException.
+
 GOOD: Always call `scope.join()` or `scope.joinUntil()` before the scope exits (before close).
+
 **Prevention:** Static analysis rule: every `StructuredTaskScope` must have a `join()` call in the try block.
 
 **Failure Mode 3: Subtask exception lost (wrong policy)**
+
 **Symptom:** Subtask throws exception but parent sees success. Errors silently disappear.
+
 **Root Cause:** Using `ShutdownOnSuccess` when the intent is to check all results. `ShutdownOnSuccess` returns the first successful result and cancels the rest, ignoring failures from slower subtasks.
+
 **Diagnostic:**
 
 ```bash
@@ -1490,8 +1544,11 @@ GOOD: Always call `scope.join()` or `scope.joinUntil()` before the scope exits (
 ```
 
 **Fix:**
+
 BAD: Logging exceptions in subtasks and hoping someone reads logs.
+
 GOOD: Use `ShutdownOnFailure` when all subtasks must succeed. Use `ShutdownOnSuccess` only for first-wins racing patterns where failed alternatives are expected.
+
 **Prevention:** Match the scope policy to the business requirement: all-must-succeed vs first-wins.
 
 ---
@@ -1870,6 +1927,7 @@ _Why they ask:_ Behavioral question testing refactoring experience.
 _Likely follow-up:_ "What was the hardest part?"
 
 **Answer:**
+
 **Situation:** Our product page service made 5 parallel calls per request: user profile, product details, recommendations, reviews, and pricing. These were implemented as `CompletableFuture.supplyAsync()` calls on the common pool. In production, we observed intermittent "ghost threads" - thread dumps showed hundreds of virtual threads (we had already migrated from platform threads) running recommendation and review fetches for requests that had already timed out and returned 504 to the client.
 
 **Task:** Eliminate thread leaks and ensure that when a request times out, all its concurrent subtasks are cancelled.
@@ -2210,11 +2268,15 @@ A **ScopedValue** is a container for a value that is bound to a specific scope o
 These invariants make ScopedValue ideal for request-scoped data (user, trace ID, tenant) in virtual thread environments. The immutability guarantee means middleware components can trust the context is what the HTTP filter set. The scope-bounded lifetime means the context is guaranteed to be cleaned up even if an exception is thrown.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Zero per-thread memory overhead, immutability safety, automatic cleanup, efficient inheritance in structured concurrency.
+
 **Cost:** Values cannot be mutated within a scope (by design). Rebinding requires a nested `runWhere()` call, adding a level of indentation. API is more restrictive than ThreadLocal.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Immutable, scope-bounded context requires a different API than mutable, thread-bound storage - you cannot just "fix" ThreadLocal
+
 **Accidental:** The nested `runWhere()` for rebinding is verbose compared to ThreadLocal's simple `set()`. Future Java versions may improve the ergonomics.
 
 ---
@@ -2269,9 +2331,12 @@ ScopedValue solves the three problems of ThreadLocal in production:
 Production patterns: bind trace ID and user in the HTTP filter, read in service layer and DAO layer without parameters. Use `ScopedValue.where(A, v1).where(B, v2).run(task)` to bind multiple values.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use ScopedValue instead of ThreadLocal for request context."
-A Staff says: "I design the entire request context propagation architecture around ScopedValue, using it as the backbone for trace propagation, tenant isolation, feature flags, and authorization context. I audit all ThreadLocal usage in dependencies and either migrate or wrap them."
-The difference: Staff engineers treat ScopedValue as an architectural pattern, not a point replacement.
+
+**A Senior says:** "I use ScopedValue instead of ThreadLocal for request context."
+
+**A Staff says:** "I design the entire request context propagation architecture around ScopedValue, using it as the backbone for trace propagation, tenant isolation, feature flags, and authorization context. I audit all ThreadLocal usage in dependencies and either migrate or wrap them."
+
+**The difference:** Staff engineers treat ScopedValue as an architectural pattern, not a point replacement.
 
 **Level 5 - Distinguished (expert thinking):**
 ScopedValue is the Java implementation of dynamically scoped variables, a concept from programming language theory. Distinguished engineers recognize the broader pattern: in functional programming, this is the Reader monad (injecting read-only environment). In Kotlin, it is CoroutineContext elements. In Go, it is `context.Context`. All solve the same problem: threading read-only context through a call chain without parameter pollution. The key insight is that ScopedValue + StructuredTaskScope gives Java something none of the others have: scope-bounded lifetime with guaranteed cleanup, even for concurrent subtasks. Go's `context.Context` can leak if a goroutine ignores cancellation. Kotlin's CoroutineContext can be modified by child coroutines. Java's ScopedValue is immutable and scope-bounded by construction.
@@ -2530,8 +2595,11 @@ ELSE ThreadLocal with discipline
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: NoSuchElementException from get() outside scope**
+
 **Symptom:** `NoSuchElementException` when calling `ScopedValue.get()`. Code expects the value to be bound but it is not.
+
 **Root Cause:** The code executes outside the `runWhere()` scope. This happens when: (1) an async callback runs after the scope exits, (2) a thread was created with `new Thread()` instead of `StructuredTaskScope.fork()`, (3) the call site is not in the scope's call chain.
+
 **Diagnostic:**
 
 ```bash
@@ -2544,13 +2612,19 @@ if (MY_VALUE.isBound()) {
 ```
 
 **Fix:**
+
 BAD: Wrapping every `get()` in a try-catch for NoSuchElementException.
+
 GOOD: Ensure all code that needs the value runs within the `runWhere()` scope. For async callbacks, pass the value explicitly or restructure to use StructuredTaskScope.
+
 **Prevention:** Use `isBound()` checks at scope boundaries. Design APIs so that scoped-value-dependent code is always called from within the scope.
 
 **Failure Mode 2: Unstructured thread does not inherit binding**
+
 **Symptom:** Forked thread (via `Thread.ofVirtual().start()` or `ExecutorService.submit()`) sees `NoSuchElementException` when reading parent's ScopedValue.
+
 **Root Cause:** ScopedValue inheritance only works with `StructuredTaskScope.fork()`. Unstructured thread creation does not propagate scoped values.
+
 **Diagnostic:**
 
 ```bash
@@ -2561,13 +2635,19 @@ SCOPED_VAL.isBound() // returns false
 ```
 
 **Fix:**
+
 BAD: Passing the value via constructor (defeats the purpose of implicit context).
+
 GOOD: Use `StructuredTaskScope.fork()` instead of manual thread creation. The forked VT inherits all parent's ScopedValue bindings automatically.
+
 **Prevention:** Adopt StructuredTaskScope as the standard for all request-scoped concurrency. Reserve unstructured thread creation for background tasks that do not need request context.
 
 **Failure Mode 3: Heap pressure from nested rebinding loops**
+
 **Symptom:** High allocation rate. GC logs show frequent collections. Profiling shows `ScopedValue.Snapshot` objects dominating allocations.
+
 **Root Cause:** Code creates deeply nested `runWhere()` scopes in a loop (e.g., rebinding a counter in each iteration). Each nesting level creates a scope snapshot object.
+
 **Diagnostic:**
 
 ```bash
@@ -2580,8 +2660,11 @@ jfr print --events \
 ```
 
 **Fix:**
+
 BAD: Increasing heap size.
+
 GOOD: Avoid rebinding ScopedValue in tight loops. Use a mutable container if the value needs to change per iteration. ScopedValue is designed for request-level binding (1-3 nesting levels), not loop-level rebinding.
+
 **Prevention:** Code review rule: `runWhere()` nesting depth should not exceed 3-4 levels.
 
 ---
@@ -2935,6 +3018,7 @@ _Why they ask:_ Behavioral question testing real-world experience or reasoning.
 _Likely follow-up:_ "How did you discover the bug?"
 
 **Answer:**
+
 **Situation:** Our multi-tenant SaaS application stored the current tenant in a ThreadLocal. During an incident, we discovered that some audit log entries were attributed to the wrong tenant. Customer A's data modifications were logged under Customer B's tenant ID.
 
 **Root cause analysis:** The request pipeline had multiple middleware layers:
@@ -3314,11 +3398,15 @@ A **carrier thread** is a platform (OS) thread that hosts a virtual thread's exe
 These invariants mean that pinning is a capacity problem: each pinned VT consumes one carrier for the duration of the pin. With default parallelism = CPU count (e.g., 8), pinning 8 VTs simultaneously blocks all carriers. The fix is to eliminate pinning by replacing `synchronized` with `ReentrantLock` for any critical section containing blocking operations.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Understanding pinning enables diagnosing and preventing virtual thread throughput degradation.
+
 **Cost:** Migrating from `synchronized` to `ReentrantLock` requires code changes in your code and potentially in libraries. Not all code is under your control.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** The OS kernel's mutex implementation is bound to a specific OS thread - this is a fundamental operating system constraint
+
 **Accidental:** Java's `synchronized` was implemented using OS monitors 25+ years ago. A future JVM could implement `synchronized` using a lightweight mechanism that supports unmounting, eliminating pinning. This is an implementation limitation, not a fundamental one.
 
 ---
@@ -3359,9 +3447,12 @@ Pinning in production is insidious because it does not cause errors - it causes 
 Common pinning sources: (1) Your own `synchronized` blocks with I/O, (2) Third-party libraries using `synchronized` (JDBC drivers, HTTP clients, logging frameworks), (3) JDK internal `synchronized` (mostly fixed in Java 21, some remain).
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I avoid synchronized in virtual thread code and use ReentrantLock instead."
-A Staff says: "I audit all dependencies for synchronized blocks that contain I/O, upgrade libraries to virtual-thread-aware versions, use JFR monitoring for pinning in production, and have a compensating strategy (increased parallelism) for libraries I cannot control."
-The difference: Staff engineers address the entire dependency chain, not just their own code.
+
+**A Senior says:** "I avoid synchronized in virtual thread code and use ReentrantLock instead."
+
+**A Staff says:** "I audit all dependencies for synchronized blocks that contain I/O, upgrade libraries to virtual-thread-aware versions, use JFR monitoring for pinning in production, and have a compensating strategy (increased parallelism) for libraries I cannot control."
+
+**The difference:** Staff engineers address the entire dependency chain, not just their own code.
 
 **Level 5 - Distinguished (expert thinking):**
 Distinguished engineers understand that pinning is a transitional problem. The JVM could, in principle, implement `synchronized` using lightweight locks that support continuation yields (similar to how `ReentrantLock` works). The OpenJDK Loom project has discussed this for future releases. In the meantime, pinning is Java's version of Go's early cooperative scheduling limitation (pre-1.14 goroutines could not be preempted in tight loops). The architectural response is to design systems where pinning duration is bounded: keep synchronized blocks short, move I/O outside synchronized, or use `ReentrantLock`. For irreducible pinning (JNI calls), increase carrier parallelism with `-Djdk.virtualThreadScheduler.maxPoolSize`.
@@ -3621,8 +3712,11 @@ ELSE IF no VT THEN synchronized (simpler)
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: All carriers pinned (scheduler stall)**
+
 **Symptom:** Application becomes unresponsive under load. Thread dump shows all `ForkJoinPool-*-worker-*` threads in BLOCKED or WAITING state inside synchronized blocks. Thousands of virtual threads are in `RUNNABLE` state but not executing.
+
 **Root Cause:** Multiple virtual threads simultaneously enter synchronized blocks containing I/O. All carrier threads are occupied by pinned VTs. No carrier available for the remaining VTs.
+
 **Diagnostic:**
 
 ```bash
@@ -3640,13 +3734,19 @@ jfr print --events jdk.VirtualThreadPinned \
 ```
 
 **Fix:**
+
 BAD: Increasing `maxPoolSize` to 1000 (creates 1000 OS threads, defeating VT purpose).
+
 GOOD: Replace `synchronized` with `ReentrantLock` in the pinning code path. If third-party library, upgrade to VT-aware version or wrap I/O calls outside the synchronized block.
+
 **Prevention:** `-Djdk.tracePinnedThreads=short` in development. JFR monitoring in production. Load test with realistic VT concurrency before deploying.
 
 **Failure Mode 2: Compensating thread explosion**
+
 **Symptom:** `ForkJoinPool` pool size grows beyond parallelism (e.g., 8 parallelism but 100+ pool size). Memory usage increases. OS context switching overhead degrades CPU efficiency.
+
 **Root Cause:** Frequent pinning causes the scheduler to create compensating threads. Each compensating thread is an OS thread (~1MB stack). The scheduler creates them to maintain throughput but never shrinks the pool.
+
 **Diagnostic:**
 
 ```bash
@@ -3660,13 +3760,19 @@ log.info("parallelism={}, poolSize={}",
 ```
 
 **Fix:**
+
 BAD: Accepting the thread explosion and increasing memory.
+
 GOOD: Eliminate the pinning source. Once pinning is fixed, the compensating threads are no longer created.
+
 **Prevention:** Alert when `poolSize > parallelism * 2` for more than 1 minute.
 
 **Failure Mode 3: Third-party library pinning**
+
 **Symptom:** Pinning detected in code you did not write. JFR stack trace points to a library's internal synchronized block. You cannot modify the library code.
+
 **Root Cause:** Many Java libraries were written before virtual threads existed and use synchronized for thread safety. Common offenders: older JDBC drivers, Apache HttpClient 4.x, some logging frameworks.
+
 **Diagnostic:**
 
 ```bash
@@ -3679,8 +3785,11 @@ jfr print --events jdk.VirtualThreadPinned \
 ```
 
 **Fix:**
+
 BAD: Forking and patching the library.
+
 GOOD: (1) Upgrade to a VT-aware version (e.g., HikariCP 5.x, Lettuce 6.3+, Logback 1.4+). (2) If no VT-aware version exists, wrap the library call in a platform thread executor to isolate pinning from the VT scheduler. (3) Increase `maxPoolSize` as a temporary mitigation.
+
 **Prevention:** Before VT migration, audit all dependencies for synchronized usage with `grep -rn "synchronized" <lib-source>`. Prefer libraries that document virtual thread compatibility.
 
 ---
@@ -3753,6 +3862,7 @@ _Why they ask:_ Tests practical diagnostic skills.
 _Likely follow-up:_ "What do you do when you find pinning?"
 
 **Answer:**
+
 **Development detection:**
 
 1. **JVM flag:** `-Djdk.tracePinnedThreads=short` (prints one-line warnings) or `-Djdk.tracePinnedThreads=full` (prints full stack traces):
@@ -3865,6 +3975,7 @@ _Why they ask:_ Behavioral question testing real-world pinning experience.
 _Likely follow-up:_ "How did you prevent it from happening again?"
 
 **Answer:**
+
 **Situation:** After migrating our payment gateway to Java 21 virtual threads, we observed an intermittent throughput degradation. Every 10-15 minutes, response times spiked from 50ms to 3 seconds for about 30 seconds, then recovered. This happened only during peak hours (10,000+ concurrent requests).
 
 **Task:** Diagnose the intermittent throughput drops and restore consistent performance.
@@ -4321,11 +4432,15 @@ Java 1.0 (1996) introduced `java.lang.Thread` mapped 1:1 to OS threads. For 25 y
 For I/O-bound workloads where threads spend most time waiting (database, network, files), virtual threads are dramatically more efficient because blocking does not waste OS threads. For CPU-bound workloads where threads never block, both types run at the same speed (bound by CPU) but virtual threads add scheduling overhead.
 
 **THE TRADE-OFFS:**
+
 **Platform threads gain:** OS scheduling guarantees, CPU affinity, predictable behavior with `synchronized`, no pinning concern.
+
 **Virtual threads gain:** Massive concurrency (millions), cheap creation, simple blocking code with async-level throughput.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** The fundamental tension between OS-managed (heavy, predictable) and JVM-managed (light, less predictable) threads is inherent to any system with green threads
+
 **Accidental:** The pinning limitation of virtual threads is specific to Java's `synchronized` implementation and may be fixed in future JVM versions
 
 ---
@@ -4369,9 +4484,12 @@ The decision framework involves three dimensions:
 Production pattern: separate your pipeline into I/O stages and CPU stages. I/O stages use virtual threads. CPU stages use `ForkJoinPool` or `ThreadPoolExecutor`. Use `CompletableFuture` to chain across executor types.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use virtual threads for I/O-bound work and platform threads for CPU-bound work."
-A Staff says: "I design the service architecture so that I/O-bound and CPU-bound stages are separated with different executors. I benchmark the crossover point for our specific workload, monitor carrier utilization and pinning in production, and have a decision matrix for the team that covers mixed workloads, library compatibility, and migration risk."
-The difference: Staff engineers create systematic decision frameworks and operational visibility, not just correct choices.
+
+**A Senior says:** "I use virtual threads for I/O-bound work and platform threads for CPU-bound work."
+
+**A Staff says:** "I design the service architecture so that I/O-bound and CPU-bound stages are separated with different executors. I benchmark the crossover point for our specific workload, monitor carrier utilization and pinning in production, and have a decision matrix for the team that covers mixed workloads, library compatibility, and migration risk."
+
+**The difference:** Staff engineers create systematic decision frameworks and operational visibility, not just correct choices.
 
 **Level 5 - Distinguished (expert thinking):**
 Distinguished engineers see virtual threads as part of a broader industry trend toward runtime-managed concurrency. Go had goroutines (2012), Erlang had processes (1986), Kotlin has coroutines (2018), Rust has Tokio tasks (2018). Java's approach is unique: virtual threads are real `java.lang.Thread` objects with full backward compatibility. This means existing code (frameworks, libraries, tools) works without modification - but it also means `synchronized` (a 25-year-old primitive) causes pinning. The trade-off between backward compatibility and clean-slate design is the defining tension of Java's evolution. Distinguished engineers evaluate this trade-off when choosing between Java VTs and other runtimes (Go, Rust) for greenfield projects.
@@ -4624,8 +4742,11 @@ ELSE IF < 200 concurrent tasks THEN either works
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Virtual threads for CPU-bound work (wasted overhead)**
+
 **Symptom:** Throughput unchanged or slightly worse after migrating to virtual threads. CPU utilization already at 90%+. No improvement in concurrent task handling.
+
 **Root Cause:** The workload is CPU-bound. Virtual threads never yield because there is no I/O. The ForkJoinPool scheduler adds overhead without benefit.
+
 **Diagnostic:**
 
 ```bash
@@ -4640,13 +4761,19 @@ jfr print --events jdk.VirtualThreadEnd \
 ```
 
 **Fix:**
+
 BAD: Creating more virtual threads (CPU is already saturated).
+
 GOOD: Use `ForkJoinPool` or `ThreadPoolExecutor` with `CPU count` threads for CPU-bound work.
+
 **Prevention:** Profile workload before choosing thread type. If CPU > 80% and I/O < 10%, use platform threads.
 
 **Failure Mode 2: Platform thread pool limiting I/O throughput**
+
 **Symptom:** P99 latency spikes under load. Thread dump shows all pool threads in `WAITING` (I/O). Request queue growing.
+
 **Root Cause:** 200-thread pool with 5,000 concurrent requests. Each request blocks 50ms on database. 200 threads x 50ms = 4,000 requests/second max. Remaining 1,000 requests/second queue.
+
 **Diagnostic:**
 
 ```bash
@@ -4657,13 +4784,19 @@ jcmd <pid> Thread.print | \
 ```
 
 **Fix:**
+
 BAD: Increasing pool size to 5,000 (5GB memory, OS scheduler degradation).
+
 GOOD: Migrate to virtual threads with semaphore-bounded DB access.
+
 **Prevention:** For services with >1,000 concurrent I/O-bound requests, evaluate virtual threads.
 
 **Failure Mode 3: Wrong crossover assumption (premature migration)**
+
 **Symptom:** After VT migration, no measurable improvement. Team wasted effort migrating code, auditing synchronized blocks, and upgrading libraries.
+
 **Root Cause:** The service handles < 100 concurrent requests. A 100-thread platform pool handles the load easily. Virtual threads solve a problem the service does not have.
+
 **Diagnostic:**
 
 ```bash
@@ -4675,8 +4808,11 @@ metrics.gauge("http.active_requests")
 ```
 
 **Fix:**
+
 BAD: Keeping virtual threads "because they are newer."
+
 GOOD: Revert to platform thread pool. Simpler, no pinning concerns, no library audit needed.
+
 **Prevention:** Measure actual concurrent task count before migrating. Virtual threads benefit services with >1,000 concurrent I/O-bound tasks.
 
 ---
@@ -4728,6 +4864,7 @@ _Why they ask:_ Tests quantitative understanding.
 _Likely follow-up:_ "How does this affect GC?"
 
 **Answer:**
+
 **Platform threads (10,000):**
 
 - Stack memory: 10,000 x 1MB default stack = 10GB native memory (outside Java heap, not GC-managed)
@@ -5137,6 +5274,7 @@ _Why they ask:_ Behavioral question testing decision-making process.
 _Likely follow-up:_ "What was the outcome?"
 
 **Answer:**
+
 **Situation:** Our team was building a new API aggregation service that fans out to 5-15 backend APIs per request and merges responses. Expected load: 2,000 concurrent requests at peak. Java 21 was available.
 
 **Task:** Choose the concurrency model for the new service.
@@ -5354,11 +5492,15 @@ The virtual thread scheduler is Doug Lea's `ForkJoinPool` adapted for continuati
 Work-stealing means no central queue, no lock contention, and automatic load balancing. When carriers have uneven numbers of runnable VTs (some VTs become runnable from I/O completion faster than others), stealing redistributes the load. The O(1) non-stealing case (pop from own deque) means scheduling overhead is minimal when VTs are balanced.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Near-optimal carrier utilization with minimal synchronization. Lock-free scheduling in the common case.
+
 **Cost:** Random stealing adds non-determinism to VT execution order. LIFO scheduling (most recent VT first) means older VTs may wait longer under heavy load. No priority support.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Multiplexing M VTs onto N carriers with dynamic load balancing requires some form of distributed scheduling
+
 **Accidental:** The scheduler is not configurable by users (no custom scheduler API). The parallelism and max pool size are system properties, not programmatic APIs. This limits tuning in environments where different workloads need different scheduling.
 
 ---
@@ -5403,9 +5545,12 @@ The scheduler has important characteristics for production:
 4. **No preemption within user code:** A CPU-bound VT runs on its carrier until it hits a yield point. The scheduler does not preempt (unlike Go 1.14+ which inserts preemption points). A VT in an infinite loop with no yield points monopolizes its carrier.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "The VT scheduler uses work-stealing to balance load across carriers."
-A Staff says: "I monitor carrier utilization, steal count, and pool size to detect scheduling anomalies. I know that the scheduler's LIFO policy means recently submitted VTs get priority, which is correct for request handling (most recent = highest priority) but can starve long-running VTs. For CPU-bound VTs that never yield, I use platform thread pools instead."
-The difference: Staff engineers understand the scheduling policy implications (LIFO, no preemption) and monitor accordingly.
+
+**A Senior says:** "The VT scheduler uses work-stealing to balance load across carriers."
+
+**A Staff says:** "I monitor carrier utilization, steal count, and pool size to detect scheduling anomalies. I know that the scheduler's LIFO policy means recently submitted VTs get priority, which is correct for request handling (most recent = highest priority) but can starve long-running VTs. For CPU-bound VTs that never yield, I use platform thread pools instead."
+
+**The difference:** Staff engineers understand the scheduling policy implications (LIFO, no preemption) and monitor accordingly.
 
 **Level 5 - Distinguished (expert thinking):**
 Distinguished engineers compare the VT scheduler to Go's GMP model. Go's scheduler uses per-P (processor context) run queues with work-stealing (similar) but adds preemption via cooperative signals at function entry (Go 1.14+). Java's VT scheduler has no preemption within user code - it relies entirely on voluntary yield points (I/O, park, sleep). This means a CPU-bound VT holds its carrier indefinitely. Go solves this with asynchronous preemption signals. Rust's Tokio uses cooperative scheduling with explicit `.await` yield points. Java's approach is the simplest (no preemption logic) but the least robust against CPU-bound VTs monopolizing carriers.
@@ -5637,8 +5782,11 @@ Erlang's scheduler is most fair (reduction counting preempts long-running proces
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: CPU-bound VT monopolizes carrier**
+
 **Symptom:** One carrier at 100% CPU, others idle. VTs on the monopolized carrier make no progress.
+
 **Root Cause:** A VT runs a CPU-intensive loop with no yield points (no I/O, no sleep, no park). The scheduler cannot preempt it.
+
 **Diagnostic:**
 
 ```bash
@@ -5651,13 +5799,19 @@ jcmd <pid> Thread.dump_to_file \
 ```
 
 **Fix:**
+
 BAD: Adding `Thread.yield()` calls in the loop (reduces computation throughput).
+
 GOOD: Move CPU-bound work to a platform thread pool (ForkJoinPool or ThreadPoolExecutor).
+
 **Prevention:** Design rule: virtual threads are for I/O-bound work only. CPU-bound computation uses platform thread pools.
 
 **Failure Mode 2: Scheduler overwhelmed by I/O completions**
+
 **Symptom:** VT throughput plateaus despite carriers having capacity. High rate of VT submissions from I/O completions. Scheduler deques are large.
+
 **Root Cause:** 100,000 VTs each doing rapid I/O (yield, resume, yield, resume). The scheduler's work-stealing deque operations become a bottleneck: each yield and resume involves push/pop on the deque.
+
 **Diagnostic:**
 
 ```bash
@@ -5670,13 +5824,19 @@ scheduler.getStealCount()
 ```
 
 **Fix:**
+
 BAD: Increasing parallelism beyond CPU count (context switching).
+
 GOOD: Batch I/O operations to reduce yield/resume frequency. Use buffered I/O. Reduce total VT count with semaphores to limit concurrent I/O.
+
 **Prevention:** Design for reasonable VT count (10,000-100,000 concurrent). Use semaphores to bound concurrency.
 
 **Failure Mode 3: Scheduling latency from LIFO starvation**
+
 **Symptom:** Some VTs have very high latency (seconds) while others complete quickly. No pinning detected. Carriers are all busy.
+
 **Root Cause:** Under sustained high load, the LIFO scheduling policy means VTs at the bottom of the deque wait a long time. Newly submitted VTs (at the top) are always picked first.
+
 **Diagnostic:**
 
 ```bash
@@ -5688,8 +5848,11 @@ jfr print --events \
 ```
 
 **Fix:**
+
 BAD: Switching to FIFO (would hurt cache locality and fresh-request prioritization).
+
 GOOD: Reduce load to prevent deque buildup. Implement request-level timeouts so stale VTs are cancelled rather than eventually executed.
+
 **Prevention:** Use request deadlines (`scope.joinUntil()`) to cancel VTs that have waited too long. Implement backpressure (reject requests when deque depth exceeds threshold).
 
 ---
@@ -5960,6 +6123,7 @@ _Why they ask:_ Behavioral question testing diagnostic experience.
 _Likely follow-up:_ "What was the root cause?"
 
 **Answer:**
+
 **Situation:** Our notification service migrated to virtual threads. Under load testing at 5,000 concurrent notifications, we observed P99 latency of 2.5 seconds instead of the expected 200ms. CPU utilization was only 30%. Carriers were not saturated. No pinning detected.
 
 **Task:** Diagnose why VTs were slow despite available carrier capacity.
@@ -6302,11 +6466,15 @@ From invariant 2: use ReentrantLock instead of synchronized. Separate CPU work o
 From invariant 3: use ScopedValues instead of ThreadLocal. Share caches externally.
 
 **THE TRADE-OFFS:**
+
 **Fixing anti-patterns gains:** Carrier utilization, memory efficiency, VT scalability
+
 **Fixing anti-patterns costs:** Code changes to existing patterns, library upgrades, mental model shift
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** The tension between platform thread patterns and VT patterns is inherent to any system introducing lightweight threads alongside heavyweight ones
+
 **Accidental:** The `synchronized` pinning issue is specific to how Java's monitors are implemented on OS mutexes. A future JVM could use heap-based monitors and eliminate this anti-pattern entirely.
 
 ---
@@ -6389,9 +6557,12 @@ javap -c -p library.jar | \
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Do not use synchronized with I/O on virtual threads."
-A Staff says: "I maintain a dependency compatibility matrix for our VT services, run `-Djdk.tracePinnedThreads=short` in CI load tests, have alerts for JFR pinning events in production, and have a migration playbook for converting synchronized blocks to ReentrantLock."
-The difference: Staff engineers create systematic detection and remediation processes, not just individual fixes.
+
+**A Senior says:** "Do not use synchronized with I/O on virtual threads."
+
+**A Staff says:** "I maintain a dependency compatibility matrix for our VT services, run `-Djdk.tracePinnedThreads=short` in CI load tests, have alerts for JFR pinning events in production, and have a migration playbook for converting synchronized blocks to ReentrantLock."
+
+**The difference:** Staff engineers create systematic detection and remediation processes, not just individual fixes.
 
 **Level 5 - Distinguished (expert thinking):**
 Distinguished engineers recognize that VT anti-patterns are a symptom of Java's backward compatibility contract. The `synchronized` keyword was designed for OS-level monitors. If Java were designed today, it would not exist - all locking would be heap-based (like `ReentrantLock`). The ThreadLocal API was designed for few, long-lived threads. ScopedValue is the VT-era replacement. Distinguished engineers see these anti-patterns as the cost of Java's commitment to backward compatibility and evaluate whether the cost is acceptable for their specific system. For greenfield microservices, they may choose Go or Kotlin to avoid the anti-pattern surface entirely. For brownfield Java systems, they create systematic migration plans.
@@ -6643,8 +6814,11 @@ Replace VT pools last (performance improvement, lowest impact).
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Silent pinning causing latency spikes**
+
 **Symptom:** Intermittent P99 latency spikes. Thread dumps show some carriers stuck in `BLOCKED` state inside `synchronized` methods. Compensating thread count fluctuates.
+
 **Root Cause:** A third-party library uses `synchronized` for object pooling. When VTs enter the pool, they pin carriers. Under load, enough VTs pin simultaneously to exhaust carriers.
+
 **Diagnostic:**
 
 ```bash
@@ -6663,13 +6837,19 @@ jfr print --events \
 ```
 
 **Fix:**
+
 BAD: Increasing maxPoolSize (treats symptom, not cause).
+
 GOOD: Replace library with VT-aware version, or wrap the library call in a platform thread executor so the VT submits and waits.
+
 **Prevention:** Load test with tracePinnedThreads before production deployment.
 
 **Failure Mode 2: ThreadLocal OOM**
+
 **Symptom:** `java.lang.OutOfMemoryError: Java heap space` after migrating to VTs. Heap dump shows millions of ThreadLocal entries.
+
 **Root Cause:** A ThreadLocal caches a 50KB buffer per thread. With 200 platform threads: 10MB. With 200,000 VTs: 10GB.
+
 **Diagnostic:**
 
 ```bash
@@ -6681,13 +6861,19 @@ jcmd <pid> GC.heap_dump heap.hprof
 ```
 
 **Fix:**
+
 BAD: Increasing heap size (delays the problem).
+
 GOOD: Replace ThreadLocal with shared thread-safe instance or ScopedValue. For mutable state that must be per-task, allocate on the stack (local variable) rather than ThreadLocal.
+
 **Prevention:** Grep for `ThreadLocal` in codebase. Assess per-VT memory cost = ThreadLocal size x expected VT count.
 
 **Failure Mode 3: VT pool bottleneck**
+
 **Symptom:** Migrated from `newFixedThreadPool(200)` to `newFixedThreadPool(200, virtualThreadFactory)`. Performance unchanged. Still see queuing under load.
+
 **Root Cause:** Pooling VTs with a fixed pool does not increase concurrency. The pool still limits to 200 concurrent tasks. VTs reduce memory per thread but the pool size is the bottleneck.
+
 **Diagnostic:**
 
 ```bash
@@ -6698,8 +6884,11 @@ GOOD: Replace ThreadLocal with shared thread-safe instance or ScopedValue. For m
 ```
 
 **Fix:**
+
 BAD: Increasing pool size to 10,000 (still a pool, still limits).
+
 GOOD: Replace with `newVirtualThreadPerTaskExecutor()` and use semaphores for resource limits.
+
 **Prevention:** Never pool virtual threads. The pattern is always per-task + semaphore.
 
 ---
@@ -7382,6 +7571,7 @@ _Why they ask:_ Behavioral question testing real-world experience.
 _Likely follow-up:_ "What monitoring did you add?"
 
 **Answer:**
+
 **Situation:** After migrating our REST API to virtual threads, production monitoring showed P99 latency increased from 150ms to 800ms under peak load. CPU was 40% (not saturated). Memory was stable. The JFR recording showed `jdk.VirtualThreadPinned` events at a rate of 500/minute.
 
 **Task:** Identify and eliminate the pinning source.
@@ -7593,11 +7783,15 @@ From invariant 2: fix anti-patterns before converting executors (or they negate 
 From invariant 3: use feature flags to toggle between executor types for safe rollback.
 
 **THE TRADE-OFFS:**
+
 **Migration gains:** Higher I/O throughput, simpler code (blocking instead of reactive), lower memory per connection.
+
 **Migration costs:** Dependency upgrades, code changes (synchronized to ReentrantLock), new monitoring (JFR pinning), team mental model shift.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Evaluating whether the workload benefits from VTs and protecting downstream resources with semaphores is inherent to any migration
+
 **Accidental:** The need to audit for `synchronized` is specific to Java's monitor implementation. If `synchronized` did not pin, 80% of the migration audit would be unnecessary.
 
 ---
@@ -7686,9 +7880,12 @@ Maintain a living document:
 | MySQL CJ | 8.2+ | Partial | Some pinning in auth |
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I migrated our service to virtual threads by replacing the executor and fixing synchronized blocks."
-A Staff says: "I created a migration playbook for the organization: profiling template, dependency audit script, anti-pattern CI gate, canary rollout process, monitoring dashboard, and rollback criteria. Ten teams migrated successfully using the playbook in Q3."
-The difference: Staff engineers create repeatable processes for the organization, not one-time fixes for one service.
+
+**A Senior says:** "I migrated our service to virtual threads by replacing the executor and fixing synchronized blocks."
+
+**A Staff says:** "I created a migration playbook for the organization: profiling template, dependency audit script, anti-pattern CI gate, canary rollout process, monitoring dashboard, and rollback criteria. Ten teams migrated successfully using the playbook in Q3."
+
+**The difference:** Staff engineers create repeatable processes for the organization, not one-time fixes for one service.
 
 **Level 5 - Distinguished (expert thinking):**
 Distinguished engineers evaluate VT migration in the context of the broader architecture. Virtual threads solve the I/O concurrency problem for imperative Java code. But if the organization already invested in reactive (Project Reactor, RxJava), the migration equation changes: reactive already solves I/O concurrency. VT migration means rewriting reactive code to blocking (simpler code, team velocity) at the cost of discarding reactive investment. The decision depends on: team reactive proficiency, codebase size, recruitment (reactive is harder to hire for), and whether the reactive codebase has bugs that blocking would eliminate. Distinguished engineers make this organization-level trade-off explicit.
@@ -7965,8 +8162,11 @@ Greenfield with unknown workload: Start with virtual threads, separate CPU stage
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Skipped profiling - migrated CPU-bound service**
+
 **Symptom:** After migration, no throughput improvement. CPU utilization unchanged at 85%. P99 slightly worse (+5%) due to VT scheduling overhead.
+
 **Root Cause:** The service is CPU-bound (data processing pipeline). Virtual threads do not help when threads never block on I/O.
+
 **Diagnostic:**
 
 ```bash
@@ -7978,13 +8178,19 @@ async-profiler -d 60 \
 ```
 
 **Fix:**
+
 BAD: Adding more VTs (CPU is already saturated).
+
 GOOD: Revert to platform thread pool. Document as "not a VT candidate" with profiling evidence.
+
 **Prevention:** Phase 1 (profiling) is mandatory. Skip it = wrong migration decision.
 
 **Failure Mode 2: Dependency pinning discovered in production**
+
 **Symptom:** P99 latency 5x worse after VT migration. JFR shows `VirtualThreadPinned` events in a third-party JDBC driver.
+
 **Root Cause:** The audit phase missed a dependency with synchronized I/O. The dependency uses `synchronized` internally for connection state management.
+
 **Diagnostic:**
 
 ```bash
@@ -7998,13 +8204,19 @@ jfr print --events \
 ```
 
 **Fix:**
+
 BAD: Increasing maxPoolSize (treats symptom).
+
 GOOD: Toggle feature flag to platform threads (immediate fix). Upgrade driver to VT-compatible version. Re-validate. Re-deploy.
+
 **Prevention:** Phase 2 (audit) must include runtime detection (`-Djdk.tracePinnedThreads=short`) under load, not just code review.
 
 **Failure Mode 3: Database overwhelmed by VT connections**
+
 **Symptom:** Database connection pool exhausted. Database CPU at 100%. Application sees `ConnectionTimeoutException`.
+
 **Root Cause:** Platform pool limited to 200 threads = 200 max connections. VT executor creates 10,000 VTs = 10,000 connection attempts. HikariCP pool (200) queues 9,800. Database receives 200 concurrent queries but queues grow.
+
 **Diagnostic:**
 
 ```bash
@@ -8015,7 +8227,9 @@ hikari.connections.timeout = 500+
 ```
 
 **Fix:**
+
 BAD: Increasing HikariCP pool size to 10,000 (overwhelms database).
+
 GOOD: Add semaphore matching HikariCP pool size:
 
 ```java
@@ -8024,6 +8238,7 @@ var dbPermit = new Semaphore(
 ```
 
 VTs beyond 200 unmount at `acquire()`, carriers stay busy with other VTs.
+
 **Prevention:** Phase 4 (convert) must add semaphores at every resource boundary.
 
 ---
@@ -8387,6 +8602,7 @@ _Why they ask:_ Tests basic requirements knowledge.
 _Likely follow-up:_ "Can I use preview features?"
 
 **Answer:**
+
 **Minimum requirements:**
 
 - **Java 21** (LTS) - virtual threads are a GA feature
@@ -8672,6 +8888,7 @@ _Why they ask:_ Behavioral question testing real migration experience.
 _Likely follow-up:_ "What would you do differently?"
 
 **Answer:**
+
 **Situation:** Our API gateway service handled 3,000 concurrent requests, each fanning out to 3-5 backend services. Running on Java 17 with a 400-thread Tomcat pool. During peak traffic, the pool was saturated, queuing requests, and P99 hit 2 seconds.
 
 **Task:** Evaluate and execute VT migration to handle 10,000 concurrent requests.

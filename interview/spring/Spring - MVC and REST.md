@@ -80,11 +80,15 @@ DispatcherServlet does not handle requests itself - it orchestrates. The actual 
 From invariant 1: cross-cutting concerns (logging, auth, CORS) are applied once in the DispatcherServlet pipeline. From invariant 2: you can mix `@RequestMapping`, RouterFunction, and legacy Controller interfaces. From invariant 3: the same handler can return JSON or HTML depending on content negotiation.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Single entry point, consistent pipeline, pluggable components.
+
 **Cost:** All requests go through the same pipeline - performance overhead for simple passthrough use cases.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Web applications need routing, content negotiation, and exception handling.
+
 **Accidental:** The Servlet API contract (init, service, destroy) is an implementation detail hidden by Spring.
 
 ---
@@ -203,9 +207,12 @@ public class WebConfig
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "DispatcherServlet routes requests to controllers."
-A Staff says: "DispatcherServlet is a pipeline of pluggable strategies. I customize HandlerInterceptors for cross-cutting concerns, configure message converters for content negotiation, and understand that `@RestController` returns go through `HttpMessageConverter` while `@Controller` returns go through `ViewResolver` - two completely different paths in the same pipeline."
-The difference: Staff engineers see DispatcherServlet as a configurable pipeline, not a black box.
+
+**A Senior says:** "DispatcherServlet routes requests to controllers."
+
+**A Staff says:** "DispatcherServlet is a pipeline of pluggable strategies. I customize HandlerInterceptors for cross-cutting concerns, configure message converters for content negotiation, and understand that `@RestController` returns go through `HttpMessageConverter` while `@Controller` returns go through `ViewResolver` - two completely different paths in the same pipeline."
+
+**The difference:** Staff engineers see DispatcherServlet as a configurable pipeline, not a black box.
 
 **Level 5 - Distinguished (expert thinking):**
 DispatcherServlet is the Front Controller pattern (GoF) applied to the Servlet API. The same pattern appears in Ruby on Rails (Action Controller), ASP.NET MVC (RouteHandler), and Express.js (middleware pipeline). Spring WebFlux replaces DispatcherServlet with `DispatcherHandler` for reactive, non-blocking processing. At scale, DispatcherServlet's thread-per-request model limits throughput for I/O-bound workloads - the shift to WebFlux or virtual threads (Java 21) addresses this.
@@ -331,15 +338,25 @@ class UserControllerTest {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Single front controller Servlet that routes all HTTP requests to handler methods.
+
 **PROBLEM IT SOLVES:** Eliminates per-URL Servlet configuration with a centralized, pluggable pipeline.
+
 **KEY INSIGHT:** DispatcherServlet orchestrates, not executes. Six strategy interfaces do the work.
+
 **USE WHEN:** Every Spring MVC/Boot web application (it is always there).
+
 **AVOID WHEN:** Reactive apps use `DispatcherHandler` instead (WebFlux).
+
 **ANTI-PATTERN:** Bypassing DispatcherServlet with raw Servlet registrations (loses Spring features).
+
 **TRADE-OFF:** Centralized pipeline vs. all-requests-through-one-chokepoint.
+
 **ONE-LINER:** "One Servlet, six strategies, every request."
+
 **KEY NUMBERS:** 7 pipeline steps. 6 pluggable strategies. Thread-per-request model.
+
 **TRIGGER PHRASE:** "Front Controller pattern."
+
 **OPENING SENTENCE:** "DispatcherServlet is the Front Controller that intercepts every HTTP request, delegating to HandlerMapping for routing, HandlerAdapter for invocation, and either HttpMessageConverter (REST) or ViewResolver (MVC) for response rendering."
 
 **If you remember only 3 things:**
@@ -385,8 +402,11 @@ DispatcherServlet handles both REST APIs and server-side rendered pages through 
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: 404 despite correct @RequestMapping**
+
 **Symptom:** Endpoint returns 404 even though the controller has the mapping.
+
 **Root Cause:** Controller not in component scan base package. Or mapping path does not match (trailing slash, typo).
+
 **Diagnostic:**
 
 ```bash
@@ -398,13 +418,19 @@ logging.level.org.springframework\
 ```
 
 **Fix:**
+
 BAD: Hardcoding a Servlet mapping to bypass DispatcherServlet.
+
 GOOD: Ensure controller is in a scanned package. Check exact path (case-sensitive, no trailing slash mismatch).
+
 **Prevention:** `@WebMvcTest` for each controller catches mapping issues in CI.
 
 **Failure Mode 2: Wrong HttpMessageConverter used**
+
 **Symptom:** Response is XML instead of JSON, or plain text instead of JSON.
+
 **Root Cause:** Accept header mismatch or wrong converter order. Or Jackson not on classpath.
+
 **Diagnostic:**
 
 ```bash
@@ -414,13 +440,19 @@ curl -H "Accept: application/json" \
 ```
 
 **Fix:**
+
 BAD: Hardcoding `produces = "application/json"` on every method.
+
 GOOD: Ensure Jackson is on classpath (via starter-web). Check converter order.
+
 **Prevention:** starter-web includes Jackson by default.
 
 **Failure Mode 3: Thread pool exhaustion under load**
+
 **Symptom:** Requests time out. Tomcat rejects connections with "Connection refused."
+
 **Root Cause:** All threads blocked on slow downstream calls (DB, external API). Thread-per-request model.
+
 **Diagnostic:**
 
 ```bash
@@ -430,8 +462,11 @@ curl localhost:8080/actuator/threaddump
 ```
 
 **Fix:**
+
 BAD: Increasing thread pool to 500 (delays the problem).
+
 GOOD: Add timeouts to downstream calls. Use async handlers (`DeferredResult`) or virtual threads for I/O-bound work.
+
 **Prevention:** Set `server.tomcat.threads.max` conservatively and monitor with Actuator metrics.
 
 ---
@@ -625,11 +660,15 @@ The argument resolution is the real power. `@PathVariable Long id` converts "42"
 From invariant 1: you never have ambiguous routing (Spring fails fast if two mappings conflict). From invariant 2: custom argument resolvers can inject any type (logged-in user, tenant context). From invariant 3: returning `ResponseEntity<T>` gives full control; returning `T` uses defaults.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Declarative routing, type-safe arguments, zero parsing code.
+
 **Cost:** Annotation-heavy code. Complex mapping rules can be hard to debug.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** HTTP APIs need routing, argument parsing, and response serialization.
+
 **Accidental:** Multiple ways to express the same mapping (`@RequestMapping` vs `@GetMapping` vs `RouterFunction`).
 
 ---
@@ -771,9 +810,12 @@ public Profile get(
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use `@GetMapping` for GET requests and `@PostMapping` for POST."
-A Staff says: "I design consistent API contracts: resources are nouns, HTTP methods are verbs, status codes are meaningful. I use custom argument resolvers for cross-cutting concerns (current user, tenant context) and `ResponseEntity` only when I need custom status codes or headers."
-The difference: Staff engineers design API conventions and custom resolvers.
+
+**A Senior says:** "Use `@GetMapping` for GET requests and `@PostMapping` for POST."
+
+**A Staff says:** "I design consistent API contracts: resources are nouns, HTTP methods are verbs, status codes are meaningful. I use custom argument resolvers for cross-cutting concerns (current user, tenant context) and `ResponseEntity` only when I need custom status codes or headers."
+
+**The difference:** Staff engineers design API conventions and custom resolvers.
 
 **Level 5 - Distinguished (expert thinking):**
 Request mapping is declarative routing - the same concept appears in Express.js (`app.get('/users/:id')`), Flask (`@app.route`), and ASP.NET (`[HttpGet("{id}")]`). Spring 5 added `RouterFunction` as a functional alternative to annotations, allowing programmatic route definition. At scale, the challenge is not routing but API versioning: URL path (`/v2/users`), header (`X-API-Version`), or content type (`application/vnd.app.v2+json`).
@@ -910,15 +952,25 @@ class UserControllerTest {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Annotation-based HTTP routing with automatic argument resolution.
+
 **PROBLEM IT SOLVES:** Eliminates manual URL parsing, body deserialization, and response serialization.
+
 **KEY INSIGHT:** Argument resolvers are the real power - they convert raw HTTP data to typed Java objects.
+
 **USE WHEN:** Every REST endpoint in a Spring MVC application.
+
 **AVOID WHEN:** Highly dynamic routes (use `RouterFunction` instead).
+
 **ANTI-PATTERN:** Using `HttpServletRequest` directly when argument annotations suffice.
+
 **TRADE-OFF:** Declarative convenience vs. annotation-heavy code.
+
 **ONE-LINER:** "@GetMapping + @PathVariable = declarative routing with type-safe arguments."
+
 **KEY NUMBERS:** 6 shortcut annotations. 6+ argument resolvers. Most-specific-wins matching.
+
 **TRIGGER PHRASE:** "Most specific mapping wins."
+
 **OPENING SENTENCE:** "@RequestMapping and its shortcuts bind URLs to handler methods with automatic argument resolution - @PathVariable extracts URL segments, @RequestBody deserializes JSON, and @Valid triggers validation, eliminating all manual HTTP parsing."
 
 **If you remember only 3 things:**
@@ -964,17 +1016,27 @@ class UserControllerTest {
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Ambiguous mapping at startup**
+
 **Symptom:** `IllegalStateException: Ambiguous mapping.`
+
 **Root Cause:** Two handler methods map to the same URL + HTTP method.
+
 **Diagnostic:** Error message names both methods.
+
 **Fix:**
+
 BAD: Removing one mapping without understanding intent.
+
 GOOD: Make paths distinct or merge into one controller.
+
 **Prevention:** Review API design before implementation. Use OpenAPI spec.
 
 **Failure Mode 2: 400 Bad Request from type conversion**
+
 **Symptom:** `MethodArgumentTypeMismatchException` - path variable cannot be converted.
+
 **Root Cause:** Client sends `/users/abc` where `Long` is expected.
+
 **Diagnostic:**
 
 ```bash
@@ -984,13 +1046,19 @@ curl -v localhost:8080/users/abc
 ```
 
 **Fix:**
+
 BAD: Catching exception per-endpoint.
+
 GOOD: Handle in `@ControllerAdvice` with a clean 400 response.
+
 **Prevention:** Document API contract. Input validation at the edge.
 
 **Failure Mode 3: @RequestBody null fields**
+
 **Symptom:** JSON deserialized but fields are null despite being in the request.
+
 **Root Cause:** Jackson cannot bind: no default constructor, field name mismatch, or missing getters.
+
 **Diagnostic:**
 
 ```java
@@ -1003,8 +1071,11 @@ public User create(
 ```
 
 **Fix:**
+
 BAD: Adding null checks everywhere.
+
 GOOD: Fix the Java class or configure Jackson naming strategy.
+
 **Prevention:** Use records or `@JsonProperty`. Test deserialization separately.
 
 ---
@@ -1216,11 +1287,15 @@ The most important design decision is the error response format. Use RFC 7807 Pr
 From invariant 1: specific handlers override general ones. From invariant 2: you can have separate advice for REST APIs vs web pages. From invariant 3: RFC 7807 ProblemDetail provides a standard format.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Clean controllers (no try-catch), consistent error format, centralized error logging.
+
 **Cost:** Exception flow can be hard to trace (where does this exception get handled?).
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Errors happen. Clients need structured error responses.
+
 **Accidental:** The HandlerExceptionResolver chain has 4+ implementations with overlapping responsibilities.
 
 ---
@@ -1380,9 +1455,12 @@ public class Handler {
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use `@ControllerAdvice` to handle exceptions globally."
-A Staff says: "I design an exception hierarchy (BusinessException, InfrastructureException) mapped to HTTP status codes, with RFC 7807 ProblemDetail for all error responses, custom error codes for client-side branching, and correlation IDs for tracing errors to logs. I separate API advice from web page advice using scoping."
-The difference: Staff engineers design the error contract and exception architecture.
+
+**A Senior says:** "Use `@ControllerAdvice` to handle exceptions globally."
+
+**A Staff says:** "I design an exception hierarchy (BusinessException, InfrastructureException) mapped to HTTP status codes, with RFC 7807 ProblemDetail for all error responses, custom error codes for client-side branching, and correlation IDs for tracing errors to logs. I separate API advice from web page advice using scoping."
+
+**The difference:** Staff engineers design the error contract and exception architecture.
 
 **Level 5 - Distinguished (expert thinking):**
 Exception handling is part of API contract design. RFC 7807 ProblemDetail is becoming the standard (adopted by Stripe, GitHub, Microsoft Graph). At scale, error responses need: machine-readable error codes (for client branching), correlation IDs (for log tracing), rate limiting metadata (Retry-After header), and i18n-ready detail messages. The `type` URI in ProblemDetail should link to documentation explaining the error and how to fix it.
@@ -1552,15 +1630,25 @@ class ExceptionHandlerTest {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Layered exception-to-HTTP-response mapping with consistent error format.
+
 **PROBLEM IT SOLVES:** Eliminates try-catch in controllers and ensures consistent error responses.
+
 **KEY INSIGHT:** RFC 7807 ProblemDetail is the standard. Design error codes for client-side branching.
+
 **USE WHEN:** Every Spring MVC application needs a global exception handler.
+
 **AVOID WHEN:** Never avoid - unhandled exceptions expose stack traces.
+
 **ANTI-PATTERN:** Try-catch in every controller method. Returning 200 with error body.
+
 **TRADE-OFF:** Centralized handling vs. harder-to-trace exception flow.
+
 **ONE-LINER:** "Throw freely in controllers; @ControllerAdvice catches and formats."
+
 **KEY NUMBERS:** 4 resolver chain steps. Controller-local beats global. Specific type beats generic.
+
 **TRIGGER PHRASE:** "RFC 7807 ProblemDetail for all errors."
+
 **OPENING SENTENCE:** "Spring MVC exception handling chains @ExceptionHandler (local) through @ControllerAdvice (global) through DefaultHandlerExceptionResolver, converting exceptions to structured RFC 7807 ProblemDetail responses with consistent error codes, status mapping, and correlation IDs."
 
 **If you remember only 3 things:**
@@ -1606,30 +1694,51 @@ Spring Boot's default error handling returns a `WhitelabelErrorPage` (HTML) or a
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Stack trace leaked to client**
+
 **Symptom:** API returns 500 with full Java stack trace.
+
 **Root Cause:** No catch-all `@ExceptionHandler(Exception.class)` in `@ControllerAdvice`.
+
 **Diagnostic:** Send a request that causes an exception and check the response body.
+
 **Fix:**
+
 BAD: Setting `server.error.include-stacktrace=never` (only hides in default error page).
+
 GOOD: Add catch-all `@ExceptionHandler(Exception.class)` that returns ProblemDetail with generic message.
+
 **Prevention:** Security test: assert no response contains Java package names.
 
 **Failure Mode 2: Filter exception not handled by advice**
+
 **Symptom:** Spring Security filter throws, but `@ControllerAdvice` handler is not called.
+
 **Root Cause:** Filters run before DispatcherServlet. The advice chain is inside DispatcherServlet.
+
 **Diagnostic:** Check if the exception occurs in a filter (look at stack trace for `FilterChain`).
+
 **Fix:**
+
 BAD: Adding try-catch in the filter.
+
 GOOD: Implement a custom `AuthenticationEntryPoint` (for security) or custom `ErrorController` for general filter errors.
+
 **Prevention:** Understand the Servlet filter vs DispatcherServlet boundary.
 
 **Failure Mode 3: Wrong handler invoked for exception**
+
 **Symptom:** A specific `NotFoundException` is caught by the generic `Exception` handler instead of the `NotFoundException` handler.
+
 **Root Cause:** `@ControllerAdvice` ordering or the specific handler is in a different advice class with lower priority.
+
 **Diagnostic:** Add logging to each handler to see which one fires.
+
 **Fix:**
+
 BAD: Removing the generic handler.
+
 GOOD: Use `@Order` on `@ControllerAdvice` classes to control priority. More specific advice should have lower order (higher priority).
+
 **Prevention:** Keep all handlers in one `@ControllerAdvice` class when possible.
 
 ---
@@ -1833,11 +1942,15 @@ The controller method returns a Java object. Content negotiation decides how to 
 From invariant 1: controllers are format-agnostic. From invariant 2: adding a new format means adding a converter (JAR on classpath). From invariant 3: clients must request a supported format.
 
 **THE TRADE-OFFS:**
+
 **Gain:** One endpoint serves multiple formats. Clean separation of data and representation.
+
 **Cost:** Debugging "wrong format returned" requires understanding converter selection order.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Different clients need different formats. Content negotiation is an HTTP standard.
+
 **Accidental:** Multiple negotiation strategies (header, param, suffix) and their priority configuration.
 
 ---
@@ -1968,9 +2081,12 @@ public byte[] getReport() {
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Spring picks JSON or XML based on the Accept header."
-A Staff says: "I configure content negotiation with a default media type, explicit converter ordering (JSON first for performance), and `produces` constraints on endpoints that serve specific formats. For API versioning via media types (`application/vnd.company.v2+json`), I register custom media types mapped to the JSON converter."
-The difference: Staff engineers design the negotiation strategy, not just rely on defaults.
+
+**A Senior says:** "Spring picks JSON or XML based on the Accept header."
+
+**A Staff says:** "I configure content negotiation with a default media type, explicit converter ordering (JSON first for performance), and `produces` constraints on endpoints that serve specific formats. For API versioning via media types (`application/vnd.company.v2+json`), I register custom media types mapped to the JSON converter."
+
+**The difference:** Staff engineers design the negotiation strategy, not just rely on defaults.
 
 **Level 5 - Distinguished (expert thinking):**
 Content negotiation is defined in HTTP/1.1 (RFC 7231 Section 5.3). Beyond `Accept`, HTTP also supports `Accept-Language` (i18n), `Accept-Encoding` (compression), and `Accept-Charset`. In practice, `Accept` is the primary concern. At scale, content negotiation interacts with caching: a `Vary: Accept` header tells CDNs to cache different representations separately.
@@ -2105,15 +2221,25 @@ class ContentNegotiationTest {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Automatic response format selection based on client's Accept header.
+
 **PROBLEM IT SOLVES:** One endpoint serves JSON, XML, or any format without controller code changes.
+
 **KEY INSIGHT:** Adding a new format = adding a converter JAR. No controller changes.
+
 **USE WHEN:** Multi-format APIs (JSON + XML). API versioning via custom media types.
+
 **AVOID WHEN:** Single-format API (JSON only) - just use the default.
+
 **ANTI-PATTERN:** Manual format switching with if/else in controllers.
+
 **TRADE-OFF:** Format flexibility vs. converter ordering complexity.
+
 **ONE-LINER:** "One controller, many formats - Accept header picks the converter."
+
 **KEY NUMBERS:** 5+ built-in converters. 406 for unsupported format. `Vary: Accept` for caching.
+
 **TRIGGER PHRASE:** "Accept header drives format selection."
+
 **OPENING SENTENCE:** "Content negotiation selects the HttpMessageConverter based on the client's Accept header - returning JSON, XML, or any supported format from the same controller method, with 406 Not Acceptable for unsupported formats."
 
 **If you remember only 3 things:**
@@ -2159,8 +2285,11 @@ If the client sends no `Accept` header (or `Accept: */*`), Spring returns the fo
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: 406 Not Acceptable**
+
 **Symptom:** Client gets 406 for a valid endpoint.
+
 **Root Cause:** No `HttpMessageConverter` registered for the requested media type.
+
 **Diagnostic:**
 
 ```bash
@@ -2170,17 +2299,27 @@ curl -v -H "Accept: application/xml" \
 ```
 
 **Fix:**
+
 BAD: Catching the 406 and returning JSON anyway.
+
 GOOD: Add the appropriate converter (e.g., jackson-dataformat-xml for XML).
+
 **Prevention:** Document supported media types in API spec.
 
 **Failure Mode 2: XML returned instead of JSON**
+
 **Symptom:** Client expects JSON but gets XML.
+
 **Root Cause:** Jackson XML converter is registered and matches before JSON due to Accept header order.
+
 **Diagnostic:** Check Accept header: `Accept: application/xml, application/json` prefers XML.
+
 **Fix:**
+
 BAD: Removing XML support entirely.
+
 GOOD: Configure default content type to JSON. Or client should send `Accept: application/json` first.
+
 **Prevention:** Set `defaultContentType(MediaType.APPLICATION_JSON)`.
 
 ---
@@ -2343,11 +2482,15 @@ Validation should happen at the system boundary (controller), not deep in the se
 From invariant 1: constraints are visible in the DTO class (self-documenting). From invariant 2: controllers are clean - no validation logic. From invariant 3: a field can be `@NotNull` for create but optional for update.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Declarative, composable, framework-integrated validation. Self-documenting constraints.
+
 **Cost:** Annotation clutter on DTOs. Complex cross-field validation requires custom validators.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Input validation is a security and data integrity requirement.
+
 **Accidental:** Two trigger annotations (`@Valid` vs `@Validated`) with subtle differences.
 
 ---
@@ -2512,9 +2655,12 @@ public class NoProfanityValidator
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Add `@Valid` to the request body and put `@NotBlank` on fields."
-A Staff says: "I design a validation strategy: constraints on DTOs at the API boundary (never on domain entities), validation groups for create vs update, custom constraints for domain rules, and a global `@ControllerAdvice` that returns structured field-level errors. I validate at the boundary so the service layer never receives invalid data."
-The difference: Staff engineers design the validation architecture (where, what, how to report).
+
+**A Senior says:** "Add `@Valid` to the request body and put `@NotBlank` on fields."
+
+**A Staff says:** "I design a validation strategy: constraints on DTOs at the API boundary (never on domain entities), validation groups for create vs update, custom constraints for domain rules, and a global `@ControllerAdvice` that returns structured field-level errors. I validate at the boundary so the service layer never receives invalid data."
+
+**The difference:** Staff engineers design the validation architecture (where, what, how to report).
 
 **Level 5 - Distinguished (expert thinking):**
 Bean Validation is an example of the Specification pattern applied at the data level. The same concept exists in every framework: Zod/Yup (TypeScript), Pydantic (Python), Joi (Node.js). Cross-field validation (start date < end date) is the awkward case - it requires class-level constraints which are harder to compose. At scale, validation schemas should be generated from the same source as OpenAPI specs to keep client and server in sync.
@@ -2681,15 +2827,25 @@ class ValidationTest {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Declarative constraint annotations on DTOs with automatic framework-triggered validation.
+
 **PROBLEM IT SOLVES:** Eliminates manual if-check validation code and ensures consistent error responses.
+
 **KEY INSIGHT:** Validate at the boundary (controller). Service layer should never receive invalid data.
+
 **USE WHEN:** Every `@RequestBody` parameter and every user input.
+
 **AVOID WHEN:** Internal service-to-service calls where data is already validated at entry.
+
 **ANTI-PATTERN:** Manual if-checks in controllers. Missing `@Valid` annotation (validation silently skipped).
+
 **TRADE-OFF:** Declarative clarity vs. annotation clutter on DTOs.
+
 **ONE-LINER:** "Annotate fields, add @Valid, get automatic 400 responses for bad data."
+
 **KEY NUMBERS:** 20+ built-in constraints. `@Valid` = Jakarta standard. `@Validated` = Spring (groups).
+
 **TRIGGER PHRASE:** "Validate at the boundary."
+
 **OPENING SENTENCE:** "Spring Validation integrates Jakarta Bean Validation via @Valid/@Validated on controller parameters, triggering constraint evaluation before handler execution - rejecting invalid data with MethodArgumentNotValidException caught by @ControllerAdvice for structured 400 responses."
 
 **If you remember only 3 things:**
@@ -2753,8 +2909,11 @@ ALSO IF validating @PathVariable/@RequestParam -> add `@Validated` on controller
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Validation silently not running**
+
 **Symptom:** Invalid data passes through to service layer. No 400 error.
+
 **Root Cause:** Missing `@Valid` on the `@RequestBody` parameter.
+
 **Diagnostic:**
 
 ```java
@@ -2768,22 +2927,35 @@ public User create(
 ```
 
 **Fix:**
+
 BAD: Adding manual validation in the service.
+
 GOOD: Add `@Valid` to the controller parameter.
+
 **Prevention:** Code review checklist: every `@RequestBody` has `@Valid`.
 
 **Failure Mode 2: ConstraintViolationException instead of MethodArgumentNotValidException**
+
 **Symptom:** Validation fails for `@PathVariable` but the exception is `ConstraintViolationException`, not `MethodArgumentNotValidException`. Your handler does not catch it.
+
 **Root Cause:** `@PathVariable`/`@RequestParam` validation uses a different mechanism (method-level validation) which throws `ConstraintViolationException`.
+
 **Diagnostic:** Check if the failing validation is on a `@RequestBody` field (MANVE) or method param (CVE).
+
 **Fix:**
+
 BAD: Ignoring the different exception type.
+
 GOOD: Add a separate `@ExceptionHandler(ConstraintViolationException.class)` in your `@ControllerAdvice`.
+
 **Prevention:** Handle both exception types in global advice.
 
 **Failure Mode 3: Nested object not validated**
+
 **Symptom:** Top-level fields are validated but nested object fields are not.
+
 **Root Cause:** Missing `@Valid` on the nested field in the parent DTO.
+
 **Diagnostic:**
 
 ```java
@@ -2801,6 +2973,7 @@ public class Order {
 ```
 
 **Fix:** Add `@Valid` to nested object fields for cascading validation.
+
 **Prevention:** Always add `@Valid` on nested DTOs. Test nested validation explicitly.
 
 ---

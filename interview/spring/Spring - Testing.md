@@ -193,8 +193,10 @@ class Test2 {
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use `@WebMvcTest` for controller tests."
-A Staff says: "I design the test strategy: `@WebMvcTest` for controllers (mock services), `@DataJpaTest` for repositories (embedded DB or Testcontainers), plain JUnit for services (no Spring context). I minimize context pollution by keeping mock sets consistent across test classes. CI runs sliced tests first (fast feedback), then full integration tests."
+
+**A Senior says:** "Use `@WebMvcTest` for controller tests."
+
+**A Staff says:** "I design the test strategy: `@WebMvcTest` for controllers (mock services), `@DataJpaTest` for repositories (embedded DB or Testcontainers), plain JUnit for services (no Spring context). I minimize context pollution by keeping mock sets consistent across test classes. CI runs sliced tests first (fast feedback), then full integration tests."
 
 ---
 
@@ -227,9 +229,13 @@ class UserControllerTest {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Layer-specific test annotations that load minimal Spring context.
+
 **KEY INSIGHT:** @WebMvcTest = web layer. @DataJpaTest = data layer. No overlap.
+
 **ANTI-PATTERN:** @SpringBootTest for everything. @MockitoBean proliferation (context pollution).
+
 **ONE-LINER:** "Test slices = fast, focused, layer-specific tests."
+
 **TRIGGER PHRASE:** "Slice the context, not the quality."
 
 **If you remember only 3 things:**
@@ -265,7 +271,9 @@ class UserControllerTest {
 ### 🔗 Related Keywords
 
 **Prerequisites:** IoC Container, Spring Boot Auto-Configuration
+
 **Builds on:** MockMvc, Testcontainers, Mockito
+
 **Alternatives:** Arquillian (Jakarta EE), manual context config
 
 ---
@@ -441,8 +449,11 @@ void uploadsFile() throws Exception {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** In-process MVC testing without HTTP server.
+
 **KEY INSIGHT:** Full MVC pipeline (filters, controllers, advice, converters) without network.
+
 **ANTI-PATTERN:** Starting full server for controller tests. Not testing error paths.
+
 **ONE-LINER:** "MockMvc = HTTP simulation through full MVC pipeline."
 
 **If you remember only 3 things:**
@@ -490,7 +501,9 @@ mvc.perform(get("/api/data")
 ### 🔗 Related Keywords
 
 **Prerequisites:** Spring MVC, DispatcherServlet
+
 **Builds on:** Spring Boot Test Slices, Spring Security
+
 **Alternatives:** WebTestClient (reactive + full stack), RestAssured
 
 ---
@@ -665,8 +678,10 @@ public class TestApp {
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use Testcontainers instead of H2."
-A Staff says: "I use a singleton container pattern for CI speed (one PostgreSQL container shared across all integration test classes). `@ServiceConnection` for auto-configuration. `@DynamicPropertySource` as fallback. Testcontainers for dev environment too (TestApplication). Database migrations (Flyway) run against the container just like production."
+
+**A Senior says:** "Use Testcontainers instead of H2."
+
+**A Staff says:** "I use a singleton container pattern for CI speed (one PostgreSQL container shared across all integration test classes). `@ServiceConnection` for auto-configuration. `@DynamicPropertySource` as fallback. Testcontainers for dev environment too (TestApplication). Database migrations (Flyway) run against the container just like production."
 
 ---
 
@@ -710,9 +725,13 @@ class UserRepoTest {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Real Docker containers (DB, Redis, Kafka) in tests.
+
 **KEY INSIGHT:** H2 is not PostgreSQL. Test against real infrastructure.
+
 **ANTI-PATTERN:** Using H2 compatibility mode for DB-specific features.
+
 **ONE-LINER:** "Testcontainers = real infra in tests. No fakes."
+
 **TRIGGER PHRASE:** "Real database, Testcontainers, @ServiceConnection."
 
 **If you remember only 3 things:**
@@ -749,7 +768,9 @@ Testcontainers runs the REAL database in Docker. Tests verify actual SQL executi
 ### 🔗 Related Keywords
 
 **Prerequisites:** Docker, Spring Boot Test Slices
+
 **Builds on:** Spring Data JPA, Integration Testing
+
 **Alternatives:** Embedded H2 (simpler but less accurate), WireMock (HTTP services)
 
 ---
@@ -879,8 +900,10 @@ Fix: standardize mock sets across tests or use base classes.
 - Business logic (test the real code)
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Mock dependencies with `@MockitoBean`."
-A Staff says: "I mock at boundaries: controllers mock services, services use real logic with mocked external clients. I never mock repositories - I test them with Testcontainers. I keep mock sets consistent to maximize context caching. I use `verify()` sparingly - test behavior, not implementation."
+
+**A Senior says:** "Mock dependencies with `@MockitoBean`."
+
+**A Staff says:** "I mock at boundaries: controllers mock services, services use real logic with mocked external clients. I never mock repositories - I test them with Testcontainers. I keep mock sets consistent to maximize context caching. I use `verify()` sparingly - test behavior, not implementation."
 
 ---
 
@@ -913,8 +936,11 @@ class OrderTest {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Replace Spring beans with Mockito mocks for isolated testing.
+
 **KEY INSIGHT:** Mock at boundaries, not internals. Test real code.
+
 **ANTI-PATTERN:** Mocking everything (tests nothing). Different mock sets per class (context pollution).
+
 **ONE-LINER:** "@MockitoBean replaces bean in context. when().thenReturn() controls it."
 
 **If you remember only 3 things:**
@@ -941,7 +967,9 @@ Rule: mock at the boundary of what you are testing. Controller test mocks servic
 ### 🔗 Related Keywords
 
 **Prerequisites:** Mockito, Spring IoC
+
 **Builds on:** Spring Boot Test Slices, MockMvc
+
 **Alternatives:** WireMock (HTTP mocks), Testcontainers (real infra)
 
 ---
@@ -1044,8 +1072,10 @@ CI pipeline:
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Write unit tests and integration tests."
-A Staff says: "I design the test pyramid: 60% unit (plain JUnit for business logic), 25% slice (framework integration per layer), 12% integration (full flows with Testcontainers), 3% E2E (contract/smoke). I optimize CI with parallel execution, context caching, and singleton Testcontainers. Target: < 5 min total CI test time."
+
+**A Senior says:** "Write unit tests and integration tests."
+
+**A Staff says:** "I design the test pyramid: 60% unit (plain JUnit for business logic), 25% slice (framework integration per layer), 12% integration (full flows with Testcontainers), 3% E2E (contract/smoke). I optimize CI with parallel execution, context caching, and singleton Testcontainers. Target: < 5 min total CI test time."
 
 ---
 
@@ -1117,9 +1147,13 @@ class PricingIT {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Layered testing strategy: unit -> slice -> integration -> E2E.
+
 **KEY INSIGHT:** Right test at the right level. Fast tests for logic, slow tests for integration.
+
 **ANTI-PATTERN:** All @SpringBootTest (slow). All unit tests (misses integration bugs).
+
 **ONE-LINER:** "60% unit, 25% slice, 12% integration, 3% E2E."
+
 **TRIGGER PHRASE:** "Testing pyramid, right test at right level."
 
 **If you remember only 3 things:**
@@ -1149,5 +1183,7 @@ Target CI time: < 5 minutes.
 ### 🔗 Related Keywords
 
 **Prerequisites:** JUnit 5, Mockito
+
 **Builds on:** All previous testing keywords
+
 **Related:** Test Pyramid, CI/CD, Code Coverage

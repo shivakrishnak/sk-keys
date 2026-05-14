@@ -80,7 +80,9 @@ AOP is the foundation of `@Transactional`, `@Cacheable`, `@Async`, `@Secured`, a
 From invariant 1: `@Transactional`, `@Cacheable` do not work on self-invocation. From invariant 2: private/protected methods cannot be advised. From invariant 3: Spring AOP is simpler but less powerful than AspectJ.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Clean separation of cross-cutting concerns. Business code is pure.
+
 **Cost:** Proxy overhead (minimal). Self-invocation trap. Hidden behavior (magic).
 
 ---
@@ -208,8 +210,10 @@ public Object advise(
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "AOP is for logging and transactions."
-A Staff says: "I understand that `@Transactional`, `@Cacheable`, `@Async`, `@Retryable`, and `@PreAuthorize` all use AOP proxies. The self-invocation limitation applies to ALL of them. I choose between Spring AOP (runtime, method-only) and AspectJ (compile-time, full power) based on needs. For production aspects, I use `@Around` with proper exception handling and metrics."
+
+**A Senior says:** "AOP is for logging and transactions."
+
+**A Staff says:** "I understand that `@Transactional`, `@Cacheable`, `@Async`, `@Retryable`, and `@PreAuthorize` all use AOP proxies. The self-invocation limitation applies to ALL of them. I choose between Spring AOP (runtime, method-only) and AspectJ (compile-time, full power) based on needs. For production aspects, I use `@Around` with proper exception handling and metrics."
 
 ---
 
@@ -270,9 +274,13 @@ public User findById(Long id) {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Proxy-based method interception for cross-cutting concerns.
+
 **KEY INSIGHT:** Foundation of @Transactional, @Cacheable, @Async. Self-invocation bypasses proxy.
+
 **ANTI-PATTERN:** Using AOP for business logic. Overusing aspects (hidden behavior).
+
 **ONE-LINER:** "Proxy intercepts method calls; advice runs before/after/around."
+
 **TRIGGER PHRASE:** "Proxy-based, self-invocation limitation."
 
 **If you remember only 3 things:**
@@ -330,7 +338,9 @@ Fixes: inject self (call through proxy), extract to separate bean, or use Aspect
 ### 🔗 Related Keywords
 
 **Prerequisites:** IoC Container, Bean Lifecycle
+
 **Builds on:** Transaction Management, Caching, Security
+
 **Alternatives:** AspectJ (compile-time), Java Interceptors (Jakarta CDI)
 
 ---
@@ -439,8 +449,11 @@ Important: `@Order` only controls ordering BETWEEN aspects. Multiple advice meth
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Controlling execution order of multiple aspects on the same method.
+
 **KEY INSIGHT:** Lower @Order = runs first on entry, last on exit (nesting).
+
 **ANTI-PATTERN:** Relying on default order. Not controlling security vs transaction ordering.
+
 **ONE-LINER:** "Security(1) wraps Transaction(2) wraps Logging(3) = nested execution."
 
 **If you remember only 3 things:**
@@ -465,7 +478,9 @@ Typical order: Security (1) -> Transaction (2) -> Caching (3) -> Logging (4).
 ### 🔗 Related Keywords
 
 **Prerequisites:** AOP Concepts and Proxies
+
 **Builds on:** Transaction Management, Caching, Security
+
 **Alternatives:** Servlet Filter ordering (@Order on FilterRegistrationBean)
 
 ---
@@ -570,8 +585,11 @@ public ExternalData fallback(
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Standard patterns where AOP eliminates cross-cutting boilerplate.
+
 **KEY INSIGHT:** @Transactional, @Cacheable, @Async, @Retryable are all AOP aspects.
+
 **ANTI-PATTERN:** Using AOP for business logic (should be explicit code, not hidden).
+
 **ONE-LINER:** "If it is duplicated in 100 methods and is not business logic, use AOP."
 
 **If you remember only 3 things:**
@@ -602,7 +620,9 @@ All share the same proxy mechanism and self-invocation limitation.
 ### 🔗 Related Keywords
 
 **Prerequisites:** AOP Concepts and Proxies
+
 **Builds on:** Transaction Management, Caching, Security
+
 **Related:** Micrometer, Spring Retry, Spring Cache
 
 ---
@@ -730,8 +750,10 @@ public class OrderService {
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Self-invocation is a known Spring issue."
-A Staff says: "I design services so transactional boundaries are at the public API level. Internal helper methods do not need `@Transactional` because the caller's transaction propagates. When I must call a transactional method internally, I extract it to a separate bean (cleaner than self-injection). I review code for this pattern during PRs."
+
+**A Senior says:** "Self-invocation is a known Spring issue."
+
+**A Staff says:** "I design services so transactional boundaries are at the public API level. Internal helper methods do not need `@Transactional` because the caller's transaction propagates. When I must call a transactional method internally, I extract it to a separate bean (cleaner than self-injection). I review code for this pattern during PRs."
 
 ---
 
@@ -790,9 +812,13 @@ public class PaymentExecutor {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** The #1 Spring AOP bug - self-invocation bypasses proxy.
+
 **KEY INSIGHT:** this.method() skips proxy. @Transactional, @Cacheable, @Async all affected.
+
 **FIX:** Extract to separate bean (cleanest) or inject self.
+
 **ONE-LINER:** "this.method() = no proxy = no AOP. Always call through the proxy."
+
 **TRIGGER PHRASE:** "Self-invocation bypass."
 
 **If you remember only 3 things:**
@@ -817,7 +843,9 @@ Fix: extract the method to a separate bean so the call goes through the proxy, o
 ### 🔗 Related Keywords
 
 **Prerequisites:** AOP Concepts and Proxies
+
 **Builds on:** Transaction Management, Caching
+
 **Related:** AspectJ (compile-time weaving has no self-invocation issue)
 
 ---
@@ -975,8 +1003,10 @@ public void deleteUser(Long userId) { }
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Create a custom annotation and match it with `@annotation()`."
-A Staff says: "I design a library of custom AOP annotations (@Timed, @RateLimit, @Audit, @Retry) that encapsulate infrastructure concerns as a shared library. Each annotation has configurable parameters. Aspects are ordered correctly. The annotations are self-documenting - developers see exactly what cross-cutting behavior applies."
+
+**A Senior says:** "Create a custom annotation and match it with `@annotation()`."
+
+**A Staff says:** "I design a library of custom AOP annotations (@Timed, @RateLimit, @Audit, @Retry) that encapsulate infrastructure concerns as a shared library. Each annotation has configurable parameters. Aspects are ordered correctly. The annotations are self-documenting - developers see exactly what cross-cutting behavior applies."
 
 ---
 
@@ -1017,8 +1047,11 @@ public Order placeOrder(OrderReq req) {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** User-defined annotations backed by AOP aspects for declarative cross-cutting.
+
 **KEY INSIGHT:** Annotations are the API. Aspects are the implementation. Decoupled and reusable.
+
 **ANTI-PATTERN:** Aspect without annotation (invisible behavior). Over-annotating methods.
+
 **ONE-LINER:** "Custom annotation + @Aspect = reusable declarative infrastructure."
 
 **If you remember only 3 things:**
@@ -1047,5 +1080,7 @@ The annotation parameter (`timed`) in the pointcut expression gives access to an
 ### 🔗 Related Keywords
 
 **Prerequisites:** AOP Concepts and Proxies, Java Annotations
+
 **Builds on:** Common AOP Use Cases
+
 **Related:** Micrometer @Timed, Spring Retry @Retryable

@@ -77,7 +77,9 @@ Spring Security is "secure by default" - adding the dependency locks down ALL en
 3. The `SecurityContext` (holding the authenticated principal) is thread-local. It is set after authentication and available everywhere in the request thread.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Centralized, declarative security. Secure by default.
+
 **Cost:** Complex filter chain is hard to debug. Steep learning curve for customization.
 
 ---
@@ -237,8 +239,10 @@ public class ApiKeyFilter
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Configure Spring Security with `HttpSecurity`."
-A Staff says: "I design separate `SecurityFilterChain` beans for API (stateless, JWT) and web (stateful, form login). I customize the filter chain by inserting custom filters at specific positions. I understand that security filters run outside DispatcherServlet, so `@ControllerAdvice` does not catch security exceptions - I configure `AuthenticationEntryPoint` and `AccessDeniedHandler` instead."
+
+**A Senior says:** "Configure Spring Security with `HttpSecurity`."
+
+**A Staff says:** "I design separate `SecurityFilterChain` beans for API (stateless, JWT) and web (stateful, form login). I customize the filter chain by inserting custom filters at specific positions. I understand that security filters run outside DispatcherServlet, so `@ControllerAdvice` does not catch security exceptions - I configure `AuthenticationEntryPoint` and `AccessDeniedHandler` instead."
 
 ---
 
@@ -299,9 +303,13 @@ public List<User> getUsers() {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Filter-chain-based security framework for authentication and authorization.
+
 **KEY INSIGHT:** Secure by default - lock down everything, then open specific paths.
+
 **ANTI-PATTERN:** Manual auth checks in controllers. Disabling CSRF without understanding why.
+
 **ONE-LINER:** "Filter chain authenticates and authorizes before DispatcherServlet."
+
 **TRIGGER PHRASE:** "SecurityFilterChain, secure by default."
 
 **If you remember only 3 things:**
@@ -372,7 +380,9 @@ http.exceptionHandling(e -> e
 ### 🔗 Related Keywords
 
 **Prerequisites:** Servlet Filters, DispatcherServlet
+
 **Builds on:** Authentication and Authorization, JWT
+
 **Alternatives:** Apache Shiro, Jakarta Security
 
 ---
@@ -559,8 +569,10 @@ public class LdapAuthProvider
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use `hasRole()` for authorization."
-A Staff says: "I design a permission model: roles group authorities, authorities map to operations (resource:action). URL-level authorization for coarse access, method-level `@PreAuthorize` for fine-grained. Custom `PermissionEvaluator` for domain-object-level security (can user X edit project Y?)."
+
+**A Senior says:** "Use `hasRole()` for authorization."
+
+**A Staff says:** "I design a permission model: roles group authorities, authorities map to operations (resource:action). URL-level authorization for coarse access, method-level `@PreAuthorize` for fine-grained. Custom `PermissionEvaluator` for domain-object-level security (can user X edit project Y?)."
 
 ---
 
@@ -599,9 +611,13 @@ public User get(@PathVariable Long id) {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Authentication = identity verification. Authorization = permission checking.
+
 **KEY INSIGHT:** Roles group authorities. Use fine-grained authorities for real apps.
+
 **ANTI-PATTERN:** Checking roles in business logic. Mixing auth and authz.
+
 **ONE-LINER:** "AuthN = who, AuthZ = what. Spring separates them with Manager interfaces."
+
 **TRIGGER PHRASE:** "UserDetailsService for auth, authorities for authz."
 
 **If you remember only 3 things:**
@@ -649,7 +665,9 @@ PermissionEvaluator checks: user.tenantId == project.tenantId AND user has proje
 ### 🔗 Related Keywords
 
 **Prerequisites:** Spring Security Architecture, Servlet Filters
+
 **Builds on:** JWT, OAuth2
+
 **Alternatives:** Apache Shiro, Keycloak
 
 ---
@@ -831,8 +849,10 @@ Token revocation strategies:
 | Refresh token rotation | Detect token theft       |
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use JWT for stateless authentication."
-A Staff says: "I use short-lived access tokens (15 min) with refresh token rotation. Access tokens are validated by signature only (stateless). Refresh tokens are stored in the database for revocation. I use RS256 (asymmetric) so resource servers validate without knowing the signing key. Custom claims map to authorities via `JwtAuthenticationConverter`."
+
+**A Senior says:** "Use JWT for stateless authentication."
+
+**A Staff says:** "I use short-lived access tokens (15 min) with refresh token rotation. Access tokens are validated by signature only (stateless). Refresh tokens are stored in the database for revocation. I use RS256 (asymmetric) so resource servers validate without knowing the signing key. Custom claims map to authorities via `JwtAuthenticationConverter`."
 
 ---
 
@@ -872,9 +892,13 @@ public ResponseEntity<Void> login(
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** Signed tokens encoding identity and authorities for stateless authentication.
+
 **KEY INSIGHT:** Stateless = no server-side session. Trade-off: revocation is hard.
+
 **ANTI-PATTERN:** Storing JWT in localStorage (XSS). Using HMAC when asymmetric is needed.
+
 **ONE-LINER:** "Short access token + refresh token rotation = secure stateless auth."
+
 **TRIGGER PHRASE:** "RS256, short expiry, refresh rotation."
 
 **If you remember only 3 things:**
@@ -929,7 +953,9 @@ Config: `oauth2ResourceServer(o -> o.jwt(...))` with `issuer-uri` pointing to th
 ### 🔗 Related Keywords
 
 **Prerequisites:** Spring Security Architecture, HTTP Headers
+
 **Builds on:** OAuth2 and OpenID Connect
+
 **Alternatives:** Session-based auth, SAML, API Keys
 
 ---
@@ -1094,8 +1120,10 @@ RegisteredClientRepository clients() {
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use OAuth2 for social login."
-A Staff says: "I design the auth architecture: Keycloak as the central authorization server, Authorization Code + PKCE for web/mobile clients, Client Credentials for service-to-service, and JWT validation at each resource server via JWKS endpoint. Token scopes map to fine-grained authorities. Refresh token rotation detects token theft."
+
+**A Senior says:** "Use OAuth2 for social login."
+
+**A Staff says:** "I design the auth architecture: Keycloak as the central authorization server, Authorization Code + PKCE for web/mobile clients, Client Credentials for service-to-service, and JWT validation at each resource server via JWKS endpoint. Token scopes map to fine-grained authorities. Refresh token rotation detects token theft."
 
 ---
 
@@ -1129,9 +1157,13 @@ public void syncCalendar(
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** OAuth2 = delegated authorization. OIDC = identity layer on top.
+
 **KEY INSIGHT:** OAuth2 is for authorization (access), OIDC is for authentication (identity).
+
 **ANTI-PATTERN:** Using Resource Owner Password grant. Storing third-party passwords.
+
 **ONE-LINER:** "Authorization Code + PKCE for users. Client Credentials for services."
+
 **TRIGGER PHRASE:** "OAuth2 for delegation, OIDC for identity."
 
 **If you remember only 3 things:**
@@ -1176,7 +1208,9 @@ PKCE extension: client generates code_verifier and code_challenge. Eliminates ne
 ### 🔗 Related Keywords
 
 **Prerequisites:** HTTP, JWT, Spring Security Architecture
+
 **Builds on:** Method-Level Security (authorities from token claims)
+
 **Alternatives:** SAML (enterprise SSO), API Keys (simple machine auth)
 
 ---
@@ -1309,8 +1343,10 @@ public void update(Project project) { }
 ```
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use `@PreAuthorize` with role checks."
-A Staff says: "I implement a custom `PermissionEvaluator` for domain-object-level authorization (can user X edit project Y?). URL security handles coarse access. Method security handles fine-grained business rules. SpEL expressions reference method parameters and authentication for dynamic authorization."
+
+**A Senior says:** "Use `@PreAuthorize` with role checks."
+
+**A Staff says:** "I implement a custom `PermissionEvaluator` for domain-object-level authorization (can user X edit project Y?). URL security handles coarse access. Method security handles fine-grained business rules. SpEL expressions reference method parameters and authentication for dynamic authorization."
 
 ---
 
@@ -1349,9 +1385,13 @@ public User getProfile(Long userId) {
 ### 📌 Quick Reference Card
 
 **WHAT IT IS:** AOP-based method-level authorization with SpEL expressions.
+
 **KEY INSIGHT:** Fine-grained access control beyond URL patterns. Can reference method params.
+
 **ANTI-PATTERN:** Manual SecurityContext checks in service methods.
+
 **ONE-LINER:** "@PreAuthorize with SpEL = fine-grained authz at method level."
+
 **TRIGGER PHRASE:** "Method security, PermissionEvaluator."
 
 **If you remember only 3 things:**
@@ -1393,5 +1433,7 @@ For performance: cache permission lookups (user-project pairs change infrequentl
 ### 🔗 Related Keywords
 
 **Prerequisites:** Spring Security Architecture, Authentication and Authorization
+
 **Builds on:** AOP (proxy-based interception)
+
 **Alternatives:** URL-level authorizeHttpRequests (coarser)

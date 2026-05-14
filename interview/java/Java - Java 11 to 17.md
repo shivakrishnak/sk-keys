@@ -86,11 +86,15 @@ Java 10 introduced `var` for local variables with initializers. Java 11 extended
 Because var is compile-time only, bytecode is identical to explicit type declarations. Because an initializer is required, `var x;` is illegal. Because the concrete type is inferred, `var list = new ArrayList<String>()` infers `ArrayList<String>`, not `List<String>` - this can accidentally expose implementation types.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Less verbosity, especially with generics; code reads closer to pseudocode
+
 **Cost:** Inferred type may not be what you intend (concrete vs interface); readability depends on good variable naming
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Balancing type explicitness with verbosity is a real language design tension
+
 **Accidental:** Java's verbose generic syntax makes type inference more valuable than in languages with lighter type syntax
 
 ---
@@ -142,9 +146,12 @@ The compiler performs type inference on the initializer expression and assigns t
 Style guidelines: use var when the type is obvious from the right-hand side (`var reader = new BufferedReader(...)`) or when the type is long generic (`var map = service.getEmployeesByDepartment()`). Avoid var when the type is not obvious (`var result = calculate()` - what type is result?). The concrete-vs-interface trap: `var list = new ArrayList<>()` infers `ArrayList`, not `List` - this leaks implementation. Fix: `var list = List.of(1, 2, 3)` or explicitly type when the interface matters. In lambdas (Java 11): `(var x, var y) -> x + y` enables `(@Nonnull var x, @Nonnull var y) -> x + y` for annotations.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use var to reduce boilerplate in local variables."
-A Staff says: "I establish team guidelines for var: use when the type is apparent from the initializer (constructors, factory methods, literals), avoid when method names do not reveal the return type, and never let var hide the distinction between interface and implementation types. `var` is a readability tool, not a typing shortcut - if removing the explicit type makes the reader uncertain, keep the type."
-The difference: Staff engineers treat var as a readability decision, not a verbosity reduction.
+
+**A Senior says:** "Use var to reduce boilerplate in local variables."
+
+**A Staff says:** "I establish team guidelines for var: use when the type is apparent from the initializer (constructors, factory methods, literals), avoid when method names do not reveal the return type, and never let var hide the distinction between interface and implementation types. `var` is a readability tool, not a typing shortcut - if removing the explicit type makes the reader uncertain, keep the type."
+
+**The difference:** Staff engineers treat var as a readability decision, not a verbosity reduction.
 
 **Level 5 - Distinguished (expert thinking):**
 Java's var is more conservative than similar features in other languages. Kotlin has `val` (immutable) and `var` (mutable); Scala has `val` and `var`; C# has `var` and now `const`. Java chose not to add `val` (immutable inference) and not to extend var to fields or return types, maintaining explicit API contracts. This conservatism reflects Java's design philosophy: local inference for implementation, explicit types for API boundaries. The distinction between "implementation detail" (local vars - infer) and "API contract" (fields, params, returns - explicit) is a design principle worth applying in any language.
@@ -302,8 +309,11 @@ No special testing needed - var is compile-time only. If code compiles, var reso
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Concrete type leakage**
+
 **Symptom:** Code accidentally depends on implementation type (ArrayList) instead of interface (List), making refactoring harder.
+
 **Root Cause:** `var list = new ArrayList<String>()` infers `ArrayList<String>`, exposing implementation-specific methods.
+
 **Diagnostic:**
 
 ```java
@@ -314,11 +324,15 @@ list.trimToSize(); // ArrayList-only!
 ```
 
 **Fix:** BAD: using var and hoping no one calls implementation methods. GOOD: use explicit type when the interface matters: `List<String> list = new ArrayList<>()`. Or use factory: `var list = List.of("a", "b")` (returns List).
+
 **Prevention:** Code review rule: when the interface type matters, use explicit declaration.
 
 **Failure Mode 2: Diamond operator produces Object**
+
 **Symptom:** Generic methods on the collection return Object instead of the expected type. Casts are needed downstream.
+
 **Root Cause:** `var list = new ArrayList<>()` - the diamond operator cannot infer type parameters without a target type.
+
 **Diagnostic:**
 
 ```java
@@ -329,11 +343,15 @@ String s = list.get(0); // compile error!
 ```
 
 **Fix:** BAD: casting after get(). GOOD: specify type in constructor: `var list = new ArrayList<String>()` or use explicit type: `List<String> list = new ArrayList<>()`.
+
 **Prevention:** Never combine var with the diamond operator without explicit type arguments.
 
 **Failure Mode 3: Unreadable method chains**
+
 **Symptom:** Code reviewers cannot determine variable types without IDE support. Bug introduced because developer assumed wrong inferred type.
+
 **Root Cause:** var used with methods whose return type is not obvious from the name.
+
 **Diagnostic:**
 
 ```java
@@ -344,6 +362,7 @@ var output = result.transform();
 ```
 
 **Fix:** BAD: adding comments explaining the type. GOOD: use explicit types when the method name does not reveal the return type, or rename methods to be more descriptive.
+
 **Prevention:** Team guideline: use var only when the right-hand side clearly indicates the type (constructors, well-named factory methods, literals).
 
 ---
@@ -567,11 +586,15 @@ JEP 355 previewed text blocks in Java 13, finalized in Java 15 (JEP 378). The de
 Because they produce standard Strings, text blocks work everywhere strings work. Because indentation is stripped automatically, text blocks can be indented to match surrounding code without affecting content. Because line endings are normalized, text blocks produce consistent output across platforms.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Readable multi-line strings, no escape noise, WYSIWYG formatting
+
 **Cost:** No string interpolation (must use .formatted()), trailing whitespace silently stripped
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Multi-line text embedding is a real programming need (SQL, JSON, HTML)
+
 **Accidental:** Java's single-line string literal syntax forces concatenation and escaping for multi-line content
 
 ---
@@ -628,9 +651,12 @@ The compiler processes text blocks in three steps: (1) normalize line endings to
 Use text blocks for SQL queries (readable, copy-pasteable to SQL tools), JSON test fixtures (paste directly from API docs), HTML email templates, and configuration snippets. Combine with `.formatted()` for parameterized templates. Text blocks make queries greppable - search for "SELECT.\*FROM employees" across the codebase. Trailing whitespace is stripped (use `\s` to preserve). The result always ends with `\n` if the closing `"""` is on its own line. For JSON templates in tests, text blocks eliminate the need for resource files for small fixtures.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use text blocks for multi-line strings."
-A Staff says: "I use text blocks strategically: SQL as text blocks makes them greppable and copy-pasteable to database tools. JSON fixtures as text blocks makes test data readable. I keep large templates in resource files. I position the closing `\"\"\"` deliberately to control indentation, and combine with `.formatted()` for parameterization."
-The difference: Staff engineers use text blocks as a readability and maintainability tool, not just a syntax shortcut.
+
+**A Senior says:** "Use text blocks for multi-line strings."
+
+**A Staff says:** "I use text blocks strategically: SQL as text blocks makes them greppable and copy-pasteable to database tools. JSON fixtures as text blocks makes test data readable. I keep large templates in resource files. I position the closing `\"\"\"` deliberately to control indentation, and combine with `.formatted()` for parameterization."
+
+**The difference:** Staff engineers use text blocks as a readability and maintainability tool, not just a syntax shortcut.
 
 **Level 5 - Distinguished (expert thinking):**
 Text blocks represent Java's incremental approach to string modernization. Kotlin has string templates, Python has f-strings, C# has interpolated strings. Java chose to add text blocks first (formatting) and defer string templates (interpolation). The indentation stripping algorithm is unique - Python's `textwrap.dedent()` is a runtime function, while Java's is compile-time. The `\s` and `\` escape sequences were invented specifically for text blocks.
@@ -793,8 +819,11 @@ The closing `"""` is the most important part of a text block - more important th
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Unexpected indentation in output**
+
 **Symptom:** Output string has more or fewer leading spaces than expected. SQL or JSON formatting is wrong.
+
 **Root Cause:** Closing `"""` is positioned at a different indentation level than intended.
+
 **Diagnostic:**
 
 ```java
@@ -807,11 +836,15 @@ String s = """
 ```
 
 **Fix:** BAD: manually adding/removing spaces. GOOD: align the closing `"""` with the leftmost content line.
+
 **Prevention:** Understand that the closing delimiter acts as the "left margin ruler."
 
 **Failure Mode 2: Trailing whitespace silently stripped**
+
 **Symptom:** YAML, Markdown, or whitespace-sensitive output is missing expected trailing spaces.
+
 **Root Cause:** Text blocks strip trailing whitespace from each line by default.
+
 **Diagnostic:**
 
 ```java
@@ -822,11 +855,15 @@ String yaml = """
 ```
 
 **Fix:** BAD: relying on invisible trailing spaces. GOOD: use `\s` at the end of lines where trailing whitespace matters.
+
 **Prevention:** Use `\s` explicitly for any line where trailing whitespace is semantically important.
 
 **Failure Mode 3: Missing or extra trailing newline**
+
 **Symptom:** String does not end with a newline when expected, or has an extra newline.
+
 **Root Cause:** If closing `"""` is on same line as last content, no trailing newline. If on its own line, trailing newline is added.
+
 **Diagnostic:**
 
 ```java
@@ -840,6 +877,7 @@ String b = """
 ```
 
 **Fix:** BAD: adding `\n` manually. GOOD: place closing `"""` on its own line for trailing newline, on same line to omit it.
+
 **Prevention:** Be deliberate about closing `"""` placement.
 
 ---
@@ -1060,11 +1098,15 @@ JEP 325 previewed switch expressions in Java 12, finalized in Java 14 (JEP 361).
 Because arrow syntax prevents fall-through, accidental case bleed is impossible. Because expressions must be exhaustive, the compiler catches missing cases at compile time. Because `yield` exists, complex logic can be enclosed in a block while still producing a value. Together, these make switch safe, complete, and expressive.
 
 **THE TRADE-OFFS:**
+
 **Gain:** No fall-through bugs, compile-time completeness checking, switch as expression
+
 **Cost:** Learning new syntax, migrating existing switch statements, default branch hides new enum values
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Multi-way branching with value production is a fundamental programming need
+
 **Accidental:** Fall-through behavior in C-style switch was a design mistake inherited from C
 
 ---
@@ -1122,9 +1164,12 @@ Switch expressions compile to the same bytecode structures as traditional switch
 In production: prefer switch expressions over if-else chains for enum and sealed type handling. Avoid default branches with enums if you want compile-time notification when new values are added. With sealed classes, omit default to get exhaustiveness checking: `switch (shape) { case Circle c -> ...; case Rectangle r -> ...; }` - adding a new permitted subtype forces all switches to be updated. Use switch expressions for mapping enums to values: `toDto()`, `toLabel()`, `priority()`. In Spring, use switch expressions in converters and mappers. For pattern matching (Java 21): `switch (obj) { case String s -> ...; case Integer i -> ...; }` combines type checking and casting.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Use switch expressions for cleaner enum handling."
-A Staff says: "I design type hierarchies with sealed classes specifically to leverage exhaustive switch expressions. When I add a new payment type to our sealed hierarchy, the compiler tells me every place in the codebase that needs updating. I deliberately omit default branches on sealed types so the compiler enforces completeness. This is not just syntax sugar - it is a design pattern for safe extensibility."
-The difference: Staff engineers use exhaustive switch as an architectural tool for safe evolution, not just cleaner syntax.
+
+**A Senior says:** "Use switch expressions for cleaner enum handling."
+
+**A Staff says:** "I design type hierarchies with sealed classes specifically to leverage exhaustive switch expressions. When I add a new payment type to our sealed hierarchy, the compiler tells me every place in the codebase that needs updating. I deliberately omit default branches on sealed types so the compiler enforces completeness. This is not just syntax sugar - it is a design pattern for safe extensibility."
+
+**The difference:** Staff engineers use exhaustive switch as an architectural tool for safe evolution, not just cleaner syntax.
 
 **Level 5 - Distinguished (expert thinking):**
 Switch expressions are Java's step toward algebraic data types and pattern matching, inspired by Scala's match expressions, Rust's match, and Haskell's case expressions. The combination of sealed classes + records + pattern matching switch creates a powerful discriminated union pattern. Java 21's guarded patterns (`case String s when s.length() > 5 ->`) add expressiveness comparable to Scala's pattern guards. The key insight is that switch expressions with sealed types provide the same safety guarantees as the Visitor pattern but with dramatically less boilerplate.
@@ -1297,8 +1342,11 @@ Adding a `default` branch to a switch expression on an enum is often a bug, not 
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Default branch hiding new enum values**
+
 **Symptom:** New enum value is silently handled by default branch. Business logic applies wrong behavior to the new value.
+
 **Root Cause:** Switch expression on enum includes a default branch, suppressing the compiler's exhaustiveness check.
+
 **Diagnostic:**
 
 ```java
@@ -1312,11 +1360,15 @@ String label = switch (status) {
 ```
 
 **Fix:** BAD: keeping default and hoping developers grep for switch statements. GOOD: remove default and handle all enum values explicitly. The compiler will force updates when new values are added.
+
 **Prevention:** Code review rule: no default on enum/sealed type switches unless deliberately handling unknown values (e.g., from deserialization).
 
 **Failure Mode 2: Missing yield in multi-statement block**
+
 **Symptom:** Compile error: "switch expression does not yield a value."
+
 **Root Cause:** Block body (`{}`) in switch expression case does not end with a `yield` statement.
+
 **Diagnostic:**
 
 ```java
@@ -1329,11 +1381,15 @@ String label = switch (status) {
 ```
 
 **Fix:** BAD: converting to switch statement. GOOD: add `yield` as the last statement in the block: `yield "Active";`.
+
 **Prevention:** Remember: single expression uses `->`, multi-statement uses `-> { ... yield value; }`.
 
 **Failure Mode 3: Mixing arrow and colon syntax**
+
 **Symptom:** Compile error: "different case kinds used in the switch."
+
 **Root Cause:** Trying to use both `->` (arrow) and `:` (colon) syntax in the same switch.
+
 **Diagnostic:**
 
 ```java
@@ -1345,6 +1401,7 @@ switch (day) {
 ```
 
 **Fix:** BAD: mixing for different behaviors. GOOD: use one syntax consistently. Prefer arrow for switch expressions, colon only for intentional fall-through in switch statements.
+
 **Prevention:** Establish team convention: always use arrow syntax unless fall-through is intentionally needed.
 
 ---
@@ -1592,11 +1649,15 @@ A **Record** (Java 16) is a restricted class that models immutable data. Declare
 Because records are transparent data carriers, the compiler can auto-generate accessors, equals, hashCode, and toString. Because they are immutable and final, they are safe to share across threads. Because their state is in the header, pattern matching can destructure them: `case Point(int x, int y) ->`.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Zero boilerplate for data classes, correct equals/hashCode by construction, pattern matching support
+
 **Cost:** No inheritance (final), no mutable state, cannot declare instance fields beyond components
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Data classes need fields, equality, hashing, and string representation
+
 **Accidental:** Writing 50+ lines of boilerplate for each data class was entirely accidental
 
 ---
@@ -1647,9 +1708,12 @@ At the bytecode level, records compile to regular classes with the `ACC_RECORD` 
 Use records for DTOs, API responses, configuration values, event payloads, and value objects in DDD. Use compact constructors for validation: `record Age(int value) { Age { if (value < 0) throw new IllegalArgumentException(); } }`. Records work well with Jackson (add `@JsonProperty` on components), Spring (constructor binding for `@ConfigurationProperties`), and JPA (as projection DTOs, not entities). Records are not JPA entities because entities require no-arg constructors and mutable state. Records support local declarations (inside methods) for throwaway data grouping. With sealed interfaces, records form algebraic data types: `sealed interface Shape permits Circle, Rectangle {}; record Circle(double r) implements Shape {}`.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Records reduce boilerplate for data classes."
-A Staff says: "Records are a semantic declaration that a class is nothing more than its data. I use them with sealed interfaces to build algebraic data types - the combination of sealed + records + pattern matching switch gives us Scala-like expressiveness with Java's type safety. I design APIs where the record header IS the contract - clients can destructure, pattern match, and reason about the data without looking at the implementation."
-The difference: Staff engineers see records as part of an algebraic type system, not just boilerplate reduction.
+
+**A Senior says:** "Records reduce boilerplate for data classes."
+
+**A Staff says:** "Records are a semantic declaration that a class is nothing more than its data. I use them with sealed interfaces to build algebraic data types - the combination of sealed + records + pattern matching switch gives us Scala-like expressiveness with Java's type safety. I design APIs where the record header IS the contract - clients can destructure, pattern match, and reason about the data without looking at the implementation."
+
+**The difference:** Staff engineers see records as part of an algebraic type system, not just boilerplate reduction.
 
 **Level 5 - Distinguished (expert thinking):**
 Records represent Java's move toward algebraic data types and product types (complement to sealed classes as sum types). The invokedynamic-based equals/hashCode is not just efficient - it is forward-compatible: the JVM can optimize it as new strategies emerge. Records enable "data-oriented programming" in Java: model data as immutable records, behavior as methods on sealed interfaces, and dispatch via pattern matching. This paradigm shift from OOP (behavior in objects) to DOP (data separate from behavior) mirrors trends in Kotlin, Rust, and functional programming.
@@ -1835,8 +1899,11 @@ Records use `invokedynamic` for equals(), hashCode(), and toString() rather than
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Mutable component corruption**
+
 **Symptom:** Record used as HashMap key returns wrong values after the component List is modified externally.
+
 **Root Cause:** Record component holds a reference to a mutable object. hashCode changes when the mutable object is modified.
+
 **Diagnostic:**
 
 ```java
@@ -1848,11 +1915,15 @@ map.get(rec);   // null - hash changed!
 ```
 
 **Fix:** BAD: assuming record fields are deeply immutable. GOOD: use defensive copies in compact constructor: `MyRecord { list = List.copyOf(list); }`.
+
 **Prevention:** Always use immutable collections in record components. Use compact constructors for defensive copying.
 
 **Failure Mode 2: Using records as JPA entities**
+
 **Symptom:** Hibernate throws `InstantiationException: No default constructor for entity`.
+
 **Root Cause:** JPA requires a no-arg constructor for proxy creation and mutable setters for hydration. Records have neither.
+
 **Diagnostic:**
 
 ```java
@@ -1863,11 +1934,15 @@ record User(Long id, String name) {}
 ```
 
 **Fix:** BAD: trying to make records work with JPA entities. GOOD: use records as DTO projections: `interface UserProjection { String name(); }` or JPQL constructor expressions: `new UserDto(u.id, u.name)`.
+
 **Prevention:** Use records for DTOs and value objects, regular classes for JPA entities.
 
 **Failure Mode 3: Overriding equals without all components**
+
 **Symptom:** Two records with different field values compare as equal because custom equals ignores some components.
+
 **Root Cause:** Developer overrides equals() to compare only a subset of components, breaking the record contract.
+
 **Diagnostic:**
 
 ```java
@@ -1883,6 +1958,7 @@ record Order(long id, String item, int qty) {
 ```
 
 **Fix:** BAD: partial equality that breaks the record contract. GOOD: let the compiler generate equals, or if you override, include all components.
+
 **Prevention:** Avoid overriding equals/hashCode on records. If you need custom equality, use a regular class.
 
 ---
@@ -2118,11 +2194,15 @@ Before sealed types, Java had only two extremes: `final` (no extension) or open 
 Because the compiler knows every subtype, switch expressions can be exhaustive without default. Because subtypes must be final, sealed, or non-sealed, the hierarchy is explicitly controlled at every level. Because sealed types are declared in source code (not configuration), the constraint is part of the API contract.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Exhaustive pattern matching, controlled hierarchies, compile-time completeness
+
 **Cost:** All permitted subtypes must be in the same package (or module), less flexible extension
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Some type hierarchies are inherently closed (a shape is a circle, rectangle, or triangle)
+
 **Accidental:** Java's binary open/final extension model was too coarse
 
 ---
@@ -2180,9 +2260,12 @@ The sealed modifier is stored in the class file as `ACC_SEALED` with a `Permitte
 Use sealed types for domain models where the set of variants is inherently fixed: payment outcomes (Success, Failure, Pending), AST nodes, command types, event hierarchies. In Spring, sealed types work with Jackson polymorphic deserialization using `@JsonSubTypes`. Sealed interfaces in different modules require the permits clause to list subtypes in the module's `exports` or `opens`. Design hierarchies with sealed interfaces at the top, records as leaf nodes, and sealed abstract classes for shared behavior in the middle. The three-modifier rule (final/sealed/non-sealed) lets you create cascading restrictions: `sealed Vehicle permits Car, Truck` where `sealed Car permits Sedan, SUV` creates a multi-level restricted hierarchy.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Sealed classes restrict who can extend a type."
-A Staff says: "Sealed classes are Java's sum types - they model 'one of N' relationships. I design domain models as sealed hierarchies with records, then use exhaustive switch for dispatch. When someone adds a new variant, the compiler shows them every place that needs updating. This is the closed-world assumption that makes algebraic data types safe. I choose sealed over enum when variants carry different data, and over open interfaces when the set of implementations is domain-fixed."
-The difference: Staff engineers see sealed types as sum types in a type-theoretic sense, not just restricted inheritance.
+
+**A Senior says:** "Sealed classes restrict who can extend a type."
+
+**A Staff says:** "Sealed classes are Java's sum types - they model 'one of N' relationships. I design domain models as sealed hierarchies with records, then use exhaustive switch for dispatch. When someone adds a new variant, the compiler shows them every place that needs updating. This is the closed-world assumption that makes algebraic data types safe. I choose sealed over enum when variants carry different data, and over open interfaces when the set of implementations is domain-fixed."
+
+**The difference:** Staff engineers see sealed types as sum types in a type-theoretic sense, not just restricted inheritance.
 
 **Level 5 - Distinguished (expert thinking):**
 Sealed types are Java's answer to algebraic data types (ADTs), completing the expression problem solution alongside records (product types). The combination of sealed (sum) + records (product) + pattern matching (dispatch) gives Java the same power as Rust enums, Scala sealed traits, and Haskell data types. The `non-sealed` escape hatch is unique to Java's design - it acknowledges that some branches of a hierarchy need to remain open while the root remains closed. This is a pragmatic compromise between pure ADTs and Java's existing open-world OOP ecosystem.
@@ -2371,8 +2454,11 @@ Sealed classes are enforced at the JVM level, not just at compile time. If a cla
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Permitted subtypes in wrong package**
+
 **Symptom:** Compile error: "class is not allowed to extend sealed class from another package."
+
 **Root Cause:** Permitted subtypes must be in the same package (without modules) or same module (with JPMS).
+
 **Diagnostic:**
 
 ```
@@ -2385,11 +2471,15 @@ record Circle(double r) implements Shape {}
 ```
 
 **Fix:** BAD: moving to same package reluctantly and polluting namespace. GOOD: use Java modules - sealed types and permitted subtypes can be in different packages within the same module.
+
 **Prevention:** Design sealed hierarchies within a single package or adopt JPMS modules.
 
 **Failure Mode 2: Missing modifier on permitted subtype**
+
 **Symptom:** Compile error: "permitted subtype must be final, sealed, or non-sealed."
+
 **Root Cause:** Every directly permitted subtype must explicitly declare its extension strategy.
+
 **Diagnostic:**
 
 ```java
@@ -2400,11 +2490,15 @@ class Circle implements Shape {}
 ```
 
 **Fix:** BAD: ignoring the error and making everything non-sealed. GOOD: use `final` for leaf types, `sealed` for intermediate types, `non-sealed` only when open extension is genuinely needed.
+
 **Prevention:** Default to `final` or `record` for leaf nodes. Use `sealed` for intermediate nodes.
 
 **Failure Mode 3: Default branch hiding new subtypes**
+
 **Symptom:** New permitted subtype silently handled by default branch instead of causing a compile error.
+
 **Root Cause:** Switch expression on sealed type includes a default branch, suppressing exhaustiveness checking.
+
 **Diagnostic:**
 
 ```java
@@ -2422,6 +2516,7 @@ double area(Shape s) {
 ```
 
 **Fix:** BAD: keeping default "for safety." GOOD: remove default and handle all permitted subtypes explicitly. The compiler will force updates when new subtypes are added.
+
 **Prevention:** Code review rule: no default on sealed type switches unless deliberately handling unknown values.
 
 ---
@@ -2666,11 +2761,15 @@ JEP 305 previewed pattern matching for instanceof in Java 14, finalized in Java 
 Because the check and binding are atomic, ClassCastException from mismatched casts is impossible. Because flow scoping restricts the variable's scope, using it in the wrong branch is a compile error. Because the variable is effectively final, it is safe for use in lambda expressions and inner classes.
 
 **THE TRADE-OFFS:**
+
 **Gain:** No redundant casts, safer type narrowing, cleaner equals() methods
+
 **Cost:** New scoping rules to learn (flow scoping can be counterintuitive)
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Runtime type checking and safe casting are fundamental to polymorphic programming
+
 **Accidental:** Writing instanceof and then casting separately is entirely redundant ceremony
 
 ---
@@ -2729,9 +2828,12 @@ At the bytecode level, pattern matching compiles to the same `instanceof` and `c
 Pattern matching simplifies four common Java patterns: (1) equals() methods - `return o instanceof Point p && x == p.x`, (2) visitor-like dispatch chains - if/else-if with instanceof, (3) generic type extraction - `if (event instanceof OrderCreated e)`, (4) null-safe type checks - instanceof returns false for null, so `obj instanceof String s` is null-safe. In Spring, use pattern matching in custom validators, exception handlers, and type converters. With sealed types (Java 17) and switch pattern matching (Java 21), instanceof patterns extend to full algebraic pattern matching.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Pattern matching saves a line by combining instanceof and cast."
-A Staff says: "Pattern matching is the first step in Java's algebraic pattern matching roadmap. I use it with sealed types to get exhaustive type-safe dispatch. The flow scoping model ensures that pattern variables cannot be used in the wrong branch - this is a fundamentally different safety guarantee than casting, not just syntactic sugar. I design type hierarchies knowing that instanceof patterns, record patterns, and guarded patterns will be the dispatch mechanism."
-The difference: Staff engineers see pattern matching as part of a type-safe dispatch system, not just shorthand.
+
+**A Senior says:** "Pattern matching saves a line by combining instanceof and cast."
+
+**A Staff says:** "Pattern matching is the first step in Java's algebraic pattern matching roadmap. I use it with sealed types to get exhaustive type-safe dispatch. The flow scoping model ensures that pattern variables cannot be used in the wrong branch - this is a fundamentally different safety guarantee than casting, not just syntactic sugar. I design type hierarchies knowing that instanceof patterns, record patterns, and guarded patterns will be the dispatch mechanism."
+
+**The difference:** Staff engineers see pattern matching as part of a type-safe dispatch system, not just shorthand.
 
 **Level 5 - Distinguished (expert thinking):**
 Pattern matching for instanceof is Java's entry point into structural pattern matching, inspired by Scala match, Haskell case, and ML pattern matching. The flow scoping model is unique - most languages use block scoping for pattern variables. Java's approach allows patterns in boolean expressions, which enables combinations with `&&` and `||`. Record patterns (Java 21) extend this to destructuring: `case Point(int x, int y) ->`. The future direction includes array patterns, string patterns, and potentially deconstruction patterns for arbitrary classes.
@@ -2900,8 +3002,11 @@ Pattern matching for instanceof introduces no new JVM bytecodes. The compiler ge
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Using pattern variable outside flow scope**
+
 **Symptom:** Compile error: "cannot resolve symbol s."
+
 **Root Cause:** Pattern variable is used in a branch where the compiler cannot prove the match succeeded.
+
 **Diagnostic:**
 
 ```java
@@ -2913,11 +3018,15 @@ System.out.println(s); // ERROR!
 ```
 
 **Fix:** BAD: declaring a separate variable before the if. GOOD: restructure logic so usage is inside the flow scope, or use negation with early return: `if (!(obj instanceof String s)) return; // s in scope after`.
+
 **Prevention:** Understand flow scoping rules: variable is in scope in the true-branch of `if`, after early return in negated checks, and within `&&` expressions.
 
 **Failure Mode 2: Flow scoping with logical operators**
+
 **Symptom:** Compile error when using pattern variable with `||`.
+
 **Root Cause:** `||` does not guarantee the pattern matched. `&&` does (short-circuit: right side only evaluated if left is true).
+
 **Diagnostic:**
 
 ```java
@@ -2930,11 +3039,15 @@ if (obj instanceof String s || s.length() > 5)
 ```
 
 **Fix:** BAD: trying to use `||` with pattern variables. GOOD: use `&&` or restructure as nested if statements.
+
 **Prevention:** Remember: `&&` is safe for pattern variables, `||` is not.
 
 **Failure Mode 3: Shadowing outer variables with pattern variable names**
+
 **Symptom:** Unexpected behavior where pattern variable shadows an outer variable of the same name.
+
 **Root Cause:** Pattern variable name matches an existing variable in the outer scope.
+
 **Diagnostic:**
 
 ```java
@@ -2947,6 +3060,7 @@ if (obj instanceof String s) {
 ```
 
 **Fix:** BAD: reusing variable names. GOOD: use distinct names for pattern variables to avoid confusion.
+
 **Prevention:** Name pattern variables descriptively to avoid shadowing.
 
 ---
@@ -3193,11 +3307,15 @@ The **Java Module System (JPMS)**, introduced in Java 9, adds a higher level of 
 Because modules declare exports, internal packages are truly hidden. Because modules declare requires, the module system builds a dependency graph and validates it at launch. Because the JDK is modularized, `jlink` can create custom runtimes without unused modules. The `opens` directive allows controlled reflective access for frameworks like Spring and Hibernate.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Strong encapsulation, reliable configuration, smaller runtimes (jlink), clear API boundaries
+
 **Cost:** Migration complexity, module-info.java boilerplate, framework compatibility issues (reflection)
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Large applications need encapsulation boundaries and dependency management
+
 **Accidental:** The flat classpath was a design limitation from Java 1.0 that was never addressed until JPMS
 
 ---
@@ -3247,9 +3365,12 @@ At compile time, javac validates that required modules are present and that only
 Most production applications use the classpath (unnamed module) with modular JDK. Key JPMS impacts: (1) `--add-opens java.base/java.lang=ALL-UNNAMED` is needed for frameworks that use deep reflection (Spring, Hibernate, Jackson). (2) `jlink` creates custom JRE images: `jlink --module-path mods --add-modules com.myapp --output runtime` produces a 30-40 MB runtime instead of 300+ MB full JDK. (3) Services: `provides com.api.Service with com.impl.ServiceImpl` replaces META-INF/services. (4) Automatic modules allow gradual migration: JARs without module-info become automatic modules with names derived from JAR filenames. (5) Split packages (same package in multiple modules) are forbidden - this breaks some legacy libraries.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "JPMS adds module-info.java for encapsulation."
-A Staff says: "I use JPMS strategically: `jlink` for containerized microservices (40% smaller images), `exports to` for friend modules, `opens` only for specific packages that frameworks need. I design module boundaries to match bounded contexts. Most importantly, I understand the migration path: put everything on the classpath first (unnamed module), then gradually modularize starting with leaf modules. JPMS is a tool for architecture enforcement, not just encapsulation."
-The difference: Staff engineers use JPMS as an architecture enforcement tool with a pragmatic migration strategy.
+
+**A Senior says:** "JPMS adds module-info.java for encapsulation."
+
+**A Staff says:** "I use JPMS strategically: `jlink` for containerized microservices (40% smaller images), `exports to` for friend modules, `opens` only for specific packages that frameworks need. I design module boundaries to match bounded contexts. Most importantly, I understand the migration path: put everything on the classpath first (unnamed module), then gradually modularize starting with leaf modules. JPMS is a tool for architecture enforcement, not just encapsulation."
+
+**The difference:** Staff engineers use JPMS as an architecture enforcement tool with a pragmatic migration strategy.
 
 **Level 5 - Distinguished (expert thinking):**
 JPMS represents a fundamental shift in Java's platform philosophy: from "open by default" to "closed by default." This aligns with OSGi's encapsulation model but at the platform level. The module system enables the JDK to evolve: internal APIs can be removed without breaking module contracts. The `jlink` custom runtime model is Java's answer to container-native deployment - it pre-resolves the module graph, eliminating classpath scanning. Long-term, JPMS enables ahead-of-time compilation (GraalVM native images use module information for reachability analysis) and startup optimization (the module graph is a closed world).
@@ -3423,8 +3544,11 @@ The JDK itself was the biggest beneficiary of JPMS. Before Java 9, the JDK was a
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: InaccessibleObjectException from reflection**
+
 **Symptom:** `java.lang.reflect.InaccessibleObjectException: Unable to make field accessible: module java.base does not "opens java.lang" to unnamed module`
+
 **Root Cause:** Framework (Spring, Hibernate, Jackson) uses reflection on a JDK internal package that is not opened.
+
 **Diagnostic:**
 
 ```bash
@@ -3434,11 +3558,15 @@ java.lang.reflect.InaccessibleObjectException
 ```
 
 **Fix:** BAD: using `--illegal-access=permit` (removed in Java 17). GOOD: add `--add-opens java.base/java.lang=ALL-UNNAMED` to JVM flags, or properly modularize and use `opens` in module-info.
+
 **Prevention:** Test with the target Java version early. Use `jdeps --jdk-internals` to find illegal access.
 
 **Failure Mode 2: Split package error**
+
 **Symptom:** `Error: module X reads package P from both Y and Z`
+
 **Root Cause:** Two modules contain the same package. JPMS forbids split packages (unlike the classpath which silently picks one).
+
 **Diagnostic:**
 
 ```bash
@@ -3448,11 +3576,15 @@ java --module-path libs -m com.app
 ```
 
 **Fix:** BAD: merging JARs. GOOD: rename packages in one module, or use the classpath (unnamed module) which allows split packages.
+
 **Prevention:** Use `jdeps` to check for split packages before modularizing.
 
 **Failure Mode 3: Missing requires for transitive dependency**
+
 **Symptom:** Compile error or `java.lang.module.FindException: Module X not found`
+
 **Root Cause:** Module depends on a transitive dependency that is not declared in requires.
+
 **Diagnostic:**
 
 ```java
@@ -3467,6 +3599,7 @@ module com.app {
 ```
 
 **Fix:** BAD: adding `--add-reads` flags. GOOD: library should use `requires transitive` for API-level dependencies that are part of its exported API.
+
 **Prevention:** Use `requires transitive` when a dependency's types appear in your exported API.
 
 ---
@@ -3720,11 +3853,15 @@ The **HttpClient API (Java 11+)** (`java.net.http`) is a modern, immutable, thre
 Because the client is immutable and thread-safe, it can manage an internal connection pool safely. Because requests are separate objects, they can be constructed, inspected, and reused. Because HTTP/2 is the default, multiplexing over a single connection is automatic. The async API returns CompletableFuture, integrating with Java's standard concurrency model.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Built-in (no dependency), HTTP/2, async with CompletableFuture, immutable and thread-safe
+
 **Cost:** Less feature-rich than Apache HttpClient (no cookie jar, fewer interceptors), no connection pool tuning
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** HTTP communication requires request construction, connection management, and response parsing
+
 **Accidental:** HttpURLConnection's mutable, stream-based API was unnecessarily complex for common use cases
 
 ---
@@ -3783,9 +3920,12 @@ HttpClient uses an internal connection pool with HTTP/2 multiplexing. For HTTP/2
 In production: (1) Create ONE HttpClient per target service configuration, share across threads. (2) Set connect and request timeouts: `client.connectTimeout()` for connection, `request.timeout()` for overall. (3) Use a custom Executor for async calls to control thread pool sizing. (4) For POST with JSON: `BodyPublishers.ofString(json)` with `Content-Type: application/json` header. (5) Use `BodyHandlers.ofFile(path)` for large downloads to avoid memory issues. (6) For connection pool tuning, use system properties: `jdk.httpclient.connectionPoolSize`. (7) For retry logic, wrap sendAsync with `.thenCompose()` retry chains. (8) In Spring Boot, prefer WebClient (reactive) or RestClient (declarative) for most cases; use HttpClient for low-level control or non-Spring projects.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "HttpClient is Java's modern HTTP client with HTTP/2 support."
-A Staff says: "I choose HttpClient strategically: for non-Spring projects or when I need low-level HTTP/2 multiplexing control. In Spring Boot, I use RestClient (sync) or WebClient (reactive). When I do use HttpClient, I configure one instance per service with appropriate timeouts, use a bounded Executor for async calls, and implement circuit-breaking via CompletableFuture composition. I also understand its limitations: no built-in retry, no circuit breaker, no metrics - these require wrapping with Resilience4j."
-The difference: Staff engineers choose the right HTTP client for the context and understand what HttpClient does NOT provide.
+
+**A Senior says:** "HttpClient is Java's modern HTTP client with HTTP/2 support."
+
+**A Staff says:** "I choose HttpClient strategically: for non-Spring projects or when I need low-level HTTP/2 multiplexing control. In Spring Boot, I use RestClient (sync) or WebClient (reactive). When I do use HttpClient, I configure one instance per service with appropriate timeouts, use a bounded Executor for async calls, and implement circuit-breaking via CompletableFuture composition. I also understand its limitations: no built-in retry, no circuit breaker, no metrics - these require wrapping with Resilience4j."
+
+**The difference:** Staff engineers choose the right HTTP client for the context and understand what HttpClient does NOT provide.
 
 **Level 5 - Distinguished (expert thinking):**
 HttpClient's design reflects modern HTTP evolution: HTTP/2 multiplexing eliminates the need for connection pool tuning that plagued Apache HttpClient. The immutable builder pattern ensures thread safety without synchronization. The BodyHandler/BodySubscriber system is built on Reactive Streams (Flow API), making it compatible with reactive programming. With virtual threads (Java 21), synchronous `send()` becomes non-blocking at the platform level, potentially making `sendAsync()` unnecessary for most use cases. The key architectural insight is that HttpClient is a low-level primitive - production HTTP communication typically needs retry, circuit breaking, load balancing, and observability, which require composition with other libraries.
@@ -3981,8 +4121,11 @@ HttpClient's async implementation is built on the Reactive Streams (Flow API) in
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Creating HttpClient per request**
+
 **Symptom:** Connection pool exhaustion, high memory usage, slow performance under load.
+
 **Root Cause:** Each HttpClient creates its own connection pool and executor. Creating one per request prevents connection reuse.
+
 **Diagnostic:**
 
 ```java
@@ -3996,11 +4139,15 @@ for (var url : urls) {
 ```
 
 **Fix:** BAD: creating a new HttpClient per request. GOOD: create one HttpClient at startup and reuse it for all requests.
+
 **Prevention:** Initialize HttpClient as a singleton or Spring bean. Never create in request-handling code.
 
 **Failure Mode 2: Missing timeout configuration**
+
 **Symptom:** Requests hang indefinitely when target service is unresponsive. Thread pool starves.
+
 **Root Cause:** Default HttpClient has no connect timeout and no request timeout.
+
 **Diagnostic:**
 
 ```java
@@ -4025,8 +4172,11 @@ HttpRequest request = HttpRequest.newBuilder()
 **Prevention:** Enforce timeout configuration in code reviews. Use a factory method for HttpClient creation.
 
 **Failure Mode 3: Blocking async callback thread**
+
 **Symptom:** Async requests complete slowly. Thread pool saturation under load.
+
 **Root Cause:** Blocking operations in CompletableFuture callbacks run on the default executor (common ForkJoinPool).
+
 **Diagnostic:**
 
 ```java
@@ -4040,6 +4190,7 @@ client.sendAsync(request,
 ```
 
 **Fix:** BAD: blocking in async callbacks. GOOD: use `.thenApplyAsync(fn, customExecutor)` with a separate thread pool for blocking operations, or use virtual threads.
+
 **Prevention:** Provide a custom Executor at HttpClient creation: `.executor(Executors.newVirtualThreadPerTaskExecutor())`.
 
 ---
@@ -4284,11 +4435,15 @@ JEP 358 introduced helpful NullPointerExceptions in Java 14. The JVM now analyze
 Because the JVM has access to bytecode and local variable tables, it can reconstruct which expression was null at the point of failure. Because analysis happens only when an NPE is thrown (not on every method call), there is no performance overhead for normal execution. Because the message includes both the action and the source, developers get actionable information immediately.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Precise null identification, faster debugging, actionable error messages
+
 **Cost:** Slightly larger exception messages, minor overhead when NPE is actually thrown
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Null references are a fundamental challenge in any language with reference types
+
 **Accidental:** Uninformative "null" messages were a JVM implementation limitation, not a fundamental constraint
 
 ---
@@ -4339,9 +4494,12 @@ When an NPE is thrown, the JVM performs bytecode analysis at the point of failur
 In production: (1) Helpful NPEs are enabled by default in Java 15+. (2) For Java 14, add `-XX:+ShowCodeDetailsInExceptionMessages` to JVM flags. (3) Ensure class files include debug info (local variable table) - this is the default for javac but may be stripped in optimized builds. Without debug info, messages are less specific but still helpful. (4) In logging, always use `e.getMessage()` or `e.toString()` to capture the helpful message, not just the stack trace. (5) Helpful NPEs work with all NPE scenarios: method call on null, field access on null, array access on null, synchronized on null, throw null, unboxing null. (6) Security consideration: in Java 14, there was concern about leaking local variable names in exception messages. The JVM flag makes this opt-in by default. Java 15 made it default because the benefit outweighed the risk.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "Helpful NPEs show which variable was null."
-A Staff says: "Helpful NPEs are a debugging accelerator, but they are a symptom treatment, not a cure. I design systems to prevent NPEs: use Optional for nullable returns, @Nullable/@NonNull annotations with static analysis, and null-safe patterns like the Null Object pattern. When an NPE does occur, helpful messages reduce MTTR. I also ensure our logging captures the full exception message, not just the class name, and I verify that production class files retain debug information for maximum message quality."
-The difference: Staff engineers focus on preventing NPEs rather than just diagnosing them faster.
+
+**A Senior says:** "Helpful NPEs show which variable was null."
+
+**A Staff says:** "Helpful NPEs are a debugging accelerator, but they are a symptom treatment, not a cure. I design systems to prevent NPEs: use Optional for nullable returns, @Nullable/@NonNull annotations with static analysis, and null-safe patterns like the Null Object pattern. When an NPE does occur, helpful messages reduce MTTR. I also ensure our logging captures the full exception message, not just the class name, and I verify that production class files retain debug information for maximum message quality."
+
+**The difference:** Staff engineers focus on preventing NPEs rather than just diagnosing them faster.
 
 **Level 5 - Distinguished (expert thinking):**
 Helpful NPEs demonstrate a broader JVM philosophy: the runtime should provide maximum diagnostic information without imposing overhead on the happy path. The lazy message computation (only when getMessage() is called) ensures zero cost for caught-and-handled NPEs. This pattern of "deferred diagnostic computation" appears in other JVM improvements: improved ClassCastException messages, improved ArrayStoreException messages, and improved IllegalArgumentException messages for reflection. The bytecode analysis approach is also used by GraalVM for its own enhanced diagnostics. Languages that prevent null at the type level (Kotlin, Rust) trade this diagnostic approach for compile-time prevention.
@@ -4520,8 +4678,11 @@ The helpful NPE message is computed lazily - the bytecode analysis only runs whe
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Missing debug info in class files**
+
 **Symptom:** Helpful NPE message shows generic expressions like "the return value of method X()" instead of variable names.
+
 **Root Cause:** Class files compiled without debug info (`-g:none`) or stripped by an optimizer/obfuscator.
+
 **Diagnostic:**
 
 ```bash
@@ -4532,11 +4693,15 @@ javap -l MyClass.class
 ```
 
 **Fix:** BAD: accepting generic messages. GOOD: compile with debug info (default for javac: `javac -g`). Configure build tools to retain debug info in production builds (Maven: default. Gradle: default. ProGuard: configure to keep local variable table).
+
 **Prevention:** Verify build pipeline retains `-g` (debug info). Most build tools do this by default.
 
 **Failure Mode 2: Not capturing the full message in logs**
+
 **Symptom:** Production logs show only "NullPointerException" or just the stack trace, missing the helpful message.
+
 **Root Cause:** Logging code uses `e.getClass().getName()` or prints only the stack trace, not `e.getMessage()`.
+
 **Diagnostic:**
 
 ```java
@@ -4548,11 +4713,15 @@ e.printStackTrace(); // may omit in some loggers
 ```
 
 **Fix:** BAD: logging only class names. GOOD: use `log.error("Error: {}", e.getMessage(), e)` or `log.error("Error occurred", e)` which includes the message and stack trace.
+
 **Prevention:** Use structured logging (SLF4J + Logback) that automatically includes `e.getMessage()`.
 
 **Failure Mode 3: Confusing helpful NPE with fixing the bug**
+
 **Symptom:** Developer sees "getAddress() is null" and adds `if (address != null)` without investigating why address is null.
+
 **Root Cause:** Treating the symptom (null value) instead of the root cause (missing data, broken invariant).
+
 **Diagnostic:**
 
 ```java
@@ -4567,6 +4736,7 @@ if (user.getAddress() != null) {
 ```
 
 **Fix:** BAD: adding null checks everywhere. GOOD: investigate WHY the value is null. Fix the data source, add validation at the boundary, or use Optional to explicitly model nullable returns.
+
 **Prevention:** Code review culture: null checks must include a comment explaining why null is expected. Unexpected nulls should be fixed at the source.
 
 ---

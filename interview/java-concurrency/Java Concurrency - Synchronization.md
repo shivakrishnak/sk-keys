@@ -90,11 +90,15 @@ The **synchronized** keyword provides two guarantees: (1) **mutual exclusion** -
 Because monitors are per-object, different objects have independent locks (reducing contention). Because the lock is reentrant, a thread that already holds the monitor can enter another synchronized block on the same object without deadlocking. Because release is implicit (try-finally), locks cannot be accidentally leaked.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Simplicity (language keyword, automatic release), mutual exclusion, memory visibility
+
 **Cost:** Cannot interrupt waiting threads, no tryLock with timeout, no fairness control, potential virtual thread pinning
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Mutual exclusion requires serialization, which limits parallelism
+
 **Accidental:** Virtual thread pinning (blocking the carrier thread) is a JVM implementation detail, not inherent to the locking concept
 
 ---
@@ -155,9 +159,12 @@ Every Java object has a header containing a mark word. The mark word stores the 
 Production concerns: (1) **Minimize critical section size.** Only synchronize the code that accesses shared state. A `synchronized` method locks for the entire method body. A block locks for just the critical code. (2) **Avoid synchronizing on this in public APIs** - external code can synchronize on your object, creating contention or deadlock. Use a private final lock object. (3) **Deadlock from lock ordering:** If thread A locks obj1 then obj2, and thread B locks obj2 then obj1, deadlock occurs. Always acquire locks in a consistent global order. (4) **Virtual thread pinning (Java 21):** When a virtual thread enters synchronized, it pins to its carrier platform thread. This blocks the carrier, reducing virtual thread scalability. Use ReentrantLock instead. (5) **Monitor contention monitoring:** JMX exposes contended monitor entries. In JFR, look for `jdk.JavaMonitorEnter` events with long durations.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use synchronized to protect shared mutable state."
-A Staff says: "I minimize critical sections, use private lock objects, enforce consistent lock ordering, and choose ReentrantLock over synchronized when I need tryLock, interruptibility, or virtual thread compatibility."
-The difference: Understanding synchronized's limitations and knowing when to upgrade to ReentrantLock.
+
+**A Senior says:** "I use synchronized to protect shared mutable state."
+
+**A Staff says:** "I minimize critical sections, use private lock objects, enforce consistent lock ordering, and choose ReentrantLock over synchronized when I need tryLock, interruptibility, or virtual thread compatibility."
+
+**The difference:** Understanding synchronized's limitations and knowing when to upgrade to ReentrantLock.
 
 **Level 5 - Distinguished (expert thinking):**
 synchronized is a coarse-grained tool. In high-performance systems, the goal is to minimize or eliminate synchronization entirely. Strategies: (1) lock-free algorithms with CAS (AtomicInteger, ConcurrentHashMap). (2) Immutable objects (no synchronization needed). (3) Thread confinement (each thread owns its data). (4) Read-write locks for read-heavy workloads. (5) Message passing (actor model, no shared state). synchronized is the right tool when contention is low and code simplicity matters more than maximum throughput.
@@ -338,8 +345,11 @@ synchronized is reentrant - a thread that already holds the monitor can enter an
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Deadlock from inconsistent lock ordering**
+
 **Symptom:** Two threads permanently BLOCKED. Application hangs. Thread dump shows circular wait.
+
 **Root Cause:** Thread A locks obj1 then obj2. Thread B locks obj2 then obj1. Both wait for the other.
+
 **Diagnostic:**
 
 ```bash
@@ -354,11 +364,15 @@ jstack <pid>
 ```
 
 **Fix:** BAD: increasing timeout (synchronized has no timeout). GOOD: Always acquire locks in a consistent global order. Use System.identityHashCode() for natural ordering.
+
 **Prevention:** Document lock ordering. Use lock hierarchy. Consider ReentrantLock with tryLock(timeout) for deadlock avoidance.
 
 **Failure Mode 2: Virtual thread carrier pinning**
+
 **Symptom:** Virtual thread throughput drops. Platform threads fully occupied despite light workload.
+
 **Root Cause:** Virtual threads entering synchronized pin their carrier platform thread. Other virtual threads cannot use that carrier.
+
 **Diagnostic:**
 
 ```bash
@@ -372,11 +386,15 @@ jstack <pid>
 ```
 
 **Fix:** BAD: increasing carrier thread count. GOOD: Replace synchronized with ReentrantLock for code called by virtual threads.
+
 **Prevention:** Audit synchronized blocks in code called by virtual threads. Replace with ReentrantLock.
 
 **Failure Mode 3: Lock contention bottleneck**
+
 **Symptom:** Thread dump shows many threads BLOCKED on same monitor. CPU low but throughput low. p99 latency high.
+
 **Root Cause:** Many threads compete for a single synchronized block. Threads spend time waiting, not working.
+
 **Diagnostic:**
 
 ```bash
@@ -390,6 +408,7 @@ jstack <pid> | grep "BLOCKED" | wc -l
 ```
 
 **Fix:** BAD: making the lock scope larger. GOOD: Split the lock, use ReadWriteLock, use lock-free structures (AtomicInteger, CAS), or eliminate shared state.
+
 **Prevention:** Profile contention early with JFR. Design for low contention: fine-grained locks, immutable objects, thread-local state.
 
 ---
@@ -658,11 +677,15 @@ The **volatile** keyword in Java ensures two properties for a field: (1) **visib
 Because volatile prevents caching, it is ideal for flags and status variables written by one thread and read by many. Because it provides no mutual exclusion, compound operations remain racy. Because it uses memory barriers (fence instructions), it is cheaper than synchronized but not free - the CPU must coordinate cache coherence across cores.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Memory visibility without locking overhead - no thread blocking, no context switching, no deadlock risk
+
 **Cost:** No atomicity for compound operations, memory barrier cost on every access, cannot protect multi-variable invariants
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** CPU caches exist for performance; visibility across caches requires explicit coordination at the hardware level
+
 **Accidental:** The JMM's pre-Java-5 volatile semantics were too weak, causing years of confusion about what volatile actually guarantees
 
 ---
@@ -723,9 +746,12 @@ On x86, a volatile write inserts a StoreLoad memory barrier (MFENCE or locked in
 Production patterns: (1) **Double-checked locking** requires volatile on the instance field to prevent seeing a partially constructed object (the JVM may reorder constructor execution and reference assignment). Without volatile, a reader thread can see a non-null reference to an object whose fields are still at default values. (2) **volatile + immutable object** for safe publication: write a fully constructed immutable object to a volatile field, and all readers see the complete object with all its fields. (3) **volatile for status/flags only** - never for counters or compound state. (4) **Performance:** volatile reads are nearly free on x86 (Total Store Order already provides strong load ordering). Volatile writes cost ~20-50ns due to StoreLoad barrier. Compared to uncontended synchronized (~50-200ns), volatile is cheaper. (5) **volatile arrays:** Declaring `volatile int[] arr` makes the reference volatile, NOT the elements. Use AtomicIntegerArray for volatile element access.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use volatile for flags shared between threads."
-A Staff says: "I understand volatile provides visibility and ordering via happens-before but not atomicity. I choose volatile for safe publication of immutable objects and simple flags. For compound operations I use Atomic classes. I know the memory barrier costs per architecture, and when VarHandle's weaker modes suffice."
-The difference: Understanding the memory model beneath volatile and choosing the minimum sufficient ordering guarantee for each use case.
+
+**A Senior says:** "I use volatile for flags shared between threads."
+
+**A Staff says:** "I understand volatile provides visibility and ordering via happens-before but not atomicity. I choose volatile for safe publication of immutable objects and simple flags. For compound operations I use Atomic classes. I know the memory barrier costs per architecture, and when VarHandle's weaker modes suffice."
+
+**The difference:** Understanding the memory model beneath volatile and choosing the minimum sufficient ordering guarantee for each use case.
 
 **Level 5 - Distinguished (expert thinking):**
 volatile is the simplest happens-before mechanism in Java, but it sits on a spectrum of memory ordering. VarHandle (Java 9+) exposes four modes: plain (no guarantees), opaque (per-variable coherence), release/acquire (happens-before for pairs), and volatile (full sequential consistency). Most uses of volatile only need release/acquire semantics - the StoreLoad fence that volatile inserts is unnecessary overhead. In performance-critical concurrent data structures (LMAX Disruptor sequence counters, Netty reference counting), choosing the minimal sufficient ordering mode yields measurable throughput gains. C++ exposes this via `std::memory_order`; Java hid it behind volatile until VarHandle.
@@ -910,8 +936,11 @@ On x86 processors, volatile reads are essentially free - the hardware already pr
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Flag change invisible to reader thread**
+
 **Symptom:** Thread continues running after stop flag set to false. Works in debugger, fails in production.
+
 **Root Cause:** Non-volatile flag hoisted out of loop by JIT compiler. Thread reads cached register value forever.
+
 **Diagnostic:**
 
 ```bash
@@ -923,11 +952,15 @@ java -XX:+UnlockDiagnosticVMOptions \
 ```
 
 **Fix:** BAD: adding Thread.sleep() in the loop (forces sync as side effect - unreliable). GOOD: Declare field as `volatile boolean running`.
+
 **Prevention:** Always use volatile for fields read/written by different threads without synchronization.
 
 **Failure Mode 2: Lost updates on volatile counter**
+
 **Symptom:** Counter shows values lower than expected. Increments silently lost. Intermittent under load.
+
 **Root Cause:** `volatile int counter; counter++` is three operations: read, increment, write. Two threads read same value, both write same result.
+
 **Diagnostic:**
 
 ```bash
@@ -938,11 +971,15 @@ java -XX:+UnlockDiagnosticVMOptions \
 ```
 
 **Fix:** BAD: adding volatile and hoping (does not help compound ops). GOOD: Use `AtomicInteger.incrementAndGet()` (CAS-based atomic read-modify-write).
+
 **Prevention:** Never use volatile for read-modify-write. If you read, compute, and write - use Atomic classes or locks.
 
 **Failure Mode 3: Partially constructed object published without volatile**
+
 **Symptom:** NullPointerException on object fields despite constructor setting them. Intermittent, rare on x86, common on ARM.
+
 **Root Cause:** Without volatile, JVM may reorder constructor and reference assignment. Reader sees non-null reference but fields still at defaults.
+
 **Diagnostic:**
 
 ```bash
@@ -954,6 +991,7 @@ java -XX:+UnlockDiagnosticVMOptions \
 ```
 
 **Fix:** BAD: adding null checks (masks root cause). GOOD: Declare reference as `volatile Config config`. Volatile write ensures constructor completes before reference is visible.
+
 **Prevention:** Use volatile for all references published across threads. Or use final fields (JMM guarantees visibility after construction).
 
 ---
@@ -1336,11 +1374,15 @@ The **Java Memory Model (JMM)** (defined in JLS Chapter 17.4) specifies the rule
 Because happens-before is transitive (A hb B and B hb C implies A hb C), you can build chains of visibility across threads. Because the JMM permits reordering when no happens-before exists, the JIT compiler and CPU can optimize aggressively. Because data races (concurrent access without happens-before, with at least one write) produce undefined behavior, the programmer must establish happens-before at every sharing point.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Platform-independent concurrency semantics - write once, run correctly everywhere (if properly synchronized)
+
 **Cost:** Developers must understand happens-before to write correct concurrent code; the abstraction is non-trivial
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Modern CPUs have per-core caches and out-of-order execution; some formal model is needed to define visibility guarantees
+
 **Accidental:** The happens-before model is more complex than sequential consistency, but sequential consistency is too expensive to enforce everywhere
 
 ---
@@ -1399,9 +1441,12 @@ The JMM defines a partial order called happens-before (hb). Key hb rules: (1) Pr
 Production implications: (1) **final fields** have special JMM semantics: if an object is properly constructed (no `this` escape from constructor), its final fields are visible to all threads without synchronization. This is why immutable objects are inherently thread-safe. (2) **Constructor this-escape** breaks final field guarantees: if the constructor publishes `this` before completing (e.g., registering a listener), other threads may see partially constructed objects with default values in final fields. (3) **Safe publication idioms:** volatile field, synchronized block, final field, AtomicReference - each creates a happens-before from construction to reading. (4) **Benign data races** (like HashMap's size field before Java 8) are technically undefined behavior but work on all known JVMs on x86. They are NOT portable and NOT correct per the JMM. (5) **JFR and happens-before:** When debugging visibility bugs, JFR events include timestamps but not happens-before chains. Use JCStress to verify happens-before correctness.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use synchronized and volatile to ensure visibility between threads."
-A Staff says: "I reason about happens-before chains. I know that visibility is guaranteed only through specific hb relationships, not by timing or CPU speed. I understand final field semantics, safe publication idioms, and why benign data races are technically undefined. I design systems to minimize shared mutable state, making the JMM less relevant."
-The difference: Reasoning from the formal model rather than intuition about what "should" be visible.
+
+**A Senior says:** "I use synchronized and volatile to ensure visibility between threads."
+
+**A Staff says:** "I reason about happens-before chains. I know that visibility is guaranteed only through specific hb relationships, not by timing or CPU speed. I understand final field semantics, safe publication idioms, and why benign data races are technically undefined. I design systems to minimize shared mutable state, making the JMM less relevant."
+
+**The difference:** Reasoning from the formal model rather than intuition about what "should" be visible.
 
 **Level 5 - Distinguished (expert thinking):**
 The JMM is a contract between the programmer and the JVM. The programmer promises to synchronize correctly (no data races). The JVM promises sequential consistency for correctly synchronized programs. This gives the JVM enormous freedom: it can reorder, eliminate, and speculatively execute any operations that do not violate happens-before relationships. C++11 adopted a similar model (std::memory_order) but with even more options (relaxed, consume, acquire, release, acq_rel, seq_cst). Go's memory model is simpler but more restrictive. Rust's ownership model sidesteps the problem entirely by preventing shared mutable state at compile time. The JMM's design decision to allow data races (with undefined results) rather than crash on them was controversial but pragmatic.
@@ -1588,8 +1633,11 @@ The JMM allows the JVM to do things that seem insane: Thread B can see a write t
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Data race causing stale reads**
+
 **Symptom:** Thread sees outdated values for shared variables. Works in debugger, fails in production. Works on x86, fails on ARM.
+
 **Root Cause:** No happens-before between writer and reader. JVM caches value in CPU register or reorders reads.
+
 **Diagnostic:**
 
 ```bash
@@ -1603,11 +1651,15 @@ java -jar jcstress.jar \
 ```
 
 **Fix:** BAD: adding Thread.sleep() or System.out.println() (forces sync as side effect). GOOD: Establish happens-before via volatile, synchronized, or Atomic operations.
+
 **Prevention:** Every shared mutable variable must be protected by a happens-before mechanism. Use immutable objects and volatile references for safe publication.
 
 **Failure Mode 2: Constructor this-escape breaking final field guarantees**
+
 **Symptom:** Other threads see default values (0/null) in final fields of a "properly constructed" object. Rare, intermittent.
+
 **Root Cause:** Constructor publishes `this` before completing (e.g., registering a listener, adding to a collection). The JMM's final field guarantee only applies to properly constructed objects (no this-escape).
+
 **Diagnostic:**
 
 ```bash
@@ -1621,11 +1673,15 @@ grep -rn "this" src/ \
 ```
 
 **Fix:** BAD: making fields volatile in addition to final (unnecessary overhead if constructor is fixed). GOOD: Remove this-escape from constructors. Use factory methods that construct then publish.
+
 **Prevention:** Static analysis rule: no `this` passed to external code in constructors. Use @Immutable annotation (ErrorProne, Checker Framework).
 
 **Failure Mode 3: Incorrect lock ordering creating invisible writes**
+
 **Symptom:** Thread A writes under lock1, Thread B reads under lock2. Thread B never sees A's writes even though "both are synchronized."
+
 **Root Cause:** Happens-before for monitors requires same monitor. lock1.unlock() hb lock1.lock(), but lock1.unlock() does NOT hb lock2.lock().
+
 **Diagnostic:**
 
 ```bash
@@ -1640,6 +1696,7 @@ jstack <pid> | grep "locked"
 ```
 
 **Fix:** BAD: using different locks and assuming visibility. GOOD: Use the same lock object for related shared state. Or use volatile for the shared variable.
+
 **Prevention:** Document which lock protects which variables. Keep the mapping explicit in code comments or annotations.
 
 ---
@@ -2082,11 +2139,15 @@ Java 1.0-1.4 had only synchronized for mutual exclusion - simple but inflexible.
 Because the lock is explicit (not tied to a block structure), it must be manually unlocked - typically in a finally block. Because it supports multiple Condition objects, you can have separate wait sets for producers and consumers on the same lock. Because fairness is configurable, you can choose between throughput (non-fair, default) and starvation prevention (fair).
 
 **THE TRADE-OFFS:**
+
 **Gain:** tryLock, timed lock, interruptibility, fairness, multiple conditions, virtual thread compatibility
+
 **Cost:** Manual unlock() required (bug-prone if forgotten), more verbose than synchronized, no automatic release on exception without try-finally
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Flexible locking requires an API beyond the simple block-structured synchronized keyword
+
 **Accidental:** The try-finally boilerplate is a language limitation - Kotlin and other JVM languages provide use/withLock extensions
 
 ---
@@ -2146,9 +2207,12 @@ ReentrantLock is built on AbstractQueuedSynchronizer (AQS). AQS maintains a vola
 Production considerations: (1) **Non-fair vs fair:** Non-fair (default) allows barging - a thread that happens to arrive when the lock is released can acquire it before queued waiters. This is 5-10x faster under contention because it avoids the overhead of unparking a queued thread. Fair locks guarantee FIFO but have significantly lower throughput. Use fair only when starvation is unacceptable. (2) **Virtual threads:** ReentrantLock does NOT pin the carrier thread (unlike synchronized). For virtual thread applications, always prefer ReentrantLock. (3) **Lock ordering for deadlock prevention:** When acquiring multiple locks, always acquire in a consistent global order (e.g., by account ID). Alternatively, use tryLock with timeout to break potential deadlocks. (4) **Condition vs wait/notify:** ReentrantLock.newCondition() provides separate wait sets. A bounded queue with one lock, a "notFull" condition, and a "notEmpty" condition is more efficient than synchronized+notify which wakes all waiters regardless of condition. (5) **Monitoring:** `lock.getQueueLength()`, `lock.isLocked()`, `lock.getHoldCount()` provide runtime diagnostics.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use ReentrantLock when I need tryLock or timeout. I always unlock in finally."
-A Staff says: "I choose between synchronized (simple cases, block-scoped), ReentrantLock (flexible locking, virtual threads), StampedLock (read-heavy), and lock-free (AtomicReference + CAS) based on the access pattern. I instrument lock contention with JFR and use fair locking only when I have data showing starvation."
-The difference: Choosing the right locking strategy from a full toolkit based on measured contention patterns.
+
+**A Senior says:** "I use ReentrantLock when I need tryLock or timeout. I always unlock in finally."
+
+**A Staff says:** "I choose between synchronized (simple cases, block-scoped), ReentrantLock (flexible locking, virtual threads), StampedLock (read-heavy), and lock-free (AtomicReference + CAS) based on the access pattern. I instrument lock contention with JFR and use fair locking only when I have data showing starvation."
+
+**The difference:** Choosing the right locking strategy from a full toolkit based on measured contention patterns.
 
 **Level 5 - Distinguished (expert thinking):**
 ReentrantLock sits on a spectrum of mutual exclusion mechanisms. At one end: synchronized (implicit, block-scoped, JVM-optimized with biased locking and adaptive spinning). In the middle: ReentrantLock (explicit, flexible, AQS-based). At the other end: StampedLock (optimistic reads, no reentrancy), and lock-free algorithms (CAS loops, no blocking). The trend in modern Java (virtual threads, structured concurrency) is toward minimizing lock scope and preferring non-blocking patterns. For infrastructure code at FAANG scale, the choice between these mechanisms can mean the difference between 100K and 1M ops/sec. The key insight: locks are not the problem; contention is. The best optimization is often redesigning the data structure to avoid contention entirely (e.g., striped locks, thread-local accumulation, LMAX Disruptor pattern).
@@ -2335,8 +2399,11 @@ Non-fair ReentrantLock (the default) is not just "slightly" faster than fair - i
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Lock leak - missing unlock in finally**
+
 **Symptom:** Application progressively slows, threads accumulate in WAITING state, eventually all threads blocked.
+
 **Root Cause:** lock() called but unlock() not reached due to exception thrown between lock() and unlock() without try-finally.
+
 **Diagnostic:**
 
 ```bash
@@ -2350,11 +2417,15 @@ jstack <pid> | grep -A 5 "WAITING"
 ```
 
 **Fix:** BAD: catching and swallowing exceptions before unlock. GOOD: Always use try-finally pattern: `lock.lock(); try { ... } finally { lock.unlock(); }`.
+
 **Prevention:** Static analysis (SpotBugs rule for Lock without corresponding unlock). Code review checklist: every lock() has matching finally-unlock().
 
 **Failure Mode 2: Deadlock from inconsistent lock ordering**
+
 **Symptom:** Two or more threads permanently blocked. jstack shows circular wait dependency. No progress, no CPU usage.
+
 **Root Cause:** Thread A holds lock1, waits for lock2. Thread B holds lock2, waits for lock1. No timeout used.
+
 **Diagnostic:**
 
 ```bash
@@ -2368,11 +2439,15 @@ jstack <pid>
 ```
 
 **Fix:** BAD: increasing timeout (delays deadlock, does not prevent it). GOOD: Acquire locks in consistent global order (e.g., sort by account ID, lock lower ID first). Or use tryLock with timeout to break the cycle.
+
 **Prevention:** Establish lock ordering conventions. Use tryLock(timeout) for multi-lock acquisition.
 
 **Failure Mode 3: Virtual thread pinning with synchronized**
+
 **Symptom:** Virtual thread throughput much lower than expected. Carrier threads are fully utilized despite low CPU usage.
+
 **Root Cause:** synchronized blocks pin virtual threads to carrier threads. If the synchronized block does I/O or sleeps, the carrier thread is wasted.
+
 **Diagnostic:**
 
 ```bash
@@ -2385,6 +2460,7 @@ jfr print --events \
 ```
 
 **Fix:** BAD: increasing carrier thread pool (masks the problem). GOOD: Replace synchronized with ReentrantLock. ReentrantLock releases the carrier thread when the virtual thread parks.
+
 **Prevention:** For virtual thread applications, audit all synchronized usage and migrate to ReentrantLock where the block may park (I/O, sleep, blocking calls).
 
 ---
@@ -2883,11 +2959,15 @@ Java 5 (2004) introduced ReentrantReadWriteLock, allowing concurrent reads but e
 Because reads are non-destructive, they can safely overlap. Because writes change state, they must be exclusive. Because the common case is read-heavy, optimistic reading (StampedLock) avoids lock overhead entirely. Because reentrancy adds complexity and overhead, StampedLock drops it for performance.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Concurrent reads (ReadWriteLock), zero-overhead reads (StampedLock optimistic), write exclusivity preserved
+
 **Cost:** ReentrantReadWriteLock has writer starvation risk. StampedLock has no reentrancy, no Conditions, and complex optimistic read retry logic.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** The fundamental read-write asymmetry - reads can overlap, writes cannot - requires different lock modes
+
 **Accidental:** StampedLock's stamp-based API is complex and error-prone - a better language-level primitive could simplify usage
 
 ---
@@ -2958,9 +3038,12 @@ ReentrantReadWriteLock uses AQS with the state int split: upper 16 bits = read c
 Production considerations: (1) **Writer starvation in ReentrantReadWriteLock:** Under heavy read load, readers continually acquire the read lock and writers may wait indefinitely. Use the fair mode constructor (`new ReentrantReadWriteLock(true)`) to prevent starvation, but this significantly reduces throughput. (2) **StampedLock is NOT reentrant:** Calling readLock() while already holding readLock() may deadlock. Never use StampedLock in recursive code paths. (3) **Optimistic read consistency:** Between tryOptimisticRead() and validate(), the read data may be inconsistent mid-field. For example, reading a Point(x,y) may see x from before a write and y from after. Always validate before using the data. (4) **Lock downgrading (ReentrantReadWriteLock):** Write lock can be downgraded to read lock (acquire read, then release write). This allows a writer to safely transition to a reader without releasing exclusivity. Upgrading (read to write) is NOT supported - it would deadlock if two readers try to upgrade simultaneously. (5) **StampedLock and virtual threads:** StampedLock does not pin carrier threads for optimistic reads (no actual lock). Pessimistic reads and writes do acquire locks.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use ReadWriteLock for read-heavy caches. I know about StampedLock's optimistic reads."
-A Staff says: "I profile the read:write ratio and contention before choosing a lock. For 1000:1 read:write, StampedLock's optimistic mode eliminates reader contention entirely. For 10:1 with complex invariants, ReentrantReadWriteLock with fairness is safer. For 1:1, a simple ReentrantLock is better because ReadWriteLock overhead is wasted."
-The difference: Choosing the right lock by measuring the access pattern, not by theoretical superiority.
+
+**A Senior says:** "I use ReadWriteLock for read-heavy caches. I know about StampedLock's optimistic reads."
+
+**A Staff says:** "I profile the read:write ratio and contention before choosing a lock. For 1000:1 read:write, StampedLock's optimistic mode eliminates reader contention entirely. For 10:1 with complex invariants, ReentrantReadWriteLock with fairness is safer. For 1:1, a simple ReentrantLock is better because ReadWriteLock overhead is wasted."
+
+**The difference:** Choosing the right lock by measuring the access pattern, not by theoretical superiority.
 
 **Level 5 - Distinguished (expert thinking):**
 StampedLock's optimistic read is essentially a seqlock from the Linux kernel. The seqlock pattern predates Java by a decade and is used in Linux for timekeeping and other read-heavy kernel data structures. The key insight: for small, frequently-read data (coordinates, timestamps, configuration snapshots), optimistic reads with retry are dramatically faster than any lock because the common path is two volatile reads with no contention. At the extreme, for larger data structures, copy-on-write (CopyOnWriteArrayList) may outperform StampedLock because readers access a completely immutable snapshot. The choice between StampedLock, copy-on-write, and persistent data structures depends on data size, write frequency, and whether readers need point-in-time snapshots.
@@ -3170,8 +3253,11 @@ StampedLock's optimistic read is not really a lock at all - it is a validation m
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Writer starvation in ReentrantReadWriteLock**
+
 **Symptom:** Write operations take seconds or minutes. Read operations fast. Writer thread spends most time in WAITING state.
+
 **Root Cause:** Non-fair ReadWriteLock under heavy read load. New readers continuously acquire the read lock before queued writer gets a chance.
+
 **Diagnostic:**
 
 ```bash
@@ -3184,11 +3270,15 @@ jcmd <pid> Thread.print
 ```
 
 **Fix:** BAD: increasing writer thread priority (OS-level, unreliable). GOOD: Use `new ReentrantReadWriteLock(true)` for fair ordering. Or switch to StampedLock where readers do not hold locks (optimistic).
+
 **Prevention:** Always measure read:write ratio. If writers are latency-sensitive, use fair mode or StampedLock.
 
 **Failure Mode 2: StampedLock reentrant deadlock**
+
 **Symptom:** Thread hangs permanently. jstack shows thread blocked on readLock() while already holding a read stamp.
+
 **Root Cause:** StampedLock is not reentrant. Calling readLock() inside an already-held readLock() or inside code called from a read-locked section causes self-deadlock.
+
 **Diagnostic:**
 
 ```bash
@@ -3202,11 +3292,15 @@ jstack <pid>
 ```
 
 **Fix:** BAD: increasing timeout (not applicable, no tryReadLock(timeout)... actually StampedLock does have tryReadLock(timeout)). GOOD: Refactor code to avoid nested lock acquisition. Or switch to ReentrantReadWriteLock which supports reentrancy.
+
 **Prevention:** Never use StampedLock in code paths that may recursively access the locked resource. Code review for nested call chains.
 
 **Failure Mode 3: Using optimistic read data without validation**
+
 **Symptom:** Application processes inconsistent data. Calculated results are subtly wrong (e.g., coordinates from different snapshots). Intermittent, hard to reproduce.
+
 **Root Cause:** Developer reads data after tryOptimisticRead() but uses it without calling validate(). A concurrent writer modifies the data mid-read, resulting in a torn read.
+
 **Diagnostic:**
 
 ```bash
@@ -3219,6 +3313,7 @@ grep -rn "tryOptimisticRead" src/
 ```
 
 **Fix:** BAD: wrapping in try-catch (inconsistent data does not throw exceptions). GOOD: Always call validate() after every optimistic read. If invalid, fall back to readLock().
+
 **Prevention:** Establish a code review checklist: every tryOptimisticRead() must have a corresponding validate() check. Create a utility method that encapsulates the pattern.
 
 ---
@@ -3678,11 +3773,15 @@ Before Java 5, thread-safe counters required synchronized blocks. Java 5 (2004) 
 Because CAS is hardware-atomic, no lock is needed. Because the field is volatile, visibility is guaranteed. Because CAS can fail, algorithms must be designed to retry in a loop (spin). Because only one variable is atomically modified, multi-variable atomic operations require higher-level constructs (locks or CAS on a combined object via AtomicReference).
 
 **THE TRADE-OFFS:**
+
 **Gain:** No blocking, no context switches, no deadlocks, no lock overhead. Scales well under low-to-moderate contention.
+
 **Cost:** CAS spin loops waste CPU under high contention. Only works for single-variable operations. More complex to reason about than locks.
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Atomic read-modify-write requires hardware support - software alone cannot prevent interleaving at the CPU level
+
 **Accidental:** Java's Atomic classes are wrappers around Unsafe/VarHandle CAS calls - the API could be simpler (and is, in languages like Rust with atomic types)
 
 ---
@@ -3754,9 +3853,12 @@ The CAS instruction (CMPXCHG on x86) executes atomically at the CPU level with a
 Production considerations: (1) **CAS contention under high thread count:** When 64+ threads CAS the same AtomicLong, the cache line bounces between CPUs (false sharing + true sharing). Each failed CAS wastes a CPU cycle. Solution: LongAdder uses striped cells - each thread CAS-es its own cell, sum() aggregates. Write throughput: AtomicLong ~10M ops/sec degrades under contention, LongAdder maintains ~100M ops/sec. (2) **ABA problem:** CAS checks value equality, not identity. If value goes A -> B -> A, CAS sees "still A" and succeeds, missing the intermediate change. For reference types, use AtomicStampedReference (adds version stamp). (3) **AtomicReference for lock-free data structures:** CAS on head/tail pointers enables lock-free queues (ConcurrentLinkedQueue), stacks, and skip lists. (4) **Memory ordering:** compareAndSet() provides volatile read + write (full barrier). weakCompareAndSet (now compareAndExchange with VarHandle) can use weaker ordering for performance. (5) **False sharing:** Adjacent atomic variables on the same cache line cause contention even when accessed by different threads. Use @Contended annotation (JDK internal) or manual padding.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use AtomicInteger for thread-safe counters. I know CAS retries on failure."
-A Staff says: "I choose between AtomicLong (single-variable, moderate contention), LongAdder (write-heavy, high contention), and VarHandle (custom memory ordering). I understand false sharing, the ABA problem, and when CAS loops degrade into spin-waits. I design data structures to minimize CAS contention points."
-The difference: Understanding the performance model of CAS under contention and choosing the right atomic variant for the access pattern.
+
+**A Senior says:** "I use AtomicInteger for thread-safe counters. I know CAS retries on failure."
+
+**A Staff says:** "I choose between AtomicLong (single-variable, moderate contention), LongAdder (write-heavy, high contention), and VarHandle (custom memory ordering). I understand false sharing, the ABA problem, and when CAS loops degrade into spin-waits. I design data structures to minimize CAS contention points."
+
+**The difference:** Understanding the performance model of CAS under contention and choosing the right atomic variant for the access pattern.
 
 **Level 5 - Distinguished (expert thinking):**
 Lock-free programming using CAS is a fundamentally different paradigm from lock-based synchronization. The correctness proof is different (linearizability instead of mutual exclusion). The performance model is different (contention degrades gracefully instead of causing blocking). The failure model is different (no deadlocks, but livelock and starvation are possible). The Michael-Scott lock-free queue (basis of ConcurrentLinkedQueue) demonstrates how CAS on head/tail pointers enables O(1) concurrent enqueue/dequeue without locks. The Treiber stack demonstrates CAS-based LIFO. These algorithms are foundational to java.util.concurrent and are also used in garbage collectors (concurrent marking), JIT compilers (inline cache updates), and OS kernels (lock-free memory allocators like jemalloc).
@@ -3941,8 +4043,11 @@ Under no contention, AtomicInteger.incrementAndGet() takes about 10ns - roughly 
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: CAS contention causing CPU spin**
+
 **Symptom:** 100% CPU utilization with low application throughput. Threads are RUNNABLE (not WAITING). Profiler shows hot loops in AtomicInteger/AtomicLong methods.
+
 **Root Cause:** Many threads CAS the same variable. Cache line bounces between CPUs. Each failed CAS wastes a CPU cycle.
+
 **Diagnostic:**
 
 ```bash
@@ -3958,11 +4063,15 @@ jfr print --events jdk.CPULoad \
 ```
 
 **Fix:** BAD: adding Thread.yield() in CAS loop (delays but does not fix). GOOD: Replace AtomicLong with LongAdder for write-heavy counters. Or partition the data so threads access different variables.
+
 **Prevention:** Use LongAdder for any counter updated by >8 threads. Profile CAS failure rate before production.
 
 **Failure Mode 2: ABA problem in lock-free data structures**
+
 **Symptom:** Lock-free stack or queue occasionally loses elements or produces duplicates. Intermittent, hard to reproduce.
+
 **Root Cause:** Thread A reads head=nodeA, gets preempted. Thread B pops A, pushes C, pushes A (head=A again). Thread A wakes, CAS succeeds (head is still A), but the stack structure has changed.
+
 **Diagnostic:**
 
 ```bash
@@ -3976,11 +4085,15 @@ java -jar jcstress.jar \
 ```
 
 **Fix:** BAD: adding retries (ABA persists across retries). GOOD: Use AtomicStampedReference which includes a version stamp. CAS checks both value and stamp.
+
 **Prevention:** Use AtomicStampedReference for any CAS on references in data structures. Or use java.util.concurrent collections (ConcurrentLinkedQueue) which already handle ABA.
 
 **Failure Mode 3: False sharing on adjacent atomic variables**
+
 **Symptom:** Two unrelated atomic counters on different threads cause unexpected mutual slowdown. Each counter is much slower than when used alone.
+
 **Root Cause:** Both AtomicInteger objects are allocated on the same cache line (64 bytes). CAS on one invalidates the cache line for the other thread, even though they access different variables.
+
 **Diagnostic:**
 
 ```bash
@@ -3995,6 +4108,7 @@ perf stat -e cache-misses,\
 ```
 
 **Fix:** BAD: ignoring it ("it is fast enough"). GOOD: Add padding between hot fields. Use @Contended annotation (internal API) or manual padding (7 long fields between hot variables). LongAdder already handles this with cell padding.
+
 **Prevention:** In performance-critical code, ensure hot atomic variables are on separate cache lines. Use LongAdder which pads cells by default.
 
 ---
@@ -4501,11 +4615,15 @@ Java 1.2 introduced ThreadLocal with a simple per-thread storage mechanism. Java
 Because each thread has its own map, no synchronization is needed for get/set. Because the map is stored inside the Thread object, values live as long as the thread lives. Because thread pools recycle threads, values persist across tasks unless explicitly removed - this is the source of memory leaks and data leakage.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Zero synchronization overhead, zero contention, perfect thread safety through confinement
+
 **Cost:** Memory multiplied by thread count, memory leak risk in thread pools, invisible state coupling (hard to trace data flow)
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Thread-confined state requires some mechanism to associate data with a thread identity
+
 **Accidental:** ThreadLocal's mutable, leak-prone API is a historical design flaw - ScopedValue (Java 20+) provides an immutable, auto-cleanup alternative
 
 ---
@@ -4561,9 +4679,12 @@ Each Thread object has a field: `ThreadLocal.ThreadLocalMap threadLocals`. This 
 Production concerns: (1) **Memory leaks in thread pools:** Thread pool threads live for the application's lifetime. Every ThreadLocal.set() without remove() accumulates values in the thread's map. With 200 threads and 50 leaked ThreadLocals each holding a 1MB object, that is 10GB of leaked memory. (2) **Data leakage between requests:** In a web server thread pool, ThreadLocal values from one request can leak into the next request on the same thread - a security vulnerability (user context, auth tokens). ALWAYS use try-finally with remove(). (3) **InheritableThreadLocal and thread pools:** InheritableThreadLocal copies values from parent to child thread AT THREAD CREATION. In a thread pool, threads are created once and reused - inheritance happens at pool creation time, not at task submission. The parent's value at pool creation time persists forever. (4) **Virtual threads and ThreadLocal:** Virtual threads are cheap (millions possible), but each ThreadLocal copy costs memory per virtual thread. With 1M virtual threads and 10 ThreadLocals, memory usage explodes. ScopedValue (Java 20+) is designed for virtual threads - immutable, auto-cleanup, no per-thread storage. (5) **Framework usage:** Spring's RequestContextHolder, SecurityContextHolder, and TransactionSynchronizationManager all use ThreadLocal internally.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use ThreadLocal for per-thread state and always call remove() in finally blocks."
-A Staff says: "I avoid ThreadLocal when possible. For virtual threads, I use ScopedValue. For request context, I pass context explicitly via method parameters. ThreadLocal is a last resort when APIs cannot be changed and thread-confined state is unavoidable. I audit ThreadLocal usage with heap dumps."
-The difference: Treating ThreadLocal as a code smell that should be minimized, not as a primary tool.
+
+**A Senior says:** "I use ThreadLocal for per-thread state and always call remove() in finally blocks."
+
+**A Staff says:** "I avoid ThreadLocal when possible. For virtual threads, I use ScopedValue. For request context, I pass context explicitly via method parameters. ThreadLocal is a last resort when APIs cannot be changed and thread-confined state is unavoidable. I audit ThreadLocal usage with heap dumps."
+
+**The difference:** Treating ThreadLocal as a code smell that should be minimized, not as a primary tool.
 
 **Level 5 - Distinguished (expert thinking):**
 ThreadLocal is fundamentally an implicit parameter passing mechanism - it lets you avoid threading context through method signatures. This is convenient but creates invisible coupling: code behavior depends on ThreadLocal state that is not visible in the API. This makes testing harder (must set up ThreadLocal before calling), debugging harder (cannot see the state in the call stack), and virtual thread migration harder (value must be inherited). ScopedValue (Java 20+) addresses this by making the pattern explicit, immutable, and bounded. Go's context.Context, Kotlin's coroutine context, and Rust's task-local storage all solve the same problem with different trade-offs. The trend across languages is toward explicit context passing over implicit thread-local storage.
@@ -4747,8 +4868,11 @@ ThreadLocal's WeakReference key design was supposed to prevent memory leaks - if
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Memory leak in thread pool**
+
 **Symptom:** Heap usage grows continuously over hours/days. OOM eventually. Thread pool threads hold unexpectedly large retained sets.
+
 **Root Cause:** ThreadLocal.set() called without corresponding remove() in finally. Values accumulate in thread's ThreadLocalMap across thousands of requests.
+
 **Diagnostic:**
 
 ```bash
@@ -4767,11 +4891,15 @@ jcmd <pid> GC.heap_info
 ```
 
 **Fix:** BAD: increasing heap (delays OOM). GOOD: Add `remove()` in finally blocks for every `set()` call. Audit all ThreadLocal usage.
+
 **Prevention:** Static analysis rule: every ThreadLocal.set() must have a remove() in a finally block in the same method or call chain. Use ScopedValue where possible.
 
 **Failure Mode 2: Data leakage between requests**
+
 **Symptom:** User A sees User B's data. Authentication context from previous request persists. Security audit finds cross-request state contamination.
+
 **Root Cause:** ThreadLocal holding request context not removed between requests. Thread pool reuses thread for different users.
+
 **Diagnostic:**
 
 ```bash
@@ -4792,11 +4920,15 @@ ThreadLocal<User> ctx = new ThreadLocal
 ```
 
 **Fix:** BAD: clearing ThreadLocal at request start (masks the bug, race condition possible). GOOD: Clear in finally block at the earliest entry point (servlet filter, interceptor).
+
 **Prevention:** Framework-level cleanup: Spring's FrameworkServlet already clears RequestContextHolder. For custom ThreadLocals, register cleanup in a servlet filter.
 
 **Failure Mode 3: Virtual thread memory explosion**
+
 **Symptom:** Application using 100K+ virtual threads runs out of memory despite small individual allocations. Heap dump shows millions of ThreadLocalMap entries.
+
 **Root Cause:** Each virtual thread has its own ThreadLocalMap. With 10 ThreadLocals per virtual thread and 100K threads, that is 1M+ entries. Third-party libraries often set ThreadLocals without cleanup.
+
 **Diagnostic:**
 
 ```bash
@@ -4813,6 +4945,7 @@ jcmd <pid> Thread.dump_to_file \
 ```
 
 **Fix:** BAD: limiting virtual thread count (defeats the purpose). GOOD: Replace ThreadLocal with ScopedValue. Audit third-party libraries for ThreadLocal usage. Use `-Djdk.traceVirtualThreadLocals=true` (when available) to log ThreadLocal access from virtual threads.
+
 **Prevention:** Adopt ScopedValue for all new code. Monitor ThreadLocal usage per virtual thread in development.
 
 ---
@@ -5296,11 +5429,15 @@ The **Condition Interface** (java.util.concurrent.locks.Condition) provides per-
 Because each Condition has its own wait queue, signal() wakes only threads waiting on that specific Condition. Because await() releases the lock atomically, no other thread can observe the "about to wait" intermediate state. Because spurious wakeups are possible (JVM specification allows them), await() must always be in a while loop checking the actual condition.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Precise signaling (O(1) wakeup vs O(n) notifyAll), multiple wait conditions per lock, timed await
+
 **Cost:** More complex API than wait/notify, requires ReentrantLock (not usable with synchronized)
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** When multiple conditions share a lock, threads must be categorized by what they are waiting for
+
 **Accidental:** The requirement to always loop around await() due to spurious wakeups is a JVM implementation leak
 
 ---
@@ -5369,9 +5506,12 @@ Condition is implemented by AQS's ConditionObject. Each Condition maintains its 
 Production patterns: (1) **Bounded buffer (ArrayBlockingQueue):** Uses exactly the two-Condition pattern above. The JDK implementation is the gold standard. (2) **State machine:** Multiple Conditions for different states (IDLE, PROCESSING, COMPLETE). Threads wait for specific state transitions. signal() only the Condition for the target state. (3) **Timed await:** `notEmpty.await(1, TimeUnit.SECONDS)` returns false on timeout - essential for shutdown sequences and health checks. (4) **awaitUninterruptibly():** Does not throw InterruptedException. Use when the wait MUST complete regardless of interrupts (rare, usually wrong). (5) **Virtual threads:** Condition.await() on a ReentrantLock does NOT pin the carrier thread (unlike Object.wait() on a synchronized monitor). Prefer Condition over wait/notify for virtual thread code. (6) **Spurious wakeups:** Always loop: `while (!condition) c.await()`. Never `if (!condition)`. Spurious wakeups are rare but allowed by the JVM spec.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use Condition for producer-consumer patterns with separate notFull and notEmpty conditions."
-A Staff says: "I design wait conditions as state predicates, always checked in while loops. I choose between Condition (fine-grained signaling), BlockingQueue (higher-level abstraction), and CompletableFuture (non-blocking) based on the interaction pattern. I know that most applications should use BlockingQueue rather than raw Condition."
-The difference: Recognizing that Condition is a building block - most applications should use higher-level constructs built on it.
+
+**A Senior says:** "I use Condition for producer-consumer patterns with separate notFull and notEmpty conditions."
+
+**A Staff says:** "I design wait conditions as state predicates, always checked in while loops. I choose between Condition (fine-grained signaling), BlockingQueue (higher-level abstraction), and CompletableFuture (non-blocking) based on the interaction pattern. I know that most applications should use BlockingQueue rather than raw Condition."
+
+**The difference:** Recognizing that Condition is a building block - most applications should use higher-level constructs built on it.
 
 **Level 5 - Distinguished (expert thinking):**
 Condition is the Java equivalent of POSIX condition variables (pthread_cond_wait/signal). The semantics are nearly identical: await atomically releases the mutex and waits; signal wakes one waiter; broadcast (signalAll) wakes all. The spurious wakeup allowance exists because it simplifies efficient implementations on multiprocessor systems - the OS may wake a thread for scheduling reasons unrelated to the condition. In practice, the JDK's ArrayBlockingQueue, LinkedBlockingQueue, and SynchronousQueue are all built on ReentrantLock + Condition. Most application developers should never use Condition directly - use BlockingQueue instead. Condition is for framework developers building custom concurrent data structures.
@@ -5558,8 +5698,11 @@ Spurious wakeups from Condition.await() are not a bug - they are explicitly allo
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Lost signal - await never returns**
+
 **Symptom:** Thread hangs indefinitely in await(). Other threads are running normally. No deadlock detected by jstack.
+
 **Root Cause:** signal() was called before await(), or on the wrong Condition. The signal is "lost" because no thread was waiting at that moment.
+
 **Diagnostic:**
 
 ```bash
@@ -5573,11 +5716,15 @@ jstack <pid>
 ```
 
 **Fix:** BAD: using signalAll() everywhere (masks the root cause). GOOD: Verify signal() is called on the correct Condition. Ensure the while-loop condition is checked before await() - if the state already satisfies the predicate, do not await().
+
 **Prevention:** Use meaningful Condition names (notFull, notEmpty, hasData). Document which Condition is signaled on which state change.
 
 **Failure Mode 2: Spurious wakeup causing state violation**
+
 **Symptom:** Thread proceeds from await() when the condition is not actually met. Data corruption or assertion failure.
+
 **Root Cause:** `if (empty) notEmpty.await()` instead of `while (empty) notEmpty.await()`. Spurious wakeup returns without signal, thread proceeds with empty queue.
+
 **Diagnostic:**
 
 ```bash
@@ -5590,11 +5737,15 @@ grep -rn "\.await()" src/
 ```
 
 **Fix:** BAD: adding retry logic after await() (duplicates the while loop). GOOD: Change `if` to `while` around every await() call.
+
 **Prevention:** Static analysis rule: Condition.await() not inside a while loop is a warning. Code review checklist.
 
 **Failure Mode 3: Calling await/signal without holding the lock**
+
 **Symptom:** IllegalMonitorStateException thrown at runtime. Application crashes.
+
 **Root Cause:** Condition.await() or signal() called outside the lock.lock()/unlock() block. The thread does not hold the associated lock.
+
 **Diagnostic:**
 
 ```bash
@@ -5607,6 +5758,7 @@ grep -rn "\.await()" src/
 ```
 
 **Fix:** BAD: catching the exception (logic error, not recoverable). GOOD: Ensure lock.lock() is called before await/signal and unlock is in finally.
+
 **Prevention:** Always pair lock.lock() with try-finally-unlock. Use IDE templates for the Condition await pattern.
 
 ---
@@ -6099,11 +6251,15 @@ A **race condition** occurs when program correctness depends on the relative tim
 Because data races are undefined behavior, the JVM makes no guarantees about what a thread sees when reading a field written by another thread without synchronization. The thread may see a stale value, a partially constructed object, or a value that was never written. This forces the use of volatile, synchronized, or j.u.c constructs for any shared mutable state. But even with correct synchronization (no data races), race conditions can still exist if the logic depends on timing.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Understanding the distinction enables targeted fixes (data race fix: add volatile/synchronized; race condition fix: redesign logic)
+
 **Cost:** Both require careful reasoning about all possible thread interleavings
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Concurrent access to shared mutable state inherently creates the possibility of both bugs
+
 **Accidental:** Java's relatively weak memory model (vs sequential consistency) makes data races especially dangerous
 
 ---
@@ -6156,9 +6312,12 @@ Data races violate the Java Memory Model's happens-before rules. Without a happe
 Key patterns and their categories: (1) **check-then-act (race condition):** if (x) then use(x). Fix: atomic operations or synchronized blocks that cover both check and act. (2) **read-modify-write (data race + race condition):** count++. Fix: AtomicInteger.incrementAndGet(). (3) **Publishing objects (data race):** assigning a reference to a shared field without volatile. The reading thread may see a non-null reference to a half-constructed object. Fix: volatile or final fields. (4) **Double-checked locking (both):** The classic broken singleton pattern without volatile. Fixed in Java 5+ with volatile. (5) **Benign data races:** Some developers argue certain data races are "harmless" (e.g., writing a cached hashCode). This is technically undefined behavior under the JMM and should be avoided. The JDK itself has a few benign data races (String.hashCode) but these rely on implementation-specific guarantees. (6) **Detection tools:** `-XX:+UseThreadSanitizer` (experimental), jcstress for stress testing, SpotBugs for static analysis, IntelliJ inspections for common patterns.
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I synchronize shared mutable state to prevent race conditions."
-A Staff says: "I distinguish data races from race conditions. Synchronization fixes data races but not race conditions. I eliminate race conditions by designing for immutability, using atomic operations, or restructuring to avoid shared mutable state entirely. The best concurrent code has no shared mutable state."
-The difference: Recognizing that synchronization is necessary but not sufficient - the real fix is often eliminating shared mutable state.
+
+**A Senior says:** "I synchronize shared mutable state to prevent race conditions."
+
+**A Staff says:** "I distinguish data races from race conditions. Synchronization fixes data races but not race conditions. I eliminate race conditions by designing for immutability, using atomic operations, or restructuring to avoid shared mutable state entirely. The best concurrent code has no shared mutable state."
+
+**The difference:** Recognizing that synchronization is necessary but not sufficient - the real fix is often eliminating shared mutable state.
 
 **Level 5 - Distinguished (expert thinking):**
 The JMM's treatment of data races as undefined behavior is a deliberate design choice borrowed from C/C++ memory models. It enables aggressive compiler optimizations (hoisting reads out of loops, eliminating redundant reads) that would be impossible under sequential consistency. The cost is that data races become catastrophic rather than merely producing stale values. In practice, this means Java has two modes: correctly synchronized (sequentially consistent, easy to reason about) and incorrectly synchronized (undefined, impossible to reason about). There is no middle ground. The distinction matters for JIT compiler developers: the compiler can transform `while (flag) { }` to `if (flag) while(true) { }` if flag is non-volatile, because the data race makes ANY behavior legal.
@@ -6338,8 +6497,11 @@ A program can be completely free of data races and still have race conditions. C
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Lost update (read-modify-write race)**
+
 **Symptom:** Counter is lower than expected. 1000 increments across 10 threads yields ~950 instead of 10000.
+
 **Root Cause:** count++ is not atomic: read, increment, write. Two threads read the same value, both increment to the same result, one update is lost.
+
 **Diagnostic:**
 
 ```bash
@@ -6353,11 +6515,15 @@ java -jar jcstress.jar \
 ```
 
 **Fix:** BAD: synchronizing the entire method (high contention, slow). GOOD: AtomicInteger.incrementAndGet() (lock-free, fast).
+
 **Prevention:** Use AtomicInteger/AtomicLong for counters. Use LongAdder for high-contention counters (striped, even faster).
 
 **Failure Mode 2: Stale read (visibility data race)**
+
 **Symptom:** Thread does not see update written by another thread. Shutdown flag is set but worker thread runs forever.
+
 **Root Cause:** Non-volatile boolean field. JIT hoists the read out of the loop: `while (running)` becomes `if (running) while(true)`.
+
 **Diagnostic:**
 
 ```bash
@@ -6370,11 +6536,15 @@ grep -rn "boolean running" src/
 ```
 
 **Fix:** BAD: Thread.sleep() in the loop (masks the bug, wastes CPU). GOOD: `volatile boolean running` establishes happens-before.
+
 **Prevention:** All shared mutable fields must be volatile, in synchronized blocks, or use j.u.c classes. SpotBugs rule: `IS2_INCONSISTENT_SYNC`.
 
 **Failure Mode 3: Check-then-act (TOCTOU race condition)**
+
 **Symptom:** Duplicate entries in map/database. Negative balance despite balance check. File overwritten despite existence check.
+
 **Root Cause:** Check and act are in separate synchronization scopes (or not synchronized at all). Another thread acts between check and act.
+
 **Diagnostic:**
 
 ```bash
@@ -6389,6 +6559,7 @@ grep -rn "containsKey\|putIfAbsent" \
 ```
 
 **Fix:** BAD: synchronizing check and act separately. GOOD: Use atomic operations: `map.computeIfAbsent()`, `AtomicReference.compareAndSet()`, or synchronize the entire check-then-act as one block.
+
 **Prevention:** Use ConcurrentHashMap atomic methods. Design APIs that combine check+act into one atomic operation.
 
 ---
@@ -6877,11 +7048,15 @@ The **Immutable Object Pattern** creates objects whose state cannot be modified 
 Because fields are final, the JMM guarantees that any thread reading the object after construction sees the correct values (JSR-133 final field semantics). Because no mutation is possible, no synchronization is needed for reads. Because the class is final (or methods are final), subclasses cannot add mutable state. These invariants together make immutable objects unconditionally thread-safe.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Thread safety with zero synchronization overhead; safe to cache, share, and use as map keys; simpler reasoning about state
+
 **Cost:** Creating a new object for every state change; GC pressure for high-mutation workloads; defensive copies of mutable components
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Some domain objects genuinely change state (order status, account balance) and must be modeled as mutable
+
 **Accidental:** Java's verbose syntax for immutable classes before records (Java 16); lack of copy-on-modify syntax (withX() methods must be hand-written)
 
 ---
@@ -6931,9 +7106,12 @@ The JMM (Java Memory Model, JSR-133) provides special semantics for final fields
 Production patterns: (1) **Copy-on-modify:** To "change" an immutable object, create a new one: `Price newPrice = new Price(old.symbol(), newAmount, Instant.now())`. (2) **Builder pattern:** For objects with many fields, use an immutable builder: `ImmutableConfig.builder().host("...").port(8080).build()`. (3) **Defensive copying:** If an immutable class holds a Date or List, the constructor must copy it: `this.dates = List.copyOf(dates)`. Otherwise, callers can mutate the original and break immutability. (4) **AtomicReference for updates:** To atomically update a shared immutable reference, use AtomicReference: `ref.compareAndSet(oldPrice, newPrice)`. (5) **Gotcha: arrays are always mutable.** Even `final int[] data` can be mutated via `data[0] = 42`. Immutable classes must never expose array references directly. (6) **Performance:** GC pressure from creating many short-lived immutable objects is usually negligible with modern G1/ZGC. The GC is optimized for this pattern (young generation collection is proportional to live objects, not garbage).
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I make classes immutable by adding final to fields and removing setters."
-A Staff says: "I design entire module boundaries around immutable data transfer. Events are records. Configuration is immutable. State changes produce new versions referenced via AtomicReference. The only mutable state is at the edges - database writes and API responses. This makes 90% of the codebase inherently thread-safe."
-The difference: Moving from making individual classes immutable to designing systems where immutability is the default and mutability is the exception.
+
+**A Senior says:** "I make classes immutable by adding final to fields and removing setters."
+
+**A Staff says:** "I design entire module boundaries around immutable data transfer. Events are records. Configuration is immutable. State changes produce new versions referenced via AtomicReference. The only mutable state is at the edges - database writes and API responses. This makes 90% of the codebase inherently thread-safe."
+
+**The difference:** Moving from making individual classes immutable to designing systems where immutability is the default and mutability is the exception.
 
 **Level 5 - Distinguished (expert thinking):**
 Immutability connects to persistent data structures (Clojure, Scala), event sourcing (state = fold of events), and MVCC (Multi-Version Concurrency Control) in databases. All share the same principle: never modify, always create new versions. PostgreSQL's MVCC keeps old row versions for concurrent readers - exactly like immutable objects with AtomicReference. The functional programming insight is that most business logic is a function from input to output. If inputs and outputs are immutable, the function is pure and trivially parallelizable. Java's move toward records, sealed interfaces, and pattern matching is converging on this model.
@@ -7125,8 +7303,11 @@ Java records are not automatically deeply immutable. `record Holder(List<String>
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Leaking mutable component (broken immutability)**
+
 **Symptom:** "Immutable" object's state changes after construction. Other threads see unexpected values. Data corruption without any set() method being called.
+
 **Root Cause:** Constructor stores a reference to a mutable collection/object without defensive copy. The caller mutates the original, which mutates the "immutable" object.
+
 **Diagnostic:**
 
 ```bash
@@ -7140,11 +7321,15 @@ grep -rn "this\.\w* = " src/ | \
 ```
 
 **Fix:** BAD: documenting "do not mutate after passing to constructor." GOOD: `this.items = List.copyOf(items)` in the constructor. Unmodifiable copy prevents external mutation.
+
 **Prevention:** Use compact constructor validation in records. Static analysis rule: constructor parameter of mutable type assigned to field without copy.
 
 **Failure Mode 2: this-escape during construction**
+
 **Symptom:** Another thread sees a partially constructed immutable object - final fields have default values (null, 0). NullPointerException on a non-null final field.
+
 **Root Cause:** The constructor publishes `this` before all final fields are set: registering `this` as a listener, passing `this` to another thread, storing `this` in a static field.
+
 **Diagnostic:**
 
 ```bash
@@ -7157,11 +7342,15 @@ grep -rn "this" src/ | \
 ```
 
 **Fix:** BAD: using volatile on final fields (contradictory). GOOD: Use factory methods. The constructor does not publish `this`. The factory method creates the object, then registers it. This ensures the object is fully constructed before publication.
+
 **Prevention:** Enable `-Xlint:this-escape` (Java 21+). Code review: constructors must never pass `this` to external code.
 
 **Failure Mode 3: Pseudo-immutable with public array field**
+
 **Symptom:** Callers modify the array contents of an "immutable" object. `values[0] = 42` changes the object's state.
+
 **Root Cause:** Arrays in Java are always mutable. Even `final int[] values` allows `values[0] = 42`. There is no unmodifiable array in Java.
+
 **Diagnostic:**
 
 ```bash
@@ -7175,6 +7364,7 @@ grep -rn "\[\]" src/ | \
 ```
 
 **Fix:** BAD: returning the array directly (callers can mutate). GOOD: Return a copy: `return values.clone()` or use `List.of()` instead of arrays. Better yet, do not use arrays in immutable classes.
+
 **Prevention:** Use List instead of arrays in immutable classes. If arrays are required (performance), always clone on input and output.
 
 ---
@@ -7665,11 +7855,15 @@ wait/notify was introduced in Java 1.0 (1996) as part of every Object - the buil
 Because wait() releases the lock atomically, no notify can be missed between "I am about to wait" and "I am waiting." Because the thread must re-acquire the lock after waking, it can safely re-check the condition before proceeding. Because notify() wakes an arbitrary thread (not necessarily the one that should proceed), the woken thread must re-check the condition in a while loop.
 
 **THE TRADE-OFFS:**
+
 **Gain:** Efficient thread coordination without busy-waiting; zero CPU during wait
+
 **Cost:** Only one wait set per monitor (cannot selectively notify); complex error-prone API
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
+
 **Essential:** Threads need to coordinate on shared state changes, which requires some signaling mechanism
+
 **Accidental:** The single-wait-set limitation, spurious wakeups, and the requirement to wrap in while loops are API design artifacts
 
 ---
@@ -7720,9 +7914,12 @@ Each Java object has an intrinsic monitor with two sets: the **entry set** (thre
 Production considerations: (1) **Always notifyAll() unless you can prove notify() is safe.** notify() wakes one arbitrary thread. If multiple threads wait for different conditions on the same monitor, the wrong thread may wake, find the condition not met, re-wait, and the right thread never wakes (missed signal). (2) **Timed wait:** wait(timeoutMillis) returns after timeout even without notify. Essential for health checks and shutdown. But wait(0) means "wait forever," not "no timeout." (3) **InterruptedException:** wait() throws InterruptedException if the thread is interrupted while waiting. Always handle it properly - either re-throw or restore the interrupt flag. (4) **Virtual threads (Java 21+):** Object.wait() on a synchronized monitor PINS the carrier thread. This is a major reason to prefer Condition (with ReentrantLock) or BlockingQueue over wait/notify in virtual thread code. (5) **Testing:** Timing-dependent tests using wait/notify are inherently flaky. Use CountDownLatch or Phaser for test synchronization. (6) **notify() vs notifyAll() performance:** With 100 waiting threads, notifyAll() causes 99 unnecessary wakeups. But notify() is only safe when all waiters wait for the same condition and any waiter can proceed (homogeneous waiters).
 
 **The Senior-to-Staff Leap:**
-A Senior says: "I use wait/notify for producer-consumer patterns with synchronized blocks."
-A Staff says: "I never use wait/notify in new code. I use BlockingQueue for producer-consumer, Condition for custom synchronizers, CompletableFuture for async results, and Phaser for test coordination. wait/notify is legacy - I only maintain it, never create it."
-The difference: Recognizing that wait/notify is the assembly language of Java concurrency - it works but higher-level abstractions are always better for new code.
+
+**A Senior says:** "I use wait/notify for producer-consumer patterns with synchronized blocks."
+
+**A Staff says:** "I never use wait/notify in new code. I use BlockingQueue for producer-consumer, Condition for custom synchronizers, CompletableFuture for async results, and Phaser for test coordination. wait/notify is legacy - I only maintain it, never create it."
+
+**The difference:** Recognizing that wait/notify is the assembly language of Java concurrency - it works but higher-level abstractions are always better for new code.
 
 **Level 5 - Distinguished (expert thinking):**
 wait/notify implements Hoare's monitor concept (1974), where condition synchronization is built into the monitor. Java chose the "signal-and-continue" semantics (Mesa monitors): after calling notify(), the signaling thread continues to hold the lock. The notified thread must wait to re-acquire it. This is why the while-loop is mandatory - the condition may change between notify and the notified thread actually running. An alternative (not used in Java) is "signal-and-wait" (Hoare monitors): the signaler immediately transfers the lock to the waiter. This would eliminate the need for while-loops but is harder to implement efficiently. Understanding this design choice explains why Java's wait/notify requires the seemingly redundant while loop.
@@ -7914,8 +8111,11 @@ notify() does not immediately wake the target thread. It moves one thread from t
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure Mode 1: Lost notify (signal before wait)**
+
 **Symptom:** Thread calls wait() and never returns. No other thread is blocked. Application appears hung for one thread.
+
 **Root Cause:** notify() was called before the consumer called wait(). Since no thread was in the wait set, the notify was lost. The consumer then calls wait() and waits forever.
+
 **Diagnostic:**
 
 ```bash
@@ -7929,11 +8129,15 @@ jstack <pid>
 ```
 
 **Fix:** BAD: adding a small sleep before wait (timing-dependent). GOOD: Always check the condition BEFORE waiting: `while (queue.isEmpty()) wait()`. If the condition is already met (queue not empty), skip wait entirely. The while-loop naturally handles lost notifies.
+
 **Prevention:** The canonical while-loop pattern inherently prevents lost notifies.
 
 **Failure Mode 2: Wrong monitor object**
+
 **Symptom:** IllegalMonitorStateException at runtime. Or no exception but notify does not wake the waiting thread.
+
 **Root Cause:** wait() called on one object, notify() called on a different object. Or calling wait/notify without holding that object's monitor.
+
 **Diagnostic:**
 
 ```bash
@@ -7950,11 +8154,15 @@ grep -n "\.wait()\|\.notify()" src/
 ```
 
 **Fix:** BAD: catching IllegalMonitorStateException (masks the bug). GOOD: Ensure wait/notify are called on the SAME object used in the synchronized block. Use a dedicated `final Object lock = new Object()` and always synchronize/wait/notify on it.
+
 **Prevention:** Naming convention: `synchronized(monitor) { monitor.wait(); monitor.notify(); }`. Always use the same variable for synchronized and wait/notify.
 
 **Failure Mode 3: notify() with heterogeneous waiters (missed wakeup)**
+
 **Symptom:** Some threads never wake up even though the condition they wait for has been met. Other threads wake and re-wait.
+
 **Root Cause:** Multiple threads wait on the same monitor for different conditions. notify() wakes an arbitrary thread. If the wrong thread wakes (one whose condition is not met), it re-waits. The right thread stays sleeping.
+
 **Diagnostic:**
 
 ```bash
@@ -7969,6 +8177,7 @@ jstack <pid>
 ```
 
 **Fix:** BAD: using notify() with heterogeneous waiters (fundamentally unsafe). GOOD: Use notifyAll() when threads wait for different conditions on the same monitor. Or better, use Condition with separate wait sets: one for "notFull," one for "notEmpty."
+
 **Prevention:** If you must use wait/notify, always use notifyAll(). For selective signaling, migrate to ReentrantLock + Condition.
 
 ---
@@ -8227,6 +8436,7 @@ _Likely follow-up:_ "Which is faster?"
 At the JVM level, each object's monitor has two thread sets:
 
 **Entry Set:** Threads blocked trying to enter synchronized (BLOCKED state).
+
 **Wait Set:** Threads that called wait() (WAITING state).
 
 **notify():**

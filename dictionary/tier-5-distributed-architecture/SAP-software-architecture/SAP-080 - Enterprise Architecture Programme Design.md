@@ -24,13 +24,13 @@ permalink: /software-architecture/enterprise-architecture-programme-design/
 
 # SAP-085 - Enterprise Architecture Programme Design
 
-⚡ TL;DR - EA programme design is the L4.5 discipline of establishing, structuring, and governing an enterprise architecture function from scratch: defining operating model, team structure, governance, tooling, and the maturity roadmap.
+⚡ TL;DR - EA programme design is the L5 discipline of establishing, structuring, and governing an enterprise architecture function from scratch: defining operating model, team structure, governance, tooling, and the maturity roadmap.
 
-| SAP-085 | Category: Software Architecture Patterns | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | SAP-037, SAP-051, SAP-013, SAP-084 | |
-| **Used by:** | SAP-086 | |
-| **Related:** | SAP-027, SAP-024, SAP-057 | |
+| SAP-085         | Category: Software Architecture Patterns | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------- | :-------------- |
+| **Depends on:** | SAP-037, SAP-051, SAP-013, SAP-084       |                 |
+| **Used by:**    | SAP-086                                  |                 |
+| **Related:**    | SAP-027, SAP-024, SAP-057                |                 |
 
 ---
 
@@ -69,6 +69,7 @@ Early EA programmes were designed as IT governance functions: centrally controll
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. An EA function exists to change decisions, not to produce documents. Design for decision impact, not artefact production.
 2. EA must be closer to the business than to IT. Functions that report only to the CTO rarely influence business strategy.
 3. Governance that slows delivery is governance that will be bypassed. Design for fast, lightweight governance that scales with delivery velocity.
@@ -76,6 +77,7 @@ Early EA programmes were designed as IT governance functions: centrally controll
 
 **DERIVED DESIGN:**
 Four operating model choices, from centralized to federated:
+
 - **Centralized EA:** Central team owns all architecture standards and reviews. Scales poorly; becomes bottleneck at scale.
 - **Federated EA:** Domain architects own their domain; central EA sets standards. Scales well; coordination overhead.
 - **Platform EA:** Central team builds architecture platforms and golden paths; delivery teams self-serve. Most scalable.
@@ -100,10 +102,12 @@ Four operating model choices, from centralized to federated:
 **SETUP:** Two organisations establish EA functions simultaneously. Organisation A implements "Full EA from Day 1" (TOGAF ADM, Architecture Review Board, full ArchiMate tooling). Organisation B implements "Minimal Viable EA" (3 architecture principles, capability map, weekly architecture office hours).
 
 **YEAR 1 OUTCOME:**
+
 - Org A: 200 artefacts produced. 0 delivery decisions changed. EA budget under review.
 - Org B: 12 decisions influenced. 3 systems consolidated. Redundancy eliminated saving $2M. EA budget increased.
 
 **YEAR 2:**
+
 - Org A: EA team disbanded. "EA failed."
 - Org B: EA team expanded to 6. ArchiMate adopted based on demand. Governance formalised.
 
@@ -140,6 +144,7 @@ EA programme design produces: an EA charter (scope, purpose, authority), an oper
 The federated EA operating model dominates modern programme design because centralised EA cannot scale with continuous delivery. The shift from centralised to federated mirrors the shift from monolithic to microservices architecture: the same trade-off (consistency vs scalability) applies in both domains. Platform EA - where the EA function''s primary product is a platform (golden paths, standards enforcement, architecture templates) rather than a review service - represents the same insight that platform engineering brought to developer tooling: make the right thing easy rather than policing the wrong thing.
 
 **Expert Thinking Cues:**
+
 - If every significant architecture decision passes through a central review board, the EA function will fail at scale. Design the review board out of the critical path.
 - The first 90 days of an EA function determine its organisational reputation for the next 5 years. Choose the first problems to solve for maximum visible impact.
 - EA functions that succeed embed EA practitioners in business and delivery teams, not in a separate EA tower.
@@ -176,6 +181,7 @@ Baseline current maturity (O-ACMM or Gartner ITScore). Define target for year 1 
 ### 🔄 The Complete Picture - End-to-End Flow
 
 **NORMAL FLOW:**
+
 ```
 CIO/CTO Decision: Establish EA Function
           |
@@ -225,24 +231,24 @@ At small scale: 1 EA practitioner, informal process, 3 principles, shared docume
 
 ### ⚖️ Comparison Table
 
-| Operating Model | Governance | Scalability | Consistency | Best For |
-|:----------------|:-----------|:------------|:------------|:---------|
-| **Centralised** | Central ARB | Low | High | < 20 delivery teams |
-| **Federated** | Domain ARBs + Central | Medium | Medium | 20-100 teams |
-| **Platform EA** | Automated + Lightweight review | High | Medium-High | > 100 teams |
-| **Hybrid** | Central standards + Domain execution | Medium-High | Medium | Most large enterprises |
+| Operating Model | Governance                           | Scalability | Consistency | Best For               |
+| :-------------- | :----------------------------------- | :---------- | :---------- | :--------------------- |
+| **Centralised** | Central ARB                          | Low         | High        | < 20 delivery teams    |
+| **Federated**   | Domain ARBs + Central                | Medium      | Medium      | 20-100 teams           |
+| **Platform EA** | Automated + Lightweight review       | High        | Medium-High | > 100 teams            |
+| **Hybrid**      | Central standards + Domain execution | Medium-High | Medium      | Most large enterprises |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|:--------------|:--------|
-| "EA programme success = framework implementation" | Success = decisions made better; framework is a means, not an end |
-| "Start with the full TOGAF ADM" | Start with the minimum needed to influence the next 3 decisions; grow from demonstrated value |
-| "EA reports to the CTO" | EA reporting structure determines its stakeholder access; reporting only to CTO limits business engagement |
-| "EA programme design is a one-time activity" | EA programme design evolves with the organisation; the operating model that works at 50 teams fails at 500 |
-| "More architects = better EA" | EA impact scales with stakeholder trust and business integration, not headcount |
+| Misconception                                     | Reality                                                                                                    |
+| :------------------------------------------------ | :--------------------------------------------------------------------------------------------------------- |
+| "EA programme success = framework implementation" | Success = decisions made better; framework is a means, not an end                                          |
+| "Start with the full TOGAF ADM"                   | Start with the minimum needed to influence the next 3 decisions; grow from demonstrated value              |
+| "EA reports to the CTO"                           | EA reporting structure determines its stakeholder access; reporting only to CTO limits business engagement |
+| "EA programme design is a one-time activity"      | EA programme design evolves with the organisation; the operating model that works at 50 teams fails at 500 |
+| "More architects = better EA"                     | EA impact scales with stakeholder trust and business integration, not headcount                            |
 
 ---
 
@@ -252,12 +258,14 @@ At small scale: 1 EA practitioner, informal process, 3 principles, shared docume
 **Symptom:** EA function has been running for 6 months with no visible business impact. Leadership confidence is declining.
 **Root Cause:** EA team focused on building comprehensive artefacts (capability map, full portfolio) before engaging with business decisions.
 **Diagnostic:**
+
 ```
 Ask: "What specific business decision
 was changed because of EA input
 in the last 90 days?"
 No clear answer: quick win failure.
 ```
+
 **Fix:** Immediately pivot to identifying 2-3 high-visibility problems EA can contribute to in the next 30 days.
 **Prevention:** Design the first 90-day plan around demonstrable impact, not artefact production. Pick 3 specific problems to solve visibly.
 
@@ -265,6 +273,7 @@ No clear answer: quick win failure.
 **Symptom:** EA function produces excellent technology architecture but has no access to business strategy discussions. Technology strategy diverges from business strategy.
 **Root Cause:** EA function reports to CTO or VP Engineering only; no visibility into or relationship with business strategy.
 **Diagnostic:**
+
 ```
 Ask: "Does the EA lead attend business
 strategy reviews or planning sessions?"
@@ -273,6 +282,7 @@ Ask: "Which business stakeholders does
 EA have a regular engagement with?"
 < 3: business engagement failure.
 ```
+
 **Fix:** Establish EA reporting to CIO (not CTO) and create a direct relationship with CFO and COO for investment decisions.
 **Prevention:** Define EA''s stakeholder map at programme design stage with explicit business stakeholder relationships.
 
@@ -280,24 +290,28 @@ EA have a regular engagement with?"
 **Symptom:** The EA programme is established but has no relationship with the CISO function. Security architecture is practiced separately from EA, creating blind spots in both functions.
 **Root Cause:** EA programme designed without security as an explicit dimension of the operating model.
 **Fix:**
+
 - BAD: EA and security architecture are separate functions with no shared governance
 - GOOD: EA programme includes CISO as a mandatory stakeholder; security architecture reviews are a component of EA Architecture Review Board agenda; security principles are included in the EA principles catalogue
-**Prevention:** Include CISO in the EA programme''s stakeholder map from day 1. Define security architecture as a cross-cutting concern in the EA operating model.
+  **Prevention:** Include CISO in the EA programme''s stakeholder map from day 1. Define security architecture as a cross-cutting concern in the EA operating model.
 
 ---
 
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - SAP-037 - Enterprise Architecture - What It Is and Why It Exists
 - SAP-051 - TOGAF Framework
 - SAP-084 - Enterprise Architecture Maturity Models
 
 **Builds On This (learn these next):**
+
 - SAP-086 - EA Tool Selection and Vendor Landscape
 - SAP-027 - Architecture Governance at Scale
 
 **Alternatives / Comparisons:**
+
 - SAP-024 - Architecture Review Process Design (governance component of EA programme)
 - SAP-025 - Legacy Modernization Strategy (common EA programme use case)
 
@@ -326,6 +340,7 @@ EA have a regular engagement with?"
 ```
 
 **If you remember only 3 things:**
+
 1. Operating model choice (centralised vs federated vs platform) is the most consequential EA programme design decision.
 2. Demonstrate value within 90 days or lose organisational credibility - start with visible problems, not comprehensive artefacts.
 3. EA is a change management programme; measure it by decisions changed, not by documents produced.
@@ -339,6 +354,7 @@ EA have a regular engagement with?"
 **Reusable Engineering Principle:** Any enabling function (EA, platform engineering, DevOps, data engineering) succeeds by making the right thing easy for its customers, not by governing the wrong thing. Design for customer adoption, not for compliance.
 
 **Where else this pattern appears:**
+
 - **Platform Engineering** - the shift from central release engineering to internal developer platform uses the same design principles: make the right path the easy path; automate standards enforcement; measure adoption, not compliance.
 - **Data mesh** - the distributed data ownership model applies the same federated EA operating model to data: domain teams own their data products; central governance sets standards.
 - **FinOps function design** - establishing a FinOps function uses the same programme design pattern: operating model, stakeholder engagement, quick wins, maturity roadmap.
@@ -355,12 +371,12 @@ The single strongest predictor of EA programme success is not the framework chos
 
 **Question 1 (System Interaction):** A financial services firm establishes an EA function. After 6 months, the EA team has produced a comprehensive capability map and application portfolio, but the portfolio management office (PMO) continues to approve projects without consulting EA. What operating model change and governance integration is required to ensure EA input into portfolio investment decisions, and what TOGAF ADM phase does portfolio alignment map to?
 
-*Hint:* Investigate how TOGAF ADM Phase E (Opportunities and Solutions) and Phase F (Migration Planning) are designed to integrate with portfolio management processes, and what governance changes are required to ensure EA artefacts from Phase E/F feed into the PMO''s investment decision gates.
+_Hint:_ Investigate how TOGAF ADM Phase E (Opportunities and Solutions) and Phase F (Migration Planning) are designed to integrate with portfolio management processes, and what governance changes are required to ensure EA artefacts from Phase E/F feed into the PMO''s investment decision gates.
 
 **Question 2 (Scale):** An EA programme designed for a 1,000-person organisation is now operating in a 10,000-person organisation after rapid growth and acquisitions. The centralised ARB now processes 200 review requests per quarter and has an average 6-week review time. What operating model redesign is required, and how do you migrate from a centralised model to a federated model without losing architectural consistency during the transition?
 
-*Hint:* Research how large technology companies (Zalando, Spotify, Netflix) describe their transition from centralised to federated architecture governance, specifically what standards they made non-negotiable at the centre and what they devolved to domain teams.
+_Hint:_ Research how large technology companies (Zalando, Spotify, Netflix) describe their transition from centralised to federated architecture governance, specifically what standards they made non-negotiable at the centre and what they devolved to domain teams.
 
 **Question 3 (Design Trade-off):** Some organisations argue that formal EA programmes are a legacy construct from the pre-cloud era, and that modern engineering organisations can achieve architectural coherence through: strong platform engineering, comprehensive API contracts, and well-defined domain ownership (Domain-Driven Design). When is a formal EA programme necessary, and when can these engineering practices substitute for it?
 
-*Hint:* Consider the types of governance questions that engineering practices can answer (how does this service integrate?) vs the types that only EA can answer (which of 200 systems implements the regulatory reporting capability we need to change?), and map which organisational contexts generate each type of question at frequency.
+_Hint:_ Consider the types of governance questions that engineering practices can answer (how does this service integrate?) vs the types that only EA can answer (which of 200 systems implements the regulatory reporting capability we need to change?), and map which organisational contexts generate each type of question at frequency.
