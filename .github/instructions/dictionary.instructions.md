@@ -203,11 +203,24 @@ Every entry MUST pass ALL eight quality tests before output.
 | 7   | Decision           | Can't decide when to use/avoid = add decision framework |
 | 8   | Scale              | No 10x/100x/1000x coverage = add scale analysis         |
 
-### Mandatory Code Example Types
+### Code Example Requirements (Non-Negotiable)
 
-- **Wrong vs Right** (BAD before GOOD) - MANDATORY for all entries with code
-- **Failure Example** (what breaks, symptoms, fix) - MANDATORY for all entries with code
-- Additional types (choose 1-3): Recognition, Production, Debugging, Scale, Trade-off, Internal Mechanism, System Interaction, Testing/Verification
+Every concept with code must choose examples from these categories.
+Choose based on concept complexity (minimum 2-3 categories):
+
+1. Recognition Example - identify the pattern in existing code
+2. Wrong vs Right Example - **MANDATORY** (BAD before GOOD, always)
+3. Production Example - real-world, not toy
+4. Failure Example - **MANDATORY** - what breaks, symptoms, fix
+5. Debugging Example - diagnostic commands, log analysis
+6. Scale Example - what changes under load
+7. Trade-off Example - gain vs sacrifice in code
+8. Internal Mechanism Example - how it works underneath
+9. System Interaction Example - cross-component behavior
+10. Testing/Verification Example - prove correctness
+
+Goal: the reader understands why, when, failure, scale,
+debugging, and trade-offs - not just the API.
 
 ### 10-Point Writing Standard
 

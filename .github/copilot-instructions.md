@@ -122,11 +122,24 @@ and `interview/_config/INTERVIEW_PROMPT.md` Section 5.
 | 7   | Decision           | Could the reader decide when to use or avoid this?   |
 | 8   | Scale              | What changes at 10x, 100x, 1000x?                    |
 
-### Code Example Requirements (Mandatory Types)
+### Code Example Requirements (Non-Negotiable)
 
-- **Wrong vs Right** (BAD before GOOD) - MANDATORY for all entries with code
-- **Failure Example** (what breaks, symptoms, fix) - MANDATORY for all entries with code
-- Choose 1-3 additional from: Recognition, Production, Debugging, Scale, Trade-off, Internal Mechanism, System Interaction, Testing/Verification
+Every concept with code must choose examples from these categories.
+Choose based on concept complexity (minimum 2-3 categories):
+
+1. Recognition Example - identify the pattern in existing code
+2. Wrong vs Right Example - **MANDATORY** (BAD before GOOD, always)
+3. Production Example - real-world, not toy
+4. Failure Example - **MANDATORY** - what breaks, symptoms, fix
+5. Debugging Example - diagnostic commands, log analysis
+6. Scale Example - what changes under load
+7. Trade-off Example - gain vs sacrifice in code
+8. Internal Mechanism Example - how it works underneath
+9. System Interaction Example - cross-component behavior
+10. Testing/Verification Example - prove correctness
+
+Goal: the reader understands why, when, failure, scale,
+debugging, and trade-offs - not just the API.
 
 ### 10-Point Writing Standard
 

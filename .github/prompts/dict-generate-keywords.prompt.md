@@ -389,6 +389,25 @@ Full content quality spec: `dictionary/_config/GENERATOR_PROMPT.md` Section 7.
 7. Decision - reader knows when to use or avoid
 8. Scale - 10x/100x/1000x behavior covered
 
+**Code Example Requirements (Non-Negotiable) - applied at content fill:**
+
+Every concept with code must choose from these categories
+(minimum 2-3 based on complexity):
+
+1. Recognition Example - identify pattern in existing code
+2. Wrong vs Right - MANDATORY (BAD before GOOD, always)
+3. Production Example - real-world, not toy
+4. Failure Example - MANDATORY - what breaks, symptoms, fix
+5. Debugging Example - diagnostic commands, log analysis
+6. Scale Example - what changes under load
+7. Trade-off Example - gain vs sacrifice in code
+8. Internal Mechanism Example - how it works underneath
+9. System Interaction Example - cross-component behavior
+10. Testing/Verification Example - prove correctness
+
+Goal: reader understands why, when, failure, scale, debugging,
+and trade-offs - not just the API.
+
 ---
 
 ## Encoding Safety (PowerShell)

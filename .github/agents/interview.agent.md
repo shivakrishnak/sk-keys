@@ -108,11 +108,24 @@ content that a Staff/Principal engineer would respect and learn from.
 
 Full spec: `interview/_config/INTERVIEW_PROMPT.md` Section 5.
 
-### Mandatory Code Example Types
+### Code Example Requirements (Non-Negotiable)
 
-- **Wrong vs Right** (BAD before GOOD) - every entry with code
-- **Failure Example** (what breaks, symptoms, fix) - every entry with code
-- Choose 1-3 additional: Recognition, Production, Debugging, Scale, Trade-off, Internal Mechanism, System Interaction, Testing/Verification
+Every concept with code must choose from these categories.
+Choose based on concept complexity (minimum 2-3 categories):
+
+1. Recognition Example - identify the pattern in existing code
+2. Wrong vs Right Example - **MANDATORY** (BAD before GOOD, always)
+3. Production Example - real-world, not toy
+4. Failure Example - **MANDATORY** - what breaks, symptoms, fix
+5. Debugging Example - diagnostic commands, log analysis
+6. Scale Example - what changes under load
+7. Trade-off Example - gain vs sacrifice in code
+8. Internal Mechanism Example - how it works underneath
+9. System Interaction Example - cross-component behavior
+10. Testing/Verification Example - prove correctness
+
+Goal: the reader understands why, when, failure, scale,
+debugging, and trade-offs - not just the API.
 
 ### 10-Point Writing Standard
 
