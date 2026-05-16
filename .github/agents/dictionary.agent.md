@@ -87,6 +87,34 @@ a description/JD like "Strong SQL skills and experience with..."
 - Python: `$env:USERPROFILE\.local\bin\python3.14.exe`
 - Do NOT `git push`
 
+## Quality Constitution (Non-Negotiable)
+
+Every entry MUST pass ALL eight quality tests from Section 7 of
+`dictionary/_config/GENERATOR_PROMPT.md`. No exceptions.
+
+**Eight Tests (all must pass):**
+
+1. Search Again? - reader never needs to look elsewhere
+2. Feynman - smart beginner understands without confusion
+3. Senior Engineer - senior still learns something useful
+4. Staff Engineer - staff/principal respects this explanation
+5. Production Reality - reader can diagnose real issues after reading
+6. Retention - reader remembers this next month
+7. Decision - reader knows when to use or avoid
+8. Scale - 10x/100x/1000x behavior covered
+
+**Mandatory Code Example Types:**
+
+- Wrong vs Right (BAD before GOOD) - every entry with code
+- Failure Example (what breaks, symptoms, fix) - every entry with code
+
+**10-Point Writing Standard:**
+Every explanation: Intuition, Mechanism, Trade-off, Failure,
+Diagnosis, Scale, Decision, Memory, Transfer, Reality
+
+**Final Gate:** "Would an experienced engineer say 'Damn - this is
+genuinely excellent'?" If uncertain: rewrite. Masterclass = target.
+
 ## Category Code Registry
 
 Consult `dictionary/index.md` for the full tier/category/code mapping.

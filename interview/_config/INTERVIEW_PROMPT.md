@@ -1145,7 +1145,183 @@ KEYWORD SEPARATION WITHIN A FILE:
 
 ================================================================
 SECTION 5: CONTENT QUALITY STANDARDS
+NON-NEGOTIABLE QUALITY CONSTITUTION
 ================================================================
+
+THIS IS A HARD REQUIREMENT. NOT OPTIONAL. NOT BEST-EFFORT.
+
+The content quality MUST be:
+  - world-class / masterclass-level
+  - elite engineering quality
+  - intellectually rigorous
+  - production-grade
+  - cognitively optimized
+  - superior to most publicly available resources
+
+If the output feels average, generic, tutorial-level, repetitive,
+shallow, textbook-only, surface-level, or AI-generated fluff:
+THE OUTPUT HAS FAILED.
+
+----------------------------------------------------------------
+5.1 GOLD STANDARD BENCHMARK
+----------------------------------------------------------------
+
+Content must be comparable to or better than:
+
+  EXPLANATION QUALITY: Feynman, Bret Victor, Josh Bloch,
+    Martin Fowler, Rich Hickey, Leslie Lamport,
+    Martin Kleppmann, Brendan Gregg, John Ousterhout
+
+  ENGINEERING DEPTH: Google/Netflix/Uber/Cloudflare engineering
+    blogs, AWS architecture docs, JVM performance experts,
+    Kubernetes production guides
+
+  PEDAGOGICAL QUALITY: MIT/Stanford-level clarity and rigor,
+    elite engineering mentorship
+
+The content should feel like:
+  > A senior principal engineer teaching a curious engineer
+  > after surviving real production failures.
+
+NOT:
+  > An LLM summarizing Wikipedia.
+
+----------------------------------------------------------------
+5.2 EIGHT QUALITY TESTS (ALL MUST PASS)
+----------------------------------------------------------------
+
+TEST 1 - THE "SEARCH AGAIN?" TEST:
+  "Would a serious engineer still need to search elsewhere?"
+  If YES: FAIL.
+  Must cover: intuition, mechanics, trade-offs, failure modes,
+  debugging, production reality, comparisons, decision criteria,
+  scaling behavior.
+
+TEST 2 - THE FEYNMAN TEST:
+  "Could a smart beginner understand this without confusion?"
+  If NO: rewrite with plain language, layered understanding,
+  memorable explanations, mental models, progressive depth.
+
+TEST 3 - THE SENIOR ENGINEER TEST:
+  "Would a senior engineer still learn something useful?"
+  If NO: FAIL.
+  Must include: hidden trade-offs, operational lessons,
+  scale effects, production edge cases, expert heuristics,
+  failure signatures, subtle misconceptions.
+
+TEST 4 - THE STAFF ENGINEER TEST:
+  "Would a staff/principal engineer respect this explanation?"
+  If NO: FAIL.
+  Must include: decision frameworks, organizational implications,
+  architecture trade-offs, scaling constraints, operational cost,
+  debugging strategy.
+
+TEST 5 - THE PRODUCTION REALITY TEST:
+  "Could someone diagnose a real production issue after reading?"
+  If NO: FAIL.
+  Must include: symptoms, metrics, logs, debugging commands,
+  diagnosis path, failure modes.
+
+TEST 6 - THE RETENTION TEST:
+  "Will the reader remember this next month?"
+  If NO: improve.
+  Must include: memorable analogy, mental model, surprising truth,
+  recall triggers, memory hooks.
+
+TEST 7 - THE DECISION TEST:
+  "Could the reader confidently decide when to use or avoid this?"
+  If NO: FAIL.
+  Must include: decision tree, trade-offs, anti-patterns,
+  alternatives, comparison framework.
+
+TEST 8 - THE SCALE TEST:
+  "What changes at 10x, 100x, or 1000x scale?"
+  If not answered: FAIL.
+  Must include: bottlenecks, contention, operational shifts,
+  architecture implications, failure cascades.
+
+----------------------------------------------------------------
+5.3 CODE EXAMPLE REQUIREMENTS (MANDATORY)
+----------------------------------------------------------------
+
+Every concept with code must include examples from these categories.
+Choose based on concept complexity (minimum 2-3 categories):
+
+  1. Recognition Example - identify the pattern in existing code
+  2. Wrong vs Right Example - MANDATORY (BAD before GOOD, always)
+  3. Production Example - real-world, not toy
+  4. Failure Example - MANDATORY - what breaks and why
+  5. Debugging Example - diagnostic commands, log analysis
+  6. Scale Example - what changes under load
+  7. Trade-off Example - gain vs sacrifice in code
+  8. Internal Mechanism Example - how it works underneath
+  9. System Interaction Example - cross-component behavior
+  10. Testing/Verification Example - prove correctness
+
+MANDATORY for every entry with code:
+  - Wrong vs Right (BAD before GOOD, always)
+  - Failure Example (what breaks, symptoms, fix)
+
+Goal: the reader understands why, when, failure, scale,
+debugging, and trade-offs - not just the API.
+
+----------------------------------------------------------------
+5.4 ENFORCED WRITING STANDARD (10-POINT)
+----------------------------------------------------------------
+
+Every explanation must contain:
+
+  1. INTUITION - Why this exists
+  2. MECHANISM - How it actually works
+  3. TRADE-OFF - What you gain vs sacrifice
+  4. FAILURE - How it breaks
+  5. DIAGNOSIS - How experts debug it
+  6. SCALE - What changes under load
+  7. DECISION - When to use or avoid it
+  8. MEMORY - Make it unforgettable
+  9. TRANSFER - Connect to broader engineering principles
+  10. REALITY - Production truth over theory
+
+----------------------------------------------------------------
+5.5 STRICTLY FORBIDDEN (NEVER GENERATE)
+----------------------------------------------------------------
+
+  - Generic textbook definitions only
+  - API documentation disguised as explanation
+  - Syntax-only code examples
+  - Toy examples without production relevance
+  - Repeated cliches ("everything is a trade-off")
+  - Vague advice ("it depends") without specifics
+  - Undefined jargon
+  - Hallucinated history or fabricated performance numbers
+  - Surface-level explanations
+  - Generic interview-style answers
+  - Empty motivational language
+  - Copy-paste blog quality
+  - Overly academic content disconnected from reality
+  - Massive walls of prose
+  - Repetition across sections
+  - Explanations that skip WHY
+  - "Best practice" claims without reasoning
+  - Positive-only framing (always show failure modes)
+
+----------------------------------------------------------------
+5.6 FINAL HARD GATE
+----------------------------------------------------------------
+
+Before outputting content ask:
+
+  "Would an experienced engineer say:
+   'Damn - this is genuinely excellent.
+    I finally understand this deeply.'"
+
+  If uncertain: rewrite.
+  Good enough = FAIL. Excellent = minimum.
+  Masterclass = target. World-class = expected.
+
+----------------------------------------------------------------
+5.7 ADDITIONAL QUALITY CHECKS (PRESERVED FROM v3.0)
+----------------------------------------------------------------
 
 THE COMPLETENESS TEST:
   For every keyword, before finalising:
@@ -1161,12 +1337,6 @@ THE MULTI-PERSPECTIVE TEST:
   [ ] IMPLEMENTOR perspective: how it works inside
   [ ] DEBUGGER perspective: how to diagnose when broken
   If any angle is missing, the entry is incomplete.
-
-THE FEYNMAN TEST:
-  Read each section aloud. If any sentence requires prior
-  knowledge NOT defined in this entry: simplify or define
-  the term inline. No reader should need to look up a term
-  used in an explanation.
 
 THE CONTRAST TEST:
   [ ] Does the reader know precisely WHEN to stop using
@@ -1191,9 +1361,8 @@ THE DANGEROUS ENGINEER TEST:
 
 THE PRESSURE TEST:
   Read the answer to Q1 aloud while timing yourself.
-  If you can't finish in 90 seconds: the answer is too long
-  or insufficiently structured.
-  If you finish in 30 seconds: the answer lacks depth.
+  If you can't finish in 90 seconds: answer is too long.
+  If you finish in 30 seconds: answer lacks depth.
   Every answer must be deliverable under interview pressure.
 
 THE COLD CALL TEST:
@@ -1202,62 +1371,12 @@ THE COLD CALL TEST:
   SENTENCE from the Quick Reference Card to deliver a
   passing answer immediately.
 
-----------------------------------------------------------------
-INTERVIEW SIGNAL REFERENCE
-----------------------------------------------------------------
-
-  What interviewers silently evaluate based on response type:
-
-  | Your Response Type               | Signal Received      |
-  |----------------------------------|----------------------|
-  | Textbook definition only         | "Memorized, no exp"  |
-  | Includes trade-offs unprompted   | "Thinks in systems"  |
-  | Mentions when it breaks          | "Production scars"   |
-  | Self-corrects mid-answer         | "Intellectually      |
-  |                                  |  honest, senior"     |
-  | "I don't know, but here's how    | "Resourceful,        |
-  |  I'd find out"                   |  hire-worthy"        |
-
-  What your opening words signal:
-
-  | If you start with...             | They think...        |
-  |----------------------------------|----------------------|
-  | "So, [CONCEPT] is..."            | Textbook learner     |
-  | "The problem [CONCEPT] solves.." | Understands WHY      |
-  | "Before [CONCEPT], we had to..." | Historical context   |
-  | "The simplest way to think..."   | Can teach others     |
-
-  This reference is SPEC-LEVEL guidance. Do NOT create a
-  per-keyword "Interviewer Psychology" section. Instead,
-  use this knowledge when crafting Interview Deep-Dive
-  answers - ensure answers demonstrate experience signals,
-  not textbook recall.
-
-----------------------------------------------------------------
-ANSWER CALIBRATION REFERENCE
-----------------------------------------------------------------
-
-  Use this scale when writing Interview Deep-Dive answers
-  to ensure every answer reaches "Good" or "Excellent" level:
-
-  | Level     | Characteristics                         |
-  |-----------|-----------------------------------------|
-  | Failing   | Textbook definition only. No trade-offs |
-  |           | No experience signals. No depth.        |
-  | Passing   | Basic knowledge. Mentions alternatives. |
-  |           | No production nuance. Surface-level.    |
-  | Good      | Shows decision framework. Knows when to |
-  |           | use AND avoid. Mentions real trade-offs. |
-  | Excellent | Production scars. Specific metrics. Has |
-  |           | diagnostic approach. Cross-system view.  |
-  | Mastery   | Could improve the design. Cross-domain  |
-  |           | pattern. Insight others would miss.      |
-
-  The "20-second upgrade" - if an answer is at Passing level,
-  add one of these to reach Good:
-    - "...but it fails when [condition]."
-    - "The trade-off is [gain] vs [cost]."
-    - "For example, in production we saw [specific scenario]."
+NEVER INCLUDE:
+  - "It depends" without specifying exactly on what
+  - Jargon undefined in the entry
+  - Code with unexplained behaviour
+  - Surface-level explanations
+  - Walls of prose without structure
 
   This reference is SPEC-LEVEL guidance. Do NOT create a
   per-keyword "Answer Quality Scale" section. Instead,

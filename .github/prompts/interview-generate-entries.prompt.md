@@ -98,6 +98,44 @@ decisions:
 
 Use UTF-8 without BOM.
 
+---
+
+## Quality Constitution (Non-Negotiable)
+
+Every keyword MUST pass ALL eight quality tests.
+Full spec: `interview/_config/INTERVIEW_PROMPT.md` Section 5.
+
+**Voice:** Precise like Josh Bloch. Clear like Martin Fowler. Intuitive like
+Feynman. Production-scarred like a senior systems architect.
+Interview-ready like a FAANG bar raiser.
+
+**Eight Tests (all must pass):**
+
+1. Search Again? - reader never needs to look elsewhere
+2. Feynman - smart beginner understands without confusion
+3. Senior Engineer - senior still learns something useful
+4. Staff Engineer - staff/principal respects this explanation
+5. Production Reality - reader can diagnose real issues
+6. Retention - reader remembers this next month
+7. Decision - reader knows when to use or avoid
+8. Scale - 10x/100x/1000x behavior covered
+
+**Mandatory Code Example Types:**
+
+- Wrong vs Right (BAD before GOOD) - every entry with code
+- Failure Example (what breaks, symptoms, fix) - every entry with code
+
+**10-Point Writing Standard:**
+Intuition, Mechanism, Trade-off, Failure, Diagnosis, Scale,
+Decision, Memory, Transfer, Reality
+
+**Forbidden:** Generic definitions, toy examples, vague advice,
+fabricated numbers, surface explanations, "best practice" without
+reasoning, walls of prose, repetition across sections.
+
+**Final Gate:** "Would an experienced engineer say 'Damn - this is
+genuinely excellent'?" If uncertain: rewrite. Masterclass = target.
+
 ### 2d. Report and continue
 
 After each batch:

@@ -354,9 +354,40 @@ FILES MODIFIED:
   - dictionary/[tier]/[FOLDER]/CODE-NNN - Name.md  (created)
   ...
 
-SYNC STATUS:  ✓ Index and folder are in sync
-═══════════════════════════════════════════════════════════
+SYNC STATUS:  \u2713 Index and folder are in sync
+\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 ```
+
+---
+
+## Quality Constitution (Non-Negotiable)
+
+Keywords generated here will become full entries later. The keyword
+list itself must be masterclass-quality: comprehensive, well-leveled,
+with no gaps in coverage.
+
+Full content quality spec: `dictionary/_config/GENERATOR_PROMPT.md` Section 7.
+
+**Keyword List Quality Checks:**
+
+- Every level (L0-META) covered where relevant (min 3 per level)
+- No duplicate concepts across difficulty levels
+- Each keyword represents a distinct, teachable concept
+- Keywords progress from foundational to expert naturally
+- Anti-patterns, decision frameworks, and failure modes included at L3+
+- No vague/generic keywords ("Advanced Topics", "Best Practices")
+- Each keyword name is specific enough to write a complete entry for
+
+**When these stubs become entries, they MUST pass:**
+
+1. Search Again? - reader never needs to look elsewhere
+2. Feynman - smart beginner understands without confusion
+3. Senior Engineer - senior still learns something useful
+4. Staff Engineer - staff/principal respects this explanation
+5. Production Reality - reader can diagnose real issues
+6. Retention - reader remembers this next month
+7. Decision - reader knows when to use or avoid
+8. Scale - 10x/100x/1000x behavior covered
 
 ---
 

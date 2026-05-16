@@ -95,6 +95,46 @@ formatting rules. The only change is batch size, not depth.
 Every keyword entry must be masterclass-level interview preparation -
 content that a Staff/Principal engineer would respect and learn from.
 
+### Quality Constitution - Eight Tests (ALL must pass)
+
+1. **Search Again?** - reader never needs to look elsewhere
+2. **Feynman** - smart beginner understands without confusion
+3. **Senior Engineer** - senior still learns something useful
+4. **Staff Engineer** - staff/principal respects this explanation
+5. **Production Reality** - reader can diagnose real issues after reading
+6. **Retention** - reader remembers this next month
+7. **Decision** - reader knows when to use or avoid
+8. **Scale** - 10x/100x/1000x behavior covered
+
+Full spec: `interview/_config/INTERVIEW_PROMPT.md` Section 5.
+
+### Mandatory Code Example Types
+
+- **Wrong vs Right** (BAD before GOOD) - every entry with code
+- **Failure Example** (what breaks, symptoms, fix) - every entry with code
+- Choose 1-3 additional: Recognition, Production, Debugging, Scale, Trade-off, Internal Mechanism, System Interaction, Testing/Verification
+
+### 10-Point Writing Standard
+
+Every explanation: (1) Intuition, (2) Mechanism, (3) Trade-off,
+(4) Failure, (5) Diagnosis, (6) Scale, (7) Decision, (8) Memory,
+(9) Transfer, (10) Reality
+
+### Forbidden Patterns
+
+- Generic textbook definitions only
+- Syntax-only or toy code examples
+- Vague advice ("it depends") without specifics
+- Fabricated benchmarks or performance numbers
+- Surface-level explanations that skip WHY
+- "Best practice" claims without reasoning
+- Walls of prose / repetition across sections
+
+### Final Gate
+
+"Would an experienced engineer say 'Damn - this is genuinely
+excellent'?" If uncertain: rewrite. Masterclass = target.
+
 ### Content Depth Requirements
 
 - **TL;DR**: Precise, zero-jargon, max 25 words. A senior should nod.

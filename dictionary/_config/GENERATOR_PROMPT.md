@@ -1642,46 +1642,195 @@ FILE ENCODING:
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 7: CONTENT QUALITY STANDARDS
+NON-NEGOTIABLE QUALITY CONSTITUTION
 ═══════════════════════════════════════════════════════════════════════════
 
-THE COMPLETENESS TEST - apply before finalising every entry:
+THIS IS A HARD REQUIREMENT. NOT OPTIONAL. NOT BEST-EFFORT.
 
-  ☐ Can the reader fully understand this concept WITHOUT looking
-    anything up elsewhere? If no: add what's missing.
-  ☐ Does the reader understand WHY this exists, not just WHAT it is?
-  ☐ Does the reader know where this fits in the complete system?
-  ☐ Can the reader diagnose failures involving this concept?
-  ☐ Can the reader explain this to a junior engineer after reading?
-  ☐ Does the reader know the precise conditions to use AND avoid this?
-  ☐ Does the reader understand what this costs (trade-off)?
+The content quality MUST be:
+  - world-class / masterclass-level
+  - elite engineering quality
+  - intellectually rigorous
+  - production-grade
+  - cognitively optimized
+  - superior to most publicly available resources
 
-THE FEYNMAN TEST - apply to sections 5.4, 5.6, 5.8:
-  Read the section aloud. If any sentence requires prior knowledge
-  of technical terms NOT defined in this entry: simplify or define.
+If the output feels average, generic, tutorial-level, repetitive,
+shallow, textbook-only, surface-level, or AI-generated fluff:
+THE OUTPUT HAS FAILED.
 
-THE PRODUCTION REALITY TEST - apply to section 5.17:
-  Every failure mode must include a REAL diagnostic command.
-  If you cannot name the command: the failure mode is not real enough.
+─────────────────────────────────────────────────────────────────────────
+7.1 GOLD STANDARD BENCHMARK
+─────────────────────────────────────────────────────────────────────────
 
-THE DANGEROUS ENGINEER TEST (v4.0):
-  After reading this entry, can the reader:
-    1. Use this concept correctly under production pressure?
-    2. Diagnose when it breaks without Googling?
-    3. Explain to someone else why NOT to misuse it?
-    4. Choose between this and its alternatives in <60 seconds?
-  If any answer is NO: strengthen the relevant section.
+Content must be comparable to or better than:
 
-THE MULTI-PERSPECTIVE TEST (v4.0) - apply to sections 5.10-5.13:
-  Does the entry cover all three angles from P14?
+  EXPLANATION QUALITY: Feynman, Bret Victor, Josh Bloch,
+    Martin Fowler, Rich Hickey, Leslie Lamport,
+    Martin Kleppmann, Brendan Gregg, John Ousterhout
+
+  ENGINEERING DEPTH: Google/Netflix/Uber/Cloudflare engineering
+    blogs, AWS architecture docs, JVM performance experts,
+    Kubernetes production guides
+
+  PEDAGOGICAL QUALITY: MIT/Stanford-level clarity and rigor,
+    elite engineering mentorship
+
+The content should feel like:
+  > A senior principal engineer teaching a curious engineer
+  > after surviving real production failures.
+
+NOT:
+  > An LLM summarizing Wikipedia.
+
+─────────────────────────────────────────────────────────────────────────
+7.2 EIGHT QUALITY TESTS (ALL MUST PASS)
+─────────────────────────────────────────────────────────────────────────
+
+TEST 1 - THE "SEARCH AGAIN?" TEST:
+  "Would a serious engineer still need to search elsewhere?"
+  If YES: FAIL.
+  Must cover: intuition, mechanics, trade-offs, failure modes,
+  debugging, production reality, comparisons, decision criteria,
+  scaling behavior.
+
+TEST 2 - THE FEYNMAN TEST:
+  "Could a smart beginner understand this without confusion?"
+  If NO: rewrite with plain language, layered understanding,
+  memorable explanations, mental models, progressive depth.
+
+TEST 3 - THE SENIOR ENGINEER TEST:
+  "Would a senior engineer still learn something useful?"
+  If NO: FAIL.
+  Must include: hidden trade-offs, operational lessons,
+  scale effects, production edge cases, expert heuristics,
+  failure signatures, subtle misconceptions.
+
+TEST 4 - THE STAFF ENGINEER TEST:
+  "Would a staff/principal engineer respect this explanation?"
+  If NO: FAIL.
+  Must include: decision frameworks, organizational implications,
+  architecture trade-offs, scaling constraints, operational cost,
+  debugging strategy.
+
+TEST 5 - THE PRODUCTION REALITY TEST:
+  "Could someone diagnose a real production issue after reading?"
+  If NO: FAIL.
+  Must include: symptoms, metrics, logs, debugging commands,
+  diagnosis path, failure modes.
+
+TEST 6 - THE RETENTION TEST:
+  "Will the reader remember this next month?"
+  If NO: improve.
+  Must include: memorable analogy, mental model, surprising truth,
+  recall triggers, memory hooks.
+
+TEST 7 - THE DECISION TEST:
+  "Could the reader confidently decide when to use or avoid this?"
+  If NO: FAIL.
+  Must include: decision tree, trade-offs, anti-patterns,
+  alternatives, comparison framework.
+
+TEST 8 - THE SCALE TEST:
+  "What changes at 10x, 100x, or 1000x scale?"
+  If not answered: FAIL.
+  Must include: bottlenecks, contention, operational shifts,
+  architecture implications, failure cascades.
+
+─────────────────────────────────────────────────────────────────────────
+7.3 CODE EXAMPLE REQUIREMENTS (MANDATORY)
+─────────────────────────────────────────────────────────────────────────
+
+Every concept with code must include examples from these categories.
+Choose based on concept complexity (minimum 2-3 categories):
+
+  1. Recognition Example - identify the pattern in existing code
+  2. Wrong vs Right Example - MANDATORY for all entries (BAD/GOOD)
+  3. Production Example - real-world, not toy
+  4. Failure Example - MANDATORY - what breaks and why
+  5. Debugging Example - diagnostic commands, log analysis
+  6. Scale Example - what changes under load
+  7. Trade-off Example - gain vs sacrifice in code
+  8. Internal Mechanism Example - how it works underneath
+  9. System Interaction Example - cross-component behavior
+  10. Testing/Verification Example - prove correctness
+
+MANDATORY for every entry with code:
+  - Wrong vs Right (BAD before GOOD, always)
+  - Failure Example (what breaks, symptoms, fix)
+
+Goal: the reader understands why, when, failure, scale,
+debugging, and trade-offs - not just the API.
+
+─────────────────────────────────────────────────────────────────────────
+7.4 ENFORCED WRITING STANDARD (10-POINT)
+─────────────────────────────────────────────────────────────────────────
+
+Every explanation must contain:
+
+  1. INTUITION - Why this exists
+  2. MECHANISM - How it actually works
+  3. TRADE-OFF - What you gain vs sacrifice
+  4. FAILURE - How it breaks
+  5. DIAGNOSIS - How experts debug it
+  6. SCALE - What changes under load
+  7. DECISION - When to use or avoid it
+  8. MEMORY - Make it unforgettable
+  9. TRANSFER - Connect to broader engineering principles
+  10. REALITY - Production truth over theory
+
+─────────────────────────────────────────────────────────────────────────
+7.5 STRICTLY FORBIDDEN (NEVER GENERATE)
+─────────────────────────────────────────────────────────────────────────
+
+  - Generic textbook definitions only
+  - API documentation disguised as explanation
+  - Syntax-only code examples
+  - Toy examples without production relevance
+  - Repeated cliches ("everything is a trade-off")
+  - Vague advice ("it depends") without specifics
+  - Undefined jargon
+  - Hallucinated history or fabricated performance numbers
+  - Surface-level explanations
+  - Generic interview-style answers
+  - Empty motivational language
+  - Copy-paste blog quality
+  - Overly academic content disconnected from reality
+  - Massive walls of prose
+  - Repetition across sections
+  - Explanations that skip WHY
+  - "Best practice" claims without reasoning
+  - Positive-only framing (always show failure modes)
+
+─────────────────────────────────────────────────────────────────────────
+7.6 FINAL HARD GATE
+─────────────────────────────────────────────────────────────────────────
+
+Before outputting content ask:
+
+  "Would an experienced engineer say:
+   'Damn - this is genuinely excellent.
+    I finally understand this deeply.'"
+
+  If uncertain: rewrite.
+  Good enough = FAIL. Excellent = minimum.
+  Masterclass = target. World-class = expected.
+
+─────────────────────────────────────────────────────────────────────────
+7.7 ADDITIONAL QUALITY CHECKS (PRESERVED FROM v4.0)
+─────────────────────────────────────────────────────────────────────────
+
+THE MULTI-PERSPECTIVE TEST - apply to sections 5.10-5.13:
+  Does the entry cover all three angles?
     ☐ USER perspective: how to use it correctly
     ☐ IMPLEMENTOR perspective: how it works inside
     ☐ DEBUGGER perspective: how to diagnose when it breaks
   If any angle is missing, the entry is incomplete.
 
-THE CONTRAST TEST (v4.0) - apply to sections 5.14, 5.19:
+THE CONTRAST TEST - apply to sections 5.14, 5.19:
   Does the reader know precisely WHEN to stop using this concept
   and switch to an alternative? If the decision boundary is vague,
-  sharpen it. P15 demands explicit contrast.
+  sharpen it.
 
 ALWAYS INCLUDE:
   - Version-specific behaviour (Java 8/11/17/21, Node 18/20, etc.)
@@ -1689,15 +1838,6 @@ ALWAYS INCLUDE:
     chrome devtools, async-profiler, Grafana, Prometheus
   - Production-scale examples (not toy examples)
   - The failure case, not just the success case
-
-NEVER INCLUDE:
-  - "It depends" without specifying exactly on what and why
-  - Jargon undefined in this entry
-  - Code with unexplained behaviour
-  - Positive-only framing (always show failure modes)
-  - Repeated content across sections
-  - Surface-level explanations that don't build understanding
-  - Walls of prose without structure
 
 ─────────────────────────────────────────────────────────────────────────
 TRUTHFULNESS & ANTI-HALLUCINATION RULES

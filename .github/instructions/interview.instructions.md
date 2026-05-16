@@ -98,6 +98,49 @@ interview/
 - Python: `$env:USERPROFILE\.local\bin\python3.14.exe`
 - No emojis in YAML frontmatter
 
+## Quality Constitution (Non-Negotiable)
+
+Full spec: `interview/_config/INTERVIEW_PROMPT.md` Section 5.
+Every keyword MUST pass ALL eight quality tests before output.
+
+### Eight Quality Tests
+
+| #   | Test               | If FAIL                                                 |
+| --- | ------------------ | ------------------------------------------------------- |
+| 1   | Search Again?      | Reader still needs to look elsewhere = incomplete       |
+| 2   | Feynman            | Smart beginner confused = rewrite                       |
+| 3   | Senior Engineer    | Senior learns nothing new = too shallow                 |
+| 4   | Staff Engineer     | Staff wouldn't respect this = lacks depth               |
+| 5   | Production Reality | Can't diagnose real issue = add diagnostics             |
+| 6   | Retention          | Won't remember next month = add memory hooks            |
+| 7   | Decision           | Can't decide when to use/avoid = add decision framework |
+| 8   | Scale              | No 10x/100x/1000x coverage = add scale analysis         |
+
+### Mandatory Code Example Types
+
+- **Wrong vs Right** (BAD before GOOD) - MANDATORY for all entries with code
+- **Failure Example** (what breaks, symptoms, fix) - MANDATORY for all entries with code
+- Additional types (choose 1-3): Recognition, Production, Debugging, Scale, Trade-off, Internal Mechanism, System Interaction, Testing/Verification
+
+### 10-Point Writing Standard
+
+Every explanation must cover: (1) Intuition, (2) Mechanism, (3) Trade-off, (4) Failure, (5) Diagnosis, (6) Scale, (7) Decision, (8) Memory, (9) Transfer, (10) Reality
+
+### Forbidden Patterns
+
+- Generic textbook definitions only
+- Syntax-only or toy code examples
+- Vague advice ("it depends") without specifics
+- Fabricated benchmarks or performance numbers
+- Surface-level explanations that skip WHY
+- "Best practice" claims without reasoning
+- Walls of prose without structure
+- Repetition across sections
+
+### Final Gate
+
+"Would an experienced engineer say 'Damn - this is genuinely excellent'?" If uncertain: rewrite.
+
 ## File Frontmatter Format (Jekyll/GitHub Pages - MANDATORY)
 
 Every content file MUST have ALL of these fields:

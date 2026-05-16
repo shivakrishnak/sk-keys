@@ -103,6 +103,50 @@ git commit -m "feat: <description>"
 # Do NOT git push
 ```
 
+## Content Quality Constitution (Non-Negotiable)
+
+Every piece of generated content MUST pass the Quality Constitution.
+Full details in `dictionary/_config/GENERATOR_PROMPT.md` Section 7
+and `interview/_config/INTERVIEW_PROMPT.md` Section 5.
+
+### Eight Quality Tests (ALL must pass)
+
+| #   | Test               | Core Question                                        |
+| --- | ------------------ | ---------------------------------------------------- |
+| 1   | Search Again?      | Would a serious engineer need to look elsewhere?     |
+| 2   | Feynman            | Could a smart beginner understand without confusion? |
+| 3   | Senior Engineer    | Would a senior engineer still learn something?       |
+| 4   | Staff Engineer     | Would a staff/principal engineer respect this?       |
+| 5   | Production Reality | Could someone diagnose a real issue after reading?   |
+| 6   | Retention          | Will the reader remember this next month?            |
+| 7   | Decision           | Could the reader decide when to use or avoid this?   |
+| 8   | Scale              | What changes at 10x, 100x, 1000x?                    |
+
+### Code Example Requirements (Mandatory Types)
+
+- **Wrong vs Right** (BAD before GOOD) - MANDATORY for all entries with code
+- **Failure Example** (what breaks, symptoms, fix) - MANDATORY for all entries with code
+- Choose 1-3 additional from: Recognition, Production, Debugging, Scale, Trade-off, Internal Mechanism, System Interaction, Testing/Verification
+
+### 10-Point Writing Standard
+
+Every explanation must cover: (1) Intuition, (2) Mechanism, (3) Trade-off, (4) Failure, (5) Diagnosis, (6) Scale, (7) Decision, (8) Memory, (9) Transfer, (10) Reality
+
+### Forbidden Patterns
+
+- Generic textbook definitions only
+- Syntax-only or toy code examples
+- Vague advice ("it depends") without specifics
+- Fabricated benchmarks or performance numbers
+- Surface-level explanations that skip WHY
+- "Best practice" claims without reasoning
+- Walls of prose without structure
+- Repetition across sections
+
+### Final Gate
+
+Before outputting: "Would an experienced engineer say 'Damn - this is genuinely excellent'?" If uncertain: rewrite. Masterclass = target.
+
 ## Quick Reference - Dictionary
 
 | Item                | Location                                          |
