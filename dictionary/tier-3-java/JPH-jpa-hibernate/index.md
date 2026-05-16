@@ -58,21 +58,19 @@ JPA specification, Hibernate ORM, Spring Data JPA, entity mapping, relationships
 | JPH-043 | @Embedded and @Embeddable | ★★★ |
 | JPH-044 | @ElementCollection | ★★★ |
 | JPH-045 | Spring Data Specifications | ★★★ |
-| JPH-046 | Hibernate Validator (Bean Validation) | ★★★ |
-| JPH-047 | Hibernate Batch Processing | ★★★ |
-| JPH-048 | Hibernate Statistics and Monitoring | ★★★ |
-| JPH-049 | Connection Pooling with JPA (HikariCP) | ★★★ |
-| JPH-050 | Multi-Tenancy in JPA and Hibernate | ★★★ |
-| JPH-051 | Hibernate Envers (Auditing and History) | ★★★ |
-| JPH-052 | Hibernate vs MyBatis vs JOOQ | ★★★ |
-| JPH-053 | @Converter and AttributeConverter | ★★★ |
-| JPH-054 | Dirty Checking and Flush Mode | ★★★ |
-| JPH-055 | QueryDSL with JPA | ★★★ |
-| JPH-056 | JPA at Scale - Architecture Patterns | ★★★ |
-| JPH-057 | ORM Selection Framework | ★★★ |
-| JPH-058 | Spring Data JPA Architecture Design | ★★★ |
-| JPH-010 | JPA Specification (JSR 338 / Jakarta Persistence) | ★★★ |
-| JPH-059 | Hibernate Internals Deep Dive | ★★★ |
-| JPH-060 | Spring Data JPA vs JOOQ vs MyBatis Decision | ★★★ |
-| JPH-032 | Hibernate 6 and Jakarta Persistence 3 Migration | ★★★ |
+| JPH-046 | Hibernate Statistics and Monitoring | ★★☆ |
+| JPH-047 | Connection Pooling with JPA (HikariCP) | ★★☆ |
+| JPH-048 | Multi-Tenancy in JPA and Hibernate | ★★★ |
+| JPH-049 | Hibernate Envers (Auditing and History) | ★★★ |
+| JPH-050 | Hibernate vs MyBatis vs JOOQ | ★★☆ |
+| JPH-051 | @Converter and AttributeConverter | ★★☆ |
+| JPH-052 | Dirty Checking and Flush Mode | ★★★ |
+| JPH-053 | QueryDSL with JPA | ★★★ |
+| JPH-054 | JPA at Scale - Architecture Patterns | ★★★ |
+| JPH-055 | ORM Selection Framework | ★★★ |
+| JPH-056 | Spring Data JPA Architecture Design | ★★★ |
+| JPH-057 | JPA Specification (JSR 338 / Jakarta Persistence) | ★★★ |
+| JPH-058 | Hibernate Internals Deep Dive | ★★★ |
+| JPH-059 | Spring Data JPA vs JOOQ vs MyBatis Decision | ★★★ |
+| JPH-060 | Hibernate 6 and Jakarta Persistence 3 Migration | ★★★ |
 | JPH-061 | JPA with Multiple Databases (Routing DataSource) | ★★★ |
