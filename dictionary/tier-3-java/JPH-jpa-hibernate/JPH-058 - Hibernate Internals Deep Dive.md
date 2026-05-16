@@ -36,11 +36,11 @@ to snapshot to build UPDATE statements. The SQL generator
 Understanding these internals explains 80% of Hibernate
 performance issues and debugging challenges.
 
-| #058 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JPA Overview, Entity Basics, EntityManager, Persistence Context, Caching, SQL Logging, N+1 Problem, Dirty Checking, JPA Spec | |
-| **Used by:** | - | |
-| **Related:** | JPA Spec, Dirty Checking/Flush, Statistics, Batch Processing, 2LC | |
+| #058            | Category: JPA & Hibernate                                                                                                    | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | JPA Overview, Entity Basics, EntityManager, Persistence Context, Caching, SQL Logging, N+1 Problem, Dirty Checking, JPA Spec |                 |
+| **Used by:**    | -                                                                                                                            |                 |
+| **Related:**    | JPA Spec, Dirty Checking/Flush, Statistics, Batch Processing, 2LC                                                            |                 |
 
 ---
 
@@ -86,16 +86,16 @@ between "Hibernate magic broke" and root cause analysis.
 framework and the reference implementation of the
 Jakarta Persistence specification. Internally composed of:
 
-| Component | Class | Role |
-|---|---|---|
-| `SessionFactory` | `org.hibernate.internal.SessionFactoryImpl` | Heavyweight singleton; bootstrapped at startup; holds: entity metadata, SQL plan cache, connection pool reference, 2LC |
-| `Session` | `org.hibernate.internal.SessionImpl` | Lightweight; one per request; holds persistence context (identity map); implements `EntityManager` |
-| `StatisticsImpl` | `org.hibernate.stat.internal.StatisticsImpl` | Runtime counters: queries, hits, misses, load times |
-| `PersistenceContext` | `org.hibernate.engine.internal.StatefulPersistenceContext` | Identity map: entity snapshots, entity entries, collection entries |
-| `ActionQueue` | `org.hibernate.engine.spi.ActionQueue` | Batches and orders INSERT/UPDATE/DELETE before flush |
-| `EventListenerRegistry` | `org.hibernate.event.service.spi.EventListenerRegistry` | Lifecycle events: pre/post persist, pre/post update, etc. |
-| `SqmTranslator` | `org.hibernate.query.sqm.sql.SqmTranslator` | Hibernate 6: compiles HQL/JPQL SQM tree -> SQL AST -> SQL string |
-| `TypeSystem` | `org.hibernate.type` | Maps Java types -> JDBC types; handles custom converters |
+| Component               | Class                                                      | Role                                                                                                                   |
+| ----------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `SessionFactory`        | `org.hibernate.internal.SessionFactoryImpl`                | Heavyweight singleton; bootstrapped at startup; holds: entity metadata, SQL plan cache, connection pool reference, 2LC |
+| `Session`               | `org.hibernate.internal.SessionImpl`                       | Lightweight; one per request; holds persistence context (identity map); implements `EntityManager`                     |
+| `StatisticsImpl`        | `org.hibernate.stat.internal.StatisticsImpl`               | Runtime counters: queries, hits, misses, load times                                                                    |
+| `PersistenceContext`    | `org.hibernate.engine.internal.StatefulPersistenceContext` | Identity map: entity snapshots, entity entries, collection entries                                                     |
+| `ActionQueue`           | `org.hibernate.engine.spi.ActionQueue`                     | Batches and orders INSERT/UPDATE/DELETE before flush                                                                   |
+| `EventListenerRegistry` | `org.hibernate.event.service.spi.EventListenerRegistry`    | Lifecycle events: pre/post persist, pre/post update, etc.                                                              |
+| `SqmTranslator`         | `org.hibernate.query.sqm.sql.SqmTranslator`                | Hibernate 6: compiles HQL/JPQL SQM tree -> SQL AST -> SQL string                                                       |
+| `TypeSystem`            | `org.hibernate.type`                                       | Maps Java types -> JDBC types; handles custom converters                                                               |
 
 ---
 
@@ -106,6 +106,7 @@ state snapshot -> let app modify entity -> at flush, compare
 current state to snapshot -> generate UPDATE only for changed columns.
 
 **One analogy:**
+
 > Hibernate's persistence context is like a spreadsheet with
 > "Track Changes" enabled. When you open a row (load an entity),
 > Hibernate records the original values. When you save the sheet
@@ -214,6 +215,7 @@ Hibernate saves a snapshot of loaded entity state.
 At `flush()`, snapshot comparison generates UPDATE SQL.
 
 **Level 3 - ActionQueue ordering (mid):**
+
 ```
 Flush execution order (ActionQueue):
   1. OrphanRemoval actions
@@ -232,6 +234,7 @@ to satisfy FK constraints.
 ```
 
 **Level 4 - SQL plan cache and SQM (senior):**
+
 ```
 Hibernate 6 query pipeline (per query):
   1. Parse HQL string -> SQM (Semantic Query Model) tree
@@ -252,6 +255,7 @@ Plan cache miss symptoms:
 ```
 
 **Level 5 - Event system and interceptors (staff):**
+
 ```
 Hibernate event listener chain (for persist operation):
   Session.persist(entity) ->
@@ -432,23 +436,23 @@ if (count % 500 == 0) {
 
 ### ⚖️ Comparison Table
 
-| Component | Hibernate 5.x | Hibernate 6.x | Notes |
-|---|---|---|---|
-| Query AST | HQL: Antlr2-based AST | HQL: SQM (new AST model) | H6 rewrote query engine |
-| Type system | `@Type(type="...")` | `@JavaType`, `@JdbcType` | More type-safe in H6 |
-| Bytecode enhancement | Optional | Optional (recommended in H6) | Lazy loading proxy |
-| Package | `org.hibernate` | `org.hibernate` (unchanged) | `javax` -> `jakarta` in provider integration |
-| JPQL compliance | JPA 2.2 | Jakarta Persistence 3.1 | H6 adds new JPQL functions |
+| Component            | Hibernate 5.x         | Hibernate 6.x                | Notes                                        |
+| -------------------- | --------------------- | ---------------------------- | -------------------------------------------- |
+| Query AST            | HQL: Antlr2-based AST | HQL: SQM (new AST model)     | H6 rewrote query engine                      |
+| Type system          | `@Type(type="...")`   | `@JavaType`, `@JdbcType`     | More type-safe in H6                         |
+| Bytecode enhancement | Optional              | Optional (recommended in H6) | Lazy loading proxy                           |
+| Package              | `org.hibernate`       | `org.hibernate` (unchanged)  | `javax` -> `jakarta` in provider integration |
+| JPQL compliance      | JPA 2.2               | Jakarta Persistence 3.1      | H6 adds new JPQL functions                   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                       | Reality                                                                                                                                                                                                                                                                                                                                                                    |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "Hibernate generates UPDATE for ALL columns always" | By default YES - unless `@DynamicUpdate` is applied. Without `@DynamicUpdate`, Hibernate generates UPDATE with all mapped columns, even unchanged ones. This is a deliberate trade-off: one SQL template per entity (cached) vs N templates per dirty pattern. `@DynamicUpdate` generates SQL at runtime for only dirty columns; more I/O efficient but requires more CPU. |
-| "Session and EntityManager are different classes" | In Hibernate, `Session` EXTENDS `EntityManager`. `SessionImpl` implements both. `em.unwrap(Session.class)` returns the same underlying object. Use `EntityManager` API for JPA-portable code; unwrap to `Session` only for Hibernate-specific features. |
-| "em.clear() is dangerous and should be avoided" | `em.clear()` is ESSENTIAL in batch processing. It detaches all managed entities, resetting the identity map. Without it, batch jobs accumulate thousands of managed entities; dirty checking becomes O(N) at each flush, eventually causing OutOfMemoryError or severe slowdown. Pattern: flush every N entities, then clear. |
+| "Session and EntityManager are different classes"   | In Hibernate, `Session` EXTENDS `EntityManager`. `SessionImpl` implements both. `em.unwrap(Session.class)` returns the same underlying object. Use `EntityManager` API for JPA-portable code; unwrap to `Session` only for Hibernate-specific features.                                                                                                                    |
+| "em.clear() is dangerous and should be avoided"     | `em.clear()` is ESSENTIAL in batch processing. It detaches all managed entities, resetting the identity map. Without it, batch jobs accumulate thousands of managed entities; dirty checking becomes O(N) at each flush, eventually causing OutOfMemoryError or severe slowdown. Pattern: flush every N entities, then clear.                                              |
 
 ---
 
@@ -467,6 +471,7 @@ objects with their snapshots. Dirty checking at flush is
 O(50,000) comparisons. GC cannot collect these because the
 `Session` holds strong references.
 **Diagnosis:**
+
 ```java
 // Check managed entity count:
 int count = ((SessionImplementor) em.unwrap(Session.class))
@@ -474,7 +479,9 @@ int count = ((SessionImplementor) em.unwrap(Session.class))
     .getNumberOfManagedEntities();
 // If this grows without bound: missing flush/clear loop
 ```
+
 **Fix:**
+
 ```java
 // Batch processing with flush/clear:
 int batchSize = 500;
@@ -493,16 +500,19 @@ em.flush();  // final flush for remainder
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-011 - EntityManager and Persistence Context]] - the
   core API that Hibernate implements
 - [[JPH-031 - N+1 Select Problem]] - most common symptom
   of not understanding lazy loading internals
 
 **Builds On This (learn these next):**
+
 - [[JPH-046 - Hibernate Statistics and Monitoring]] - using
   the statistics API described in this entry
 
 **Related:**
+
 - [[JPH-052 - Dirty Checking and Flush Mode]] - deep dive on
   the dirty checking mechanism described here
 - [[JPH-057 - JPA Specification]] - the spec that Hibernate implements
@@ -537,6 +547,7 @@ em.flush();  // final flush for remainder
 ```
 
 **If you remember only 3 things:**
+
 1. `SessionFactory` is heavyweight singleton; `Session` is lightweight per-request
 2. Dirty checking = snapshot comparison at flush; grows O(N) with persistence context size
 3. Batch jobs MUST call `em.flush(); em.clear()` every N entities to prevent OOM
@@ -595,6 +606,7 @@ high-throughput scenarios.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **DRAW** the lifecycle of a Hibernate entity through
    persist, load, dirty check, flush, and session close
 2. **EXPLAIN** why loading the same entity ID twice in one
@@ -612,9 +624,10 @@ high-throughput scenarios.
 
 **Q1: How does Hibernate detect which entities to UPDATE
 on flush? Walk through the mechanism.**
-*Why they ask:* Separates candidates who "know Hibernate is dirty-checking"
+_Why they ask:_ Separates candidates who "know Hibernate is dirty-checking"
 from those who understand how it works.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - When entity is loaded (`find`, JPQL result, `merge`), Hibernate creates an
   `EntityEntry` in the `StatefulPersistenceContext`
 - `EntityEntry.loadedState`: an `Object[]` snapshot of all mapped column values
@@ -630,10 +643,11 @@ from those who understand how it works.
 **Q2: A batch job that imports 200,000 records runs fine for
 the first 50,000 rows, then gets progressively slower and
 eventually crashes. What do you suspect and how do you fix it?**
-*Why they ask:* Tests batch processing knowledge and persistence context behavior.
-*Strong answer includes:*
+_Why they ask:_ Tests batch processing knowledge and persistence context behavior.
+_Strong answer includes:_
+
 - Diagnosis: persistence context accumulates managed entities; dirty check
-  is O(entities * columns) at each flush
+  is O(entities \* columns) at each flush
 - After 50,000 entities: 50,000 EntityEntry snapshots held in memory
 - Each flush compares all 50,000 snapshots (most unchanged)
 - Memory: heap fills with snapshot arrays; GC pressure increases

@@ -30,11 +30,11 @@ results with total count metadata. Add `Pageable` to any
 repository method for automatic LIMIT/OFFSET SQL. Never
 use `findAll()` without pagination on production tables.
 
-| #025 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JPQL, CrudRepository/JpaRepository, @Query, Derived Query Methods | |
-| **Used by:** | N+1 Problem, DTO Projections, Spring Data Specifications | |
-| **Related:** | Criteria API, JPA at Scale | |
+| #025            | Category: JPA & Hibernate                                         | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | JPQL, CrudRepository/JpaRepository, @Query, Derived Query Methods |                 |
+| **Used by:**    | N+1 Problem, DTO Projections, Spring Data Specifications          |                 |
+| **Related:**    | Criteria API, JPA at Scale                                        |                 |
 
 ---
 
@@ -94,6 +94,7 @@ Can be built inline: `Sort.by("price").descending().and(Sort.by("name"))`.
 method for automatic SQL pagination.
 
 **One analogy:**
+
 > `Pageable` is the chapter and page number in a book.
 > `Page<T>` is that physical page with content + "page X
 > of Y total pages". You request page 3 of 10; the library
@@ -216,8 +217,7 @@ with custom `@Query` using `WHERE id > :lastId`.
 > in section Science, sorted by publication date, 20 at
 > a time, starting from book number 40." The librarian
 > (Spring Data) finds ALL books in section Science
-> (conceptually), sorts them, skips 40, and brings you
-> 20. `Page<T>` is the stack of books PLUS a note saying
+> (conceptually), sorts them, skips 40, and brings you 20. `Page<T>` is the stack of books PLUS a note saying
 > "there are 500 books in this section total."
 >
 > The performance problem: for the 10,000th page, the
@@ -428,22 +428,22 @@ List<Product> page2 = repo.findNextPage(lastId,
 
 ### ⚖️ Comparison Table
 
-| Return Type | Count query? | hasNext() | Total pages? | Use case |
-|---|---|---|---|---|
-| `Page<T>` | Yes (2 queries) | Yes | Yes | Standard pagination with "X of Y pages" UI |
-| `Slice<T>` | No (1 query) | Yes (fetch size+1) | No | Infinite scroll / load more |
-| `List<T>` | No | No | No | Fixed-size results where pagination metadata not needed |
+| Return Type | Count query?    | hasNext()          | Total pages? | Use case                                                |
+| ----------- | --------------- | ------------------ | ------------ | ------------------------------------------------------- |
+| `Page<T>`   | Yes (2 queries) | Yes                | Yes          | Standard pagination with "X of Y pages" UI              |
+| `Slice<T>`  | No (1 query)    | Yes (fetch size+1) | No           | Infinite scroll / load more                             |
+| `List<T>`   | No              | No                 | No           | Fixed-size results where pagination metadata not needed |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`Page<T>` is always the right return type for paginated queries" | `Page<T>` issues a second `COUNT(*)` query. For tables with millions of rows, this COUNT can be slow. For infinite scroll UIs that don't show total pages, `Slice<T>` is faster. |
-| "Pagination without sorting is fine because ORDER BY is implicit" | Without an explicit `ORDER BY`, the database may return rows in any order (it is undefined). Consecutive paginated calls may return overlapping or missing rows. Always provide explicit sort criteria with `PageRequest`. |
-| "`PageRequest.of(page, size)` is 1-based" | Spring Data `Pageable` page numbers are 0-based. Page 0 is the first page. Passing `page=1` from a 1-based frontend without adjustment returns the SECOND page. |
-| "Deep pagination (page 10,000) is equally fast as page 1" | `OFFSET` pagination requires the database to scan and skip `page * size` rows. Page 10,000 of 20 items requires skipping 199,980 rows. This is O(offset) and becomes slow at large page numbers. Use keyset pagination for large datasets. |
+| Misconception                                                     | Reality                                                                                                                                                                                                                                    |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "`Page<T>` is always the right return type for paginated queries" | `Page<T>` issues a second `COUNT(*)` query. For tables with millions of rows, this COUNT can be slow. For infinite scroll UIs that don't show total pages, `Slice<T>` is faster.                                                           |
+| "Pagination without sorting is fine because ORDER BY is implicit" | Without an explicit `ORDER BY`, the database may return rows in any order (it is undefined). Consecutive paginated calls may return overlapping or missing rows. Always provide explicit sort criteria with `PageRequest`.                 |
+| "`PageRequest.of(page, size)` is 1-based"                         | Spring Data `Pageable` page numbers are 0-based. Page 0 is the first page. Passing `page=1` from a 1-based frontend without adjustment returns the SECOND page.                                                                            |
+| "Deep pagination (page 10,000) is equally fast as page 1"         | `OFFSET` pagination requires the database to scan and skip `page * size` rows. Page 10,000 of 20 items requires skipping 199,980 rows. This is O(offset) and becomes slow at large page numbers. Use keyset pagination for large datasets. |
 
 ---
 
@@ -463,7 +463,7 @@ guarantee stable ordering.
 
 ---
 
-**Failure Mode 2: Slow COUNT(*) on Large Tables**
+**Failure Mode 2: Slow COUNT(\*) on Large Tables**
 
 **Symptom:** Paginated API endpoint takes 3 seconds for
 the first request. SQL log shows a slow `COUNT(*)` query
@@ -492,12 +492,14 @@ updated by triggers).
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-016 - CrudRepository and JpaRepository]] -
   `findAll(Pageable)` is defined on `JpaRepository`
 - [[JPH-023 - @Query]] - `@Query` methods can accept
   `Pageable` parameter
 
 **Builds On This (learn these next):**
+
 - [[JPH-027 - N+1 Problem]] - pagination does not fix N+1;
   JOIN FETCH with pagination has ordering conflicts
 - [[JPH-030 - DTO Projections]] - project to DTOs in
@@ -506,6 +508,7 @@ updated by triggers).
   can be combined with `Pageable` for dynamic filtering
 
 **Related:**
+
 - [[JPH-054 - JPA at Scale]] - keyset pagination and
   deep pagination strategies for large datasets
 
@@ -537,6 +540,7 @@ updated by triggers).
 ```
 
 **If you remember only 3 things:**
+
 1. `Pageable` page numbers are 0-based; always include
    an explicit Sort to prevent non-deterministic results
 2. `Page<T>` issues 2 SQL queries (data + COUNT); use
@@ -571,6 +575,7 @@ Redis SCAN uses a cursor, DynamoDB pagination uses
 a pagination API; always use it.
 
 **Where else this pattern appears:**
+
 - **REST APIs** - pagination links in response body (`next`,
   `prev`, `last` HAL links); `Content-Range` header
 - **GraphQL** - cursor-based pagination via `first`/`after`
@@ -601,6 +606,7 @@ they were loaded via JOIN FETCH in the original query.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **WRITE** a paginated endpoint with a custom `@Query`
    including `countQuery`, taking `Pageable` from request
    parameters, and mapping to DTOs
@@ -619,26 +625,28 @@ they were loaded via JOIN FETCH in the original query.
 
 **Q1: What is the difference between Page<T> and Slice<T>
 in Spring Data, and when would you use each?**
-*Why they ask:* Tests Spring Data depth knowledge and
+_Why they ask:_ Tests Spring Data depth knowledge and
 performance awareness.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `Page<T>`: executes 2 SQL queries (data with LIMIT/OFFSET
-  + `COUNT(*)` for total). Returns total elements, total
-  pages, current page, isFirst, isLast, hasNext, hasPrevious.
-  Use when UI shows "page X of Y" or total record count.
+  - `COUNT(*)` for total). Returns total elements, total
+    pages, current page, isFirst, isLast, hasNext, hasPrevious.
+    Use when UI shows "page X of Y" or total record count.
 - `Slice<T>`: executes 1 SQL query (data with LIMIT+1 to
   detect next page). Returns hasNext() only. Use for
   infinite scroll / load more where total count is not
   shown.
-- Performance: for tables with millions of rows, COUNT(*)
+- Performance: for tables with millions of rows, COUNT(\*)
   can be as slow as the data query. Slice<T> halves the
   database load for these cases.
 
 **Q2: Why does pagination without a sort order produce
 unreliable results?**
-*Why they ask:* Tests understanding of SQL query semantics
+_Why they ask:_ Tests understanding of SQL query semantics
 and determinism.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Without `ORDER BY`, the database returns rows in
   implementation-defined order (no guarantee)
 - A table scan may return rows in different orders on
@@ -653,9 +661,10 @@ and determinism.
 
 **Q3: What is the performance problem with deep OFFSET
 pagination, and how would you solve it?**
-*Why they ask:* Tests scalability thinking; common
+_Why they ask:_ Tests scalability thinking; common
 architectural question for senior roles.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - OFFSET pagination: `SELECT ... LIMIT 20 OFFSET N` requires
   the database to scan and skip N rows
 - For page 10,000 of 20 items: skip 199,980 rows -> O(N)

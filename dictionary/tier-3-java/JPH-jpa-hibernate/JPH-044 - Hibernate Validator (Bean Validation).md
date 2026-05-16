@@ -35,17 +35,18 @@ Key distinction: Bean Validation happens at Java layer
 (before SQL); `@Column(nullable=false)` is SQL DDL.
 Both are complementary; neither replaces the other.
 
-| #044 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Id, @Table/@Column, EntityManager, @Transactional, @Embedded | |
-| **Used by:** | JPA at Scale, Spring Data JPA Architecture | |
-| **Related:** | JPA Auditing, Optimistic Locking, @Converter | |
+| #044            | Category: JPA & Hibernate                                              | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Id, @Table/@Column, EntityManager, @Transactional, @Embedded |                 |
+| **Used by:**    | JPA at Scale, Spring Data JPA Architecture                             |                 |
+| **Related:**    | JPA Auditing, Optimistic Locking, @Converter                           |                 |
 
 ---
 
 ### 🔥 The Problem This Solves
 
 **VALIDATION WITHOUT BEAN VALIDATION:**
+
 ```java
 @Service
 public class UserService {
@@ -68,6 +69,7 @@ public class UserService {
 ```
 
 **WITH BEAN VALIDATION:**
+
 ```java
 @Entity
 public class User {
@@ -96,6 +98,7 @@ It validates Java beans using annotations on fields,
 methods, and class level.
 
 **Core annotations:**
+
 - `@NotNull` - must not be null (any type)
 - `@NotBlank` - must not be null or empty/whitespace (String only)
 - `@NotEmpty` - must not be null or empty (String, Collection, Map, array)
@@ -109,6 +112,7 @@ methods, and class level.
 - `@Past` / `@PastOrPresent` / `@Future` / `@FutureOrPresent` - date/time
 
 **Validation triggers in Spring Boot:**
+
 1. `@Valid` / `@Validated` on controller `@RequestBody` - HTTP 400 on failure
 2. `@Validated` on `@Service` class + constraints on method params - `ConstraintViolationException`
 3. JPA: Hibernate validates entities before INSERT/UPDATE
@@ -123,6 +127,7 @@ on Java fields; Hibernate Validator enforces them at runtime
 (at controller layer, service layer, and before SQL INSERT/UPDATE).
 
 **One analogy:**
+
 > Bean Validation annotations are like labels on a form's
 > fields: "Email (required, valid format)", "Age (0-150)".
 > The form itself can't be submitted without meeting all
@@ -256,6 +261,7 @@ Spring AOP validates on method entry. Throws
 
 **Level 4 - Custom constraints (senior engineer):**
 Create `@Constraint`-annotated custom annotation:
+
 ```java
 @Documented
 @Constraint(validatedBy = UniqueEmailValidator.class)
@@ -267,6 +273,7 @@ public @interface UniqueEmail {
     Class<? extends Payload>[] payload() default {};
 }
 ```
+
 `ConstraintValidator<UniqueEmail, String>` implements
 `isValid()` - called by Hibernate Validator.
 
@@ -476,22 +483,22 @@ public class UserController {
 
 ### ⚖️ Comparison Table
 
-| Layer | Mechanism | When fires | Exception | HTTP |
-|---|---|---|---|---|
-| Controller | `@Valid` on `@RequestBody` | Before method body | `MethodArgumentNotValidException` | 400 (auto) |
-| Service | `@Validated` + constraints on params | Method entry (AOP) | `ConstraintViolationException` | Must map manually |
-| JPA | Hibernate pre-flush validate | Before INSERT/UPDATE | `ConstraintViolationException` | Must map manually |
-| Database | SQL DDL NOT NULL, UNIQUE | SQL execute | `DataIntegrityViolationException` | Must map manually |
+| Layer      | Mechanism                            | When fires           | Exception                         | HTTP              |
+| ---------- | ------------------------------------ | -------------------- | --------------------------------- | ----------------- |
+| Controller | `@Valid` on `@RequestBody`           | Before method body   | `MethodArgumentNotValidException` | 400 (auto)        |
+| Service    | `@Validated` + constraints on params | Method entry (AOP)   | `ConstraintViolationException`    | Must map manually |
+| JPA        | Hibernate pre-flush validate         | Before INSERT/UPDATE | `ConstraintViolationException`    | Must map manually |
+| Database   | SQL DDL NOT NULL, UNIQUE             | SQL execute          | `DataIntegrityViolationException` | Must map manually |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "@NotNull on entity is enough" | `@NotNull` on an entity field validates at the JPA layer (before flush). Without `@Valid` on the controller DTO, null values reach the service/entity layer first - resulting in ConstraintViolationException mapped to HTTP 500, not 400. Always validate at the earliest layer (controller DTO). |
-| "@Column(nullable=false) is the same as @NotNull" | `@Column(nullable=false)` is SQL DDL metadata - it affects the generated CREATE TABLE statement and produces a DB-level constraint. `@NotNull` is Java-level validation that runs before SQL. They enforce the same business rule at different layers. Both are needed; neither replaces the other. |
-| "Service-layer @Validated automatically returns HTTP 400" | Spring AOP throws `ConstraintViolationException` for service-layer validation failures. Spring does NOT automatically convert this to HTTP 400. You must handle it in a `@ControllerAdvice` or `@ExceptionHandler` explicitly. |
+| Misconception                                             | Reality                                                                                                                                                                                                                                                                                             |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "@NotNull on entity is enough"                            | `@NotNull` on an entity field validates at the JPA layer (before flush). Without `@Valid` on the controller DTO, null values reach the service/entity layer first - resulting in ConstraintViolationException mapped to HTTP 500, not 400. Always validate at the earliest layer (controller DTO).  |
+| "@Column(nullable=false) is the same as @NotNull"         | `@Column(nullable=false)` is SQL DDL metadata - it affects the generated CREATE TABLE statement and produces a DB-level constraint. `@NotNull` is Java-level validation that runs before SQL. They enforce the same business rule at different layers. Both are needed; neither replaces the other. |
+| "Service-layer @Validated automatically returns HTTP 400" | Spring AOP throws `ConstraintViolationException` for service-layer validation failures. Spring does NOT automatically convert this to HTTP 400. You must handle it in a `@ControllerAdvice` or `@ExceptionHandler` explicitly.                                                                      |
 
 ---
 
@@ -509,6 +516,7 @@ fires at the JPA layer (before flush), which is after
 `@Transactional` is opened - the exception propagates
 as a 500.
 **Fix:**
+
 ```java
 // BEFORE (broken):
 public User create(@RequestBody UserDto dto)
@@ -516,7 +524,9 @@ public User create(@RequestBody UserDto dto)
 // AFTER (correct):
 public User create(@Valid @RequestBody UserDto dto)
 ```
+
 **Verification:** Unit test with MockMvc:
+
 ```java
 mockMvc.perform(post("/users")
     .content("{\"email\":null}")
@@ -529,16 +539,19 @@ mockMvc.perform(post("/users")
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-006 - @Entity]] - validation annotations on entity
   fields require understanding entities
 - [[JPH-041 - @Embedded]] - `@Valid` cascades into
   embeddable objects (`@Valid` on @Embedded field)
 
 **Builds On This (learn these next):**
+
 - [[JPH-054 - JPA at Scale]] - validation configuration
   in large systems with multiple service layers
 
 **Related:**
+
 - [[JPH-032 - JPA Auditing]] - auditing and validation
   are complementary lifecycle concerns
 - [[JPH-038 - Optimistic Locking]] - both are entity
@@ -571,6 +584,7 @@ mockMvc.perform(post("/users")
 ```
 
 **If you remember only 3 things:**
+
 1. Add `@Valid` to controller `@RequestBody` parameters -
    without it, validation fires at JPA layer (too late) and
    produces HTTP 500 instead of 400
@@ -605,6 +619,7 @@ but the PRIMARY validation should always be at the outermost
 boundary. Deep layers are backup, not primary enforcement.
 
 **Where else this pattern appears:**
+
 - **Spring @RequestParam @Valid** - path variable validation
 - **Kafka consumer validation** - `@Validated` on consumer
   class validates message payloads
@@ -638,6 +653,7 @@ which layer threw the exception to handle it correctly.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **ADD** `@Valid` to controller `@RequestBody` and configure
    a `@ControllerAdvice` for `MethodArgumentNotValidException`
 2. **EXPLAIN** the difference between `@NotNull` (Java layer)
@@ -655,8 +671,9 @@ which layer threw the exception to handle it correctly.
 
 **Q1: What is the difference between @NotNull (Bean Validation)
 and @Column(nullable=false) in JPA?**
-*Why they ask:* Very common interview question; tests depth.
-*Strong answer includes:*
+_Why they ask:_ Very common interview question; tests depth.
+_Strong answer includes:_
+
 - `@NotNull`: Java annotation processed by Hibernate Validator;
   runs in Java before any SQL; throws `ConstraintViolationException`
   with a clear message; fires at controller (if `@Valid`),
@@ -670,8 +687,9 @@ and @Column(nullable=false) in JPA?**
 
 **Q2: Why does a validation failure at the JPA layer return
 HTTP 500 instead of HTTP 400, and how do you fix it?**
-*Why they ask:* Tests practical debugging knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests practical debugging knowledge.
+_Strong answer includes:_
+
 - `@Valid` missing on controller `@RequestBody` parameter:
   invalid DTO passes through controller without validation
 - JPA layer (pre-flush) validates entity -> `ConstraintViolationException`

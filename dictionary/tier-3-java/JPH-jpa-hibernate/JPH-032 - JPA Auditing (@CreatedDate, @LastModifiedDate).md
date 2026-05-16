@@ -31,11 +31,11 @@ Enable with `@EnableJpaAuditing` + `@EntityListeners(AuditingEntityListener.clas
 For who (user) auditing: implement `AuditorAware<T>`.
 Never set these fields manually in application code.
 
-| #032 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, EntityManager, Persistence Context, Entity Lifecycle, @Transactional | |
-| **Used by:** | Hibernate Envers, JPA at Scale | |
-| **Related:** | @Embedded/@Embeddable, @Converter/AttributeConverter | |
+| #032            | Category: JPA & Hibernate                                                     | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, EntityManager, Persistence Context, Entity Lifecycle, @Transactional |                 |
+| **Used by:**    | Hibernate Envers, JPA at Scale                                                |                 |
+| **Related:**    | @Embedded/@Embeddable, @Converter/AttributeConverter                          |                 |
 
 ---
 
@@ -77,6 +77,7 @@ lifecycle callbacks (`@PrePersist`, `@PreUpdate`) under
 the hood via `AuditingEntityListener`.
 
 **Key annotations:**
+
 - `@CreatedDate`: populated on initial `persist()`; never updated again
 - `@LastModifiedDate`: populated on `persist()` and every `merge()`/flush with dirty entity
 - `@CreatedBy`: populated on `persist()`; captures auditor from `AuditorAware`
@@ -97,6 +98,7 @@ Spring calls `getCurrentAuditor()` at each persist/update event.
 every entity save/update without any manual code.
 
 **One analogy:**
+
 > JPA auditing is like an automatic timestamp stamp
 > machine at a government office. Every document that
 > passes through the machine gets stamped with the
@@ -211,6 +213,7 @@ You annotate fields with `@CreatedDate`, `@LastModifiedDate`,
 etc., and Spring Data fills them in automatically.
 
 **Level 2 - How to use it (junior developer):**
+
 1. Add `@EnableJpaAuditing` to your `@SpringBootApplication`
    or a `@Configuration` class.
 2. Add `@EntityListeners(AuditingEntityListener.class)` to your entity.
@@ -423,24 +426,24 @@ public class SpringSecurityAuditorAware
 
 ### ⚖️ Comparison Table
 
-| Feature | JPA Auditing (Spring Data) | Hibernate Envers (JPH-049) |
-|---|---|---|
-| Captures | Current timestamps + user | Full history of every version |
-| Storage | In entity columns | Separate audit table (_AUD) |
-| Setup complexity | Simple (4 annotations) | Moderate (@Audited on entity) |
-| Query history? | No | Yes (find entity at revision N) |
-| Use for | Standard operational metadata | Compliance, undo, forensics |
+| Feature          | JPA Auditing (Spring Data)    | Hibernate Envers (JPH-049)      |
+| ---------------- | ----------------------------- | ------------------------------- |
+| Captures         | Current timestamps + user     | Full history of every version   |
+| Storage          | In entity columns             | Separate audit table (\_AUD)    |
+| Setup complexity | Simple (4 annotations)        | Moderate (@Audited on entity)   |
+| Query history?   | No                            | Yes (find entity at revision N) |
+| Use for          | Standard operational metadata | Compliance, undo, forensics     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`@EnableJpaAuditing` can be on any class" | Technically yes, but if placed on a `@SpringBootTest` configuration, it applies only to tests. Best practice: place it on the main `@SpringBootApplication` class or a dedicated `@Configuration`. |
-| "`@CreatedDate` is automatically immutable" | Without `@Column(updatable = false)`, Hibernate includes `created_at` in UPDATE statements. The value doesn't change (the listener doesn't touch it on updates) but it generates unnecessary SQL. Always add `updatable = false` to `@CreatedDate` fields. |
-| "JPA Auditing works in `@Scheduled` methods" | The `AuditorAware` implementation must handle cases where there is no `SecurityContext` (scheduled tasks, async methods, batch jobs). Return `Optional.of("system")` or the job name as a fallback. Without a fallback, `@CreatedBy` may be `null`. |
-| "`@MappedSuperclass` handles `@EntityListeners` inheritance automatically" | `@EntityListeners` on a `@MappedSuperclass` IS inherited by subclass entities (JPA spec). However, this is a subtle JPA spec behavior. Explicitly adding `@EntityListeners` on the concrete entity is safer and more visible. |
+| Misconception                                                              | Reality                                                                                                                                                                                                                                                    |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`@EnableJpaAuditing` can be on any class"                                 | Technically yes, but if placed on a `@SpringBootTest` configuration, it applies only to tests. Best practice: place it on the main `@SpringBootApplication` class or a dedicated `@Configuration`.                                                         |
+| "`@CreatedDate` is automatically immutable"                                | Without `@Column(updatable = false)`, Hibernate includes `created_at` in UPDATE statements. The value doesn't change (the listener doesn't touch it on updates) but it generates unnecessary SQL. Always add `updatable = false` to `@CreatedDate` fields. |
+| "JPA Auditing works in `@Scheduled` methods"                               | The `AuditorAware` implementation must handle cases where there is no `SecurityContext` (scheduled tasks, async methods, batch jobs). Return `Optional.of("system")` or the job name as a fallback. Without a fallback, `@CreatedBy` may be `null`.        |
+| "`@MappedSuperclass` handles `@EntityListeners` inheritance automatically" | `@EntityListeners` on a `@MappedSuperclass` IS inherited by subclass entities (JPA spec). However, this is a subtle JPA spec behavior. Explicitly adding `@EntityListeners` on the concrete entity is safer and more visible.                              |
 
 ---
 
@@ -454,11 +457,13 @@ public class SpringSecurityAuditorAware
 missing or placed on a test configuration that is not
 active in production. Alternatively, `@EntityListeners(AuditingEntityListener.class)` is missing from the entity class.
 **Diagnosis:**
+
 ```java
 // Check @Configuration classes for @EnableJpaAuditing
 // Check entity class for @EntityListeners
 // Add debug: implement AuditingEntityListener and log touchForCreate
 ```
+
 **Fix:** Add `@EnableJpaAuditing` to main application
 config; add `@EntityListeners(AuditingEntityListener.class)`
 to entity or base class.
@@ -480,16 +485,19 @@ system) with a fallback value.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-013 - Entity Lifecycle]] - auditing hooks use
   `@PrePersist` and `@PreUpdate` lifecycle callbacks
 - [[JPH-026 - @Transactional]] - audit fields are set
   within the transaction boundary
 
 **Builds On This (learn these next):**
+
 - [[JPH-049 - Hibernate Envers]] - for full entity
   revision history beyond timestamps
 
 **Related:**
+
 - [[JPH-041 - @Embedded and @Embeddable]] - audit fields
   are often extracted into a reusable `@Embeddable`
   `AuditInfo` value object
@@ -527,6 +535,7 @@ system) with a fallback value.
 ```
 
 **If you remember only 3 things:**
+
 1. Requires three components: `@EnableJpaAuditing` config,
    `@EntityListeners(AuditingEntityListener.class)` on entity,
    and annotations on fields
@@ -539,9 +548,10 @@ system) with a fallback value.
 populates `@CreatedDate`, `@LastModifiedDate`, `@CreatedBy`,
 and `@LastModifiedBy` via JPA lifecycle callbacks
 (`@PrePersist`/`@PreUpdate`). Enabled by `@EnableJpaAuditing`
-+ `@EntityListeners(AuditingEntityListener.class)`.
-Implement `AuditorAware` for user tracking. Always mark
-`@CreatedDate` with `@Column(updatable = false)`.
+
+- `@EntityListeners(AuditingEntityListener.class)`.
+  Implement `AuditorAware` for user tracking. Always mark
+  `@CreatedDate` with `@Column(updatable = false)`.
 
 ---
 
@@ -563,6 +573,7 @@ distributed tracing context propagation - all enforced
 at the infrastructure layer, invisible to business logic.
 
 **Where else this pattern appears:**
+
 - **MongoDB** - Spring Data MongoDB auditing: same
   `@EnableMongoAuditing` + `@CreatedDate` annotations;
   identical concept
@@ -596,6 +607,7 @@ bulk query SQL. This is an important exception to the
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **SET UP** complete JPA auditing with `@MappedSuperclass`,
    `@EnableJpaAuditing`, and `AuditorAware`
 2. **EXPLAIN** why `@Column(updatable = false)` is needed
@@ -612,9 +624,10 @@ bulk query SQL. This is an important exception to the
 ### 🎯 Interview Deep-Dive
 
 **Q1: How does Spring Data JPA auditing work under the hood?**
-*Why they ask:* Tests JPA lifecycle callback knowledge
+_Why they ask:_ Tests JPA lifecycle callback knowledge
 and Spring Data internals.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `@EnableJpaAuditing` registers `AuditingEntityListener`
   as a Spring-managed JPA entity listener
 - `@EntityListeners(AuditingEntityListener.class)` on the
@@ -631,9 +644,10 @@ and Spring Data internals.
 
 **Q2: Does JPA auditing work with bulk UPDATE queries?
 If not, how do you ensure audit fields are updated?**
-*Why they ask:* Tests understanding of JPA lifecycle
+_Why they ask:_ Tests understanding of JPA lifecycle
 callbacks and bulk DML interaction.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - NO - bulk UPDATE (`@Modifying @Query(...)`) executes SQL
   directly; JPA lifecycle callbacks (`@PreUpdate`) are
   NOT fired
@@ -642,6 +656,6 @@ callbacks and bulk DML interaction.
   after bulk UPDATE
 - Fix: include audit columns explicitly in the bulk query:
   `UPDATE products SET price=:p, updated_at=NOW(),
-  updated_by=:user WHERE category=:cat`
+updated_by=:user WHERE category=:cat`
 - This also applies to Hibernate Envers - bulk DML
   operations are not tracked in audit tables

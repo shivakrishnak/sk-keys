@@ -29,11 +29,11 @@ operates on entity classes and their fields (not database
 tables and columns), producing results that are either
 managed entity instances or scalar values.
 
-| #014 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Table and @Column, EntityManager, Entity Lifecycle | |
-| **Used by:** | N+1 Problem, JOIN FETCH, Named Queries, @EntityGraph | |
-| **Related:** | Criteria API, Native SQL Queries | |
+| #014            | Category: JPA & Hibernate                                    | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Table and @Column, EntityManager, Entity Lifecycle |                 |
+| **Used by:**    | N+1 Problem, JOIN FETCH, Named Queries, @EntityGraph         |                 |
+| **Related:**    | Criteria API, Native SQL Queries                             |                 |
 
 ---
 
@@ -78,6 +78,7 @@ to SQL in structure (SELECT, FROM, WHERE, JOIN, GROUP BY,
 ORDER BY) but entity-model oriented.
 
 Key characteristics:
+
 - **Entity-centric**: `FROM Product p` references the Java
   entity class, not the database table
 - **Field-name based**: `p.name` references the Java field,
@@ -97,6 +98,7 @@ your Java classes and fields instead of database tables
 and columns.
 
 **One analogy:**
+
 > JPQL is to SQL what Google Maps street names are to
 > GPS coordinates. SQL requires exact coordinates (table
 > names, column names). JPQL uses human-readable names
@@ -149,6 +151,7 @@ Positional parameters (avoid in Spring):
 ```
 
 **CORE INVARIANTS:**
+
 1. JPQL FROM clause uses entity class names (Java), not table names
 2. JPQL field paths use Java field names, not column names
 3. JPQL results are managed entities (unless using projections)
@@ -156,7 +159,7 @@ Positional parameters (avoid in Spring):
    execute SQL; results ARE stored in the persistence context
 5. Named parameters (`:name`) are safe from SQL injection
    - positional and named parameters both go through JDBC
-   PreparedStatement, never concatenated into SQL
+     PreparedStatement, never concatenated into SQL
 
 ---
 
@@ -259,6 +262,7 @@ cache hit rate is visible in Hibernate statistics:
 `org.hibernate.stat.QueryStatistics`.
 
 **Expert Thinking Cues:**
+
 - Ask: "Does this JPQL use JOIN FETCH or not?" - the
   presence of JOIN FETCH determines whether N+1 occurs
 - Watch: JPQL with `IN` clauses and large parameter lists
@@ -466,16 +470,17 @@ em.clear(); // ensures stale entities are not used
 
 ### ⚖️ Comparison Table
 
-| Feature | JPQL | HQL | Criteria API | Native SQL |
-|---|---|---|---|---|
-| Syntax | SQL-like string | SQL-like string | Type-safe Java API | Raw SQL string |
-| Target | Entity model | Entity model | Entity model | Database schema |
-| Type safety | No (compile time) | No | Yes | No |
-| IDE support | Limited | Limited | Full | None |
-| Portability | Full | Hibernate only | Full | DB-specific |
-| Complex queries | Good | Better (HQL extensions) | Verbose but powerful | Unlimited |
+| Feature         | JPQL              | HQL                     | Criteria API         | Native SQL      |
+| --------------- | ----------------- | ----------------------- | -------------------- | --------------- |
+| Syntax          | SQL-like string   | SQL-like string         | Type-safe Java API   | Raw SQL string  |
+| Target          | Entity model      | Entity model            | Entity model         | Database schema |
+| Type safety     | No (compile time) | No                      | Yes                  | No              |
+| IDE support     | Limited           | Limited                 | Full                 | None            |
+| Portability     | Full              | Hibernate only          | Full                 | DB-specific     |
+| Complex queries | Good              | Better (HQL extensions) | Verbose but powerful | Unlimited       |
 
 **How to choose:**
+
 - Simple to medium queries: JPQL with `@Query` in Spring Data
 - Dynamic queries (runtime-built): Criteria API or Querydsl
 - Complex aggregations/window functions: Native SQL
@@ -485,13 +490,13 @@ em.clear(); // ensures stale entities are not used
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "JPQL query results bypass the persistence context because it's a query" | JPQL results ARE loaded into the persistence context. Each returned entity is added to the identity map and tracked for dirty checking. Only DTO projections bypass the persistence context. |
-| "JPQL WHERE clause uses database column names" | JPQL uses Java field names. `WHERE p.firstName = :name` (Java field) NOT `WHERE p.FIRST_NM = :name` (DB column). Using the column name in JPQL causes a `QueryException: could not resolve property`. |
-| "`IN` clause with a List parameter works without size limits" | JPQL `WHERE p.id IN :ids` with a list of 1000+ IDs may fail on databases with IN clause limits (Oracle has a 1000-item limit per IN clause). Split large lists or use a JOIN with a temporary table. |
-| "JPQL bulk UPDATE and DELETE are tracked by dirty checking" | Bulk JPQL UPDATE/DELETE bypass the persistence context entirely. Managed entities in the session are NOT updated. After a bulk operation, call `em.clear()` to ensure the session reflects the new database state. |
-| "JPQL is compiled once and cached globally" | JPQL is compiled per distinct query string. If parameters are concatenated into the string (anti-pattern), each value creates a new unique query string that is separately compiled and cached - exhausting the query plan cache. |
+| Misconception                                                            | Reality                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "JPQL query results bypass the persistence context because it's a query" | JPQL results ARE loaded into the persistence context. Each returned entity is added to the identity map and tracked for dirty checking. Only DTO projections bypass the persistence context.                                      |
+| "JPQL WHERE clause uses database column names"                           | JPQL uses Java field names. `WHERE p.firstName = :name` (Java field) NOT `WHERE p.FIRST_NM = :name` (DB column). Using the column name in JPQL causes a `QueryException: could not resolve property`.                             |
+| "`IN` clause with a List parameter works without size limits"            | JPQL `WHERE p.id IN :ids` with a list of 1000+ IDs may fail on databases with IN clause limits (Oracle has a 1000-item limit per IN clause). Split large lists or use a JOIN with a temporary table.                              |
+| "JPQL bulk UPDATE and DELETE are tracked by dirty checking"              | Bulk JPQL UPDATE/DELETE bypass the persistence context entirely. Managed entities in the session are NOT updated. After a bulk operation, call `em.clear()` to ensure the session reflects the new database state.                |
+| "JPQL is compiled once and cached globally"                              | JPQL is compiled per distinct query string. If parameters are concatenated into the string (anti-pattern), each value creates a new unique query string that is separately compiled and cached - exhausting the query plan cache. |
 
 ---
 
@@ -609,6 +614,7 @@ Problem) for comprehensive fix strategies.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-006 - @Entity]] - JPQL FROM clause uses @Entity
   class names
 - [[JPH-008 - @Table and @Column]] - the metadata JPQL
@@ -620,6 +626,7 @@ Problem) for comprehensive fix strategies.
   JPQL results are MANAGED entities in the persistence context
 
 **Builds On This (learn these next):**
+
 - [[JPH-020 - N+1 Problem]] - the most critical JPQL
   performance failure mode
 - [[JPH-021 - JOIN FETCH]] - the JPQL solution to N+1
@@ -629,6 +636,7 @@ Problem) for comprehensive fix strategies.
   for JPQL queries
 
 **Alternatives / Comparisons:**
+
 - [[JPH-025 - Criteria API]] - type-safe programmatic
   alternative to JPQL strings
 - [[JPH-033 - Native SQL Queries]] - for database-specific
@@ -671,6 +679,7 @@ Problem) for comprehensive fix strategies.
 ```
 
 **If you remember only 3 things:**
+
 1. JPQL uses Java class/field names (not DB table/column
    names) - the JPA provider translates to SQL
 2. Always use named parameters (`:name`) - never
@@ -702,6 +711,7 @@ names), and MongoDB aggregation pipelines (operate on
 document fields, not SQL tables).
 
 **Where else this pattern appears:**
+
 - **GraphQL** - queries use field names from the GraphQL
   schema (logical model), not database columns; the resolver
   translates to DB queries - same indirection as JPQL
@@ -733,6 +743,7 @@ Hibernate 5 and 6).
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **WRITE** a JPQL query with a JOIN (explicit), named
    parameters, and DTO projection from memory without
    referencing documentation
@@ -760,22 +771,22 @@ property: productName` is thrown. The database has a
 column `PROD_NM`. The Java entity has a field named
 `name` with `@Column(name="PROD_NM")`. What is the cause
 and fix?
-*Hint: JPQL uses Java field names (name), not property
+_Hint: JPQL uses Java field names (name), not property
 names (productName) or column names (PROD_NM). The JPQL
-must use `p.name`, not `p.productName` or `p.PROD_NM`.*
+must use `p.name`, not `p.productName` or `p.PROD_NM`._
 
 **Q2 (TYPE C - Design Trade-off):** Your reporting endpoint
 returns a list of 50,000 `Product` entities using JPQL.
 Response time is 8 seconds and memory usage spikes to 2GB.
-Compare the options: (1) keep returning full entities, 
+Compare the options: (1) keep returning full entities,
 (2) use a DTO projection `SELECT new ProductDto(p.id, p.name, p.price)`,
 (3) use native SQL with manual mapping. What does each
 approach gain and sacrifice?
-*Hint: Full entities = persistence context overhead + dirty
+_Hint: Full entities = persistence context overhead + dirty
 checking overhead + all column data. DTO projection = no
 persistence context, selective columns, but still uses
 JPQL. Native SQL = maximum flexibility but loses type
-safety and portability.*
+safety and portability._
 
 **Q3 (TYPE G - Hands-On):** Configure Hibernate statistics
 in a Spring Boot application. Write a test that calls a
@@ -792,9 +803,10 @@ cache misses to 1 (the first call).
 
 **Q1: What is the difference between JPQL and SQL?
 Why would you use JPQL instead of native SQL?**
-*Why they ask:* Tests fundamental understanding of JPA
+_Why they ask:_ Tests fundamental understanding of JPA
 abstractions - why they exist and when to use them.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - JPQL uses entity class names and Java field names;
   SQL uses database table and column names
 - JPA translates JPQL to SQL using entity metadata;
@@ -808,9 +820,10 @@ abstractions - why they exist and when to use them.
 **Q2: What happens to the query plan cache when you
 concatenate values into a JPQL string instead of using
 parameters?**
-*Why they ask:* Tests depth of JPQL implementation knowledge
+_Why they ask:_ Tests depth of JPQL implementation knowledge
 and awareness of production performance traps.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Each unique JPQL string is compiled into a distinct
   query plan and cached separately
 - Concatenating values produces a new unique string per
@@ -824,9 +837,10 @@ and awareness of production performance traps.
 
 **Q3: Why must you call `em.clear()` after a JPQL bulk
 UPDATE or DELETE statement?**
-*Why they ask:* Tests understanding of the persistence
+_Why they ask:_ Tests understanding of the persistence
 context bypass by bulk operations.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - JPQL bulk UPDATE/DELETE execute directly on the database
   without going through the persistence context
 - Any managed entities in the session that match the

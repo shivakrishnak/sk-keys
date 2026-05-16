@@ -35,11 +35,11 @@ transaction closes. Memory problems in batch processing
 come from unbounded 1LC growth - fix with `em.clear()` or
 `em.evict()` periodically.
 
-| #033 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | EntityManager, Persistence Context, Entity Lifecycle, @Transactional, N+1 Problem, Hibernate Session vs EntityManager | |
-| **Used by:** | Second Level Cache, Optimistic Locking, Batch Processing, Dirty Checking and Flush Mode, Hibernate Internals | |
-| **Related:** | HQL, EntityGraph | |
+| #033            | Category: JPA & Hibernate                                                                                             | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | EntityManager, Persistence Context, Entity Lifecycle, @Transactional, N+1 Problem, Hibernate Session vs EntityManager |                 |
+| **Used by:**    | Second Level Cache, Optimistic Locking, Batch Processing, Dirty Checking and Flush Mode, Hibernate Internals          |                 |
+| **Related:**    | HQL, EntityGraph                                                                                                      |                 |
 
 ---
 
@@ -80,6 +80,7 @@ EntityManager) for the duration of the session's lifetime.
 It is a `Map<EntityKey, Object>` where `EntityKey = (EntityClass, primaryKey)`.
 
 **Key properties:**
+
 - Always enabled; cannot be configured off
 - Scoped to a single Session/EntityManager (transaction-scoped in Spring)
 - Guarantees within-session identity: same entity loaded twice
@@ -105,6 +106,7 @@ same transaction hits the cache (no second DB query)
 and returns the same Java object.
 
 **One analogy:**
+
 > The first-level cache is your desk during a work session.
 > Every document you pull from the filing cabinet (database)
 > goes on your desk (1LC). If you need the same document
@@ -433,22 +435,22 @@ public void processMillion(List<Long> ids) {
 
 ### ⚖️ Comparison Table
 
-| Cache | Scope | Always on? | Shared? | Controlled by |
-|---|---|---|---|---|
-| First Level Cache (1LC) | Transaction/Session | Always on | No (per session) | Developer via `clear()`/`evict()` |
-| Second Level Cache (2LC) | Application-wide | Optional | Yes (all sessions) | Config + `@Cache` on entity |
-| Query Cache | Application-wide | Optional | Yes (all sessions) | Config + `@QueryHints` |
+| Cache                    | Scope               | Always on? | Shared?            | Controlled by                     |
+| ------------------------ | ------------------- | ---------- | ------------------ | --------------------------------- |
+| First Level Cache (1LC)  | Transaction/Session | Always on  | No (per session)   | Developer via `clear()`/`evict()` |
+| Second Level Cache (2LC) | Application-wide    | Optional   | Yes (all sessions) | Config + `@Cache` on entity       |
+| Query Cache              | Application-wide    | Optional   | Yes (all sessions) | Config + `@QueryHints`            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "The first-level cache can be disabled for performance-sensitive paths" | The 1LC CANNOT be disabled. It is the persistence context itself. If you want non-cached behavior, use native JDBC queries or stateless sessions (`Session.openStatelessSession()`). |
-| "JPQL queries use the first-level cache to avoid database hits" | JPQL queries ALWAYS execute SQL. They do NOT check the 1LC before querying. However, Hibernate merges query results into the 1LC afterward, ensuring identity consistency. |
-| "em.clear() is safe to call at any time in a batch" | `em.clear()` DISCARDS all pending dirty changes without flushing them to the database. Always call `em.flush()` BEFORE `em.clear()` or dirty changes will be lost. |
-| "Two EntityManagers in the same application share the first-level cache" | The 1LC is NEVER shared. Each EntityManager has its own 1LC. Changes in one EM are invisible to another EM until they are committed to the database. |
+| Misconception                                                            | Reality                                                                                                                                                                              |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "The first-level cache can be disabled for performance-sensitive paths"  | The 1LC CANNOT be disabled. It is the persistence context itself. If you want non-cached behavior, use native JDBC queries or stateless sessions (`Session.openStatelessSession()`). |
+| "JPQL queries use the first-level cache to avoid database hits"          | JPQL queries ALWAYS execute SQL. They do NOT check the 1LC before querying. However, Hibernate merges query results into the 1LC afterward, ensuring identity consistency.           |
+| "em.clear() is safe to call at any time in a batch"                      | `em.clear()` DISCARDS all pending dirty changes without flushing them to the database. Always call `em.flush()` BEFORE `em.clear()` or dirty changes will be lost.                   |
+| "Two EntityManagers in the same application share the first-level cache" | The 1LC is NEVER shared. Each EntityManager has its own 1LC. Changes in one EM are invisible to another EM until they are committed to the database.                                 |
 
 ---
 
@@ -465,14 +467,17 @@ arrays.
 transaction. With 1 million entities, 2 million objects
 (entity + snapshot) fill the heap.
 **Fix:**
+
 ```java
 if (i % 100 == 0) {
     em.flush();
     em.clear();
 }
 ```
+
 Or use `StatelessSession` for read-heavy batch jobs
 (no 1LC at all):
+
 ```java
 StatelessSession ss = sessionFactory.openStatelessSession();
 ScrollableResults results = ss.createQuery(
@@ -496,6 +501,7 @@ still shows the old value. The 1LC returns the cached
 entry for the updated entity is not invalidated.
 **Fix:** Call `em.clear()` or `em.refresh(entity)` after
 bulk DML to evict stale entities:
+
 ```java
 repo.updatePrices(category, multiplier);
 em.clear(); // evict all; force re-fetch from DB
@@ -508,18 +514,21 @@ em.refresh(specificEntity); // re-fetch single entity
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-011 - EntityManager]] - the 1LC is the persistence
   context managed by EntityManager
 - [[JPH-012 - Persistence Context]] - 1LC IS the
   persistence context
 
 **Builds On This (learn these next):**
+
 - [[JPH-034 - Second Level Cache]] - shared, configurable
   cache complementing the transaction-scoped 1LC
 - [[JPH-052 - Dirty Checking and Flush Mode]] - dirty
   checking compares entity state vs 1LC snapshot
 
 **Related:**
+
 - [[JPH-045 - Hibernate Batch Processing]] - periodic
   flush+clear pattern for 1LC memory management
 - [[JPH-058 - Hibernate Internals]] - 1LC implementation
@@ -553,6 +562,7 @@ em.refresh(specificEntity); // re-fetch single entity
 ```
 
 **If you remember only 3 things:**
+
 1. The 1LC guarantees entity identity within a transaction:
    same entity loaded twice returns the same Java object
    reference, with only one SQL query
@@ -589,6 +599,7 @@ one "unit of work" (transaction, session, context), each
 entity has exactly one in-memory representation.
 
 **Where else this pattern appears:**
+
 - **SQLAlchemy (Python)**: `Session` maintains an identity
   map; `session.get(User, 1)` twice returns the same
   Python object
@@ -625,6 +636,7 @@ additional SQL queries.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the data structure of the 1LC (Map of
    EntityKey to EntityEntry with snapshot)
 2. **DEMONSTRATE** with code that two `em.find()` calls
@@ -644,9 +656,10 @@ additional SQL queries.
 
 **Q1: What is the first-level cache in Hibernate, and
 what problem does it solve?**
-*Why they ask:* Core Hibernate knowledge; tests understanding
+_Why they ask:_ Core Hibernate knowledge; tests understanding
 of persistence context mechanics.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - The 1LC is the persistence context: a Map keyed by
   entity type + primary key
 - Solves the identity problem: within one transaction,
@@ -659,9 +672,10 @@ of persistence context mechanics.
 
 **Q2: Why does a batch job cause OutOfMemoryError, and
 how do you fix it?**
-*Why they ask:* Common production incident; tests practical
+_Why they ask:_ Common production incident; tests practical
 batch processing knowledge.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Root cause: every `em.find()` or query result adds an
   entity to the 1LC; in a long transaction, 1 million
   entities = 2 million objects (entity + snapshot)
@@ -674,9 +688,10 @@ batch processing knowledge.
 
 **Q3: What happens when you call JPQL query for an
 entity that is already in the first-level cache?**
-*Why they ask:* Tests deep understanding of 1LC + query
+_Why they ask:_ Tests deep understanding of 1LC + query
 interaction.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - JPQL always issues SQL (does NOT check 1LC for cache hit)
 - After the query, Hibernate merges results into 1LC:
   if an entity with that id is already in 1LC, Hibernate

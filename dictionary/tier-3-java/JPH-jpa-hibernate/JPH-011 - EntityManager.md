@@ -29,11 +29,11 @@ managing entities: it persists, finds, merges, removes, and
 queries, while owning the persistence context (first-level
 cache and dirty-checking state) for its session lifetime.
 
-| #011 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Id and @GeneratedValue, JPA Configuration | |
-| **Used by:** | Persistence Context, Entity Lifecycle, JPQL, CrudRepository and JpaRepository | |
-| **Related:** | @Transactional, Native SQL Queries | |
+| #011            | Category: JPA & Hibernate                                                     | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Id and @GeneratedValue, JPA Configuration                           |                 |
+| **Used by:**    | Persistence Context, Entity Lifecycle, JPQL, CrudRepository and JpaRepository |                 |
+| **Related:**    | @Transactional, Native SQL Queries                                            |                 |
 
 ---
 
@@ -78,6 +78,7 @@ of entity instances within a **persistence context** -
 a set of managed entity instances representing a unit of work.
 
 The `EntityManager` API provides:
+
 - **CRUD operations**: `persist()`, `find()`, `merge()`,
   `remove()`, `refresh()`
 - **Query creation**: `createQuery()` (JPQL), `createNativeQuery()`,
@@ -100,6 +101,7 @@ tracks entities, translates Java operations to SQL, and
 maintains the first-level cache within a unit of work.
 
 **One analogy:**
+
 > `EntityManager` is a shopping cart at a supermarket.
 > You add items (persist), modify them (merge), remove them
 > (remove), and look them up by barcode (find). At checkout
@@ -119,6 +121,7 @@ maintains the first-level cache within a unit of work.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. One `EntityManager` = one persistence context = one unit of work
 2. `EntityManager` is NOT thread-safe; never share an
    instance across threads
@@ -133,16 +136,17 @@ maintains the first-level cache within a unit of work.
 
 **SIX CORE OPERATIONS:**
 
-| Operation | SQL Generated | Entity State After |
-|---|---|---|
-| `persist(entity)` | `INSERT` (at flush) | MANAGED |
-| `find(Class, id)` | `SELECT` (or cache hit) | MANAGED |
+| Operation         | SQL Generated                    | Entity State After       |
+| ----------------- | -------------------------------- | ------------------------ |
+| `persist(entity)` | `INSERT` (at flush)              | MANAGED                  |
+| `find(Class, id)` | `SELECT` (or cache hit)          | MANAGED                  |
 | `merge(detached)` | `SELECT` + `UPDATE` (if changed) | Returns new MANAGED copy |
-| `remove(entity)` | `DELETE` (at flush) | REMOVED |
-| `refresh(entity)` | `SELECT` (forced reload) | MANAGED (overwritten) |
-| `detach(entity)` | None | DETACHED |
+| `remove(entity)`  | `DELETE` (at flush)              | REMOVED                  |
+| `refresh(entity)` | `SELECT` (forced reload)         | MANAGED (overwritten)    |
+| `detach(entity)`  | None                             | DETACHED                 |
 
 **THE CRITICAL DISTINCTION - persist vs merge:**
+
 - `persist()`: transitions a NEW entity to MANAGED; entity
   becomes tracked; cannot be called on a detached entity
 - `merge()`: copies state from a detached entity into a
@@ -269,6 +273,7 @@ call detaches all entities, releasing their snapshots from
 memory - essential when processing 100,000+ rows.
 
 **Expert Thinking Cues:**
+
 - Ask: "Is `em.merge()` being called when `em.persist()`
   is expected?" - `merge()` on a new entity (null ID) still
   works but triggers an unnecessary SELECT first
@@ -501,28 +506,28 @@ public void processAllOrders(
 
 ### ⚖️ Comparison Table
 
-| Operation | When to use | State before | State after | SQL |
-|---|---|---|---|---|
-| `persist(e)` | NEW entity, first save | NEW (null id) | MANAGED | INSERT at flush |
-| `find(C, id)` | Load by primary key | Any | MANAGED | SELECT (or cache hit) |
-| `merge(e)` | Detached entity, update | DETACHED | Returned MANAGED copy | SELECT + UPDATE |
-| `remove(e)` | Delete entity | MANAGED | REMOVED | DELETE at flush |
-| `refresh(e)` | Reload from DB, discard changes | MANAGED | MANAGED (fresh) | SELECT |
-| `detach(e)` | Stop tracking | MANAGED | DETACHED | None |
-| `flush()` | Force write to DB | - | - | Pending SQL executed |
-| `clear()` | Release all from context | - | All DETACHED | None |
+| Operation     | When to use                     | State before  | State after           | SQL                   |
+| ------------- | ------------------------------- | ------------- | --------------------- | --------------------- |
+| `persist(e)`  | NEW entity, first save          | NEW (null id) | MANAGED               | INSERT at flush       |
+| `find(C, id)` | Load by primary key             | Any           | MANAGED               | SELECT (or cache hit) |
+| `merge(e)`    | Detached entity, update         | DETACHED      | Returned MANAGED copy | SELECT + UPDATE       |
+| `remove(e)`   | Delete entity                   | MANAGED       | REMOVED               | DELETE at flush       |
+| `refresh(e)`  | Reload from DB, discard changes | MANAGED       | MANAGED (fresh)       | SELECT                |
+| `detach(e)`   | Stop tracking                   | MANAGED       | DETACHED              | None                  |
+| `flush()`     | Force write to DB               | -             | -                     | Pending SQL executed  |
+| `clear()`     | Release all from context        | -             | All DETACHED          | None                  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`em.persist()` immediately INSERTs to DB" | `persist()` only changes entity state to MANAGED and buffers the INSERT. The SQL is sent at `flush()` time (either automatic before a query, or at transaction commit). |
-| "`em.merge()` updates the entity I passed in" | `merge()` returns a NEW managed copy. The entity you passed to `merge()` remains DETACHED. If you continue using the input object, changes are not tracked. Always use the return value. |
-| "I can call `em.persist()` on a detached entity to re-attach it" | `persist()` on a detached entity throws `EntityExistsException`. Use `merge()` to re-attach a detached entity. |
-| "`em.find()` always hits the database" | `find()` checks the first-level cache (identity map) first. If the entity was loaded earlier in the same session, it returns the cached instance without a DB query. |
-| "Spring Data's `repository.save()` always calls `persist()`" | `save()` calls `isNew()` - if the `@Id` is null/0 it calls `persist()`; if non-null it calls `merge()`. For entities with pre-assigned UUID IDs, `save()` always calls `merge()`, triggering a SELECT before every INSERT. |
+| Misconception                                                    | Reality                                                                                                                                                                                                                    |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`em.persist()` immediately INSERTs to DB"                       | `persist()` only changes entity state to MANAGED and buffers the INSERT. The SQL is sent at `flush()` time (either automatic before a query, or at transaction commit).                                                    |
+| "`em.merge()` updates the entity I passed in"                    | `merge()` returns a NEW managed copy. The entity you passed to `merge()` remains DETACHED. If you continue using the input object, changes are not tracked. Always use the return value.                                   |
+| "I can call `em.persist()` on a detached entity to re-attach it" | `persist()` on a detached entity throws `EntityExistsException`. Use `merge()` to re-attach a detached entity.                                                                                                             |
+| "`em.find()` always hits the database"                           | `find()` checks the first-level cache (identity map) first. If the entity was loaded earlier in the same session, it returns the cached instance without a DB query.                                                       |
+| "Spring Data's `repository.save()` always calls `persist()`"     | `save()` calls `isNew()` - if the `@Id` is null/0 it calls `persist()`; if non-null it calls `merge()`. For entities with pre-assigned UUID IDs, `save()` always calls `merge()`, triggering a SELECT before every INSERT. |
 
 ---
 
@@ -531,10 +536,12 @@ public void processAllOrders(
 **Failure Mode 1: TransactionRequiredException**
 
 **Symptom:**
+
 ```
 javax.persistence.TransactionRequiredException:
 No transactional EntityManager available
 ```
+
 **Root Cause:** `em.persist()`, `em.merge()`, or `em.remove()`
 called outside a `@Transactional` context. Write operations
 require an active transaction.
@@ -634,6 +641,7 @@ entities must use `flush()/clear()` pattern or use
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-006 - @Entity]] - entities are what the
   EntityManager manages; @Entity is the prerequisite
 - [[JPH-007 - @Id and @GeneratedValue]] - the identity
@@ -644,6 +652,7 @@ entities must use `flush()/clear()` pattern or use
   from which `EntityManager` instances are created
 
 **Builds On This (learn these next):**
+
 - [[JPH-012 - Persistence Context]] - deep dive into the
   identity map and dirty checking that the EntityManager
   maintains
@@ -655,6 +664,7 @@ entities must use `flush()/clear()` pattern or use
   Data abstracts EntityManager behind repositories
 
 **Alternatives / Comparisons:**
+
 - [[JPH-029 - @Transactional]] - transactions that scope
   the EntityManager's lifetime
 - [[JPH-033 - Native SQL Queries]] - `em.createNativeQuery()`
@@ -695,6 +705,7 @@ entities must use `flush()/clear()` pattern or use
 ```
 
 **If you remember only 3 things:**
+
 1. `persist()` for NEW entities; `merge()` for DETACHED -
    and always use `merge()`'s return value, not the input
 2. `EntityManager` is NOT thread-safe; `@PersistenceContext`
@@ -726,6 +737,7 @@ conceptual object) and database rows (which are identified
 by a single primary key).
 
 **Where else this pattern appears:**
+
 - **Active Record (Ruby on Rails)** - `record.save()` is
   Unit of Work applied to a single record; the session
   is the HTTP request
@@ -736,6 +748,7 @@ by a single primary key).
   `em.persist()`, `tx.commit()`
 
 **Industry applications:**
+
 - Microservices with shared databases: each service has its
   own `EntityManagerFactory` with separate entity scan scope;
   `EntityManager` sessions are strictly scoped to service
@@ -767,6 +780,7 @@ null until `flush()` with `IDENTITY` strategy.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the difference between `persist()` and
    `merge()` including which entity state transitions each
    triggers, and why you must use the return value of `merge()`
@@ -794,9 +808,9 @@ null until `flush()` with `IDENTITY` strategy.
 field, and calls `em.merge(customer)`. The update is not
 persisted to the database. Trace three possible root causes
 and the diagnostic steps to identify each.
-*Hint: (1) merge() return value ignored - changes made on
+_Hint: (1) merge() return value ignored - changes made on
 detached input; (2) @Transactional missing - flush never
-called; (3) FlushMode.COMMIT with no transaction commit.*
+called; (3) FlushMode.COMMIT with no transaction commit._
 
 **Q2 (TYPE B - Scale):** You are writing a batch job that
 processes 1,000,000 `Order` entities, calculating a summary
@@ -804,10 +818,10 @@ field for each. After processing 100,000 entities, the JVM
 OOM-crashes. What is the root cause, and what is the correct
 fix? Explain why `em.clear()` alone (without `em.flush()`
 before it) could cause data loss.
-*Hint: clear() detaches entities and releases snapshots,
+_Hint: clear() detaches entities and releases snapshots,
 but if there are pending INSERT/UPDATE operations, they are
 also discarded. flush() must come before clear() to write
-pending changes.*
+pending changes._
 
 **Q3 (TYPE G - Hands-On):** Write a test that demonstrates
 the identity map behaviour: load the same entity twice in
@@ -816,8 +830,8 @@ and assert that the second reference sees the change.
 Then write a second test that loads the entity in two
 separate transactions and demonstrates that changes in
 one transaction are not visible to the other until committed.
-*Hint: Use @Transactional with REQUIRES_NEW for the
-second transaction; or two separate EntityManager instances.*
+_Hint: Use @Transactional with REQUIRES_NEW for the
+second transaction; or two separate EntityManager instances._
 
 ---
 
@@ -825,9 +839,10 @@ second transaction; or two separate EntityManager instances.*
 
 **Q1: What is the difference between `em.persist()` and
 `em.merge()`? When would you use each?**
-*Why they ask:* Tests daily-use JPA understanding; a very
+_Why they ask:_ Tests daily-use JPA understanding; a very
 common source of bugs in production code.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `persist()`: for NEW entities (null ID); transitions
   to MANAGED; entity IS the managed object; throws
   `EntityExistsException` if called on a detached entity
@@ -841,9 +856,10 @@ common source of bugs in production code.
 
 **Q2: Why is `EntityManager` not thread-safe, and how does
 Spring make it safe to use in a multi-threaded web application?**
-*Why they ask:* Tests understanding of Spring internals
+_Why they ask:_ Tests understanding of Spring internals
 and concurrency model.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Not thread-safe because it holds a mutable identity map;
   concurrent access from two threads corrupts the snapshot
   state
@@ -857,10 +873,11 @@ and concurrency model.
 
 **Q3: Explain the consequences of NOT calling `em.clear()`
 in a batch job that processes 100,000 entities.**
-*Why they ask:* Tests production operational knowledge -
+_Why they ask:_ Tests production operational knowledge -
 batch processing is a common JPA use case with specific
 pitfalls.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Each `em.find()` adds the entity and its snapshot to the
   persistence context; 100,000 entities = 100,000 snapshots
 - At flush time, Hibernate must dirty-check all 100,000

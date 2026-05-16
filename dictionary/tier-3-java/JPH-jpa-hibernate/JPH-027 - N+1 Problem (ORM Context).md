@@ -33,11 +33,11 @@ JOIN FETCH in JPQL, `@EntityGraph`, `@BatchSize`, or
 DTO projections. This is the most common JPA performance
 bug in production.
 
-| #027 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JPQL, @OneToMany/@ManyToOne, FetchType, @Query, Pagination, @Transactional | |
-| **Used by:** | DTO Projections, EntityGraph, Batch Processing, JPA at Scale | |
-| **Related:** | First Level Cache, Spring Data Specifications | |
+| #027            | Category: JPA & Hibernate                                                  | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | JPQL, @OneToMany/@ManyToOne, FetchType, @Query, Pagination, @Transactional |                 |
+| **Used by:**    | DTO Projections, EntityGraph, Batch Processing, JPA at Scale               |                 |
+| **Related:**    | First Level Cache, Spring Data Specifications                              |                 |
 
 ---
 
@@ -62,6 +62,7 @@ queries - the ORM generated them transparently.
 
 **THE DISCOVERY MOMENT:**
 Enabling Hibernate SQL logging reveals the explosion:
+
 ```
 Hibernate: select * from orders
 Hibernate: select * from customers where id=1
@@ -69,6 +70,7 @@ Hibernate: select * from customers where id=2
 Hibernate: select * from customers where id=3
 ... (100 more) ...
 ```
+
 The fix - a JOIN FETCH - collapses 101 queries into 1.
 
 ---
@@ -98,6 +100,7 @@ a lazy association on each causes N extra queries -
 N+1 queries total instead of one JOIN.
 
 **One analogy:**
+
 > You're a librarian fetching 100 book requests. First,
 > you fetch the request list (1 query). Then, for each
 > of the 100 requests, you separately look up the
@@ -170,7 +173,7 @@ public class Order {
 
 // With EAGER: finding multiple orders by status
 // JPQL: "FROM Order o WHERE o.status = :s"
-// Hibernate: 
+// Hibernate:
 //   SELECT * FROM orders WHERE status=?  (returns N rows)
 //   SELECT * FROM customers WHERE id=1   (per row!)
 //   SELECT * FROM customers WHERE id=2
@@ -221,13 +224,14 @@ If you see 1 query followed by N nearly identical queries
 unmistakable in logs.
 
 **Level 3 - How to fix it (mid-level engineer):**
+
 - **JOIN FETCH** in JPQL: `FROM Order o JOIN FETCH o.customer`
 - **@EntityGraph**: `@EntityGraph(attributePaths = {"customer"})`
   on repository method
 - **@BatchSize**: loads associations in batches of N
   instead of one-by-one (N/batch_size + 1 queries)
 - **DTO Projection**: `SELECT new OrderDto(o.id, c.name)
-  FROM Order o JOIN o.customer c` - no proxy involved
+FROM Order o JOIN o.customer c` - no proxy involved
 
 **Level 4 - Trade-offs (senior/staff):**
 JOIN FETCH with pagination (`Pageable`) causes Hibernate
@@ -423,24 +427,24 @@ public Page<OrderDto> getPagedOrders(Pageable pageable) {
 
 ### ⚖️ Comparison Table
 
-| Fix | Queries | Works with Pageable? | Use case |
-|---|---|---|---|
-| JOIN FETCH | 1 | No (in-memory pagination) | Non-paginated lists |
-| @EntityGraph | 1 | No (same as JOIN FETCH) | Read-heavy single associations |
-| @BatchSize | ceil(N/size)+1 | Yes | When JOIN FETCH is impractical |
-| Two-query (IDs then fetch) | 2 | Yes | Paginated lists with associations |
-| DTO projection | 1 | Yes | Read-only APIs (best performance) |
+| Fix                        | Queries        | Works with Pageable?      | Use case                          |
+| -------------------------- | -------------- | ------------------------- | --------------------------------- |
+| JOIN FETCH                 | 1              | No (in-memory pagination) | Non-paginated lists               |
+| @EntityGraph               | 1              | No (same as JOIN FETCH)   | Read-heavy single associations    |
+| @BatchSize                 | ceil(N/size)+1 | Yes                       | When JOIN FETCH is impractical    |
+| Two-query (IDs then fetch) | 2              | Yes                       | Paginated lists with associations |
+| DTO projection             | 1              | Yes                       | Read-only APIs (best performance) |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Changing from LAZY to EAGER fixes N+1" | EAGER on a collection query still generates N separate queries (not a JOIN). It also loads data even when not needed. EAGER makes N+1 worse, not better. |
-| "JOIN FETCH always works" | JOIN FETCH multiplies rows for @OneToMany collections. With Pageable, Hibernate loads ALL rows in memory and paginates in Java, causing `HHH90003004` warning and potential OOM. |
-| "@EntityGraph solves all N+1 problems" | @EntityGraph uses LEFT JOIN FETCH. Same limitation as JOIN FETCH when used with Pageable (collection associations). Works well for @ManyToOne and @OneToOne. |
-| "N+1 only occurs with LAZY loading" | N+1 occurs whenever an association is loaded per-entity in a loop. Even EAGER @ManyToOne in a collection query causes N separate SELECTs (Hibernate queries each by ID). |
+| Misconception                           | Reality                                                                                                                                                                          |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Changing from LAZY to EAGER fixes N+1" | EAGER on a collection query still generates N separate queries (not a JOIN). It also loads data even when not needed. EAGER makes N+1 worse, not better.                         |
+| "JOIN FETCH always works"               | JOIN FETCH multiplies rows for @OneToMany collections. With Pageable, Hibernate loads ALL rows in memory and paginates in Java, causing `HHH90003004` warning and potential OOM. |
+| "@EntityGraph solves all N+1 problems"  | @EntityGraph uses LEFT JOIN FETCH. Same limitation as JOIN FETCH when used with Pageable (collection associations). Works well for @ManyToOne and @OneToOne.                     |
+| "N+1 only occurs with LAZY loading"     | N+1 occurs whenever an association is loaded per-entity in a loop. Even EAGER @ManyToOne in a collection query causes N separate SELECTs (Hibernate queries each by ID).         |
 
 ---
 
@@ -452,6 +456,7 @@ public Page<OrderDto> getPagedOrders(Pageable pageable) {
 In production with 5,000 records, the endpoint times out.
 DB CPU spikes. Connection pool exhausted.
 **Diagnosis:**
+
 ```
 # Enable slow query logging in application
 spring.jpa.properties.hibernate.generate_statistics=true
@@ -464,6 +469,7 @@ grep "select.*from customers where id=" app.log | wc -l
 # Use p6spy or datasource-proxy in staging:
 # Reports total SQL count per request
 ```
+
 **Fix:** Add JOIN FETCH or @EntityGraph to the repository
 method, or use DTO projections.
 
@@ -487,6 +493,7 @@ JOIN FETCH by ID list) or `@BatchSize` instead of JOIN FETCH.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-018 - @OneToMany and @ManyToOne]] - the associations
   that most commonly cause N+1
 - [[JPH-021 - FetchType]] - LAZY vs EAGER; why EAGER does
@@ -495,6 +502,7 @@ JOIN FETCH by ID list) or `@BatchSize` instead of JOIN FETCH.
 - [[JPH-026 - @Transactional]] - N+1 fires within a transaction
 
 **Builds On This (learn these next):**
+
 - [[JPH-037 - EntityGraph]] - `@EntityGraph` as a
   structured fix for N+1
 - [[JPH-030 - DTO Projections]] - best long-term fix for
@@ -503,6 +511,7 @@ JOIN FETCH by ID list) or `@BatchSize` instead of JOIN FETCH.
   for reducing N+1 to N/batch queries
 
 **Related:**
+
 - [[JPH-033 - First Level Cache]] - repeated loads of the
   same ID are cached; N+1 with same IDs hits 1L cache
 - [[JPH-054 - JPA at Scale]] - N+1 in high-QPS services
@@ -536,6 +545,7 @@ JOIN FETCH by ID list) or `@BatchSize` instead of JOIN FETCH.
 ```
 
 **If you remember only 3 things:**
+
 1. N+1 = 1 query loads N parents, then N queries load
    each parent's association = N+1 total queries
 2. Switching LAZY to EAGER does NOT fix N+1; JOIN FETCH
@@ -568,6 +578,7 @@ how many SQL queries your data access layer generates.
 Establish a "max queries per request" metric in tests.
 
 **Where else this pattern appears:**
+
 - **GraphQL** - N+1 in resolvers (each field resolver
   loads data separately). Fix: DataLoader (batch loading)
 - **REST API clients** - N+1 across services: fetch list
@@ -604,6 +615,7 @@ all required associations within the transaction boundary.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **REPRODUCE** an N+1 scenario in code and confirm it
    via Hibernate SQL logs showing repeated queries
 2. **APPLY** three different fixes (JOIN FETCH, @EntityGraph,
@@ -621,9 +633,10 @@ all required associations within the transaction boundary.
 
 **Q1: What is the N+1 problem, and how would you detect
 it in production?**
-*Why they ask:* Core JPA question. Tests both understanding
+_Why they ask:_ Core JPA question. Tests both understanding
 and operational awareness.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Definition: 1 query loads N parents, N lazy loads fire
   = N+1 total; instead of 1-2 with JOIN
 - Detection in development: `spring.jpa.show-sql=true`,
@@ -637,9 +650,10 @@ and operational awareness.
 **Q2: You have a paginated endpoint returning orders with
 customer data. Your JOIN FETCH fix causes the Hibernate
 in-memory pagination warning. How do you fix it?**
-*Why they ask:* Tests deep practical knowledge combining
+_Why they ask:_ Tests deep practical knowledge combining
 N+1, JOIN FETCH, and pagination limitations.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Root cause: JOIN FETCH on @OneToMany multiplies rows;
   SQL LIMIT/OFFSET cannot paginate correctly; Hibernate
   loads all rows and paginates in Java
@@ -654,9 +668,10 @@ N+1, JOIN FETCH, and pagination limitations.
 
 **Q3: Why does changing FetchType from LAZY to EAGER not
 fix the N+1 problem?**
-*Why they ask:* Tests understanding of HOW Hibernate loads
+_Why they ask:_ Tests understanding of HOW Hibernate loads
 EAGER associations in collection queries.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `em.find(Order.class, id)` for a single entity: EAGER
   triggers a JOIN (one query)
 - JPQL collection query `FROM Order WHERE status=X`:

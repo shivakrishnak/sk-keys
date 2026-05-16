@@ -29,11 +29,11 @@ implements the JPA specification - you code to the standard
 `EntityManager` API while Hibernate supplies the SQL generation,
 caching, and performance engine underneath.
 
-| #004 | Category: JPA & Hibernate | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | The Object-Relational Mismatch Problem, What is ORM, JPA vs JDBC | |
-| **Used by:** | EntityManager, HQL, Hibernate Session vs EntityManager, Hibernate Internals Deep Dive | |
-| **Related:** | JPA Ecosystem Map, Hibernate vs MyBatis vs JOOQ | |
+| #004            | Category: JPA & Hibernate                                                             | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | The Object-Relational Mismatch Problem, What is ORM, JPA vs JDBC                      |                 |
+| **Used by:**    | EntityManager, HQL, Hibernate Session vs EntityManager, Hibernate Internals Deep Dive |                 |
+| **Related:**    | JPA Ecosystem Map, Hibernate vs MyBatis vs JOOQ                                       |                 |
 
 ---
 
@@ -51,10 +51,11 @@ standard, no portability, and no community to share solutions.
 Gavin King was building a Java application in 2000 and grew
 frustrated writing the same JDBC mapping code for every
 entity. The specific frustration was that EJB 2.x Entity Beans
+
 - the supposed Java standard for persistence - were so complex
-to write and test that they were slower to develop than raw
-JDBC. There was no middle ground between "too low" (JDBC) and
-"too heavy" (EJB 2.x).
+  to write and test that they were slower to develop than raw
+  JDBC. There was no middle ground between "too low" (JDBC) and
+  "too heavy" (EJB 2.x).
 
 **THE INVENTION MOMENT:**
 Gavin King released Hibernate 1.0 in 2001 as a lightweight
@@ -66,14 +67,14 @@ implemented.
 
 **EVOLUTION:**
 
-| Version | Key Change | Why It Matters |
-|---|---|---|
-| Hibernate 2.x | HQL, criteria queries | First JPQL-like query language |
-| Hibernate 3.x | Annotations (alongside XML) | Removed XML verbosity |
-| JPA 1.0 (2006) | Standardised Hibernate's API | Hibernate implements the spec |
-| Hibernate 4.x | Multitenancy, OSGi support | Enterprise adoption |
-| Hibernate 5.x | Java 8 types, spatial | `Optional`, `LocalDate` support |
-| Hibernate 6.x | Jakarta namespace, new SQL AST | JDK 11+, Jakarta EE 10 |
+| Version        | Key Change                     | Why It Matters                  |
+| -------------- | ------------------------------ | ------------------------------- |
+| Hibernate 2.x  | HQL, criteria queries          | First JPQL-like query language  |
+| Hibernate 3.x  | Annotations (alongside XML)    | Removed XML verbosity           |
+| JPA 1.0 (2006) | Standardised Hibernate's API   | Hibernate implements the spec   |
+| Hibernate 4.x  | Multitenancy, OSGi support     | Enterprise adoption             |
+| Hibernate 5.x  | Java 8 types, spatial          | `Optional`, `LocalDate` support |
+| Hibernate 6.x  | Jakarta namespace, new SQL AST | JDK 11+, Jakarta EE 10          |
 
 ---
 
@@ -99,6 +100,7 @@ behind that interface.
 person who does the job.
 
 **One analogy:**
+
 > JPA is like the USB standard: it defines the connector shape,
 > the protocol, and the API. Hibernate is like a specific USB
 > device - it implements the standard exactly, but may also
@@ -117,6 +119,7 @@ needed but couple you to Hibernate.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Hibernate implements every `javax.persistence` /
    `jakarta.persistence` interface - `EntityManager`,
    `EntityManagerFactory`, `Query`, `TypedQuery`
@@ -255,6 +258,7 @@ Hibernate version introduced which fix and validate
 upgrade paths before applying.
 
 **Expert Thinking Cues:**
+
 - Ask: "Am I using Hibernate features or JPA features?"
   Answer determines portability and upgrade risk
 - Watch: Hibernate version mismatches with Spring Boot BOM
@@ -300,6 +304,7 @@ upgrade paths before applying.
 ```
 
 **Startup Sequence:**
+
 1. `SessionFactory` created once per application
 2. All `@Entity` classes scanned, metadata model built
 3. `SchemaManagementTool` validates or creates schema
@@ -308,6 +313,7 @@ upgrade paths before applying.
    (or explicit `spring.jpa.database-platform`)
 
 **Request Lifecycle:**
+
 1. `@Transactional` opens a `Session` (bound to thread)
 2. Entity operations queue to `ActionQueue`
 3. At flush, `ActionQueue` executes INSERT/UPDATE/DELETE
@@ -476,16 +482,16 @@ s.enableFilter("activeOnly")
 
 ### ⚖️ Comparison Table
 
-| Feature | JPA Standard | Hibernate Extension |
-|---|---|---|
+| Feature        | JPA Standard                   | Hibernate Extension            |
+| -------------- | ------------------------------ | ------------------------------ |
 | Entity mapping | `@Entity`, `@Table`, `@Column` | `@Formula`, `@Filter`, `@Type` |
-| Query language | JPQL | HQL (JPQL superset) |
-| Session API | `EntityManager` | `Session` (unwrapped) |
-| Caching | `@Cacheable` (basic) | `@Cache` (region, strategy) |
-| Auditing | None | Hibernate Envers |
-| Bulk load | `persist()` / `merge()` | `StatelessSession` |
-| Custom mapping | `@Convert` (JPA 2.1+) | `UserType` interface |
-| **Provider** | Spec (no implementation) | Full runtime engine |
+| Query language | JPQL                           | HQL (JPQL superset)            |
+| Session API    | `EntityManager`                | `Session` (unwrapped)          |
+| Caching        | `@Cacheable` (basic)           | `@Cache` (region, strategy)    |
+| Auditing       | None                           | Hibernate Envers               |
+| Bulk load      | `persist()` / `merge()`        | `StatelessSession`             |
+| Custom mapping | `@Convert` (JPA 2.1+)          | `UserType` interface           |
+| **Provider**   | Spec (no implementation)       | Full runtime engine            |
 
 **How to choose:** Use JPA API unless a Hibernate extension
 solves a problem that has no JPA equivalent (auditing via
@@ -497,13 +503,13 @@ as a coupling decision.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Hibernate and JPA are interchangeable terms" | JPA is the specification; Hibernate is the implementation. You program to JPA; Hibernate runs the code. They are not synonyms - confusing them leads to vendor lock-in via Hibernate-specific features used accidentally. |
-| "Spring Data JPA is different from Hibernate" | Spring Data JPA is a repository abstraction layer. Under the hood it uses a JPA provider, which is Hibernate by default in Spring Boot. Spring Data JPA -> JPA spec -> Hibernate -> JDBC. |
-| "`hbm2ddl.auto=create-drop` is fine in development" | `create-drop` destroys and recreates your entire schema on every restart. Any test data or schema changes not in `@Entity` annotations are lost. Use `validate` in dev and `update` only in controlled CI environments. |
-| "Hibernate generates the same SQL on all databases" | Hibernate's `Dialect` system generates database-specific SQL. The JPQL you write is the same; the generated SQL for pagination (`LIMIT`/`OFFSET` vs `ROWNUM` vs `FETCH FIRST`) differs by dialect. |
-| "Upgrading Hibernate is low-risk" | Hibernate major versions (5.x to 6.x) include SQL AST changes, namespace migration (javax to jakarta), and behaviour changes in dirty checking and proxy generation. Test thoroughly before upgrading. |
+| Misconception                                       | Reality                                                                                                                                                                                                                   |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Hibernate and JPA are interchangeable terms"       | JPA is the specification; Hibernate is the implementation. You program to JPA; Hibernate runs the code. They are not synonyms - confusing them leads to vendor lock-in via Hibernate-specific features used accidentally. |
+| "Spring Data JPA is different from Hibernate"       | Spring Data JPA is a repository abstraction layer. Under the hood it uses a JPA provider, which is Hibernate by default in Spring Boot. Spring Data JPA -> JPA spec -> Hibernate -> JDBC.                                 |
+| "`hbm2ddl.auto=create-drop` is fine in development" | `create-drop` destroys and recreates your entire schema on every restart. Any test data or schema changes not in `@Entity` annotations are lost. Use `validate` in dev and `update` only in controlled CI environments.   |
+| "Hibernate generates the same SQL on all databases" | Hibernate's `Dialect` system generates database-specific SQL. The JPQL you write is the same; the generated SQL for pagination (`LIMIT`/`OFFSET` vs `ROWNUM` vs `FETCH FIRST`) differs by dialect.                        |
+| "Upgrading Hibernate is low-risk"                   | Hibernate major versions (5.x to 6.x) include SQL AST changes, namespace migration (javax to jakarta), and behaviour changes in dirty checking and proxy generation. Test thoroughly before upgrading.                    |
 
 ---
 
@@ -595,6 +601,7 @@ new projects; use DTO projections from service layer.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-001 - The Object-Relational Mismatch Problem]] -
   the problem Hibernate solves
 - [[JPH-002 - What is ORM (Object-Relational Mapping)]] -
@@ -603,6 +610,7 @@ new projects; use DTO projections from service layer.
   Hibernate sits in the persistence stack
 
 **Builds On This (learn these next):**
+
 - [[JPH-011 - EntityManager]] - the JPA API that Hibernate
   implements
 - [[JPH-028 - HQL (Hibernate Query Language)]] - Hibernate's
@@ -613,6 +621,7 @@ new projects; use DTO projections from service layer.
   of the Hibernate runtime
 
 **Alternatives / Comparisons:**
+
 - [[JPH-005 - JPA Ecosystem Map (Hibernate, EclipseLink, MyBatis)]] -
   how Hibernate compares to other JPA providers
 - [[JPH-050 - Hibernate vs MyBatis vs JOOQ]] - when to choose
@@ -653,6 +662,7 @@ new projects; use DTO projections from service layer.
 ```
 
 **If you remember only 3 things:**
+
 1. Hibernate implements the JPA specification - code to JPA
    API for portability; use Hibernate extensions only when
    JPA cannot solve the problem
@@ -681,6 +691,7 @@ largest production install base carries the most battle-tested
 design decisions.
 
 **Where else this pattern appears:**
+
 - **Jackson and JSON** - Jackson is to JSON serialisation what
   Hibernate is to JPA: the dominant implementation that
   shaped the standard (`JsonSerializer` API)
@@ -692,6 +703,7 @@ design decisions.
   spec evolution through implementation leadership
 
 **Industry applications:**
+
 - Financial services: Hibernate powers transaction and account
   entity management in banking systems processing millions of
   daily transactions, relying on Hibernate's Envers for
@@ -720,6 +732,7 @@ no other framework holds.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the relationship between JPA (spec),
    Hibernate (implementation), and Spring Data JPA
    (repository abstraction) to a junior developer using
@@ -749,9 +762,9 @@ the standard JPA `EntityManager` API and its own native
 Under what conditions would you consciously choose to use
 `Session` directly instead of `EntityManager`? What are
 the long-term maintenance trade-offs of that decision?
-*Hint: Consider `StatelessSession`, `@Filter`, `@Formula`,
+_Hint: Consider `StatelessSession`, `@Filter`, `@Formula`,
 and Hibernate-specific caching annotations - and weigh
-against the cost of a future provider migration.*
+against the cost of a future provider migration._
 
 **Q2 (TYPE B - Scale):** Your application starts with
 Hibernate defaults. At 5x traffic growth you notice
@@ -760,8 +773,8 @@ connection pool exhaustion during peak hours. The
 instances. Trace the sequence from high request volume
 to connection exhaustion, and identify the three
 configuration changes with the most impact.
-*Hint: Look at `open-in-view`, HikariCP `maximumPoolSize`,
-and Hibernate's `connection.acquisition_mode`.*
+_Hint: Look at `open-in-view`, HikariCP `maximumPoolSize`,
+and Hibernate's `connection.acquisition_mode`._
 
 **Q3 (TYPE G - Hands-On):** Configure a Spring Boot
 application to validate its schema on startup using
@@ -771,10 +784,10 @@ Flyway migration script, and verify that startup fails
 with a `SchemaManagementException` if the migration has
 not been applied. What Flyway and Hibernate settings
 are needed to make this pipeline work end-to-end?
-*Hint: Check `spring.flyway.enabled`, the order of
+_Hint: Check `spring.flyway.enabled`, the order of
 Flyway execution vs Hibernate schema validation in
 Spring Boot auto-configuration, and the `ddl-auto`
-property interaction with Flyway.*
+property interaction with Flyway._
 
 ---
 
@@ -782,10 +795,11 @@ property interaction with Flyway.*
 
 **Q1: What is the relationship between Hibernate and JPA?
 Are they the same thing?**
-*Why they ask:* A fundamental question that separates
+_Why they ask:_ A fundamental question that separates
 candidates who understand the Java persistence stack from
 those who use it by cargo-cult.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - JPA is the specification (interface); Hibernate is the
   most popular implementation (runtime engine)
 - Hibernate's concepts (session, dirty checking, L1 cache,
@@ -796,9 +810,10 @@ those who use it by cargo-cult.
 
 **Q2: What does `spring.jpa.hibernate.ddl-auto` do, and
 which value should you use in production?**
-*Why they ask:* Tests awareness of a setting that can
+_Why they ask:_ Tests awareness of a setting that can
 silently destroy production data if misconfigured.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `create-drop`: recreates schema on startup/shutdown -
   never use in production or shared environments
 - `update`: adds missing columns but cannot drop safely -
@@ -811,9 +826,10 @@ silently destroy production data if misconfigured.
 **Q3: A senior developer says "always code to the JPA
 interface, never use Hibernate-specific classes." Is this
 always right? When would you break the rule?**
-*Why they ask:* Tests nuanced engineering judgment -
+_Why they ask:_ Tests nuanced engineering judgment -
 knowing when standards compliance is worth bending.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - The rule is correct by default: portability, testability,
   fewer Hibernate-version coupling issues
 - Break it for justified cases: `StatelessSession` for

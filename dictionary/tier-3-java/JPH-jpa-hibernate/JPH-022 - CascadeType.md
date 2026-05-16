@@ -31,11 +31,11 @@ to child entities. Never use `CascadeType.ALL` on
 `orphanRemoval=true` instead of `ALL` on `@OneToMany`
 when you need cascade delete.
 
-| #022 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Entity Lifecycle, @OneToOne, @OneToMany/@ManyToOne, @ManyToMany, FetchType | |
-| **Used by:** | N+1 Problem, @EntityGraph, Pessimistic Locking | |
-| **Related:** | @Transactional with JPA, Dirty Checking and Flush Mode | |
+| #022            | Category: JPA & Hibernate                                                  | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Entity Lifecycle, @OneToOne, @OneToMany/@ManyToOne, @ManyToMany, FetchType |                 |
+| **Used by:**    | N+1 Problem, @EntityGraph, Pessimistic Locking                             |                 |
+| **Related:**    | @Transactional with JPA, Dirty Checking and Flush Mode                     |                 |
 
 ---
 
@@ -80,6 +80,7 @@ the rest.
 entity to its associated entities through a relationship.
 
 The six cascade types:
+
 - `PERSIST` - `em.persist(parent)` cascades to associated entities
 - `MERGE` - `em.merge(parent)` cascades to associated entities
 - `REMOVE` - `em.remove(parent)` cascades to associated entities
@@ -99,6 +100,7 @@ from the parent's collection, even without `em.remove(parent)`.
 operations "flow through" an association from parent to child.
 
 **One analogy:**
+
 > A company (parent) and its employees (children). With
 > `CascadeType.PERSIST`, registering the company automatically
 > registers all employees. With `CascadeType.REMOVE`,
@@ -171,9 +173,10 @@ private UserProfile profile;
 ```
 
 **CORE INVARIANTS:**
+
 1. Cascade only flows in ONE direction: parent -> child
 2. `CascadeType.ALL` = PERSIST + MERGE + REMOVE + REFRESH
-   + DETACH (all five)
+   - DETACH (all five)
 3. `orphanRemoval=true` implies `CascadeType.REMOVE` but
    also adds collection-based deletion
 4. On `@ManyToMany`: NEVER use `REMOVE` or `ALL` - it
@@ -234,6 +237,7 @@ of who "owns" the entity lifecycle.
 ### 🧠 Mental Model / Analogy
 
 > Think of cascade types as HR policies in a company.
+>
 > - `PERSIST` = when a new department is created, its
 >   initial employees are registered automatically
 > - `MERGE` = when a department's data is updated, employee
@@ -245,9 +249,9 @@ of who "owns" the entity lifecycle.
 >   (even if the department continues)
 >
 > Using `ALL` on a shared team (like a project team where
->   employees can be on multiple projects) is dangerous -
->   dissolving Project A terminates employees who are still
->   on Project B.
+> employees can be on multiple projects) is dangerous -
+> dissolving Project A terminates employees who are still
+> on Project B.
 
 ---
 
@@ -476,26 +480,26 @@ em.refresh(order);
 
 ### ⚖️ Comparison Table
 
-| Cascade | Triggers on | Safe for @ManyToMany? | Use case |
-|---|---|---|---|
-| `PERSIST` | `em.persist(parent)` | Yes | Save new children with parent |
-| `MERGE` | `em.merge(parent)` | Yes | Update detached children |
-| `REMOVE` | `em.remove(parent)` | NO - deletes shared entities | Exclusive ownership only |
-| `REFRESH` | `em.refresh(parent)` | Yes (rarely needed) | After bulk updates |
-| `DETACH` | `em.detach(parent)` | Yes (rarely needed) | Batch processing |
-| `ALL` | All of the above | NO | `@OneToOne`/`@OneToMany` exclusive ownership |
-| `orphanRemoval` | Collection modification | N/A | Exclusive children that die with parent |
+| Cascade         | Triggers on             | Safe for @ManyToMany?        | Use case                                     |
+| --------------- | ----------------------- | ---------------------------- | -------------------------------------------- |
+| `PERSIST`       | `em.persist(parent)`    | Yes                          | Save new children with parent                |
+| `MERGE`         | `em.merge(parent)`      | Yes                          | Update detached children                     |
+| `REMOVE`        | `em.remove(parent)`     | NO - deletes shared entities | Exclusive ownership only                     |
+| `REFRESH`       | `em.refresh(parent)`    | Yes (rarely needed)          | After bulk updates                           |
+| `DETACH`        | `em.detach(parent)`     | Yes (rarely needed)          | Batch processing                             |
+| `ALL`           | All of the above        | NO                           | `@OneToOne`/`@OneToMany` exclusive ownership |
+| `orphanRemoval` | Collection modification | N/A                          | Exclusive children that die with parent      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`orphanRemoval=true` and `CascadeType.REMOVE` are the same" | `CascadeType.REMOVE` fires only on `em.remove(parent)`. `orphanRemoval=true` ALSO fires when a child is removed from the parent's collection via `collection.remove(child)`. `orphanRemoval` is stricter. |
-| "`CascadeType.ALL` is always safe for @OneToMany" | `ALL` includes `REMOVE`. If the child entities could ever be referenced by another parent (e.g., shared lookup entities), cascading `REMOVE` deletes them across the board. Only use `ALL` for exclusively-owned children. |
-| "Cascade fires in SQL order (parent first, then children)" | Cascade fires at the Java EntityManager level, then Hibernate determines the SQL insertion order based on FK dependencies. The cascade happens before SQL generation. |
-| "`CascadeType.MERGE` is needed for updating child entities" | If the child is already MANAGED (in the persistence context), dirty checking handles updates automatically at flush time - no explicit `merge` or `cascade=MERGE` needed. `cascade=MERGE` is needed only when the parent OR child is DETACHED and `em.merge(parent)` is called. |
+| Misconception                                                | Reality                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`orphanRemoval=true` and `CascadeType.REMOVE` are the same" | `CascadeType.REMOVE` fires only on `em.remove(parent)`. `orphanRemoval=true` ALSO fires when a child is removed from the parent's collection via `collection.remove(child)`. `orphanRemoval` is stricter.                                                                       |
+| "`CascadeType.ALL` is always safe for @OneToMany"            | `ALL` includes `REMOVE`. If the child entities could ever be referenced by another parent (e.g., shared lookup entities), cascading `REMOVE` deletes them across the board. Only use `ALL` for exclusively-owned children.                                                      |
+| "Cascade fires in SQL order (parent first, then children)"   | Cascade fires at the Java EntityManager level, then Hibernate determines the SQL insertion order based on FK dependencies. The cascade happens before SQL generation.                                                                                                           |
+| "`CascadeType.MERGE` is needed for updating child entities"  | If the child is already MANAGED (in the persistence context), dirty checking handles updates automatically at flush time - no explicit `merge` or `cascade=MERGE` needed. `cascade=MERGE` is needed only when the parent OR child is DETACHED and `em.merge(parent)` is called. |
 
 ---
 
@@ -566,6 +570,7 @@ is set to null when removing (via the helper method).
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-013 - Entity Lifecycle (NEW, MANAGED, DETACHED, REMOVED)]] -
   cascade types map to lifecycle transitions
 - [[JPH-018 - @OneToMany and @ManyToOne]] - primary
@@ -573,6 +578,7 @@ is set to null when removing (via the helper method).
 - [[JPH-019 - @ManyToMany]] - NEVER use REMOVE or ALL cascade
 
 **Builds On This (learn these next):**
+
 - [[JPH-027 - N+1 Problem (ORM Context)]] - cascade affects
   the number of SQL statements
 - [[JPH-037 - EntityGraph (Solving N+1)]] - @EntityGraph
@@ -607,6 +613,7 @@ is set to null when removing (via the helper method).
 ```
 
 **If you remember only 3 things:**
+
 1. `CascadeType.REMOVE` on `@ManyToMany` deletes shared
    entities - not just join rows. NEVER use it.
 2. `orphanRemoval=true` fires on collection.remove(child);
@@ -665,6 +672,7 @@ child entities in a long-running session.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **CHOOSE** the correct cascade set for three scenarios:
    (a) exclusively-owned `@OneToMany`, (b) `@ManyToMany`
    shared entities, (c) `@OneToOne` with shared lifecycle
@@ -685,9 +693,10 @@ child entities in a long-running session.
 
 **Q1: What is the danger of using CascadeType.ALL on a
 @ManyToMany relationship?**
-*Why they ask:* Very common production bug; tests cascade
+_Why they ask:_ Very common production bug; tests cascade
 depth understanding.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `ALL` includes `CascadeType.REMOVE`
 - For `@ManyToMany`, the entities in the collection are
   SHARED - other parents reference them
@@ -700,9 +709,10 @@ depth understanding.
 
 **Q2: What is the difference between orphanRemoval=true
 and CascadeType.REMOVE?**
-*Why they ask:* A subtle distinction that affects data
+_Why they ask:_ A subtle distinction that affects data
 integrity; tests JPA lifecycle knowledge.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `CascadeType.REMOVE`: fires only when `em.remove(parent)`
   is explicitly called; cascades the remove operation to
   all child entities
@@ -718,9 +728,10 @@ integrity; tests JPA lifecycle knowledge.
 **Q3: What happens if you have CascadeType.PERSIST but
 not CascadeType.MERGE and you try to update a detached
 child entity?**
-*Why they ask:* Tests understanding of entity states and
+_Why they ask:_ Tests understanding of entity states and
 which cascade type handles which transition.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `CascadeType.PERSIST`: only fires on `em.persist()` for
   NEW entities; does not cascade merging DETACHED entities
 - Without `CascadeType.MERGE`: when `em.merge(parent)` is

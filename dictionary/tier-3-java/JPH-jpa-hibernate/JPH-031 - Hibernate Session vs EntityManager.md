@@ -34,11 +34,11 @@ Hibernate's proprietary extension that IMPLEMENTS
 projects: use `EntityManager` for portability; unwrap to
 `Session` only when you need Hibernate-specific features.
 
-| #031 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | EntityManager, Persistence Context, Entity Lifecycle, JPQL, @Transactional, HQL | |
-| **Used by:** | First Level Cache, Second Level Cache, Optimistic Locking, Batch Processing, Hibernate Envers, Hibernate Internals | |
-| **Related:** | Criteria API, Dirty Checking and Flush Mode, JPA Specification | |
+| #031            | Category: JPA & Hibernate                                                                                          | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | EntityManager, Persistence Context, Entity Lifecycle, JPQL, @Transactional, HQL                                    |                 |
+| **Used by:**    | First Level Cache, Second Level Cache, Optimistic Locking, Batch Processing, Hibernate Envers, Hibernate Internals |                 |
+| **Related:**    | Criteria API, Dirty Checking and Flush Mode, JPA Specification                                                     |                 |
 
 ---
 
@@ -71,6 +71,7 @@ you just gain access to the Hibernate API on top of it.
 
 **`EntityManager`** (JPA standard, `jakarta.persistence.EntityManager`)
 is the primary JPA interface for:
+
 - Persisting entities: `persist()`, `merge()`, `remove()`
 - Finding entities: `find()`, `getReference()`
 - Querying: `createQuery()`, `createNamedQuery()`, `createNativeQuery()`
@@ -79,6 +80,7 @@ is the primary JPA interface for:
 
 **`Session`** (Hibernate-specific, `org.hibernate.Session`)
 extends `EntityManager` and adds:
+
 - `saveOrUpdate()` - upsert-like behavior
 - `byId()`, `bySimpleNaturalId()`, `byNaturalId()` - typed load APIs
 - `setReadOnly(entity, true)` - mark entity read-only in session
@@ -89,6 +91,7 @@ extends `EntityManager` and adds:
 - `getStatistics()` - Hibernate statistics
 
 **`SessionFactory`** vs `EntityManagerFactory`:
+
 - `SessionFactory` is the Hibernate-specific factory
 - `EntityManagerFactory` is the JPA standard factory
 - In Hibernate's implementation: `EntityManagerFactory.unwrap(SessionFactory.class)`
@@ -104,6 +107,7 @@ unwrap `EntityManager` to get a `Session` when you need
 Hibernate-specific features.
 
 **One analogy:**
+
 > `EntityManager` is like a standard car with the
 > required controls (steering, gas, brake). `Session`
 > is the same car but with the hood open and additional
@@ -424,30 +428,30 @@ session.enableFilter("tenantFilter")
 
 ### ⚖️ Comparison Table
 
-| Operation | EntityManager (JPA) | Session (Hibernate) |
-|---|---|---|
-| Persist new | `persist(entity)` | `persist(entity)` |
-| Load by ID | `find(T.class, id)` | `get(T.class, id)` or `byId(T.class).load(id)` |
-| Proxy load | `getReference(T.class, id)` | `load(T.class, id)` |
-| Merge detached | `merge(entity)` | `merge(entity)` |
-| Delete | `remove(entity)` | `remove(entity)` |
-| Flush | `flush()` | `flush()` |
-| Evict single | No direct method | `evict(entity)` |
-| Natural-id lookup | No direct method | `bySimpleNaturalId(T.class).load(key)` |
-| Per-entity read-only | No direct method | `setReadOnly(entity, true)` |
-| Direct JDBC | No direct method | `doWork(conn -> {...})` |
-| Session filters | No equivalent | `enableFilter("name").setParameter(...)` |
+| Operation            | EntityManager (JPA)         | Session (Hibernate)                            |
+| -------------------- | --------------------------- | ---------------------------------------------- |
+| Persist new          | `persist(entity)`           | `persist(entity)`                              |
+| Load by ID           | `find(T.class, id)`         | `get(T.class, id)` or `byId(T.class).load(id)` |
+| Proxy load           | `getReference(T.class, id)` | `load(T.class, id)`                            |
+| Merge detached       | `merge(entity)`             | `merge(entity)`                                |
+| Delete               | `remove(entity)`            | `remove(entity)`                               |
+| Flush                | `flush()`                   | `flush()`                                      |
+| Evict single         | No direct method            | `evict(entity)`                                |
+| Natural-id lookup    | No direct method            | `bySimpleNaturalId(T.class).load(key)`         |
+| Per-entity read-only | No direct method            | `setReadOnly(entity, true)`                    |
+| Direct JDBC          | No direct method            | `doWork(conn -> {...})`                        |
+| Session filters      | No equivalent               | `enableFilter("name").setParameter(...)`       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`Session` and `EntityManager` use different persistence contexts" | `em.unwrap(Session.class)` returns the same underlying `SessionImpl`. They share exactly one persistence context. Changes via `Session` are immediately visible via the `EntityManager` reference and vice versa. |
-| "`saveOrUpdate()` is equivalent to JPA `merge()`" | `saveOrUpdate()` determines INSERT vs UPDATE based on whether the ID field is null. This fails with natural IDs or UUIDs. `merge()` checks the persistence context first, then issues a SELECT to check the database if needed - more robust semantics. |
-| "Using `SessionFactory` directly is always bad" | `SessionFactory` is Hibernate's native factory. In Spring Boot, the `EntityManagerFactory` IS the `SessionFactory` (unwrap it). For test setup, batch jobs without Spring context, or tools, accessing `SessionFactory` directly is perfectly fine. |
-| "`EntityManager` is slower than `Session` due to abstraction overhead" | There is no measurable overhead. `EntityManagerImpl` in Hibernate is a thin wrapper that delegates to the `Session` implementation for all operations. The JPA interface adds zero runtime cost. |
+| Misconception                                                          | Reality                                                                                                                                                                                                                                                 |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`Session` and `EntityManager` use different persistence contexts"     | `em.unwrap(Session.class)` returns the same underlying `SessionImpl`. They share exactly one persistence context. Changes via `Session` are immediately visible via the `EntityManager` reference and vice versa.                                       |
+| "`saveOrUpdate()` is equivalent to JPA `merge()`"                      | `saveOrUpdate()` determines INSERT vs UPDATE based on whether the ID field is null. This fails with natural IDs or UUIDs. `merge()` checks the persistence context first, then issues a SELECT to check the database if needed - more robust semantics. |
+| "Using `SessionFactory` directly is always bad"                        | `SessionFactory` is Hibernate's native factory. In Spring Boot, the `EntityManagerFactory` IS the `SessionFactory` (unwrap it). For test setup, batch jobs without Spring context, or tools, accessing `SessionFactory` directly is perfectly fine.     |
+| "`EntityManager` is slower than `Session` due to abstraction overhead" | There is no measurable overhead. `EntityManagerImpl` in Hibernate is a thin wrapper that delegates to the `Session` implementation for all operations. The JPA interface adds zero runtime cost.                                                        |
 
 ---
 
@@ -485,12 +489,14 @@ persistence context + database.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-011 - EntityManager]] - the JPA standard API;
   understand it before Session
 - [[JPH-012 - Persistence Context]] - Session and
   EntityManager both wrap a persistence context
 
 **Builds On This (learn these next):**
+
 - [[JPH-033 - First Level Cache]] - first-level cache is
   the persistence context managed by Session/EM
 - [[JPH-034 - Second Level Cache]] - Session provides
@@ -499,6 +505,7 @@ persistence context + database.
   provides fine-grained flush mode control
 
 **Related:**
+
 - [[JPH-057 - JPA Specification]] - EntityManager is
   defined in the JPA specification; Session is Hibernate's
   proprietary extension
@@ -531,6 +538,7 @@ persistence context + database.
 ```
 
 **If you remember only 3 things:**
+
 1. `Session` extends and implements `EntityManager` -
    they are the same underlying object; `unwrap()` just
    exposes additional methods
@@ -568,6 +576,7 @@ code at the seam needs review. Standard-API code is
 unchanged.
 
 **Where else this pattern appears:**
+
 - **JDBC**: `Connection.unwrap(OracleConnection.class)` for
   Oracle-specific LOB handling while keeping standard JDBC
   elsewhere
@@ -602,6 +611,7 @@ from Hibernate-specific API changes between major versions.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **DIAGRAM** the inheritance relationship: `SessionImpl`
    implements both `Session` and `EntityManager`
 2. **LIST** five Hibernate-specific `Session` features
@@ -620,9 +630,10 @@ from Hibernate-specific API changes between major versions.
 
 **Q1: What is the relationship between Hibernate Session
 and JPA EntityManager?**
-*Why they ask:* Common confusion; tests Hibernate/JPA
+_Why they ask:_ Common confusion; tests Hibernate/JPA
 architecture understanding.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `Session` extends/implements `EntityManager` in Hibernate
 - Hibernate's `SessionImpl` is the concrete class that
   implements both interfaces
@@ -636,9 +647,10 @@ architecture understanding.
 
 **Q2: When would you prefer to use Hibernate Session
 directly over EntityManager?**
-*Why they ask:* Tests practical knowledge of Hibernate
+_Why they ask:_ Tests practical knowledge of Hibernate
 features.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `session.evict(entity)`: remove specific entity from
   first-level cache in batch processing (free memory per entity)
 - `session.setReadOnly(entity, true)`: mark specific

@@ -36,11 +36,11 @@ tenant) and `CurrentTenantIdentifierResolver` (determines
 tenant from request context). Spring Boot: use
 `AbstractRoutingDataSource` for schema/database strategies.
 
-| #048 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Entity Basics, EntityManager, JPA Lifecycle, @Transactional, Connection Pooling | |
-| **Used by:** | JPA at Scale, JPA with Multiple Databases | |
-| **Related:** | Inheritance Mapping, Specifications, Connection Pooling, Multiple Databases | |
+| #048            | Category: JPA & Hibernate                                                       | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Entity Basics, EntityManager, JPA Lifecycle, @Transactional, Connection Pooling |                 |
+| **Used by:**    | JPA at Scale, JPA with Multiple Databases                                       |                 |
+| **Related:**    | Inheritance Mapping, Specifications, Connection Pooling, Multiple Databases     |                 |
 
 ---
 
@@ -72,13 +72,14 @@ organizations, accounts) with isolated data.
 
 **Hibernate multi-tenancy strategies (`MultiTenancyStrategy`):**
 
-| Strategy | Hibernate Enum | Isolation | Resource Cost | Use Case |
-|---|---|---|---|---|
-| Separate Database | `DATABASE` | Maximum | High | Healthcare, Finance (strict compliance) |
-| Separate Schema | `SCHEMA` | High | Medium | Most SaaS apps |
-| Shared Table (discriminator) | `DISCRIMINATOR` | Low | Low | Small apps, low-sensitivity data |
+| Strategy                     | Hibernate Enum  | Isolation | Resource Cost | Use Case                                |
+| ---------------------------- | --------------- | --------- | ------------- | --------------------------------------- |
+| Separate Database            | `DATABASE`      | Maximum   | High          | Healthcare, Finance (strict compliance) |
+| Separate Schema              | `SCHEMA`        | High      | Medium        | Most SaaS apps                          |
+| Shared Table (discriminator) | `DISCRIMINATOR` | Low       | Low           | Small apps, low-sensitivity data        |
 
 **Key interfaces:**
+
 - `CurrentTenantIdentifierResolver` - extracts tenant ID from
   request context (thread-local, JWT, header)
 - `MultiTenantConnectionProvider` - provides a JDBC connection
@@ -93,6 +94,7 @@ or queries to tenant-specific isolation boundaries
 (database, schema, or row-level filter).
 
 **One analogy:**
+
 > Multi-tenancy is like a hotel. **SEPARATE_DATABASE**:
 > each guest has a separate building (total isolation; very
 > expensive). **SEPARATE_SCHEMA**: each guest has a
@@ -205,12 +207,14 @@ Multi-tenancy means one application serves many customers
 with each customer's data kept separate.
 
 **Level 2 - Three strategies (junior developer):**
+
 - **Discriminator**: one table, add `tenant_id` column
 - **Schema**: one DB, separate schema per tenant
   (`SET search_path TO tenant_schema`)
 - **Database**: completely separate DB per tenant
 
 **Level 3 - Hibernate interfaces (mid-level engineer):**
+
 ```java
 @Component
 public class TenantResolver
@@ -236,6 +240,7 @@ public class TenantResolver
 ```
 
 **Level 4 - Schema routing with HikariCP (senior engineer):**
+
 ```java
 @Component
 public class SchemaPerTenantConnectionProvider
@@ -398,21 +403,21 @@ public class SafeTenantResolver
 
 ### ⚖️ Comparison Table
 
-| Strategy | Isolation | DB connections | Schema migrations | Compliance | Code complexity |
-|---|---|---|---|---|---|
-| SEPARATE_DATABASE | Maximum | 1 pool per tenant | Per-tenant Flyway | Best (GDPR, HIPAA) | High |
-| SEPARATE_SCHEMA | High | Shared pool | Per-schema Flyway | Good | Medium |
-| DISCRIMINATOR | Low | Shared pool | One migration | Poor | Low (but risky) |
+| Strategy          | Isolation | DB connections    | Schema migrations | Compliance         | Code complexity |
+| ----------------- | --------- | ----------------- | ----------------- | ------------------ | --------------- |
+| SEPARATE_DATABASE | Maximum   | 1 pool per tenant | Per-tenant Flyway | Best (GDPR, HIPAA) | High            |
+| SEPARATE_SCHEMA   | High      | Shared pool       | Per-schema Flyway | Good               | Medium          |
+| DISCRIMINATOR     | Low       | Shared pool       | One migration     | Poor               | Low (but risky) |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "DISCRIMINATOR is safe with Hibernate's `@TenantId`" | Hibernate 6's `@TenantId` is experimental. It filters at the Hibernate level, not the DB level. A native query, JDBC template query, or bug in Hibernate's filter could bypass it, exposing all tenants' data. SCHEMA or DATABASE strategies enforce isolation at the JDBC layer where Hibernate bugs cannot bypass it. |
-| "Multi-tenancy requires separate application instances" | No - one application instance can serve all tenants. Multi-tenancy is a data isolation pattern, not a deployment pattern. Separate deployments are a valid strategy but bring higher operational complexity. |
-| "Connection pool can be naively shared across schemas" | When using SEPARATE_SCHEMA, connections are reused across tenants. The schema must be explicitly set (SET search_path) on EVERY borrow. If schema is only set on connection creation (at pool initialization), pooled connections will serve the wrong schema after first use. Always set the schema at borrow time, not creation time. |
+| Misconception                                           | Reality                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "DISCRIMINATOR is safe with Hibernate's `@TenantId`"    | Hibernate 6's `@TenantId` is experimental. It filters at the Hibernate level, not the DB level. A native query, JDBC template query, or bug in Hibernate's filter could bypass it, exposing all tenants' data. SCHEMA or DATABASE strategies enforce isolation at the JDBC layer where Hibernate bugs cannot bypass it.                 |
+| "Multi-tenancy requires separate application instances" | No - one application instance can serve all tenants. Multi-tenancy is a data isolation pattern, not a deployment pattern. Separate deployments are a valid strategy but bring higher operational complexity.                                                                                                                            |
+| "Connection pool can be naively shared across schemas"  | When using SEPARATE_SCHEMA, connections are reused across tenants. The schema must be explicitly set (SET search_path) on EVERY borrow. If schema is only set on connection creation (at pool initialization), pooled connections will serve the wrong schema after first use. Always set the schema at borrow time, not creation time. |
 
 ---
 
@@ -431,6 +436,7 @@ queries bypassing Hibernate filter.
 connection borrow; connection returned to pool with wrong
 `search_path` and reused by another tenant.
 **Diagnosis:**
+
 ```java
 // Add audit log to resolver:
 public String resolveCurrentTenantIdentifier() {
@@ -443,6 +449,7 @@ public String resolveCurrentTenantIdentifier() {
     return tenant;
 }
 ```
+
 **Fix:** Reject null tenant IDs at resolver level;
 always set `search_path` on connection borrow (not on
 creation); add integration test that verifies cross-tenant
@@ -453,6 +460,7 @@ data isolation.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-026 - @Transactional]] - transactions span
   one tenant's connection; multi-tenancy resolves at
   transaction boundary
@@ -461,10 +469,12 @@ data isolation.
   is critical for multi-tenancy
 
 **Builds On This (learn these next):**
+
 - [[JPH-061 - JPA with Multiple Databases]] - SEPARATE_DATABASE
   strategy uses multiple DataSource routing
 
 **Related:**
+
 - [[JPH-043 - Spring Data Specifications]] - DISCRIMINATOR
   strategy uses Specifications to add tenant_id filters
 - [[JPH-040 - Inheritance Mapping]] - tenant isolation
@@ -503,10 +513,11 @@ data isolation.
 ```
 
 **If you remember only 3 things:**
+
 1. Three strategies: DATABASE (most isolated, most expensive),
    SCHEMA (good balance), DISCRIMINATOR (cheapest, riskiest)
 2. Two interfaces: `CurrentTenantIdentifierResolver` (WHO is requesting)
-   + `MultiTenantConnectionProvider` (WHERE to route them)
+   - `MultiTenantConnectionProvider` (WHERE to route them)
 3. Security: always extract tenant ID from JWT (never from raw headers);
    validate format to prevent schema name injection
 
@@ -535,6 +546,7 @@ more reliable than controls at higher layers (application
 code). Defense in depth: use both.
 
 **Where else this pattern appears:**
+
 - **Row-Level Security (RLS)**: PostgreSQL RLS enforces
   row visibility at the DB level (like enhanced DISCRIMINATOR)
   without application code; can be combined with SCHEMA
@@ -566,6 +578,7 @@ use Hibernate 6's `@TenantId` only after thorough testing.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **CHOOSE** the correct strategy (DATABASE/SCHEMA/DISCRIMINATOR)
    given isolation requirements and resource constraints
 2. **IMPLEMENT** `CurrentTenantIdentifierResolver` that
@@ -584,8 +597,9 @@ use Hibernate 6's `@TenantId` only after thorough testing.
 **Q1: Your team is building a SaaS product for healthcare
 organizations. Which multi-tenancy strategy would you choose
 and why?**
-*Why they ask:* Tests isolation vs cost trade-off analysis.
-*Strong answer includes:*
+_Why they ask:_ Tests isolation vs cost trade-off analysis.
+_Strong answer includes:_
+
 - Healthcare (HIPAA): data isolation is a compliance requirement
 - SEPARATE_DATABASE: maximum isolation; each organization's
   data in its own DB; a DB credential compromise only exposes
@@ -598,8 +612,9 @@ and why?**
 
 **Q2: How do you ensure that a shared connection pool
 correctly routes connections to the right tenant schema?**
-*Why they ask:* Tests implementation correctness understanding.
-*Strong answer includes:*
+_Why they ask:_ Tests implementation correctness understanding.
+_Strong answer includes:_
+
 - Always set `SET search_path TO tenant_schema` on connection BORROW
   (in `MultiTenantConnectionProvider.getConnection(tenantId)`)
 - NOT on connection creation (pool creates connections without tenant context)

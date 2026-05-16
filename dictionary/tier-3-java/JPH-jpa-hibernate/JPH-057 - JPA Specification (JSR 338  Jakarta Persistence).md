@@ -35,11 +35,11 @@ JPQL, Criteria API, lifecycle callbacks. The spec does NOT
 define: N+1 behavior, 2LC specifics, batch size,
 `StatelessSession` - those are Hibernate extensions.
 
-| #057 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JPA Overview, Entity Basics, Entity Lifecycle, JPQL, Hibernate 6 Migration | |
-| **Used by:** | - | |
-| **Related:** | JPA Overview, Hibernate 6 Migration, Hibernate Internals | |
+| #057            | Category: JPA & Hibernate                                                  | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | JPA Overview, Entity Basics, Entity Lifecycle, JPQL, Hibernate 6 Migration |                 |
+| **Used by:**    | -                                                                          |                 |
+| **Related:**    | JPA Overview, Hibernate 6 Migration, Hibernate Internals                   |                 |
 
 ---
 
@@ -84,25 +84,25 @@ under `jakarta.persistence` when Java EE transitioned to Jakarta EE.
 
 **Version history:**
 
-| Version | Year | Package | Key additions | Spring Boot version |
-|---|---|---|---|---|
-| JPA 1.0 (JSR 220) | 2006 | `javax.persistence` | Core: @Entity, EntityManager, JPQL | 1.x |
-| JPA 2.0 (JSR 317) | 2009 | `javax.persistence` | Criteria API, metamodel, cache API | 1.x-2.x |
-| JPA 2.1 (JSR 338) | 2013 | `javax.persistence` | Stored procedure, bulk ops, converters | 2.x |
-| JPA 2.2 | 2017 | `javax.persistence` | Java 8 types, streaming | 2.x |
-| Jakarta Persistence 3.0 | 2020 | `jakarta.persistence` | Package rename from `javax` | 3.x |
-| Jakarta Persistence 3.1 | 2022 | `jakarta.persistence` | Math functions, UUID, numeric types | 3.x |
+| Version                 | Year | Package               | Key additions                          | Spring Boot version |
+| ----------------------- | ---- | --------------------- | -------------------------------------- | ------------------- |
+| JPA 1.0 (JSR 220)       | 2006 | `javax.persistence`   | Core: @Entity, EntityManager, JPQL     | 1.x                 |
+| JPA 2.0 (JSR 317)       | 2009 | `javax.persistence`   | Criteria API, metamodel, cache API     | 1.x-2.x             |
+| JPA 2.1 (JSR 338)       | 2013 | `javax.persistence`   | Stored procedure, bulk ops, converters | 2.x                 |
+| JPA 2.2                 | 2017 | `javax.persistence`   | Java 8 types, streaming                | 2.x                 |
+| Jakarta Persistence 3.0 | 2020 | `jakarta.persistence` | Package rename from `javax`            | 3.x                 |
+| Jakarta Persistence 3.1 | 2022 | `jakarta.persistence` | Math functions, UUID, numeric types    | 3.x                 |
 
 **Key standard interfaces:**
 
-| Interface | Location | Role |
-|---|---|---|
-| `EntityManager` | `jakarta.persistence` | Persistence context operations |
-| `EntityManagerFactory` | `jakarta.persistence` | Create EntityManager; session factory |
-| `Query` / `TypedQuery<T>` | `jakarta.persistence` | JPQL/native query execution |
-| `CriteriaBuilder` | `jakarta.persistence.criteria` | Build Criteria queries |
-| `CriteriaQuery<T>` | `jakarta.persistence.criteria` | Criteria query structure |
-| `Metamodel` | `jakarta.persistence.metamodel` | Static metamodel access |
+| Interface                 | Location                        | Role                                  |
+| ------------------------- | ------------------------------- | ------------------------------------- |
+| `EntityManager`           | `jakarta.persistence`           | Persistence context operations        |
+| `EntityManagerFactory`    | `jakarta.persistence`           | Create EntityManager; session factory |
+| `Query` / `TypedQuery<T>` | `jakarta.persistence`           | JPQL/native query execution           |
+| `CriteriaBuilder`         | `jakarta.persistence.criteria`  | Build Criteria queries                |
+| `CriteriaQuery<T>`        | `jakarta.persistence.criteria`  | Criteria query structure              |
+| `Metamodel`               | `jakarta.persistence.metamodel` | Static metamodel access               |
 
 ---
 
@@ -113,6 +113,7 @@ API contract); Hibernate is the implementation. You write
 code against JPA interfaces; Hibernate implements them.
 
 **One analogy:**
+
 > JPA is like JDBC. JDBC is a standard (interface +
 > contract); MySQL driver, PostgreSQL driver, H2 are
 > implementations. You write `Connection.prepareStatement(sql)`
@@ -232,6 +233,7 @@ most popular implementation. You write `@Entity` (JPA);
 Hibernate handles the SQL generation.
 
 **Level 2 - Key spec annotations (junior developer):**
+
 ```java
 // All from jakarta.persistence:
 @Entity                // marks class as persistent
@@ -258,6 +260,7 @@ default batch sizes, cache hit rates, or provider-specific
 SQL generation behavior (ORDER BY may vary).
 
 **Level 4 - EntityManager lifecycle (senior engineer):**
+
 ```java
 // EntityManager is the JPA entry point (spec-defined)
 // In Spring: injected as a scoped proxy (one per tx)
@@ -328,6 +331,7 @@ spring.jpa.properties.hibernate.jdbc.batch_size=50
 ```
 
 Spring Boot's `HibernateJpaAutoConfiguration` creates:
+
 - `LocalContainerEntityManagerFactoryBean` (wraps Hibernate `SessionFactory`)
 - `JpaTransactionManager` (implements both `PlatformTransactionManager`
   and JPA `EntityTransaction` semantics)
@@ -423,12 +427,13 @@ public class Order {
 
 ### ⚖️ Comparison Table
 
-| Package | JPA version | Spring Boot version | Hibernate version |
-|---|---|---|---|
-| `javax.persistence` | 1.0 - 2.2 | 1.x - 2.x | 4.x - 5.x |
-| `jakarta.persistence` | 3.0 - 3.1+ | 3.x+ | 6.x+ |
+| Package               | JPA version | Spring Boot version | Hibernate version |
+| --------------------- | ----------- | ------------------- | ----------------- |
+| `javax.persistence`   | 1.0 - 2.2   | 1.x - 2.x           | 4.x - 5.x         |
+| `jakarta.persistence` | 3.0 - 3.1+  | 3.x+                | 6.x+              |
 
 **Key differences JPA 2.2 -> Jakarta 3.x:**
+
 - Package: `javax.persistence` -> `jakarta.persistence`
 - Bean Validation: `javax.validation` -> `jakarta.validation`
 - Servlet API: `javax.servlet` -> `jakarta.servlet`
@@ -438,11 +443,11 @@ public class Order {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "JPA and Hibernate are the same" | JPA is the specification (interfaces, annotations, contracts). Hibernate is an implementation. You can run JPA code with EclipseLink or DataNucleus instead of Hibernate. In practice: Hibernate is used in >95% of Spring applications, so the distinction is rarely relevant but important to understand conceptually. |
-| "javax.persistence annotations still work in Spring Boot 3" | NO - Spring Boot 3 requires `jakarta.persistence.*`. Any code using `javax.persistence.*` will fail to compile against Spring Boot 3's classpath. This is the #1 compilation error in Spring Boot 2 -> 3 migrations. The fix is a mechanical import rename (OpenRewrite automates this). |
-| "The JPA spec defines N+1 behavior" | NO - the JPA spec defines `FetchType.LAZY` as an optimization HINT. The spec does not require lazy loading to be implemented as "load on first access." Hibernate happens to implement LAZY as a proxy that loads on first method call. The N+1 problem is a Hibernate implementation behavior, not a JPA spec behavior. |
+| Misconception                                               | Reality                                                                                                                                                                                                                                                                                                                  |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "JPA and Hibernate are the same"                            | JPA is the specification (interfaces, annotations, contracts). Hibernate is an implementation. You can run JPA code with EclipseLink or DataNucleus instead of Hibernate. In practice: Hibernate is used in >95% of Spring applications, so the distinction is rarely relevant but important to understand conceptually. |
+| "javax.persistence annotations still work in Spring Boot 3" | NO - Spring Boot 3 requires `jakarta.persistence.*`. Any code using `javax.persistence.*` will fail to compile against Spring Boot 3's classpath. This is the #1 compilation error in Spring Boot 2 -> 3 migrations. The fix is a mechanical import rename (OpenRewrite automates this).                                 |
+| "The JPA spec defines N+1 behavior"                         | NO - the JPA spec defines `FetchType.LAZY` as an optimization HINT. The spec does not require lazy loading to be implemented as "load on first access." Hibernate happens to implement LAZY as a proxy that loads on first method call. The N+1 problem is a Hibernate implementation behavior, not a JPA spec behavior. |
 
 ---
 
@@ -459,6 +464,7 @@ produces no error but entity is not mapped to a table.
 (Spring Boot 3 style). The class loads but the annotation
 is from a different package - treated as unknown annotation.
 **Diagnosis:**
+
 ```bash
 # Find all javax.persistence imports:
 grep -r "javax.persistence" src/
@@ -468,6 +474,7 @@ grep -r "javax.persistence" src/
 grep -r "javax.validation" src/  # bean validation
 grep -r "javax.servlet"   src/  # servlet API
 ```
+
 **Fix:** Replace all `javax.persistence` -> `jakarta.persistence`.
 OpenRewrite: `mvn rewrite:run -Drewrite.recipe=org.openrewrite.java.migrate.javax.JavaxPersistenceToJakartaPersistence`
 
@@ -476,16 +483,19 @@ OpenRewrite: `mvn rewrite:run -Drewrite.recipe=org.openrewrite.java.migrate.java
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-001 - JPA Overview]] - practical JPA usage before
   understanding the spec formally
 - [[JPH-006 - Entity Basics]] - `@Entity` annotation meaning
   and mapping conventions per spec
 
 **Builds On This (learn these next):**
+
 - [[JPH-060 - Hibernate 6 Migration]] - Jakarta Persistence 3
   migration from Spring Boot 2 to 3
 
 **Related:**
+
 - [[JPH-058 - Hibernate Internals]] - how Hibernate
   implements JPA spec interfaces
 - [[JPH-001 - JPA Overview]] - practical application of
@@ -521,6 +531,7 @@ OpenRewrite: `mvn rewrite:run -Drewrite.recipe=org.openrewrite.java.migrate.java
 ```
 
 **If you remember only 3 things:**
+
 1. JPA = specification (interfaces); Hibernate = implementation;
    Spring Data JPA = Spring abstraction on top of JPA
 2. Spring Boot 2 = `javax.persistence.*`; Spring Boot 3 = `jakarta.persistence.*`;
@@ -579,6 +590,7 @@ to maintain long-term, ensure you control the namespace.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the relationship between the JPA spec,
    Hibernate, Spring Data JPA, and Spring Boot
 2. **IDENTIFY** which annotations/interfaces are JPA
@@ -597,8 +609,9 @@ to maintain long-term, ensure you control the namespace.
 
 **Q1: What is the difference between JPA, Hibernate,
 and Spring Data JPA?**
-*Why they ask:* Tests clarity of the Java persistence stack.
-*Strong answer includes:*
+_Why they ask:_ Tests clarity of the Java persistence stack.
+_Strong answer includes:_
+
 - JPA (Jakarta Persistence API): the SPECIFICATION - defines
   the interface contract. `@Entity`, `EntityManager`, JPQL are
   JPA concepts. Package: `jakarta.persistence.*`
@@ -615,8 +628,9 @@ and Spring Data JPA?**
 **Q2: A team member says "We should avoid Hibernate-specific
 annotations and only use standard JPA annotations for portability."
 Is this advice sound?**
-*Why they ask:* Tests pragmatic architecture judgment.
-*Strong answer includes:*
+_Why they ask:_ Tests pragmatic architecture judgment.
+_Strong answer includes:_
+
 - Partially sound; but overly rigid in practice
 - Portability benefit: code compiles against any JPA provider
 - Reality check: 99% of Spring apps use Hibernate; switching providers

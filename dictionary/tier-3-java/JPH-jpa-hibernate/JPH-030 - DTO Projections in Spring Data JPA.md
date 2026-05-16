@@ -34,11 +34,11 @@ methods: they eliminate dirty checking overhead, prevent
 accidental entity modification, load fewer columns, and
 are the cleanest fix for N+1 on read endpoints.
 
-| #030 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JPQL, CrudRepository/JpaRepository, @Query, Pagination, N+1 Problem, @NamedQuery/Native Queries | |
-| **Used by:** | EntityGraph, Spring Data Specifications, JPA at Scale, Spring Data JPA Architecture | |
-| **Related:** | Criteria API, QueryDSL with JPA | |
+| #030            | Category: JPA & Hibernate                                                                       | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | JPQL, CrudRepository/JpaRepository, @Query, Pagination, N+1 Problem, @NamedQuery/Native Queries |                 |
+| **Used by:**    | EntityGraph, Spring Data Specifications, JPA at Scale, Spring Data JPA Architecture             |                 |
+| **Related:**    | Criteria API, QueryDSL with JPA                                                                 |                 |
 
 ---
 
@@ -104,6 +104,7 @@ managed entity objects.
 into lightweight DTOs instead of full managed entities.
 
 **One analogy:**
+
 > Loading a full entity is like ordering a complete
 > restaurant meal when you only want the appetizer.
 > A DTO projection is the a-la-carte order: only what
@@ -430,23 +431,23 @@ interface OrderSummary {
 
 ### ⚖️ Comparison Table
 
-| Projection Type | Proxy overhead? | Constructor needed? | Computed fields? | Best for |
-|---|---|---|---|---|
-| Interface (closed) | Yes (JDK proxy) | No | No (@Value defeats optimization) | Simple field subsets |
-| Class / Record | No | Yes | Yes (in constructor) | Performance-critical reads |
-| Dynamic | Depends on type | Depends on type | N/A | Flexible APIs |
-| Native + interface | No (direct mapping) | No | Via SQL expressions | Analytics, complex SQL |
+| Projection Type    | Proxy overhead?     | Constructor needed? | Computed fields?                 | Best for                   |
+| ------------------ | ------------------- | ------------------- | -------------------------------- | -------------------------- |
+| Interface (closed) | Yes (JDK proxy)     | No                  | No (@Value defeats optimization) | Simple field subsets       |
+| Class / Record     | No                  | Yes                 | Yes (in constructor)             | Performance-critical reads |
+| Dynamic            | Depends on type     | Depends on type     | N/A                              | Flexible APIs              |
+| Native + interface | No (direct mapping) | No                  | Via SQL expressions              | Analytics, complex SQL     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Interface projections always load fewer columns" | Only CLOSED interface projections (no @Value SpEL) load fewer columns. Open projections with `@Value("#{target.field}")` load the full entity. Spring cannot determine required columns from SpEL expressions. |
-| "Class projections require the DTO to be in the same package as the entity" | Class projections require the FULL qualified class name in the JPQL constructor expression: `SELECT new com.example.dto.ProductDto(...)`. Any package is fine as long as the FQN is used. |
-| "DTO projections prevent SQL injection" | Projections are not a security mechanism. They use the same JPQL parameter binding as regular queries. SQL injection protection comes from using named parameters, not from using projections. |
-| "Projections can be updated; changes are saved" | DTO projections are NOT managed entities. Calling setters on a DTO has NO effect on the database. To update, load the managed entity explicitly. |
+| Misconception                                                               | Reality                                                                                                                                                                                                        |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Interface projections always load fewer columns"                           | Only CLOSED interface projections (no @Value SpEL) load fewer columns. Open projections with `@Value("#{target.field}")` load the full entity. Spring cannot determine required columns from SpEL expressions. |
+| "Class projections require the DTO to be in the same package as the entity" | Class projections require the FULL qualified class name in the JPQL constructor expression: `SELECT new com.example.dto.ProductDto(...)`. Any package is fine as long as the FQN is used.                      |
+| "DTO projections prevent SQL injection"                                     | Projections are not a security mechanism. They use the same JPQL parameter binding as regular queries. SQL injection protection comes from using named parameters, not from using projections.                 |
+| "Projections can be updated; changes are saved"                             | DTO projections are NOT managed entities. Calling setters on a DTO has NO effect on the database. To update, load the managed entity explicitly.                                                               |
 
 ---
 
@@ -490,12 +491,14 @@ JPQL strings.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-014 - JPQL]] - constructor expression syntax
   `SELECT new ...` is JPQL
 - [[JPH-027 - N+1 Problem]] - projections are the cleanest
   fix for N+1 on read-only endpoints
 
 **Builds On This (learn these next):**
+
 - [[JPH-037 - EntityGraph]] - EntityGraph is a different
   approach to controlling what associations are loaded;
   compare with projections
@@ -503,6 +506,7 @@ JPQL strings.
   can be combined with projections for dynamic filtering
 
 **Related:**
+
 - [[JPH-036 - Criteria API]] - Criteria API also supports
   tuple and constructor result projections
 - [[JPH-054 - JPA at Scale]] - read model vs write model
@@ -538,6 +542,7 @@ JPQL strings.
 ```
 
 **If you remember only 3 things:**
+
 1. Closed interface projections load only the columns
    matching the getter names - never use `@Value` SpEL
    (forces full entity load)
@@ -576,6 +581,7 @@ lazy-load surprises in JSON serialization), and enables
 independent optimization of read and write paths.
 
 **Where else this pattern appears:**
+
 - **GraphQL** - fields in queries are projections; only
   the requested fields are resolved (if resolvers are
   efficient)
@@ -619,6 +625,7 @@ Page<ProductCard> findActiveCards(
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **CREATE** all three projection types (interface, class,
    dynamic) for a repository method
 2. **EXPLAIN** why closed interface projections optimize
@@ -637,9 +644,10 @@ Page<ProductCard> findActiveCards(
 
 **Q1: What are the different types of projections in
 Spring Data JPA, and when would you use each?**
-*Why they ask:* Core Spring Data knowledge; tests practical
+_Why they ask:_ Core Spring Data knowledge; tests practical
 JPA expertise.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Interface projection (closed): getters match field names;
   Spring generates SELECT with those columns; uses JDK
   proxy; good for simple field subsets
@@ -656,8 +664,9 @@ JPA expertise.
 
 **Q2: What is the difference between a DTO projection
 and a managed entity in terms of JPA behavior?**
-*Why they ask:* Tests understanding of JPA lifecycle.
-*Strong answer includes:*
+_Why they ask:_ Tests understanding of JPA lifecycle.
+_Strong answer includes:_
+
 - Managed entity: registered in persistence context;
   dirty checking tracks changes; flush sends SQL on changes;
   lazy associations can be loaded while session is open
@@ -671,10 +680,11 @@ and a managed entity in terms of JPA behavior?**
   methods; return entities from write methods
 
 **Q3: You have a paginated interface projection query
-with a JOIN. The COUNT(*) query is slow. How do you fix it?**
-*Why they ask:* Tests depth of Spring Data Pagination
+with a JOIN. The COUNT(\*) query is slow. How do you fix it?**
+_Why they ask:_ Tests depth of Spring Data Pagination
 and @Query knowledge.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Root cause: `Page<T>` auto-generates a `COUNT(*)` query
   derived from the data query; if the data query has a
   JOIN, the count query also JOINs unnecessarily

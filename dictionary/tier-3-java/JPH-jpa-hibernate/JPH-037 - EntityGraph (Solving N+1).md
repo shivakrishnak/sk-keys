@@ -30,14 +30,15 @@ the default LAZY fetch strategy for that one query. Use
 it to solve N+1 problems where JOIN FETCH in JPQL is
 not practical. Critical limits: EntityGraph + `Pageable`
 causes HHH90003004 (in-memory pagination) for collections
-- same problem as JOIN FETCH. Solution: two-query approach
-(fetch IDs first, then fetch entities by ID with EntityGraph).
 
-| #037 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, Relationships, @OneToMany, JPQL, LAZY Loading, Fetch Types, N+1 Problem | |
-| **Used by:** | JPA at Scale, Spring Data JPA Architecture, Hibernate Internals | |
-| **Related:** | Pagination, Specifications, Batch Processing | |
+- same problem as JOIN FETCH. Solution: two-query approach
+  (fetch IDs first, then fetch entities by ID with EntityGraph).
+
+| #037            | Category: JPA & Hibernate                                                        | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, Relationships, @OneToMany, JPQL, LAZY Loading, Fetch Types, N+1 Problem |                 |
+| **Used by:**    | JPA at Scale, Spring Data JPA Architecture, Hibernate Internals                  |                 |
+| **Related:**    | Pagination, Specifications, Batch Processing                                     |                 |
 
 ---
 
@@ -76,6 +77,7 @@ with EntityGraph).
 **@EntityGraph** is a JPA 2.1 feature that allows specifying
 at query time which entity associations should be fetched
 eagerly, overriding the default fetch strategy. Two types:
+
 - **@NamedEntityGraph** - declares the graph on the entity class
 - **@EntityGraph** on repository method - references a named
   graph or specifies `attributePaths` inline
@@ -97,6 +99,7 @@ also load these associations via JOIN" - solving N+1
 without changing the entity's global fetch strategy.
 
 **One analogy:**
+
 > Entity associations are like books in a library with
 > two checkout modes: "on-demand" (LAZY - you request
 > each book separately when needed) and "bundled" (EAGER -
@@ -411,23 +414,23 @@ Optional<Order> findById(Long id);
 
 ### ⚖️ Comparison Table
 
-| Approach | N+1 Solved? | Works with Pageable? | Verbosity | Best for |
-|---|---|---|---|---|
-| `fetch=EAGER` | Yes | No (HHH90003004) | Low | Avoid |
-| JOIN FETCH (JPQL) | Yes | No for collections | Medium | Single associations |
-| `@EntityGraph` | Yes | No for collections | Low | Same as JOIN FETCH, cleaner |
-| Two-query pattern | Yes | Yes | High | Paginated lists |
-| `@BatchSize` | Partial (batch) | Yes | Low | Large collection lists |
+| Approach          | N+1 Solved?     | Works with Pageable? | Verbosity | Best for                    |
+| ----------------- | --------------- | -------------------- | --------- | --------------------------- |
+| `fetch=EAGER`     | Yes             | No (HHH90003004)     | Low       | Avoid                       |
+| JOIN FETCH (JPQL) | Yes             | No for collections   | Medium    | Single associations         |
+| `@EntityGraph`    | Yes             | No for collections   | Low       | Same as JOIN FETCH, cleaner |
+| Two-query pattern | Yes             | Yes                  | High      | Paginated lists             |
+| `@BatchSize`      | Partial (batch) | Yes                  | Low       | Large collection lists      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "@EntityGraph fixes N+1 for paginated lists" | EntityGraph + `Pageable` + collection = HHH90003004 (in-memory pagination). Same problem as JOIN FETCH + Pageable. Fix: two-query pattern. |
-| "EntityGraph overrides ALL associations to EAGER" | Only the associations listed in `attributePaths`. All others remain LAZY (with FETCH graph type, default). Unlisted mappings with `fetch=EAGER` on the entity ARE overridden to LAZY when using FETCH type. |
-| "Using multiple attributePaths for multiple collections is safe" | Multiple collection JOIN FETCHes produce a Cartesian product. 10 items * 5 tags = 50 rows per parent entity. Can severely increase result set size. Use @BatchSize or separate queries for multiple collections. |
+| Misconception                                                    | Reality                                                                                                                                                                                                           |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "@EntityGraph fixes N+1 for paginated lists"                     | EntityGraph + `Pageable` + collection = HHH90003004 (in-memory pagination). Same problem as JOIN FETCH + Pageable. Fix: two-query pattern.                                                                        |
+| "EntityGraph overrides ALL associations to EAGER"                | Only the associations listed in `attributePaths`. All others remain LAZY (with FETCH graph type, default). Unlisted mappings with `fetch=EAGER` on the entity ARE overridden to LAZY when using FETCH type.       |
+| "Using multiple attributePaths for multiple collections is safe" | Multiple collection JOIN FETCHes produce a Cartesian product. 10 items \* 5 tags = 50 rows per parent entity. Can severely increase result set size. Use @BatchSize or separate queries for multiple collections. |
 
 ---
 
@@ -455,7 +458,7 @@ fetch entities with EntityGraph by IDs.
 results. `orders.size()` returns 500 when expecting 50.
 **Root Cause:** Multiple collection associations in
 EntityGraph (e.g., `orderItems` AND `orderTags`).
-Each item*tag combination produces a row. Hibernate
+Each item\*tag combination produces a row. Hibernate
 assembles duplicate order objects for each row.
 **Fix:** Remove one collection from EntityGraph.
 Use `@BatchSize` on the second collection, or load the
@@ -466,16 +469,19 @@ second collection in a separate query.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-027 - N+1 Problem]] - EntityGraph is one solution;
   understand the problem first
 - [[JPH-018 - @OneToMany]] - EntityGraph applies to
   association mappings
 
 **Builds On This (learn these next):**
+
 - [[JPH-054 - JPA at Scale]] - EntityGraph usage patterns
   in high-load production systems
 
 **Related:**
+
 - [[JPH-025 - Pagination]] - HHH90003004 is the interaction
   between EntityGraph and pagination
 - [[JPH-043 - Spring Data Specifications]] - Specifications
@@ -508,6 +514,7 @@ second collection in a separate query.
 ```
 
 **If you remember only 3 things:**
+
 1. `@EntityGraph` generates a LEFT JOIN FETCH for named
    associations - solves N+1 for non-paginated queries
 2. EntityGraph + `Pageable` + collection = HHH90003004
@@ -540,6 +547,7 @@ pool settings should match specific workload patterns.
 Precision of effect reduces unintended side effects.
 
 **Where else this pattern appears:**
+
 - **SQL query hints** - `/*+ INDEX(t idx_name) */` applies
   an index hint to one specific query, not globally
 - **@Transactional isolation levels** - specify isolation
@@ -571,6 +579,7 @@ essential for Spring Data JPA's derived query feature.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **WRITE** an `@EntityGraph` that loads `Order` with
    its `orderItems` and each item's `product` in one query
 2. **EXPLAIN** why EntityGraph + Pageable + @OneToMany
@@ -587,8 +596,9 @@ essential for Spring Data JPA's derived query feature.
 ### 🎯 Interview Deep-Dive
 
 **Q1: What is @EntityGraph and how does it solve N+1?**
-*Why they ask:* Core JPA performance concept.
-*Strong answer includes:*
+_Why they ask:_ Core JPA performance concept.
+_Strong answer includes:_
+
 - `@EntityGraph` is a per-method fetch strategy override
 - Generates a LEFT JOIN FETCH in SQL for specified associations
 - Identical SQL to `JOIN FETCH` in JPQL; difference: expressed
@@ -598,9 +608,10 @@ essential for Spring Data JPA's derived query feature.
 
 **Q2: Why does @EntityGraph with Pageable on a collection
 association cause a performance problem, and how do you fix it?**
-*Why they ask:* Tests depth - most candidates know EntityGraph
+_Why they ask:_ Tests depth - most candidates know EntityGraph
 but miss the Pageable interaction.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - HHH90003004: LEFT JOIN of collection multiplies rows;
   Hibernate can't apply SQL LIMIT/OFFSET when rows are multiplied
   (page 1 needs rows 1-20 of deduped entities, but SQL rows

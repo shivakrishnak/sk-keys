@@ -36,11 +36,11 @@ require UNION ALL). Default recommendation: `JOINED`
 for most cases; `SINGLE_TABLE` for performance-critical
 hierarchies with few fields; avoid `TABLE_PER_CLASS`.
 
-| #040 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Id, @Table/@Column, EntityManager, JPQL, @OneToMany, @ManyToOne | |
-| **Used by:** | @Embedded and @Embeddable, JPA at Scale, Spring Data JPA Architecture, Hibernate Internals | |
-| **Related:** | HQL, Criteria API, @Embedded | |
+| #040            | Category: JPA & Hibernate                                                                  | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Id, @Table/@Column, EntityManager, JPQL, @OneToMany, @ManyToOne                  |                 |
+| **Used by:**    | @Embedded and @Embeddable, JPA at Scale, Spring Data JPA Architecture, Hibernate Internals |                 |
+| **Related:**    | HQL, Criteria API, @Embedded                                                               |                 |
 
 ---
 
@@ -48,6 +48,7 @@ hierarchies with few fields; avoid `TABLE_PER_CLASS`.
 
 **THE OBJECT-RELATIONAL IMPEDANCE FOR INHERITANCE:**
 Java's object model supports inheritance naturally:
+
 ```java
 abstract class Payment { Long id; BigDecimal amount; }
 class CreditCardPayment extends Payment { String cardNumber; }
@@ -57,6 +58,7 @@ class BankTransferPayment extends Payment { String iban; }
 Relational databases have no concept of inheritance.
 The problem: how do you store these three classes in
 a relational schema while supporting:
+
 1. Polymorphic queries: `SELECT * FROM Payment` returns
    both credit card and bank transfer payments
 2. Type-specific queries: `SELECT * FROM CreditCardPayment`
@@ -107,21 +109,22 @@ JOINs), or one table per class (no joins for subtypes,
 UNION ALL for polymorphic).
 
 **One analogy:**
+
 > A company directory has employees with different roles:
 > Engineer, Manager, Intern. Three ways to store this:
 >
 > SINGLE_TABLE: one spreadsheet "Employees" with a
->   "role" column. Engineers have blank "managedTeam" cells.
->   Fast to query; lots of nulls.
+> "role" column. Engineers have blank "managedTeam" cells.
+> Fast to query; lots of nulls.
 >
 > JOINED: "Employees" table (shared fields) + "Engineers"
->   table (engineer-specific fields). Get an engineer:
->   JOIN both tables. Normalized; slower.
+> table (engineer-specific fields). Get an engineer:
+> JOIN both tables. Normalized; slower.
 >
 > TABLE_PER_CLASS: separate "Engineers" spreadsheet,
->   "Managers" spreadsheet, "Interns" spreadsheet, each
->   with all fields. Fast per-type; "all employees" requires
->   combining all sheets.
+> "Managers" spreadsheet, "Interns" spreadsheet, each
+> with all fields. Fast per-type; "all employees" requires
+> combining all sheets.
 
 ---
 
@@ -262,6 +265,7 @@ Avoid `TABLE_PER_CLASS` - it has no FK constraint support
 and UNION ALL polymorphic queries.
 
 **Level 3 - JPA configuration (mid-level engineer):**
+
 ```java
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -442,25 +446,25 @@ List<CreditCardPayment> ccPayments = em
 
 ### ⚖️ Comparison Table
 
-| Feature | SINGLE_TABLE | JOINED | TABLE_PER_CLASS |
-|---|---|---|---|
-| Tables | 1 | 1 per class | 1 per concrete class |
-| Discriminator | Required | Optional (can use FK type) | None |
-| Polymorphic query | Single scan | LEFT JOIN per subtype | UNION ALL |
-| Subtype query | WHERE dtype=? | INNER JOIN | Single scan |
-| NOT NULL constraints | Not on subtype fields | Yes | Yes |
-| FK references | Yes (to parent table) | Yes (to parent table) | No (which table?) |
-| Recommended for | Performance-critical, few fields | Most cases | Avoid |
+| Feature              | SINGLE_TABLE                     | JOINED                     | TABLE_PER_CLASS      |
+| -------------------- | -------------------------------- | -------------------------- | -------------------- |
+| Tables               | 1                                | 1 per class                | 1 per concrete class |
+| Discriminator        | Required                         | Optional (can use FK type) | None                 |
+| Polymorphic query    | Single scan                      | LEFT JOIN per subtype      | UNION ALL            |
+| Subtype query        | WHERE dtype=?                    | INNER JOIN                 | Single scan          |
+| NOT NULL constraints | Not on subtype fields            | Yes                        | Yes                  |
+| FK references        | Yes (to parent table)            | Yes (to parent table)      | No (which table?)    |
+| Recommended for      | Performance-critical, few fields | Most cases                 | Avoid                |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "@MappedSuperclass and @Inheritance(SINGLE_TABLE) are interchangeable" | `@MappedSuperclass` = parent class is NOT an entity, no table, no polymorphic queries. `SINGLE_TABLE` parent = IS an entity, has a table (shared), supports polymorphic queries. Completely different. |
-| "JOINED strategy doesn't need a discriminator column" | JOINED works without a discriminator column (Hibernate infers the type from which child table has a matching row). However, some JPA providers require it. Adding one is a best practice for clarity and query debugging. |
-| "TABLE_PER_CLASS is good for query performance" | It is ONLY good for subtype-specific queries. Polymorphic queries (`FROM Payment`) require UNION ALL across all tables - no index optimization, full scans. This is typically worse than JOINED. |
+| Misconception                                                          | Reality                                                                                                                                                                                                                   |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "@MappedSuperclass and @Inheritance(SINGLE_TABLE) are interchangeable" | `@MappedSuperclass` = parent class is NOT an entity, no table, no polymorphic queries. `SINGLE_TABLE` parent = IS an entity, has a table (shared), supports polymorphic queries. Completely different.                    |
+| "JOINED strategy doesn't need a discriminator column"                  | JOINED works without a discriminator column (Hibernate infers the type from which child table has a matching row). However, some JPA providers require it. Adding one is a best practice for clarity and query debugging. |
+| "TABLE_PER_CLASS is good for query performance"                        | It is ONLY good for subtype-specific queries. Polymorphic queries (`FROM Payment`) require UNION ALL across all tables - no index optimization, full scans. This is typically worse than JOINED.                          |
 
 ---
 
@@ -478,6 +482,7 @@ the column IS nullable for other subtypes.
 will be `VARCHAR NULL` despite the `nullable=false` annotation.
 **Fix:** Switch to `JOINED` strategy if NOT NULL constraints
 are required. In `SINGLE_TABLE`, use `@Check` constraint:
+
 ```java
 @Table(name = "payments", indexes = {...},
        uniqueConstraints = {...})
@@ -491,15 +496,18 @@ are required. In `SINGLE_TABLE`, use `@Check` constraint:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-006 - @Entity]] - entity basics before inheritance
 - [[JPH-021 - @OneToMany]] - parent entity relationships
   interact with inheritance strategy
 
 **Builds On This (learn these next):**
+
 - [[JPH-041 - @Embedded and @Embeddable]] - alternative
   to inheritance for value types
 
 **Related:**
+
 - [[JPH-028 - HQL]] - polymorphic queries work through
   JPQL/HQL using parent entity names
 - [[JPH-036 - Criteria API]] - Criteria queries on
@@ -531,6 +539,7 @@ are required. In `SINGLE_TABLE`, use `@Check` constraint:
 ```
 
 **If you remember only 3 things:**
+
 1. `SINGLE_TABLE` = one table, discriminator column, fastest
    queries but cannot enforce NOT NULL on subtype fields
 2. `JOINED` = parent + child tables joined on PK/FK,
@@ -570,6 +579,7 @@ vs relational DB (relationship traversal vs set operations),
 document store vs key-value (rich queries vs throughput).
 
 **Where else this pattern appears:**
+
 - **ActiveRecord (Rails)** - provides the same three
   strategies (STI for SINGLE_TABLE, class_table_inheritance
   gem for JOINED)
@@ -600,6 +610,7 @@ the parent entity - never rely on the default.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **IMPLEMENT** a `JOINED` inheritance hierarchy and
    explain the generated DDL (parent + child tables + FK)
 2. **EXPLAIN** why `SINGLE_TABLE` cannot enforce NOT NULL
@@ -617,8 +628,9 @@ the parent entity - never rely on the default.
 
 **Q1: What are the three JPA inheritance strategies and
 what are their trade-offs?**
-*Why they ask:* Common design question; reveals ORM depth.
-*Strong answer includes:*
+_Why they ask:_ Common design question; reveals ORM depth.
+_Strong answer includes:_
+
 - SINGLE_TABLE: one table, discriminator column, fastest
   queries (no JOINs), cannot enforce NOT NULL on subtype fields
 - JOINED: parent+child tables with FK, normalized, NOT NULL
@@ -630,8 +642,9 @@ what are their trade-offs?**
 
 **Q2: What is the difference between @Inheritance(SINGLE_TABLE)
 and @MappedSuperclass?**
-*Why they ask:* Tests precision - many candidates confuse these.
-*Strong answer includes:*
+_Why they ask:_ Tests precision - many candidates confuse these.
+_Strong answer includes:_
+
 - `@MappedSuperclass`: parent class is NOT an entity; has NO table;
   cannot be queried polymorphically; cannot be FK target
 - `@Inheritance(SINGLE_TABLE)`: parent class IS an entity; HAS a table;

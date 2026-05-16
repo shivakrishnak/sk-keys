@@ -31,11 +31,11 @@ SELECT. Default: `@ManyToOne` = EAGER (dangerous),
 `@ManyToOne` to LAZY. EAGER is almost never the right
 choice in production code.
 
-| #021 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Persistence Context, Entity Lifecycle, @OneToOne, @OneToMany/@ManyToOne, @ManyToMany, @JoinColumn/@JoinTable | |
-| **Used by:** | N+1 Problem, @EntityGraph, Dirty Checking and Flush Mode | |
-| **Related:** | First Level Cache, Second Level Cache | |
+| #021            | Category: JPA & Hibernate                                                                                    | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Persistence Context, Entity Lifecycle, @OneToOne, @OneToMany/@ManyToOne, @ManyToMany, @JoinColumn/@JoinTable |                 |
+| **Used by:**    | N+1 Problem, @EntityGraph, Dirty Checking and Flush Mode                                                     |                 |
+| **Related:**    | First Level Cache, Second Level Cache                                                                        |                 |
 
 ---
 
@@ -72,6 +72,7 @@ cost for the association.
 ### 📘 Textbook Definition
 
 **`FetchType`** is a JPA enum with two values:
+
 - `LAZY`: related entities or collections are NOT loaded
   immediately. A proxy object is returned. The actual
   data is fetched from the database on first access to
@@ -82,6 +83,7 @@ cost for the association.
   the owning entity is loaded.
 
 **JPA Specification Defaults:**
+
 - `@ManyToOne`: EAGER (default - should almost always override to LAZY)
 - `@OneToOne`: EAGER (default - should almost always override to LAZY)
 - `@OneToMany`: LAZY (safe default - leave as is)
@@ -100,6 +102,7 @@ Always LAZY for all associations; load what you need
 via JOIN FETCH or `@EntityGraph`.
 
 **One analogy:**
+
 > EAGER is like a waiter who brings the entire menu, full
 > appetizers, main course, and dessert when you sit down
 > "just in case". LAZY is like a waiter who takes your
@@ -167,6 +170,7 @@ em.find(Order.class, 1L)
 ```
 
 **CORE INVARIANTS:**
+
 1. LAZY on a closed session (no persistence context) ->
    `LazyInitializationException` on first field access
 2. EAGER on `@ManyToOne` -> JOIN in the owning entity's
@@ -279,6 +283,7 @@ repository methods - a cleaner alternative to JOIN FETCH
 in JPQL strings.
 
 **Expert Thinking Cues:**
+
 - Ask: "What is the fetch type on this `@ManyToOne`?" -
   if not explicitly LAZY, it is EAGER (the dangerous default)
 - Watch: `open-in-view=true` (Spring Boot default) hides
@@ -468,27 +473,27 @@ public class Document {
 
 ### ⚖️ Comparison Table
 
-| | LAZY | EAGER |
-|---|---|---|
-| When loaded | First field access | Immediately on entity load |
-| SQL impact | Extra SELECT when accessed | JOIN or extra SELECT on load |
-| N+1 risk | Only if accessed in a loop | Automatic for every query |
-| LazyInitException risk | After session closes | None (already loaded) |
-| Memory | Loads only needed data | Loads all related data |
-| Testing | May hide missing joins | "Convenient" but masks real load |
-| Production | Correct for most use cases | Correct only for always-needed relations |
+|                        | LAZY                       | EAGER                                    |
+| ---------------------- | -------------------------- | ---------------------------------------- |
+| When loaded            | First field access         | Immediately on entity load               |
+| SQL impact             | Extra SELECT when accessed | JOIN or extra SELECT on load             |
+| N+1 risk               | Only if accessed in a loop | Automatic for every query                |
+| LazyInitException risk | After session closes       | None (already loaded)                    |
+| Memory                 | Loads only needed data     | Loads all related data                   |
+| Testing                | May hide missing joins     | "Convenient" but masks real load         |
+| Production             | Correct for most use cases | Correct only for always-needed relations |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "EAGER prevents N+1 by loading everything in one query" | EAGER for `@OneToMany` causes N separate SELECT statements - one per parent entity. It does NOT produce a single JOIN. EAGER causes N+1, it does not prevent it. |
-| "`fetch=LAZY` on @OneToOne (inverse side) makes it truly lazy" | On the inverse side of `@OneToOne` (mappedBy side), Hibernate still issues a SELECT to check null vs. proxy even with `fetch=LAZY`. True lazy on inverse `@OneToOne` requires `@MapsId` or bytecode enhancement. |
-| "EAGER is safer because you always have the data available" | EAGER loads data even when never used. In production, most requests access only a subset of an entity's relationships. EAGER wastes database I/O, memory, and network for data that goes unused. |
-| "`open-in-view=true` fixes LazyInitializationException" | OEIV keeps the session open through the view (HTTP response serialization) layer, hiding LIE in development. It delays session close until after the view is rendered, creating a transaction per HTTP request. This hides lazy loading issues that only appear under load when session timeout becomes a problem. |
-| "LAZY loading always issues a separate SELECT" | Hibernate can batch lazy loads with `@BatchSize` (loads N collections in one IN query) or with second-level cache (returns cached data without a SELECT). LAZY does not always mean one extra SELECT. |
+| Misconception                                                  | Reality                                                                                                                                                                                                                                                                                                            |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "EAGER prevents N+1 by loading everything in one query"        | EAGER for `@OneToMany` causes N separate SELECT statements - one per parent entity. It does NOT produce a single JOIN. EAGER causes N+1, it does not prevent it.                                                                                                                                                   |
+| "`fetch=LAZY` on @OneToOne (inverse side) makes it truly lazy" | On the inverse side of `@OneToOne` (mappedBy side), Hibernate still issues a SELECT to check null vs. proxy even with `fetch=LAZY`. True lazy on inverse `@OneToOne` requires `@MapsId` or bytecode enhancement.                                                                                                   |
+| "EAGER is safer because you always have the data available"    | EAGER loads data even when never used. In production, most requests access only a subset of an entity's relationships. EAGER wastes database I/O, memory, and network for data that goes unused.                                                                                                                   |
+| "`open-in-view=true` fixes LazyInitializationException"        | OEIV keeps the session open through the view (HTTP response serialization) layer, hiding LIE in development. It delays session close until after the view is rendered, creating a transaction per HTTP request. This hides lazy loading issues that only appear under load when session timeout becomes a problem. |
+| "LAZY loading always issues a separate SELECT"                 | Hibernate can batch lazy loads with `@BatchSize` (loads N collections in one IN query) or with second-level cache (returns cached data without a SELECT). LAZY does not always mean one extra SELECT.                                                                                                              |
 
 ---
 
@@ -551,12 +556,14 @@ queries that need the related entities.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-012 - Persistence Context]] - LAZY requires an
   open persistence context when the proxy is accessed
 - [[JPH-018 - @OneToMany and @ManyToOne]] - fetch defaults
   differ: `@ManyToOne` EAGER, `@OneToMany` LAZY
 
 **Builds On This (learn these next):**
+
 - [[JPH-027 - N+1 Problem (ORM Context)]] - EAGER on
   collections causes N+1; LAZY without JOIN FETCH also
   causes N+1; both are fetch strategy failures
@@ -594,6 +601,7 @@ queries that need the related entities.
 ```
 
 **If you remember only 3 things:**
+
 1. `@ManyToOne` and `@OneToOne` default to EAGER - always
    add `fetch=LAZY`; EAGER causes N+1 on list queries
 2. `LazyInitializationException` = accessing LAZY data
@@ -619,6 +627,7 @@ explicit-eager-per-operation is the correct pattern for
 any data loading system. Load the minimum required data
 by default; load additional data only when a specific
 operation needs it. This principle appears in:
+
 - **Microservice API design**: sparse field sets by default
   (only id, name, status); include related entities via
   query parameter (`?include=items,customer`)
@@ -648,6 +657,7 @@ with a requirement.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **AUDIT** an entity class and identify all EAGER
    associations (both explicit and default) and explain
    the SQL impact of each
@@ -669,10 +679,11 @@ with a requirement.
 
 **Q1: What are the default fetch types for @ManyToOne and
 @OneToMany, and why are they problematic?**
-*Why they ask:* Tests daily-use JPA knowledge; the EAGER
+_Why they ask:_ Tests daily-use JPA knowledge; the EAGER
 default on `@ManyToOne` is a common production performance
 issue.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `@ManyToOne` default: EAGER - dangerous
   (`findAll()` JOINs all EAGER associations)
 - `@OneToMany` default: LAZY - safe
@@ -683,9 +694,10 @@ issue.
   `@ManyToOne` and `@OneToOne` annotations
 
 **Q2: Why does EAGER fetch on @OneToMany NOT prevent N+1?**
-*Why they ask:* Tests understanding of how JPA implements
+_Why they ask:_ Tests understanding of how JPA implements
 EAGER for collections (SELECT, not JOIN).
-*Strong answer includes:*
+_Strong answer includes:_
+
 - EAGER `@OneToMany` does not generate a JOIN
 - Hibernate avoids JOINs for collections to prevent
   Cartesian product rows in the result
@@ -699,9 +711,10 @@ EAGER for collections (SELECT, not JOIN).
 
 **Q3: What is the risk of Spring Boot's `open-in-view=true`
 default and what should you do about it?**
-*Why they ask:* Tests production readiness knowledge and
+_Why they ask:_ Tests production readiness knowledge and
 awareness of the OEIV anti-pattern.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - OEIV keeps the JPA session open for the entire HTTP
   request lifecycle (including view rendering/serialization)
 - During development: hides `LazyInitializationException`

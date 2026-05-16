@@ -30,11 +30,11 @@ the FK column. `@OneToMany` is on the "one" side and uses
 unidirectional `@OneToMany` (generates a join table or
 an extra UPDATE statement for the FK).
 
-| #018 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Id, @Table/@Column, Entity Lifecycle, @OneToOne | |
-| **Used by:** | @ManyToMany, FetchType, CascadeType, N+1 Problem, @EntityGraph | |
-| **Related:** | @JoinColumn and @JoinTable, Inheritance Mapping | |
+| #018            | Category: JPA & Hibernate                                      | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Id, @Table/@Column, Entity Lifecycle, @OneToOne      |                 |
+| **Used by:**    | @ManyToMany, FetchType, CascadeType, N+1 Problem, @EntityGraph |                 |
+| **Related:**    | @JoinColumn and @JoinTable, Inheritance Mapping                |                 |
 
 ---
 
@@ -92,6 +92,7 @@ entity has `@OneToMany(mappedBy="...")` (inverse side).
 `@OneToMany(mappedBy="order")` is on `Order` (the one side).
 
 **One analogy:**
+
 > Think of a folder and its files. Each file belongs to
 > one folder (`@ManyToOne` on File). Each folder contains
 > many files (`@OneToMany` on Folder). The folder does not
@@ -165,6 +166,7 @@ public class OrderItem {
 ```
 
 **CORE INVARIANTS:**
+
 1. `@ManyToOne` is ALWAYS the owning side - it holds the FK
 2. `@OneToMany(mappedBy=...)` is ALWAYS the inverse side
 3. Cascade is set on the parent (`Order`), not the child
@@ -194,6 +196,7 @@ public class Order {
 ```
 
 **WHAT HAPPENS:**
+
 1. `order.getItems().add(item)` -> Hibernate does:
    - INSERT INTO order_items (qty, price) VALUES (?, ?)
      -> item inserted with order_id = NULL
@@ -203,6 +206,7 @@ public class Order {
 3. For 100 items added: 100 INSERTs + 100 UPDATEs
 
 **VS BIDIRECTIONAL (with mappedBy and @ManyToOne):**
+
 1. `order.addItem(item)` -> item.order = order is set
 2. Hibernate: INSERT INTO order_items (qty, price,
    order_id) VALUES (?, ?, ?) -> FK set in INSERT directly
@@ -443,23 +447,23 @@ public class Order {
 
 ### ⚖️ Comparison Table
 
-| Design | FK Location | Extra UPDATE | JOIN TABLE | Use case |
-|---|---|---|---|---|
-| Bidirectional `@ManyToOne`/`@OneToMany(mappedBy)` | Child table | No | No | Standard pattern (always prefer) |
-| Unidirectional `@OneToMany` (no `@ManyToOne`) | Child table via `@JoinColumn` | Yes (extra UPDATE) | No | Avoid; use bidirectional instead |
-| Unidirectional `@OneToMany` (no `@JoinColumn`) | Join table | No | Yes | Avoid; use `@ManyToMany` or bidirectional |
+| Design                                            | FK Location                   | Extra UPDATE       | JOIN TABLE | Use case                                  |
+| ------------------------------------------------- | ----------------------------- | ------------------ | ---------- | ----------------------------------------- |
+| Bidirectional `@ManyToOne`/`@OneToMany(mappedBy)` | Child table                   | No                 | No         | Standard pattern (always prefer)          |
+| Unidirectional `@OneToMany` (no `@ManyToOne`)     | Child table via `@JoinColumn` | Yes (extra UPDATE) | No         | Avoid; use bidirectional instead          |
+| Unidirectional `@OneToMany` (no `@JoinColumn`)    | Join table                    | No                 | Yes        | Avoid; use `@ManyToMany` or bidirectional |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "The @OneToMany parent controls the FK" | The `@ManyToOne` child holds the FK column. The `@OneToMany` parent has `mappedBy` and is the INVERSE side - it does NOT write the FK. |
-| "@ManyToOne default fetch is LAZY" | `@ManyToOne` default is EAGER. Every `em.find(OrderItem.class, 1L)` triggers a JOIN to load the parent Order. Always override with `fetch=LAZY`. |
-| "JOIN FETCH with @OneToMany is always safe" | JOIN FETCH with `@OneToMany` produces a Cartesian product in SQL. Without `DISTINCT` or using a `Set` result, the parent entity appears multiple times in the result list (once per child row). |
-| "orphanRemoval=true and CascadeType.REMOVE are the same" | `CascadeType.REMOVE` cascades `em.remove(order)` to all items. `orphanRemoval=true` additionally deletes items removed from the collection, even without `em.remove(order)`. `orphanRemoval` is stricter. |
-| "Infinite JSON serialization is a JPA problem" | Infinite recursion in JSON (`Order -> items -> order -> items...`) is a serialization problem, not a JPA problem. Fix with `@JsonManagedReference`/`@JsonBackReference` or `@JsonIgnore`, not by changing the JPA mapping. |
+| Misconception                                            | Reality                                                                                                                                                                                                                    |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The @OneToMany parent controls the FK"                  | The `@ManyToOne` child holds the FK column. The `@OneToMany` parent has `mappedBy` and is the INVERSE side - it does NOT write the FK.                                                                                     |
+| "@ManyToOne default fetch is LAZY"                       | `@ManyToOne` default is EAGER. Every `em.find(OrderItem.class, 1L)` triggers a JOIN to load the parent Order. Always override with `fetch=LAZY`.                                                                           |
+| "JOIN FETCH with @OneToMany is always safe"              | JOIN FETCH with `@OneToMany` produces a Cartesian product in SQL. Without `DISTINCT` or using a `Set` result, the parent entity appears multiple times in the result list (once per child row).                            |
+| "orphanRemoval=true and CascadeType.REMOVE are the same" | `CascadeType.REMOVE` cascades `em.remove(order)` to all items. `orphanRemoval=true` additionally deletes items removed from the collection, even without `em.remove(order)`. `orphanRemoval` is stricter.                  |
+| "Infinite JSON serialization is a JPA problem"           | Infinite recursion in JSON (`Order -> items -> order -> items...`) is a serialization problem, not a JPA problem. Fix with `@JsonManagedReference`/`@JsonBackReference` or `@JsonIgnore`, not by changing the JPA mapping. |
 
 ---
 
@@ -523,11 +527,13 @@ List<Order> findAllWithItems();
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-006 - @Entity]] - entities needed for associations
 - [[JPH-007 - @Id and @GeneratedValue]] - PK for FK targets
 - [[JPH-017 - @OneToOne]] - same owning/inverse concept
 
 **Builds On This (learn these next):**
+
 - [[JPH-019 - @ManyToMany]] - extends to M:N with join table
 - [[JPH-021 - FetchType (LAZY vs EAGER)]] - fetch strategy
   for collections and references
@@ -537,6 +543,7 @@ List<Order> findAllWithItems();
   of N+1 is `@OneToMany` collections
 
 **Alternatives / Comparisons:**
+
 - [[JPH-020 - @JoinColumn and @JoinTable]] - FK column
   customization for associations
 
@@ -570,6 +577,7 @@ List<Order> findAllWithItems();
 ```
 
 **If you remember only 3 things:**
+
 1. `@ManyToOne` owns the FK column - only it writes to the
    database; always use `fetch=LAZY` on `@ManyToOne`
 2. `@OneToMany(mappedBy=...)` is the inverse side - changes
@@ -603,6 +611,7 @@ a shopping cart (parent) has items (children) where each
 item stores `cart_id`.
 
 **Where else this pattern appears:**
+
 - **REST API design** - the child resource URL embeds the
   parent ID: `/orders/{orderId}/items` mirrors the FK
   `order_id` in the items table
@@ -632,6 +641,7 @@ that don't need all children loaded simultaneously.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **DRAW** the database schema from the entity code and
    correctly identify which table has the FK column
 2. **FIX** a bug where `product.category_id` is null
@@ -650,9 +660,10 @@ that don't need all children loaded simultaneously.
 
 **Q1: Which side of @OneToMany/@ManyToOne holds the FK
 column, and why does it matter for persistence?**
-*Why they ask:* Core JPA knowledge; tests whether the
+_Why they ask:_ Core JPA knowledge; tests whether the
 candidate understands the owning/inverse distinction.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `@ManyToOne` (child) holds the FK column (owning side)
 - Changes to the `@OneToMany` (inverse) field are IGNORED
   by JPA - only `@ManyToOne` writes the FK to the database
@@ -663,9 +674,10 @@ candidate understands the owning/inverse distinction.
 
 **Q2: Why is the default fetch type on @ManyToOne dangerous
 and what should you always do?**
-*Why they ask:* Tests awareness of the most common JPA
+_Why they ask:_ Tests awareness of the most common JPA
 performance anti-pattern in production code.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `@ManyToOne` default is EAGER - every `em.find(OrderItem)`
   also loads the parent Order via JOIN
 - In a list query (`SELECT i FROM OrderItem i`), EAGER
@@ -678,9 +690,10 @@ performance anti-pattern in production code.
 
 **Q3: What happens when you use JOIN FETCH on a @OneToMany
 collection without DISTINCT?**
-*Why they ask:* Tests understanding of SQL JOIN semantics
+_Why they ask:_ Tests understanding of SQL JOIN semantics
 vs JPA result list expectations.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - JOIN FETCH produces a SQL JOIN: ORDER rows are repeated
   for each ORDER_ITEM row (Cartesian product)
 - 5 orders with 3 items each = 15 result rows

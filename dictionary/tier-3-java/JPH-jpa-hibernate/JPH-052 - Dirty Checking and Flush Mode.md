@@ -37,11 +37,11 @@ large sessions: use `@Transactional(readOnly=true)` for
 reads (disables dirty checking), or call `em.clear()` in
 batch processing to drop managed entities from session.
 
-| #052 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Entity Basics, EntityManager, JPA Lifecycle, @Transactional, First Level Cache | |
-| **Used by:** | Batch Processing, JPA at Scale, Hibernate Internals | |
-| **Related:** | Session and Persistence Context, First Level Cache, Optimistic Locking, Hibernate Statistics | |
+| #052            | Category: JPA & Hibernate                                                                    | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Entity Basics, EntityManager, JPA Lifecycle, @Transactional, First Level Cache               |                 |
+| **Used by:**    | Batch Processing, JPA at Scale, Hibernate Internals                                          |                 |
+| **Related:**    | Session and Persistence Context, First Level Cache, Optimistic Locking, Hibernate Statistics |                 |
 
 ---
 
@@ -71,6 +71,7 @@ public void giveDiscount(Long productId) {
 ```
 
 **THE PERFORMANCE COST:**
+
 ```java
 @Transactional
 public void processReport() {
@@ -107,14 +108,15 @@ context changes to the database (still within transaction).
 
 **FlushModeType options:**
 
-| Mode | When auto-flush triggers |
-|---|---|
+| Mode             | When auto-flush triggers                                                                     |
+| ---------------- | -------------------------------------------------------------------------------------------- |
 | `AUTO` (default) | Before JPQL/HQL queries that might be affected by pending changes; before transaction commit |
-| `COMMIT` | Only before transaction commit |
-| `ALWAYS` | Before every query execution |
-| `MANUAL` | Never automatic; only when `em.flush()` explicitly called |
+| `COMMIT`         | Only before transaction commit                                                               |
+| `ALWAYS`         | Before every query execution                                                                 |
+| `MANUAL`         | Never automatic; only when `em.flush()` explicitly called                                    |
 
 **Key distinction:**
+
 - **Flush** = write to DB (within transaction, still reversible)
 - **Commit** = make DB changes permanent (ends transaction)
 
@@ -127,6 +129,7 @@ flush to the snapshot taken at load; changed entities
 generate UPDATE SQL automatically without calling `save()`.
 
 **One analogy:**
+
 > Dirty checking is like a hotel room inspection system.
 > When you check in (load entity), the hotel takes a
 > photo of the room (snapshot). When you check out (flush),
@@ -252,6 +255,7 @@ automatically writes those changes to the DB at flush time.
 No `save()` call needed to update an entity.
 
 **Level 2 - How flush works (junior developer):**
+
 ```java
 // Three ways to trigger a flush:
 // 1. Transaction commit (always)
@@ -268,6 +272,7 @@ em.flush();
 ```
 
 **Level 3 - Flush mode trade-offs (mid-level engineer):**
+
 ```java
 // For read-only operations: disable dirty checking
 @Transactional(readOnly = true)
@@ -448,21 +453,21 @@ public void updateAndSearch(Long id, String keyword) {
 
 ### ⚖️ Comparison Table
 
-| FlushMode | Auto-flush when? | Risk | Use case |
-|---|---|---|---|
-| `AUTO` | Before JPQL query on dirty type; before commit | Unexpected flush mid-transaction | Default; most cases |
-| `COMMIT` | Only before commit | Queries may not see pending changes | Batch reads; data import |
-| `ALWAYS` | Before every query | Too many flushes; performance risk | Legacy/test scenarios |
-| `MANUAL` | Never | Changes lost if `em.flush()` forgotten | Expert batch processing |
+| FlushMode | Auto-flush when?                               | Risk                                   | Use case                 |
+| --------- | ---------------------------------------------- | -------------------------------------- | ------------------------ |
+| `AUTO`    | Before JPQL query on dirty type; before commit | Unexpected flush mid-transaction       | Default; most cases      |
+| `COMMIT`  | Only before commit                             | Queries may not see pending changes    | Batch reads; data import |
+| `ALWAYS`  | Before every query                             | Too many flushes; performance risk     | Legacy/test scenarios    |
+| `MANUAL`  | Never                                          | Changes lost if `em.flush()` forgotten | Expert batch processing  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "You must call save() to update an entity" | NO - for MANAGED (loaded via EntityManager) entities, dirty checking generates the UPDATE automatically at flush. `save()` in Spring Data is for NEW entities (triggers INSERT) or for DETACHED entities (triggers merge + UPDATE). Calling `save()` on an already-managed entity is a no-op that returns the same entity. |
-| "`@Transactional(readOnly=true)` prevents writes" | readOnly=true is a HINT to Hibernate to skip snapshot/dirty-check overhead. It does NOT prevent you from calling `save()` or `persist()`. Hibernate may still emit writes in readOnly mode (it's a hint, not an enforcement). For strict read-only: use JDBC directly or detach entities. |
+| Misconception                                     | Reality                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "You must call save() to update an entity"        | NO - for MANAGED (loaded via EntityManager) entities, dirty checking generates the UPDATE automatically at flush. `save()` in Spring Data is for NEW entities (triggers INSERT) or for DETACHED entities (triggers merge + UPDATE). Calling `save()` on an already-managed entity is a no-op that returns the same entity.                                  |
+| "`@Transactional(readOnly=true)` prevents writes" | readOnly=true is a HINT to Hibernate to skip snapshot/dirty-check overhead. It does NOT prevent you from calling `save()` or `persist()`. Hibernate may still emit writes in readOnly mode (it's a hint, not an enforcement). For strict read-only: use JDBC directly or detach entities.                                                                   |
 | "FlushModeType.COMMIT is always faster than AUTO" | Not necessarily. With `COMMIT` mode, all dirty entities accumulate in the session and are flushed at commit. For long transactions with many entity changes: one large flush at commit vs many small flushes during execution. Large batch flush may cause: large INSERT/UPDATE batches, longer lock hold time, more undo log space. AUTO spreads the load. |
 
 ---
@@ -478,6 +483,7 @@ is causing UPDATE statements in the transaction log.
 (perhaps by a downstream service or mapper that called
 a setter), and dirty checking detected the change.
 **Diagnosis:**
+
 ```java
 // Enable SQL log to catch unexpected UPDATEs:
 logging.level.org.hibernate.SQL=DEBUG
@@ -501,6 +507,7 @@ public class UpdateTracer
     }
 }
 ```
+
 **Fix:** Add `@Transactional(readOnly=true)` to read
 methods; audit mappers/utilities that may call setters
 on loaded entities.
@@ -510,12 +517,14 @@ on loaded entities.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-033 - First Level Cache]] - dirty checking works
   on entities in the first-level cache (persistence context)
 - [[JPH-011 - Entity Lifecycle]] - managed state is
   required for dirty checking; detached entities are not checked
 
 **Builds On This (learn these next):**
+
 - [[JPH-045 - Batch Processing]] - flush+clear pattern
   for batch: flush every N entities, then clear() to prevent
   accumulated dirty check overhead
@@ -523,6 +532,7 @@ on loaded entities.
   mechanism; dirty detection implementation details
 
 **Related:**
+
 - [[JPH-038 - Optimistic Locking]] - `@Version` check is
   part of the flush UPDATE: `WHERE version = ?`
 - [[JPH-046 - Hibernate Statistics]] - `flushCount` and
@@ -557,6 +567,7 @@ on loaded entities.
 ```
 
 **If you remember only 3 things:**
+
 1. Dirty checking compares entity snapshot (taken at load)
    to current state at flush; changed fields -> auto UPDATE (no `save()`)
 2. `@Transactional(readOnly=true)` disables dirty checking -
@@ -617,6 +628,7 @@ and dirty checking becomes quadratic as batch size increases.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** why entity updates work without `save()` for
    managed entities (dirty checking snapshots)
 2. **DESCRIBE** when `FlushModeType.AUTO` triggers an early
@@ -634,8 +646,9 @@ and dirty checking becomes quadratic as batch size increases.
 
 **Q1: Explain how Hibernate's dirty checking works. When
 does an entity get an automatic UPDATE in the database?**
-*Why they ask:* Tests deep understanding of JPA lifecycle.
-*Strong answer includes:*
+_Why they ask:_ Tests deep understanding of JPA lifecycle.
+_Strong answer includes:_
+
 - At `em.find()` / `repo.findById()`: entity loaded + snapshot (hydrated state) stored
 - Mutations via setters: entity state changes; snapshot unchanged -> "dirty"
 - At flush (pre-commit or pre-JPQL query in AUTO mode):
@@ -648,11 +661,12 @@ does an entity get an automatic UPDATE in the database?**
 **Q2: A batch processing job loads 100,000 entities,
 updates each, and commits. It runs out of memory at 50,000.
 What is wrong and how do you fix it?**
-*Why they ask:* Tests production batch processing knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests production batch processing knowledge.
+_Strong answer includes:_
+
 - Root cause: all 100,000 entities accumulate in first-level
   cache (session) with their snapshots. Each entity + snapshot
-  = ~2x memory per entity. 100K entities * 2x memory = OOM.
+  = ~2x memory per entity. 100K entities \* 2x memory = OOM.
 - Additionally: dirty check at commit = 100K entity comparisons
 - Fix: flush+clear every N entities (N=50-100):
   ```java

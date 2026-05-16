@@ -28,11 +28,11 @@ permalink: /jpa-hibernate/id-generatedvalue/
 entity; `@GeneratedValue` tells the JPA provider how to
 automatically assign a value to it on insert.
 
-| #007 | Category: JPA & Hibernate | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity | |
-| **Used by:** | EntityManager, Entity Lifecycle, Optimistic Locking (@Version) | |
-| **Related:** | @Table and @Column, Inheritance Mapping Strategies | |
+| #007            | Category: JPA & Hibernate                                      | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity                                                        |                 |
+| **Used by:**    | EntityManager, Entity Lifecycle, Optimistic Locking (@Version) |                 |
+| **Related:**    | @Table and @Column, Inheritance Mapping Strategies             |                 |
 
 ---
 
@@ -85,10 +85,11 @@ the `@Id` value manually before calling `em.persist()`.
 
 ### ⏱️ Understand It in 30 Seconds
 
-**One line:** `@Id` says "this is the primary key"; 
+**One line:** `@Id` says "this is the primary key";
 `@GeneratedValue` says "let the database generate its value."
 
 **One analogy:**
+
 > `@Id` is like a social security number field on a form.
 > `@GeneratedValue` is like the government automating SSN
 > assignment - you submit the form and they fill in the
@@ -109,6 +110,7 @@ determines whether bulk inserts scale.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Every `@Entity` must have exactly one `@Id` (or composite
    key via `@IdClass` / `@EmbeddedId`)
 2. The `@Id` value uniquely identifies an entity row within
@@ -124,6 +126,7 @@ determines whether bulk inserts scale.
 **DERIVED DESIGN:**
 The four generation strategies reflect the four underlying
 database mechanisms:
+
 - `IDENTITY`: database `AUTO_INCREMENT` / `SERIAL` column;
   the database assigns the value on INSERT
 - `SEQUENCE`: database sequence object; Hibernate calls
@@ -134,12 +137,12 @@ database mechanisms:
 
 **THE TRADE-OFFS:**
 
-| Strategy | Batch support | DB dependency | Globally unique |
-|---|---|---|---|
-| `IDENTITY` | No | Specific to DB | No (per-table) |
-| `SEQUENCE` | Yes (allocationSize) | Requires sequences | No (per-sequence) |
-| `TABLE` | Yes | Database-agnostic | No |
-| `UUID` (manual) | Yes | None | Yes |
+| Strategy        | Batch support        | DB dependency      | Globally unique   |
+| --------------- | -------------------- | ------------------ | ----------------- |
+| `IDENTITY`      | No                   | Specific to DB     | No (per-table)    |
+| `SEQUENCE`      | Yes (allocationSize) | Requires sequences | No (per-sequence) |
+| `TABLE`         | Yes                  | Database-agnostic  | No                |
+| `UUID` (manual) | Yes                  | None               | Yes               |
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** Every stored entity needs a unique identifier -
@@ -250,6 +253,7 @@ high-throughput financial systems, `SEQUENCE` with a large
 `allocationSize` (500-1000) is the standard pattern.
 
 **Expert Thinking Cues:**
+
 - Ask: "Does this entity need batch insert support?"
   If yes, `IDENTITY` is wrong; use `SEQUENCE`
 - Watch: gaps in `SEQUENCE` values are normal due to
@@ -294,6 +298,7 @@ high-throughput financial systems, `SEQUENCE` with a large
 
 **Key Hibernate Detail - `isNew()` detection:**
 `SimpleJpaRepository.save()` calls `entityInformation.isNew(entity)`:
+
 - If `@Id` is null/0 -> `persist()` (INSERT)
 - If `@Id` is non-null/non-0 -> `merge()` (SELECT + UPDATE)
 
@@ -466,12 +471,12 @@ public class OrderItem {
 
 ### ⚖️ Comparison Table
 
-| Strategy | DB Mechanism | Batch Insert | Gaps | Global Unique | Use Case |
-|---|---|---|---|---|---|
-| **IDENTITY** | AUTO_INCREMENT | No | Possible | No | Simple apps, MySQL default |
-| SEQUENCE | DB sequence | Yes | Normal | No | High-throughput, PostgreSQL |
-| TABLE | Sequence table | Yes | Normal | No | DB without sequences |
-| UUID (manual) | Java UUID | Yes | N/A | Yes | Distributed, microservices |
+| Strategy      | DB Mechanism   | Batch Insert | Gaps     | Global Unique | Use Case                    |
+| ------------- | -------------- | ------------ | -------- | ------------- | --------------------------- |
+| **IDENTITY**  | AUTO_INCREMENT | No           | Possible | No            | Simple apps, MySQL default  |
+| SEQUENCE      | DB sequence    | Yes          | Normal   | No            | High-throughput, PostgreSQL |
+| TABLE         | Sequence table | Yes          | Normal   | No            | DB without sequences        |
+| UUID (manual) | Java UUID      | Yes          | N/A      | Yes           | Distributed, microservices  |
 
 **How to choose:**
 Default to `IDENTITY` for simple Spring Boot applications
@@ -490,13 +495,13 @@ Database has no sequence support? - TABLE (last resort)
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "IDENTITY is always the best default" | IDENTITY is simplest but disables Hibernate batch insert. For bulk operations, SEQUENCE with a tuned `allocationSize` can be 5-10x faster. |
-| "UUID primary keys have no downsides" | UUID v4 (random) causes B-tree index fragmentation on insert, leading to page splits and slower INSERT/SELECT performance at scale. UUID v7 (time-ordered) solves this. UUID columns are 16 bytes vs 8 for Long, doubling all FK storage. |
-| "SEQUENCE values are always gapless" | Sequences skip values on transaction rollback and advance by `allocationSize` per allocation. Never use sequence values as invoice numbers or order numbers requiring gapless sequences. |
-| "You can change an entity's @Id after persist" | Changing a managed entity's `@Id` value is undefined behaviour in the JPA spec. Hibernate may or may not detect the change, leading to duplicate-key errors or silent data corruption. |
-| "@GeneratedValue is required with @Id" | `@GeneratedValue` is optional. Without it, you assign the ID value manually before `em.persist()`. This is valid for business keys (e.g. ISBN, tax number) that are known before insert. |
+| Misconception                                  | Reality                                                                                                                                                                                                                                   |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "IDENTITY is always the best default"          | IDENTITY is simplest but disables Hibernate batch insert. For bulk operations, SEQUENCE with a tuned `allocationSize` can be 5-10x faster.                                                                                                |
+| "UUID primary keys have no downsides"          | UUID v4 (random) causes B-tree index fragmentation on insert, leading to page splits and slower INSERT/SELECT performance at scale. UUID v7 (time-ordered) solves this. UUID columns are 16 bytes vs 8 for Long, doubling all FK storage. |
+| "SEQUENCE values are always gapless"           | Sequences skip values on transaction rollback and advance by `allocationSize` per allocation. Never use sequence values as invoice numbers or order numbers requiring gapless sequences.                                                  |
+| "You can change an entity's @Id after persist" | Changing a managed entity's `@Id` value is undefined behaviour in the JPA spec. Hibernate may or may not detect the change, leading to duplicate-key errors or silent data corruption.                                                    |
+| "@GeneratedValue is required with @Id"         | `@GeneratedValue` is optional. Without it, you assign the ID value manually before `em.persist()`. This is valid for business keys (e.g. ISBN, tax number) that are known before insert.                                                  |
 
 ---
 
@@ -609,10 +614,12 @@ rationale.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-006 - @Entity]] - `@Id` is always required on
   an `@Entity` class; cannot exist without it
 
 **Builds On This (learn these next):**
+
 - [[JPH-008 - @Table and @Column]] - customising the column
   that `@Id` maps to
 - [[JPH-011 - EntityManager]] - uses the `@Id` value for
@@ -623,6 +630,7 @@ rationale.
   alongside `@Id` to detect concurrent modifications
 
 **Alternatives / Comparisons:**
+
 - [[JPH-040 - Inheritance Mapping Strategies (SINGLE_TABLE, JOINED, TABLE_PER_CLASS)]] -
   how `@Id` propagates through inheritance hierarchies
 
@@ -661,13 +669,14 @@ rationale.
 ```
 
 **If you remember only 3 things:**
+
 1. `IDENTITY` disables Hibernate batch inserts - use
    `SEQUENCE` with `allocationSize` for bulk workloads
 2. `@GeneratedValue` is optional - omit it when the ID
    is a natural business key known before insert
 3. UUID IDs must implement `Persistable` to override
    `isNew()`, otherwise Spring Data calls `merge()` (SELECT
-   + update) instead of `persist()` for new entities
+   - update) instead of `persist()` for new entities
 
 **Interview one-liner:** `@Id` marks the primary key field;
 `@GeneratedValue` configures the automatic assignment strategy.
@@ -690,6 +699,7 @@ rate, distribution of insert sources, and downstream
 query patterns.
 
 **Where else this pattern appears:**
+
 - **Distributed databases (Cassandra, DynamoDB)** - partition
   keys are manually assigned UUIDs or composite keys; no
   auto-increment equivalent because coordination is impossible
@@ -702,6 +712,7 @@ query patterns.
   trade-offs as JPA ID strategies
 
 **Industry applications:**
+
 - E-commerce order processing: `SEQUENCE` strategy with
   `allocationSize=100` enables batching 10,000+ orders/minute
   during flash sales without database saturation
@@ -731,6 +742,7 @@ issues in production PostgreSQL systems.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** why `GenerationType.IDENTITY` disables
    Hibernate batch inserts, tracing the mechanism from
    ID assignment timing through JDBC batch requirements
@@ -761,9 +773,9 @@ At 1000 inserts/second, the sequence is called 20 times/second.
 What happens if the sequence call fails (database unreachable
 for 100ms)? How many entity inserts fail, and what does
 Hibernate do with the partially allocated ID block?
-*Hint: Consider what happens to in-memory ID allocations
+_Hint: Consider what happens to in-memory ID allocations
 when the transaction rolls back, and whether Hibernate
-reuses the allocated IDs after a failure.*
+reuses the allocated IDs after a failure._
 
 **Q2 (TYPE C - Design Trade-off):** UUID v4 (random) causes
 index fragmentation at scale; UUID v7 (time-ordered) solves
@@ -772,9 +784,9 @@ ordered but requires a database sequence object. How would
 you choose between UUID v7 and SEQUENCE for the primary key
 of a high-throughput events table in a distributed system
 where events are written from 10 service instances?
-*Hint: Consider database index page fill factor, the cost
+_Hint: Consider database index page fill factor, the cost
 of a distributed sequence lock vs. local UUID generation,
-and what happens during a database failover for each strategy.*
+and what happens during a database failover for each strategy._
 
 **Q3 (TYPE G - Hands-On):** Create a benchmark Spring Boot
 test that inserts 10,000 `Order` entities using three
@@ -783,10 +795,10 @@ strategies: `IDENTITY`, `SEQUENCE(allocationSize=50)`, and
 and sequence call count for each. What configuration is
 required to enable JDBC batching, and what `application.properties`
 settings interact with the ID strategy?
-*Hint: `hibernate.jdbc.batch_size`, `hibernate.order_inserts`,
+_Hint: `hibernate.jdbc.batch_size`, `hibernate.order_inserts`,
 `hibernate.generate_statistics`, and the `@SequenceGenerator`
 `allocationSize` all interact. Use `Statistics.getPrepareStatementCount()`
-to verify actual query counts.*
+to verify actual query counts._
 
 ---
 
@@ -795,10 +807,11 @@ to verify actual query counts.*
 **Q1: What is the difference between
 `GenerationType.IDENTITY` and `GenerationType.SEQUENCE`,
 and when would you choose each?**
-*Why they ask:* Tests performance awareness - a common
+_Why they ask:_ Tests performance awareness - a common
 interview distinction between experienced and inexperienced
 JPA developers.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `IDENTITY`: DB assigns ID via AUTO_INCREMENT after INSERT;
   Hibernate cannot batch because it does not know the ID
   before inserting
@@ -811,9 +824,10 @@ JPA developers.
 **Q2: A developer reports that `hibernate.jdbc.batch_size=50`
 has no effect - each insert is still individual. What is
 the most likely cause and fix?**
-*Why they ask:* Tests knowledge of a real production gotcha
+_Why they ask:_ Tests knowledge of a real production gotcha
 that trips up most developers the first time.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Most likely cause: `GenerationType.IDENTITY` is used;
   it disables batching because Hibernate cannot reorder
   inserts without knowing the IDs first
@@ -825,9 +839,10 @@ that trips up most developers the first time.
 
 **Q3: What problems arise when using UUID as a primary
 key, and how do you mitigate them?**
-*Why they ask:* Tests depth of UUID knowledge beyond "it's
+_Why they ask:_ Tests depth of UUID knowledge beyond "it's
 globally unique" - a senior-level distinction.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - UUID v4 (random): B-tree index fragmentation on insert
   (random values go to random index pages, causing constant
   page splits); 2-3x slower inserts vs. sequential keys

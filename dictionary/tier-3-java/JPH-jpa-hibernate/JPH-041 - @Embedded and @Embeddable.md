@@ -34,11 +34,11 @@ object is null, all its columns are stored as NULL. Use
 `@AttributeOverride` to rename columns when embedding the
 same class multiple times.
 
-| #041 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Id, @Table/@Column, EntityManager, Inheritance Mapping | |
-| **Used by:** | @ElementCollection, @Converter, JPA at Scale, Spring Data JPA Architecture | |
-| **Related:** | Inheritance Mapping, @ElementCollection, @Converter | |
+| #041            | Category: JPA & Hibernate                                                  | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Id, @Table/@Column, EntityManager, Inheritance Mapping           |                 |
+| **Used by:**    | @ElementCollection, @Converter, JPA at Scale, Spring Data JPA Architecture |                 |
+| **Related:**    | Inheritance Mapping, @ElementCollection, @Converter                        |                 |
 
 ---
 
@@ -113,6 +113,7 @@ public class Customer {
 
 **@Embeddable** marks a class as an embeddable value type.
 An embeddable class:
+
 - Has NO `@Id` field (it has no independent identity)
 - Is stored as columns in the OWNING entity's table (no separate table)
 - Can be reused in multiple entities via `@Embedded`
@@ -140,6 +141,7 @@ a Java value object - the columns stay in the parent
 table, but the Java code has structure and reusability.
 
 **One analogy:**
+
 > A database row for a customer has 20 columns: name,
 > 4 address columns, 4 phone columns, etc. In Java,
 > instead of 20 flat fields on the Customer class, you
@@ -275,6 +277,7 @@ the same database table. Better Java code organization
 without changing the database structure.
 
 **Level 2 - How to use it (junior developer):**
+
 1. Create a class with `@Embeddable` and the grouped fields
 2. Add an `@Embedded` field in your entity pointing to the
    embeddable class
@@ -480,22 +483,22 @@ List<Customer> customers = em.createQuery(
 
 ### ⚖️ Comparison Table
 
-| Approach | Separate Table? | Identity? | Reusable? | NULL handling | Best for |
-|---|---|---|---|---|---|
-| `@Embeddable` | No | No (@Id) | Yes (with @AttributeOverride) | All columns NULL | Value objects, grouped fields |
-| `@OneToOne` | Yes | Yes | Yes | FK is NULL | Complex owned entities with own lifecycle |
-| Flat fields | No | N/A | No | Per-field NULL | Simple, non-reused column groups |
-| `@MappedSuperclass` | No | Via subclass | Via inheritance | Per-field | Shared columns across entities |
+| Approach            | Separate Table? | Identity?    | Reusable?                     | NULL handling    | Best for                                  |
+| ------------------- | --------------- | ------------ | ----------------------------- | ---------------- | ----------------------------------------- |
+| `@Embeddable`       | No              | No (@Id)     | Yes (with @AttributeOverride) | All columns NULL | Value objects, grouped fields             |
+| `@OneToOne`         | Yes             | Yes          | Yes                           | FK is NULL       | Complex owned entities with own lifecycle |
+| Flat fields         | No              | N/A          | No                            | Per-field NULL   | Simple, non-reused column groups          |
+| `@MappedSuperclass` | No              | Via subclass | Via inheritance               | Per-field        | Shared columns across entities            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "@Embeddable creates a separate table" | `@Embeddable` NEVER creates its own table. Its fields are always stored in the owning entity's table as regular columns. For a separate table with its own primary key, use `@Entity` with `@OneToOne`. |
-| "I can use @OneToMany inside an @Embeddable" | `@OneToMany` is NOT supported inside `@Embeddable` directly. Use `@ElementCollection` with an `@Embeddable` type as the element for collection-of-value-objects scenarios (see JPH-042). |
-| "Embeddable objects need an @Id field" | Embeddables explicitly MUST NOT have `@Id`. They derive identity from the owning entity. Adding `@Id` to an `@Embeddable` class will cause a mapping error. |
+| Misconception                                | Reality                                                                                                                                                                                                 |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "@Embeddable creates a separate table"       | `@Embeddable` NEVER creates its own table. Its fields are always stored in the owning entity's table as regular columns. For a separate table with its own primary key, use `@Entity` with `@OneToOne`. |
+| "I can use @OneToMany inside an @Embeddable" | `@OneToMany` is NOT supported inside `@Embeddable` directly. Use `@ElementCollection` with an `@Embeddable` type as the element for collection-of-value-objects scenarios (see JPH-042).                |
+| "Embeddable objects need an @Id field"       | Embeddables explicitly MUST NOT have `@Id`. They derive identity from the owning entity. Adding `@Id` to an `@Embeddable` class will cause a mapping error.                                             |
 
 ---
 
@@ -510,6 +513,7 @@ after loading an entity from the database.
 in the database, Hibernate returns `null` for the embeddable
 reference (not an empty Address with all null fields).
 **Fix:**
+
 1. Use null checks: `Optional.ofNullable(c.getBillingAddress())`
 2. Initialize in the entity: `private Address billingAddress = new Address()`
    (empty object with null fields; Hibernate will save nulls
@@ -523,15 +527,18 @@ reference (not an empty Address with all null fields).
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-006 - @Entity]] - embeddable belongs to an entity
 - [[JPH-040 - Inheritance Mapping]] - @MappedSuperclass
   is a similar but different concept
 
 **Builds On This (learn these next):**
+
 - [[JPH-042 - @ElementCollection]] - extends embeddable
   to support collections of value objects
 
 **Related:**
+
 - [[JPH-051 - @Converter]] - attribute converters can
   convert Java types to/from DB types; alternative for
   simple type mappings
@@ -566,6 +573,7 @@ reference (not an empty Address with all null fields).
 ```
 
 **If you remember only 3 things:**
+
 1. `@Embeddable` stores fields in the SAME table as the
    owning entity - no separate table, no JOIN required
 2. All embedded columns NULL in DB means the Java
@@ -599,6 +607,7 @@ encapsulation - Money.add() not scattered in services,
 `new Money(order.getTotalAmount() * rate, order.getCurrency())`.
 
 **Where else this pattern appears:**
+
 - **Kotlin data classes** - natural value objects; JPA
   uses `data class` with protected no-arg constructor
 - **Python dataclasses / NamedTuple** - value objects;
@@ -632,6 +641,7 @@ that would naturally have no such constructor.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **IMPLEMENT** an immutable `Money` value object using
    `@Embeddable` with proper no-arg constructor workaround
 2. **CONFIGURE** `@AttributeOverride` to embed the same
@@ -647,8 +657,9 @@ that would naturally have no such constructor.
 ### 🎯 Interview Deep-Dive
 
 **Q1: What is @Embeddable and how does it differ from @Entity?**
-*Why they ask:* Tests understanding of value types vs entities.
-*Strong answer includes:*
+_Why they ask:_ Tests understanding of value types vs entities.
+_Strong answer includes:_
+
 - `@Embeddable`: value type; no `@Id`; no own table; stored
   in owning entity's table; no independent lifecycle
 - `@Entity`: has `@Id`; has own table; has independent lifecycle
@@ -659,8 +670,9 @@ that would naturally have no such constructor.
 
 **Q2: What happens when an @Embeddable field is set to null
 on an entity?**
-*Why they ask:* Tests operational knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests operational knowledge.
+_Strong answer includes:_
+
 - All columns of the embedded object are set to NULL in the database
 - When loaded: if ALL columns are NULL, Hibernate returns null
   for the embeddable reference (not an empty object)

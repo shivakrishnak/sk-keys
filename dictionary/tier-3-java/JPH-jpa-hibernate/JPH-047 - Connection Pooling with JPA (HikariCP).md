@@ -35,11 +35,11 @@ default 10m), `maxLifetime` (max connection lifetime;
 set slightly below DB server timeout to avoid stale connections).
 Pool exhaustion = `SQLTimeoutException` at scale.
 
-| #047 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | EntityManager, JPA Persistence Unit, JPA Lifecycle, @Transactional, Hibernate Statistics | |
-| **Used by:** | Multi-Tenancy, JPA at Scale, JPA with Multiple Databases | |
-| **Related:** | Pessimistic Locking, Batch Processing, Hibernate Statistics, Multiple Databases | |
+| #047            | Category: JPA & Hibernate                                                                | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | EntityManager, JPA Persistence Unit, JPA Lifecycle, @Transactional, Hibernate Statistics |                 |
+| **Used by:**    | Multi-Tenancy, JPA at Scale, JPA with Multiple Databases                                 |                 |
+| **Related:**    | Pessimistic Locking, Batch Processing, Hibernate Statistics, Multiple Databases          |                 |
 
 ---
 
@@ -50,12 +50,14 @@ Every JDBC operation creates a new TCP connection to the
 database. A TCP connection requires: TCP handshake
 (~1-3ms), TLS handshake (~5-10ms if SSL), authentication
 (~5-10ms). For a request needing 5 queries: 5 connections
-* 15ms overhead = 75ms of pure connection overhead per
-request. At 1,000 req/sec: 1,000 connections/sec to
-the database - which typically has a hard limit of 100-500
-max connections.
+
+- 15ms overhead = 75ms of pure connection overhead per
+  request. At 1,000 req/sec: 1,000 connections/sec to
+  the database - which typically has a hard limit of 100-500
+  max connections.
 
 **WITH HIKARICP:**
+
 - Pool of 10 pre-created connections
 - Request gets an existing connection from pool (< 1ms)
 - Returns connection when transaction commits
@@ -73,18 +75,19 @@ be borrowed by application threads and returned after use.
 
 **Key configuration properties:**
 
-| Property | Default | Description |
-|---|---|---|
-| `maximumPoolSize` | 10 | Max connections in pool (max concurrent DB queries) |
-| `minimumIdle` | equals maximumPoolSize | Minimum idle connections to maintain |
-| `connectionTimeout` | 30000 ms | Max time to wait for a connection from pool |
-| `idleTimeout` | 600000 ms (10min) | Remove idle connections after this time |
-| `maxLifetime` | 1800000 ms (30min) | Max age of a connection before it's retired |
-| `keepaliveTime` | 0 (disabled) | Interval to send keepalive query (e.g., `SELECT 1`) |
-| `validationTimeout` | 5000 ms | Timeout for connection validation (isValid check) |
-| `connectionInitSql` | none | SQL to run when connection is created (e.g., `SET timezone`) |
+| Property            | Default                | Description                                                  |
+| ------------------- | ---------------------- | ------------------------------------------------------------ |
+| `maximumPoolSize`   | 10                     | Max connections in pool (max concurrent DB queries)          |
+| `minimumIdle`       | equals maximumPoolSize | Minimum idle connections to maintain                         |
+| `connectionTimeout` | 30000 ms               | Max time to wait for a connection from pool                  |
+| `idleTimeout`       | 600000 ms (10min)      | Remove idle connections after this time                      |
+| `maxLifetime`       | 1800000 ms (30min)     | Max age of a connection before it's retired                  |
+| `keepaliveTime`     | 0 (disabled)           | Interval to send keepalive query (e.g., `SELECT 1`)          |
+| `validationTimeout` | 5000 ms                | Timeout for connection validation (isValid check)            |
+| `connectionInitSql` | none                   | SQL to run when connection is created (e.g., `SET timezone`) |
 
 **How it works:**
+
 1. At startup: create `minimumIdle` connections
 2. On borrow: return an idle connection immediately (< 1ms)
 3. If no idle connection and pool not full: create new connection
@@ -100,6 +103,7 @@ database connections for reuse, eliminating connection
 setup overhead on every query.
 
 **One analogy:**
+
 > Database connections are like rental cars at an airport.
 > Without pooling: every traveler waits for a new car to
 > be manufactured when they arrive (TCP connection setup).
@@ -220,6 +224,7 @@ the pool (fast) instead of creating a new one (slow).
 After the query, the connection is returned for reuse.
 
 **Level 2 - How to configure it (junior developer):**
+
 ```properties
 spring.datasource.hikari.maximum-pool-size=10
 spring.datasource.hikari.connection-timeout=5000
@@ -238,7 +243,7 @@ enable `keepaliveTime` for long-idle connections.
 **Level 4 - Pool sizing (senior engineer):**
 Formula: `pool_size = (core_count * 2) + effective_spindle_count`
 (HikariCP official recommendation). For AWS RDS `db.t3.medium`
-(2 vCPUs): pool = 2*2 + 1 = 5 per app instance. With 10
+(2 vCPUs): pool = 2\*2 + 1 = 5 per app instance. With 10
 app instances: total 50 DB connections. Check RDS
 `max_connections` parameter: for db.t3.medium, ~85 max.
 50 connections from 10 app instances leaves headroom for
@@ -390,22 +395,22 @@ class HikariConfigTest {
 
 ### ⚖️ Comparison Table
 
-| Pool | Default in Spring Boot | Key features | Best for |
-|---|---|---|---|
-| HikariCP | Yes (Spring Boot 2+) | Fast, minimal footprint, JMX | All Spring Boot apps |
-| DBCP2 (Apache) | No | Battle-tested, more config options | Legacy apps |
-| C3P0 | No | Older, complex config | Legacy apps |
-| Tomcat JDBC | No (was 1.x default) | Tomcat-aware | Embedded Tomcat |
+| Pool           | Default in Spring Boot | Key features                       | Best for             |
+| -------------- | ---------------------- | ---------------------------------- | -------------------- |
+| HikariCP       | Yes (Spring Boot 2+)   | Fast, minimal footprint, JMX       | All Spring Boot apps |
+| DBCP2 (Apache) | No                     | Battle-tested, more config options | Legacy apps          |
+| C3P0           | No                     | Older, complex config              | Legacy apps          |
+| Tomcat JDBC    | No (was 1.x default)   | Tomcat-aware                       | Embedded Tomcat      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Larger pool = better performance" | Counter-intuitively, very large pools reduce throughput. Too many connections cause DB CPU context switching and memory overhead. Pool size should match DB CPU count * 2, not the number of app threads. |
-| "connection-timeout is the DB query timeout" | `connectionTimeout` is how long to WAIT for a connection from the POOL - not how long a query is allowed to run. Set `spring.jpa.properties.hibernate.jdbc.time_out` or `javax.persistence.query.timeout` for query timeouts. |
-| "maxLifetime being large is safe" | If `maxLifetime` is longer than the DB server's connection idle timeout (e.g., MySQL `wait_timeout` default 8 hours), the DB server may close the connection, but HikariCP doesn't know it's dead. Next use: `SocketException: broken pipe`. Set `maxLifetime` < `wait_timeout` by at least 2 minutes. |
+| Misconception                                | Reality                                                                                                                                                                                                                                                                                                |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Larger pool = better performance"           | Counter-intuitively, very large pools reduce throughput. Too many connections cause DB CPU context switching and memory overhead. Pool size should match DB CPU count \* 2, not the number of app threads.                                                                                             |
+| "connection-timeout is the DB query timeout" | `connectionTimeout` is how long to WAIT for a connection from the POOL - not how long a query is allowed to run. Set `spring.jpa.properties.hibernate.jdbc.time_out` or `javax.persistence.query.timeout` for query timeouts.                                                                          |
+| "maxLifetime being large is safe"            | If `maxLifetime` is longer than the DB server's connection idle timeout (e.g., MySQL `wait_timeout` default 8 hours), the DB server may close the connection, but HikariCP doesn't know it's dead. Next use: `SocketException: broken pipe`. Set `maxLifetime` < `wait_timeout` by at least 2 minutes. |
 
 ---
 
@@ -422,6 +427,7 @@ methods holding connections during external HTTP calls,
 (2) long-running queries holding connections, (3) deadlocks
 preventing transaction commit (connection never returned).
 **Diagnosis:**
+
 ```java
 // At runtime:
 HikariPoolMXBean pool = hds.getHikariPoolMXBean();
@@ -433,6 +439,7 @@ log.info("Active: {}, Total: {}",
 // If active = total: pool fully exhausted
 // If waiting > 0: active exhaustion occurring
 ```
+
 **Fix:** (1) Reduce `@Transactional` scope (no external
 calls inside), (2) increase `maximumPoolSize` temporarily,
 (3) set shorter `connectionTimeout` to fail fast with
@@ -443,18 +450,21 @@ clear 503 instead of 30s hang.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-026 - @Transactional]] - transactions determine
   how long connections are held
 - [[JPH-046 - Hibernate Statistics]] - `connectCount`
   metric shows connection acquisition frequency
 
 **Builds On This (learn these next):**
+
 - [[JPH-048 - Multi-Tenancy]] - multi-tenant apps often
   need multiple data sources and connection pools
 - [[JPH-061 - JPA with Multiple Databases]] - routing
   DataSource uses multiple HikariCP pools
 
 **Related:**
+
 - [[JPH-039 - Pessimistic Locking]] - locks held in DB
   hold connections until commit; connection pool interaction
 - [[JPH-045 - Batch Processing]] - batch operations hold
@@ -489,6 +499,7 @@ clear 503 instead of 30s hang.
 ```
 
 **If you remember only 3 things:**
+
 1. `maximumPoolSize = cores * 2`, not "as large as possible" -
    more connections than DB can handle causes CPU contention
 2. `connectionTimeout` is POOL wait time (throw if no free connection),
@@ -523,6 +534,7 @@ thread pools (`ThreadPoolExecutor.corePoolSize`), message
 consumer pools, Redis connection pools, gRPC channel pools.
 
 **Where else this pattern appears:**
+
 - **OkHttp ConnectionPool** - same maxIdleConnections,
   keepAliveDuration for HTTP client pooling
 - **Redis Lettuce/Jedis pool** - maxTotal, maxIdle, maxWaitMillis
@@ -558,6 +570,7 @@ if pool growth latency during load spikes is acceptable.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **CONFIGURE** HikariCP for a production Spring Boot
    app with appropriate `maximumPoolSize`, `connectionTimeout`,
    and `maxLifetime`
@@ -576,8 +589,9 @@ if pool growth latency during load spikes is acceptable.
 
 **Q1: What is the ideal HikariCP pool size for an
 application with 200 concurrent requests?**
-*Why they ask:* Tests understanding of pool sizing.
-*Strong answer includes:*
+_Why they ask:_ Tests understanding of pool sizing.
+_Strong answer includes:_
+
 - NOT 200 (not one connection per thread)
 - Formula: `pool_size = db_cpu_cores * 2`
 - With 8-core DB: pool = 16; 200 requests share 16 connections
@@ -588,8 +602,9 @@ application with 200 concurrent requests?**
 
 **Q2: An application starts getting "Connection is not available"
 errors at peak load. How do you diagnose and fix this?**
-*Why they ask:* Tests production troubleshooting.
-*Strong answer includes:*
+_Why they ask:_ Tests production troubleshooting.
+_Strong answer includes:_
+
 - Diagnosis: check `HikariPoolMXBean.getActiveConnections()` vs `getTotalConnections()`
   - if active = total: pool exhausted
   - check `getThreadsAwaitingConnection()` - should be 0 normally

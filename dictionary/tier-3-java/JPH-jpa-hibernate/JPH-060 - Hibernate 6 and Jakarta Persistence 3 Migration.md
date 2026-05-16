@@ -36,11 +36,11 @@ type system overhaul (`@Type`, `@TypeDef` removed; use `@JavaType`,
 Automated with OpenRewrite. Typical migration: 1-3 days for a
 mid-size Spring Boot 2 app.
 
-| #060 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JPA Overview, Entity Basics, EntityManager, JPQL, Persistence Context, JPA Spec | |
-| **Used by:** | - | |
-| **Related:** | JPA Spec, Hibernate Internals, Converters | |
+| #060            | Category: JPA & Hibernate                                                       | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | JPA Overview, Entity Basics, EntityManager, JPQL, Persistence Context, JPA Spec |                 |
+| **Used by:**    | -                                                                               |                 |
+| **Related:**    | JPA Spec, Hibernate Internals, Converters                                       |                 |
 
 ---
 
@@ -87,20 +87,20 @@ to `jakarta.*`.
 
 **Key versions in the migration path:**
 
-| Spring Boot | JPA spec | Hibernate | Package | Java minimum |
-|---|---|---|---|---|
-| 2.5.x - 2.7.x | JPA 2.2 | 5.6.x | `javax.persistence` | 8 |
-| 3.0.x | Jakarta 3.0 | 6.1.x | `jakarta.persistence` | 17 |
-| 3.1.x | Jakarta 3.1 | 6.2.x | `jakarta.persistence` | 17 |
-| 3.2.x | Jakarta 3.1 | 6.4.x | `jakarta.persistence` | 17 |
+| Spring Boot   | JPA spec    | Hibernate | Package               | Java minimum |
+| ------------- | ----------- | --------- | --------------------- | ------------ |
+| 2.5.x - 2.7.x | JPA 2.2     | 5.6.x     | `javax.persistence`   | 8            |
+| 3.0.x         | Jakarta 3.0 | 6.1.x     | `jakarta.persistence` | 17           |
+| 3.1.x         | Jakarta 3.1 | 6.2.x     | `jakarta.persistence` | 17           |
+| 3.2.x         | Jakarta 3.1 | 6.4.x     | `jakarta.persistence` | 17           |
 
 **Three categories of changes:**
 
-| Category | Scope | Example |
-|---|---|---|
-| Package rename | All `javax.*` imports | `javax.persistence.Entity` -> `jakarta.persistence.Entity` |
-| Hibernate type system | `@Type`, `@TypeDef` APIs | `@Type(type="json")` -> `@JdbcTypeCode(SqlTypes.JSON)` |
-| Query/SQL changes | Some HQL/JPQL changes | Deprecated implicit join syntax removed |
+| Category              | Scope                    | Example                                                    |
+| --------------------- | ------------------------ | ---------------------------------------------------------- |
+| Package rename        | All `javax.*` imports    | `javax.persistence.Entity` -> `jakarta.persistence.Entity` |
+| Hibernate type system | `@Type`, `@TypeDef` APIs | `@Type(type="json")` -> `@JdbcTypeCode(SqlTypes.JSON)`     |
+| Query/SQL changes     | Some HQL/JPQL changes    | Deprecated implicit join syntax removed                    |
 
 ---
 
@@ -110,6 +110,7 @@ to `jakarta.*`.
 Three things break: import packages, `@Type` annotations, some HQL syntax.
 
 **One analogy:**
+
 > This migration is like moving from one city to another with the same
 > job. Your skills (Java, JPA, Hibernate) are identical. But your
 > address changes (`javax` -> `jakarta`), your workplace layout changed
@@ -235,6 +236,7 @@ The import statements change: `javax.persistence.Entity` ->
 the same. Automated tool fixes the imports.
 
 **Level 2 - Dependency changes (junior):**
+
 ```xml
 <!-- pom.xml Spring Boot 2 -> 3 -->
 <parent>
@@ -265,6 +267,7 @@ the same. Automated tool fixes the imports.
 ```
 
 **Level 3 - Type system migration (mid):**
+
 ```java
 // Spring Boot 2 / Hibernate 5: @Type for custom types
 @Entity
@@ -292,6 +295,7 @@ public class Product {
 ```
 
 **Level 4 - Custom UserType migration (senior):**
+
 ```java
 // Hibernate 5 UserType (un-typed, raw):
 public class MoneyUserType implements UserType {
@@ -347,6 +351,7 @@ public class MoneyUserType implements UserType<Money> {
 ```
 
 **Level 5 - OpenRewrite automation (staff):**
+
 ```xml
 <!-- pom.xml: add OpenRewrite plugin for automated migration -->
 <plugin>
@@ -499,26 +504,26 @@ public class Product {
 
 ### ⚖️ Comparison Table
 
-| Feature | Hibernate 5 / Spring Boot 2 | Hibernate 6 / Spring Boot 3 |
-|---|---|---|
-| Package | `javax.persistence` | `jakarta.persistence` |
-| Java minimum | 8 | 17 |
-| Custom types | `@Type(type="...")` + `@TypeDef` | `@JdbcTypeCode(SqlTypes.X)` |
+| Feature      | Hibernate 5 / Spring Boot 2            | Hibernate 6 / Spring Boot 3                 |
+| ------------ | -------------------------------------- | ------------------------------------------- |
+| Package      | `javax.persistence`                    | `jakarta.persistence`                       |
+| Java minimum | 8                                      | 17                                          |
+| Custom types | `@Type(type="...")` + `@TypeDef`       | `@JdbcTypeCode(SqlTypes.X)`                 |
 | JSON support | Via `hypersistence-utils-hibernate-55` | Native + `hypersistence-utils-hibernate-60` |
-| UUID support | `@Type(type="uuid-char")` | Native `UUID` type |
-| Query engine | Antlr2-based HQL AST | SQM (Antlr4-based) |
-| UserType API | `UserType` (untyped) | `UserType<T>` (typed) |
-| PostgreSQL | `@Type(type="array")` for arrays | `@JdbcTypeCode(SqlTypes.ARRAY)` |
+| UUID support | `@Type(type="uuid-char")`              | Native `UUID` type                          |
+| Query engine | Antlr2-based HQL AST                   | SQM (Antlr4-based)                          |
+| UserType API | `UserType` (untyped)                   | `UserType<T>` (typed)                       |
+| PostgreSQL   | `@Type(type="array")` for arrays       | `@JdbcTypeCode(SqlTypes.ARRAY)`             |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "The migration is just changing import statements" | Import rename is the largest change by volume, but the Hibernate 6 type system changes and some HQL changes require manual attention. A project using `@Type(type="json")` extensively will need every such annotation changed with correct semantics, not just imports. |
-| "OpenRewrite handles everything" | OpenRewrite handles ~90% (imports, config property renames, some boot-specific changes). The Hibernate 5 `@Type` -> `@JdbcTypeCode` migration requires per-case judgment (what SQL type to use, how UUID should be stored). Custom `UserType` implementations require manual rewrite. |
-| "Hibernate 6 changes lazy loading behavior" | Partially true - Hibernate 6 changed how some associations are loaded (particularly for batching). In some cases, queries that loaded correctly in H5 may produce different SQL in H6. This should be validated by comparing SQL logs before and after migration. |
+| Misconception                                      | Reality                                                                                                                                                                                                                                                                               |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The migration is just changing import statements" | Import rename is the largest change by volume, but the Hibernate 6 type system changes and some HQL changes require manual attention. A project using `@Type(type="json")` extensively will need every such annotation changed with correct semantics, not just imports.              |
+| "OpenRewrite handles everything"                   | OpenRewrite handles ~90% (imports, config property renames, some boot-specific changes). The Hibernate 5 `@Type` -> `@JdbcTypeCode` migration requires per-case judgment (what SQL type to use, how UUID should be stored). Custom `UserType` implementations require manual rewrite. |
+| "Hibernate 6 changes lazy loading behavior"        | Partially true - Hibernate 6 changed how some associations are loaded (particularly for batching). In some cases, queries that loaded correctly in H5 may produce different SQL in H6. This should be validated by comparing SQL logs before and after migration.                     |
 
 ---
 
@@ -537,11 +542,13 @@ and the Java `Map`. Additionally: the Jackson ObjectMapper used
 by Hibernate's JSON type handling may not be able to deserialize
 to the target generic type (e.g., `Map<String, CustomObject>`).
 **Diagnosis:**
+
 ```sql
 -- Verify data exists in DB:
 SELECT id, attributes FROM product WHERE id=1;
 -- Check columnDefinition matches actual DB type
 ```
+
 ```java
 // Fix: explicit column definition:
 @JdbcTypeCode(SqlTypes.JSON)
@@ -559,16 +566,19 @@ private Map<String, Object> attributes;
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-057 - JPA Specification]] - the javax vs jakarta
   package naming and version history context
 - [[JPH-051 - Converter and AttributeConverter]] - alternative
   to @Type annotations for custom type mapping
 
 **Builds On This (learn these next):**
+
 - [[JPH-058 - Hibernate Internals]] - new internals in Hibernate 6
   (SQM query engine details)
 
 **Related:**
+
 - [[JPH-001 - JPA Overview]] - JPA fundamentals unchanged across versions
 
 ---
@@ -601,6 +611,7 @@ private Map<String, Object> attributes;
 ```
 
 **If you remember only 3 things:**
+
 1. Package: `javax.persistence.*` (Spring Boot 2) -> `jakarta.persistence.*` (Spring Boot 3); automated
 2. Type system: `@Type(type="json")` -> `@JdbcTypeCode(SqlTypes.JSON)` (manual); `@TypeDef` removed
 3. Use OpenRewrite (`mvn rewrite:run`) to automate ~90%; manually fix custom types and UserType classes
@@ -655,6 +666,7 @@ how deeply breaking a future API cleanup must be.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **LIST** the three categories of breaking changes in
    Spring Boot 2 -> 3 migration (imports, type system, HQL)
 2. **FIX** a `@Type(type="json")` annotation for Spring Boot 3
@@ -671,9 +683,10 @@ how deeply breaking a future API cleanup must be.
 **Q1: Your team needs to upgrade from Spring Boot 2.7 to
 Spring Boot 3.2. What is your migration plan and what
 are the main risks?**
-*Why they ask:* Tests migration planning and knowledge of actual
+_Why they ask:_ Tests migration planning and knowledge of actual
 breaking changes.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Pre-requisite: upgrade to Java 17 FIRST (separate PR, validate)
 - Phase 1: run OpenRewrite (`mvn rewrite:run`) to automate ~90% of changes
   (import renames, property renames, some annotation migrations)
@@ -691,8 +704,9 @@ breaking changes.
 **Q2: A colleague updated the Spring Boot version to 3.0 but
 all entity fields annotated with `@Type(type="json")` are
 now returning null. How would you diagnose and fix this?**
-*Why they ask:* Tests practical H5->H6 migration knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests practical H5->H6 migration knowledge.
+_Strong answer includes:_
+
 - Root cause: `@Type(type="json")` is a Hibernate 5 API, removed in H6
 - Fix: replace with `@JdbcTypeCode(SqlTypes.JSON)`
 - Ensure `@Column(columnDefinition = "jsonb")` is present for PostgreSQL

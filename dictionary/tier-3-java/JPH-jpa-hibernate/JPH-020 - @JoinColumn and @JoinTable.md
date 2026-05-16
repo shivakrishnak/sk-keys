@@ -31,11 +31,11 @@ and FK column names for `@ManyToMany` and unidirectional
 `@OneToMany`. Without them, JPA generates column/table
 names that often conflict with existing schema conventions.
 
-| #020 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Table/@Column, @OneToOne, @OneToMany/@ManyToOne, @ManyToMany | |
-| **Used by:** | FetchType, CascadeType, @EntityGraph, Inheritance Mapping | |
-| **Related:** | @Embedded and @Embeddable | |
+| #020            | Category: JPA & Hibernate                                              | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Table/@Column, @OneToOne, @OneToMany/@ManyToOne, @ManyToMany |                 |
+| **Used by:**    | FetchType, CascadeType, @EntityGraph, Inheritance Mapping              |                 |
+| **Related:**    | @Embedded and @Embeddable                                              |                 |
 
 ---
 
@@ -59,7 +59,7 @@ either schema migration or annotation on every field.
 
 **THE INVENTION MOMENT:**
 `@JoinColumn(name="ord_id")` and
-`@JoinTable(name="STU_CRS", joinColumns=@JoinColumn(name="STU_ID"))` 
+`@JoinTable(name="STU_CRS", joinColumns=@JoinColumn(name="STU_ID"))`
 explicitly declare the FK column and join table names.
 The developer controls the exact SQL generated for every
 association - matching any existing schema without changing
@@ -75,6 +75,7 @@ FK column used to join two tables. It can be applied to
 and `@ManyToMany` (within `@JoinTable`).
 
 Key attributes of `@JoinColumn`:
+
 - `name`: FK column name in the table (default: `fieldName_id`)
 - `referencedColumnName`: PK column being referenced
   (default: the referenced entity's `@Id` column)
@@ -86,6 +87,7 @@ Key attributes of `@JoinColumn`:
 unidirectional `@OneToMany` associations.
 
 Key attributes of `@JoinTable`:
+
 - `name`: join table name
 - `joinColumns`: FK column(s) pointing to the owning entity
 - `inverseJoinColumns`: FK column(s) pointing to the
@@ -102,6 +104,7 @@ Without them, JPA invents names that may conflict with
 your database schema.
 
 **One analogy:**
+
 > `@JoinColumn` is like naming the door between two rooms.
 > Without it, the architect picks a default name ("door1").
 > With `@JoinColumn(name="main_entrance")`, the door has
@@ -255,8 +258,8 @@ For `Order order` referencing `Order.id`: `order_id`.
 
 **Level 4 - Why it was designed this way (senior/staff):**
 JPA naming strategies (physical and implicit) allow global
-renaming conventions (e.g., all columns snake_case,
-all FK columns prefixed with `FK_`). `@JoinColumn` provides
+renaming conventions (e.g., all columns snake*case,
+all FK columns prefixed with `FK*`). `@JoinColumn` provides
 field-level override when the global convention does not
 apply to a specific column. The two-tier design (global
 strategy + field-level override) avoids annotating every
@@ -452,22 +455,22 @@ public class Enrollment {
 
 ### ⚖️ Comparison Table
 
-| Annotation | Applies to | Specifies | Controls |
-|---|---|---|---|
-| `@JoinColumn` | `@ManyToOne`, `@OneToOne`, unidirectional `@OneToMany` | FK column name, nullability, FK constraint name | Single FK column |
-| `@JoinTable` | `@ManyToMany`, unidirectional `@OneToMany` | Join table name, join/inverse FK columns, unique constraints | Join table + 2 FK columns |
-| `@Column` | Scalar fields | Column name, type, nullability | Non-FK column |
+| Annotation    | Applies to                                             | Specifies                                                    | Controls                  |
+| ------------- | ------------------------------------------------------ | ------------------------------------------------------------ | ------------------------- |
+| `@JoinColumn` | `@ManyToOne`, `@OneToOne`, unidirectional `@OneToMany` | FK column name, nullability, FK constraint name              | Single FK column          |
+| `@JoinTable`  | `@ManyToMany`, unidirectional `@OneToMany`             | Join table name, join/inverse FK columns, unique constraints | Join table + 2 FK columns |
+| `@Column`     | Scalar fields                                          | Column name, type, nullability                               | Non-FK column             |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "@JoinColumn goes on the @OneToMany parent" | `@JoinColumn` goes on the OWNING side. For bidirectional `@OneToMany`/`@ManyToOne`, the owning side is `@ManyToOne` on the CHILD. Putting `@JoinColumn` on `@OneToMany(mappedBy=...)` has no effect (mappedBy marks it as inverse). |
-| "Omitting @JoinColumn means no FK column is created" | Omitting `@JoinColumn` means Hibernate generates a default FK column name. The FK column still exists; it just has an auto-generated name. |
-| "`foreignKey = @ForeignKey(name=...)` is optional" | Technically optional (JPA still creates the FK constraint), but without a name, Hibernate generates a random constraint name (e.g., `FKr9t5lhfp...`). Random constraint names make schema migration scripts (Flyway/Liquibase) fragile. Always name FK constraints. |
-| "@JoinTable is only for @ManyToMany" | `@JoinTable` can also be used on unidirectional `@OneToMany` (without a corresponding `@ManyToOne`). However, unidirectional `@OneToMany` with a join table is unusual; bidirectional is preferred. |
+| Misconception                                        | Reality                                                                                                                                                                                                                                                             |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "@JoinColumn goes on the @OneToMany parent"          | `@JoinColumn` goes on the OWNING side. For bidirectional `@OneToMany`/`@ManyToOne`, the owning side is `@ManyToOne` on the CHILD. Putting `@JoinColumn` on `@OneToMany(mappedBy=...)` has no effect (mappedBy marks it as inverse).                                 |
+| "Omitting @JoinColumn means no FK column is created" | Omitting `@JoinColumn` means Hibernate generates a default FK column name. The FK column still exists; it just has an auto-generated name.                                                                                                                          |
+| "`foreignKey = @ForeignKey(name=...)` is optional"   | Technically optional (JPA still creates the FK constraint), but without a name, Hibernate generates a random constraint name (e.g., `FKr9t5lhfp...`). Random constraint names make schema migration scripts (Flyway/Liquibase) fragile. Always name FK constraints. |
+| "@JoinTable is only for @ManyToMany"                 | `@JoinTable` can also be used on unidirectional `@OneToMany` (without a corresponding `@ManyToOne`). However, unidirectional `@OneToMany` with a join table is unusual; bidirectional is preferred.                                                                 |
 
 ---
 
@@ -522,12 +525,14 @@ at the JPA level before the database constraint fires.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-017 - @OneToOne]] - `@JoinColumn` on owning side
 - [[JPH-018 - @OneToMany and @ManyToOne]] - `@JoinColumn`
   on `@ManyToOne` owning side
 - [[JPH-019 - @ManyToMany]] - `@JoinTable` on owning side
 
 **Builds On This (learn these next):**
+
 - [[JPH-021 - FetchType (LAZY vs EAGER)]] - all associations
   use `@JoinColumn`/`@JoinTable`; fetch strategy determines
   when the JOIN fires
@@ -559,6 +564,7 @@ at the JPA level before the database constraint fires.
 ```
 
 **If you remember only 3 things:**
+
 1. `@JoinColumn` goes on the owning side (the side WITHOUT
    `mappedBy`); it specifies the FK column name
 2. `@JoinTable` names the join table for `@ManyToMany`;
@@ -610,9 +616,10 @@ is mapped by multiple properties`.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **WRITE** `@JoinColumn` and `@JoinTable` for a brownfield
    schema with non-default FK column names
-2. **NAME** all FK constraints using `@ForeignKey(name=...)` 
+2. **NAME** all FK constraints using `@ForeignKey(name=...)`
    and explain why it matters for schema migrations
 3. **DEBUG** an "Unknown column" error by identifying the
    missing/incorrect `@JoinColumn` and fixing the mapping
@@ -628,9 +635,10 @@ is mapped by multiple properties`.
 
 **Q1: Where do you place @JoinColumn in a bidirectional
 @OneToMany/@ManyToOne relationship?**
-*Why they ask:* Tests owning/inverse side understanding;
+_Why they ask:_ Tests owning/inverse side understanding;
 common mistake is placing `@JoinColumn` on the wrong side.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `@JoinColumn` goes on the `@ManyToOne` field (child
   entity, owning side - has the FK column)
 - NOT on `@OneToMany(mappedBy=...)` - the mappedBy marks
@@ -640,8 +648,9 @@ common mistake is placing `@JoinColumn` on the wrong side.
 
 **Q2: Why should you always name FK constraints with
 @ForeignKey instead of relying on Hibernate-generated names?**
-*Why they ask:* Tests database schema management awareness.
-*Strong answer includes:*
+_Why they ask:_ Tests database schema management awareness.
+_Strong answer includes:_
+
 - Hibernate-generated names are deterministic but opaque
   (e.g., `FK4d23klm2...`) and change if the entity or
   field is renamed
@@ -654,9 +663,10 @@ common mistake is placing `@JoinColumn` on the wrong side.
 
 **Q3: What does insertable=false, updatable=false on a
 @JoinColumn mean, and when would you use it?**
-*Why they ask:* Tests advanced JPA knowledge for composite
+_Why they ask:_ Tests advanced JPA knowledge for composite
 key and @MapsId scenarios.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - It tells Hibernate: "this @JoinColumn field maps a
   column that is owned by another mapping (e.g., @EmbeddedId
   or @MapsId); don't generate SQL for it from this field"
@@ -664,7 +674,7 @@ key and @MapsId scenarios.
   column is both part of the composite PK and mapped to a
   `@ManyToOne` field
 - Without it: `HibernateException: Column X mapped by
-  multiple properties` because two mappings claim ownership
+multiple properties` because two mappings claim ownership
   of the same column
 - Pattern: `@MapsId` on the association + `insertable=false,
-  updatable=false` on any duplicate mapping of the same column
+updatable=false` on any duplicate mapping of the same column

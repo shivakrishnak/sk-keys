@@ -29,11 +29,11 @@ permalink: /jpa-hibernate/what-is-orm/
 maps Java objects to database tables, letting you persist
 and query data without writing SQL by hand.
 
-| #002 | Category: JPA & Hibernate | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | The Object-Relational Mismatch Problem | |
-| **Used by:** | JPA vs JDBC, Hibernate as JPA Implementation, EntityManager | |
-| **Related:** | Hibernate Session vs EntityManager, Hibernate vs MyBatis vs JOOQ | |
+| #002            | Category: JPA & Hibernate                                        | Difficulty: ★☆☆ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | The Object-Relational Mismatch Problem                           |                 |
+| **Used by:**    | JPA vs JDBC, Hibernate as JPA Implementation, EntityManager      |                 |
+| **Related:**    | Hibernate Session vs EntityManager, Hibernate vs MyBatis vs JOOQ |                 |
 
 ---
 
@@ -66,13 +66,13 @@ using metadata to automate the object-table translation.
 
 **EVOLUTION:**
 
-| Era | Approach | Representative Tool |
-|---|---|---|
-| 1990s | Hand-written JDBC DAOs | Raw JDBC |
-| 2001 | First ORM frameworks | Hibernate 1.x |
-| 2006 | Standardised ORM API | JPA 1.0 (Java EE 5) |
-| 2013 | Spring integration | Spring Data JPA 1.x |
-| 2022 | Jakarta namespace + records | JPA 3.x / Hibernate 6 |
+| Era   | Approach                    | Representative Tool   |
+| ----- | --------------------------- | --------------------- |
+| 1990s | Hand-written JDBC DAOs      | Raw JDBC              |
+| 2001  | First ORM frameworks        | Hibernate 1.x         |
+| 2006  | Standardised ORM API        | JPA 1.0 (Java EE 5)   |
+| 2013  | Spring integration          | Spring Data JPA 1.x   |
+| 2022  | Jakarta namespace + records | JPA 3.x / Hibernate 6 |
 
 ---
 
@@ -96,6 +96,7 @@ loading automatically.
 into database rows and back - automatically.
 
 **One analogy:**
+
 > An ORM is like a GPS navigation system. You tell it "get me
 > from this Java object to the database and back" - it works
 > out the route (the SQL) and drives the car (executes it).
@@ -112,6 +113,7 @@ the ORM writes the plumbing.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. A mapping is defined once (via annotations or XML) and
    reused for every operation on that entity
 2. The ORM maintains an identity map: within a session,
@@ -247,6 +249,7 @@ as the right tool for 70-80% of persistence needs and
 deliberately chooses the lower-level tool for the rest.
 
 **Expert Thinking Cues:**
+
 - Ask: "Is this operation better expressed as an object
   graph traversal or a set operation?" ORM wins the former;
   SQL wins the latter
@@ -471,13 +474,13 @@ class ProductRepositoryTest {
 
 ### ⚖️ Comparison Table
 
-| Approach | Boilerplate | SQL control | Auto dirty check | Best for |
-|---|---|---|---|---|
-| **ORM (JPA/Hibernate)** | Minimal | Generated | Yes | Standard CRUD, domain-rich models |
-| Raw JDBC | High | Full | No | Bulk ops, stored procedures, raw speed |
-| Spring JDBC Template | Medium | Full | No | Simpler apps, read-heavy, stored procs |
-| MyBatis | Low | Full (XML/annot) | No | DBA-owned SQL, legacy schemas |
-| JOOQ | Low | Type-safe DSL | No | Complex SQL, compile-time query safety |
+| Approach                | Boilerplate | SQL control      | Auto dirty check | Best for                               |
+| ----------------------- | ----------- | ---------------- | ---------------- | -------------------------------------- |
+| **ORM (JPA/Hibernate)** | Minimal     | Generated        | Yes              | Standard CRUD, domain-rich models      |
+| Raw JDBC                | High        | Full             | No               | Bulk ops, stored procedures, raw speed |
+| Spring JDBC Template    | Medium      | Full             | No               | Simpler apps, read-heavy, stored procs |
+| MyBatis                 | Low         | Full (XML/annot) | No               | DBA-owned SQL, legacy schemas          |
+| JOOQ                    | Low         | Type-safe DSL    | No               | Complex SQL, compile-time query safety |
 
 **How to choose:** Start with ORM for greenfield CRUD-heavy
 applications. Add JOOQ or native SQL queries for reporting,
@@ -494,13 +497,13 @@ Legacy app already on JDBC? - Consider Spring JDBC Template before ORM
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "ORM replaces SQL" | ORM generates SQL. You still need SQL knowledge to tune, debug, and override generated queries. A developer who cannot read SQL cannot effectively use an ORM. |
-| "ORM is always slower than raw JDBC" | For standard CRUD, ORM is within 5-10% of raw JDBC (connection overhead dominates). The real risk is not ORM overhead but misuse (N+1, cartesian joins) that ORM makes easy to accidentally create. |
-| "ORM abstracts the database completely" | ORM reduces database coupling but does not eliminate it. Query strategies, fetch plans, and second-level cache configuration are all database-aware decisions. |
-| "Hibernate and JPA are the same thing" | JPA is the specification (interface); Hibernate is the most popular implementation. You program to the JPA API; Hibernate provides the runtime behaviour. Switching to EclipseLink requires changing only the provider dependency, not the application code. |
-| "ORM is for simple apps only" | The most complex Java systems (financial trading platforms, e-commerce engines at scale) use Hibernate in production. Complexity comes from misuse, not from ORM itself. |
+| Misconception                           | Reality                                                                                                                                                                                                                                                      |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "ORM replaces SQL"                      | ORM generates SQL. You still need SQL knowledge to tune, debug, and override generated queries. A developer who cannot read SQL cannot effectively use an ORM.                                                                                               |
+| "ORM is always slower than raw JDBC"    | For standard CRUD, ORM is within 5-10% of raw JDBC (connection overhead dominates). The real risk is not ORM overhead but misuse (N+1, cartesian joins) that ORM makes easy to accidentally create.                                                          |
+| "ORM abstracts the database completely" | ORM reduces database coupling but does not eliminate it. Query strategies, fetch plans, and second-level cache configuration are all database-aware decisions.                                                                                               |
+| "Hibernate and JPA are the same thing"  | JPA is the specification (interface); Hibernate is the most popular implementation. You program to the JPA API; Hibernate provides the runtime behaviour. Switching to EclipseLink requires changing only the provider dependency, not the application code. |
+| "ORM is for simple apps only"           | The most complex Java systems (financial trading platforms, e-commerce engines at scale) use Hibernate in production. Complexity comes from misuse, not from ORM itself.                                                                                     |
 
 ---
 
@@ -602,10 +605,12 @@ requiring `em.clear()` and second-level cache eviction.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-001 - The Object-Relational Mismatch Problem]] -
   the structural problem ORM was invented to solve
 
 **Builds On This (learn these next):**
+
 - [[JPH-003 - JPA vs JDBC - Why ORM Exists]] - compares the
   ORM approach against raw JDBC with concrete trade-offs
 - [[JPH-004 - Hibernate as JPA Implementation]] - the most
@@ -613,6 +618,7 @@ requiring `em.clear()` and second-level cache eviction.
 - [[JPH-011 - EntityManager]] - the ORM session API in depth
 
 **Alternatives / Comparisons:**
+
 - [[JPH-031 - Hibernate Session vs EntityManager]] - how the
   ORM session differs between Hibernate-native and JPA APIs
 - [[JPH-050 - Hibernate vs MyBatis vs JOOQ]] - when to pick
@@ -652,6 +658,7 @@ requiring `em.clear()` and second-level cache eviction.
 ```
 
 **If you remember only 3 things:**
+
 1. ORM maps objects to tables via metadata - declare the
    mapping once; SQL is generated automatically
 2. The persistence context (first-level cache) is the ORM's
@@ -677,6 +684,7 @@ must be understood to debug correctly - the same trade-off
 as code generation, compiler plugins, and AOP.
 
 **Where else this pattern appears:**
+
 - **Java Bean Validation** - declare constraints once with
   `@NotNull`/`@Size`; the framework generates all validation
   logic at runtime; same metadata-driven approach
@@ -688,6 +696,7 @@ as code generation, compiler plugins, and AOP.
   rendering and validation behaviour
 
 **Industry applications:**
+
 - Large e-commerce platforms rely on ORM for product catalogue
   CRUD (thousands of SKUs with complex attribute models) while
   using native SQL for inventory aggregation and reporting
@@ -713,6 +722,7 @@ with developer convenience as the beneficial side effect.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** what dirty checking is, how the ORM detects
    field changes without you writing any comparison code, and
    why this requires the persistence context to stay open
@@ -742,9 +752,9 @@ requests/second, each request opens and closes an
 `EntityManager`. What are the three most likely bottlenecks
 introduced by ORM at this scale, and how would you measure
 each one?
-*Hint: Think about startup time (entity scanning), connection
+_Hint: Think about startup time (entity scanning), connection
 pool sizing (session-per-request), and the cost of dirty
-checking on entities with deeply nested collections.*
+checking on entities with deeply nested collections._
 
 **Q2 (TYPE D - Root Cause Trace):** A developer adds a
 `@OneToMany(cascade = CascadeType.ALL)` relationship to an
@@ -752,9 +762,9 @@ existing entity. The next day, a `DELETE` on the parent entity
 causes a cascading delete of thousands of child records the
 developer did not intend to remove. Trace the exact sequence
 of ORM operations that caused this.
-*Hint: Follow the cascade from `remove()` through the
+_Hint: Follow the cascade from `remove()` through the
 persistence context to the generated `DELETE` statements,
-and consider what `orphanRemoval` adds on top.*
+and consider what `orphanRemoval` adds on top._
 
 **Q3 (TYPE G - Hands-On):** Using only `@DataJpaTest` and
 Hibernate Statistics, write a test that proves your ORM
@@ -762,9 +772,9 @@ configuration loads an `Order` with 5 `LineItem` objects
 in exactly 1 SQL query (not 6). What `HibernateStatistics`
 method gives you the query count? What would you change to
 make it work with both `JOIN FETCH` and `@BatchSize`?
-*Hint: Look at `Statistics.getPrepareStatementCount()`,
+_Hint: Look at `Statistics.getPrepareStatementCount()`,
 the `@BatchSize` annotation on collections, and how
-`@DataJpaTest` configures an in-memory H2 datasource.*
+`@DataJpaTest` configures an in-memory H2 datasource._
 
 ---
 
@@ -772,9 +782,10 @@ the `@BatchSize` annotation on collections, and how
 
 **Q1: What is an ORM, and what specific problem does it
 solve that raw JDBC does not?**
-*Why they ask:* Separates candidates who understand the
+_Why they ask:_ Separates candidates who understand the
 motivation from those who only know the API.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Defines ORM as metadata-driven object-table translation
 - Names the concrete pain: JDBC boilerplate multiplied
   across every entity times every operation
@@ -783,9 +794,10 @@ motivation from those who only know the API.
 
 **Q2: A colleague says "ORM is magic - I don't need to
 understand SQL to use it." How do you respond?**
-*Why they ask:* Tests production maturity - understanding
+_Why they ask:_ Tests production maturity - understanding
 that ORM hides but does not eliminate SQL.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Agrees ORM reduces SQL writing but disagrees it eliminates
   the need to understand SQL
 - Gives concrete example: N+1 queries are invisible without
@@ -795,9 +807,10 @@ that ORM hides but does not eliminate SQL.
 
 **Q3: What is dirty checking, and when does it not
 work as expected?**
-*Why they ask:* Tests understanding of the persistence
+_Why they ask:_ Tests understanding of the persistence
 context internals, a key ORM concept beyond basic usage.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Explains dirty checking: ORM snapshots entity state at
   load time and compares at flush to generate minimal SQL
 - Notes it does NOT work for detached entities (outside

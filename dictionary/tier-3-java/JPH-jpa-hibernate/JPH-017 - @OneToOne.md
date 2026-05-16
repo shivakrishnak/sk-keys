@@ -31,11 +31,11 @@ the related entity eagerly by default (even with
 `fetch=LAZY`) unless you use bytecode enhancement or
 subselect fetch.
 
-| #017 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Id and @GeneratedValue, @Table and @Column, Entity Lifecycle | |
-| **Used by:** | @OneToMany and @ManyToOne, FetchType, CascadeType, @EntityGraph | |
-| **Related:** | @Embedded and @Embeddable, Inheritance Mapping | |
+| #017            | Category: JPA & Hibernate                                              | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Id and @GeneratedValue, @Table and @Column, Entity Lifecycle |                 |
+| **Used by:**    | @OneToMany and @ManyToOne, FetchType, CascadeType, @EntityGraph        |                 |
+| **Related:**    | @Embedded and @Embeddable, Inheritance Mapping                         |                 |
 
 ---
 
@@ -76,6 +76,7 @@ other is the "inverse side" (uses `mappedBy`). JPA uses
 the foreign key on the owning side to join the two tables.
 
 Attributes:
+
 - `fetch`: `EAGER` (default, bad) or `LAZY` (recommended)
 - `cascade`: cascade operations from owner to related entity
 - `mappedBy`: marks the inverse (non-owning) side
@@ -91,6 +92,7 @@ maps to exactly one instance of another entity via a
 foreign key.
 
 **One analogy:**
+
 > A `User` and their `Passport` - each user has at most
 > one passport and each passport belongs to one user.
 > `@OneToOne` on `User.passport` tells JPA where to find
@@ -156,6 +158,7 @@ public class UserProfile {
 ```
 
 **CORE INVARIANTS:**
+
 1. The side without `mappedBy` is the owning side - it
    controls the FK column
 2. The side WITH `mappedBy` is the inverse side - changes
@@ -177,6 +180,7 @@ on `Order.shipment` (inverse side, no FK).
 
 **WHAT HAPPENS WITH `Order order = em.find(Order.class, 1L)`:**
 Even with `fetch=LAZY` on the inverse `@OneToOne`:
+
 1. Hibernate loads the `Order` row
 2. Hibernate issues a SECOND SELECT for the `Shipment`
    to check if a Shipment with `order_id=1` exists
@@ -235,7 +239,7 @@ one instance of another entity. `user.getProfile()` loads
 the linked profile.
 
 **Level 2 - How to use it (junior developer):**
-Declare `@OneToOne` on one entity, `@OneToOne(mappedBy="...")` 
+Declare `@OneToOne` on one entity, `@OneToOne(mappedBy="...")`
 on the other. Set `cascade=CascadeType.ALL` if the child
 should be saved/deleted with the parent.
 
@@ -424,22 +428,22 @@ public class Shipment {
 
 ### ⚖️ Comparison Table
 
-| Approach | FK columns | True lazy on inverse | Table join | When to use |
-|---|---|---|---|---|
-| Standard `@OneToOne` | Separate FKs | No | JOIN on FK | Related entities with independent PKs |
-| `@MapsId` (shared PK) | Shared PK | Yes | JOIN on PK | Parent-child with same lifecycle |
-| `@Embedded` | Same table | N/A (single row) | No join | Value objects in same table |
+| Approach              | FK columns   | True lazy on inverse | Table join | When to use                           |
+| --------------------- | ------------ | -------------------- | ---------- | ------------------------------------- |
+| Standard `@OneToOne`  | Separate FKs | No                   | JOIN on FK | Related entities with independent PKs |
+| `@MapsId` (shared PK) | Shared PK    | Yes                  | JOIN on PK | Parent-child with same lifecycle      |
+| `@Embedded`           | Same table   | N/A (single row)     | No join    | Value objects in same table           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`@OneToOne(fetch=LAZY)` always loads lazily" | On the INVERSE side (with `mappedBy`), Hibernate issues an extra SELECT even with `LAZY` to determine null vs. proxy. True lazy on the inverse side requires `@MapsId` or bytecode enhancement. |
-| "Setting the inverse side (`mappedBy`) updates the database" | JPA ignores changes made to the `mappedBy` side. Only changes to the OWNING side (the side without `mappedBy`) are reflected in the database FK column. |
-| "`optional=false` is enforced at the JPA level" | `optional=false` adds a NOT NULL constraint to the generated DDL. It also hints to Hibernate to use INNER JOIN instead of LEFT JOIN when loading. It does not prevent the Java field from being set to null. |
-| "`@OneToOne` is always better than a separate query" | For performance, `@Embedded` (no join) is better for value objects. A separate repository call is better when the relationship is rarely needed - avoids the join overhead even with LAZY (which fires anyway on inverse side). |
+| Misconception                                                | Reality                                                                                                                                                                                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`@OneToOne(fetch=LAZY)` always loads lazily"                | On the INVERSE side (with `mappedBy`), Hibernate issues an extra SELECT even with `LAZY` to determine null vs. proxy. True lazy on the inverse side requires `@MapsId` or bytecode enhancement.                                 |
+| "Setting the inverse side (`mappedBy`) updates the database" | JPA ignores changes made to the `mappedBy` side. Only changes to the OWNING side (the side without `mappedBy`) are reflected in the database FK column.                                                                         |
+| "`optional=false` is enforced at the JPA level"              | `optional=false` adds a NOT NULL constraint to the generated DDL. It also hints to Hibernate to use INNER JOIN instead of LEFT JOIN when loading. It does not prevent the Java field from being set to null.                    |
+| "`@OneToOne` is always better than a separate query"         | For performance, `@Embedded` (no join) is better for value objects. A separate repository call is better when the relationship is rarely needed - avoids the join overhead even with LAZY (which fires anyway on inverse side). |
 
 ---
 
@@ -506,6 +510,7 @@ List<Order> findByStatus(@Param("s") String s);
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-006 - @Entity]] - entities required for the association
 - [[JPH-007 - @Id and @GeneratedValue]] - PK strategy
   affects `@MapsId` design choice
@@ -513,6 +518,7 @@ List<Order> findByStatus(@Param("s") String s);
   the same naming rules
 
 **Builds On This (learn these next):**
+
 - [[JPH-018 - @OneToMany and @ManyToOne]] - most common
   association type; same owning/inverse concepts apply
 - [[JPH-021 - FetchType (LAZY vs EAGER)]] - fetch strategy
@@ -521,6 +527,7 @@ List<Order> findByStatus(@Param("s") String s);
   parent to child through associations
 
 **Alternatives / Comparisons:**
+
 - [[JPH-041 - @Embedded and @Embeddable]] - often better
   than `@OneToOne` for value objects in the same table
 
@@ -552,6 +559,7 @@ List<Order> findByStatus(@Param("s") String s);
 ```
 
 **If you remember only 3 things:**
+
 1. The side WITHOUT `mappedBy` is the owning side - it
    holds the FK and is the only side JPA writes to the DB
 2. `@OneToOne(fetch=LAZY)` on the INVERSE side does NOT
@@ -604,6 +612,7 @@ query plans without any code change.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **DRAW** the database schema for a bidirectional
    `@OneToOne` and identify which table has the FK column
    from the Java entity code
@@ -624,9 +633,10 @@ query plans without any code change.
 
 **Q1: What is the difference between the owning side
 and the inverse side in a @OneToOne relationship?**
-*Why they ask:* Tests fundamental JPA association knowledge;
+_Why they ask:_ Tests fundamental JPA association knowledge;
 not knowing this leads to silent null FK bugs.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Owning side: no `mappedBy`; holds the FK column;
   JPA writes the FK value from this side's field
 - Inverse side: has `mappedBy`; changes to this field
@@ -639,9 +649,10 @@ not knowing this leads to silent null FK bugs.
 
 **Q2: Why does `@OneToOne(fetch=LAZY)` on the inverse
 side not actually load lazily?**
-*Why they ask:* This is a well-known JPA gotcha; tests
+_Why they ask:_ This is a well-known JPA gotcha; tests
 depth of understanding beyond documentation.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Hibernate must return either null or a proxy for the
   inverse `@OneToOne` field
 - To decide which, it must query the FK table to check
@@ -655,9 +666,10 @@ depth of understanding beyond documentation.
 
 **Q3: When would you use @MapsId with @OneToOne instead
 of a standard @OneToOne?**
-*Why they ask:* Tests awareness of advanced JPA patterns
+_Why they ask:_ Tests awareness of advanced JPA patterns
 and their design rationale.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - When the related entity is a "detail" that shares
   the lifecycle of the parent (same PK, created together)
 - Eliminates the separate FK column (uses shared PK)

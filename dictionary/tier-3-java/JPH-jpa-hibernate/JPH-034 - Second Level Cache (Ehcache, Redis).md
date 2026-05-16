@@ -34,11 +34,11 @@ for reduced database load on frequently-read, rarely-
 modified entities (reference data, lookups, configuration).
 Never cache mutable high-write entities.
 
-| #034 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Persistence Context, Entity Lifecycle, @Transactional, Hibernate Session vs EntityManager, First Level Cache | |
-| **Used by:** | Query Cache, Hibernate Statistics, Multi-Tenancy, JPA at Scale, Hibernate Internals | |
-| **Related:** | EntityGraph, Connection Pooling | |
+| #034            | Category: JPA & Hibernate                                                                                    | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Persistence Context, Entity Lifecycle, @Transactional, Hibernate Session vs EntityManager, First Level Cache |                 |
+| **Used by:**    | Query Cache, Hibernate Statistics, Multi-Tenancy, JPA at Scale, Hibernate Internals                          |                 |
+| **Related:**    | EntityGraph, Connection Pooling                                                                              |                 |
 
 ---
 
@@ -82,12 +82,14 @@ data loaded by Session A is available to Session B,
 Session C, and across HTTP requests.
 
 **Cache Concurrency Strategies** (choose per entity):
+
 - `READ_ONLY`: no updates; cache never invalidated. Best for immutable reference data. Highest performance.
 - `READ_WRITE`: updates invalidate the cache; soft-lock mechanism prevents stale reads. Suitable for entities that are updated occasionally.
 - `NONSTRICT_READ_WRITE`: no locking; race condition window during updates. Suitable for data where brief staleness is acceptable.
 - `TRANSACTIONAL` (JTA only): full transactional cache; most expensive; requires JTA transaction manager.
 
 **Cache Providers:** Hibernate supports pluggable cache providers:
+
 - **Ehcache** (in-process): `hibernate-ehcache` dependency; local JVM heap cache; no network overhead
 - **Caffeine** (in-process): modern successor to Guava Cache; high throughput
 - **Redis** (distributed, via Redisson/Spring Cache): shared across cluster nodes; invalidation propagated
@@ -102,6 +104,7 @@ that persists across transactions - `em.find()` checks
 the 2LC before hitting the database in any session.
 
 **One analogy:**
+
 > The first-level cache is your personal notepad during
 > one meeting (transaction). The second-level cache is
 > the whiteboard in the office kitchen - shared by everyone,
@@ -202,6 +205,7 @@ With Redis (distributed via Redisson):
 ```
 
 **CHOOSING IN-PROCESS vs DISTRIBUTED:**
+
 - **In-process (Ehcache)**: zero network latency; data may
   be stale on other nodes; fine for single-node or
   infrequently-changed data
@@ -250,6 +254,7 @@ The 2LC region is configured per-entity with TTL (time-to-live) and max size.
 
 **Level 4 - Strategy selection (senior/staff):**
 Match concurrency strategy to entity mutation rate:
+
 - `READ_ONLY` for immutable lookup tables (country, currency, product categories that never change)
 - `READ_WRITE` for infrequently-updated reference data
 - Avoid 2LC for: high-write entities (orders, inventory), entities with fine-grained updates, entities where stale reads cause business logic bugs
@@ -447,30 +452,30 @@ public void verifyCacheHit(Long catId) {
 
 ### ⚖️ Comparison Table
 
-| Strategy | Concurrency | Invalidation | Use case |
-|---|---|---|---|
-| READ_ONLY | None needed | Never (immutable) | Countries, currencies, status codes |
-| READ_WRITE | Soft lock | On UPDATE | Infrequently changed lookup data |
-| NONSTRICT_READ_WRITE | None | Remove on UPDATE | Data where brief staleness is OK |
-| TRANSACTIONAL | Full XA lock | On TX commit | Critical consistent data (JTA only) |
+| Strategy             | Concurrency  | Invalidation      | Use case                            |
+| -------------------- | ------------ | ----------------- | ----------------------------------- |
+| READ_ONLY            | None needed  | Never (immutable) | Countries, currencies, status codes |
+| READ_WRITE           | Soft lock    | On UPDATE         | Infrequently changed lookup data    |
+| NONSTRICT_READ_WRITE | None         | Remove on UPDATE  | Data where brief staleness is OK    |
+| TRANSACTIONAL        | Full XA lock | On TX commit      | Critical consistent data (JTA only) |
 
-| Provider | Scope | Network latency | Best for |
-|---|---|---|---|
-| Ehcache (local) | JVM | Zero | Single-node or tolerable staleness |
-| Caffeine (local) | JVM | Zero | High-throughput single-node |
-| Redis (via Redisson) | Cluster | ~1ms | Multi-node consistent cache |
-| Hazelcast | Cluster | ~1ms | Multi-node with data grid features |
+| Provider             | Scope   | Network latency | Best for                           |
+| -------------------- | ------- | --------------- | ---------------------------------- |
+| Ehcache (local)      | JVM     | Zero            | Single-node or tolerable staleness |
+| Caffeine (local)     | JVM     | Zero            | High-throughput single-node        |
+| Redis (via Redisson) | Cluster | ~1ms            | Multi-node consistent cache        |
+| Hazelcast            | Cluster | ~1ms            | Multi-node with data grid features |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "The 2LC caches JPQL query results" | The 2LC caches entity state by primary key. JPQL query results are cached by the Query Cache (a separate, additional feature). They work independently. |
-| "Enabling the 2LC is always a performance improvement" | For high-write entities, the 2LC adds serialization overhead on every write and rarely gets cache hits. Net result: slower. Enable 2LC only on low-write, high-read entities. |
-| "The 2LC is consistent across JVM instances without configuration" | In-process caches (Ehcache, Caffeine) are NOT shared across JVM instances. Updates in one JVM leave stale entries in others. For cluster-consistent 2LC, use a distributed cache (Redis, Hazelcast). |
-| "@Cache on an entity also caches its collections" | `@Cache` on an entity caches the entity itself. Collections (`@OneToMany`) require a SEPARATE `@Cache` annotation on the collection field to be cached. Without it, collections are always loaded from the DB. |
+| Misconception                                                      | Reality                                                                                                                                                                                                        |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The 2LC caches JPQL query results"                                | The 2LC caches entity state by primary key. JPQL query results are cached by the Query Cache (a separate, additional feature). They work independently.                                                        |
+| "Enabling the 2LC is always a performance improvement"             | For high-write entities, the 2LC adds serialization overhead on every write and rarely gets cache hits. Net result: slower. Enable 2LC only on low-write, high-read entities.                                  |
+| "The 2LC is consistent across JVM instances without configuration" | In-process caches (Ehcache, Caffeine) are NOT shared across JVM instances. Updates in one JVM leave stale entries in others. For cluster-consistent 2LC, use a distributed cache (Redis, Hazelcast).           |
+| "@Cache on an entity also caches its collections"                  | `@Cache` on an entity caches the entity itself. Collections (`@OneToMany`) require a SEPARATE `@Cache` annotation on the collection field to be cached. Without it, collections are always loaded from the DB. |
 
 ---
 
@@ -491,6 +496,7 @@ invalidation).
 or if the Hibernate session that ran the update is the
 same process as the reader.
 **Fix:**
+
 - If native SQL is used for updates: call `em.clear()` or
   evict the cache region explicitly:
   ```java
@@ -505,11 +511,13 @@ same process as the reader.
 
 **Symptom:** `Statistics.getSecondLevelCacheHitCount()` is 0.
 **Root Cause (common):**
+
 1. `@Cache` annotation missing on entity
 2. `hibernate.cache.use_second_level_cache=false` in config
 3. Cache provider JAR missing from classpath
 4. `@Cache` on entity but not on collections being accessed
-**Fix:** Check all four above. Verify via:
+   **Fix:** Check all four above. Verify via:
+
 ```java
 stats.getDomainDataRegionStatistics("com.example.Country")
     .getHitCount();
@@ -520,18 +528,21 @@ stats.getDomainDataRegionStatistics("com.example.Country")
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-033 - First Level Cache]] - understand 1LC first;
   2LC complements it
 - [[JPH-026 - @Transactional]] - transaction boundaries
   affect when 2LC entries are invalidated
 
 **Builds On This (learn these next):**
+
 - [[JPH-035 - Query Cache]] - caches JPQL query results;
   uses 2LC infrastructure
 - [[JPH-046 - Hibernate Statistics and Monitoring]] -
   monitoring 2LC hit rates
 
 **Related:**
+
 - [[JPH-047 - Connection Pooling with JPA (HikariCP)]] -
   2LC reduces DB load; both are database pressure mitigations
 - [[JPH-054 - JPA at Scale]] - 2LC strategy in distributed systems
@@ -565,6 +576,7 @@ stats.getDomainDataRegionStatistics("com.example.Country")
 ```
 
 **If you remember only 3 things:**
+
 1. The 2LC is shared across all sessions/transactions;
    unlike the 1LC, it persists between HTTP requests
 2. Only cache low-write, high-read reference entities
@@ -600,6 +612,7 @@ response caching (`Cache-Control: max-age`), DNS TTL,
 and in-memory maps in microservices.
 
 **Where else this pattern appears:**
+
 - **HTTP caching** - `Cache-Control: max-age=86400` on
   static assets; only practical for rarely-changing content
 - **DNS TTL** - DNS records have TTL; lower TTL = more
@@ -633,6 +646,7 @@ the 2LC for entities that have external write paths.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **CONFIGURE** the 2LC for an entity using Ehcache with
    `READ_WRITE` strategy and verify the hit rate via
    Hibernate statistics
@@ -651,9 +665,10 @@ the 2LC for entities that have external write paths.
 
 **Q1: What is the difference between the first-level
 cache and the second-level cache in Hibernate?**
-*Why they ask:* Core Hibernate caching knowledge; tests
+_Why they ask:_ Core Hibernate caching knowledge; tests
 understanding of scope and purpose.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - 1LC (first-level): scoped to one Session/transaction;
   always enabled; cannot be shared; cleared at TX end
 - 2LC (second-level): application-scoped; shared across
@@ -665,9 +680,10 @@ understanding of scope and purpose.
   entities to cache causes staleness
 
 **Q2: When would you NOT use the second-level cache?**
-*Why they ask:* Tests understanding of when the cache
+_Why they ask:_ Tests understanding of when the cache
 creates problems rather than solving them.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - High-write entities: orders, inventory - every write
   invalidates the cache; hit rate approaches 0%; adds
   serialization overhead with no read benefit
@@ -682,8 +698,9 @@ creates problems rather than solving them.
 
 **Q3: How does the second-level cache interact with
 cluster deployments?**
-*Why they ask:* Tests architectural awareness for distributed systems.
-*Strong answer includes:*
+_Why they ask:_ Tests architectural awareness for distributed systems.
+_Strong answer includes:_
+
 - In-process caches (Ehcache): each JVM has independent cache;
   updates on one node do NOT invalidate others; stale data
   persists until TTL expires or the entry is evicted on that node

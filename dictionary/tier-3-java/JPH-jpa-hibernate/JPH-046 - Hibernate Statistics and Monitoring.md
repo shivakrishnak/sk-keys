@@ -36,11 +36,11 @@ patterns, cache inefficiency, and unexpected query volumes.
 Never leave `generate_statistics=true` in production
 unless you understand the overhead (3-5% throughput cost).
 
-| #046 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | EntityManager, Hibernate Session vs EntityManager, First Level Cache, Second Level Cache, Query Cache, Batch Processing | |
-| **Used by:** | JPA at Scale, Hibernate Internals | |
-| **Related:** | N+1 Problem, Connection Pooling, Dirty Checking | |
+| #046            | Category: JPA & Hibernate                                                                                               | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | EntityManager, Hibernate Session vs EntityManager, First Level Cache, Second Level Cache, Query Cache, Batch Processing |                 |
+| **Used by:**    | JPA at Scale, Hibernate Internals                                                                                       |                 |
+| **Related:**    | N+1 Problem, Connection Pooling, Dirty Checking                                                                         |                 |
 
 ---
 
@@ -50,12 +50,14 @@ unless you understand the overhead (3-5% throughput cost).
 A service endpoint is slow (500ms). You suspect N+1 queries
 but `show_sql=true` produces thousands of log lines in
 production - unreadable. You need a way to see:
+
 - How many SQL queries were executed per request?
 - Were second-level cache entries hit or missed?
 - How long did connection acquisition take?
 - How many entity objects were loaded?
 
 **WITH HIBERNATE STATISTICS:**
+
 ```java
 Statistics stats = sessionFactory.getStatistics();
 stats.setStatisticsEnabled(true);
@@ -80,17 +82,18 @@ cache operations. Enabled per `SessionFactory`.
 
 **Key metric groups:**
 
-| Group | Metrics |
-|---|---|
-| Query | executionCount, executionRowCount, maxTime, minTime |
-| Entity | loadCount, insertCount, updateCount, deleteCount, fetchCount |
-| Collection | loadCount, updateCount, recreateCount, removeCount, fetchCount |
-| 2LC | hitCount, missCount, putCount, elementCountInMemory, elementCountOnDisk |
-| Connection | connectCount (JDBC connection acquisitions) |
-| Session | openCount, closeCount, flushCount |
-| Transaction | count, successfulCount, failedCount |
+| Group       | Metrics                                                                 |
+| ----------- | ----------------------------------------------------------------------- |
+| Query       | executionCount, executionRowCount, maxTime, minTime                     |
+| Entity      | loadCount, insertCount, updateCount, deleteCount, fetchCount            |
+| Collection  | loadCount, updateCount, recreateCount, removeCount, fetchCount          |
+| 2LC         | hitCount, missCount, putCount, elementCountInMemory, elementCountOnDisk |
+| Connection  | connectCount (JDBC connection acquisitions)                             |
+| Session     | openCount, closeCount, flushCount                                       |
+| Transaction | count, successfulCount, failedCount                                     |
 
 **Key integration points:**
+
 - `SessionFactory.getStatistics()` - direct Java access
 - JMX MBean auto-registered when statistics enabled
 - Spring Boot Actuator: exposed via `/actuator/metrics`
@@ -106,6 +109,7 @@ entity loads, connections. Essential for diagnosing
 performance issues without relying on SQL log parsing.
 
 **One analogy:**
+
 > Hibernate Statistics is the "dashboard" of your JPA
 > layer - like the dashboard gauges in a car (RPM, speed,
 > fuel level). SQL logging (`show_sql=true`) is looking
@@ -208,11 +212,13 @@ queries ran, how many entities were loaded, whether cache
 was used. Useful for finding performance problems.
 
 **Level 2 - How to enable it (junior developer):**
+
 ```properties
 spring.jpa.properties.hibernate.generate_statistics=true
 spring.jpa.properties.hibernate.session.events.log=true
 # Logs session stats per session close
 ```
+
 Access in code: `sessionFactory.getStatistics()`.
 
 **Level 3 - Key metrics (mid-level engineer):**
@@ -233,6 +239,7 @@ Export to Prometheus/Grafana for continuous monitoring.
 **Level 5 - Per-entity region statistics (staff engineer):**
 For the 2LC, per-region statistics show which entity types
 have high miss rates:
+
 ```java
 for (String region : s.getSecondLevelCacheRegionNames()) {
     CacheRegionStatistics rs =
@@ -243,6 +250,7 @@ for (String region : s.getSecondLevelCacheRegionNames()) {
     // -> Increase TTL, increase region size, or remove caching
 }
 ```
+
 This granularity allows targeted cache configuration
 per entity type.
 
@@ -344,6 +352,7 @@ management:
 ```
 
 **Grafana dashboard panels:**
+
 - Query execution rate (req/sec)
 - 2LC hit ratio (should be >70% for cached entities)
 - Avg query execution time (trend alert)
@@ -409,23 +418,23 @@ public void logCacheStats() {
 
 ### ⚖️ Comparison Table
 
-| Tool | Granularity | Overhead | Use case |
-|---|---|---|---|
-| `hibernate.show_sql=true` | Per-SQL statement | Low | Dev debugging: see exact SQL |
-| `hibernate.generate_statistics` | Aggregate counters | 3-5% | Performance diagnosis, monitoring |
-| `hibernate.session.events.log` | Per-session summary | Low | Per-request query counts in dev |
-| Spring Boot Actuator metrics | Aggregate, exported | Micrometer overhead | Production Prometheus/Grafana |
-| P6Spy / datasource-proxy | Per-SQL with full params | High | Integration testing |
+| Tool                            | Granularity              | Overhead            | Use case                          |
+| ------------------------------- | ------------------------ | ------------------- | --------------------------------- |
+| `hibernate.show_sql=true`       | Per-SQL statement        | Low                 | Dev debugging: see exact SQL      |
+| `hibernate.generate_statistics` | Aggregate counters       | 3-5%                | Performance diagnosis, monitoring |
+| `hibernate.session.events.log`  | Per-session summary      | Low                 | Per-request query counts in dev   |
+| Spring Boot Actuator metrics    | Aggregate, exported      | Micrometer overhead | Production Prometheus/Grafana     |
+| P6Spy / datasource-proxy        | Per-SQL with full params | High                | Integration testing               |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Statistics are thread-safe to reset during load tests" | `statistics.clear()` resets ALL counters atomically, but calling clear while concurrent requests are running makes the statistics unreliable. For accurate per-request analysis: test in isolation or use per-session statistics. |
-| "generate_statistics=true has no production cost" | Enabling statistics has a measurable overhead (3-5% throughput reduction). For production, either disable statistics or use sampling (log stats periodically and reset, not per-request). In latency-sensitive applications, disable in production and enable only when diagnosing specific issues. |
-| "Statistics show current operation count, not since startup" | Statistics are cumulative since the last `clear()` (or application start). Call `statistics.clear()` before a test to get fresh counts. In production monitoring, use the rate of change (delta over time interval), not absolute values. |
+| Misconception                                                | Reality                                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Statistics are thread-safe to reset during load tests"      | `statistics.clear()` resets ALL counters atomically, but calling clear while concurrent requests are running makes the statistics unreliable. For accurate per-request analysis: test in isolation or use per-session statistics.                                                                   |
+| "generate_statistics=true has no production cost"            | Enabling statistics has a measurable overhead (3-5% throughput reduction). For production, either disable statistics or use sampling (log stats periodically and reset, not per-request). In latency-sensitive applications, disable in production and enable only when diagnosing specific issues. |
+| "Statistics show current operation count, not since startup" | Statistics are cumulative since the last `clear()` (or application start). Call `statistics.clear()` before a test to get fresh counts. In production monitoring, use the rate of change (delta over time interval), not absolute values.                                                           |
 
 ---
 
@@ -442,6 +451,7 @@ causes: (1) using the wrong property key
 `spring.jpa.properties.hibernate.generate_statistics`), or
 (2) multiple persistence units - checking wrong `SessionFactory`.
 **Fix:**
+
 ```java
 Statistics s = emf.unwrap(SessionFactory.class)
     .getStatistics();
@@ -457,16 +467,19 @@ log.info("Stats enabled: {}",
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-033 - First Level Cache]] - statistics track 1LC
   interactions (entity loads, flushes)
 - [[JPH-034 - Second Level Cache]] - 2LC hit/miss rate
   is the primary 2LC diagnostic from statistics
 
 **Builds On This (learn these next):**
+
 - [[JPH-054 - JPA at Scale]] - statistics patterns in
   production monitoring at scale
 
 **Related:**
+
 - [[JPH-027 - N+1 Problem]] - statistics is the primary
   N+1 detection tool in integration tests
 - [[JPH-045 - Batch Processing]] - batch effectiveness
@@ -501,6 +514,7 @@ log.info("Stats enabled: {}",
 ```
 
 **If you remember only 3 things:**
+
 1. Enable with `spring.jpa.properties.hibernate.generate_statistics=true`;
    access via `emf.unwrap(SessionFactory.class).getStatistics()`
 2. `queryExecutionCount` for N+1 detection in tests;
@@ -558,10 +572,11 @@ see all `hibernate.*` metric names exposed.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **ENABLE** Hibernate statistics with the correct property
    key and verify it's active via `isStatisticsEnabled()`
 2. **WRITE** a test that asserts `queryExecutionCount <=
-   expected` to detect N+1 regressions
+expected` to detect N+1 regressions
 3. **COMPUTE** the 2LC hit rate from `hitCount` and `missCount`
    and interpret what a low hit rate means
 4. **VERIFY** batch processing effectiveness using the
@@ -575,8 +590,9 @@ see all `hibernate.*` metric names exposed.
 
 **Q1: How would you detect an N+1 query problem in an
 integration test without reading SQL logs?**
-*Why they ask:* Tests practical monitoring knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests practical monitoring knowledge.
+_Strong answer includes:_
+
 - Enable Hibernate statistics: `sf.getStatistics().setStatisticsEnabled(true)`
 - `sf.getStatistics().clear()` before the test
 - Execute the test operation
@@ -587,8 +603,9 @@ integration test without reading SQL logs?**
 
 **Q2: What overhead does hibernate.generate_statistics=true
 add and how do you manage it in production?**
-*Why they ask:* Tests production-readiness thinking.
-*Strong answer includes:*
+_Why they ask:_ Tests production-readiness thinking.
+_Strong answer includes:_
+
 - Overhead: 3-5% throughput reduction (atomic counter increments
   on every query, entity load, cache access)
 - Production strategy: (1) disable in production (zero overhead);

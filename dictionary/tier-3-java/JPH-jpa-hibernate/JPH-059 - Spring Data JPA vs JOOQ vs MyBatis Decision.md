@@ -35,11 +35,11 @@ JPA's query model becomes a liability (reporting, analytics, bulk ops).
 MyBatis is used when JOOQ's code generation is impractical.
 Mixing is valid: Spring Data JPA for entities, JOOQ for reports.
 
-| #059 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JPA Overview, JPQL, Criteria API, Native Queries, Named Queries, Hibernate vs MyBatis vs JOOQ, QueryDSL, ORM Selection Framework | |
-| **Used by:** | - | |
-| **Related:** | Hibernate vs MyBatis vs JOOQ, QueryDSL, ORM Selection Framework, JPA at Scale | |
+| #059            | Category: JPA & Hibernate                                                                                                        | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | JPA Overview, JPQL, Criteria API, Native Queries, Named Queries, Hibernate vs MyBatis vs JOOQ, QueryDSL, ORM Selection Framework |                 |
+| **Used by:**    | -                                                                                                                                |                 |
+| **Related:**    | Hibernate vs MyBatis vs JOOQ, QueryDSL, ORM Selection Framework, JPA at Scale                                                    |                 |
 
 ---
 
@@ -99,17 +99,17 @@ or annotations; MyBatis handles result mapping to Java
 objects. No ORM magic: no dirty checking, no lazy loading,
 no entity lifecycle. Manual SQL = full SQL control.
 
-| Axis | Spring Data JPA | JOOQ | MyBatis |
-|---|---|---|---|
-| Approach | ORM (object-first) | SQL DSL (SQL-first, typed) | SQL mapping (SQL-first, plain) |
-| Query language | JPQL / Criteria API / native | Java fluent SQL API | Raw SQL in XML / annotations |
-| Schema awareness | From `@Entity` annotations | Code-generated from DB schema | Manual result maps |
-| Dirty checking | Yes (automatic) | No | No |
-| Lazy loading | Yes (Hibernate proxies) | No | No |
-| Associations | Mapped (`@ManyToOne`, etc.) | Manual joins | Manual joins |
-| 2LC / 1LC | Yes | No | No (3rd party only) |
-| Best at | CRUD, domain model, lifecycle | Complex SQL, reporting, bulk ops | Stored proc, full SQL control |
-| Main cost | Complex queries become awkward | Code generation step needed | No ORM benefits; verbose for CRUD |
+| Axis             | Spring Data JPA                | JOOQ                             | MyBatis                           |
+| ---------------- | ------------------------------ | -------------------------------- | --------------------------------- |
+| Approach         | ORM (object-first)             | SQL DSL (SQL-first, typed)       | SQL mapping (SQL-first, plain)    |
+| Query language   | JPQL / Criteria API / native   | Java fluent SQL API              | Raw SQL in XML / annotations      |
+| Schema awareness | From `@Entity` annotations     | Code-generated from DB schema    | Manual result maps                |
+| Dirty checking   | Yes (automatic)                | No                               | No                                |
+| Lazy loading     | Yes (Hibernate proxies)        | No                               | No                                |
+| Associations     | Mapped (`@ManyToOne`, etc.)    | Manual joins                     | Manual joins                      |
+| 2LC / 1LC        | Yes                            | No                               | No (3rd party only)               |
+| Best at          | CRUD, domain model, lifecycle  | Complex SQL, reporting, bulk ops | Stored proc, full SQL control     |
+| Main cost        | Complex queries become awkward | Code generation step needed      | No ORM benefits; verbose for CRUD |
 
 ---
 
@@ -120,6 +120,7 @@ JOOQ = "I'll write the SQL but in type-safe Java";
 MyBatis = "I'll write the SQL in XML/annotations, you map results."
 
 **One analogy:**
+
 > Spring Data JPA is like a hotel: everything is managed for you
 > (room service, housekeeping = entity lifecycle). JOOQ is like
 > a well-equipped Airbnb: you cook your own meals but the kitchen
@@ -238,8 +239,9 @@ Verdict: JOOQ wins for SQL-heavy analytics.
 > control), but you manually handle everything. The right
 > fleet uses multiple aircraft based on mission. Most
 > Spring applications fly at low altitude most of the time
+>
 > - airliner (JPA) is the right default; rent the private
-> jet (JOOQ) when the route demands it.
+>   jet (JOOQ) when the route demands it.
 
 ---
 
@@ -252,6 +254,7 @@ MyBatis: when your team wants full SQL control.
 Mixing: allowed and common in large apps.
 
 **Level 2 - Code comparison (junior developer):**
+
 ```java
 // Same query: "find active users by plan tier"
 
@@ -284,6 +287,7 @@ MyBatis: `SqlSession` integrates with Spring transaction via
 if both are in same `@Transactional` context.
 
 **Level 4 - Mixing Spring Data JPA + JOOQ (senior):**
+
 ```java
 // Pattern: JPA for writes/CRUD, JOOQ for reads/reports
 @Service
@@ -316,6 +320,7 @@ public class OrderReportService {
 ```
 
 **Level 5 - JOOQ code generation and maintenance (staff):**
+
 ```xml
 <!-- pom.xml: JOOQ code generation plugin -->
 <plugin>
@@ -488,28 +493,28 @@ public class OrderJooqRepository {
 
 ### ⚖️ Comparison Table
 
-| Criterion | Spring Data JPA | JOOQ | MyBatis |
-|---|---|---|---|
-| Query complexity | Low-medium | Any | Any |
-| Entity lifecycle | Full (dirty check, cascade) | None | None |
-| Type safety | JPQL is string-based | Compile-time (generated) | SQL strings only |
-| DB-specific features | Via native SQL | Full support (generated) | Full SQL support |
-| Learning curve | Medium | Medium + code-gen setup | Low (just SQL) |
-| Code generation | No | Required | No |
-| Bulk operations | Via JPQL (limited) | Excellent | Excellent |
-| Dynamic queries | Criteria API / Specifications | Natural (fluent builder) | Dynamic SQL tags |
-| Spring Boot auto-config | Native | Spring Boot starter | Spring Boot starter |
-| Stored procedures | Via native query | Full support | Full support |
+| Criterion               | Spring Data JPA               | JOOQ                     | MyBatis             |
+| ----------------------- | ----------------------------- | ------------------------ | ------------------- |
+| Query complexity        | Low-medium                    | Any                      | Any                 |
+| Entity lifecycle        | Full (dirty check, cascade)   | None                     | None                |
+| Type safety             | JPQL is string-based          | Compile-time (generated) | SQL strings only    |
+| DB-specific features    | Via native SQL                | Full support (generated) | Full SQL support    |
+| Learning curve          | Medium                        | Medium + code-gen setup  | Low (just SQL)      |
+| Code generation         | No                            | Required                 | No                  |
+| Bulk operations         | Via JPQL (limited)            | Excellent                | Excellent           |
+| Dynamic queries         | Criteria API / Specifications | Natural (fluent builder) | Dynamic SQL tags    |
+| Spring Boot auto-config | Native                        | Spring Boot starter      | Spring Boot starter |
+| Stored procedures       | Via native query              | Full support             | Full support        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "JOOQ replaces Spring Data JPA" | NO - JOOQ is not an ORM. It has no entity lifecycle, dirty checking, or identity map. JOOQ excels at SQL building; Spring Data JPA excels at entity management. They solve different problems and are commonly combined in the same application. |
-| "MyBatis is legacy/bad" | Misconception. MyBatis is excellent for brownfield codebases with existing SQL investment, stored procedure-heavy databases, or teams with SQL expertise who don't want ORM abstraction. Many high-scale Chinese tech companies (Alibaba, Baidu) use MyBatis at enormous scale. It's not legacy - it's a deliberate design choice for SQL-first teams. |
-| "You must choose one and use it for everything" | No requirement. Spring Boot supports Spring Data JPA + JOOQ in the same project on the same DataSource within the same @Transactional boundary. The mix pattern (JPA for CRUD entities, JOOQ for reporting) is widely used in production at scale. |
+| Misconception                                   | Reality                                                                                                                                                                                                                                                                                                                                                |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "JOOQ replaces Spring Data JPA"                 | NO - JOOQ is not an ORM. It has no entity lifecycle, dirty checking, or identity map. JOOQ excels at SQL building; Spring Data JPA excels at entity management. They solve different problems and are commonly combined in the same application.                                                                                                       |
+| "MyBatis is legacy/bad"                         | Misconception. MyBatis is excellent for brownfield codebases with existing SQL investment, stored procedure-heavy databases, or teams with SQL expertise who don't want ORM abstraction. Many high-scale Chinese tech companies (Alibaba, Baidu) use MyBatis at enormous scale. It's not legacy - it's a deliberate design choice for SQL-first teams. |
+| "You must choose one and use it for everything" | No requirement. Spring Boot supports Spring Data JPA + JOOQ in the same project on the same DataSource within the same @Transactional boundary. The mix pattern (JPA for CRUD entities, JOOQ for reporting) is widely used in production at scale.                                                                                                     |
 
 ---
 
@@ -526,6 +531,7 @@ JOOQ operations do not.
 `DataSource`. JOOQ opened its own JDBC connection, bypassing
 Spring's transaction synchronization.
 **Diagnosis:**
+
 ```java
 // Check JOOQ configuration:
 // BAD: JOOQ uses its own connection (not tx-aware):
@@ -556,15 +562,18 @@ public DSLContext dslContext(DataSource ds) {
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-001 - JPA Overview]] - foundational JPA before comparing
 - [[JPH-023 - JPQL Queries]] - JPA query model
 - [[JPH-016 - Repository Pattern]] - Spring Data JPA foundation
 
 **Builds On This (learn these next):**
+
 - [[JPH-055 - ORM Selection Framework]] - formal decision
   framework extending this comparison
 
 **Related:**
+
 - [[JPH-050 - Hibernate vs MyBatis vs JOOQ]] - feature comparison
 - [[JPH-053 - QueryDSL with JPA]] - type-safe JPA alternative
   (compare with JOOQ approach)
@@ -598,6 +607,7 @@ public DSLContext dslContext(DataSource ds) {
 ```
 
 **If you remember only 3 things:**
+
 1. Spring Data JPA = ORM (entity lifecycle); JOOQ = SQL DSL; MyBatis = SQL mapping
 2. JOOQ is not an ORM - no dirty checking, no entity lifecycle; they complement JPA, not replace it
 3. Mixing Spring Data JPA + JOOQ in one Spring Boot app is idiomatic for CRUD + reporting
@@ -650,6 +660,7 @@ technical comparisons.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the fundamental difference between an ORM
    (entity lifecycle) and a SQL builder (JOOQ) in one paragraph
 2. **IDENTIFY** which tool is wrong for a given use case
@@ -667,9 +678,10 @@ technical comparisons.
 
 **Q1: When would you choose JOOQ over Spring Data JPA?
 Describe a concrete scenario.**
-*Why they ask:* Tests whether candidate can go beyond "JOOQ is type-safe"
+_Why they ask:_ Tests whether candidate can go beyond "JOOQ is type-safe"
 to explain the actual use case boundaries.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Spring Data JPA scenario: CRUD entities, simple queries,
   entity associations, domain model with lifecycle
 - JOOQ scenario: complex SQL required - window functions (`LAG`, `RANK`,
@@ -687,8 +699,9 @@ to explain the actual use case boundaries.
 **Q2: Can Spring Data JPA and JOOQ be used in the same
 Spring Boot application? If so, how do you ensure they
 participate in the same transaction?**
-*Why they ask:* Tests integration architecture knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests integration architecture knowledge.
+_Strong answer includes:_
+
 - YES - both can use the same `DataSource` and Spring transaction manager
 - Spring Boot: use `spring-boot-starter-data-jpa` + `spring-boot-starter-jooq`
 - Spring Boot auto-configures JOOQ with `TransactionAwareDataSourceProxy` when

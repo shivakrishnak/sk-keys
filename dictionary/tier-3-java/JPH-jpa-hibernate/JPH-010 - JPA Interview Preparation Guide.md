@@ -30,11 +30,11 @@ JPA/Hibernate interview questions, organised by difficulty
 tier and topic cluster. Use this to audit gaps and
 prioritise study depth.
 
-| #010 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | ORM Mismatch, What is ORM, JPA vs JDBC, Hibernate as JPA Impl, JPA Ecosystem Map | |
-| **Used by:** | EntityManager, Persistence Context, Entity Lifecycle, JPQL | |
-| **Related:** | CrudRepository vs JpaRepository, Spring Data JPA Auto-configuration, JDBC Template | |
+| #010            | Category: JPA & Hibernate                                                          | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | ORM Mismatch, What is ORM, JPA vs JDBC, Hibernate as JPA Impl, JPA Ecosystem Map   |                 |
+| **Used by:**    | EntityManager, Persistence Context, Entity Lifecycle, JPQL                         |                 |
+| **Related:**    | CrudRepository vs JpaRepository, Spring Data JPA Auto-configuration, JDBC Template |                 |
 
 ---
 
@@ -78,6 +78,7 @@ dependencies (what you must understand before what).
 and you will pass JPA questions at junior through staff level.
 
 **One analogy:**
+
 > Preparing for JPA interviews without a guide is like
 > packing for a trip without knowing the destination.
 > This guide is the itinerary: what to pack (topics),
@@ -121,12 +122,12 @@ Zone 5 - Performance (asked at senior/staff level)
 
 **SENIORITY DEPTH MAP:**
 
-| Level | Expected depth | Traps |
-|---|---|---|
-| Junior | Can describe concept + basic usage | Confusing @Transient with Java `transient` |
-| Mid | Can trace mechanism + failure modes | LAZY vs EAGER in practice, N+1 |
-| Senior | Can compare trade-offs + diagnose production issues | Transaction propagation, optimistic lock conflict |
-| Staff | Can design persistence architecture | Cache invalidation, multi-datasource, schema migration strategy |
+| Level  | Expected depth                                      | Traps                                                           |
+| ------ | --------------------------------------------------- | --------------------------------------------------------------- |
+| Junior | Can describe concept + basic usage                  | Confusing @Transient with Java `transient`                      |
+| Mid    | Can trace mechanism + failure modes                 | LAZY vs EAGER in practice, N+1                                  |
+| Senior | Can compare trade-offs + diagnose production issues | Transaction propagation, optimistic lock conflict               |
+| Staff  | Can design persistence architecture                 | Cache invalidation, multi-datasource, schema migration strategy |
 
 ---
 
@@ -169,6 +170,7 @@ than any other single question.
 > a decathlon rather than a sprint. You need minimum
 > competence in every event, but the order to train
 > and the depth per event matters:
+>
 > 1. Fundamentals (sprinting) - everyone's tested on these
 > 2. Querying/N+1 (javelin) - mid-level gateway question
 > 3. Transactions (pole vault) - senior-level discriminator
@@ -186,6 +188,7 @@ Spring Data JPA -> second-level cache.
 
 **Level 2 - Question Frequency (junior preparation):**
 Most asked by frequency:
+
 1. What is the N+1 problem? How do you fix it?
 2. Difference between `persist()`, `merge()`, `detach()`
 3. LAZY vs EAGER fetch - when to use each?
@@ -194,6 +197,7 @@ Most asked by frequency:
 
 **Level 3 - Mechanism Depth (mid-level preparation):**
 For each of the top 5, explain:
+
 - What Hibernate does internally
 - What SQL is generated
 - What breaks and why
@@ -201,6 +205,7 @@ For each of the top 5, explain:
 
 **Level 4 - Design Trade-offs (senior preparation):**
 For each topic, know:
+
 - When the default choice is wrong
 - Three real production failure modes
 - Alternatives and their trade-offs
@@ -208,6 +213,7 @@ For each topic, know:
 
 **Level 5 - Architecture Decisions (staff preparation):**
 Be able to answer:
+
 - How would you design the persistence layer for
   a 100-table schema in a microservices architecture?
 - How do you handle schema migration with zero downtime?
@@ -288,23 +294,23 @@ Week 2 - Depth
 
 **TOP 15 INTERVIEW QUESTIONS BY FREQUENCY:**
 
-| # | Question | Depth Required | JPH Entry |
-|---|---|---|---|
-| 1 | What is the N+1 problem? How to fix it? | Senior | JPH-020 |
-| 2 | LAZY vs EAGER fetch - trade-offs? | Mid | JPH-019 |
-| 3 | `persist()` vs `merge()` vs `save()` differences? | Mid | JPH-011 |
-| 4 | What is the persistence context / first-level cache? | Mid | JPH-012 |
-| 5 | `@OneToMany(mappedBy=)` vs `@JoinColumn`? | Mid | JPH-017 |
-| 6 | How does dirty checking work? | Senior | JPH-012 |
-| 7 | When would you use native SQL over JPQL? | Mid | JPH-033 |
-| 8 | Explain `@Transactional` propagation types | Senior | JPH-029 |
-| 9 | Optimistic vs pessimistic locking? | Senior | JPH-038 |
-| 10 | What is `CascadeType.ALL` and when is it dangerous? | Senior | JPH-018 |
-| 11 | How does Spring Data's `save()` decide persist vs merge? | Mid | JPH-016 |
-| 12 | What is the difference between `@Repository` and `JpaRepository`? | Junior | JPH-016 |
-| 13 | How would you tune JPA for bulk inserts? | Senior | JPH-009 |
-| 14 | What is the second-level cache in Hibernate? | Senior | JPH-043 |
-| 15 | How do you prevent LazyInitializationException? | Mid | JPH-019 |
+| #   | Question                                                          | Depth Required | JPH Entry |
+| --- | ----------------------------------------------------------------- | -------------- | --------- |
+| 1   | What is the N+1 problem? How to fix it?                           | Senior         | JPH-020   |
+| 2   | LAZY vs EAGER fetch - trade-offs?                                 | Mid            | JPH-019   |
+| 3   | `persist()` vs `merge()` vs `save()` differences?                 | Mid            | JPH-011   |
+| 4   | What is the persistence context / first-level cache?              | Mid            | JPH-012   |
+| 5   | `@OneToMany(mappedBy=)` vs `@JoinColumn`?                         | Mid            | JPH-017   |
+| 6   | How does dirty checking work?                                     | Senior         | JPH-012   |
+| 7   | When would you use native SQL over JPQL?                          | Mid            | JPH-033   |
+| 8   | Explain `@Transactional` propagation types                        | Senior         | JPH-029   |
+| 9   | Optimistic vs pessimistic locking?                                | Senior         | JPH-038   |
+| 10  | What is `CascadeType.ALL` and when is it dangerous?               | Senior         | JPH-018   |
+| 11  | How does Spring Data's `save()` decide persist vs merge?          | Mid            | JPH-016   |
+| 12  | What is the difference between `@Repository` and `JpaRepository`? | Junior         | JPH-016   |
+| 13  | How would you tune JPA for bulk inserts?                          | Senior         | JPH-009   |
+| 14  | What is the second-level cache in Hibernate?                      | Senior         | JPH-043   |
+| 15  | How do you prevent LazyInitializationException?                   | Mid            | JPH-019   |
 
 ---
 
@@ -396,24 +402,24 @@ public class OrderService {
 
 **Answer Quality by Question and Level:**
 
-| Question | Junior answer | Senior answer |
-|---|---|---|
-| N+1 problem | "Load list, N child queries fire" | "Symptom of fetch mismatch; fix with JOIN FETCH or @EntityGraph; Cartesian product danger with multiple collections; use projections for reporting" |
-| LAZY vs EAGER | "LAZY = load on demand" | "LAZY is default for collections, EAGER is default for @ManyToOne; EAGER can cause N+1 with JPQL without JOIN; OSIV determines LAZY accessibility outside transaction" |
-| dirty checking | "JPA auto-saves changes" | "Hibernate takes a snapshot at load; at flush, field-by-field comparison via bytecode enhancement or reflection; snapshot memory doubles with large result sets" |
-| first-level cache | "Session-level cache" | "Identity map within EntityManager session; `find()` uses it; JPQL bypasses it; detach() removes entity from it; clear() empties it; critical for preventing duplicate entity instances" |
+| Question          | Junior answer                     | Senior answer                                                                                                                                                                            |
+| ----------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| N+1 problem       | "Load list, N child queries fire" | "Symptom of fetch mismatch; fix with JOIN FETCH or @EntityGraph; Cartesian product danger with multiple collections; use projections for reporting"                                      |
+| LAZY vs EAGER     | "LAZY = load on demand"           | "LAZY is default for collections, EAGER is default for @ManyToOne; EAGER can cause N+1 with JPQL without JOIN; OSIV determines LAZY accessibility outside transaction"                   |
+| dirty checking    | "JPA auto-saves changes"          | "Hibernate takes a snapshot at load; at flush, field-by-field comparison via bytecode enhancement or reflection; snapshot memory doubles with large result sets"                         |
+| first-level cache | "Session-level cache"             | "Identity map within EntityManager session; `find()` uses it; JPQL bypasses it; detach() removes entity from it; clear() empties it; critical for preventing duplicate entity instances" |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "EAGER fetch is safer because you avoid LazyInitializationException" | EAGER on collections causes Cartesian products with JPQL (unless JOIN FETCH is used), leading to N+1 at the query level. LAZY with explicit fetch strategies is almost always the correct design. |
-| "`CascadeType.ALL` is the safe default" | `CascadeType.ALL` includes `REMOVE`, which cascades deletes. An unintended cascade delete can wipe child records. Use specific cascade types (`PERSIST`, `MERGE`) unless full cascade including delete is explicitly required. |
-| "Spring Data's `repository.save()` always does an INSERT" | `save()` calls `isNew()` - if the entity has a null/0 ID it calls `persist()` (INSERT); if non-null it calls `merge()` (SELECT + potential UPDATE). For entities with pre-assigned UUIDs, every `save()` triggers a SELECT. |
-| "`@Transactional` on a private method works in Spring" | Spring's `@Transactional` is implemented via a proxy subclass; private methods are not overriddable and the proxy cannot intercept them. The `@Transactional` annotation on a private method is silently ignored. |
-| "The second-level cache always improves performance" | The second-level cache improves read performance for frequently accessed, rarely changing entities. For frequently written entities, cache invalidation overhead and stale read risk can make performance worse than no cache. |
+| Misconception                                                        | Reality                                                                                                                                                                                                                        |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "EAGER fetch is safer because you avoid LazyInitializationException" | EAGER on collections causes Cartesian products with JPQL (unless JOIN FETCH is used), leading to N+1 at the query level. LAZY with explicit fetch strategies is almost always the correct design.                              |
+| "`CascadeType.ALL` is the safe default"                              | `CascadeType.ALL` includes `REMOVE`, which cascades deletes. An unintended cascade delete can wipe child records. Use specific cascade types (`PERSIST`, `MERGE`) unless full cascade including delete is explicitly required. |
+| "Spring Data's `repository.save()` always does an INSERT"            | `save()` calls `isNew()` - if the entity has a null/0 ID it calls `persist()` (INSERT); if non-null it calls `merge()` (SELECT + potential UPDATE). For entities with pre-assigned UUIDs, every `save()` triggers a SELECT.    |
+| "`@Transactional` on a private method works in Spring"               | Spring's `@Transactional` is implemented via a proxy subclass; private methods are not overriddable and the proxy cannot intercept them. The `@Transactional` annotation on a private method is silently ignored.              |
+| "The second-level cache always improves performance"                 | The second-level cache improves read performance for frequently accessed, rarely changing entities. For frequently written entities, cache invalidation overhead and stale read risk can make performance worse than no cache. |
 
 ---
 
@@ -464,6 +470,7 @@ at the application layer.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-001 - The Object-Relational Mismatch Problem]] -
   why JPA exists at all
 - [[JPH-002 - What is ORM (Object-Relational Mapping)]] -
@@ -472,6 +479,7 @@ at the application layer.
   the engine behind every JPA feature
 
 **Builds On This (learn these next):**
+
 - [[JPH-011 - EntityManager]] - the core API; must know
   deeply for all senior JPA questions
 - [[JPH-012 - Persistence Context]] - the mechanism behind
@@ -479,6 +487,7 @@ at the application layer.
 - [[JPH-020 - N+1 Problem]] - the #1 interview question
 
 **Alternatives / Comparisons:**
+
 - [[JPH-015 - CrudRepository and JpaRepository]] - Spring
   Data JPA interview questions are the most asked practical
   questions in Spring Boot roles
@@ -511,6 +520,7 @@ at the application layer.
 ```
 
 **Study priority order (if time is limited):**
+
 1. N+1 + JOIN FETCH + @EntityGraph (JPH-020, JPH-021, JPH-023)
 2. EntityManager + Persistence Context (JPH-011, JPH-012)
 3. @OneToMany/@ManyToOne + fetch (JPH-017, JPH-019)
@@ -565,6 +575,7 @@ interviewers value highly.
 ### ✅ Mastery Checklist
 
 **You are interview-ready at senior level when you can:**
+
 1. **EXPLAIN** the N+1 problem, trace the SQL it generates,
    and describe three fixes (JOIN FETCH, @EntityGraph, DTO
    projection) with the trade-off of each
@@ -612,9 +623,9 @@ and the diagnostic steps for each.
 ### 🎯 Interview Deep-Dive
 
 **Q1: What is the N+1 problem and how do you solve it?**
-*Why they ask:* #1 most asked JPA question - tests practical
+_Why they ask:_ #1 most asked JPA question - tests practical
 ORM experience more than any other single topic.
-*Strong answer:*
+_Strong answer:_
 "N+1 occurs when loading N parent entities and accessing
 their `LAZY`-loaded collections generates N additional
 SELECT queries - 1 for the parent list and N for each
@@ -632,9 +643,9 @@ DTO projection for reporting/read-heavy queries."
 
 **Q2: Explain the persistence context. What is the first-level
 cache and how does it affect your code?**
-*Why they ask:* Tests understanding of the core JPA mechanism
+_Why they ask:_ Tests understanding of the core JPA mechanism
 most candidates confuse with the second-level cache.
-*Strong answer:*
+_Strong answer:_
 "The persistence context is an identity map maintained by
 the EntityManager for the duration of a session. Every
 entity loaded within the same session is cached by its
@@ -655,9 +666,9 @@ the same entity was modified in the same session."
 
 **Q3: What is the `@Transactional` self-invocation trap
 and how do you fix it?**
-*Why they ask:* Discriminates senior from mid-level candidates;
+_Why they ask:_ Discriminates senior from mid-level candidates;
 requires understanding of Spring AOP proxy mechanism.
-*Strong answer:*
+_Strong answer:_
 "Spring's `@Transactional` is implemented via a proxy.
 When a bean is `@Autowired`, you receive a proxy, not the
 real bean. Calling an `@Transactional` method through the

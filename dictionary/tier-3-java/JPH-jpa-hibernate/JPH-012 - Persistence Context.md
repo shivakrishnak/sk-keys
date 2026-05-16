@@ -30,11 +30,11 @@ session: every managed entity is stored in it; dirty
 checking compares snapshots at flush time to generate
 only the SQL that is actually needed.
 
-| #012 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | EntityManager | |
-| **Used by:** | Entity Lifecycle, Fetch Strategies (LAZY/EAGER), @Transactional, Optimistic Locking (@Version) | |
-| **Related:** | Second-Level Cache (@Cache), Hibernate Session vs EntityManager | |
+| #012            | Category: JPA & Hibernate                                                                      | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | EntityManager                                                                                  |                 |
+| **Used by:**    | Entity Lifecycle, Fetch Strategies (LAZY/EAGER), @Transactional, Optimistic Locking (@Version) |                 |
+| **Related:**    | Second-Level Cache (@Cache), Hibernate Session vs EntityManager                                |                 |
 
 ---
 
@@ -96,6 +96,7 @@ memory: every entity you load is stored there, every change
 tracked, and at flush time it generates just the SQL needed.
 
 **One analogy:**
+
 > The persistence context is a notepad for a transaction.
 > Every entity you look up gets written on the notepad.
 > Every change you make is marked. At the end of the
@@ -157,6 +158,7 @@ p.setPrice(29.99);
 ```
 
 **CORE INVARIANTS:**
+
 1. Identity map is per-session; the same entity in two
    different sessions is a different Java object
 2. Dirty checking compares all mapped fields at flush time;
@@ -188,9 +190,10 @@ the email change from `CustomerService`.
 **WITH identity map:**
 `CustomerService.updateEmail()` loads Customer #42 (SELECT 1),
 modifies email. `OrderService.createOrder()` calls `em.find(Customer.class, 42L)`
+
 - gets the SAME Java object (cache hit, no SELECT). It sees
-the updated email. At flush, ONE UPDATE is generated for the
-single shared instance.
+  the updated email. At flush, ONE UPDATE is generated for the
+  single shared instance.
 
 **THE INSIGHT:** The identity map is what makes a JPA
 session a coherent unit of work. Without it, multi-layered
@@ -249,7 +252,7 @@ used by the dirty checker at flush.
 
 **Level 4 - Why it was designed this way (senior/staff):**
 Bytecode enhancement (Hibernate 5+) changes dirty checking
-from a full field scan (O(entities * fields)) to a
+from a full field scan (O(entities \* fields)) to a
 field-write interception (O(1) per write). When bytecode
 enhancement is active, Hibernate instruments the entity
 class to set a dirty flag when any setter is called.
@@ -275,6 +278,7 @@ which in turn affects the ordering guarantees of
 read-your-own-writes within a transaction.
 
 **Expert Thinking Cues:**
+
 - Ask: "How many entities will be in the persistence
   context at peak?" - if > 10,000, proactive `clear()`
   strategy is needed
@@ -386,10 +390,10 @@ pre-transaction state in the application, but the database
 has no changes (rollback is complete).
 
 **WHAT CHANGES AT SCALE:**
-At 10,000 managed entities, the flush takes O(10,000 entities * N fields)
+At 10,000 managed entities, the flush takes O(10,000 entities _ N fields)
 time for reflection-based dirty checking. Bytecode enhancement
 reduces this to O(dirty entities only). The snapshot map
-takes O(10,000 * avg_fields * 8 bytes) memory. For batch
+takes O(10,000 _ avg_fields \* 8 bytes) memory. For batch
 jobs, this adds up to hundreds of MB. The `em.clear()` every
 1000 entities strategy is non-negotiable at batch scale.
 
@@ -484,11 +488,11 @@ public void migratePrices(List<Long> ids) {
 
 ### ⚖️ Comparison Table
 
-| Cache | Scope | On/Off | Shared? | Invalidation |
-|---|---|---|---|---|
-| **First-level (Persistence Context)** | Per-session / per-transaction | Always on | No | On `em.clear()`, session close, `em.detach()` |
-| **Second-level (@Cache)** | Per-EntityManagerFactory | Optional | Yes (across sessions) | On update, via `evict()`, TTL |
-| **Query Cache** | Per-EntityManagerFactory | Optional | Yes | On table change |
+| Cache                                 | Scope                         | On/Off    | Shared?               | Invalidation                                  |
+| ------------------------------------- | ----------------------------- | --------- | --------------------- | --------------------------------------------- |
+| **First-level (Persistence Context)** | Per-session / per-transaction | Always on | No                    | On `em.clear()`, session close, `em.detach()` |
+| **Second-level (@Cache)**             | Per-EntityManagerFactory      | Optional  | Yes (across sessions) | On update, via `evict()`, TTL                 |
+| **Query Cache**                       | Per-EntityManagerFactory      | Optional  | Yes                   | On table change                               |
 
 **Key distinction:** First-level cache ensures consistency
 WITHIN a transaction (identity map). Second-level cache
@@ -500,13 +504,13 @@ completely independent and complementary.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "The first-level cache is the same as the second-level cache" | The first-level cache (persistence context) is per-session, mandatory, and transaction-scoped. The second-level cache is per-application, optional, and shared across sessions. They are distinct systems. |
-| "Dirty checking generates an UPDATE for all fields" | By default Hibernate generates an UPDATE with only changed fields (with `@DynamicUpdate`) or all fields (default, for prepared statement caching). With bytecode enhancement, only genuinely dirty fields are included. |
-| "JPQL queries always use the persistence context cache" | JPQL queries bypass the first-level cache and always hit the database. The results ARE stored in the first-level cache (merged with existing instances), but the query itself executes SQL. |
-| "`em.clear()` is safe to call at any time" | `em.clear()` without a preceding `em.flush()` discards all pending changes. Any `persist()`, `merge()`, or field modification since the last flush is lost silently. Always `flush()` before `clear()` in batch jobs. |
-| "The persistence context is only relevant in complex applications" | Every JPA operation uses the persistence context. A simple `em.find()` + field modification + transaction commit uses the identity map and dirty checking. There is no JPA operation that bypasses it. |
+| Misconception                                                      | Reality                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The first-level cache is the same as the second-level cache"      | The first-level cache (persistence context) is per-session, mandatory, and transaction-scoped. The second-level cache is per-application, optional, and shared across sessions. They are distinct systems.              |
+| "Dirty checking generates an UPDATE for all fields"                | By default Hibernate generates an UPDATE with only changed fields (with `@DynamicUpdate`) or all fields (default, for prepared statement caching). With bytecode enhancement, only genuinely dirty fields are included. |
+| "JPQL queries always use the persistence context cache"            | JPQL queries bypass the first-level cache and always hit the database. The results ARE stored in the first-level cache (merged with existing instances), but the query itself executes SQL.                             |
+| "`em.clear()` is safe to call at any time"                         | `em.clear()` without a preceding `em.flush()` discards all pending changes. Any `persist()`, `merge()`, or field modification since the last flush is lost silently. Always `flush()` before `clear()` in batch jobs.   |
+| "The persistence context is only relevant in complex applications" | Every JPA operation uses the persistence context. A simple `em.find()` + field modification + transaction commit uses the identity map and dirty checking. There is no JPA operation that bypasses it.                  |
 
 ---
 
@@ -608,10 +612,12 @@ that ensures read-your-own-writes consistency.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-011 - EntityManager]] - the `EntityManager` owns
   the persistence context; understand EntityManager first
 
 **Builds On This (learn these next):**
+
 - [[JPH-013 - Entity Lifecycle (NEW, MANAGED, DETACHED, REMOVED)]] -
   the entity state machine driven by persistence context
   membership
@@ -625,6 +631,7 @@ that ensures read-your-own-writes consistency.
   comparison at flush time
 
 **Alternatives / Comparisons:**
+
 - [[JPH-043 - Second-Level Cache (@Cache, @Cacheable)]] -
   the cross-session cache that complements the first-level
   persistence context
@@ -668,6 +675,7 @@ that ensures read-your-own-writes consistency.
 ```
 
 **If you remember only 3 things:**
+
 1. Identity map: one `@Id` = one Java object per session;
    `em.find()` hits DB only on first call; subsequent calls
    return the cached instance
@@ -701,6 +709,7 @@ same scope (session/transaction). This prevents split-brain
 data corruption within a single unit of work.
 
 **Where else this pattern appears:**
+
 - **SQLAlchemy Session (Python)** - identical Identity Map
   implementation; `session.query(Product).get(1)` returns
   the same Python object on repeated calls within the session
@@ -726,7 +735,7 @@ Bytecode enhancement rewrites the entity bytecode to set
 a dirty flag only when a setter is called, reducing flush
 time from O(N*F) to O(dirty entities). This optimisation
 is not widely known: most Spring Boot applications run
-without bytecode enhancement, silently paying the O(N*F)
+without bytecode enhancement, silently paying the O(N\*F)
 flush cost for large persistence contexts.
 
 ---
@@ -734,6 +743,7 @@ flush cost for large persistence contexts.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the identity map behaviour: what happens when
    `em.find(Product.class, 1L)` is called twice in the same
    transaction, and why this ensures consistency
@@ -759,11 +769,11 @@ transaction A. Transaction A is not committed. Transaction B
 loads the same entity. Is Transaction B's entity the same
 Java object as Transaction A's? What does this mean for
 concurrent modification?
-*Hint: Different EntityManager instances = different
+_Hint: Different EntityManager instances = different
 persistence contexts = different Java objects. Transaction
 isolation is at the DB level, not the Java object level.
 Two threads can have two different Java objects for the
-same DB row.*
+same DB row._
 
 **Q2 (TYPE C - Design Trade-off):** Your batch job processes
 100,000 entities in a single `@Transactional` method. You
@@ -772,9 +782,9 @@ fails halfway through with a constraint violation. What
 happened? Are all 50,000 previously processed entities
 rolled back, or are only the 1000 entities in the current
 batch rolled back?
-*Hint: The entire method is one transaction. A single
+_Hint: The entire method is one transaction. A single
 `@Transactional` method = one JDBC transaction. If it fails,
-all 50,000 previous changes are rolled back too.*
+all 50,000 previous changes are rolled back too._
 
 **Q3 (TYPE G - Hands-On):** Write a test that proves:
 (1) Two calls to `em.find(Product.class, 1L)` in the same
@@ -790,8 +800,9 @@ Which Hibernate statistics counter tracks identity map hits vs. misses?
 
 **Q1: What is the persistence context and how is it different
 from the second-level cache?**
-*Why they ask:* The most common JPA cache confusion in interviews.
-*Strong answer includes:*
+_Why they ask:_ The most common JPA cache confusion in interviews.
+_Strong answer includes:_
+
 - Persistence context = first-level cache: per-session,
   mandatory, always on, contains entity objects for identity
   map and dirty checking
@@ -806,13 +817,14 @@ from the second-level cache?**
 
 **Q2: How does Hibernate's dirty checking work, and what
 are the performance implications for large persistence contexts?**
-*Why they ask:* Tests understanding of hidden JPA performance
+_Why they ask:_ Tests understanding of hidden JPA performance
 costs that surface in batch processing and large transactions.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Dirty checking compares each managed entity's current
   field values against the snapshot taken at load time
-- Without bytecode enhancement: O(entities * fields)
-  comparison at every flush; 10,000 entities * 20 fields
+- Without bytecode enhancement: O(entities _ fields)
+  comparison at every flush; 10,000 entities _ 20 fields
   = 200,000 comparisons per flush
 - With bytecode enhancement: entity setters set a dirty
   flag; only flagged entities are compared; O(dirty entities)
@@ -824,9 +836,10 @@ costs that surface in batch processing and large transactions.
 **Q3: A batch job calls `em.clear()` periodically but
 forgets to call `em.flush()` first. What is the observable
 symptom and why?**
-*Why they ask:* Tests understanding of the flush-clear
+_Why they ask:_ Tests understanding of the flush-clear
 sequence, which is a frequent batch job bug.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `em.clear()` evicts all entities from the persistence
   context; pending changes (dirty entities, buffered
   INSERT/DELETE) are discarded without SQL being generated

@@ -33,11 +33,11 @@ Requires the 2LC to be enabled and the entity to be
 `@Cache`-annotated. Useful only for expensive queries
 with stable parameters. Almost never worth the complexity.
 
-| #035 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JPQL, @Transactional, First Level Cache, Second Level Cache | |
-| **Used by:** | Hibernate Statistics, Hibernate Internals | |
-| **Related:** | HQL, Criteria API | |
+| #035            | Category: JPA & Hibernate                                   | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------- | :-------------- |
+| **Depends on:** | JPQL, @Transactional, First Level Cache, Second Level Cache |                 |
+| **Used by:**    | Hibernate Statistics, Hibernate Internals                   |                 |
+| **Related:**    | HQL, Criteria API                                           |                 |
 
 ---
 
@@ -54,6 +54,7 @@ SQL, subsequent requests return the cached result in <1ms.
 
 **WHY IT'S RARELY WORTH IT:**
 The query cache is only useful for a very specific pattern:
+
 - Expensive query
 - Identical parameters on repeated calls
 - Results are stable (don't change often)
@@ -75,6 +76,7 @@ returns the cached key list and then fetches each entity
 from the second-level cache (or database if not in 2LC).
 
 **Key characteristics:**
+
 - Requires `hibernate.cache.use_query_cache=true`
 - Requires the 2LC to be enabled AND the entity to be `@Cache`-annotated
 - Cache key = (SQL string + bind parameter values + first result + max results)
@@ -91,6 +93,7 @@ between sessions; on cache hit, Hibernate still needs
 the entities from the 2LC (or DB).
 
 **One analogy:**
+
 > The query cache is like a cached search results page
 > that remembers "searching for 'laptops' returns product
 > IDs [101, 205, 307]". The products themselves are in
@@ -213,6 +216,7 @@ parameters, it returns the cached results without hitting
 the database.
 
 **Level 2 - How to enable it (junior developer):**
+
 1. Enable 2LC: `hibernate.cache.use_second_level_cache=true`
 2. Enable query cache: `hibernate.cache.use_query_cache=true`
 3. Annotate entity with `@Cache`
@@ -382,24 +386,24 @@ public class CategoryService {
 
 ### ⚖️ Comparison Table
 
-| Feature | Hibernate Query Cache | Spring @Cacheable |
-|---|---|---|
-| Granularity | Per query + parameters | Per method call + key |
-| Requires 2LC? | Yes (for entity queries) | No |
-| Invalidation | Auto (any entity mutation) | Manual (@CacheEvict) or TTL |
-| Complexity | High (2 cache layers) | Low (one annotation) |
-| Works for scalars? | Yes | Yes |
-| Cluster support | Via 2LC provider (Redis) | Via Spring Cache (Redis) |
-| Recommended? | Rarely | Default choice for caching |
+| Feature            | Hibernate Query Cache      | Spring @Cacheable           |
+| ------------------ | -------------------------- | --------------------------- |
+| Granularity        | Per query + parameters     | Per method call + key       |
+| Requires 2LC?      | Yes (for entity queries)   | No                          |
+| Invalidation       | Auto (any entity mutation) | Manual (@CacheEvict) or TTL |
+| Complexity         | High (2 cache layers)      | Low (one annotation)        |
+| Works for scalars? | Yes                        | Yes                         |
+| Cluster support    | Via 2LC provider (Redis)   | Via Spring Cache (Redis)    |
+| Recommended?       | Rarely                     | Default choice for caching  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "The query cache stores full entity objects" | The query cache stores only entity PRIMARY KEYS (or scalar values). Entity state is stored in the 2LC separately. A query cache hit still requires 2LC lookups for each ID. |
-| "Enabling the query cache speeds up all queries" | The query cache only caches queries marked with `org.hibernate.cacheable=true`. Unmarked queries are not cached. And for mutable data, the cache is constantly invalidated, providing zero benefit. |
+| Misconception                                              | Reality                                                                                                                                                                                                                                                                 |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The query cache stores full entity objects"               | The query cache stores only entity PRIMARY KEYS (or scalar values). Entity state is stored in the 2LC separately. A query cache hit still requires 2LC lookups for each ID.                                                                                             |
+| "Enabling the query cache speeds up all queries"           | The query cache only caches queries marked with `org.hibernate.cacheable=true`. Unmarked queries are not cached. And for mutable data, the cache is constantly invalidated, providing zero benefit.                                                                     |
 | "The query cache invalidates only for exact table matches" | The Hibernate query cache uses "table space" tracking. ANY modification to a Product entity invalidates ALL query cache entries that return Product results - regardless of whether the specific modified row appeared in the cached results. Very coarse invalidation. |
 
 ---
@@ -417,6 +421,7 @@ call (no two calls have the same key -> no hits), or
 N individual SELECT queries (N+1), or (3) entity is
 modified frequently -> cache is constantly invalidated.
 **Diagnosis:**
+
 ```java
 Statistics stats = sf.getStatistics();
 long hits   = stats.getQueryCacheHitCount();
@@ -425,6 +430,7 @@ long puts   = stats.getQueryCachePutCount();
 // If puts >> hits: cache is constantly invalidated
 // or rarely reused
 ```
+
 **Fix:** Remove the query cache hint; use `@Cacheable`
 at the service layer, or redesign the query to reduce
 mutations on the cached entity.
@@ -434,14 +440,17 @@ mutations on the cached entity.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-034 - Second Level Cache]] - query cache requires
   2LC to be enabled and entity to be @Cache-annotated
 
 **Builds On This (learn these next):**
+
 - [[JPH-046 - Hibernate Statistics and Monitoring]] -
   monitoring query cache hit/miss rates
 
 **Related:**
+
 - [[JPH-028 - HQL]] - query cache works with HQL/JPQL
 - [[JPH-036 - Criteria API]] - Criteria API queries can
   also be marked cacheable
@@ -473,6 +482,7 @@ mutations on the cached entity.
 ```
 
 **If you remember only 3 things:**
+
 1. The query cache stores entity IDs, not entity data -
    it still needs entities from the 2LC; without 2LC on
    the entity, a query cache hit causes N+1 queries
@@ -508,6 +518,7 @@ local Caffeine (application-layer two-tier cache). Each
 tier must be justified by the problem it solves.
 
 **Where else this pattern appears:**
+
 - **CPU cache hierarchy** - L1/L2/L3 caches: exact same
   concept; inner cache stores IDs/addresses; outer stores
   data
@@ -542,6 +553,7 @@ with a very small set of distinct parameter combinations
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **CONFIGURE** the query cache correctly (2LC enabled,
    entity @Cache, query hint) and verify with statistics
 2. **EXPLAIN** why query cache without entity 2LC causes
@@ -559,8 +571,9 @@ with a very small set of distinct parameter combinations
 
 **Q1: What does the Hibernate Query Cache store, and
 what does it need to work correctly?**
-*Why they ask:* Tests understanding of two-tier caching.
-*Strong answer includes:*
+_Why they ask:_ Tests understanding of two-tier caching.
+_Strong answer includes:_
+
 - Query Cache stores: list of entity primary keys (not entity state)
 - Requires: 2LC enabled AND entity annotated with `@Cache`
 - Without entity in 2LC: cache hit returns IDs; each ID
@@ -571,9 +584,10 @@ what does it need to work correctly?**
 
 **Q2: When is Spring @Cacheable preferable to Hibernate
 Query Cache?**
-*Why they ask:* Tests practical decision-making between
+_Why they ask:_ Tests practical decision-making between
 two caching approaches.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `@Cacheable`: no 2LC required; simpler setup; explicit
   cache keys; manual eviction with `@CacheEvict`; works
   for any service method result (DTOs, scalars, complex objects)

@@ -31,11 +31,11 @@ Works well for 1-3 conditions; use `@Query` for complex
 queries. Method names over 5 conditions become unreadable
 and should be replaced with `@Query` or Specifications.
 
-| #024 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JPQL, CrudRepository/JpaRepository, @Query | |
-| **Used by:** | Pagination/Sorting, DTO Projections | |
-| **Related:** | Criteria API, Spring Data Specifications | |
+| #024            | Category: JPA & Hibernate                  | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------- | :-------------- |
+| **Depends on:** | JPQL, CrudRepository/JpaRepository, @Query |                 |
+| **Used by:**    | Pagination/Sorting, DTO Projections        |                 |
+| **Related:**    | Criteria API, Spring Data Specifications   |                 |
 
 ---
 
@@ -74,6 +74,7 @@ into subject (what to do: `find`, `count`, `exists`,
 comparison keywords).
 
 Method name structure:
+
 ```
 [Subject][By][Property][Operator][And/Or][Property]...
   find      By  Email    Contains  And    Status
@@ -90,6 +91,7 @@ Method name structure:
 field names and Spring Data generates the JPQL for you.
 
 **One analogy:**
+
 > Derived query methods are like ordering coffee by
 > description: "I want a large, oat-milk, one-shot latte
 > with no sugar". The barista (Spring Data) translates
@@ -154,6 +156,7 @@ findByCategory_Parent_Name(String name)
 ```
 
 **CORE INVARIANTS:**
+
 1. Method names are parsed at startup via Spring Data's
    `PartTree` - invalid names cause `PropertyReferenceException`
    at startup
@@ -415,23 +418,23 @@ void deleteByStatus(String status);
 
 ### ⚖️ Comparison Table
 
-| Complexity | Method name | @Query | Criteria API |
-|---|---|---|---|
-| 1-2 conditions, simple types | Best | Overkill | Overkill |
-| 3-5 conditions, no JOINs | OK | Better | OK |
-| JOINs, subqueries, aggregations | Not possible | Best | Verbose |
-| Dynamic conditions (runtime built) | Not possible | Not possible | Best |
+| Complexity                         | Method name  | @Query       | Criteria API |
+| ---------------------------------- | ------------ | ------------ | ------------ |
+| 1-2 conditions, simple types       | Best         | Overkill     | Overkill     |
+| 3-5 conditions, no JOINs           | OK           | Better       | OK           |
+| JOINs, subqueries, aggregations    | Not possible | Best         | Verbose      |
+| Dynamic conditions (runtime built) | Not possible | Not possible | Best         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Derived query methods are validated at runtime" | Derived queries are parsed and validated at application startup. `PropertyReferenceException` is thrown at startup if a field name is wrong - not at first call. |
-| "`findByStatus` and `findByStatus(String)` are different methods" | Method names are the primary key for Spring Data query derivation. Parameter types are NOT part of the query derivation - only names. Two methods with same name but different parameter types on a Spring Data repository interface is a compilation error. |
+| Misconception                                                      | Reality                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Derived query methods are validated at runtime"                   | Derived queries are parsed and validated at application startup. `PropertyReferenceException` is thrown at startup if a field name is wrong - not at first call.                                                                                                                         |
+| "`findByStatus` and `findByStatus(String)` are different methods"  | Method names are the primary key for Spring Data query derivation. Parameter types are NOT part of the query derivation - only names. Two methods with same name but different parameter types on a Spring Data repository interface is a compilation error.                             |
 | "The `_` separator in method names is required for all traversals" | `_` is only required to disambiguate when both a flat property and a nested property path could match. For unambiguous paths, Spring Data resolves traversal automatically (e.g., `findByAddressZipCode` if only `Address.zipCode` exists). Using `_` always is safer and more readable. |
-| "`deleteBy` performs a single bulk DELETE SQL" | `deleteBy` in Spring Data loads all matching entities first (`findBy`), then calls `em.remove()` on each. For 1000 entities, this is 1 SELECT + 1000 DELETEs. For bulk delete, use `@Modifying @Transactional @Query("DELETE FROM ... WHERE ...")`. |
+| "`deleteBy` performs a single bulk DELETE SQL"                     | `deleteBy` in Spring Data loads all matching entities first (`findBy`), then calls `em.remove()` on each. For 1000 entities, this is 1 SELECT + 1000 DELETEs. For bulk delete, use `@Modifying @Transactional @Query("DELETE FROM ... WHERE ...")`.                                      |
 
 ---
 
@@ -478,17 +481,20 @@ int deleteByStatusBulk(@Param("status") String status);
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-014 - JPQL]] - derived methods generate JPQL
 - [[JPH-016 - CrudRepository and JpaRepository]] -
   derived methods are defined on the repository interface
 
 **Builds On This (learn these next):**
+
 - [[JPH-025 - Pagination and Sorting (Pageable, Sort)]] -
   add `Pageable` to derived methods for pagination
 - [[JPH-030 - DTO Projections]] - return interface or
   class projections from derived methods
 
 **Alternatives:**
+
 - [[JPH-036 - Criteria API]] - type-safe dynamic queries
 - [[JPH-043 - Spring Data Specifications]] - predicate-based
   dynamic query building
@@ -519,6 +525,7 @@ int deleteByStatusBulk(@Param("status") String status);
 ```
 
 **If you remember only 3 things:**
+
 1. Method names are parsed at startup - invalid field
    names cause startup failure, not runtime errors
 2. Use `_` for nested property traversal to avoid
@@ -541,18 +548,19 @@ use `@Modifying @Query` for true bulk delete.
 ### 💎 Transferable Wisdom
 
 **Reusable Engineering Principle:** Convention over configuration
+
 - when a naming convention expresses intent precisely,
-code generation from the convention eliminates boilerplate
-while preserving readability. Spring Data's method name
-DSL is a prime example: the method name IS the specification.
-The same principle appears in Rails ActiveRecord
-(`find_by_email_and_status`), Swift Core Data fetch
-predicates, and REST URL conventions (`/users/{id}/orders`).
-The convention reduces cognitive load when it matches
-the domain language naturally; it becomes an obstacle
-when the domain requires expressiveness beyond the
-convention's scope (at which point `@Query`, Specifications,
-or native SQL take over).
+  code generation from the convention eliminates boilerplate
+  while preserving readability. Spring Data's method name
+  DSL is a prime example: the method name IS the specification.
+  The same principle appears in Rails ActiveRecord
+  (`find_by_email_and_status`), Swift Core Data fetch
+  predicates, and REST URL conventions (`/users/{id}/orders`).
+  The convention reduces cognitive load when it matches
+  the domain language naturally; it becomes an obstacle
+  when the domain requires expressiveness beyond the
+  convention's scope (at which point `@Query`, Specifications,
+  or native SQL take over).
 
 ---
 
@@ -578,6 +586,7 @@ developers who think of repositories as schema mappers.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **WRITE** derived query methods for: equality, range,
    IN clause, null check, case-insensitive LIKE, and
    nested property traversal
@@ -597,9 +606,10 @@ developers who think of repositories as schema mappers.
 
 **Q1: How does Spring Data generate queries from method
 names, and when are they validated?**
-*Why they ask:* Tests foundational Spring Data knowledge
+_Why they ask:_ Tests foundational Spring Data knowledge
 and understanding of the startup-vs-runtime tradeoff.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Method names are parsed by `PartTree` at application
   startup via `RepositoryFactory`
 - The parser splits the name into subject (`findBy`,
@@ -615,9 +625,10 @@ and understanding of the startup-vs-runtime tradeoff.
 
 **Q2: What is the performance difference between
 deleteByStatus and a @Modifying @Query DELETE?**
-*Why they ask:* Tests awareness of ORM overhead in batch
+_Why they ask:_ Tests awareness of ORM overhead in batch
 operations.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `deleteByStatus(String status)`: Spring Data calls
   `findByStatus(status)` first (loads all matching entities
   into persistence context), then calls `em.remove()` on
@@ -632,9 +643,10 @@ operations.
 
 **Q3: When would you use `findByCategory_Name` vs
 `findByCategoryName`?**
-*Why they ask:* Tests understanding of nested property
+_Why they ask:_ Tests understanding of nested property
 traversal and disambiguation.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `findByCategoryName`: Spring Data tries to find a direct
   field called `categoryName` on the entity. If not found,
   it tries `category.name` (navigating the `@ManyToOne`).

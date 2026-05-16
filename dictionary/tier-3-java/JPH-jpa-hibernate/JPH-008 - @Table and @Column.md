@@ -29,11 +29,11 @@ and schema for an entity; `@Column` overrides the column
 name, type constraints, and DDL options for individual
 fields.
 
-| #008 | Category: JPA & Hibernate | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Id and @GeneratedValue | |
-| **Used by:** | EntityManager, JPQL (Java Persistence Query Language) | |
-| **Related:** | Native SQL Queries, Stored Procedure Mapping | |
+| #008            | Category: JPA & Hibernate                             | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Id and @GeneratedValue                      |                 |
+| **Used by:**    | EntityManager, JPQL (Java Persistence Query Language) |                 |
+| **Related:**    | Native SQL Queries, Stored Procedure Mapping          |                 |
 
 ---
 
@@ -92,12 +92,14 @@ attributes are `name` (column name), `nullable`, `unique`,
 override JPA's defaults.
 
 **One analogy:**
+
 > `@Table` is the street address of a building - it tells
 > the mail carrier (JPA provider) where to deliver
 > persistence operations. `@Column` is the apartment number
+>
 > - it routes the right field to the right column within
-> the table. Without them, JPA guesses the address and
-> apartment from the class and field names.
+>   the table. Without them, JPA guesses the address and
+>   apartment from the class and field names.
 
 **One insight:** `@Table` and `@Column` serve two purposes:
 (1) mapping - connecting Java names to database names;
@@ -111,6 +113,7 @@ via Flyway/Liquibase.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Without `@Table`, the table name defaults to the entity
    class name (or the naming strategy's transformation of it)
 2. Without `@Column`, the column name defaults to the field
@@ -128,6 +131,7 @@ via Flyway/Liquibase.
 
 **DERIVED DESIGN:**
 Two naming resolution layers exist independently:
+
 - **Physical Naming Strategy**: transforms logical names
   (class, field) to physical names (table, column) via
   camelCase-to-snake_case or similar rules
@@ -266,6 +270,7 @@ it is the only way to declare compound uniqueness constraints
 via JPA annotations.
 
 **Expert Thinking Cues:**
+
 - Ask: "Is this `@Column` annotation for mapping (name) or
   for DDL (nullable/length)?" - teams using Flyway should
   strip DDL attributes and let migration scripts control schema
@@ -486,15 +491,15 @@ public class AuditedEntity {
 
 ### ⚖️ Comparison Table
 
-| Attribute | Affects | DDL Generated | Runtime Enforcement |
-|---|---|---|---|
-| `@Column(name)` | Mapping | No | Yes (column name in SQL) |
-| `@Column(nullable=false)` | DDL | `NOT NULL` | No (DB enforces) |
-| `@Column(length=200)` | DDL | `VARCHAR(200)` | No |
-| `@Column(unique=true)` | DDL | `UNIQUE INDEX` | No (DB enforces) |
-| `@Column(insertable=false)` | Mapping | No | Yes (excluded from INSERT) |
-| `@Table(uniqueConstraints)` | DDL | `UNIQUE (col1, col2)` | No (DB enforces) |
-| `@Column(columnDefinition)` | DDL | Raw SQL fragment | No |
+| Attribute                   | Affects | DDL Generated         | Runtime Enforcement        |
+| --------------------------- | ------- | --------------------- | -------------------------- |
+| `@Column(name)`             | Mapping | No                    | Yes (column name in SQL)   |
+| `@Column(nullable=false)`   | DDL     | `NOT NULL`            | No (DB enforces)           |
+| `@Column(length=200)`       | DDL     | `VARCHAR(200)`        | No                         |
+| `@Column(unique=true)`      | DDL     | `UNIQUE INDEX`        | No (DB enforces)           |
+| `@Column(insertable=false)` | Mapping | No                    | Yes (excluded from INSERT) |
+| `@Table(uniqueConstraints)` | DDL     | `UNIQUE (col1, col2)` | No (DB enforces)           |
+| `@Column(columnDefinition)` | DDL     | Raw SQL fragment      | No                         |
 
 **Key distinction:** `@Column` constraints define the desired
 schema state (for DDL generation); Bean Validation annotations
@@ -505,13 +510,13 @@ Java application layer. Both should be used in tandem.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`@Column(nullable=false)` throws an exception when you set null" | It only generates `NOT NULL` in DDL. Setting null on the Java field succeeds until the INSERT hits the database, which then throws a constraint violation. Use `@NotNull` (Bean Validation) for Java-layer validation. |
-| "You need `@Column` on every field" | Without `@Column`, Hibernate maps the field to a column named after the field (via naming strategy). Only add `@Column` when you need to override the default - especially the name. |
-| "`@Table` is only useful for renaming tables" | `@Table` also sets `schema`, `catalog`, `uniqueConstraints`, and `indexes`. For multi-schema databases, `schema` is essential for correctness. |
-| "`@Column(columnDefinition)` is a good idea for cross-database apps" | `columnDefinition` takes raw SQL fragment specific to one database vendor (e.g. `"JSONB"` for PostgreSQL). Using it couples your entity to that vendor, breaking portability to other databases. |
-| "Changing `@Column(name)` is safe to do in production" | Renaming the mapped column name changes every generated SQL query immediately. If the database column name has not been renamed (via migration), all queries break immediately after deployment. Always coordinate with a Flyway migration. |
+| Misconception                                                        | Reality                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`@Column(nullable=false)` throws an exception when you set null"    | It only generates `NOT NULL` in DDL. Setting null on the Java field succeeds until the INSERT hits the database, which then throws a constraint violation. Use `@NotNull` (Bean Validation) for Java-layer validation.                      |
+| "You need `@Column` on every field"                                  | Without `@Column`, Hibernate maps the field to a column named after the field (via naming strategy). Only add `@Column` when you need to override the default - especially the name.                                                        |
+| "`@Table` is only useful for renaming tables"                        | `@Table` also sets `schema`, `catalog`, `uniqueConstraints`, and `indexes`. For multi-schema databases, `schema` is essential for correctness.                                                                                              |
+| "`@Column(columnDefinition)` is a good idea for cross-database apps" | `columnDefinition` takes raw SQL fragment specific to one database vendor (e.g. `"JSONB"` for PostgreSQL). Using it couples your entity to that vendor, breaking portability to other databases.                                            |
+| "Changing `@Column(name)` is safe to do in production"               | Renaming the mapped column name changes every generated SQL query immediately. If the database column name has not been renamed (via migration), all queries break immediately after deployment. Always coordinate with a Flyway migration. |
 
 ---
 
@@ -598,7 +603,7 @@ the old name.
 
 ```bash
 spring.jpa.show-sql=true
-# Look for SELECT ... product_name ... 
+# Look for SELECT ... product_name ...
 # then verify DB column is still prod_name
 ```
 
@@ -621,12 +626,14 @@ migration.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-006 - @Entity]] - `@Table` annotates `@Entity`
   classes; cannot exist without `@Entity`
 - [[JPH-007 - @Id and @GeneratedValue]] - `@Column` often
   used alongside `@Id` to specify the primary key column name
 
 **Builds On This (learn these next):**
+
 - [[JPH-011 - EntityManager]] - EntityManager generates SQL
   using the table and column names resolved by these annotations
 - [[JPH-014 - JPQL (Java Persistence Query Language)]] -
@@ -634,6 +641,7 @@ migration.
   understanding the distinction prevents confusion
 
 **Alternatives / Comparisons:**
+
 - [[JPH-033 - Native SQL Queries]] - when full control over
   SQL is needed, bypassing `@Table`/`@Column` mappings
 - [[JPH-034 - Stored Procedure Mapping]] - stored procedures
@@ -675,6 +683,7 @@ migration.
 ```
 
 **If you remember only 3 things:**
+
 1. `@Column(nullable=false, length=200)` generates DDL
    constraints but does NOT validate in Java - add
    `@NotNull`/`@Size` for Java-layer enforcement
@@ -707,6 +716,7 @@ domain objects, or external API models mapped to internal
 representations.
 
 **Where else this pattern appears:**
+
 - **Jackson `@JsonProperty`** - same pattern: decouples Java
   field names from JSON key names; `@JsonProperty("user_id")`
   maps a Java `userId` field to `"user_id"` in JSON
@@ -717,6 +727,7 @@ representations.
   explicit column-to-property mapping, identical concept
 
 **Industry applications:**
+
 - Legacy banking systems: Java microservices mapping to
   COBOL-era Oracle schemas with 8-character column name
   limits require extensive `@Column(name=...)` usage
@@ -746,6 +757,7 @@ when the two differ.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the difference between `@Column(nullable=false)`
    (DDL constraint) and `@NotNull` (Bean Validation) and
    state exactly when each is enforced
@@ -774,9 +786,9 @@ to manage all database schema changes. Should you include
 `@Column(nullable=false, length=200)` DDL attributes in your
 entities, or omit them and rely on Flyway migrations only?
 What are the arguments for and against each approach?
-*Hint: Consider schema as documentation, DRY principle
+_Hint: Consider schema as documentation, DRY principle
 (constraints in two places), and what happens when the
-Flyway migration and the `@Column` annotation disagree.*
+Flyway migration and the `@Column` annotation disagree._
 
 **Q2 (TYPE D - Root Cause Trace):** A JPQL query
 `SELECT c.email FROM Customer c WHERE c.id = :id` works
@@ -784,8 +796,8 @@ correctly. After renaming the Java field from `email` to
 `emailAddress` and adding `@Column(name="email")`, the JPQL
 query breaks. Trace exactly what happened and what the
 developer needs to fix.
-*Hint: JPQL uses Java field names; after renaming the field,
-all JPQL queries using `c.email` must be updated to `c.emailAddress`.*
+_Hint: JPQL uses Java field names; after renaming the field,
+all JPQL queries using `c.email` must be updated to `c.emailAddress`._
 
 **Q3 (TYPE G - Hands-On):** Create an entity class that maps
 to a table with the following constraints: (1) a compound
@@ -802,10 +814,11 @@ annotations and explain each annotation choice.
 
 **Q1: What is the difference between `@Column(nullable=false)`
 and `@NotNull`? Which one would you use and when?**
-*Why they ask:* Tests the distinction between persistence
+_Why they ask:_ Tests the distinction between persistence
 constraints and application validation - a very common
 interview question for Spring/JPA roles.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `@Column(nullable=false)`: DDL constraint, generates
   `NOT NULL` in `CREATE TABLE`, enforced by the database
   at INSERT/UPDATE time; no Java exception until DB is hit
@@ -818,11 +831,12 @@ interview question for Spring/JPA roles.
 
 **Q2: When would you use `@Column(insertable=false,
 updatable=false)` and what problem does it solve?**
-*Why they ask:* Tests knowledge of edge-case mapping needs -
+_Why they ask:_ Tests knowledge of edge-case mapping needs -
 database-managed columns, triggers, and shared foreign keys.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Used for columns managed by the database: `DEFAULT
-  CURRENT_TIMESTAMP`, `GENERATED ALWAYS AS (...)`, or
+CURRENT_TIMESTAMP`, `GENERATED ALWAYS AS (...)`, or
   values set by INSERT triggers
 - Also used when a join column is mapped twice (as a
   `@Column` and as a `@ManyToOne` join column) - one
@@ -832,9 +846,10 @@ database-managed columns, triggers, and shared foreign keys.
 
 **Q3: If you use JPQL and also Native SQL on the same entity,
 what naming do you use for column references in each?**
-*Why they ask:* Tests understanding of the fundamental
+_Why they ask:_ Tests understanding of the fundamental
 JPQL-vs-SQL distinction that confuses many developers.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - JPQL: uses Java field names (e.g. `c.email`, `p.name`) -
   the JPA provider translates to database column names
 - Native SQL: uses database column names (e.g. `c.CUST_EMAIL`,

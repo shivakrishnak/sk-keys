@@ -35,11 +35,11 @@ applications need BOTH Hibernate (entity CRUD) AND
 JOOQ or JDBC (analytics). The correct architecture
 is a hybrid, not an exclusive choice.
 
-| #055 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JPA Overview, Hibernate vs MyBatis vs JOOQ, QueryDSL, JPA at Scale | |
-| **Used by:** | Spring Data JPA vs JOOQ vs MyBatis Decision | |
-| **Related:** | Criteria API, Spring Data Specifications, Hibernate vs MyBatis vs JOOQ, QueryDSL, Spring Data JPA Decision | |
+| #055            | Category: JPA & Hibernate                                                                                  | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | JPA Overview, Hibernate vs MyBatis vs JOOQ, QueryDSL, JPA at Scale                                         |                 |
+| **Used by:**    | Spring Data JPA vs JOOQ vs MyBatis Decision                                                                |                 |
+| **Related:**    | Criteria API, Spring Data Specifications, Hibernate vs MyBatis vs JOOQ, QueryDSL, Spring Data JPA Decision |                 |
 
 ---
 
@@ -86,13 +86,13 @@ domain model richness, and performance requirements.
 
 **The five primary tools:**
 
-| Tool | Abstraction | Query model | Best for |
-|---|---|---|---|
-| Spring Data JPA + Hibernate | Object graph (ORM) | JPQL / entity methods | Domain CRUD, rich associations |
-| JOOQ | Type-safe SQL DSL | Java SQL DSL | Complex queries, analytics, type safety |
-| MyBatis | SQL mapper | SQL in XML/annotations | Legacy DB, stored procedures, SQL-fluent teams |
-| Spring JDBC Template | Raw JDBC wrapper | SQL strings | Simple queries, bulk operations, lowest overhead |
-| R2DBC + Spring Data R2DBC | Reactive JDBC | Reactive SQL | Non-blocking I/O, WebFlux applications |
+| Tool                        | Abstraction        | Query model            | Best for                                         |
+| --------------------------- | ------------------ | ---------------------- | ------------------------------------------------ |
+| Spring Data JPA + Hibernate | Object graph (ORM) | JPQL / entity methods  | Domain CRUD, rich associations                   |
+| JOOQ                        | Type-safe SQL DSL  | Java SQL DSL           | Complex queries, analytics, type safety          |
+| MyBatis                     | SQL mapper         | SQL in XML/annotations | Legacy DB, stored procedures, SQL-fluent teams   |
+| Spring JDBC Template        | Raw JDBC wrapper   | SQL strings            | Simple queries, bulk operations, lowest overhead |
+| R2DBC + Spring Data R2DBC   | Reactive JDBC      | Reactive SQL           | Non-blocking I/O, WebFlux applications           |
 
 ---
 
@@ -104,6 +104,7 @@ SQL DSL/raw for aggregations, and always use BOTH
 for different operations in the same service.
 
 **One analogy:**
+
 > Tool selection is like choosing the right kitchen
 > utensil. A chef doesn't choose "knife OR spoon" -
 > they use both for different tasks. Similarly, a
@@ -203,12 +204,13 @@ a DIVISION OF RESPONSIBILITY per operation type.
 > not "saw OR hammer." Each tool has a design center
 > (the problem it was optimized for). Using a tool
 > outside its design center creates friction:
->   - Hibernate for analytics: entity lifecycle overhead
->   - JOOQ for domain model: no cascade, no audit, no lazy load
->   - MyBatis for 30 entities: 30 XML mappers to maintain
-> The framework forces the question: "What is the design
-> center of THIS operation?" then routes to the tool
-> whose design center matches.
+>
+> - Hibernate for analytics: entity lifecycle overhead
+> - JOOQ for domain model: no cascade, no audit, no lazy load
+> - MyBatis for 30 entities: 30 XML mappers to maintain
+>   The framework forces the question: "What is the design
+>   center of THIS operation?" then routes to the tool
+>   whose design center matches.
 
 ---
 
@@ -222,19 +224,20 @@ in the same application.
 
 **Level 2 - Quick reference table (junior developer):**
 
-| Operation | Recommended tool |
-|---|---|
-| Save new entity | Spring Data `save()` |
-| Find by ID with associations | JPA `findById()` + `@EntityGraph` |
-| Dynamic search with optional filters | Specifications or QueryDSL |
-| Aggregate: SUM, COUNT, GROUP BY | JOOQ or JPQL aggregate query |
-| Window functions, CTEs | JOOQ |
-| Bulk insert 100K rows | JDBC `batchUpdate()` or JOOQ batch |
-| Complex join across 8 tables | JOOQ |
-| Entity audit history | Hibernate Envers |
-| Stored procedure call | MyBatis or JDBC `StoredProcedure` |
+| Operation                            | Recommended tool                   |
+| ------------------------------------ | ---------------------------------- |
+| Save new entity                      | Spring Data `save()`               |
+| Find by ID with associations         | JPA `findById()` + `@EntityGraph`  |
+| Dynamic search with optional filters | Specifications or QueryDSL         |
+| Aggregate: SUM, COUNT, GROUP BY      | JOOQ or JPQL aggregate query       |
+| Window functions, CTEs               | JOOQ                               |
+| Bulk insert 100K rows                | JDBC `batchUpdate()` or JOOQ batch |
+| Complex join across 8 tables         | JOOQ                               |
+| Entity audit history                 | Hibernate Envers                   |
+| Stored procedure call                | MyBatis or JDBC `StoredProcedure`  |
 
 **Level 3 - Integration setup (mid-level engineer):**
+
 ```java
 // Hybrid service: JPA writes + JOOQ reads
 @Service
@@ -357,12 +360,14 @@ Reactive        | Spring Data R2DBC       | WebFlux apps only
 ```
 
 **Adding JOOQ to existing Spring Boot app (minimal config):**
+
 ```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-jooq</artifactId>
 </dependency>
 ```
+
 Spring Boot auto-configures `DSLContext` bean using
 the same DataSource as JPA. No separate transaction
 configuration needed. JPA and JOOQ share transactions
@@ -418,27 +423,27 @@ public class CustomerService {
 
 ### ⚖️ Comparison Table
 
-| Criteria | Choose Hibernate | Choose JOOQ | Choose MyBatis | Choose JDBC |
-|---|---|---|---|---|
-| Object graph | YES | No | No | No |
-| Lifecycle events | YES | No | No | No |
-| Audit trail | YES (Envers) | No | No | No |
-| Window functions | No | YES | YES | YES |
-| Type-safe SQL | Partial (Criteria) | YES | No | No |
-| Stored procs | Partial | Partial | YES | YES |
-| Bulk insert >10K | Slow | Fast | Fast | YES (fastest) |
-| Dynamic predicates | Specifications | BooleanBuilder | Hard | Manual |
-| Reactive | No | No | No | R2DBC |
+| Criteria           | Choose Hibernate   | Choose JOOQ    | Choose MyBatis | Choose JDBC   |
+| ------------------ | ------------------ | -------------- | -------------- | ------------- |
+| Object graph       | YES                | No             | No             | No            |
+| Lifecycle events   | YES                | No             | No             | No            |
+| Audit trail        | YES (Envers)       | No             | No             | No            |
+| Window functions   | No                 | YES            | YES            | YES           |
+| Type-safe SQL      | Partial (Criteria) | YES            | No             | No            |
+| Stored procs       | Partial            | Partial        | YES            | YES           |
+| Bulk insert >10K   | Slow               | Fast           | Fast           | YES (fastest) |
+| Dynamic predicates | Specifications     | BooleanBuilder | Hard           | Manual        |
+| Reactive           | No                 | No             | No             | R2DBC         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                                   | Reality                                                                                                                                                                                                                                                                                                                                                    |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "We should pick one database access tool for the whole project" | No - different operations have different requirements. The industry standard for mature applications is a hybrid approach: Spring Data JPA for entity CRUD + JOOQ or JDBC for reporting/analytics. Forcing one tool for everything leads to either "ORM overuse" (loading entities for aggregations) or "SQL overuse" (hand-writing CRUD for 30 entities). |
-| "JOOQ replaces Hibernate" | JOOQ handles queries; Hibernate handles object graphs. JOOQ has no entity lifecycle, cascade, lazy loading, dirty checking, or @Audited. A JOOQ-only application must implement its own association loading (explicit JOINs for every relation), change tracking, and event publishing. Possible but verbose. |
-| "Using both JPA and JOOQ doubles configuration complexity" | With Spring Boot: `spring-boot-starter-jooq` adds one dependency. `DSLContext` auto-configured using the same DataSource as JPA. Same transaction context. Adding JOOQ to an existing JPA application is a 30-minute setup. |
+| "JOOQ replaces Hibernate"                                       | JOOQ handles queries; Hibernate handles object graphs. JOOQ has no entity lifecycle, cascade, lazy loading, dirty checking, or @Audited. A JOOQ-only application must implement its own association loading (explicit JOINs for every relation), change tracking, and event publishing. Possible but verbose.                                              |
+| "Using both JPA and JOOQ doubles configuration complexity"      | With Spring Boot: `spring-boot-starter-jooq` adds one dependency. `DSLContext` auto-configured using the same DataSource as JPA. Same transaction context. Adding JOOQ to an existing JPA application is a 30-minute setup.                                                                                                                                |
 
 ---
 
@@ -451,9 +456,10 @@ at low load but times out at 200+ concurrent requests.
 **Root Cause:** Report endpoint uses Spring Data JPA to
 load full entity lists, then aggregates in Java:
 `repo.findAll()` loads 50K Order entities; `.stream().mapToLong().sum()`.
-At 200 concurrent: 200 * 50K entity loads = 10M entities
+At 200 concurrent: 200 \* 50K entity loads = 10M entities
 in memory simultaneously. GC pressure. OOM.
 **Fix:**
+
 ```java
 // BEFORE: loading entities for aggregation
 List<Order> orders = orderRepo.findAll();
@@ -472,15 +478,18 @@ Long total = jooq.select(sum(ORDER.AMOUNT))
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-001 - JPA Overview]] - what JPA is and is not
 - [[JPH-050 - Hibernate vs MyBatis vs JOOQ]] - tool comparison
 - [[JPH-054 - JPA at Scale]] - scale failure patterns
 
 **Builds On This (learn these next):**
+
 - [[JPH-059 - Spring Data JPA vs JOOQ vs MyBatis Decision]]
   - practical decision with real-world scenarios
 
 **Related:**
+
 - [[JPH-036 - Criteria API]] - type-safe query alternative within JPA
 - [[JPH-053 - QueryDSL]] - another type-safe query option
 
@@ -513,6 +522,7 @@ Long total = jooq.select(sum(ORDER.AMOUNT))
 ```
 
 **If you remember only 3 things:**
+
 1. "Does this operation need an object graph?" YES -> JPA, NO -> JOOQ
 2. Anti-pattern: loading entities for aggregations. Fix: JOOQ SELECT SUM(...)
 3. JPA + JOOQ in same application is the industry default; not a conflict
@@ -569,6 +579,7 @@ debate ended years ago among practitioners - the answer is
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **APPLY** the five-question decision tree to assign a
    database tool to any given operation
 2. **DESIGN** a hybrid JPA + JOOQ service with correct
@@ -587,8 +598,9 @@ debate ended years ago among practitioners - the answer is
 **Q1: You're designing a new e-commerce platform's
 data layer. What database access tools would you choose
 and why?**
-*Why they ask:* Tests architectural decision-making.
-*Strong answer includes:*
+_Why they ask:_ Tests architectural decision-making.
+_Strong answer includes:_
+
 - Not a single-tool answer; hybrid is the correct answer
 - Spring Data JPA + Hibernate for: order domain model, customer entities,
   product catalog CRUD, entity relationships (Order -> Items -> Products)
@@ -599,8 +611,9 @@ and why?**
 - All share same DataSource; JPA and JOOQ participate in same `@Transactional`
 
 **Q2: When would you choose MyBatis over Spring Data JPA?**
-*Why they ask:* Tests knowledge of full tool landscape.
-*Strong answer includes:*
+_Why they ask:_ Tests knowledge of full tool landscape.
+_Strong answer includes:_
+
 - Legacy database with extensive stored procedures containing business logic
   (cannot move logic to application layer)
 - Team is predominantly database-focused; writes SQL more naturally than JPQL

@@ -34,11 +34,11 @@ transactions lock rows in different orders. Always lock
 rows in a consistent order. Keep transactions SHORT -
 the lock is held for the entire transaction duration.
 
-| #039 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | EntityManager, Session/Transaction, JPA Lifecycle, @Transactional, First Level Cache, Optimistic Locking | |
-| **Used by:** | Multi-Tenancy, JPA at Scale, Hibernate Internals | |
-| **Related:** | Dirty Checking, Batch Processing | |
+| #039            | Category: JPA & Hibernate                                                                                | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | EntityManager, Session/Transaction, JPA Lifecycle, @Transactional, First Level Cache, Optimistic Locking |                 |
+| **Used by:**    | Multi-Tenancy, JPA at Scale, Hibernate Internals                                                         |                 |
+| **Related:**    | Dirty Checking, Batch Processing                                                                         |                 |
 
 ---
 
@@ -48,6 +48,7 @@ the lock is held for the entire transaction duration.
 An e-commerce site sells 100 seats for a concert.
 At ticket release time, 1,000 users simultaneously
 try to purchase. With optimistic locking:
+
 - 1,000 concurrent reads (all see quantity=100)
 - First 100 succeed; remaining 900 get `OptimisticLockException`
 - 900 retries; most fail again
@@ -55,6 +56,7 @@ try to purchase. With optimistic locking:
   failed attempts plus the retries
 
 **REAL SCENARIO: INVENTORY DECREMENT:**
+
 ```java
 // Without locking: race condition
 Product product = repo.findById(id).orElseThrow();
@@ -68,6 +70,7 @@ if (product.getStock() > 0) {
 ```
 
 **WITH PESSIMISTIC WRITE:**
+
 ```java
 Product product = em.find(Product.class, id,
     LockModeType.PESSIMISTIC_WRITE);
@@ -90,13 +93,13 @@ until the lock is released at commit/rollback.
 
 **JPA LockModeType values:**
 
-| Mode | SQL | Behavior |
-|---|---|---|
-| `PESSIMISTIC_READ` | `SELECT ... FOR SHARE` (or `LOCK IN SHARE MODE`) | Prevents other writers; multiple readers can coexist |
-| `PESSIMISTIC_WRITE` | `SELECT ... FOR UPDATE` | Exclusive lock; blocks other readers (in some databases) and all writers |
-| `PESSIMISTIC_FORCE_INCREMENT` | `SELECT ... FOR UPDATE` + version increment | Exclusive lock AND increments @Version counter |
-| `OPTIMISTIC` | No SQL lock; version check at commit | See JPH-038 |
-| `OPTIMISTIC_FORCE_INCREMENT` | No SQL lock; force version increment at commit | Use when updating owned collections |
+| Mode                          | SQL                                              | Behavior                                                                 |
+| ----------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------ |
+| `PESSIMISTIC_READ`            | `SELECT ... FOR SHARE` (or `LOCK IN SHARE MODE`) | Prevents other writers; multiple readers can coexist                     |
+| `PESSIMISTIC_WRITE`           | `SELECT ... FOR UPDATE`                          | Exclusive lock; blocks other readers (in some databases) and all writers |
+| `PESSIMISTIC_FORCE_INCREMENT` | `SELECT ... FOR UPDATE` + version increment      | Exclusive lock AND increments @Version counter                           |
+| `OPTIMISTIC`                  | No SQL lock; version check at commit             | See JPH-038                                                              |
+| `OPTIMISTIC_FORCE_INCREMENT`  | No SQL lock; force version increment at commit   | Use when updating owned collections                                      |
 
 ---
 
@@ -107,6 +110,7 @@ update this row - block everyone else from touching it
 until I'm done."
 
 **One analogy:**
+
 > A pessimistic transaction is like reserving a meeting
 > room before your meeting: you book it (lock acquired),
 > nobody else can book it while you have the reservation
@@ -432,25 +436,25 @@ public void purchaseWithTimeout(Long eventId) {
 
 ### ⚖️ Comparison Table
 
-| Feature | Optimistic (@Version) | Pessimistic (FOR UPDATE) |
-|---|---|---|
-| DB lock held? | No | Yes (until commit) |
-| Read throughput | High | Blocked (WRITE mode) |
-| Conflict detection | At commit | At read |
-| Deadlock risk | None | Yes |
-| Best for | Low contention | High contention |
-| Transaction length | Any | Keep short |
-| Exception | OptimisticLockException | PessimisticLockException |
+| Feature            | Optimistic (@Version)   | Pessimistic (FOR UPDATE) |
+| ------------------ | ----------------------- | ------------------------ |
+| DB lock held?      | No                      | Yes (until commit)       |
+| Read throughput    | High                    | Blocked (WRITE mode)     |
+| Conflict detection | At commit               | At read                  |
+| Deadlock risk      | None                    | Yes                      |
+| Best for           | Low contention          | High contention          |
+| Transaction length | Any                     | Keep short               |
+| Exception          | OptimisticLockException | PessimisticLockException |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Pessimistic locking blocks ALL reads" | Depends on lock mode and database. `PESSIMISTIC_WRITE` (FOR UPDATE) blocks other FOR UPDATE readers and writers. Regular (non-locked) reads at READ COMMITTED isolation level are NOT blocked in PostgreSQL and MySQL InnoDB. MVCC allows consistent reads of the last committed version. |
-| "Lock is acquired when the method starts" | The lock is acquired when `em.find(..., PESSIMISTIC_WRITE)` or the repository query executes - not when the `@Transactional` method starts. The lock window = from `SELECT FOR UPDATE` to commit. |
-| "Pessimistic locking prevents all data anomalies" | Pessimistic WRITE locks the specified row(s). It does NOT prevent phantom reads (new rows inserted that match a query's WHERE). To prevent phantoms: use `SERIALIZABLE` isolation or lock the index range. |
+| Misconception                                     | Reality                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Pessimistic locking blocks ALL reads"            | Depends on lock mode and database. `PESSIMISTIC_WRITE` (FOR UPDATE) blocks other FOR UPDATE readers and writers. Regular (non-locked) reads at READ COMMITTED isolation level are NOT blocked in PostgreSQL and MySQL InnoDB. MVCC allows consistent reads of the last committed version. |
+| "Lock is acquired when the method starts"         | The lock is acquired when `em.find(..., PESSIMISTIC_WRITE)` or the repository query executes - not when the `@Transactional` method starts. The lock window = from `SELECT FOR UPDATE` to commit.                                                                                         |
+| "Pessimistic locking prevents all data anomalies" | Pessimistic WRITE locks the specified row(s). It does NOT prevent phantom reads (new rows inserted that match a query's WHERE). To prevent phantoms: use `SERIALIZABLE` isolation or lock the index range.                                                                                |
 
 ---
 
@@ -465,6 +469,7 @@ for ShareLock on transaction N; blocked by process Y`.
 **Root Cause:** Two concurrent transactions lock rows in
 different orders, creating a circular wait.
 **Diagnosis:**
+
 ```sql
 -- MySQL: check deadlock details
 SHOW ENGINE INNODB STATUS;
@@ -475,7 +480,9 @@ SELECT pid, query, state, wait_event_type, wait_event
 FROM pg_stat_activity
 WHERE wait_event_type = 'Lock';
 ```
+
 **Fix:**
+
 1. Lock rows in consistent order (by primary key ascending)
 2. Add a lock ordering utility:
    ```java
@@ -489,16 +496,19 @@ WHERE wait_event_type = 'Lock';
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-038 - Optimistic Locking]] - understand optimistic
   locking trade-offs before choosing pessimistic
 - [[JPH-026 - @Transactional]] - pessimistic lock is held
   for the full transaction duration
 
 **Builds On This (learn these next):**
+
 - [[JPH-048 - Multi-Tenancy]] - multi-tenant scenarios
   often require fine-grained locking strategies
 
 **Related:**
+
 - [[JPH-052 - Dirty Checking and Flush Mode]] - flush
   timing matters for when locked-entity updates execute
 - [[JPH-045 - Batch Processing]] - batch inserts/updates
@@ -533,6 +543,7 @@ WHERE wait_event_type = 'Lock';
 ```
 
 **If you remember only 3 things:**
+
 1. `PESSIMISTIC_WRITE` generates `SELECT FOR UPDATE`;
    row is locked from that point until transaction commits
 2. Keep the transaction as short as possible - others
@@ -569,6 +580,7 @@ file system locks (flock), message queue consumer groups
 (partition assignment locking).
 
 **Where else this pattern appears:**
+
 - **Redis SETNX** - `SET key value NX EX 30` is pessimistic
   locking: acquire or fail immediately; held for TTL
 - **Database transactions SERIALIZABLE** - serializable
@@ -591,21 +603,23 @@ or `SELECT FOR SHARE` due to MVCC - they simply read
 the last committed version. So `PESSIMISTIC_READ`'s claim
 to "allow concurrent reads while blocking writes" only
 applies to other `PESSIMISTIC_READ` reads vs. regular reads
+
 - regular reads aren't blocked by writers anyway under MVCC.
-The practical result: `PESSIMISTIC_READ` primarily prevents
-other `PESSIMISTIC_WRITE` from acquiring an exclusive lock
-(because shared locks block exclusive locks). This is only
-useful in the specific pattern "I want to ensure nobody
-is currently updating this row while I read it" - even
-though regular reads don't block. `PESSIMISTIC_WRITE` is
-the almost universally correct choice for pessimistic
-concurrency in production.
+  The practical result: `PESSIMISTIC_READ` primarily prevents
+  other `PESSIMISTIC_WRITE` from acquiring an exclusive lock
+  (because shared locks block exclusive locks). This is only
+  useful in the specific pattern "I want to ensure nobody
+  is currently updating this row while I read it" - even
+  though regular reads don't block. `PESSIMISTIC_WRITE` is
+  the almost universally correct choice for pessimistic
+  concurrency in production.
 
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **IMPLEMENT** a ticket booking system using
    `PESSIMISTIC_WRITE` that prevents overselling
 2. **EXPLAIN** the deadlock scenario and implement
@@ -623,8 +637,9 @@ concurrency in production.
 
 **Q1: When would you choose pessimistic locking over
 optimistic locking?**
-*Why they ask:* Core concurrency decision-making.
-*Strong answer includes:*
+_Why they ask:_ Core concurrency decision-making.
+_Strong answer includes:_
+
 - Choose pessimistic when: high contention expected
   (same hot row, many concurrent writes); cost of retry
   storm (optimistic) > cost of lock holding (pessimistic)
@@ -635,8 +650,9 @@ optimistic locking?**
   pessimistic = predictable latency under high contention
 
 **Q2: How do you prevent deadlocks when using pessimistic locking?**
-*Why they ask:* Practical production safety knowledge.
-*Strong answer includes:*
+_Why they ask:_ Practical production safety knowledge.
+_Strong answer includes:_
+
 - Root cause: circular wait - A holds X, waits for Y;
   B holds Y, waits for X
 - Prevention: consistent lock acquisition ORDER (sort

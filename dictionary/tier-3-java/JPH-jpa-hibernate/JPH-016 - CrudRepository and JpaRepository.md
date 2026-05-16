@@ -30,11 +30,11 @@ features (batch operations, flush control, paging/sorting,
 and `Specification` support). In Spring Data JPA, almost
 all repositories should extend `JpaRepository`.
 
-| #016 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | EntityManager, Entity Lifecycle, JPQL | |
-| **Used by:** | N+1 Problem, @EntityGraph, Spring Data JPA Auto-configuration | |
-| **Related:** | CrudRepository vs PagingAndSortingRepository vs JpaRepository, Criteria API, @Transactional | |
+| #016            | Category: JPA & Hibernate                                                                   | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | EntityManager, Entity Lifecycle, JPQL                                                       |                 |
+| **Used by:**    | N+1 Problem, @EntityGraph, Spring Data JPA Auto-configuration                               |                 |
+| **Related:**    | CrudRepository vs PagingAndSortingRepository vs JpaRepository, Criteria API, @Transactional |                 |
 
 ---
 
@@ -101,6 +101,7 @@ that generates a full, transaction-aware DAO implementation
 for any entity - no code required.
 
 **One analogy:**
+
 > `JpaRepository` is like a bank's ATM network. You don't
 > write the ATM software - you just use the standard ATM
 > interface (deposit, withdraw, balance). Spring Data
@@ -155,17 +156,19 @@ public <S extends T> S save(S entity) {
 ```
 
 **isNew() CHECK ORDER:**
+
 1. Does entity implement `Persistable<ID>`? -> use `isNew()`
 2. Does entity have an `@Version` field? -> new if version is null
 3. Else: new if `@Id` is null (or 0 for primitives)
 
 **CORE INVARIANTS:**
+
 1. `save()` returns the managed entity; callers must use
    the return value when `merge()` is called
 2. `deleteById()` loads the entity first (`em.find()`)
    then calls `em.remove()` - this triggers two SQL queries
 3. `deleteAllInBatch()` generates `DELETE FROM table WHERE
-   id IN (...)` - bypasses cascade and `@PreRemove`
+id IN (...)` - bypasses cascade and `@PreRemove`
 4. `getById()` returns a Hibernate proxy (no SQL); the
    SELECT fires only on first field access
 5. `findAll()` loads all entities with no WHERE - dangerous
@@ -189,6 +192,7 @@ public class Product {
 ```
 
 **WHAT HAPPENS WITH repository.save(new Product(...)):**
+
 1. `isNew()` checks `@Id` - it is non-null (UUID assigned
    in constructor)
 2. `save()` calls `em.merge()` (not `em.persist()`)
@@ -310,6 +314,7 @@ and read-only optimisation that affects performance in
 read-heavy services.
 
 **Expert Thinking Cues:**
+
 - Ask: "Does `save()` call persist() or merge()?" - for
   UUID entities it calls merge() for all inserts; fix
   with `Persistable`
@@ -520,13 +525,14 @@ public class AuditEvent
 
 ### ⚖️ Comparison Table
 
-| Repository | Extends | Key additions | Use case |
-|---|---|---|---|
-| `CrudRepository` | `Repository` | 11 CRUD methods | Non-JPA (MongoDB, Redis, etc.) |
-| `PagingAndSortingRepository` | `CrudRepository` | `findAll(Sort)`, `findAll(Pageable)` | Any Spring Data with paging |
-| `JpaRepository` | `PagingAndSortingRepository` | `flush()`, `saveAndFlush()`, `getById()`, `deleteAllInBatch()` | JPA/Hibernate applications |
+| Repository                   | Extends                      | Key additions                                                  | Use case                       |
+| ---------------------------- | ---------------------------- | -------------------------------------------------------------- | ------------------------------ |
+| `CrudRepository`             | `Repository`                 | 11 CRUD methods                                                | Non-JPA (MongoDB, Redis, etc.) |
+| `PagingAndSortingRepository` | `CrudRepository`             | `findAll(Sort)`, `findAll(Pageable)`                           | Any Spring Data with paging    |
+| `JpaRepository`              | `PagingAndSortingRepository` | `flush()`, `saveAndFlush()`, `getById()`, `deleteAllInBatch()` | JPA/Hibernate applications     |
 
 **When to use each:**
+
 - Always use `JpaRepository` in Spring Data JPA projects
 - Use `CrudRepository` in the interface contract if you
   want to keep the persistence layer abstraction (allows
@@ -538,13 +544,13 @@ public class AuditEvent
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`repository.save()` always calls INSERT" | `save()` calls `isNew()` first. Non-null `@Id` -> `merge()` (SELECT + potential INSERT/UPDATE). Null `@Id` -> `persist()` (INSERT). For UUID entities with auto-assigned IDs, every `save()` calls `merge()` and triggers a SELECT first. |
-| "`deleteAllInBatch()` is always faster than `deleteAll()`" | `deleteAllInBatch()` is faster (single DELETE SQL) but bypasses `@PreRemove` callbacks and JPA cascade. If your entity has cascade-delete relationships or `@PreRemove` logic, `deleteAllInBatch()` silently skips them, leaving orphan records. |
-| "`findAll()` is safe for any table" | `findAll()` without a `Pageable` loads ALL rows. On a table with millions of rows, this causes `OutOfMemoryError`. Always use `findAll(Pageable)` or a `@Query` with pagination for production code. |
-| "`getById()` always loads the entity from the database" | `getById()` returns a Hibernate proxy without hitting the database. The SELECT fires only when a field is accessed. If called outside a transaction, accessing the proxy later causes `LazyInitializationException`. |
-| "Custom `@Query` methods in a repository are not transactional" | `SimpleJpaRepository` is annotated `@Transactional(readOnly=true)` at the class level. All repository methods (including custom `@Query` ones) run in a read-only transaction unless overridden with `@Modifying @Transactional`. |
+| Misconception                                                   | Reality                                                                                                                                                                                                                                          |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "`repository.save()` always calls INSERT"                       | `save()` calls `isNew()` first. Non-null `@Id` -> `merge()` (SELECT + potential INSERT/UPDATE). Null `@Id` -> `persist()` (INSERT). For UUID entities with auto-assigned IDs, every `save()` calls `merge()` and triggers a SELECT first.        |
+| "`deleteAllInBatch()` is always faster than `deleteAll()`"      | `deleteAllInBatch()` is faster (single DELETE SQL) but bypasses `@PreRemove` callbacks and JPA cascade. If your entity has cascade-delete relationships or `@PreRemove` logic, `deleteAllInBatch()` silently skips them, leaving orphan records. |
+| "`findAll()` is safe for any table"                             | `findAll()` without a `Pageable` loads ALL rows. On a table with millions of rows, this causes `OutOfMemoryError`. Always use `findAll(Pageable)` or a `@Query` with pagination for production code.                                             |
+| "`getById()` always loads the entity from the database"         | `getById()` returns a Hibernate proxy without hitting the database. The SELECT fires only when a field is accessed. If called outside a transaction, accessing the proxy later causes `LazyInitializationException`.                             |
+| "Custom `@Query` methods in a repository are not transactional" | `SimpleJpaRepository` is annotated `@Transactional(readOnly=true)` at the class level. All repository methods (including custom `@Query` ones) run in a read-only transaction unless overridden with `@Modifying @Transactional`.                |
 
 ---
 
@@ -650,6 +656,7 @@ SonarQube) can detect this.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-011 - EntityManager]] - `JpaRepository` wraps
   `EntityManager` operations; understanding persist/merge
   is required to understand save() behaviour
@@ -659,6 +666,7 @@ SonarQube) can detect this.
   `@Query` annotation accepts JPQL strings
 
 **Builds On This (learn these next):**
+
 - [[JPH-020 - N+1 Problem]] - the most common performance
   issue in JpaRepository-based code
 - [[JPH-023 - @EntityGraph]] - declarative fetch plans
@@ -667,6 +675,7 @@ SonarQube) can detect this.
   Spring Boot wires repositories automatically
 
 **Alternatives / Comparisons:**
+
 - [[JPH-015 - CrudRepository vs PagingAndSortingRepository vs JpaRepository]] -
   detailed comparison of the hierarchy
 - [[JPH-025 - Criteria API]] - type-safe programmatic
@@ -703,6 +712,7 @@ SonarQube) can detect this.
 ```
 
 **If you remember only 3 things:**
+
 1. `save()` uses `isNew()` to decide `persist()` vs `merge()`;
    UUID entities always call `merge()` (SELECT first) unless
    `Persistable` is implemented
@@ -735,6 +745,7 @@ as depending on interfaces rather than implementations:
 the domain service does not know or care how data is stored.
 
 **Where else this pattern appears:**
+
 - **Spring Data MongoDB** - `MongoRepository<Product, String>`
   provides the same 11 CRUD methods as `CrudRepository`
   for MongoDB documents; same interface, different storage
@@ -745,6 +756,7 @@ the domain service does not know or care how data is stored.
   `findAll(Predicate)` to the `JpaRepository` interface
 
 **Industry applications:**
+
 - Microservices data layer isolation: each service has its
   own `JpaRepository` interface per aggregate root; no
   cross-service entity access; the interface boundary is
@@ -776,6 +788,7 @@ every find operation.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the `save()` isNew() decision tree including
    the UUID entity gotcha and the `Persistable` fix
 2. **CHOOSE** between `deleteAll()` and `deleteAllInBatch()`
@@ -784,7 +797,7 @@ every find operation.
    before every INSERT by reading the SQL log and tracing
    to the `merge()` call in `SimpleJpaRepository`
 4. **WRITE** a repository with a `@Modifying @Transactional
-   @Query` bulk UPDATE and verify it works without triggering
+@Query` bulk UPDATE and verify it works without triggering
    `TransactionRequiredException`
 5. **APPLY** `findAll(Pageable)` with `Sort` for paginated
    reads and explain why `findAll()` without paging is
@@ -800,19 +813,19 @@ calls `productRepository.findById(id)`. What transaction
 runs during `findById()`? Does the `readOnly=true` hint
 from `SimpleJpaRepository`'s default apply? What is the
 effective read-only status of the operation?
-*Hint: With REQUIRED propagation (default), the service's
+_Hint: With REQUIRED propagation (default), the service's
 existing transaction is used. The outer transaction's
 readOnly setting overrides the method-level readOnly hint.
-If the outer is readOnly=true, that applies.*
+If the outer is readOnly=true, that applies._
 
 **Q2 (TYPE B - Scale):** A batch service processes 1 million
 events by calling `eventRepository.save(new Event(...))` in
 a loop with UUID IDs. After 100,000 iterations, the job is
 running at 200 events/second (expected: 10,000/second).
 What is the bottleneck and how would you fix it?
-*Hint: UUID -> merge() -> 1 SELECT per event -> 2 DB round
+_Hint: UUID -> merge() -> 1 SELECT per event -> 2 DB round
 trips per insert. Fix: Persistable<UUID> + SEQUENCE strategy
-alternative + JDBC batch insert.*
+alternative + JDBC batch insert._
 
 **Q3 (TYPE G - Hands-On):** Configure a Spring Boot
 integration test that (1) measures query count per
@@ -828,10 +841,11 @@ to count prepared statement executions.
 
 **Q1: Explain how `JpaRepository.save()` works and when
 it calls `persist()` vs `merge()`.**
-*Why they ask:* Tests daily-use JPA knowledge; a common
+_Why they ask:_ Tests daily-use JPA knowledge; a common
 source of production bugs (extra SELECTs, wrong entity
 returned).
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `save()` calls `entityInformation.isNew(entity)`:
   returns true if `@Id` is null/0 -> calls `persist()`
 - Returns false if `@Id` is non-null -> calls `merge()`
@@ -843,9 +857,10 @@ returned).
 
 **Q2: When would you use `deleteAllInBatch()` vs `deleteAll()`
 and what are the risks of each?**
-*Why they ask:* Tests awareness of the cascade/event bypass
+_Why they ask:_ Tests awareness of the cascade/event bypass
 trap in batch delete operations.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `deleteAllInBatch()`: single DELETE SQL, fast, no cascade,
   no `@PreRemove` - use for leaf entities or when cascade
   is handled at database (ON DELETE CASCADE) level
@@ -858,10 +873,11 @@ trap in batch delete operations.
 
 **Q3: How does Spring Data generate the implementation
 for a `@Query` method defined in a repository interface?**
-*Why they ask:* Tests understanding of Spring Data internals;
+_Why they ask:_ Tests understanding of Spring Data internals;
 distinguishes senior candidates who know the framework
 deeply.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - At startup, `RepositoryFactory` scans the repository
   interface for methods with `@Query` annotations
 - The JPQL string from `@Query` is stored as a

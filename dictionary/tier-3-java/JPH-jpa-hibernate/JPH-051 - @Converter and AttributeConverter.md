@@ -35,11 +35,11 @@ fields of type `X`, or `@Convert(converter=MyConverter.class)`
 on a specific field. `convertToDatabaseColumn()` runs at
 flush; `convertToEntityAttribute()` runs at load.
 
-| #051 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Entity Basics, @ManyToOne, @OneToMany, EntityManager, @Embedded/@Embeddable | |
-| **Used by:** | JPA at Scale, Hibernate Internals | |
-| **Related:** | Inheritance Mapping, Hibernate Validator, Hibernate 6 Migration | |
+| #051            | Category: JPA & Hibernate                                                   | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Entity Basics, @ManyToOne, @OneToMany, EntityManager, @Embedded/@Embeddable |                 |
+| **Used by:**    | JPA at Scale, Hibernate Internals                                           |                 |
+| **Related:**    | Inheritance Mapping, Hibernate Validator, Hibernate 6 Migration             |                 |
 
 ---
 
@@ -70,6 +70,7 @@ public enum OrderStatus {
 ```
 
 **WITH AttributeConverter:**
+
 ```java
 @Converter(autoApply = true)
 public class OrderStatusConverter
@@ -101,19 +102,20 @@ column type `Y`. Registered via `@Converter` annotation.
 
 **Two methods:**
 
-| Method | When called | Direction |
-|---|---|---|
-| `convertToDatabaseColumn(X)` | At flush (INSERT/UPDATE) | Java type -> JDBC type |
-| `convertToEntityAttribute(Y)` | At load (SELECT) | JDBC type -> Java type |
+| Method                        | When called              | Direction              |
+| ----------------------------- | ------------------------ | ---------------------- |
+| `convertToDatabaseColumn(X)`  | At flush (INSERT/UPDATE) | Java type -> JDBC type |
+| `convertToEntityAttribute(Y)` | At load (SELECT)         | JDBC type -> Java type |
 
 **`@Converter` options:**
 
-| Attribute | Default | Behavior |
-|---|---|---|
-| `autoApply=true` | false | Apply to ALL entity fields of type `X` automatically |
-| `autoApply=false` | - | Must explicitly annotate each field with `@Convert` |
+| Attribute         | Default | Behavior                                             |
+| ----------------- | ------- | ---------------------------------------------------- |
+| `autoApply=true`  | false   | Apply to ALL entity fields of type `X` automatically |
+| `autoApply=false` | -       | Must explicitly annotate each field with `@Convert`  |
 
 **`@Convert` on field:**
+
 ```java
 @Convert(converter = MoneyConverter.class)
 private Money price;
@@ -132,6 +134,7 @@ between a Java field type and its DB column representation,
 running transparently at flush and load.
 
 **One analogy:**
+
 > `AttributeConverter` is like a customs translator at
 > the Java-DB border. Java speaks `Money(amount=100, currency="USD")`;
 > the database speaks `VARCHAR "100:USD"`. The converter
@@ -245,6 +248,7 @@ column type automatically. The entity always uses the
 rich Java type; the DB stores a simpler representation.
 
 **Level 2 - Enum converter (junior developer):**
+
 ```java
 // Convert enum to stable String code (not ordinal):
 @Converter(autoApply = true)
@@ -267,6 +271,7 @@ public class OrderStatusConverter
 ```
 
 **Level 3 - Custom value type converter (mid-level engineer):**
+
 ```java
 // Map Money value type to DECIMAL column
 @Converter
@@ -292,6 +297,7 @@ private Money price;
 ```
 
 **Level 4 - Encrypted field converter (senior engineer):**
+
 ```java
 @Converter
 public class EncryptedStringConverter
@@ -485,21 +491,21 @@ class MoneyConverterTest {
 
 ### ⚖️ Comparison Table
 
-| Approach | Best for | Limitation |
-|---|---|---|
-| `@Enumerated(EnumType.STRING)` | Simple enum to String | No custom codes; enum name = DB value |
-| `AttributeConverter` | Any custom type, custom enum codes, encryption | No DB-level queries on converted values (can't use LIKE, range) |
-| `@Embedded` | Value type with multiple DB columns | Multiple columns; more schema space |
-| `@Type` (Hibernate-specific) | PostgreSQL `jsonb`, `hstore`, array types | Hibernate-specific; not portable JPA |
+| Approach                       | Best for                                       | Limitation                                                      |
+| ------------------------------ | ---------------------------------------------- | --------------------------------------------------------------- |
+| `@Enumerated(EnumType.STRING)` | Simple enum to String                          | No custom codes; enum name = DB value                           |
+| `AttributeConverter`           | Any custom type, custom enum codes, encryption | No DB-level queries on converted values (can't use LIKE, range) |
+| `@Embedded`                    | Value type with multiple DB columns            | Multiple columns; more schema space                             |
+| `@Type` (Hibernate-specific)   | PostgreSQL `jsonb`, `hstore`, array types      | Hibernate-specific; not portable JPA                            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "AttributeConverter works with native queries" | NO - native queries (`nativeQuery=true`) bypass JPA, including converters. For native queries, you must pass the already-converted value (e.g., the String code, not the enum). Use JPQL or Criteria API for automatic converter application. |
-| "`autoApply=true` applies globally to all entities" | `autoApply=true` applies to all entity fields of the matching Java type `X` in the persistence unit. It does NOT apply to embedded objects, non-entity classes, or Spring Data projections. Always test with the actual entity, not just unit test the converter. |
+| Misconception                                              | Reality                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "AttributeConverter works with native queries"             | NO - native queries (`nativeQuery=true`) bypass JPA, including converters. For native queries, you must pass the already-converted value (e.g., the String code, not the enum). Use JPQL or Criteria API for automatic converter application.                                                                                                               |
+| "`autoApply=true` applies globally to all entities"        | `autoApply=true` applies to all entity fields of the matching Java type `X` in the persistence unit. It does NOT apply to embedded objects, non-entity classes, or Spring Data projections. Always test with the actual entity, not just unit test the converter.                                                                                           |
 | "Sorting/filtering on converted columns is always correct" | For `AttributeConverter`, the DB stores the CONVERTED value. Sorting `WHERE status > 'PROCESSING'` does string comparison, not enum ordinal comparison. If sort order matters in queries, design the converter's output to be lexicographically sortable (e.g., use status codes that sort alphabetically in the desired order) or use a different DB type. |
 
 ---
@@ -515,13 +521,16 @@ returns empty results even though rows with
 converter mechanism. The enum object is passed as-is to
 the JDBC driver, which can't convert it to a String.
 **Diagnosis:**
+
 ```java
 // Enable SQL logging to see the actual parameter:
 // Expected in SQL: WHERE status = 'PROCESSING'
 // Actual: WHERE status = <enum toString representation>
 // Or: BindingException: No dialect mapping for JDBC type
 ```
+
 **Fix:**
+
 ```java
 // Explicitly convert to string before native query:
 @Query(value = "SELECT * FROM orders WHERE status = ?1",
@@ -539,16 +548,19 @@ orderRepo.findByStatusNative(
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-041 - @Embedded and @Embeddable]] - alternative
   for value types that map to multiple columns
 - [[JPH-006 - Entity Basics]] - understanding basic entity
   field mapping before adding custom converters
 
 **Builds On This (learn these next):**
+
 - [[JPH-058 - Hibernate Internals]] - Hibernate's type
   system and how `AttributeConverter` fits within it
 
 **Related:**
+
 - [[JPH-044 - Hibernate Validator]] - bean validation
   on entity fields applies BEFORE converter conversion
 - [[JPH-060 - Hibernate 6 Migration]] - Hibernate 6
@@ -585,6 +597,7 @@ orderRepo.findByStatusNative(
 ```
 
 **If you remember only 3 things:**
+
 1. `AttributeConverter<X,Y>`: Java field type X -> DB type Y;
    implemented in 2 methods: `convertToDatabaseColumn` and
    `convertToEntityAttribute`
@@ -641,6 +654,7 @@ pure functions of their input value.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **IMPLEMENT** an `AttributeConverter` for an enum that
    stores stable String codes instead of ordinals
 2. **EXPLAIN** the difference between `autoApply=true` and
@@ -657,8 +671,9 @@ pure functions of their input value.
 
 **Q1: Why is `@Enumerated(EnumType.ORDINAL)` dangerous
 and how do you fix it using `AttributeConverter`?**
-*Why they ask:* Tests practical JPA field mapping safety.
-*Strong answer includes:*
+_Why they ask:_ Tests practical JPA field mapping safety.
+_Strong answer includes:_
+
 - `EnumType.ORDINAL` stores 0, 1, 2... based on enum declaration order
 - Adding a new enum constant in the middle shifts all subsequent ordinals
 - Existing DB rows now map to the wrong enum values - DATA CORRUPTION
@@ -669,8 +684,9 @@ and how do you fix it using `AttributeConverter`?**
 
 **Q2: Does `AttributeConverter` apply to parameters in
 JPQL queries? What about native queries?**
-*Why they ask:* Tests understanding of converter scope.
-*Strong answer includes:*
+_Why they ask:_ Tests understanding of converter scope.
+_Strong answer includes:_
+
 - JPQL/JPQL-Criteria: YES - JPA calls `convertToDatabaseColumn()`
   on JPQL parameters for fields that have a converter. Transparent.
 - Spring Data derived methods (`findByStatus`): YES - Spring Data

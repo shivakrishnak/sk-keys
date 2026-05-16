@@ -34,11 +34,11 @@ locks held; high throughput. Fails under contention:
 if two users edit the same record simultaneously, one
 gets the exception. Handle it - don't swallow it.
 
-| #038 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, EntityManager, Session/Transaction, @Transactional, First Level Cache | |
-| **Used by:** | Pessimistic Locking, Multi-Tenancy, JPA at Scale, Hibernate Internals | |
-| **Related:** | JPA Auditing, Dirty Checking | |
+| #038            | Category: JPA & Hibernate                                                      | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, EntityManager, Session/Transaction, @Transactional, First Level Cache |                 |
+| **Used by:**    | Pessimistic Locking, Multi-Tenancy, JPA at Scale, Hibernate Internals          |                 |
+| **Related:**    | JPA Auditing, Dirty Checking                                                   |                 |
 
 ---
 
@@ -46,6 +46,7 @@ gets the exception. Handle it - don't swallow it.
 
 **THE LOST UPDATE PROBLEM:**
 Two users load order #100 (status=PENDING, total=$200).
+
 - User A changes status to CONFIRMED, saves.
 - User B (who loaded stale data) changes total to $250, saves.
 - User B's save overwrites User A's status change.
@@ -53,6 +54,7 @@ Two users load order #100 (status=PENDING, total=$200).
 - User A's update is silently lost.
 
 **WITHOUT LOCKING:**
+
 ```
 T1: User A reads order (version=1, status=PENDING)
 T2: User B reads order (version=1, status=PENDING)
@@ -64,6 +66,7 @@ T4: User B updates -> total=250  (version still 1 in memory)
 ```
 
 **WITH @VERSION:**
+
 ```
 T4: User B's save:
     UPDATE orders SET total=250, version=2 WHERE id=100 AND version=1
@@ -84,6 +87,7 @@ If the WHERE clause matches 0 rows, a `StaleObjectStateException`
 is thrown (which Spring wraps in `ObjectOptimisticLockingFailureException`).
 
 **Supported field types:**
+
 - `int` / `Integer` - counter (auto-incremented by Hibernate)
 - `long` / `Long` - counter (same; recommended for large tables)
 - `short` / `Short` - counter (overflow risk for active entities)
@@ -103,6 +107,7 @@ silent overwrites when concurrent sessions modify the
 same entity.
 
 **One analogy:**
+
 > Editing a shared Google Doc is like optimistic locking:
 > you work freely (no lock), but when you save, Google
 > checks "did anyone else save since you opened this?"
@@ -454,21 +459,21 @@ public ResponseEntity<ProductDto> updateProduct(
 
 ### ⚖️ Comparison Table
 
-| Approach | Locking? | DB Cost | Contention | Best for |
-|---|---|---|---|---|
-| No locking | None | None | Lost updates | Single-user or append-only |
-| Optimistic (@Version) | No lock | Check at UPDATE | Rare conflicts | Most web apps |
-| Pessimistic (SELECT FOR UPDATE) | Row lock held | Lock held until commit | Common conflicts | Inventory, banking |
-| Application-level mutex | External lock | Redis/DB call | Custom | Distributed systems |
+| Approach                        | Locking?      | DB Cost                | Contention       | Best for                   |
+| ------------------------------- | ------------- | ---------------------- | ---------------- | -------------------------- |
+| No locking                      | None          | None                   | Lost updates     | Single-user or append-only |
+| Optimistic (@Version)           | No lock       | Check at UPDATE        | Rare conflicts   | Most web apps              |
+| Pessimistic (SELECT FOR UPDATE) | Row lock held | Lock held until commit | Common conflicts | Inventory, banking         |
+| Application-level mutex         | External lock | Redis/DB call          | Custom           | Distributed systems        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "@Version prevents all concurrent access" | It does NOT block reads. Multiple transactions can read the same entity simultaneously. It only prevents silent overwrites at commit time. It's called "optimistic" because it assumes conflicts are rare. |
-| "Timestamp @Version is as reliable as counter @Version" | Timestamp version can miss conflicts if two updates happen within the same clock tick (millisecond precision). Counter version is exact. On databases with low timestamp precision, timestamp locking has correctness bugs. |
+| Misconception                                                         | Reality                                                                                                                                                                                                                                                      |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "@Version prevents all concurrent access"                             | It does NOT block reads. Multiple transactions can read the same entity simultaneously. It only prevents silent overwrites at commit time. It's called "optimistic" because it assumes conflicts are rare.                                                   |
+| "Timestamp @Version is as reliable as counter @Version"               | Timestamp version can miss conflicts if two updates happen within the same clock tick (millisecond precision). Counter version is exact. On databases with low timestamp precision, timestamp locking has correctness bugs.                                  |
 | "I can call repository.save() to retry after OptimisticLockException" | After an `OptimisticLockException`, the EntityManager is in an inconsistent state. The transaction is invalid. You MUST start a new transaction with a fresh EntityManager (load the entity again) before retrying. Never retry within the same transaction. |
 
 ---
@@ -499,16 +504,19 @@ increment/decrement instead of read-modify-write,
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-026 - @Transactional with JPA]] - optimistic
   locking fires at transaction commit time
 - [[JPH-033 - First Level Cache]] - version is part of
   the entity snapshot in the 1LC
 
 **Builds On This (learn these next):**
+
 - [[JPH-039 - Pessimistic Locking]] - the alternative
   for high-contention scenarios
 
 **Related:**
+
 - [[JPH-032 - JPA Auditing]] - @LastModifiedDate is
   often combined with @Version for display + locking
 - [[JPH-052 - Dirty Checking and Flush Mode]] - flush
@@ -542,6 +550,7 @@ increment/decrement instead of read-modify-write,
 ```
 
 **If you remember only 3 things:**
+
 1. `@Version` adds `AND version=?` to every UPDATE/DELETE;
    0 rows updated = `OptimisticLockException` = conflict
 2. Always handle the exception - return HTTP 409; never
@@ -575,6 +584,7 @@ SVN checkout lock is pessimistic), HTTP caching (ETags/If-Match
 is optimistic). Choose based on measured or expected conflict rate.
 
 **Where else this pattern appears:**
+
 - **HTTP ETags** - `ETag` + `If-Match` header implement
   optimistic locking over HTTP for REST APIs
 - **CAS (Compare-And-Swap)** - hardware atomic instruction;
@@ -609,6 +619,7 @@ entities from the persistence context.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **IMPLEMENT** optimistic locking on an entity and
    handle the exception correctly (HTTP 409, retry logic)
 2. **EXPLAIN** the SQL Hibernate generates with `@Version`
@@ -625,8 +636,9 @@ entities from the persistence context.
 ### 🎯 Interview Deep-Dive
 
 **Q1: What does @Version do and when would you use it?**
-*Why they ask:* Core concurrency pattern.
-*Strong answer includes:*
+_Why they ask:_ Core concurrency pattern.
+_Strong answer includes:_
+
 - `@Version` adds `AND version=?` to UPDATE/DELETE SQL
 - Hibernate increments the version in the SET clause
 - 0 rows affected: `OptimisticLockException` thrown
@@ -636,8 +648,9 @@ entities from the persistence context.
 
 **Q2: What happens when two threads concurrently update the
 same entity with @Version? Walk through the exact SQL.**
-*Why they ask:* Tests depth of mechanism understanding.
-*Strong answer includes:*
+_Why they ask:_ Tests depth of mechanism understanding.
+_Strong answer includes:_
+
 - Thread A reads (version=2), Thread B reads (version=2)
 - Thread A commits: `UPDATE ... SET version=3 WHERE id=? AND version=2` -> 1 row updated
 - Thread B commits: `UPDATE ... SET version=3 WHERE id=? AND version=2` -> 0 rows (version is now 3!)

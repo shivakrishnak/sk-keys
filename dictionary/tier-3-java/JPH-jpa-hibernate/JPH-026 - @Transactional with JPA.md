@@ -33,11 +33,11 @@ rollback. Without `@Transactional`, every JPA operation
 in a Spring Data repository uses its own tiny transaction
 (read is auto-transactional; write requires explicit tx).
 
-| #026 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | EntityManager, Persistence Context, Entity Lifecycle, FetchType, CascadeType | |
-| **Used by:** | N+1 Problem, First Level Cache, Optimistic Locking, Pessimistic Locking, Batch Processing, Dirty Checking | |
-| **Related:** | Hibernate Session vs EntityManager, Multi-Tenancy | |
+| #026            | Category: JPA & Hibernate                                                                                 | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | EntityManager, Persistence Context, Entity Lifecycle, FetchType, CascadeType                              |                 |
+| **Used by:**    | N+1 Problem, First Level Cache, Optimistic Locking, Pessimistic Locking, Batch Processing, Dirty Checking |                 |
+| **Related:**    | Hibernate Session vs EntityManager, Multi-Tenancy                                                         |                 |
 
 ---
 
@@ -106,6 +106,7 @@ all JPA calls in one database transaction - all succeed
 or all roll back.
 
 **One analogy:**
+
 > A transaction is like a Google Doc batch save. You make
 > 10 edits (add paragraph, delete heading, change font).
 > Until you click "Save", none of the changes are committed.
@@ -211,6 +212,7 @@ proxy entirely. The `@Transactional` on `sendConfirmation`
 is never processed.
 
 **THE FIX - 3 APPROACHES:**
+
 1. Move `sendConfirmation()` to a separate `@Service` bean
 2. Inject the service into itself via `@Autowired private OrderService self;` then `self.sendConfirmation(id)`
 3. Use `AopContext.currentProxy()` (fragile; avoid in new code)
@@ -486,23 +488,23 @@ public void process() throws IOException {
 
 ### ⚖️ Comparison Table
 
-| Aspect | @Transactional | No @Transactional | REQUIRES_NEW |
-|---|---|---|---|
-| Transaction scope | Method duration | Per-repo-call auto-tx | New tx per method; parent suspended |
-| Rollback | RuntimeException | Auto per operation | Independent; does not roll back with parent |
-| Connection usage | 1 connection for method | 1 connection per repo call | 2 connections (parent + new) |
-| readOnly hint | Yes (skip dirty check) | N/A | Yes (per method) |
+| Aspect            | @Transactional          | No @Transactional          | REQUIRES_NEW                                |
+| ----------------- | ----------------------- | -------------------------- | ------------------------------------------- |
+| Transaction scope | Method duration         | Per-repo-call auto-tx      | New tx per method; parent suspended         |
+| Rollback          | RuntimeException        | Auto per operation         | Independent; does not roll back with parent |
+| Connection usage  | 1 connection for method | 1 connection per repo call | 2 connections (parent + new)                |
+| readOnly hint     | Yes (skip dirty check)  | N/A                        | Yes (per method)                            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`@Transactional` can be placed on private methods" | Spring's AOP proxy cannot intercept private methods. `@Transactional` on a private method is silently ignored. Methods must be public and called through the proxy (externally). |
-| "Checked exceptions automatically trigger rollback" | Only unchecked exceptions (`RuntimeException`) trigger rollback by default. `IOException`, `SQLException` (checked) do NOT cause rollback. Use `rollbackFor = Exception.class` or catch and rethrow as `RuntimeException`. |
-| "`@Transactional` on a class applies to all methods" | Class-level `@Transactional` applies to all PUBLIC methods of the class. Private and protected methods are not proxied. Method-level annotation overrides class-level. |
-| "readOnly=true prevents all writes" | `readOnly = true` is a hint to Hibernate (skip dirty checking) and the database driver. It does NOT enforce immutability. Hibernate will still execute INSERTs/UPDATEs if the code calls them. The hint is used for optimization, not enforcement. |
+| Misconception                                        | Reality                                                                                                                                                                                                                                            |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`@Transactional` can be placed on private methods"  | Spring's AOP proxy cannot intercept private methods. `@Transactional` on a private method is silently ignored. Methods must be public and called through the proxy (externally).                                                                   |
+| "Checked exceptions automatically trigger rollback"  | Only unchecked exceptions (`RuntimeException`) trigger rollback by default. `IOException`, `SQLException` (checked) do NOT cause rollback. Use `rollbackFor = Exception.class` or catch and rethrow as `RuntimeException`.                         |
+| "`@Transactional` on a class applies to all methods" | Class-level `@Transactional` applies to all PUBLIC methods of the class. Private and protected methods are not proxied. Method-level annotation overrides class-level.                                                                             |
+| "readOnly=true prevents all writes"                  | `readOnly = true` is a hint to Hibernate (skip dirty checking) and the database driver. It does NOT enforce immutability. Hibernate will still execute INSERTs/UPDATEs if the code calls them. The hint is used for optimization, not enforcement. |
 
 ---
 
@@ -556,6 +558,7 @@ context (and its session) was closed. The controller
 accesses a lazy-loaded association that was not loaded
 while the session was open.
 **Fix Options:**
+
 1. Fetch associations eagerly in the service query (JOIN FETCH)
 2. Map entities to DTOs inside `@Transactional` (before context closes)
 3. Use `@Transactional(readOnly = true)` on the controller (OEIV - anti-pattern)
@@ -565,6 +568,7 @@ while the session was open.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-011 - EntityManager]] - `@Transactional` manages
   the EntityManager lifecycle
 - [[JPH-012 - Persistence Context]] - one persistence
@@ -573,6 +577,7 @@ while the session was open.
   when entities transition between states
 
 **Builds On This (learn these next):**
+
 - [[JPH-027 - N+1 Problem]] - N+1 occurs within a
   transaction when lazy loading fires N queries
 - [[JPH-033 - First Level Cache]] - first-level cache is
@@ -581,6 +586,7 @@ while the session was open.
   at flush time within the transaction
 
 **Related:**
+
 - [[JPH-052 - Dirty Checking and Flush Mode]] - flush mode
   controls when SQL is sent to DB within the transaction
 
@@ -612,6 +618,7 @@ while the session was open.
 ```
 
 **If you remember only 3 things:**
+
 1. `@Transactional` only works for calls through the
    Spring proxy - same-class `this.method()` calls bypass
    it silently
@@ -646,6 +653,7 @@ has `@transaction.atomic`, Go apps use explicit `db.Begin()`/
 `db.Commit()` scopes, all serving the same purpose.
 
 **Where else this pattern appears:**
+
 - **Django** - `@transaction.atomic` decorator on views/
   service functions; same proxy/decorator pattern
 - **Rails** - `ActiveRecord::Base.transaction do ... end`;
@@ -677,6 +685,7 @@ is a bonus - the Hibernate optimization alone is worth it.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** why `@Transactional` on a private method
    or self-invoked method is silently ignored, and describe
    three fixes
@@ -697,9 +706,10 @@ is a bonus - the Hibernate optimization alone is worth it.
 
 **Q1: When does @Transactional NOT work, even though it
 is annotated correctly?**
-*Why they ask:* Tests understanding of AOP proxy mechanics
+_Why they ask:_ Tests understanding of AOP proxy mechanics
+
 - a critical Spring gotcha.
-*Strong answer includes:*
+  _Strong answer includes:_
 - Self-invocation: `this.method()` bypasses the proxy
 - Private methods: proxy cannot intercept; annotation
   silently ignored
@@ -713,9 +723,10 @@ is annotated correctly?**
 **Q2: What is the difference between @Transactional
 readOnly=true and readOnly=false in terms of what Hibernate
 does?**
-*Why they ask:* Tests depth of Hibernate internals
+_Why they ask:_ Tests depth of Hibernate internals
 knowledge beyond basic usage.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `readOnly = false` (default): Hibernate takes a snapshot
   of every loaded entity for dirty checking at flush time
 - `readOnly = true`: Hibernate skips entity snapshots;
@@ -730,9 +741,10 @@ knowledge beyond basic usage.
 **Q3: How do you handle a scenario where you need a
 database audit log entry to persist even if the main
 business transaction rolls back?**
-*Why they ask:* Tests knowledge of transaction propagation
+_Why they ask:_ Tests knowledge of transaction propagation
 and a common architectural requirement.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Use `REQUIRES_NEW` on the audit writing method
 - This suspends the outer transaction, opens a new
   connection, and commits the audit entry independently

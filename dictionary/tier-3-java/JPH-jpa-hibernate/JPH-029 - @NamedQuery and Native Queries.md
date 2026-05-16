@@ -33,11 +33,11 @@ queries. Use native queries for DB-specific features,
 complex analytics, or stored procedure calls that JPQL
 cannot express.
 
-| #029 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, EntityManager, JPQL, @Query, HQL | |
-| **Used by:** | DTO Projections, Hibernate Session vs EntityManager, Hibernate Internals | |
-| **Related:** | Criteria API, Multi-Tenancy | |
+| #029            | Category: JPA & Hibernate                                                | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, EntityManager, JPQL, @Query, HQL                                |                 |
+| **Used by:**    | DTO Projections, Hibernate Session vs EntityManager, Hibernate Internals |                 |
+| **Related:**    | Criteria API, Multi-Tenancy                                              |                 |
 
 ---
 
@@ -62,6 +62,7 @@ analytics or DB-specific optimizations, raw SQL is the
 only option.
 
 **THE SOLUTION:**
+
 - `@NamedQuery`: defines JPQL at the entity class level;
   validated (parsed + checked) during `EntityManagerFactory`
   initialization at startup. Errors surface immediately,
@@ -85,6 +86,7 @@ with a result mapping declaration.
 
 **Native Query** (via `em.createNativeQuery()`) executes
 raw SQL. Results can be:
+
 - Object arrays (`Object[]`) - no mapping
 - A specific entity class - Hibernate maps columns to fields
 - A custom mapping via `@SqlResultSetMapping`
@@ -103,6 +105,7 @@ JPQL at startup; native queries run raw SQL when JPQL
 cannot express the needed operation.
 
 **One analogy:**
+
 > `@NamedQuery` is like a restaurant's printed menu
 > (queries pre-approved by the chef). If a dish isn't
 > on the menu, it's caught before opening. Native query
@@ -454,23 +457,23 @@ public class ProductSummary {
 
 ### ⚖️ Comparison Table
 
-| Query Type | Validation | Database portability | Use case |
-|---|---|---|---|
-| `@NamedQuery` (JPQL) | Startup | Portable (all JPQL-compatible DBs) | Reusable named JPQL; early error detection |
-| `@Query` (Spring Data) | Startup | Portable (JPQL) or DB-specific (native=true) | Repository-scoped queries |
-| `em.createQuery()` | Runtime only | Portable | One-off JPQL in service methods |
-| `em.createNativeQuery()` | Runtime only | DB-specific | DB-specific features; stored procs |
+| Query Type               | Validation   | Database portability                         | Use case                                   |
+| ------------------------ | ------------ | -------------------------------------------- | ------------------------------------------ |
+| `@NamedQuery` (JPQL)     | Startup      | Portable (all JPQL-compatible DBs)           | Reusable named JPQL; early error detection |
+| `@Query` (Spring Data)   | Startup      | Portable (JPQL) or DB-specific (native=true) | Repository-scoped queries                  |
+| `em.createQuery()`       | Runtime only | Portable                                     | One-off JPQL in service methods            |
+| `em.createNativeQuery()` | Runtime only | DB-specific                                  | DB-specific features; stored procs         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`@NamedQuery` is required for named queries in Spring Data" | Spring Data `@Query` is equivalent and more common. `@NamedQuery` is the pure JPA approach. `@Query` has the same startup validation and better co-location with repository code. |
-| "Native queries bypass all JPA features" | Native queries returning entity classes still go through the Hibernate entity lifecycle: returned entities are managed, dirty checking applies, and the first-level cache holds them. Only `createNativeQuery(sql)` with `Object[]` result fully bypasses entity management. |
-| "Native queries can return any columns in any order" | Native queries mapped to an entity class depend on column-to-field name matching (Hibernate maps by column alias to `@Column` names). Mismatched aliases cause mapping errors or null fields. |
-| "`@NamedQuery` is faster than `@Query` because it's pre-compiled" | Both `@NamedQuery` and Spring Data `@Query` pre-compile and cache the query plan at startup. The runtime performance is identical. `@NamedQuery`'s advantage is startup validation, not execution speed over `@Query`. |
+| Misconception                                                     | Reality                                                                                                                                                                                                                                                                      |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`@NamedQuery` is required for named queries in Spring Data"      | Spring Data `@Query` is equivalent and more common. `@NamedQuery` is the pure JPA approach. `@Query` has the same startup validation and better co-location with repository code.                                                                                            |
+| "Native queries bypass all JPA features"                          | Native queries returning entity classes still go through the Hibernate entity lifecycle: returned entities are managed, dirty checking applies, and the first-level cache holds them. Only `createNativeQuery(sql)` with `Object[]` result fully bypasses entity management. |
+| "Native queries can return any columns in any order"              | Native queries mapped to an entity class depend on column-to-field name matching (Hibernate maps by column alias to `@Column` names). Mismatched aliases cause mapping errors or null fields.                                                                                |
+| "`@NamedQuery` is faster than `@Query` because it's pre-compiled" | Both `@NamedQuery` and Spring Data `@Query` pre-compile and cache the query plan at startup. The runtime performance is identical. `@NamedQuery`'s advantage is startup validation, not execution speed over `@Query`.                                                       |
 
 ---
 
@@ -495,6 +498,7 @@ a runtime bug from reaching production.
 Hibernate silently sets unmatched fields to `null`.
 **Diagnosis:** Log the SQL and check that every `@Column(name="...")` has a matching column in the SELECT.
 **Fix:** Use column aliases that match `@Column` names:
+
 ```sql
 SELECT p.product_id AS id, p.product_name AS name
 FROM products p
@@ -520,18 +524,21 @@ model is very large.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-014 - JPQL]] - `@NamedQuery` uses JPQL syntax;
   understand JPQL first
 - [[JPH-023 - @Query]] - Spring Data equivalent with
   same startup validation
 
 **Builds On This (learn these next):**
+
 - [[JPH-030 - DTO Projections]] - native queries with
   interface projections are a DTO strategy
 - [[JPH-031 - Hibernate Session vs EntityManager]] - HQL
   named queries vs JPA named queries
 
 **Related:**
+
 - [[JPH-036 - Criteria API]] - type-safe programmatic
   alternative to string-based named queries
 - [[JPH-057 - JPA Specification (JSR 338)]] - `@NamedQuery`
@@ -564,6 +571,7 @@ model is very large.
 ```
 
 **If you remember only 3 things:**
+
 1. `@NamedQuery` validates JPQL at startup - typos fail
    the startup rather than failing at runtime in production
 2. Spring Data `@Query` gives the same startup validation
@@ -599,6 +607,7 @@ validation (via compile-time query builders like JOOQ or
 Querydsl) is possible and even more powerful.
 
 **Where else this pattern appears:**
+
 - **JOOQ** - SQL queries are compile-time type-checked
   (DSL against generated schema classes)
 - **Querydsl** - JPQL-based queries generated from
@@ -636,6 +645,7 @@ string concatenation are not.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **DEFINE** a `@NamedQuery` on an entity and call it
    via `em.createNamedQuery()`
 2. **WRITE** a Spring Data repository method using
@@ -653,9 +663,10 @@ string concatenation are not.
 
 **Q1: What is the advantage of @NamedQuery over creating
 the JPQL string inline in the service method?**
-*Why they ask:* Tests understanding of fail-fast and
+_Why they ask:_ Tests understanding of fail-fast and
 startup validation benefits.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Startup validation: JPQL parsed and field names resolved
   at `EntityManagerFactory` initialization; typos/wrong
   fields cause startup failure, not runtime exceptions
@@ -669,8 +680,9 @@ startup validation benefits.
 
 **Q2: When would you choose a native query over JPQL?
 Give three concrete examples.**
-*Why they ask:* Tests practical SQL and ORM knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests practical SQL and ORM knowledge.
+_Strong answer includes:_
+
 1. Window functions: `RANK() OVER (PARTITION BY ... ORDER BY ...)` - not available in JPQL; required for ranked lists, percentile calculations
 2. CTEs (`WITH`): recursive queries, multi-step transformations - JPQL has no CTE support
 3. DB-specific operators: PostgreSQL JSON operators (`->>`, `@>`), `SIMILAR TO`, `ILIKE`, `array_agg()` - not in JPQL/HQL standard
@@ -678,8 +690,9 @@ Give three concrete examples.**
 5. Stored procedure calls (though `@StoredProcedureQuery` also works)
 
 **Q3: Are native queries safe from SQL injection?**
-*Why they ask:* Tests security awareness with JPA/Hibernate.
-*Strong answer includes:*
+_Why they ask:_ Tests security awareness with JPA/Hibernate.
+_Strong answer includes:_
+
 - Native queries using `setParameter()` or `:namedParam`
   are safe: Hibernate binds values via JDBC
   `PreparedStatement`, which sanitizes values
@@ -688,6 +701,6 @@ Give three concrete examples.**
 - Common mistake: dynamically constructing ORDER BY with
   user-provided column name: `"ORDER BY " + userInput`
   - column names cannot be parameterized in SQL; must
-  use whitelist validation
+    use whitelist validation
 - Named parameters work for WHERE clause values only;
   table/column names must always be whitelisted if dynamic

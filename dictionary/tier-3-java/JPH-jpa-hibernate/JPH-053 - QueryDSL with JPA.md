@@ -35,11 +35,11 @@ with Spring Data via `QuerydslPredicateExecutor<T>`:
 filters (search forms with optional fields). Overlap with
 Spring Data Specifications; choose one consistently.
 
-| #053 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Entity Basics, @ManyToOne, @OneToMany, JPQL, Spring Data JPA, Spring Data Repositories, Criteria API, Spring Data Specifications | |
-| **Used by:** | JPA at Scale, ORM Selection Framework, Spring Data JPA vs JOOQ | |
-| **Related:** | Criteria API, Spring Data Specifications, Hibernate vs MyBatis vs JOOQ, ORM Selection | |
+| #053            | Category: JPA & Hibernate                                                                                                        | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Entity Basics, @ManyToOne, @OneToMany, JPQL, Spring Data JPA, Spring Data Repositories, Criteria API, Spring Data Specifications |                 |
+| **Used by:**    | JPA at Scale, ORM Selection Framework, Spring Data JPA vs JOOQ                                                                   |                 |
+| **Related:**    | Criteria API, Spring Data Specifications, Hibernate vs MyBatis vs JOOQ, ORM Selection                                            |                 |
 
 ---
 
@@ -93,15 +93,16 @@ metamodel but with fluent query API).
 
 **Core components:**
 
-| Component | Role |
-|---|---|
-| `Q` classes (`QProduct`, `QOrder`) | Type-safe query meta-model; field-level predicates |
-| `JPAQueryFactory` | Entry point for building JPA queries |
-| `BooleanBuilder` | Composable boolean predicate (`and`, `or`, `not`) |
-| `Predicate` | Single condition (`p.price.gt(100)`) |
-| `QuerydslPredicateExecutor<T>` | Spring Data interface: `findAll(Predicate)`, `findAll(Predicate, Pageable)` |
+| Component                          | Role                                                                        |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| `Q` classes (`QProduct`, `QOrder`) | Type-safe query meta-model; field-level predicates                          |
+| `JPAQueryFactory`                  | Entry point for building JPA queries                                        |
+| `BooleanBuilder`                   | Composable boolean predicate (`and`, `or`, `not`)                           |
+| `Predicate`                        | Single condition (`p.price.gt(100)`)                                        |
+| `QuerydslPredicateExecutor<T>`     | Spring Data interface: `findAll(Predicate)`, `findAll(Predicate, Pageable)` |
 
 **Dependencies:**
+
 ```xml
 <dependency>
     <groupId>com.querydsl</groupId>
@@ -127,14 +128,16 @@ classes from JPA entities so you can write JPQL-like
 queries as Java code with compile-time type safety.
 
 **One analogy:**
+
 > QueryDSL is to JPQL what a type-safe HTTP client
 > (Feign, Retrofit) is to raw `HttpClient.get(urlString)`.
 > Without QueryDSL: write JPQL as strings ("WHERE p.price
+>
 > > :min"); typos found at runtime. With QueryDSL: write
-> `QProduct.product.price.gt(min)`; `price` is a typed
-> Java field. Typo (`QProduct.product.priice`) = compile
-> error. The `Q` class is the "interface definition" of
-> your entity, just like Feign interface defines your API.
+> > `QProduct.product.price.gt(min)`; `price` is a typed
+> > Java field. Typo (`QProduct.product.priice`) = compile
+> > error. The `Q` class is the "interface definition" of
+> > your entity, just like Feign interface defines your API.
 
 **One insight:** QueryDSL-JPA generates JPQL under the hood -
 it is NOT a SQL DSL (unlike JOOQ). It still goes through JPA's
@@ -248,6 +251,7 @@ you can write database queries as Java code instead of
 SQL/JPQL strings. Errors caught by compiler, not at runtime.
 
 **Level 2 - Basic usage (junior developer):**
+
 ```java
 @Repository
 @RequiredArgsConstructor
@@ -270,6 +274,7 @@ public class ProductQueryRepository {
 ```
 
 **Level 3 - Spring Data integration (mid-level engineer):**
+
 ```java
 // Repository with QuerydslPredicateExecutor:
 public interface ProductRepository
@@ -302,6 +307,7 @@ public class ProductSearchService {
 ```
 
 **Level 4 - JOIN queries (senior engineer):**
+
 ```java
 QProduct product = QProduct.product;
 QCategory cat    = QCategory.category;
@@ -327,6 +333,7 @@ List<ProductDto> results = factory
 ```
 
 **Level 5 - Count + fetchResults pattern (staff engineer):**
+
 ```java
 // Pagination with total count (efficient):
 QProduct p = QProduct.product;
@@ -506,25 +513,25 @@ repo.findAll(
 
 ### ⚖️ Comparison Table
 
-| Feature | QueryDSL | Spring Data Specifications | JOOQ |
-|---|---|---|---|
-| Type safety | Yes (Q classes) | Partial (CriteriaBuilder verbose) | Yes (generated table classes) |
-| SQL backend | JPQL (via JPA) | JPQL (via JPA) | Native SQL |
-| Complex SQL (window fn) | No | No | Yes |
-| Code generation | APT (Q classes) | None needed | Schema-based codegen |
-| Learning curve | Medium | Medium (CriteriaBuilder verbose) | Medium |
-| Spring Data integration | `QuerydslPredicateExecutor` | `JpaSpecificationExecutor` | Manual |
-| Jakarta EE compatibility | Requires `jakarta` classifier | Native JPA | Separate dialects |
+| Feature                  | QueryDSL                      | Spring Data Specifications        | JOOQ                          |
+| ------------------------ | ----------------------------- | --------------------------------- | ----------------------------- |
+| Type safety              | Yes (Q classes)               | Partial (CriteriaBuilder verbose) | Yes (generated table classes) |
+| SQL backend              | JPQL (via JPA)                | JPQL (via JPA)                    | Native SQL                    |
+| Complex SQL (window fn)  | No                            | No                                | Yes                           |
+| Code generation          | APT (Q classes)               | None needed                       | Schema-based codegen          |
+| Learning curve           | Medium                        | Medium (CriteriaBuilder verbose)  | Medium                        |
+| Spring Data integration  | `QuerydslPredicateExecutor`   | `JpaSpecificationExecutor`        | Manual                        |
+| Jakarta EE compatibility | Requires `jakarta` classifier | Native JPA                        | Separate dialects             |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "QueryDSL generates native SQL like JOOQ" | NO - QueryDSL-JPA generates JPQL, not SQL. It goes through JPA's query engine. Window functions, CTEs, and DB-specific SQL are NOT supported. For native SQL type-safety: use JOOQ. |
-| "QueryDSL replaces Spring Data repositories" | NO - `QuerydslPredicateExecutor` is an extension to Spring Data repositories. You still extend `JpaRepository<T,ID>` and ADD `QuerydslPredicateExecutor<T>`. Standard methods (`save`, `findById`, `findAll`) still work. |
-| "Q classes must be manually maintained" | NO - APT regenerates Q classes from entity annotations on every build. Never manually edit Q classes (they're in `target/generated-sources` and should be gitignored). Any entity change automatically regenerates the corresponding Q class. |
+| Misconception                                | Reality                                                                                                                                                                                                                                       |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "QueryDSL generates native SQL like JOOQ"    | NO - QueryDSL-JPA generates JPQL, not SQL. It goes through JPA's query engine. Window functions, CTEs, and DB-specific SQL are NOT supported. For native SQL type-safety: use JOOQ.                                                           |
+| "QueryDSL replaces Spring Data repositories" | NO - `QuerydslPredicateExecutor` is an extension to Spring Data repositories. You still extend `JpaRepository<T,ID>` and ADD `QuerydslPredicateExecutor<T>`. Standard methods (`save`, `findById`, `findAll`) still work.                     |
+| "Q classes must be manually maintained"      | NO - APT regenerates Q classes from entity annotations on every build. Never manually edit Q classes (they're in `target/generated-sources` and should be gitignored). Any entity change automatically regenerates the corresponding Q class. |
 
 ---
 
@@ -538,6 +545,7 @@ Code that uses `QProduct.product` doesn't compile.
 not running, or generated sources directory not added
 to build classpath.
 **Diagnosis:**
+
 ```
 # Check: does target/generated-sources/java exist?
 ls target/generated-sources/java/
@@ -549,6 +557,7 @@ ls target/generated-sources/java/
 #   OR: Mark directory as "Generated Sources Root"
 #   (target/generated-sources/java)
 ```
+
 **Fix:** In Maven: add `apt-maven-plugin` with processor
 `com.querydsl.apt.jpa.JPAAnnotationProcessor`. Rebuild.
 In Gradle: use `querydsl` plugin. Verify the generated
@@ -559,18 +568,21 @@ sources directory is on the build classpath.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-036 - Criteria API]] - QueryDSL solves the same
   problem as Criteria API but with a cleaner syntax; compare
 - [[JPH-043 - Spring Data Specifications]] - both are used
   for dynamic predicates; pick one approach, don't mix
 
 **Builds On This (learn these next):**
+
 - [[JPH-055 - ORM Selection Framework]] - when to choose
   QueryDSL vs Specifications vs JOOQ
 - [[JPH-059 - Spring Data JPA vs JOOQ vs MyBatis Decision]]
   - QueryDSL position in the broader tool selection decision
 
 **Related:**
+
 - [[JPH-050 - Hibernate vs MyBatis vs JOOQ]] - JOOQ is an
   alternative to QueryDSL for type-safe queries; comparison
 - [[JPH-023 - Spring Data Repositories]] - QuerydslPredicateExecutor
@@ -605,6 +617,7 @@ sources directory is on the build classpath.
 ```
 
 **If you remember only 3 things:**
+
 1. Q classes (generated by APT) enable type-safe field references:
    `QProduct.product.price.goe(100)` vs `"p.price >= :min"` string
 2. `BooleanBuilder` is the key for dynamic predicates:
@@ -664,6 +677,7 @@ QueryDSL. If no: JOOQ or Spring JDBC.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **SET UP** QueryDSL in a Maven/Gradle project with
    APT configuration and verify Q classes are generated
 2. **WRITE** a dynamic search query using `BooleanBuilder`
@@ -681,27 +695,29 @@ QueryDSL. If no: JOOQ or Spring JDBC.
 
 **Q1: When would you choose QueryDSL over Spring Data
 Specifications for dynamic filtering?**
-*Why they ask:* Tests practical Spring Data JPA expertise.
-*Strong answer includes:*
+_Why they ask:_ Tests practical Spring Data JPA expertise.
+_Strong answer includes:_
+
 - Both solve the same problem; main differentiators:
   (1) QueryDSL: more concise predicate syntax
-      (`q.price.goe(100)` vs `cb.greaterThanOrEqualTo(root.get("price"), 100)`)
+  (`q.price.goe(100)` vs `cb.greaterThanOrEqualTo(root.get("price"), 100)`)
   (2) Specifications: no code generation step; pure Spring Data JPA
   (3) QueryDSL: joins and path navigation more readable
-      (`q.category.supplier.name.eq(...)` vs nested `Join` in Criteria)
+  (`q.category.supplier.name.eq(...)` vs nested `Join` in Criteria)
 - Team familiarity is the deciding factor for simple cases
 - QueryDSL wins for complex joins; Specifications win for simple filters
   where you don't want APT in the build pipeline
 - Either way: don't use both in the same project
 
 **Q2: A QueryDSL query on a large table is slow. How do you diagnose?**
-*Why they ask:* Tests understanding of underlying execution.
-*Strong answer includes:*
+_Why they ask:_ Tests understanding of underlying execution.
+_Strong answer includes:_
+
 - QueryDSL generates JPQL; JPQL generates SQL
 - Enable `logging.level.org.hibernate.SQL=DEBUG` to see the SQL
 - Check the EXPLAIN PLAN for the generated SQL (PostgreSQL: `EXPLAIN ANALYZE`)
 - Common issues: missing index on filter column; Cartesian product
-  from missing JOIN ON condition; fetching all columns (SELECT p.*)
+  from missing JOIN ON condition; fetching all columns (SELECT p.\*)
   when only a few needed -> use `Projections.constructor(DTO.class, ...)` to select specific fields
 - QueryDSL limitation: cannot hint the DB optimizer directly;
   for index hints or `FOR UPDATE SKIP LOCKED`: fall back to native SQL

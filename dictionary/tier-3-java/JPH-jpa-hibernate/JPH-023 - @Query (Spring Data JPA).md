@@ -31,11 +31,11 @@ for the naming convention. Always use named parameters
 (`:name`). For UPDATE/DELETE, pair with `@Modifying` and
 `@Transactional`.
 
-| #023 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JPQL, CrudRepository/JpaRepository, FetchType, CascadeType | |
-| **Used by:** | Derived Query Methods, Pagination/Sorting, N+1 Problem, DTO Projections, @EntityGraph | |
-| **Related:** | @NamedQuery/Native Queries, Criteria API, Spring Data Specifications | |
+| #023            | Category: JPA & Hibernate                                                             | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | JPQL, CrudRepository/JpaRepository, FetchType, CascadeType                            |                 |
+| **Used by:**    | Derived Query Methods, Pagination/Sorting, N+1 Problem, DTO Projections, @EntityGraph |                 |
+| **Related:**    | @NamedQuery/Native Queries, Criteria API, Spring Data Specifications                  |                 |
 
 ---
 
@@ -76,6 +76,7 @@ class-level `@Transactional(readOnly=true)`), and maps
 results to the method's return type.
 
 Key attributes:
+
 - `value`: the JPQL or native SQL string
 - `nativeQuery`: if `true`, the value is raw SQL (default: false)
 - `countQuery`: custom count query for `Page<T>` return types
@@ -91,6 +92,7 @@ on a repository method - full query control with Spring
 Data's proxy convenience.
 
 **One analogy:**
+
 > Method name derivation is like ordering off a standard
 > menu. `@Query` is like writing the full recipe yourself
 > and handing it to the kitchen. Same service (Spring Data),
@@ -167,6 +169,7 @@ List<ProductNameOnly> findAllBy();
 ```
 
 **CORE INVARIANTS:**
+
 1. `@Query` JPQL is compiled and validated at startup if
    the method is called during context initialization;
    otherwise at first call time
@@ -466,24 +469,24 @@ int applyPriceIncrease(
 
 ### ⚖️ Comparison Table
 
-| Approach | When to use | Validation | Type safety | Dynamic? |
-|---|---|---|---|---|
-| Method name derivation | Simple conditions (1-3 fields, no JOINs) | Compile-time (method name parse) | High | No |
-| `@Query` (JPQL) | Complex JPQL (JOINs, subqueries, aggregations) | First call / startup | Medium (no compile-time) | No (static string) |
-| `@Query(nativeQuery=true)` | DB-specific features (window functions, full-text) | None (runtime only) | None | No |
-| Criteria API / Querydsl | Dynamic queries (conditions built at runtime) | Compile-time | High | Yes |
-| Spring Data Specifications | Complex dynamic queries in repository pattern | Compile-time | High | Yes |
+| Approach                   | When to use                                        | Validation                       | Type safety              | Dynamic?           |
+| -------------------------- | -------------------------------------------------- | -------------------------------- | ------------------------ | ------------------ |
+| Method name derivation     | Simple conditions (1-3 fields, no JOINs)           | Compile-time (method name parse) | High                     | No                 |
+| `@Query` (JPQL)            | Complex JPQL (JOINs, subqueries, aggregations)     | First call / startup             | Medium (no compile-time) | No (static string) |
+| `@Query(nativeQuery=true)` | DB-specific features (window functions, full-text) | None (runtime only)              | None                     | No                 |
+| Criteria API / Querydsl    | Dynamic queries (conditions built at runtime)      | Compile-time                     | High                     | Yes                |
+| Spring Data Specifications | Complex dynamic queries in repository pattern      | Compile-time                     | High                     | Yes                |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`@Modifying` alone makes an UPDATE @Query work" | `@Modifying` marks the query as an update operation (uses `executeUpdate()` instead of `getResultList()`). It does NOT provide a transaction. Without `@Transactional`, `TransactionRequiredException` is thrown. Both are required. |
-| "`@Query` is validated at compile time" | `@Query` JPQL strings are not validated at compile time. Errors (unknown entity names, field names) surface at first execution. Use `@NamedQuery` on the entity class (validated at startup) for early validation. |
-| "nativeQuery=true @Query is immune to SQL injection" | `nativeQuery=true` with BOUND parameters (`:name`) is safe. But if the query string is dynamically built with concatenated values, it is vulnerable to SQL injection since the string is sent as raw SQL to the database. Always use bound parameters. |
-| "Spring Data auto-adds DISTINCT to fix @OneToMany JOINs" | Spring Data does NOT add `DISTINCT` automatically. If you `JOIN FETCH` a `@OneToMany` collection in a `@Query`, the result list has duplicate parent entities. Add `DISTINCT` to your JPQL: `SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.items`. |
+| Misconception                                            | Reality                                                                                                                                                                                                                                                |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "`@Modifying` alone makes an UPDATE @Query work"         | `@Modifying` marks the query as an update operation (uses `executeUpdate()` instead of `getResultList()`). It does NOT provide a transaction. Without `@Transactional`, `TransactionRequiredException` is thrown. Both are required.                   |
+| "`@Query` is validated at compile time"                  | `@Query` JPQL strings are not validated at compile time. Errors (unknown entity names, field names) surface at first execution. Use `@NamedQuery` on the entity class (validated at startup) for early validation.                                     |
+| "nativeQuery=true @Query is immune to SQL injection"     | `nativeQuery=true` with BOUND parameters (`:name`) is safe. But if the query string is dynamically built with concatenated values, it is vulnerable to SQL injection since the string is sent as raw SQL to the database. Always use bound parameters. |
+| "Spring Data auto-adds DISTINCT to fix @OneToMany JOINs" | Spring Data does NOT add `DISTINCT` automatically. If you `JOIN FETCH` a `@OneToMany` collection in a `@Query`, the result list has duplicate parent entities. Add `DISTINCT` to your JPQL: `SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.items`.  |
 
 ---
 
@@ -550,12 +553,14 @@ List<Order> findWithItems(@Param("cid") Long cid);
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-014 - JPQL (Java Persistence Query Language)]] -
   `@Query` value is JPQL; all JPQL rules apply
 - [[JPH-016 - CrudRepository and JpaRepository]] -
   `@Query` is applied on Spring Data repository methods
 
 **Builds On This (learn these next):**
+
 - [[JPH-024 - Derived Query Methods]] - simpler alternative
   for basic queries
 - [[JPH-025 - Pagination and Sorting (Pageable, Sort)]] -
@@ -594,6 +599,7 @@ List<Order> findWithItems(@Param("cid") Long cid);
 ```
 
 **If you remember only 3 things:**
+
 1. `@Query` value is JPQL by default; use `nativeQuery=true`
    only for database-specific SQL features
 2. UPDATE/DELETE `@Query` requires BOTH `@Modifying` AND
@@ -652,6 +658,7 @@ Page<Order> findAllWithItems(Pageable pageable);
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **WRITE** a `@Query` method with named parameters, JOIN
    FETCH, DISTINCT, and a `Pageable` parameter including
    a custom `countQuery`
@@ -670,9 +677,10 @@ Page<Order> findAllWithItems(Pageable pageable);
 
 **Q1: What annotations are required for a @Query that
 executes an UPDATE or DELETE statement, and why?**
-*Why they ask:* Very common practical question; tests
+_Why they ask:_ Very common practical question; tests
 understanding of transaction + @Modifying interaction.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `@Modifying`: tells Spring Data to use `executeUpdate()`
   instead of `getResultList()` for the query
 - `@Transactional`: provides the transaction context
@@ -685,9 +693,10 @@ understanding of transaction + @Modifying interaction.
 
 **Q2: Why do you need DISTINCT in a @Query with JOIN FETCH
 on a @OneToMany collection?**
-*Why they ask:* Tests understanding of SQL Cartesian product
+_Why they ask:_ Tests understanding of SQL Cartesian product
 and JPQL DISTINCT semantics.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - JOIN FETCH with `@OneToMany` produces SQL Cartesian product:
   parent rows multiplied by child rows
 - Without DISTINCT: result list contains one `Order` object
@@ -701,9 +710,10 @@ and JPQL DISTINCT semantics.
 
 **Q3: When would you use nativeQuery=true in @Query vs
 standard JPQL?**
-*Why they ask:* Tests awareness of when JPA abstractions
+_Why they ask:_ Tests awareness of when JPA abstractions
 are insufficient and native SQL is needed.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Use native SQL for database-specific features: window
   functions (`ROW_NUMBER() OVER(...)`), JSON path
   expressions, full-text search (`MATCH AGAINST`), stored

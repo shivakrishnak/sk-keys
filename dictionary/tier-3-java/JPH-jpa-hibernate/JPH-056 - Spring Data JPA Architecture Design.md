@@ -36,11 +36,11 @@ without `Pageable` is almost always wrong in production
 (interfaces, class-based DTOs) eliminate N+1 in read
 paths; use them by default for list endpoints.
 
-| #056 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Entity Lifecycle, JPQL, Spring Data JPA, Spring Data Repositories, @Transactional, N+1 Problem, Criteria API, Spring Data Specifications, JPA at Scale | |
-| **Used by:** | - | |
-| **Related:** | Spring Data Specifications, QueryDSL, JPA at Scale, ORM Selection, Spring Data JPA Decision | |
+| #056            | Category: JPA & Hibernate                                                                                                                              | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Entity Lifecycle, JPQL, Spring Data JPA, Spring Data Repositories, @Transactional, N+1 Problem, Criteria API, Spring Data Specifications, JPA at Scale |                 |
+| **Used by:**    | -                                                                                                                                                      |                 |
+| **Related:**    | Spring Data Specifications, QueryDSL, JPA at Scale, ORM Selection, Spring Data JPA Decision                                                            |                 |
 
 ---
 
@@ -98,15 +98,16 @@ applications.
 
 **Architectural layers:**
 
-| Layer | Responsibility | Spring components |
-|---|---|---|
-| Controller/API | HTTP boundary; input validation; DTO marshaling | `@RestController`, `@RequestBody`, `@Valid` |
-| Service | Business logic; transaction management; orchestration | `@Service`, `@Transactional` |
-| Repository | Data access; query definition; NOT business logic | `@Repository`, `JpaRepository` |
-| Entity | Persistence state; domain invariants (no anemic model) | `@Entity`, domain methods |
-| DTO/Projection | Data transfer; decouple persistence from API | records, interfaces, class projections |
+| Layer          | Responsibility                                         | Spring components                           |
+| -------------- | ------------------------------------------------------ | ------------------------------------------- |
+| Controller/API | HTTP boundary; input validation; DTO marshaling        | `@RestController`, `@RequestBody`, `@Valid` |
+| Service        | Business logic; transaction management; orchestration  | `@Service`, `@Transactional`                |
+| Repository     | Data access; query definition; NOT business logic      | `@Repository`, `JpaRepository`              |
+| Entity         | Persistence state; domain invariants (no anemic model) | `@Entity`, domain methods                   |
+| DTO/Projection | Data transfer; decouple persistence from API           | records, interfaces, class projections      |
 
 **Golden rules:**
+
 1. Entities don't cross the service boundary (return DTOs)
 2. `@Transactional` on service methods, not repository methods
 3. One repository per aggregate root
@@ -123,6 +124,7 @@ transactions span service methods, repositories are thin
 query interfaces.
 
 **One analogy:**
+
 > Spring Data JPA architecture is like a restaurant's
 > kitchen pass (the counter between kitchen and dining room).
 > The kitchen (persistence layer) uses raw ingredients
@@ -243,6 +245,7 @@ List<ProductDashboardDto> getDashboardData();
 (3) Always add `Pageable` to list queries.
 
 **Level 2 - Repository design (junior developer):**
+
 ```java
 // One repository per aggregate root (not per table):
 // ORDER is the aggregate root; ORDER_ITEM is part of ORDER aggregate
@@ -259,6 +262,7 @@ List<Order> findByStatus(OrderStatus status); // unbounded
 ```
 
 **Level 3 - Projection design (mid-level engineer):**
+
 ```java
 // Interface projection: auto-mapped by field name
 public interface OrderListItem {
@@ -277,6 +281,7 @@ Page<OrderListItem> findAll(Pageable pageable);
 ```
 
 **Level 4 - Custom repository implementation (senior engineer):**
+
 ```java
 // For complex queries: custom repository fragment pattern
 public interface OrderRepositoryCustom {
@@ -486,23 +491,23 @@ class OrderServiceTest {
 
 ### ⚖️ Comparison Table
 
-| Pattern | Anti-pattern | Better approach | Benefit |
-|---|---|---|---|
+| Pattern                          | Anti-pattern                   | Better approach                         | Benefit                                     |
+| -------------------------------- | ------------------------------ | --------------------------------------- | ------------------------------------------- |
 | Entity in controller return type | `@GetMapping -> List<Product>` | Return `Page<ProductDto>` or projection | No lazy load, pagination, schema decoupling |
-| `@Transactional` on repository | `@Repository @Transactional` | `@Transactional` on `@Service` | Atomic multi-repo operations |
-| No pagination | `findAll()` in controller | `findAll(Pageable)` | Bounded result set; no OOM |
-| Business logic in `@Query` | `@Query("UPDATE... * 0.9...")` | Domain method on entity | Testable, composable, version-safe |
-| `OrderItemRepository` exists | One repo per DB table | One repo per aggregate root | Aggregate invariants enforced |
+| `@Transactional` on repository   | `@Repository @Transactional`   | `@Transactional` on `@Service`          | Atomic multi-repo operations                |
+| No pagination                    | `findAll()` in controller      | `findAll(Pageable)`                     | Bounded result set; no OOM                  |
+| Business logic in `@Query`       | `@Query("UPDATE... * 0.9...")` | Domain method on entity                 | Testable, composable, version-safe          |
+| `OrderItemRepository` exists     | One repo per DB table          | One repo per aggregate root             | Aggregate invariants enforced               |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Spring Data repositories are transactional by default" | Spring Data JPA repository implementations DO add `@Transactional` to each individual method (like `save()`, `findById()`). But these are single-method transactions. When your service calls `orderRepo.save()` + `inventoryRepo.decrement()`, each runs in its own transaction unless the service method wraps them in one `@Transactional`. The service `@Transactional` ensures multi-repo operations are atomic. |
-| "Interface projections always avoid N+1" | Interface projections with `@Value("#{target.association.field}")` WILL trigger lazy loading to resolve the SpEL expression. The safe alternative is a JPQL-based DTO projection with a constructor expression that JOINs the association: `SELECT NEW dto(p.id, c.name) FROM Product p JOIN p.category c`. This avoids lazy loading entirely. |
-| "Returning entities from services is fine as long as the session is open" | Open-session-in-view (OSIV) pattern keeps the session open until the HTTP response is complete. This allows lazy loading during JSON serialization (no LazyInitializationException) but at the cost of uncontrolled N+1 in the view layer. Disable OSIV in production: `spring.jpa.open-in-view=false`. This forces you to eagerly load everything the controller needs, preventing hidden lazy loading. |
+| Misconception                                                             | Reality                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Spring Data repositories are transactional by default"                   | Spring Data JPA repository implementations DO add `@Transactional` to each individual method (like `save()`, `findById()`). But these are single-method transactions. When your service calls `orderRepo.save()` + `inventoryRepo.decrement()`, each runs in its own transaction unless the service method wraps them in one `@Transactional`. The service `@Transactional` ensures multi-repo operations are atomic. |
+| "Interface projections always avoid N+1"                                  | Interface projections with `@Value("#{target.association.field}")` WILL trigger lazy loading to resolve the SpEL expression. The safe alternative is a JPQL-based DTO projection with a constructor expression that JOINs the association: `SELECT NEW dto(p.id, c.name) FROM Product p JOIN p.category c`. This avoids lazy loading entirely.                                                                        |
+| "Returning entities from services is fine as long as the session is open" | Open-session-in-view (OSIV) pattern keeps the session open until the HTTP response is complete. This allows lazy loading during JSON serialization (no LazyInitializationException) but at the cost of uncontrolled N+1 in the view layer. Disable OSIV in production: `spring.jpa.open-in-view=false`. This forces you to eagerly load everything the controller needs, preventing hidden lazy loading.              |
 
 ---
 
@@ -519,18 +524,22 @@ the transaction committed and the Hibernate session
 closed. The controller tries to access a lazy association
 on the now-detached entity - no session available.
 **Diagnosis:**
+
 ```java
 // Is OSIV on or off?
 # spring.jpa.open-in-view=true (default) -> no LIZE, but N+1 risk
 # spring.jpa.open-in-view=false -> LIZE forces you to load eagerly
 ```
+
 **Fix A (preferred):** Return a DTO from the service:
+
 ```java
 return new OrderResponseDto(
     order.getId(),
     order.getCustomer().getName(), // access inside tx
     order.getTotal());
 ```
+
 **Fix B:** Use `@EntityGraph` or JOIN FETCH to eagerly
 load `customer` within the service transaction.
 Do NOT re-enable OSIV as a solution - it hides N+1.
@@ -540,14 +549,17 @@ Do NOT re-enable OSIV as a solution - it hides N+1.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-026 - @Transactional]] - transaction ownership in service layer
 - [[JPH-023 - Spring Data Repositories]] - repository interface design
 - [[JPH-027 - N+1 Problem]] - why entities in controllers cause N+1
 
 **Builds On This (learn these next):**
+
 - All JPH architecture entries synthesize here
 
 **Related:**
+
 - [[JPH-043 - Spring Data Specifications]] - advanced filtering
   within the service layer
 - [[JPH-054 - JPA at Scale]] - architecture patterns at high traffic
@@ -580,6 +592,7 @@ Do NOT re-enable OSIV as a solution - it hides N+1.
 ```
 
 **If you remember only 3 things:**
+
 1. `@Transactional` on the SERVICE layer (not repository) - ensures
    multi-repository operations are atomic
 2. NEVER return entities from controllers - return DTOs or projections
@@ -642,6 +655,7 @@ correct loading upfront.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** why `@Transactional` belongs on service
    methods and the concrete failure mode when it's on repositories
 2. **DESIGN** a layered service with entity loading inside
@@ -659,8 +673,9 @@ correct loading upfront.
 
 **Q1: Why is it a problem to put `@Transactional` on a
 Spring Data JPA repository method instead of a service method?**
-*Why they ask:* Tests understanding of transaction scope.
-*Strong answer includes:*
+_Why they ask:_ Tests understanding of transaction scope.
+_Strong answer includes:_
+
 - Repository `@Transactional` creates a transaction per method call
 - Service calling two repos: `orderRepo.save()` + `inventoryRepo.decrement()`
   = two separate transactions (no atomicity)
@@ -675,8 +690,9 @@ Spring Data JPA repository method instead of a service method?**
 
 **Q2: What happens if you return an entity from a service method
 and then access a lazy association in the controller?**
-*Why they ask:* Tests understanding of session lifecycle.
-*Strong answer includes:*
+_Why they ask:_ Tests understanding of session lifecycle.
+_Strong answer includes:_
+
 - `@Transactional` on service method closes the session on return
 - Entity is now DETACHED (no associated Hibernate session)
 - Controller accesses `entity.getAssociation()` (lazy proxy) -> triggers load

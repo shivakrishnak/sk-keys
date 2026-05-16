@@ -30,11 +30,11 @@ production - the moment you need an attribute on the join
 table (e.g., `enrolled_at`, `role`), you must replace it
 with an explicit join entity + two `@ManyToOne` associations.
 
-| #019 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Id, @Table/@Column, @OneToMany and @ManyToOne | |
-| **Used by:** | @JoinColumn and @JoinTable, FetchType, CascadeType, N+1 Problem | |
-| **Related:** | @Embedded, Inheritance Mapping | |
+| #019            | Category: JPA & Hibernate                                       | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Id, @Table/@Column, @OneToMany and @ManyToOne         |                 |
+| **Used by:**    | @JoinColumn and @JoinTable, FetchType, CascadeType, N+1 Problem |                 |
+| **Related:**    | @Embedded, Inheritance Mapping                                  |                 |
 
 ---
 
@@ -87,6 +87,7 @@ a join table; one side owns the join table (`@JoinTable`),
 the other uses `mappedBy`.
 
 **One analogy:**
+
 > Students and Courses: each student takes many courses,
 > each course has many students. The enrollment record
 > in the middle is the join table. `@ManyToMany` lets JPA
@@ -156,6 +157,7 @@ public class Course {
 ```
 
 **CORE INVARIANTS:**
+
 1. The owning side (with `@JoinTable`) controls join table
    writes; inverse side (`mappedBy`) changes are ignored
 2. Always use `Set` (not `List`) for `@ManyToMany` collections
@@ -456,21 +458,21 @@ private List<UserRole> roles = new ArrayList<>();
 
 ### ⚖️ Comparison Table
 
-| Approach | Join table columns | Attributes on join | Cascade safe | Use case |
-|---|---|---|---|---|
-| `@ManyToMany` | 2 FKs only | No | Only PERSIST/MERGE | Simple tagging, role assignment |
-| Explicit join entity | FKs + extra columns | Yes | Full control | When relationship has data |
+| Approach             | Join table columns  | Attributes on join | Cascade safe       | Use case                        |
+| -------------------- | ------------------- | ------------------ | ------------------ | ------------------------------- |
+| `@ManyToMany`        | 2 FKs only          | No                 | Only PERSIST/MERGE | Simple tagging, role assignment |
+| Explicit join entity | FKs + extra columns | Yes                | Full control       | When relationship has data      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Use `CascadeType.ALL` on @ManyToMany for convenience" | `CascadeType.ALL` includes `REMOVE`. Deleting a student cascades to remove all their Course entities - deleting courses other students are enrolled in. Never use `CascadeType.ALL` or `REMOVE` on `@ManyToMany`. |
-| "Changes to the @ManyToMany inverse side write to the join table" | Only the owning side (with `@JoinTable`) writes to the join table. Adding to the inverse `mappedBy` side has no effect on the database. |
-| "Use List instead of Set for @ManyToMany collections" | Using `List` for `@ManyToMany` can create duplicate join table entries and causes Hibernate to delete all join rows then re-insert them when the list changes. Always use `Set`. |
-| "Pure @ManyToMany is sufficient for most domain models" | In most real domains, the M:N relationship eventually needs attributes (created_at, status, type). An explicit join entity is almost always the better choice. `@ManyToMany` is appropriate only for truly attribute-free relationships like product tags. |
+| Misconception                                                     | Reality                                                                                                                                                                                                                                                    |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Use `CascadeType.ALL` on @ManyToMany for convenience"            | `CascadeType.ALL` includes `REMOVE`. Deleting a student cascades to remove all their Course entities - deleting courses other students are enrolled in. Never use `CascadeType.ALL` or `REMOVE` on `@ManyToMany`.                                          |
+| "Changes to the @ManyToMany inverse side write to the join table" | Only the owning side (with `@JoinTable`) writes to the join table. Adding to the inverse `mappedBy` side has no effect on the database.                                                                                                                    |
+| "Use List instead of Set for @ManyToMany collections"             | Using `List` for `@ManyToMany` can create duplicate join table entries and causes Hibernate to delete all join rows then re-insert them when the list changes. Always use `Set`.                                                                           |
+| "Pure @ManyToMany is sufficient for most domain models"           | In most real domains, the M:N relationship eventually needs attributes (created_at, status, type). An explicit join entity is almost always the better choice. `@ManyToMany` is appropriate only for truly attribute-free relationships like product tags. |
 
 ---
 
@@ -520,12 +522,14 @@ and re-inserts them on any collection change.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-018 - @OneToMany and @ManyToOne]] - the building
   block that explicit join entities use
 - [[JPH-020 - @JoinColumn and @JoinTable]] - customises
   the join table name and FK column names
 
 **Builds On This (learn these next):**
+
 - [[JPH-021 - FetchType (LAZY vs EAGER)]] - both sides
   of `@ManyToMany` should be LAZY
 - [[JPH-022 - CascadeType]] - cascade rules differ for
@@ -559,6 +563,7 @@ and re-inserts them on any collection change.
 ```
 
 **If you remember only 3 things:**
+
 1. `@ManyToMany` owning side (with `@JoinTable`) writes to
    the join table; inverse (`mappedBy`) side is ignored
 2. NEVER use `CascadeType.ALL` or `REMOVE` on `@ManyToMany` -
@@ -612,6 +617,7 @@ not just for correctness but for performance.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **WRITE** a bidirectional `@ManyToMany` from scratch
    including correct `@JoinTable` configuration, sync
    helper methods, and `Set` collection type
@@ -631,9 +637,10 @@ not just for correctness but for performance.
 
 **Q1: What is the danger of using CascadeType.ALL on a
 @ManyToMany relationship?**
-*Why they ask:* Common production bug; tests JPA cascade
+_Why they ask:_ Common production bug; tests JPA cascade
 depth knowledge.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `CascadeType.ALL` includes `CascadeType.REMOVE`
 - Deleting the owning-side entity cascades `em.remove()`
   to all entities in the collection
@@ -647,9 +654,10 @@ depth knowledge.
 
 **Q2: Why should you use Set instead of List for @ManyToMany
 collections?**
-*Why they ask:* Tests awareness of Hibernate's collection
+_Why they ask:_ Tests awareness of Hibernate's collection
 dirty-checking behavior and the List vs Set performance trap.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Hibernate uses "delete all + re-insert" strategy for
   List changes in `@ManyToMany`
 - Adding 1 item to a `List` of 100 join rows: DELETE 100,
@@ -663,9 +671,10 @@ dirty-checking behavior and the List vs Set performance trap.
 
 **Q3: When would you upgrade from @ManyToMany to an
 explicit join entity?**
-*Why they ask:* Tests architectural thinking and JPA
+_Why they ask:_ Tests architectural thinking and JPA
 design experience.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - When the join table needs any additional columns
   (created_at, role, quantity, status)
 - When you need to query or filter by the relationship

@@ -35,11 +35,11 @@ If you use Hibernate's `Session` API directly, you write
 HQL. In Spring Boot, JPQL through `@Query` covers 95%
 of cases; HQL is for Hibernate-native code paths.
 
-| #028 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Id/@GeneratedValue, @Table/@Column, EntityManager, JPQL, @OneToMany/@ManyToOne | |
-| **Used by:** | @NamedQuery and Native Queries, Hibernate Session vs EntityManager, First Level Cache, Hibernate Internals | |
-| **Related:** | Criteria API, QueryDSL with JPA | |
+| #028            | Category: JPA & Hibernate                                                                                  | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Id/@GeneratedValue, @Table/@Column, EntityManager, JPQL, @OneToMany/@ManyToOne                   |                 |
+| **Used by:**    | @NamedQuery and Native Queries, Hibernate Session vs EntityManager, First Level Cache, Hibernate Internals |                 |
+| **Related:**    | Criteria API, QueryDSL with JPA                                                                            |                 |
 
 ---
 
@@ -84,6 +84,7 @@ translates HQL to SQL at query execution time using
 the configured dialect.
 
 **Key characteristics:**
+
 - Case-insensitive for HQL keywords (`FROM`, `WHERE`, `JOIN`)
 - Case-SENSITIVE for entity class names and field names
   (Java is case-sensitive: `Product` not `product`)
@@ -104,6 +105,7 @@ instead of table/column names; Hibernate translates to
 the correct SQL for your database.
 
 **One analogy:**
+
 > SQL is like giving GPS coordinates to a taxi driver.
 > HQL is like saying "take me to the Empire State Building."
 > The taxi driver (Hibernate) knows the actual address
@@ -404,26 +406,26 @@ List<Tag> popularTags = session
 
 ### ⚖️ Comparison Table
 
-| Feature | HQL | JPQL | Native SQL |
-|---|---|---|---|
-| SELECT clause | Optional (Hibernate fills in) | Required | Required |
-| Entity/field names | Yes | Yes | No (table/column names) |
-| Polymorphic queries | Yes | Yes | No (manual DTYPE) |
-| DB vendor functions | `function()` | `function()` (JPA 2.1+) | Native syntax |
-| Portability | Hibernate only | All JPA providers | DB-specific |
-| `ELEMENTS()`, `INDICES()` | Yes | No | N/A |
-| Bulk DML | `createMutationQuery()` | `createQuery()` | Yes |
+| Feature                   | HQL                           | JPQL                    | Native SQL              |
+| ------------------------- | ----------------------------- | ----------------------- | ----------------------- |
+| SELECT clause             | Optional (Hibernate fills in) | Required                | Required                |
+| Entity/field names        | Yes                           | Yes                     | No (table/column names) |
+| Polymorphic queries       | Yes                           | Yes                     | No (manual DTYPE)       |
+| DB vendor functions       | `function()`                  | `function()` (JPA 2.1+) | Native syntax           |
+| Portability               | Hibernate only                | All JPA providers       | DB-specific             |
+| `ELEMENTS()`, `INDICES()` | Yes                           | No                      | N/A                     |
+| Bulk DML                  | `createMutationQuery()`       | `createQuery()`         | Yes                     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "HQL and JPQL are the same thing" | JPQL is the JPA standard and a subset of HQL. HQL has Hibernate-specific extensions (optional SELECT, ELEMENTS(), INDICES(), more functions). All JPQL is valid HQL but not vice versa. |
-| "HQL queries table names" | HQL queries entity class names and their Java field names. `FROM Product` queries the Java class `Product`, not the table `product`. The class-to-table mapping is in `@Entity`/`@Table`. |
+| Misconception                                    | Reality                                                                                                                                                                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "HQL and JPQL are the same thing"                | JPQL is the JPA standard and a subset of HQL. HQL has Hibernate-specific extensions (optional SELECT, ELEMENTS(), INDICES(), more functions). All JPQL is valid HQL but not vice versa.                      |
+| "HQL queries table names"                        | HQL queries entity class names and their Java field names. `FROM Product` queries the Java class `Product`, not the table `product`. The class-to-table mapping is in `@Entity`/`@Table`.                    |
 | "Omitting SELECT in HQL is fine in all contexts" | Omitting SELECT is valid in Hibernate's HQL but NOT in standard JPQL. If you switch JPA providers from Hibernate to EclipseLink, queries without SELECT will fail. Write `SELECT p FROM...` for portability. |
-| "HQL is safe from SQL injection by default" | HQL is safe IF you use named or positional parameters. HQL built by string concatenation is vulnerable to HQL injection (analogous to SQL injection). Always use `.setParameter()`. |
+| "HQL is safe from SQL injection by default"      | HQL is safe IF you use named or positional parameters. HQL built by string concatenation is vulnerable to HQL injection (analogous to SQL injection). Always use `.setParameter()`.                          |
 
 ---
 
@@ -441,12 +443,14 @@ unique query string instances in memory.
 With thousands of unique prices, thousands of entries
 fill the query plan cache.
 **Diagnosis:**
+
 ```java
 // Hibernate statistic: query plan cache misses
 Statistics stats = sessionFactory.getStatistics();
 stats.getQueryPlanCacheMissCount();
 // High miss count with large query count = cache thrashing
 ```
+
 **Fix:** Always use named parameters. Never concatenate
 values into HQL strings. Query plan cache size is
 configurable: `hibernate.query.plan_cache_max_size=4096`.
@@ -468,18 +472,21 @@ class name; `Product` (capitalized) is.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-014 - JPQL]] - JPQL is the portable foundation;
   understand it before HQL extensions
 - [[JPH-011 - EntityManager]] - HQL is used through
   EntityManager (or Hibernate Session)
 
 **Builds On This (learn these next):**
+
 - [[JPH-029 - @NamedQuery and Native Queries]] - named
   queries pre-compile HQL/JPQL at startup
 - [[JPH-031 - Hibernate Session vs EntityManager]] -
   HQL is the native query language for Hibernate Session
 
 **Related:**
+
 - [[JPH-036 - Criteria API]] - type-safe programmatic
   alternative to HQL strings
 - [[JPH-053 - QueryDSL with JPA]] - fluent DSL that
@@ -513,6 +520,7 @@ class name; `Product` (capitalized) is.
 ```
 
 **If you remember only 3 things:**
+
 1. HQL uses Java entity class names and field names
    (case-sensitive), not SQL table/column names
 2. HQL is a Hibernate-specific superset of JPQL;
@@ -546,6 +554,7 @@ implementation), and Elasticsearch (queries against the
 document structure, not the Lucene index internals).
 
 **Where else this pattern appears:**
+
 - **LINQ (C#/.NET)** - query C# objects/Entity Framework
   models using C# property names; EF generates SQL
 - **SOQL (Salesforce)** - queries Salesforce object model
@@ -579,6 +588,7 @@ all stale entities from the first-level cache.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **WRITE** an HQL query with JOIN FETCH, named parameters,
    and DTO constructor expression
 2. **EXPLAIN** why HQL queries use entity class names
@@ -596,9 +606,10 @@ all stale entities from the first-level cache.
 
 **Q1: What is the difference between HQL and JPQL?
 When would you choose HQL over JPQL?**
-*Why they ask:* Tests understanding of Hibernate vs JPA
+_Why they ask:_ Tests understanding of Hibernate vs JPA
 layers and when to use each.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - JPQL: JPA standard; portable across providers
   (Hibernate, EclipseLink, OpenJPA)
 - HQL: Hibernate's superset; adds SELECT-optional syntax,
@@ -613,9 +624,10 @@ layers and when to use each.
 **Q2: Why is string concatenation in HQL queries
 dangerous, and what are the consequences beyond
 security?**
-*Why they ask:* Tests both security awareness and
+_Why they ask:_ Tests both security awareness and
 Hibernate internals knowledge.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Security: HQL injection (same concept as SQL injection
   but for the ORM query layer; can traverse entity
   relationships to extract data)

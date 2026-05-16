@@ -28,11 +28,11 @@ permalink: /jpa-hibernate/entity-annotation/
 a Java class as a persistent type mapped to a database table,
 making the JPA provider responsible for its storage lifecycle.
 
-| #006 | Category: JPA & Hibernate | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | What is ORM, Hibernate as JPA Implementation | |
-| **Used by:** | @Id and @GeneratedValue, @Table and @Column, EntityManager, Entity Lifecycle | |
-| **Related:** | @Table and @Column, @Embedded and @Embeddable, Inheritance Mapping Strategies | |
+| #006            | Category: JPA & Hibernate                                                     | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What is ORM, Hibernate as JPA Implementation                                  |                 |
+| **Used by:**    | @Id and @GeneratedValue, @Table and @Column, EntityManager, Entity Lifecycle  |                 |
+| **Related:**    | @Table and @Column, @Embedded and @Embeddable, Inheritance Mapping Strategies |                 |
 
 ---
 
@@ -85,6 +85,7 @@ a mapped superclass that provides one.
 in a database table - manage its lifecycle."
 
 **One analogy:**
+
 > `@Entity` is like a passport. A Java class without
 > `@Entity` is a person without ID - they exist but the
 > border control (the JPA provider) does not recognise them.
@@ -102,6 +103,7 @@ dirty checking. Everything in JPA depends on this annotation.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Every `@Entity` class maps to exactly one primary table
    (by default, the class name; customised via `@Table`)
 2. Every `@Entity` class must have an `@Id` - either on a
@@ -116,6 +118,7 @@ dirty checking. Everything in JPA depends on this annotation.
 
 **DERIVED DESIGN:**
 When Hibernate scans a `@Entity` class, it:
+
 1. Maps class name to table name (or uses `@Table(name=...)`)
 2. Maps each non-`@Transient` field to a column
 3. Registers a `PersisterCreator` for the entity type
@@ -252,6 +255,7 @@ An alternative is using records for projections (non-entities)
 and accepting that full entities need the proxy-compatible design.
 
 **Expert Thinking Cues:**
+
 - Ask: "Is every field in this `@Entity` class that is not
   persisted marked `@Transient`?" - unintentionally persisted
   fields are a silent data corruption vector
@@ -488,12 +492,12 @@ public class Product extends BaseEntity {
 
 ### ⚖️ Comparison Table
 
-| Annotation | Creates Table | JPA Managed | Can Query Directly | Use Case |
-|---|---|---|---|---|
-| `@Entity` | Yes | Yes | Yes | Persistent domain objects |
-| `@MappedSuperclass` | No | Partial | No (via subclass) | Shared columns without own table |
-| `@Embeddable` | No | Via owner | No | Value objects embedded in entity |
-| `@Transient` | N/A | No | N/A | Fields to exclude from mapping |
+| Annotation          | Creates Table | JPA Managed | Can Query Directly | Use Case                         |
+| ------------------- | ------------- | ----------- | ------------------ | -------------------------------- |
+| `@Entity`           | Yes           | Yes         | Yes                | Persistent domain objects        |
+| `@MappedSuperclass` | No            | Partial     | No (via subclass)  | Shared columns without own table |
+| `@Embeddable`       | No            | Via owner   | No                 | Value objects embedded in entity |
+| `@Transient`        | N/A           | No          | N/A                | Fields to exclude from mapping   |
 
 **How to choose:** Use `@Entity` for any class that represents
 a distinct database row with its own identity. Use
@@ -505,13 +509,13 @@ for value types (Address, Money) embedded in an entity's table.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Any Java class with @Entity will just work" | The class must be non-final, have a no-arg constructor (at minimum protected), and have an @Id field. Violating any of these causes a startup failure or broken lazy loading. |
-| "@MappedSuperclass is the same as @Entity" | `@MappedSuperclass` shares column mappings but creates no table and cannot be queried directly. `@Entity` creates a table and is a first-class JPA-managed type. |
-| "All fields in an @Entity class are automatically persisted" | Fields marked `@Transient` or `static` or `final` are excluded. ALL other non-transient non-static fields are mapped by default - missing `@Transient` on a computed field causes a mapping error. |
+| Misconception                                                   | Reality                                                                                                                                                                                                                                                               |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Any Java class with @Entity will just work"                    | The class must be non-final, have a no-arg constructor (at minimum protected), and have an @Id field. Violating any of these causes a startup failure or broken lazy loading.                                                                                         |
+| "@MappedSuperclass is the same as @Entity"                      | `@MappedSuperclass` shares column mappings but creates no table and cannot be queried directly. `@Entity` creates a table and is a first-class JPA-managed type.                                                                                                      |
+| "All fields in an @Entity class are automatically persisted"    | Fields marked `@Transient` or `static` or `final` are excluded. ALL other non-transient non-static fields are mapped by default - missing `@Transient` on a computed field causes a mapping error.                                                                    |
 | "@Entity classes should follow standard OOP immutability rules" | JPA requires a no-arg constructor and non-final class, both of which conflict with OOP immutability guidelines. Entity classes are persistence objects, not pure domain objects. Consider separating domain objects (immutable) from entity objects (JPA-compatible). |
-| "You need @Column on every field" | `@Column` is optional. Without it, Hibernate maps the field to a column with the same name. Only add `@Column` when you need to override defaults (name, nullable, length, precision). |
+| "You need @Column on every field"                               | `@Column` is optional. Without it, Hibernate maps the field to a column with the same name. Only add `@Column` when you need to override defaults (name, nullable, length, precision).                                                                                |
 
 ---
 
@@ -625,12 +629,14 @@ Checkstyle rule) to flag `final` classes annotated with
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-002 - What is ORM (Object-Relational Mapping)]] -
   what the JPA provider does with `@Entity` classes
 - [[JPH-004 - Hibernate as JPA Implementation]] - the engine
   that processes `@Entity` annotations at startup
 
 **Builds On This (learn these next):**
+
 - [[JPH-007 - @Id and @GeneratedValue]] - required companion
   to `@Entity` - every entity needs an identifier
 - [[JPH-008 - @Table and @Column]] - customising the default
@@ -641,6 +647,7 @@ Checkstyle rule) to flag `final` classes annotated with
   the four states an `@Entity` instance can be in
 
 **Alternatives / Comparisons:**
+
 - [[JPH-041 - @Embedded and @Embeddable]] - for value types
   that are part of an entity but not entities themselves
 - [[JPH-040 - Inheritance Mapping Strategies (SINGLE_TABLE, JOINED, TABLE_PER_CLASS)]] -
@@ -681,6 +688,7 @@ Checkstyle rule) to flag `final` classes annotated with
 ```
 
 **If you remember only 3 things:**
+
 1. `@Entity` classes must be non-final and have a no-arg
    constructor (at minimum `protected`)
 2. Every non-transient, non-static field is mapped to a
@@ -710,6 +718,7 @@ eliminating synchronisation lag between code and configuration.
 This principle appears in every modern Java framework.
 
 **Where else this pattern appears:**
+
 - **Spring `@Component`/`@Service`/`@Repository`** - same
   declarative registration pattern; Spring scans for these
   annotations and registers beans, same as JPA scans for
@@ -720,6 +729,7 @@ This principle appears in every modern Java framework.
   instead of external test suite descriptors
 
 **Industry applications:**
+
 - Domain-driven design at scale: entities in DDD are
   domain concepts with identity and lifecycle, which maps
   directly to `@Entity` - the annotation formalises the
@@ -749,6 +759,7 @@ compatibility, not a technical necessity.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the three requirements for a valid `@Entity`
    class (non-final, no-arg constructor, `@Id` field) and
    explain WHY each requirement exists in terms of Hibernate
@@ -781,10 +792,10 @@ classes final unless explicitly designed for extension.
 How would you reconcile these two guidelines in a real project?
 What architectural pattern separates domain model design from
 persistence model constraints?
-*Hint: Consider the difference between domain objects (rich
+_Hint: Consider the difference between domain objects (rich
 behaviour, ideally immutable/final) and persistence entities
 (JPA-compatible, mutable) - and how Hibernate 6's new
-embeddable records partially address this.*
+embeddable records partially address this._
 
 **Q2 (TYPE D - Root Cause Trace):** A developer adds a
 `transient` Java keyword (not `@Transient` annotation) to
@@ -792,10 +803,10 @@ a field in an `@Entity` class. What happens? Trace the
 difference in behaviour between `transient` (Java keyword,
 Java serialisation) and `@Transient` (JPA annotation,
 persistence exclusion) and explain when each is needed.
-*Hint: Both exclude from their respective systems, but
+_Hint: Both exclude from their respective systems, but
 `transient` affects Java serialisation and does NOT affect
 JPA mapping, while `@Transient` affects JPA mapping and
-does NOT affect Java serialisation.*
+does NOT affect Java serialisation._
 
 **Q3 (TYPE G - Hands-On):** Create an `@Entity` class that
 deliberately violates each of the three requirements (final,
@@ -803,9 +814,9 @@ no no-arg constructor, no @Id), and write assertions that
 confirm the correct exception type and message for each
 violation. What does each exception tell you about Hibernate's
 startup sequence?
-*Hint: Use `@SpringBootTest` with `@TestPropertySource` to
+_Hint: Use `@SpringBootTest` with `@TestPropertySource` to
 control `ddl-auto` and observe the exact exception types
-at `EntityManagerFactory` creation time.*
+at `EntityManagerFactory` creation time._
 
 ---
 
@@ -813,10 +824,11 @@ at `EntityManagerFactory` creation time.*
 
 **Q1: What are the three requirements for a valid JPA
 `@Entity` class, and why does each requirement exist?**
-*Why they ask:* Tests understanding of the JPA specification
+_Why they ask:_ Tests understanding of the JPA specification
 constraints, which every Spring developer encounters but many
 cannot explain.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Non-final: Hibernate generates proxy subclasses for lazy
   loading; `final` prevents subclassing
 - No-arg constructor (at minimum `protected`): Hibernate
@@ -827,10 +839,11 @@ cannot explain.
 
 **Q2: What is the difference between `@Entity`,
 `@MappedSuperclass`, and `@Embeddable`?**
-*Why they ask:* Tests ability to model domain hierarchies
+_Why they ask:_ Tests ability to model domain hierarchies
 correctly in JPA - a frequent design decision in enterprise
 applications.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `@Entity`: own table, own identity (`@Id`), queryable
   directly with JPQL
 - `@MappedSuperclass`: no own table, shares column mappings
@@ -842,9 +855,10 @@ applications.
 `fullName = firstName + " " + lastName`. After deploying
 to production, you start seeing SQL errors. What happened
 and how would you fix it?**
-*Why they ask:* Tests practical understanding of Hibernate's
+_Why they ask:_ Tests practical understanding of Hibernate's
 automatic field mapping - a common real-world mistake.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Hibernate automatically maps all non-transient, non-static
   fields to columns; `fullName` was mapped to a
   `full_name` column that does not exist in the database

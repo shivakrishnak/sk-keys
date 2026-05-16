@@ -31,11 +31,11 @@ SQL-mapper frameworks (MyBatis), and type-safe SQL builders
 (JOOQ) - each optimises for a different point on the
 control-vs-convenience spectrum.
 
-| #005 | Category: JPA & Hibernate | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Object-Relational Mismatch Problem, What is ORM, JPA vs JDBC, Hibernate as JPA Implementation | |
-| **Used by:** | Hibernate vs MyBatis vs JOOQ | |
-| **Related:** | Criteria API, QueryDSL with JPA | |
+| #005            | Category: JPA & Hibernate                                                                     | Difficulty: ★☆☆ |
+| :-------------- | :-------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Object-Relational Mismatch Problem, What is ORM, JPA vs JDBC, Hibernate as JPA Implementation |                 |
+| **Used by:**    | Hibernate vs MyBatis vs JOOQ                                                                  |                 |
+| **Related:**    | Criteria API, QueryDSL with JPA                                                               |                 |
 
 ---
 
@@ -88,6 +88,7 @@ behaviour transparency.
 exists because the others left a gap.
 
 **One analogy:**
+
 > Think of database access as ordering food. JDBC is cooking
 > from scratch - full control, all work. Hibernate/JPA is
 > a full-service restaurant - you describe what you want,
@@ -108,6 +109,7 @@ persistence falls into the hammer-nail trap.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. All Java database access terminates at JDBC - every
    framework (Hibernate, MyBatis, JOOQ) generates JDBC
    calls under the hood
@@ -124,6 +126,7 @@ persistence falls into the hammer-nail trap.
 **DERIVED DESIGN:**
 The ecosystem stratified into these tiers because each one
 left a specific gap:
+
 - JDBC was too verbose -> Hibernate/JPA automated mapping
 - Hibernate generated suboptimal SQL for complex queries ->
   native SQL / JOOQ provided direct SQL access
@@ -134,14 +137,14 @@ left a specific gap:
 
 **THE TRADE-OFFS:**
 
-| Tool | SQL Control | Boilerplate | Magic Factor | Best For |
-|---|---|---|---|---|
-| JDBC | Full | High | None | Bulk, stored procs |
-| Hibernate/JPA | Generated | Minimal | High | Entity CRUD |
-| EclipseLink | Generated | Minimal | High | Jakarta EE apps |
-| MyBatis | Full | Medium | Low | DBA-owned SQL |
-| JOOQ | Type-safe DSL | Low | Medium | Complex SQL, safety |
-| Spring Data JPA | Generated | Minimal | High | Spring CRUD |
+| Tool            | SQL Control   | Boilerplate | Magic Factor | Best For            |
+| --------------- | ------------- | ----------- | ------------ | ------------------- |
+| JDBC            | Full          | High        | None         | Bulk, stored procs  |
+| Hibernate/JPA   | Generated     | Minimal     | High         | Entity CRUD         |
+| EclipseLink     | Generated     | Minimal     | High         | Jakarta EE apps     |
+| MyBatis         | Full          | Medium      | Low          | DBA-owned SQL       |
+| JOOQ            | Type-safe DSL | Low         | Medium       | Complex SQL, safety |
+| Spring Data JPA | Generated     | Minimal     | High         | Spring CRUD         |
 
 **ESSENTIAL vs ACCIDENTAL COMPLEXITY:**
 **Essential:** The mapping between Java types and SQL must
@@ -250,6 +253,7 @@ JDBC on writes. The choice of framework within each boundary
 is secondary to the clarity of the boundaries themselves.
 
 **Expert Thinking Cues:**
+
 - Ask: "Is this operation entity-lifecycle-centric or
   data-query-centric?" - entity lifecycle goes to JPA;
   data queries consider JOOQ or native SQL
@@ -293,6 +297,7 @@ is secondary to the clarity of the boundaries themselves.
 **Key Tool Characteristics:**
 
 **Hibernate:**
+
 - JPA implementation
 - Session (persistence context), dirty checking, L1/L2 cache
 - JPQL + HQL for queries
@@ -300,12 +305,14 @@ is secondary to the clarity of the boundaries themselves.
 - Spring Boot default
 
 **EclipseLink:**
+
 - Reference JPA implementation (used in Jakarta EE servers)
 - Static weaving (vs Hibernate's runtime proxy)
 - Better Jakarta EE integration (GlassFish, WildFly)
 - Less Spring Boot adoption
 
 **MyBatis:**
+
 - NOT a JPA implementation
 - XML or annotation SQL mappers
 - No session / dirty checking
@@ -313,6 +320,7 @@ is secondary to the clarity of the boundaries themselves.
 - ResultMap for object construction from complex joins
 
 **JOOQ:**
+
 - NOT an ORM - a DSL code generator
 - Schema -> Java classes at build time
 - Type-safe SQL (column types, table names validated by compiler)
@@ -474,13 +482,13 @@ public class ImportService {
 
 ### ⚖️ Comparison Table
 
-| Tool | JPA Compliant | SQL Control | Compile Safety | Boilerplate | Best Use Case |
-|---|---|---|---|---|---|
-| **Hibernate** | Yes | Generated | Runtime JPQL | Minimal | Entity CRUD, lifecycle |
-| EclipseLink | Yes | Generated | Runtime JPQL | Minimal | Jakarta EE, GlassFish |
-| MyBatis | No | Full (XML/annot) | None | Medium | DBA-SQL, legacy schemas |
-| JOOQ | No | Full DSL | Compile-time | Low | Complex queries, safety |
-| Spring JDBC | No | Full | None | Medium | Bulk ops, stored procs |
+| Tool          | JPA Compliant | SQL Control      | Compile Safety | Boilerplate | Best Use Case           |
+| ------------- | ------------- | ---------------- | -------------- | ----------- | ----------------------- |
+| **Hibernate** | Yes           | Generated        | Runtime JPQL   | Minimal     | Entity CRUD, lifecycle  |
+| EclipseLink   | Yes           | Generated        | Runtime JPQL   | Minimal     | Jakarta EE, GlassFish   |
+| MyBatis       | No            | Full (XML/annot) | None           | Medium      | DBA-SQL, legacy schemas |
+| JOOQ          | No            | Full DSL         | Compile-time   | Low         | Complex queries, safety |
+| Spring JDBC   | No            | Full             | None           | Medium      | Bulk ops, stored procs  |
 
 **How to choose:**
 Use Hibernate when the object model drives persistence
@@ -500,13 +508,13 @@ Jakarta EE server (non-Spring)? - EclipseLink
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "MyBatis is an ORM like Hibernate" | MyBatis is a SQL mapper - it maps SQL result sets to Java objects. It does NOT generate SQL, manage a session, or perform dirty checking. The distinction matters for architectural decisions. |
-| "JOOQ replaces Hibernate" | JOOQ generates type-safe SQL; Hibernate manages entity lifecycle. They solve different problems and are commonly used together in the same application. |
-| "EclipseLink is better than Hibernate" | EclipseLink is the JPA reference implementation and is technically more specification-compliant. Hibernate has significantly more production use, community support, and Spring integration. Neither is universally "better." |
-| "Using two persistence frameworks in one app is bad practice" | It is explicitly good practice when each framework is used for the right job. Spring Boot supports Hibernate + JdbcTemplate in the same transaction out of the box. |
-| "Spring Data JPA is a framework" | Spring Data JPA is a repository abstraction layer over JPA. It is not a persistence framework itself - it delegates to a JPA provider (Hibernate by default). |
+| Misconception                                                 | Reality                                                                                                                                                                                                                       |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "MyBatis is an ORM like Hibernate"                            | MyBatis is a SQL mapper - it maps SQL result sets to Java objects. It does NOT generate SQL, manage a session, or perform dirty checking. The distinction matters for architectural decisions.                                |
+| "JOOQ replaces Hibernate"                                     | JOOQ generates type-safe SQL; Hibernate manages entity lifecycle. They solve different problems and are commonly used together in the same application.                                                                       |
+| "EclipseLink is better than Hibernate"                        | EclipseLink is the JPA reference implementation and is technically more specification-compliant. Hibernate has significantly more production use, community support, and Spring integration. Neither is universally "better." |
+| "Using two persistence frameworks in one app is bad practice" | It is explicitly good practice when each framework is used for the right job. Spring Boot supports Hibernate + JdbcTemplate in the same transaction out of the box.                                                           |
+| "Spring Data JPA is a framework"                              | Spring Data JPA is a repository abstraction layer over JPA. It is not a persistence framework itself - it delegates to a JPA provider (Hibernate by default).                                                                 |
 
 ---
 
@@ -588,6 +596,7 @@ generated code changes are not committed.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-001 - The Object-Relational Mismatch Problem]] -
   the root problem all these tools address
 - [[JPH-002 - What is ORM (Object-Relational Mapping)]] -
@@ -596,10 +605,12 @@ generated code changes are not committed.
   dominant tool in this ecosystem
 
 **Builds On This (learn these next):**
+
 - [[JPH-050 - Hibernate vs MyBatis vs JOOQ]] - deep dive on
   the three-way comparison for tool selection
 
 **Alternatives / Comparisons:**
+
 - [[JPH-036 - Criteria API]] - Hibernate's programmatic query
   builder vs JOOQ's type-safe DSL
 - [[JPH-053 - QueryDSL with JPA]] - type-safe query DSL that
@@ -640,6 +651,7 @@ generated code changes are not committed.
 ```
 
 **If you remember only 3 things:**
+
 1. All Java persistence tools run on top of JDBC - the
    differences are in what layer above JDBC they occupy
 2. Hibernate for entity CRUD; JOOQ for complex queries;
@@ -668,6 +680,7 @@ the tool's rightful domain. A tool used outside its domain
 always reveals the gap it was not designed to fill.
 
 **Where else this pattern appears:**
+
 - **Frontend state management** - Redux (ORM equivalent: full
   automation), Zustand (MyBatis equivalent: explicit), Jotai
   (JOOQ equivalent: type-safe atoms) - same control spectrum
@@ -677,6 +690,7 @@ always reveals the gap it was not designed to fill.
   Spock (JOOQ equivalent for test DSL expressiveness)
 
 **Industry applications:**
+
 - Banking systems use Hibernate for account/transaction entity
   management (lifecycle-critical) and JOOQ for regulatory
   reporting (complex joins, type-safe, auditable SQL)
@@ -703,6 +717,7 @@ framework that predates Spring Data by a decade.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the four tiers of the Java persistence
    ecosystem (JDBC, JPA ORM, SQL mapper, type-safe DSL)
    and name at least one tool in each tier
@@ -731,20 +746,20 @@ is the precise condition that makes JOOQ the better choice,
 and when does QueryDSL over JPA make more sense? Consider
 a team using Hibernate for entity management but needing
 type-safe read queries.
-*Hint: Think about how each tool interacts with the JPA
+_Hint: Think about how each tool interacts with the JPA
 first-level cache, transaction boundaries, and the cost of
 maintaining generated classes (JOOQ's schema-generated DSL
-vs QueryDSL's entity-generated Q-types).*
+vs QueryDSL's entity-generated Q-types)._
 
 **Q2 (TYPE E - First Principles):** If you were designing a
 new Java persistence framework from scratch today, which
 features would you take from each tool in the ecosystem
 (Hibernate, MyBatis, JOOQ, JDBC) to create a single optimal
 tool? Which features are inherently incompatible?
-*Hint: Consider whether ORM dirty checking is compatible with
+_Hint: Consider whether ORM dirty checking is compatible with
 type-safe SQL generation, and whether a single transaction
 model can satisfy both entity lifecycle and bulk operation
-needs simultaneously.*
+needs simultaneously._
 
 **Q3 (TYPE G - Hands-On):** Refactor a Spring Boot service
 that uses a complex Hibernate `@Query(nativeQuery=true)` for
@@ -752,10 +767,10 @@ a reporting endpoint. Replace it with JOOQ. Set up JOOQ code
 generation from the existing schema, write the type-safe DSL
 query, and verify the results match. What build configuration
 is needed? What would break if a column were renamed?
-*Hint: Look at the `jooq-codegen-maven` plugin, the
+_Hint: Look at the `jooq-codegen-maven` plugin, the
 `database.inputSchema` configuration, and how to run
 code generation after Flyway migrations in a Maven
-lifecycle.*
+lifecycle._
 
 ---
 
@@ -763,9 +778,10 @@ lifecycle.*
 
 **Q1: Name three Java persistence frameworks and explain
 when you would choose each one.**
-*Why they ask:* Distinguishes candidates with breadth of
+_Why they ask:_ Distinguishes candidates with breadth of
 persistence knowledge from those who only know Hibernate.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Hibernate/JPA: entity lifecycle, CRUD, dirty checking,
   relationships - the default for Spring Boot apps
 - JOOQ: complex SQL with compile-time type safety -
@@ -775,9 +791,10 @@ persistence knowledge from those who only know Hibernate.
 
 **Q2: Why would you use JOOQ alongside Hibernate in the
 same Spring Boot application? Isn't that redundant?**
-*Why they ask:* Tests understanding of tool responsibility
+_Why they ask:_ Tests understanding of tool responsibility
 boundaries - a common architectural pattern in production.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Not redundant - they serve different query shapes
 - Hibernate: write model, entity lifecycle, transactional
   domain operations
@@ -788,9 +805,10 @@ boundaries - a common architectural pattern in production.
 **Q3: A team is using Hibernate for everything including
 monthly revenue reports with 8-table joins. What are the
 risks, and what would you recommend?**
-*Why they ask:* Tests production persistence wisdom - a
+_Why they ask:_ Tests production persistence wisdom - a
 real scenario that shows up in enterprise codebases.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Risks: Hibernate generates suboptimal SQL for complex
   joins; query strings are not compile-time validated;
   schema changes break queries silently at runtime

@@ -33,11 +33,11 @@ on runtime conditions. For static queries: `@Query` is
 cleaner. For dynamic queries: Criteria API or Querydsl
 (JPH-053). Never concatenate strings to build JPQL.
 
-| #036 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Id/@GeneratedValue, @Table/@Column, EntityManager, JPQL, Pagination | |
-| **Used by:** | Spring Data Specifications, QueryDSL with JPA, JPA at Scale, Spring Data JPA Architecture | |
-| **Related:** | HQL, DTO Projections, QueryDSL | |
+| #036            | Category: JPA & Hibernate                                                                 | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Id/@GeneratedValue, @Table/@Column, EntityManager, JPQL, Pagination             |                 |
+| **Used by:**    | Spring Data Specifications, QueryDSL with JPA, JPA at Scale, Spring Data JPA Architecture |                 |
+| **Related:**    | HQL, DTO Projections, QueryDSL                                                            |                 |
 
 ---
 
@@ -63,6 +63,7 @@ per combination). With 10 optional filters, there are
 1,024 possible query strings - 1,024 unique cache entries.
 
 **THE CRITERIA API SOLUTION:**
+
 ```java
 CriteriaBuilder cb = em.getCriteriaBuilder();
 CriteriaQuery<Product> cq = cb.createQuery(Product.class);
@@ -73,6 +74,7 @@ if (name != null) predicates.add(
 // ...
 cq.where(predicates.toArray(new Predicate[0]));
 ```
+
 Predicates are Java objects. No string concatenation.
 Query plan cache key is the generated SQL structure.
 
@@ -84,6 +86,7 @@ Query plan cache key is the generated SQL structure.
 for building JPA queries using Java objects (no string
 JPQL). Defined in `jakarta.persistence.criteria` package.
 Core classes:
+
 - `CriteriaBuilder` - factory for predicates, expressions, query objects
 - `CriteriaQuery<T>` - the query being built; specifies return type
 - `Root<T>` - the FROM clause entity; field access via `root.get("fieldName")`
@@ -105,6 +108,7 @@ using Java objects instead of string concatenation -
 type-safe, dynamic, but verbose.
 
 **One analogy:**
+
 > Writing JPQL by hand is like writing a letter in a
 > foreign language from memory - a typo may not be
 > noticed until someone reads it (runtime). The Criteria
@@ -200,7 +204,7 @@ p.get(Product_.price)
 ### 🧠 Mental Model / Analogy
 
 > Writing JPQL is like writing SQL as a string in any
-> language - it works, but "SELECT * FROM productz" won't
+> language - it works, but "SELECT \* FROM productz" won't
 > fail until runtime. The Criteria API with the JPA
 > metamodel is like using an ORM query builder with
 > model classes - `Product.where(price: gt(100))` - where
@@ -415,22 +419,22 @@ Page<Product> results = productRepo.findAll(
 
 ### ⚖️ Comparison Table
 
-| Approach | Type-safe | Dynamic? | Verbosity | Readability | Best for |
-|---|---|---|---|---|---|
-| JPQL `@Query` | No | No | Low | High | Static queries |
-| Criteria API | Yes (with metamodel) | Yes | High | Low | Dynamic queries (framework code) |
-| Spring Data Specification | Yes (with metamodel) | Yes | Medium | Medium | Dynamic search in Spring Boot |
-| QueryDSL | Yes (generated types) | Yes | Low | High | Dynamic queries with high readability |
+| Approach                  | Type-safe             | Dynamic? | Verbosity | Readability | Best for                              |
+| ------------------------- | --------------------- | -------- | --------- | ----------- | ------------------------------------- |
+| JPQL `@Query`             | No                    | No       | Low       | High        | Static queries                        |
+| Criteria API              | Yes (with metamodel)  | Yes      | High      | Low         | Dynamic queries (framework code)      |
+| Spring Data Specification | Yes (with metamodel)  | Yes      | Medium    | Medium      | Dynamic search in Spring Boot         |
+| QueryDSL                  | Yes (generated types) | Yes      | Low       | High        | Dynamic queries with high readability |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Criteria API is type-safe without the JPA metamodel" | Without metamodel, field access is `root.get("price")` (string) - no compile-time safety. Metamodel generates `Product_.price` (typed). Without metamodel, the advantage over JPQL strings is minimal. |
+| Misconception                                                      | Reality                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Criteria API is type-safe without the JPA metamodel"              | Without metamodel, field access is `root.get("price")` (string) - no compile-time safety. Metamodel generates `Product_.price` (typed). Without metamodel, the advantage over JPQL strings is minimal.                              |
 | "Criteria API is necessary for all dynamic queries in Spring Data" | Spring Data `Specification<T>` (a wrapper around Criteria API predicates) is the idiomatic approach. Even cleaner: Querydsl with `QuerydslPredicateExecutor`. Raw Criteria API is rarely used directly in Spring Boot applications. |
-| "CriteriaQuery executes immediately on creation" | `CriteriaQuery` is just a builder. Query execution happens when `em.createQuery(cq).getResultList()` is called. The query is translated and compiled at execution time. |
+| "CriteriaQuery executes immediately on creation"                   | `CriteriaQuery` is just a builder. Query execution happens when `em.createQuery(cq).getResultList()` is called. The query is translated and compiled at execution time.                                                             |
 
 ---
 
@@ -466,18 +470,21 @@ variables (via `cb.literal()` vs bound parameters).
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-014 - JPQL]] - Criteria API generates JPQL; understand
   JPQL semantics first
 - [[JPH-011 - EntityManager]] - Criteria API uses the
   EntityManager for query execution
 
 **Builds On This (learn these next):**
+
 - [[JPH-043 - Spring Data Specifications]] - Spring Data's
   abstraction over Criteria API predicates
 - [[JPH-053 - QueryDSL with JPA]] - modern, more readable
   alternative to raw Criteria API
 
 **Related:**
+
 - [[JPH-030 - DTO Projections]] - Criteria API supports
   tuple and constructor result projections
 - [[JPH-025 - Pagination and Sorting]] - Criteria queries
@@ -511,6 +518,7 @@ variables (via `cb.literal()` vs bound parameters).
 ```
 
 **If you remember only 3 things:**
+
 1. Criteria API builds JPQL dynamically using Java objects
    instead of string concatenation - compile-time safety
    requires the JPA metamodel (`Product_.price`)
@@ -547,6 +555,7 @@ pattern for dynamic query construction; prefer it over
 string manipulation.
 
 **Where else this pattern appears:**
+
 - **JOOQ** - SQL type-safe builder; same concept as
   Criteria API but for SQL directly (not JPQL)
 - **Querydsl** - cleaner alternative to JPA Criteria API;
@@ -580,6 +589,7 @@ type-safe query classes) is more practical.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **BUILD** a dynamic 5-condition Criteria API query
    using the JPA metamodel for type-safe field references
 2. **CONFIGURE** `hibernate-jpamodelgen` to generate
@@ -597,8 +607,9 @@ type-safe query classes) is more practical.
 
 **Q1: What is the JPA Criteria API and when would you
 use it over JPQL @Query?**
-*Why they ask:* Tests knowledge of dynamic query building.
-*Strong answer includes:*
+_Why they ask:_ Tests knowledge of dynamic query building.
+_Strong answer includes:_
+
 - Criteria API: programmatic query builder using Java
   objects; with JPA metamodel - compile-time field safety
 - Use over @Query when: WHERE clause conditions are
@@ -611,8 +622,9 @@ use it over JPQL @Query?**
 
 **Q2: What is the JPA Metamodel and how does it make
 the Criteria API type-safe?**
-*Why they ask:* Tests depth of Criteria API knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests depth of Criteria API knowledge.
+_Strong answer includes:_
+
 - JPA Metamodel: generated classes (`Product_`) with
   static fields for each entity field, typed with
   JPA attribute types (`SingularAttribute<Product, BigDecimal>`)

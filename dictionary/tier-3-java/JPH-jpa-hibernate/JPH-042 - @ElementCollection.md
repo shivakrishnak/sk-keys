@@ -35,23 +35,25 @@ re-inserts the ENTIRE collection on ANY modification
 frequent single-element changes, use `@OneToMany` with
 a `@Entity` instead.
 
-| #042 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | @Entity, @Id, @Table/@Column, EntityManager, @OneToMany Basics, @ManyToOne, @Embeddable | |
-| **Used by:** | JPA at Scale, Spring Data JPA Architecture | |
-| **Related:** | @OneToMany, @ManyToMany, @Embedded, @Converter | |
+| #042            | Category: JPA & Hibernate                                                               | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | @Entity, @Id, @Table/@Column, EntityManager, @OneToMany Basics, @ManyToOne, @Embeddable |                 |
+| **Used by:**    | JPA at Scale, Spring Data JPA Architecture                                              |                 |
+| **Related:**    | @OneToMany, @ManyToMany, @Embedded, @Converter                                          |                 |
 
 ---
 
 ### 🔥 The Problem This Solves
 
 **SCENARIOS WHERE @ElementCollection FITS:**
+
 1. A `User` has a `Set<String> phoneNumbers`
 2. A `Product` has a `List<String> tags`
 3. A `Customer` has a `List<Address> previousAddresses`
    (Address is `@Embeddable`)
 
 These cannot be modeled with `@OneToMany` because:
+
 - Strings/enums are not entities (no `@Id`)
 - An `@Embeddable` has no `@Id` and no independent table
 
@@ -72,11 +74,13 @@ is an `@Embeddable` value object (no identity needed), then
 **@ElementCollection** maps a collection of basic types
 or embeddable classes to a separate collection table.
 The collection table:
+
 - Has a foreign key column to the owning entity's table
 - Has NO primary key (or uses a composite of all columns)
 - Has NO independent entity lifecycle
 
 **Related annotations:**
+
 - `@CollectionTable` - specifies the collection table name
   and FK column name
 - `@Column` - specifies the value column name (for basic types)
@@ -100,6 +104,7 @@ table with a FK to the owner, but replaces the entire
 collection on any change.
 
 **One analogy:**
+
 > An `@ElementCollection` of phone numbers is like a sticky
 > note attached to a file folder (entity). The sticky note
 > has no ID of its own - it only exists as an attachment.
@@ -222,6 +227,7 @@ private List<OrderItem> items;
 in a separate table, without each item needing its own ID.
 
 **Level 2 - How to use it (junior developer):**
+
 ```java
 @ElementCollection
 @CollectionTable(name = "user_roles",
@@ -398,25 +404,25 @@ private List<String> steps = new ArrayList<>();
 
 ### ⚖️ Comparison Table
 
-| Feature | @ElementCollection | @OneToMany |
-|---|---|---|
-| Element has @Id? | No | Yes |
-| Separate table? | Yes (collection table) | Yes (entity table) |
-| FK? | FK from coll. table to owner | FK from child to parent |
-| Lifecycle | Owned by parent; no independent | Independent (own cascade) |
-| Modification | Delete-all + insert-all | Per-element INSERT/UPDATE/DELETE |
-| Polymorphic query | No (not entities) | Yes (JOIN on entity table) |
-| Best for | Small, stable value collections | Large or frequently-updated collections |
+| Feature           | @ElementCollection              | @OneToMany                              |
+| ----------------- | ------------------------------- | --------------------------------------- |
+| Element has @Id?  | No                              | Yes                                     |
+| Separate table?   | Yes (collection table)          | Yes (entity table)                      |
+| FK?               | FK from coll. table to owner    | FK from child to parent                 |
+| Lifecycle         | Owned by parent; no independent | Independent (own cascade)               |
+| Modification      | Delete-all + insert-all         | Per-element INSERT/UPDATE/DELETE        |
+| Polymorphic query | No (not entities)               | Yes (JOIN on entity table)              |
+| Best for          | Small, stable value collections | Large or frequently-updated collections |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "@ElementCollection is the same as @OneToMany" | Key difference: element lifecycle and update behavior. `@ElementCollection` deletes and re-inserts the entire collection on any change. `@OneToMany` tracks individual entity changes. Use `@ElementCollection` for VALUE types only. |
+| Misconception                                                              | Reality                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "@ElementCollection is the same as @OneToMany"                             | Key difference: element lifecycle and update behavior. `@ElementCollection` deletes and re-inserts the entire collection on any change. `@OneToMany` tracks individual entity changes. Use `@ElementCollection` for VALUE types only.       |
 | "I don't need @CollectionTable - Hibernate generates a default table name" | Hibernate DOES generate a default name (typically `EntityName_fieldName`). But the generated table name and FK column name may be inconsistent across Hibernate versions. Always specify `@CollectionTable` explicitly for production code. |
-| "@ElementCollection with List maintains insertion order automatically" | Without `@OrderColumn`, the order is determined by the database's query plan - no guaranteed order. Add `@OrderColumn` to maintain deterministic list ordering in the collection table. |
+| "@ElementCollection with List maintains insertion order automatically"     | Without `@OrderColumn`, the order is determined by the database's query plan - no guaranteed order. Add `@OrderColumn` to maintain deterministic list ordering in the collection table.                                                     |
 
 ---
 
@@ -431,6 +437,7 @@ Collection has grown to thousands of elements.
 on collection modification. Adding or removing one element
 triggers full collection replacement.
 **Diagnosis:**
+
 ```sql
 -- Check collection table size:
 SELECT COUNT(*) FROM product_tags WHERE product_id = ?;
@@ -440,6 +447,7 @@ SELECT COUNT(*) FROM product_tags WHERE product_id = ?;
 -- DELETE FROM product_tags WHERE product_id=?  <-- all rows
 -- INSERT INTO product_tags ... (many rows)
 ```
+
 **Fix:** Convert to `@OneToMany` with a proper `@Entity`.
 Or: if modifications are always full replacement (replace
 all tags, not add/remove one), `@ElementCollection` may
@@ -450,16 +458,19 @@ still be acceptable - but with explicit batch inserts.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-041 - @Embedded and @Embeddable]] - @ElementCollection
   with embeddable element type; understand @Embeddable first
 - [[JPH-021 - @OneToMany]] - understand the alternative
   before deciding between them
 
 **Builds On This (learn these next):**
+
 - [[JPH-054 - JPA at Scale]] - @ElementCollection
   performance patterns at scale
 
 **Related:**
+
 - [[JPH-018 - @ManyToOne]] - relationships to entities;
   contrast with element collections for value types
 - [[JPH-051 - @Converter]] - alternative for storing
@@ -493,6 +504,7 @@ still be acceptable - but with explicit batch inserts.
 ```
 
 **If you remember only 3 things:**
+
 1. `@ElementCollection` stores non-entity values (Strings,
    embeddables) in a collection table; elements have NO `@Id`
 2. ANY modification to the collection triggers delete-all
@@ -527,6 +539,7 @@ amplification), always replaced as a unit (semantically
 correct), or when delta tracking adds more complexity than it saves.
 
 **Where else this pattern appears:**
+
 - **JPA @OneToMany with orphanRemoval** - on cascade
   replace, orphan removal deletes all children and
   replaces - same pattern for entities
@@ -541,26 +554,28 @@ correct), or when delta tracking adds more complexity than it saves.
 
 Hibernate's `@ElementCollection` with `Set` type is more
 efficient than with `List` for single-element operations
+
 - but only in a very specific case: when `@BatchSize` is
-configured and the collection is being loaded (not modified).
-For modifications, `Set` and `List` behave identically:
-delete-all + insert-all. However, `Set` semantics (no
-duplicates) means you can safely use `add()` without
-worrying about duplicate entries in the collection table.
-For `List` without `@OrderColumn`, there is no uniqueness
-guarantee - duplicate values in the list will both be
-inserted and both retrieved. The collection table has no
-PK to enforce uniqueness. This means a `List<String>`
-without `@OrderColumn` can contain duplicate strings if
-added multiple times, but a `Set<String>` cannot. Always
-prefer `Set` for simple value collections unless order
-matters, and add `@OrderColumn` when using `List`.
+  configured and the collection is being loaded (not modified).
+  For modifications, `Set` and `List` behave identically:
+  delete-all + insert-all. However, `Set` semantics (no
+  duplicates) means you can safely use `add()` without
+  worrying about duplicate entries in the collection table.
+  For `List` without `@OrderColumn`, there is no uniqueness
+  guarantee - duplicate values in the list will both be
+  inserted and both retrieved. The collection table has no
+  PK to enforce uniqueness. This means a `List<String>`
+  without `@OrderColumn` can contain duplicate strings if
+  added multiple times, but a `Set<String>` cannot. Always
+  prefer `Set` for simple value collections unless order
+  matters, and add `@OrderColumn` when using `List`.
 
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **IMPLEMENT** `@ElementCollection` for `Set<String>`,
    `List<Embeddable>`, and `Set<Enum>` with proper
    `@CollectionTable` and `@Column` configuration
@@ -579,8 +594,9 @@ matters, and add `@OrderColumn` when using `List`.
 
 **Q1: What is @ElementCollection and how does it differ
 from @OneToMany?**
-*Why they ask:* Tests understanding of value types vs entities.
-*Strong answer includes:*
+_Why they ask:_ Tests understanding of value types vs entities.
+_Strong answer includes:_
+
 - `@ElementCollection`: collection of VALUE types (no `@Id`);
   separate collection table; elements share owner lifecycle
 - `@OneToMany`: collection of ENTITIES (have `@Id`); separate
@@ -594,8 +610,9 @@ from @OneToMany?**
 
 **Q2: What is the performance implication of modifying an
 @ElementCollection with 1,000 elements?**
-*Why they ask:* Tests awareness of the delete-all behavior.
-*Strong answer includes:*
+_Why they ask:_ Tests awareness of the delete-all behavior.
+_Strong answer includes:_
+
 - Hibernate deletes ALL 1,000 rows: `DELETE FROM table WHERE owner_id=?`
 - Then inserts all current 1,001 elements: 1,001 INSERT statements
 - Adding one element costs 1,000 DELETEs + 1,001 INSERTs = 2,001 operations

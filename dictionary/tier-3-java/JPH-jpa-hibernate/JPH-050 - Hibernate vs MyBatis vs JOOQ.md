@@ -35,11 +35,11 @@ management; you write JPQL/HQL; ORM handles SQL. Best for
 domain-model-heavy CRUD apps. Common in practice: Hibernate
 for domain entities + JOOQ for reporting/analytics queries.
 
-| #050 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JPA Overview, Entity Basics, JPQL, Spring Data JPA, Spring Data Repositories, @Transactional | |
-| **Used by:** | ORM Selection Framework, Spring Data JPA vs JOOQ vs MyBatis | |
-| **Related:** | Criteria API, Spring Data Specifications, QueryDSL, ORM Selection, Spring Data JPA Decision | |
+| #050            | Category: JPA & Hibernate                                                                    | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | JPA Overview, Entity Basics, JPQL, Spring Data JPA, Spring Data Repositories, @Transactional |                 |
+| **Used by:**    | ORM Selection Framework, Spring Data JPA vs JOOQ vs MyBatis                                  |                 |
+| **Related:**    | Criteria API, Spring Data Specifications, QueryDSL, ORM Selection, Spring Data JPA Decision  |                 |
 
 ---
 
@@ -91,15 +91,15 @@ using JOOQ's type-safe builder. JOOQ generates Java
 classes from your DB schema (table as class, column as
 field). SQL is verified at compile time.
 
-| Dimension | Hibernate/JPA | MyBatis | JOOQ |
-|---|---|---|---|
-| SQL control | Low (generated) | Full (you write SQL) | Full (DSL generates SQL) |
-| Type safety | Medium (JPQL as strings) | Low (SQL in XML) | High (compile-time SQL) |
-| Object mapping | Rich (associations, lazy load) | Manual (ResultMap) | Manual (records or DTOs) |
-| Learning curve | High (ORM concepts) | Low | Medium (DSL learning) |
-| Complex SQL support | Medium (limited JPQL) | Excellent (native SQL) | Excellent (full SQL DSL) |
-| Schema changes | Auto DDL / detected | Manual | Code regeneration needed |
-| N+1 risk | High (lazy loading) | None (explicit SQL) | None (explicit SQL) |
+| Dimension           | Hibernate/JPA                  | MyBatis                | JOOQ                     |
+| ------------------- | ------------------------------ | ---------------------- | ------------------------ |
+| SQL control         | Low (generated)                | Full (you write SQL)   | Full (DSL generates SQL) |
+| Type safety         | Medium (JPQL as strings)       | Low (SQL in XML)       | High (compile-time SQL)  |
+| Object mapping      | Rich (associations, lazy load) | Manual (ResultMap)     | Manual (records or DTOs) |
+| Learning curve      | High (ORM concepts)            | Low                    | Medium (DSL learning)    |
+| Complex SQL support | Medium (limited JPQL)          | Excellent (native SQL) | Excellent (full SQL DSL) |
+| Schema changes      | Auto DDL / detected            | Manual                 | Code regeneration needed |
+| N+1 risk            | High (lazy loading)            | None (explicit SQL)    | None (explicit SQL)      |
 
 ---
 
@@ -110,6 +110,7 @@ entities), MyBatis manages SQL (you write SQL), JOOQ
 manages type-safe SQL (you write SQL as Java code).
 
 **One analogy:**
+
 > Database access tools are like navigation systems.
 > **Hibernate**: GPS autopilot - tell it where you want
 > to go (save/find entity); it figures out the route (SQL).
@@ -225,6 +226,7 @@ var results = ctx
 > The choice between Hibernate, MyBatis, and JOOQ is
 > fundamentally about the "abstraction level" you want
 > to work at:
+>
 > - **Object level** (Hibernate): think in entities and
 >   associations; SQL is an implementation detail
 > - **SQL level with Java binding** (MyBatis): think in
@@ -248,12 +250,14 @@ MyBatis: you write SQL, it maps results to Java objects.
 JOOQ: you write SQL as type-safe Java code.
 
 **Level 2 - When to choose each (junior developer):**
+
 - Hibernate: new app, rich domain model, standard CRUD
 - JOOQ: complex queries, analytics, type safety important
 - MyBatis: existing DB with complex stored procedures,
   team prefers writing SQL directly
 
 **Level 3 - Combining tools (mid-level engineer):**
+
 ```java
 // Hybrid: Hibernate for entity management + JOOQ for reporting
 @Repository
@@ -295,6 +299,7 @@ public class OrderRepository {
 Hibernate and JOOQ can share the same JDBC transaction when
 configured with the same `DataSource`. Spring's
 `@Transactional` wraps both in one transaction:
+
 ```java
 @Configuration
 public class JooqConfig {
@@ -307,6 +312,7 @@ public class JooqConfig {
     // both Hibernate and JOOQ to the same active transaction
 }
 ```
+
 Both tools write in the same transaction; single commit.
 No distributed transaction needed.
 
@@ -329,6 +335,7 @@ significant boilerplate code.
 ### ⚙️ How It Works (Mechanism)
 
 **MYBATIS SETUP:**
+
 ```xml
 <!-- pom.xml -->
 <dependency>
@@ -337,6 +344,7 @@ significant boilerplate code.
     <version>3.0.3</version>
 </dependency>
 ```
+
 ```java
 // Mapper interface
 @Mapper
@@ -359,6 +367,7 @@ public class ProductService {
 ```
 
 **JOOQ SETUP:**
+
 ```xml
 <!-- Code generation plugin generates table/column classes -->
 <plugin>
@@ -446,25 +455,25 @@ public BigDecimal totalRevenue(int year) {
 
 ### ⚖️ Comparison Table
 
-| Scenario | Recommended Tool | Reason |
-|---|---|---|
-| Domain entity CRUD with associations | Hibernate | Cascade, lazy loading, dirty checking save code |
-| Complex reporting with aggregates | JOOQ | Type-safe SQL; no entity overhead |
-| Legacy DB with stored procedures | MyBatis | Full SQL control; call stored procs directly |
-| Analytics queries, window functions | JOOQ | First-class window function DSL |
-| Entity history/audit | Hibernate + Envers | `@Audited` automates audit table |
-| Batch inserts (>10K rows) | JOOQ or JDBC batch | No entity lifecycle overhead; faster |
-| Complex search (dynamic predicates) | JOOQ or Specifications | Type-safe predicates; easy composition |
+| Scenario                             | Recommended Tool       | Reason                                          |
+| ------------------------------------ | ---------------------- | ----------------------------------------------- |
+| Domain entity CRUD with associations | Hibernate              | Cascade, lazy loading, dirty checking save code |
+| Complex reporting with aggregates    | JOOQ                   | Type-safe SQL; no entity overhead               |
+| Legacy DB with stored procedures     | MyBatis                | Full SQL control; call stored procs directly    |
+| Analytics queries, window functions  | JOOQ                   | First-class window function DSL                 |
+| Entity history/audit                 | Hibernate + Envers     | `@Audited` automates audit table                |
+| Batch inserts (>10K rows)            | JOOQ or JDBC batch     | No entity lifecycle overhead; faster            |
+| Complex search (dynamic predicates)  | JOOQ or Specifications | Type-safe predicates; easy composition          |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "JOOQ and Hibernate are competing tools - you must pick one" | Most mature production codebases use BOTH. Hibernate for entity management (CRUD, associations, audit); JOOQ for reporting queries, analytics, bulk operations. They share the same DataSource and participate in the same Spring transaction. |
-| "MyBatis is outdated and should be replaced" | MyBatis is widely used in enterprise Java (especially in Asian tech companies and financial institutions). It excels when teams have strong SQL skills and need to call complex stored procedures or work with legacy schemas that don't map cleanly to ORM entities. |
-| "JOOQ requires regenerating code on every schema change" | Yes - but this is a FEATURE, not a bug. JOOQ code generation catches schema drift at compile time. If you rename a column: JOOQ code doesn't compile until you regenerate. This prevents the runtime `ColumnNotFoundException` you'd get with Hibernate's JPQL strings or MyBatis XML. |
+| Misconception                                                | Reality                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "JOOQ and Hibernate are competing tools - you must pick one" | Most mature production codebases use BOTH. Hibernate for entity management (CRUD, associations, audit); JOOQ for reporting queries, analytics, bulk operations. They share the same DataSource and participate in the same Spring transaction.                                         |
+| "MyBatis is outdated and should be replaced"                 | MyBatis is widely used in enterprise Java (especially in Asian tech companies and financial institutions). It excels when teams have strong SQL skills and need to call complex stored procedures or work with legacy schemas that don't map cleanly to ORM entities.                  |
+| "JOOQ requires regenerating code on every schema change"     | Yes - but this is a FEATURE, not a bug. JOOQ code generation catches schema drift at compile time. If you rename a column: JOOQ code doesn't compile until you regenerate. This prevents the runtime `ColumnNotFoundException` you'd get with Hibernate's JPQL strings or MyBatis XML. |
 
 ---
 
@@ -480,6 +489,7 @@ loads ALL Order entity objects into Hibernate's first-level
 cache - potentially hundreds of thousands. Full entity graph
 loaded, identity map tracking all objects, huge heap usage.
 **Diagnosis:**
+
 ```java
 // Enable statistics to confirm:
 long entityLoads = sf.getStatistics().getEntityLoadCount();
@@ -489,8 +499,10 @@ long entityLoads = sf.getStatistics().getEntityLoadCount();
 // stack trace: findAll() -> loading full List<Order>
 // then .stream().map().reduce()
 ```
+
 **Fix:** Replace entity query with JOOQ aggregate,
 Spring JDBC Template, or JPQL aggregate projection:
+
 ```java
 // JPQL aggregate projection (no entity loading):
 em.createQuery(
@@ -505,18 +517,21 @@ em.createQuery(
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-001 - JPA Overview]] - understanding what JPA
   is clarifies when to move beyond it
 - [[JPH-014 - JPQL]] - understanding JPQL's limitations
   (no window functions, string-based) motivates JOOQ choice
 
 **Builds On This (learn these next):**
+
 - [[JPH-055 - ORM Selection Framework]] - structured
   decision framework for choosing database access tools
 - [[JPH-059 - Spring Data JPA vs JOOQ vs MyBatis Decision]]
   - practical decision guide with real-world scenarios
 
 **Related:**
+
 - [[JPH-036 - Criteria API]] - Hibernate's own type-safe
   query API; heavier syntax than JOOQ; good for JPA-integrated
   dynamic queries
@@ -554,6 +569,7 @@ em.createQuery(
 ```
 
 **If you remember only 3 things:**
+
 1. Hibernate: object-level abstraction (ORM, entity graph,
    dirty checking); best for domain CRUD with associations
 2. JOOQ: type-safe SQL DSL; column names are Java fields;
@@ -611,6 +627,7 @@ pays back in compile-time SQL safety.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the fundamental difference between ORM
    (Hibernate), SQL mapper (MyBatis), and SQL DSL (JOOQ)
 2. **IDENTIFY** which tool is appropriate for a given
@@ -627,8 +644,9 @@ pays back in compile-time SQL safety.
 ### 🎯 Interview Deep-Dive
 
 **Q1: When would you choose JOOQ over Hibernate?**
-*Why they ask:* Tests practical database tool knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests practical database tool knowledge.
+_Strong answer includes:_
+
 - Complex queries: window functions (`ROW_NUMBER OVER`,
   `LAG`, `LEAD`), CTEs, lateral joins - Hibernate JPQL doesn't
   support these; JOOQ has first-class DSL support
@@ -641,8 +659,9 @@ pays back in compile-time SQL safety.
 
 **Q2: Can Hibernate and JOOQ be used together in the same
 application? If so, how do you share transactions?**
-*Why they ask:* Tests architectural integration knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests architectural integration knowledge.
+_Strong answer includes:_
+
 - YES - this is the most common pattern in mature Spring apps
 - Both configured to use the same Spring `DataSource`
 - `DSLContext` configured with the same DataSource:

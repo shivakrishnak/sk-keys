@@ -37,11 +37,11 @@ Key pitfalls: `@Transactional` propagation across different EMFs is
 not supported without JTA; routing after transaction starts loses effect;
 distributed transactions require Atomikos or JTA manager.
 
-| #061 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JPA Overview, EntityManager, Persistence Context, Connection Pooling, Multi-Tenancy | |
-| **Used by:** | - | |
-| **Related:** | Multi-Tenancy, Connection Pooling, JPA at Scale | |
+| #061            | Category: JPA & Hibernate                                                           | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | JPA Overview, EntityManager, Persistence Context, Connection Pooling, Multi-Tenancy |                 |
+| **Used by:**    | -                                                                                   |                 |
+| **Related:**    | Multi-Tenancy, Connection Pooling, JPA at Scale                                     |                 |
 
 ---
 
@@ -98,10 +98,10 @@ key determined at runtime (typically from a `ThreadLocal`).
 
 **Two patterns compared:**
 
-| Pattern | When to use | What it enables |
-|---|---|---|
+| Pattern                         | When to use                               | What it enables                                            |
+| ------------------------------- | ----------------------------------------- | ---------------------------------------------------------- |
 | Multiple `EntityManagerFactory` | Different entities in different databases | Per-DB entity management; fully isolated persistence units |
-| `AbstractRoutingDataSource` | Same schema, different DB instances | Dynamic routing; primary/replica; multi-tenant same schema |
+| `AbstractRoutingDataSource`     | Same schema, different DB instances       | Dynamic routing; primary/replica; multi-tenant same schema |
 
 ---
 
@@ -112,6 +112,7 @@ databases. `AbstractRoutingDataSource` = same entities, different
 database instances, chosen at runtime per request.
 
 **One analogy:**
+
 > Multiple `EntityManagerFactory` is like having two separate
 > HR departments at two different offices. Each office has
 > its own staff list (entity classes), its own filing system
@@ -248,6 +249,7 @@ need two `EntityManagerFactory` beans. If you have one database
 with a read replica (same schema): you need `AbstractRoutingDataSource`.
 
 **Level 2 - Read/write splitting wiring (junior-mid):**
+
 ```java
 // Read/write split with AbstractRoutingDataSource
 public class ReadWriteRoutingDataSource
@@ -279,6 +281,7 @@ public class DataSourceContext {
 ```
 
 **Level 3 - Transaction interaction (mid):**
+
 ```java
 // CRITICAL: Set routing key BEFORE @Transactional proxy fires
 // @Transactional proxy: opens transaction on method entry
@@ -311,6 +314,7 @@ public class DataSourceAspect {
 ```
 
 **Level 4 - Multiple EMF configuration (senior):**
+
 ```java
 // Multiple EntityManagerFactory beans:
 @Configuration
@@ -345,6 +349,7 @@ public class OrdersDbConfig {
 ```
 
 **Level 5 - JTA for cross-DB atomicity (staff):**
+
 ```xml
 <!-- pom.xml: add Atomikos JTA for distributed transactions -->
 <dependency>
@@ -353,6 +358,7 @@ public class OrdersDbConfig {
     <version>6.0.0</version>
 </dependency>
 ```
+
 ```java
 // With JTA: both DataSources participate in one atomic TX
 @Transactional  // JTA transaction manager (XA)
@@ -526,22 +532,22 @@ public class ReadOnlyRoutingAspect {
 
 ### ⚖️ Comparison Table
 
-| Pattern | Isolation | Transaction scope | Use case |
-|---|---|---|---|
-| Multiple EMF | Full (different entities, schemas) | Per DataSource; no cross-DS atomic | Orders DB + Inventory DB |
-| AbstractRoutingDataSource | None (same schema) | Single TX per routing key | Primary/replica split |
-| JTA (Atomikos) | Full (XA) | Cross-DataSource atomic | When cross-DB atomicity required |
-| Saga pattern | Eventual consistency | Per-service local TX | Microservices; preferred over JTA |
+| Pattern                   | Isolation                          | Transaction scope                  | Use case                          |
+| ------------------------- | ---------------------------------- | ---------------------------------- | --------------------------------- |
+| Multiple EMF              | Full (different entities, schemas) | Per DataSource; no cross-DS atomic | Orders DB + Inventory DB          |
+| AbstractRoutingDataSource | None (same schema)                 | Single TX per routing key          | Primary/replica split             |
+| JTA (Atomikos)            | Full (XA)                          | Cross-DataSource atomic            | When cross-DB atomicity required  |
+| Saga pattern              | Eventual consistency               | Per-service local TX               | Microservices; preferred over JTA |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "AbstractRoutingDataSource routes individual queries" | It routes at connection acquisition time - when the transaction opens (first `@Transactional` method entry). All queries within that transaction use the same connection (same DataSource). Changing the ThreadLocal mid-transaction has no effect. The decision is per-transaction, not per-query. |
-| "Two EntityManagerFactory beans can participate in one @Transactional" | NO - each `JpaTransactionManager` manages one `EntityManagerFactory`. A `@Transactional` without a qualifier uses the `@Primary` TM. Using both DataSources in one method without JTA means two independent local transactions - no atomicity guarantee. |
-| "readOnly=true on @Transactional automatically routes to replica" | NOT automatically. `readOnly=true` is a Hibernate optimization hint (no flush, no dirty checking). It does NOT route to a replica unless you've wired routing logic (AbstractRoutingDataSource + AOP aspect) that reads this flag. The routing is YOUR code; Spring doesn't provide it out of the box. |
+| Misconception                                                          | Reality                                                                                                                                                                                                                                                                                                |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "AbstractRoutingDataSource routes individual queries"                  | It routes at connection acquisition time - when the transaction opens (first `@Transactional` method entry). All queries within that transaction use the same connection (same DataSource). Changing the ThreadLocal mid-transaction has no effect. The decision is per-transaction, not per-query.    |
+| "Two EntityManagerFactory beans can participate in one @Transactional" | NO - each `JpaTransactionManager` manages one `EntityManagerFactory`. A `@Transactional` without a qualifier uses the `@Primary` TM. Using both DataSources in one method without JTA means two independent local transactions - no atomicity guarantee.                                               |
+| "readOnly=true on @Transactional automatically routes to replica"      | NOT automatically. `readOnly=true` is a Hibernate optimization hint (no flush, no dirty checking). It does NOT route to a replica unless you've wired routing logic (AbstractRoutingDataSource + AOP aspect) that reads this flag. The routing is YOUR code; Spring doesn't provide it out of the box. |
 
 ---
 
@@ -559,6 +565,7 @@ clears the ThreadLocal is not being called in finally block
 (exception path), or (b) the routing key is set outside the
 thread-safe scope (async operation, thread pool).
 **Diagnosis:**
+
 ```java
 // Debug: log the routing key:
 @Override
@@ -570,6 +577,7 @@ protected Object determineCurrentLookupKey() {
     return key;
 }
 ```
+
 **Fix:** Ensure `DataSourceContext.clear()` is in a `finally` block.
 For async operations: pass routing context explicitly (do not use
 ThreadLocal across thread boundaries without propagation).
@@ -579,16 +587,19 @@ ThreadLocal across thread boundaries without propagation).
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-047 - Connection Pooling with JPA (HikariCP)]] - underlying
   connection pool that `AbstractRoutingDataSource` routes to
 - [[JPH-048 - Multi-Tenancy in JPA and Hibernate]] - multi-tenancy
   approaches including separate DB per tenant
 
 **Builds On This (learn these next):**
+
 - [[JPH-054 - JPA at Scale - Architecture Patterns]] - how
   multiple DataSource fits into larger architecture patterns
 
 **Related:**
+
 - [[JPH-047 - Connection Pooling]] - HikariCP configuration
   per DataSource in routing setup
 
@@ -625,6 +636,7 @@ ThreadLocal across thread boundaries without propagation).
 ```
 
 **If you remember only 3 things:**
+
 1. Multiple EMF = different entities/schemas per DB; `AbstractRoutingDataSource` = same schema, different DB instances
 2. Routing decision is made at transaction start (connection acquisition); ThreadLocal must be set BEFORE `@Transactional`
 3. Cross-DataSource atomicity requires JTA (costly) or Saga pattern (eventual consistency); prefer Saga for microservices
@@ -682,6 +694,7 @@ problem.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **CHOOSE** between multiple EMF and `AbstractRoutingDataSource`
    for a given use case (different schemas vs read/write split)
 2. **EXPLAIN** why the ThreadLocal must be set BEFORE `@Transactional`
@@ -700,8 +713,9 @@ problem.
 **Q1: You need to implement read/write splitting in a Spring Boot
 app: reads to a PostgreSQL replica, writes to the primary. How
 would you implement this with JPA?**
-*Why they ask:* Tests practical multi-DataSource architecture knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests practical multi-DataSource architecture knowledge.
+_Strong answer includes:_
+
 - Use `AbstractRoutingDataSource` extending class with `determineCurrentLookupKey()`
 - Two target DataSources: `primaryDataSource`, `replicaDataSource` (both HikariCP pools)
 - Routing key stored in `ThreadLocal` (custom `DataSourceContext` class)
@@ -718,8 +732,9 @@ would you implement this with JPA?**
 databases (orders-db and inventory-db) in one Spring Boot service.
 What configuration approach would you recommend, and what are the
 transaction management implications?**
-*Why they ask:* Tests multiple EMF knowledge and transaction boundary understanding.
-*Strong answer includes:*
+_Why they ask:_ Tests multiple EMF knowledge and transaction boundary understanding.
+_Strong answer includes:_
+
 - Approach: two separate `DataSource` beans, two `LocalContainerEntityManagerFactoryBean`,
   two `JpaTransactionManager` beans
 - Entity scanning: configure each EMF to scan separate package

@@ -30,11 +30,11 @@ session), DETACHED (outside the session), or REMOVED
 (scheduled for delete). Understanding which state an entity
 is in determines what JPA does with it.
 
-| #013 | Category: JPA & Hibernate | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | EntityManager, Persistence Context | |
-| **Used by:** | JPQL, Relationship Mapping (@OneToMany/@ManyToOne), Cascade Types, @Transactional | |
-| **Related:** | Optimistic Locking (@Version), Second-Level Cache | |
+| #013            | Category: JPA & Hibernate                                                         | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | EntityManager, Persistence Context                                                |                 |
+| **Used by:**    | JPQL, Relationship Mapping (@OneToMany/@ManyToOne), Cascade Types, @Transactional |                 |
+| **Related:**    | Optimistic Locking (@Version), Second-Level Cache                                 |                 |
 
 ---
 
@@ -106,7 +106,9 @@ DETACHED (disconnected), REMOVED (delete queued) - and the
 transitions between them are the EntityManager's API.
 
 **One analogy:**
+
 > Think of entity lifecycle like employment:
+>
 > - NEW: a job candidate (not yet hired, no employee ID)
 > - MANAGED: a current employee (active, tracked, changes visible)
 > - DETACHED: a former employee (has an ID, exists in records,
@@ -155,18 +157,19 @@ em.detach() close   em.remove()
 
 **TRANSITION TABLE:**
 
-| From | Operation | To | SQL |
-|---|---|---|---|
-| NEW | `em.persist(e)` | MANAGED | INSERT (at flush) |
-| MANAGED | `em.detach(e)` | DETACHED | None |
-| MANAGED | session close | DETACHED | None |
-| MANAGED | `em.remove(e)` | REMOVED | DELETE (at flush) |
-| MANAGED | field change | MANAGED | UPDATE (at flush) |
-| DETACHED | `em.merge(e)` | MANAGED (new copy returned) | SELECT + UPDATE |
-| REMOVED | none (via flush) | (gone) | DELETE |
-| ANY | `em.find()` for ID | MANAGED (if found) | SELECT (or cache hit) |
+| From     | Operation          | To                          | SQL                   |
+| -------- | ------------------ | --------------------------- | --------------------- |
+| NEW      | `em.persist(e)`    | MANAGED                     | INSERT (at flush)     |
+| MANAGED  | `em.detach(e)`     | DETACHED                    | None                  |
+| MANAGED  | session close      | DETACHED                    | None                  |
+| MANAGED  | `em.remove(e)`     | REMOVED                     | DELETE (at flush)     |
+| MANAGED  | field change       | MANAGED                     | UPDATE (at flush)     |
+| DETACHED | `em.merge(e)`      | MANAGED (new copy returned) | SELECT + UPDATE       |
+| REMOVED  | none (via flush)   | (gone)                      | DELETE                |
+| ANY      | `em.find()` for ID | MANAGED (if found)          | SELECT (or cache hit) |
 
 **CORE INVARIANTS:**
+
 1. Only MANAGED entities are dirty-checked and flushed
 2. Calling `em.persist()` on a MANAGED entity is a no-op
 3. Calling `em.persist()` on a DETACHED entity throws
@@ -184,6 +187,7 @@ em.detach() close   em.remove()
 **SCENARIO: REST API update flow**
 
 A common pattern:
+
 1. GET /products/1 -> loads entity, serialises to JSON,
    entity session closes -> entity DETACHED
 2. Client modifies JSON, sends PUT /products/1
@@ -218,6 +222,7 @@ request body with a non-null ID.
 ### 🧠 Mental Model / Analogy
 
 > Entity lifecycle = library book lifecycle:
+>
 > - NEW: a book someone brought to donate (no library ID yet)
 > - MANAGED: a catalogued book on the shelf (ID assigned,
 >   status tracked, checked out = "modified", returned = clean)
@@ -245,12 +250,13 @@ it's scheduled for deletion. Four states, four behaviours.
 
 **Level 2 - How to use it (junior developer):**
 In Spring Data JPA:
+
 - `repository.save(entity)` when `id` is null = persist
 - `repository.save(entity)` when `id` is non-null = merge
 - `repository.delete(entity)` = remove
 - `repository.findById(id)` = find (returns MANAGED)
-Spring Data manages transitions automatically. Directly
-using `EntityManager` requires knowing the state explicitly.
+  Spring Data manages transitions automatically. Directly
+  using `EntityManager` requires knowing the state explicitly.
 
 **Level 3 - How it works (mid-level engineer):**
 The persistence context maintains a registry of MANAGED
@@ -325,15 +331,15 @@ the cascade chain creates a cycle or an incomplete tree.
 **Lifecycle Callbacks:**
 JPA provides annotations for entity lifecycle events:
 
-| Annotation | Trigger | Common Use |
-|---|---|---|
-| `@PrePersist` | Before INSERT | Set `createdAt` timestamp |
-| `@PostPersist` | After INSERT | Send creation event |
-| `@PreUpdate` | Before UPDATE | Set `updatedAt` timestamp |
-| `@PostUpdate` | After UPDATE | Audit logging |
-| `@PreRemove` | Before DELETE | Soft delete logic |
-| `@PostRemove` | After DELETE | Cleanup side effects |
-| `@PostLoad` | After SELECT / refresh | Decrypt fields |
+| Annotation     | Trigger                | Common Use                |
+| -------------- | ---------------------- | ------------------------- |
+| `@PrePersist`  | Before INSERT          | Set `createdAt` timestamp |
+| `@PostPersist` | After INSERT           | Send creation event       |
+| `@PreUpdate`   | Before UPDATE          | Set `updatedAt` timestamp |
+| `@PostUpdate`  | After UPDATE           | Audit logging             |
+| `@PreRemove`   | Before DELETE          | Soft delete logic         |
+| `@PostRemove`  | After DELETE           | Cleanup side effects      |
+| `@PostLoad`    | After SELECT / refresh | Decrypt fields            |
 
 **CONCURRENCY / THREAD-SAFETY BEHAVIOR:**
 Entity state is per-EntityManager (per-session, per-thread
@@ -488,12 +494,12 @@ public Product update(
 
 ### ⚖️ Comparison Table
 
-| State | In Persistence Context | Tracked | SQL on change | `@Id` Present |
-|---|---|---|---|---|
-| **NEW** | No | No | No | No (or 0) |
-| **MANAGED** | Yes | Yes | UPDATE at flush | Yes (after persist) |
-| **DETACHED** | No | No | No | Yes |
-| **REMOVED** | Yes | No (deleted) | DELETE at flush | Yes |
+| State        | In Persistence Context | Tracked      | SQL on change   | `@Id` Present       |
+| ------------ | ---------------------- | ------------ | --------------- | ------------------- |
+| **NEW**      | No                     | No           | No              | No (or 0)           |
+| **MANAGED**  | Yes                    | Yes          | UPDATE at flush | Yes (after persist) |
+| **DETACHED** | No                     | No           | No              | Yes                 |
+| **REMOVED**  | Yes                    | No (deleted) | DELETE at flush | Yes                 |
 
 **Key distinction:** DETACHED vs. NEW both have no tracking,
 but DETACHED entities have a valid `@Id` (they existed in
@@ -506,13 +512,13 @@ DETACHED = call `merge()`.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "I need to call `em.save()` to persist changes to a MANAGED entity" | There is no `em.save()`. MANAGED entities are automatically dirty-checked at flush. Just modify the field and let flush handle the UPDATE. This is the essence of dirty checking. |
-| "`em.persist()` works on any entity object, including detached ones" | `em.persist()` on a DETACHED entity throws `EntityExistsException`. Use `em.merge()` for detached entities. |
-| "After `em.remove()`, the entity is deleted from the database" | `em.remove()` transitions to REMOVED state. The DELETE SQL is only sent at flush. Until flush, the row still exists in the database. |
-| "`em.merge()` updates the entity I passed in" | `em.merge()` returns a NEW managed copy. The input entity remains DETACHED. All subsequent modifications must be made on the returned managed copy. |
-| "Entity state is shared across sessions" | Each `EntityManager` has its own persistence context. The same entity in two different sessions is two different Java objects in two independent MANAGED states. Changes in one session do not affect the other until committed and the other refreshes. |
+| Misconception                                                        | Reality                                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "I need to call `em.save()` to persist changes to a MANAGED entity"  | There is no `em.save()`. MANAGED entities are automatically dirty-checked at flush. Just modify the field and let flush handle the UPDATE. This is the essence of dirty checking.                                                                        |
+| "`em.persist()` works on any entity object, including detached ones" | `em.persist()` on a DETACHED entity throws `EntityExistsException`. Use `em.merge()` for detached entities.                                                                                                                                              |
+| "After `em.remove()`, the entity is deleted from the database"       | `em.remove()` transitions to REMOVED state. The DELETE SQL is only sent at flush. Until flush, the row still exists in the database.                                                                                                                     |
+| "`em.merge()` updates the entity I passed in"                        | `em.merge()` returns a NEW managed copy. The input entity remains DETACHED. All subsequent modifications must be made on the returned managed copy.                                                                                                      |
+| "Entity state is shared across sessions"                             | Each `EntityManager` has its own persistence context. The same entity in two different sessions is two different Java objects in two independent MANAGED states. Changes in one session do not affect the other until committed and the other refreshes. |
 
 ---
 
@@ -521,10 +527,12 @@ DETACHED = call `merge()`.
 **Failure Mode 1: Calling persist() on a Detached Entity**
 
 **Symptom:**
+
 ```
 javax.persistence.EntityExistsException:
 detached entity passed to persist: com.example.Product
 ```
+
 **Root Cause:** An entity with a non-null `@Id` was passed
 to `em.persist()`. The entity was previously managed (has
 an `@Id`) but is now detached.
@@ -586,10 +594,12 @@ the repository method that wraps the modification.
 **Failure Mode 3: Remove Called on Detached Entity**
 
 **Symptom:**
+
 ```
 java.lang.IllegalArgumentException:
 Removing a detached instance com.example.Order#42
 ```
+
 **Root Cause:** `em.remove()` was called on an entity that
 is DETACHED (not in the current persistence context).
 **Diagnostic:**
@@ -622,6 +632,7 @@ a detached entity across method boundaries.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-011 - EntityManager]] - lifecycle transitions are
   EntityManager operations; understand EntityManager first
 - [[JPH-012 - Persistence Context]] - the persistence
@@ -629,6 +640,7 @@ a detached entity across method boundaries.
   an entity is in
 
 **Builds On This (learn these next):**
+
 - [[JPH-014 - JPQL (Java Persistence Query Language)]] -
   JPQL results are MANAGED entities (loaded into the
   persistence context)
@@ -640,6 +652,7 @@ a detached entity across method boundaries.
   determines when entities transition from MANAGED to DETACHED
 
 **Alternatives / Comparisons:**
+
 - [[JPH-038 - Optimistic Locking (@Version)]] - handles
   concurrent MANAGED -> flush conflicts
 - [[JPH-043 - Second-Level Cache (@Cache, @Cacheable)]] -
@@ -674,6 +687,7 @@ a detached entity across method boundaries.
 ```
 
 **If you remember only 3 things:**
+
 1. MANAGED = tracked; DETACHED = not tracked. Changes to
    DETACHED entities are silently ignored at flush
 2. `merge()` returns a NEW managed copy; always use the
@@ -705,6 +719,7 @@ have fewer "impossible" bugs than systems where state is
 tracked via boolean flags.
 
 **Where else this pattern appears:**
+
 - **Order management systems** - an order's state (PENDING,
   CONFIRMED, SHIPPED, DELIVERED, CANCELLED) follows an
   explicit state machine; trying to ship a CANCELLED order
@@ -738,13 +753,14 @@ abandoned.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **DRAW** the entity lifecycle state diagram from memory
    with all four states, all transitions, and the operation
    that triggers each transition
 2. **IDENTIFY** the state of an entity at any point in a
    code example: is it NEW, MANAGED, DETACHED, or REMOVED?
 3. **DEBUG** an `EntityExistsException: detached entity
-   passed to persist` by identifying the object came from
+passed to persist` by identifying the object came from
    outside the current session and replacing `persist()`
    with `merge()`
 4. **EXPLAIN** why `merge()` returns a new object and
@@ -764,12 +780,12 @@ and then calls `MethodC()` which is `@Transactional` and
 calls `repository.save(entity)`. Is the modification from
 `MethodB()` persisted? Why or why not? What is the entity's
 state at each method boundary?
-*Hint: Without `@Transactional` on MethodA, the entity is
+_Hint: Without `@Transactional` on MethodA, the entity is
 loaded but the session immediately closes. The entity is
 DETACHED before MethodB is called. MethodB modifies a
 DETACHED entity. MethodC calls save() which calls merge()
 on the DETACHED entity - so YES, the modification IS
-persisted, because merge() copies the detached state.*
+persisted, because merge() copies the detached state._
 
 **Q2 (TYPE C - Design Trade-off):** Compare two approaches
 for a REST API PUT endpoint: (1) Accept `@RequestBody Product`
@@ -777,18 +793,18 @@ and call `repository.save(product)` directly. (2) Accept
 `@RequestBody ProductUpdateDto`, load the entity with
 `findById()`, apply the DTO's fields to the managed entity.
 Which is safer and why? What security risks does approach (1) introduce?
-*Hint: Approach 1 is a "mass assignment" vulnerability -
+_Hint: Approach 1 is a "mass assignment" vulnerability -
 the client can send any field including sensitive ones
 (isAdmin, price, discount). Approach 2 explicitly maps
-only allowed fields from the DTO to the entity.*
+only allowed fields from the DTO to the entity._
 
 **Q3 (TYPE A - Fundamentals):** An entity is in REMOVED
 state. What happens if `em.persist(entity)` is called on
 it before flush? What does the JPA spec say?
-*Hint: The JPA spec says calling persist() on a REMOVED entity
+_Hint: The JPA spec says calling persist() on a REMOVED entity
 reactivates it (transitions back to MANAGED and cancels the
 DELETE). This is an edge case that is easy to overlook -
-a REMOVED entity can be "un-removed" by calling persist() before flush.*
+a REMOVED entity can be "un-removed" by calling persist() before flush._
 
 ---
 
@@ -796,9 +812,10 @@ a REMOVED entity can be "un-removed" by calling persist() before flush.*
 
 **Q1: Describe the four entity lifecycle states and the
 operations that transition between them.**
-*Why they ask:* Tests foundational JPA knowledge; this
+_Why they ask:_ Tests foundational JPA knowledge; this
 is a standard screening question for all JPA roles.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - NEW: created with `new`, no persistence context, no
   `@Id`; transition to MANAGED via `em.persist()`
 - MANAGED: in persistence context, dirty checked;
@@ -812,9 +829,10 @@ is a standard screening question for all JPA roles.
 
 **Q2: Why does `em.merge()` return a new object instead
 of modifying the entity you passed in?**
-*Why they ask:* Tests deep understanding of the merge
+_Why they ask:_ Tests deep understanding of the merge
 contract - a common source of bugs.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `merge()` must work when the detached entity has an ID
   that may or may not exist in the current persistence
   context; it needs to either locate or load the managed
@@ -829,9 +847,10 @@ contract - a common source of bugs.
 
 **Q3: In a REST controller, a `@RequestBody Product` has
 an id=42. Is this entity NEW or DETACHED?**
-*Why they ask:* Tests practical understanding of entity
+_Why they ask:_ Tests practical understanding of entity
 state in web application contexts - a common interview trap.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - It is NEW - it was constructed by the Jackson deserialiser
   with `new Product()` and field assignments; it has never
   been loaded from a database by this JPA session

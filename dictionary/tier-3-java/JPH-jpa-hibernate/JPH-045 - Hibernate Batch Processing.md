@@ -34,17 +34,18 @@ Must call `em.flush()` + `em.clear()` every N entities or
 the persistence context grows unboundedly (OOM). For bulk
 operations, `@Modifying @Query` is faster (no entity loading).
 
-| #045 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | EntityManager, Session/Transaction, JPA Lifecycle, @Transactional, Hibernate Session vs EntityManager, First Level Cache | |
-| **Used by:** | Hibernate Statistics, JPA at Scale, Hibernate Internals | |
-| **Related:** | N+1 Problem, Pessimistic Locking, Connection Pooling, Dirty Checking | |
+| #045            | Category: JPA & Hibernate                                                                                                | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | EntityManager, Session/Transaction, JPA Lifecycle, @Transactional, Hibernate Session vs EntityManager, First Level Cache |                 |
+| **Used by:**    | Hibernate Statistics, JPA at Scale, Hibernate Internals                                                                  |                 |
+| **Related:**    | N+1 Problem, Pessimistic Locking, Connection Pooling, Dirty Checking                                                     |                 |
 
 ---
 
 ### 🔥 The Problem This Solves
 
 **INSERTING 100,000 ENTITIES WITHOUT BATCHING:**
+
 ```java
 @Transactional
 public void importProducts(List<ProductDto> products) {
@@ -60,6 +61,7 @@ public void importProducts(List<ProductDto> products) {
 ```
 
 **WITH HIBERNATE BATCH INSERT:**
+
 ```java
 @Transactional
 public void importProducts(List<ProductDto> products) {
@@ -89,6 +91,7 @@ reaches `hibernate.jdbc.batch_size`, Hibernate calls
 statements in a single server roundtrip.
 
 **Configuration properties:**
+
 - `hibernate.jdbc.batch_size=50` - number of statements
   per batch (50-100 typical for INSERTs; test for your workload)
 - `hibernate.order_inserts=true` - sort INSERT statements
@@ -100,6 +103,7 @@ statements in a single server roundtrip.
   to JDBC batching limitations with row count verification)
 
 **Batch processing modes:**
+
 - `em.persist()` loop + `flush()/clear()` - for INSERT batching
 - `@Modifying @Query("UPDATE ...")` - bulk UPDATE (no entity loading)
 - `@Modifying @Query("DELETE ...")` - bulk DELETE (no entity loading)
@@ -116,6 +120,7 @@ from N to N/batchSize. Must flush+clear periodically to
 prevent OOM.
 
 **One analogy:**
+
 > Without batching: a grocery store cashier scans one item,
 > walks to the register, punches it in, walks back, scans
 > next item. 100 items = 100 trips.
@@ -252,11 +257,13 @@ record. This is much faster for importing thousands of
 records.
 
 **Level 2 - How to enable it (junior developer):**
+
 ```properties
 spring.jpa.properties.hibernate.jdbc.batch_size=50
 spring.jpa.properties.hibernate.order_inserts=true
 spring.jpa.properties.hibernate.order_updates=true
 ```
+
 Then in the import loop: `em.flush(); em.clear()` every
 N entities. Both properties and the flush/clear loop are
 required for effective batching.
@@ -276,6 +283,7 @@ no dirty checking, no lifecycle events. For pure write
 imports (no callbacks needed), `StatelessSession` is 2-5x
 faster than regular Session because it skips all persistence
 context overhead:
+
 ```java
 try (StatelessSession ss = sf.openStatelessSession()) {
     Transaction tx = ss.beginTransaction();
@@ -295,6 +303,7 @@ the database generates the ID AFTER INSERT and Hibernate
 needs the ID for the persistence context. This effectively
 DISABLES batching for IDENTITY-generated IDs.
 Solution: use `SEQUENCE` strategy:
+
 ```java
 @GeneratedValue(strategy = GenerationType.SEQUENCE,
     generator = "product_seq")
@@ -302,6 +311,7 @@ Solution: use `SEQUENCE` strategy:
     sequenceName="product_id_seq",
     allocationSize=50)  // pre-allocate 50 IDs
 ```
+
 Hibernate pre-allocates 50 IDs in one sequence call,
 then batches 50 INSERTs without individual SELECT calls.
 This is why `SEQUENCE` + batching outperforms `IDENTITY` + batching.
@@ -469,21 +479,21 @@ public class Product {
 
 ### ⚖️ Comparison Table
 
-| Approach | Use case | Memory | Speed | Complexity |
-|---|---|---|---|---|
-| `em.persist()` loop (no batch) | Small datasets | O(N) | Slow (N roundtrips) | Low |
-| `em.persist()` + flush/clear | Large INSERT batches | O(batch_size) | Fast | Medium |
-| `StatelessSession.insert()` | Very large imports | Minimal | Very fast | Medium-High |
-| `@Modifying @Query UPDATE` | Bulk UPDATE/DELETE | Minimal | Fastest | Low |
+| Approach                       | Use case             | Memory        | Speed               | Complexity  |
+| ------------------------------ | -------------------- | ------------- | ------------------- | ----------- |
+| `em.persist()` loop (no batch) | Small datasets       | O(N)          | Slow (N roundtrips) | Low         |
+| `em.persist()` + flush/clear   | Large INSERT batches | O(batch_size) | Fast                | Medium      |
+| `StatelessSession.insert()`    | Very large imports   | Minimal       | Very fast           | Medium-High |
+| `@Modifying @Query UPDATE`     | Bulk UPDATE/DELETE   | Minimal       | Fastest             | Low         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Setting hibernate.jdbc.batch_size is enough for batching" | You also need `order_inserts=true` and `order_updates=true` for full batch efficiency. And you MUST call `flush() + clear()` every N entities in the loop - without it, the persistence context grows unboundedly. |
-| "IDENTITY generator works fine with batching" | IDENTITY generators (auto_increment) force individual INSERT execution because Hibernate needs the generated ID before proceeding. Use `SEQUENCE` with `allocationSize` matching batch_size for true batching. |
+| Misconception                                                | Reality                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Setting hibernate.jdbc.batch_size is enough for batching"   | You also need `order_inserts=true` and `order_updates=true` for full batch efficiency. And you MUST call `flush() + clear()` every N entities in the loop - without it, the persistence context grows unboundedly.                                                           |
+| "IDENTITY generator works fine with batching"                | IDENTITY generators (auto_increment) force individual INSERT execution because Hibernate needs the generated ID before proceeding. Use `SEQUENCE` with `allocationSize` matching batch_size for true batching.                                                               |
 | "@Transactional means all INSERTs are batched automatically" | `@Transactional` opens a transaction but does not enable batching. Batching requires `hibernate.jdbc.batch_size` configuration AND the `flush() + clear()` pattern in code. Without explicit configuration, every `persist()` results in an individual INSERT at flush time. |
 
 ---
@@ -499,6 +509,7 @@ Every `em.persist()` entity is held in the first-level cache.
 100,000 entities with 10 fields each = millions of objects
 in the persistence context map.
 **Diagnosis:**
+
 ```java
 // Add logging to confirm clear() is firing:
 if (i > 0 && i % batchSize == 0) {
@@ -509,6 +520,7 @@ if (i > 0 && i % batchSize == 0) {
 }
 // If log never appears: clear is NOT being called
 ```
+
 **Fix:** Add `em.flush(); em.clear();` inside the loop
 at every `batchSize` interval. Use `StatelessSession`
 for extreme throughput requirements.
@@ -524,6 +536,7 @@ Batching should reduce to N/batchSize.
 batching), or `order_inserts=false` (mixed-table statements
 break batch grouping).
 **Diagnosis:**
+
 ```java
 Statistics stats = sessionFactory.getStatistics();
 long prepStmts = stats.getPrepareStatementCount();
@@ -532,6 +545,7 @@ double ratio   = (double) prepStmts / entities;
 // If ratio ≈ 1.0: batching not working
 // If ratio ≈ 1/batchSize: batching working correctly
 ```
+
 **Fix:** Switch from IDENTITY to SEQUENCE generator;
 set `order_inserts=true`; verify `batch_size` property
 is set (Spring property: `spring.jpa.properties.hibernate.jdbc.batch_size`).
@@ -541,16 +555,19 @@ is set (Spring property: `spring.jpa.properties.hibernate.jdbc.batch_size`).
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-033 - First Level Cache]] - flush+clear pattern
   manages the 1LC during batch operations
 - [[JPH-031 - Hibernate Session vs EntityManager]] -
   StatelessSession is a Hibernate extension for batch processing
 
 **Builds On This (learn these next):**
+
 - [[JPH-046 - Hibernate Statistics and Monitoring]] -
   verify batch effectiveness with statistics API
 
 **Related:**
+
 - [[JPH-027 - N+1 Problem]] - batch loading (@BatchSize)
   is different from batch INSERT/UPDATE
 - [[JPH-052 - Dirty Checking and Flush Mode]] - flush
@@ -585,6 +602,7 @@ is set (Spring property: `spring.jpa.properties.hibernate.jdbc.batch_size`).
 ```
 
 **If you remember only 3 things:**
+
 1. Configure `batch_size`, `order_inserts`, `order_updates`;
    call `em.flush(); em.clear()` every N entities in the loop
 2. `IDENTITY` generator (auto_increment) disables batching;
@@ -621,6 +639,7 @@ size is a tuning parameter: too small = frequent small
 batches; too large = high memory, slow first-item latency.
 
 **Where else this pattern appears:**
+
 - **Spring Batch** - framework for batch processing jobs;
   chunk-oriented processing = read N, process N, write N
 - **JDBC `addBatch()` / `executeBatch()`** - raw JDBC
@@ -654,6 +673,7 @@ roughly `batchSize`. If ratio is ~1: batching is not working.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **IMPLEMENT** a batch import with `em.persist()`,
    `flush()`, `clear()` loop using the correct batch size
 2. **EXPLAIN** why `IDENTITY` generator disables batching
@@ -671,8 +691,9 @@ roughly `batchSize`. If ratio is ~1: batching is not working.
 
 **Q1: How do you implement efficient batch insert of 100,000
 records using JPA/Hibernate?**
-*Why they ask:* Common performance engineering question.
-*Strong answer includes:*
+_Why they ask:_ Common performance engineering question.
+_Strong answer includes:_
+
 - Configure: `hibernate.jdbc.batch_size=50`, `order_inserts=true`,
   `order_updates=true`
 - Loop with flush+clear every 50 entities
@@ -682,8 +703,9 @@ records using JPA/Hibernate?**
 
 **Q2: Why does using GenerationType.IDENTITY disable Hibernate
 batching and how do you fix it?**
-*Why they ask:* Tests deep knowledge of ID generation + batching interaction.
-*Strong answer includes:*
+_Why they ask:_ Tests deep knowledge of ID generation + batching interaction.
+_Strong answer includes:_
+
 - `IDENTITY` = database generates ID after INSERT (auto_increment, SERIAL)
 - Hibernate needs the generated ID to store entity in 1LC IMMEDIATELY
 - Must execute INSERT individually (not batch) to get the ID via `getGeneratedKeys()`

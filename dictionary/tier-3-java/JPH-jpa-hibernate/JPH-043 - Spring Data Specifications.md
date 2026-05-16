@@ -35,11 +35,11 @@ Best for dynamic search endpoints with optional filters.
 Returning `null` from a Specification is idiomatic - means
 "no restriction" not "IS NULL".
 
-| #043 | Category: JPA & Hibernate | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | JPQL, Spring Data JPA Repository, CRUD Methods, Pagination, N+1 Problem, Criteria API | |
-| **Used by:** | QueryDSL with JPA, JPA at Scale, Spring Data JPA Architecture Design | |
-| **Related:** | DTO Projections, Criteria API, EntityGraph, QueryDSL | |
+| #043            | Category: JPA & Hibernate                                                             | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | JPQL, Spring Data JPA Repository, CRUD Methods, Pagination, N+1 Problem, Criteria API |                 |
+| **Used by:**    | QueryDSL with JPA, JPA at Scale, Spring Data JPA Architecture Design                  |                 |
+| **Related:**    | DTO Projections, Criteria API, EntityGraph, QueryDSL                                  |                 |
 
 ---
 
@@ -48,11 +48,13 @@ Returning `null` from a Specification is idiomatic - means
 **SEARCH API WITH OPTIONAL FILTERS:**
 A product search endpoint accepts 8 optional parameters.
 Without Specifications, you need one of:
+
 1. String concatenation JPQL - injection risk, cache pollution
 2. Raw Criteria API - 80 lines of verbose boilerplate
 3. 256 repository methods (one per filter combination)
 
 **WITH SPECIFICATIONS:**
+
 ```java
 // Each filter is ONE Specification:
 Specification<Product> spec =
@@ -63,6 +65,7 @@ Specification<Product> spec =
 
 Page<Product> results = productRepo.findAll(spec, pageable);
 ```
+
 - Each Specification is reusable across features
 - Null filter = null Specification = no WHERE clause added
 - Composable: combine with `.and()`, `.or()`, `.not()`
@@ -73,6 +76,7 @@ Page<Product> results = productRepo.findAll(spec, pageable);
 ### 📘 Textbook Definition
 
 **Specification<T>** is a functional interface from Spring Data:
+
 ```java
 public interface Specification<T> {
     Predicate toPredicate(
@@ -91,6 +95,7 @@ public interface Specification<T> {
 
 **JpaSpecificationExecutor<T>** adds specification-aware
 query methods to a repository:
+
 ```java
 public interface JpaSpecificationExecutor<T> {
     Optional<T> findOne(Specification<T> spec);
@@ -114,6 +119,7 @@ composable WHERE clause condition expressed as a lambda
 instead of JPQL string or Criteria boilerplate.
 
 **One analogy:**
+
 > A SQL WHERE clause is built from AND/OR conditions.
 > A Specification is one such condition as a Java object.
 > `spec1.and(spec2)` is `WHERE cond1 AND cond2`.
@@ -212,7 +218,7 @@ Specification<Product> spec =
 
 > A `Specification<Product>` is like a single row in a
 > filter configuration: `{field: "category", op: "eq",
-> value: "Electronics"}`. The Specification's `toPredicate()`
+value: "Electronics"}`. The Specification's `toPredicate()`
 > method is the executor that translates this to a SQL
 > predicate. Composing specifications (`spec1.and(spec2)`)
 > is building a filter chain: "category = Electronics"
@@ -231,6 +237,7 @@ reusable Java objects. You combine them with `.and()` and
 `.or()` to create complex queries without writing JPQL strings.
 
 **Level 2 - How to use it (junior developer):**
+
 1. Add `JpaSpecificationExecutor<T>` to your repository
 2. Create static methods that return `Specification<T>` lambdas
 3. Compose with `Specification.where(spec1).and(spec2)`
@@ -260,11 +267,13 @@ Specifications are powerful for row-level security: inject
 the current user/tenant into the specification to add
 an automatic filter. Every query automatically includes
 the tenant or user filter:
+
 ```java
 Specification<Order> tenantSpec = (root, q, cb) ->
     cb.equal(root.get(Order_.tenantId), currentTenantId);
 // Applied to ALL order queries for this tenant
 ```
+
 This is the Specification pattern as a cross-cutting
 concern - no service method needs to remember to add
 the tenant filter; the base specification handles it.
@@ -434,21 +443,21 @@ public Page<Order> findOrders(OrderFilter filter,
 
 ### ⚖️ Comparison Table
 
-| Approach | Type-safe | Composable | Reusable | Verbosity | Best for |
-|---|---|---|---|---|---|
-| String JPQL `@Query` | No | No | No | Low | Static queries |
-| Criteria API (raw) | Yes (metamodel) | Manual | Manual | Very High | Framework code |
-| `Specification<T>` | Yes (metamodel) | Yes (built-in) | Yes (methods) | Medium | Dynamic search in Spring |
-| Querydsl | Yes (generated) | Yes | Yes | Low | Dynamic queries, preferred alternative |
+| Approach             | Type-safe       | Composable     | Reusable      | Verbosity | Best for                               |
+| -------------------- | --------------- | -------------- | ------------- | --------- | -------------------------------------- |
+| String JPQL `@Query` | No              | No             | No            | Low       | Static queries                         |
+| Criteria API (raw)   | Yes (metamodel) | Manual         | Manual        | Very High | Framework code                         |
+| `Specification<T>`   | Yes (metamodel) | Yes (built-in) | Yes (methods) | Medium    | Dynamic search in Spring               |
+| Querydsl             | Yes (generated) | Yes            | Yes           | Low       | Dynamic queries, preferred alternative |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Returning null from toPredicate means 'match null rows'" | Returning `null` from `toPredicate` means "no predicate" - the condition is excluded from the WHERE clause entirely. To match NULL values in a column, use `cb.isNull(root.get("field"))`. |
-| "Specifications work with regular JpaRepository" | Specifications require `JpaSpecificationExecutor<T>`. The repository must extend BOTH `JpaRepository<T, ID>` AND `JpaSpecificationExecutor<T>`. |
+| Misconception                                                     | Reality                                                                                                                                                                                                                                                                                                     |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Returning null from toPredicate means 'match null rows'"         | Returning `null` from `toPredicate` means "no predicate" - the condition is excluded from the WHERE clause entirely. To match NULL values in a column, use `cb.isNull(root.get("field"))`.                                                                                                                  |
+| "Specifications work with regular JpaRepository"                  | Specifications require `JpaSpecificationExecutor<T>`. The repository must extend BOTH `JpaRepository<T, ID>` AND `JpaSpecificationExecutor<T>`.                                                                                                                                                             |
 | "spec1.and(spec2) when spec2 is null throws NullPointerException" | Spring Data handles null gracefully in `Specification.where(null)` (returns all-matching spec). However, calling `spec1.and(null)` directly on a Specification instance MAY throw NPE depending on implementation. Use `Specification.where(spec1).and(spec2)` and return null from within `toPredicate()`. |
 
 ---
@@ -464,6 +473,7 @@ a collection association). The JOIN multiplies rows.
 Without `DISTINCT`, each row in the result is mapped to
 a separate entity (with duplicates).
 **Fix:**
+
 ```java
 // In the Specification that adds a JOIN:
 public static Specification<Product> hasTag(String tag) {
@@ -483,16 +493,19 @@ public static Specification<Product> hasTag(String tag) {
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-036 - Criteria API]] - Specifications are wrappers
   around Criteria API predicates
 
 **Builds On This (learn these next):**
+
 - [[JPH-053 - QueryDSL with JPA]] - more expressive
   alternative to raw Specifications
 - [[JPH-056 - Spring Data JPA Architecture]] - how
   Specifications fit in the overall architecture
 
 **Related:**
+
 - [[JPH-030 - DTO Projections]] - combine with Specifications
   for efficient dynamic queries returning DTOs
 - [[JPH-037 - EntityGraph]] - combine with findAll(spec, pageable)
@@ -524,6 +537,7 @@ public static Specification<Product> hasTag(String tag) {
 ```
 
 **If you remember only 3 things:**
+
 1. `Specification<T>` is a `(root, query, cb) -> Predicate`
    lambda; composable with `.and()`, `.or()`, `.not()`
 2. Return `null` from `toPredicate()` = "no restriction"
@@ -558,6 +572,7 @@ The core insight: break down complex boolean logic into
 named, composable, independent pieces.
 
 **Where else this pattern appears:**
+
 - **ElasticSearch Bool Query** - `must`, `should`, `filter`,
   `must_not` clauses compose exactly like Specifications
 - **MongoDB Query** - `Query.query(where("active").is(true).and("category").is("X"))`
@@ -588,6 +603,7 @@ advanced capabilities.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **IMPLEMENT** 5 Specification factory methods with proper
    null handling and JPA metamodel field references
 2. **COMPOSE** specifications: `where(s1).and(s2).or(s3).not()`
@@ -603,8 +619,9 @@ advanced capabilities.
 
 **Q1: What is a Spring Data Specification and how does it
 relate to the JPA Criteria API?**
-*Why they ask:* Tests Spring Data + JPA knowledge combination.
-*Strong answer includes:*
+_Why they ask:_ Tests Spring Data + JPA knowledge combination.
+_Strong answer includes:_
+
 - Specification: functional interface `(Root, CriteriaQuery, CriteriaBuilder) -> Predicate`
 - Spring Data wrapper around a Criteria API predicate
 - Adds composability: `.and()`, `.or()`, `.not()`
@@ -613,8 +630,9 @@ relate to the JPA Criteria API?**
 - `findAll(spec, pageable)` builds the WHERE clause from the predicate
 
 **Q2: When would you return null vs cb.conjunction() from a Specification?**
-*Why they ask:* Tests precise understanding of null semantics.
-*Strong answer includes:*
+_Why they ask:_ Tests precise understanding of null semantics.
+_Strong answer includes:_
+
 - Return `null`: "this filter is not active; exclude this
   condition entirely from the WHERE clause"
 - Return `cb.conjunction()`: "add a 1=1 always-true predicate;

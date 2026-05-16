@@ -30,11 +30,11 @@ Hibernate properties. In plain JPA this lives in
 `persistence.xml`; in Spring Boot it moves to
 `application.properties` with auto-configuration.
 
-| #009 | Category: JPA & Hibernate | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Hibernate as JPA Implementation, @Entity | |
-| **Used by:** | EntityManager, CrudRepository and JpaRepository | |
-| **Related:** | Spring Data JPA, JPA Ecosystem Map | |
+| #009            | Category: JPA & Hibernate                       | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------------- | :-------------- |
+| **Depends on:** | Hibernate as JPA Implementation, @Entity        |                 |
+| **Used by:**    | EntityManager, CrudRepository and JpaRepository |                 |
+| **Related:**    | Spring Data JPA, JPA Ecosystem Map              |                 |
 
 ---
 
@@ -97,6 +97,7 @@ behave - `persistence.xml` for standard JPA;
 `application.properties` for Spring Boot.
 
 **One analogy:**
+
 > `persistence.xml` is the birth certificate of the
 > persistence unit - it establishes identity (unit name),
 > lineage (entity classes), and home address (database URL).
@@ -114,6 +115,7 @@ the production database schema on application startup.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. A JPA application needs exactly one `EntityManagerFactory`
    per persistence unit; configuration is the input for
    building it
@@ -131,6 +133,7 @@ the production database schema on application startup.
 **DERIVED DESIGN:**
 Spring Boot auto-configuration reads `spring.datasource.*`
 and `spring.jpa.*` to construct:
+
 1. A `DataSource` bean (connection pool, HikariCP by default)
 2. A `LocalContainerEntityManagerFactoryBean` wrapping the
    JPA `EntityManagerFactory`
@@ -276,6 +279,7 @@ are required. The `@Primary` annotation designates the
 default factory for `@Transactional` without a qualifier.
 
 **Expert Thinking Cues:**
+
 - Ask: "What is the `ddl-auto` value in each environment?"
   Different teams have different production policies:
   `validate` is standard; some teams use `none` for
@@ -522,11 +526,11 @@ public class CatalogDataConfig {
 
 ### ⚖️ Comparison Table
 
-| Config Approach | Required for | Entity registration | Env config | Boilerplate |
-|---|---|---|---|---|
-| `persistence.xml` | Plain JPA / Java EE | Explicit `<class>` or `<jar-file>` | Hardcoded or JNDI | High |
-| `application.properties` + Spring Boot | Spring Boot | Auto-scan (`@Entity`) | Profile-based / env vars | Low |
-| Programmatic (`EntityManagerFactoryBuilder`) | Multi-datasource | Package scan | In `@Configuration` | Medium |
+| Config Approach                              | Required for        | Entity registration                | Env config               | Boilerplate |
+| -------------------------------------------- | ------------------- | ---------------------------------- | ------------------------ | ----------- |
+| `persistence.xml`                            | Plain JPA / Java EE | Explicit `<class>` or `<jar-file>` | Hardcoded or JNDI        | High        |
+| `application.properties` + Spring Boot       | Spring Boot         | Auto-scan (`@Entity`)              | Profile-based / env vars | Low         |
+| Programmatic (`EntityManagerFactoryBuilder`) | Multi-datasource    | Package scan                       | In `@Configuration`      | Medium      |
 
 **How to choose:**
 Use `application.properties` for all Spring Boot projects
@@ -538,13 +542,13 @@ Use `persistence.xml` only for non-Spring Java EE deployments.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`ddl-auto=update` is safe for production" | `update` adds missing columns and tables but never drops them, and can misinterpret type changes (e.g. VARCHAR(100) to VARCHAR(200)) leading to silent truncation. Use `validate` with Flyway for production schema management. |
-| "Spring Boot detects the dialect automatically so I never need to set it" | In most cases yes, but Hibernate may choose a different dialect version than expected (e.g. `PostgreSQL10Dialect` vs `PostgreSQLDialect`). Explicitly set `spring.jpa.database-platform` for production to pin the dialect. |
-| "`spring.jpa.show-sql=true` logs SQL via the configured logger" | `show-sql=true` prints to stdout using `System.out`, not the logging framework. Use `logging.level.org.hibernate.SQL=DEBUG` and `logging.level.org.hibernate.orm.jdbc.bind=TRACE` for properly logged SQL with bind parameters. |
-| "You need `persistence.xml` in Spring Boot" | Spring Boot's auto-configuration makes `persistence.xml` optional. Only add it if you need a non-default persistence unit name or are deploying to a Java EE container that requires it. |
-| "`open-in-view=true` (the default) is fine for most apps" | `open-in-view=true` keeps a database connection open for the entire HTTP request duration (including template rendering and JSON serialisation). This can exhaust the connection pool under load. Set `spring.jpa.open-in-view=false` explicitly. |
+| Misconception                                                             | Reality                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`ddl-auto=update` is safe for production"                                | `update` adds missing columns and tables but never drops them, and can misinterpret type changes (e.g. VARCHAR(100) to VARCHAR(200)) leading to silent truncation. Use `validate` with Flyway for production schema management.                   |
+| "Spring Boot detects the dialect automatically so I never need to set it" | In most cases yes, but Hibernate may choose a different dialect version than expected (e.g. `PostgreSQL10Dialect` vs `PostgreSQLDialect`). Explicitly set `spring.jpa.database-platform` for production to pin the dialect.                       |
+| "`spring.jpa.show-sql=true` logs SQL via the configured logger"           | `show-sql=true` prints to stdout using `System.out`, not the logging framework. Use `logging.level.org.hibernate.SQL=DEBUG` and `logging.level.org.hibernate.orm.jdbc.bind=TRACE` for properly logged SQL with bind parameters.                   |
+| "You need `persistence.xml` in Spring Boot"                               | Spring Boot's auto-configuration makes `persistence.xml` optional. Only add it if you need a non-default persistence unit name or are deploying to a Java EE container that requires it.                                                          |
+| "`open-in-view=true` (the default) is fine for most apps"                 | `open-in-view=true` keeps a database connection open for the entire HTTP request duration (including template rendering and JSON serialisation). This can exhaust the connection pool under load. Set `spring.jpa.open-in-view=false` explicitly. |
 
 ---
 
@@ -651,6 +655,7 @@ production schema state before releasing.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - [[JPH-004 - Hibernate as JPA Implementation]] - configuration
   tells Hibernate how to bootstrap; understanding the pieces
   being configured helps
@@ -658,6 +663,7 @@ production schema state before releasing.
   will scan and register
 
 **Builds On This (learn these next):**
+
 - [[JPH-011 - EntityManager]] - the primary API bean created
   from the configured `EntityManagerFactory`
 - [[JPH-016 - CrudRepository and JpaRepository]] - Spring
@@ -665,6 +671,7 @@ production schema state before releasing.
   `EntityManagerFactory`
 
 **Alternatives / Comparisons:**
+
 - [[JPH-028 - Spring Data JPA Auto-configuration]] - deep
   dive into how Spring Boot wires the JPA layer
 - [[JPH-050 - MyBatis as an Alternative to JPA]] - alternative
@@ -707,6 +714,7 @@ production schema state before releasing.
 ```
 
 **If you remember only 3 things:**
+
 1. `ddl-auto=validate` for production; `create-drop` only
    in test profiles - never `create` in main config
 2. `spring.jpa.open-in-view=false` - the default `true`
@@ -736,6 +744,7 @@ application artifact to deploy across environments without
 modification.
 
 **Where else this pattern appears:**
+
 - **Flyway `application.properties`** - `spring.flyway.url`,
   `spring.flyway.user`, `spring.flyway.locations` follow
   the same auto-configuration pattern as JPA
@@ -746,6 +755,7 @@ modification.
   separation JPA configuration best practice recommends
 
 **Industry applications:**
+
 - Twelve-Factor App methodology (12factor.net) codifies
   exactly this: store config in the environment, not in code;
   `spring.datasource.password=${DB_PASSWORD}` is the
@@ -778,6 +788,7 @@ logs are filtered to INFO.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** the five `ddl-auto` values, their effects,
    and which are safe for production vs. test-only
 2. **DEBUG** a connection pool exhaustion issue caused by
@@ -803,19 +814,19 @@ application to production with `ddl-auto=create` left in
 `application.properties`. The application starts successfully.
 What just happened to the production database, and how would
 you detect and remediate the damage?
-*Hint: All table data is gone; recovery depends on whether
+_Hint: All table data is gone; recovery depends on whether
 a backup existed and when it was taken. Remediation requires
-running Flyway baseline against the backup and redeploying.*
+running Flyway baseline against the backup and redeploying._
 
 **Q2 (TYPE C - Design Trade-off):** Your team debates whether
 to use `ddl-auto=validate` (let JPA check the schema) or
 `ddl-auto=none` (Flyway owns the schema, JPA does not check).
 What are the trade-offs of each approach? In what scenarios
 does each fail?
-*Hint: `validate` catches schema drift at startup; `none`
+_Hint: `validate` catches schema drift at startup; `none`
 with Flyway is faster to start and avoids schema check
 round trips to the DB but misses entity-schema drift until
-the first query fails at runtime.*
+the first query fails at runtime._
 
 **Q3 (TYPE G - Hands-On):** Create a Spring Boot
 `application.properties` for a production e-commerce
@@ -832,9 +843,10 @@ property choice.
 
 **Q1: What is `spring.jpa.open-in-view` and why would you
 disable it?**
-*Why they ask:* Tests awareness of a common Spring Boot
+_Why they ask:_ Tests awareness of a common Spring Boot
 default that causes production performance issues.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `open-in-view=true` (default) extends the Hibernate
   session to cover the entire HTTP request, including
   view rendering and JSON serialisation
@@ -850,10 +862,11 @@ default that causes production performance issues.
 the console via `spring.jpa.show-sql=true` but the SQL does
 not appear in the centralised log aggregation system.
 What is happening and how do you fix it?**
-*Why they ask:* Tests understanding of a subtle logging
+_Why they ask:_ Tests understanding of a subtle logging
 gotcha - most developers are surprised when SQL does not
 appear in logs.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - `show-sql=true` uses `System.out.println`, not SLF4J/Logback;
   log aggregators capture logger output, not stdout
 - Fix: use `logging.level.org.hibernate.SQL=DEBUG` for
@@ -864,9 +877,10 @@ appear in logs.
 
 **Q3: Describe the `ddl-auto` values you use in development,
 staging, and production environments and explain why.**
-*Why they ask:* Tests operational maturity and understanding
+_Why they ask:_ Tests operational maturity and understanding
 of deployment risks.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Development: `create-drop` or `update` - schema rebuilt
   on restart, matching evolving entity model
 - Staging: `validate` with Flyway - tests that migration
