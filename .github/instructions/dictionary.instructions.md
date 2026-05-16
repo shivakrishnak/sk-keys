@@ -251,8 +251,17 @@ Every explanation must cover: (1) Intuition, (2) Mechanism, (3) Trade-off, (4) F
 
 ```bash
 git add dictionary/
-git commit -m "feat: add <CODE>-<NNN>-<CODE>-<NNN> <Category> - batch <N>"
+git commit -m "feat: add <CODE>-<START>-<CODE>-<END> <Category> - batch <N>"
 # Do NOT git push
+# Do NOT commit single files
 ```
+
+**Batch Commit Rules (Non-Negotiable):**
+
+- Commit every **10 created files** (never single files)
+- Only commit files that were **created** (not just modified/upgraded)
+- If fewer than 10 remain at the end, commit all remaining at once
+- Include ID range in commit message (e.g. `DST-078-DST-087`)
+- Do NOT `git push`
 
 > For the complete 671-line spec with full section rules, teaching philosophy, key section rules, and version detection, see `dictionary/_config/GENERATOR_PROMPT.md`.

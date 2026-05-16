@@ -161,14 +161,18 @@ After each batch:
 
 ## Phase 3 - Commit
 
-After completing all keywords in a file (or after every 3 files):
+Commit in batches of **5 created files** (non-negotiable):
 
 ```pwsh
 git add interview/
-git commit -m "feat: add interview content ({keyword list})"
+git commit -m "feat: add interview <Topic> - batch <N>"
 ```
 
-Do NOT `git push`.
+**Batch Rules:**
+- Do NOT commit single files - wait until 5 files are created
+- Only count **created** files (not just modified)
+- If fewer than 5 remain at the end, commit all remaining
+- Do NOT `git push`
 
 ---
 

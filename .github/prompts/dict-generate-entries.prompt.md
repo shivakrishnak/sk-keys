@@ -169,18 +169,25 @@ reading the entry's existing content for context. Add only the missing content â
 
 ---
 
-## Phase 3 â€” Commit
+## Phase 3 - Commit
 
-After all batches complete:
+Commit in batches of **10 created files** (non-negotiable):
 
 ```powershell
 cd C:\ASK\MyWorkspace\sk-keys
 git add dictionary/
 # generate mode:
-git commit -m "feat: generate ${input:target} entries - full LATEST_VERSION_LABEL content"
+git commit -m "feat: generate ${input:target} <CODE>-<START>-<CODE>-<END> - batch <N>"
 # upgrade mode:
-# git commit -m "upgrade: ->LATEST_VERSION_LABEL ${input:target} entries - batch N"
+# git commit -m "upgrade: ->LATEST_VERSION_LABEL ${input:target} <CODE>-<START>-<CODE>-<END> - batch <N>"
 ```
+
+**Batch Rules:**
+
+- Do NOT commit single files - wait until 10 files are created
+- Only count **created** files (not just modified)
+- If fewer than 10 remain at the end, commit all remaining
+- Do NOT `git push`
 
 ---
 

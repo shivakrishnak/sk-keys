@@ -210,6 +210,18 @@ files pass frontmatter checks. See full verification command and
 rules in `.github/agents/interview.agent.md` section
 "Pre-Commit Frontmatter Verification". Any missing field = block commit.
 
+### Batch Commit Rules (Non-Negotiable)
+
+- Commit every **5 created files** (never single files)
+- Only commit files that were **created** (not just modified)
+- If fewer than 5 remain at the end, commit all remaining at once
+- Do NOT `git push`
+
+```bash
+git add interview/
+git commit -m "feat: add interview <Topic> - batch <N>"
+```
+
 ## Scaffold Workflow (optional)
 
 Scaffolding is no longer required for content generation. The agent

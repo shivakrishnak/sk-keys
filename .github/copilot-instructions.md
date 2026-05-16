@@ -98,10 +98,25 @@ tmp/                                  Historical/utility scripts
 ### Git Workflow
 
 ```bash
-git add dictionary/ interview/
-git commit -m "feat: <description>"
+# Dictionary: commit in batches of 10 created files
+git add dictionary/
+git commit -m "feat: add <CODE>-<START>-<CODE>-<END> <Category> - batch <N>"
+
+# Interview: commit in batches of 5 created files
+git add interview/
+git commit -m "feat: add interview <Topic> - batch <N>"
+
 # Do NOT git push
+# Do NOT commit single files - always batch
 ```
+
+**Batch Commit Rules (Non-Negotiable):**
+
+- Dictionary: commit every **10 created files** (never single files)
+- Interview: commit every **5 created files** (never single files)
+- Only commit files that were **created** (not just modified)
+- If fewer than the batch size remain at the end, commit all remaining
+- Do NOT `git push`
 
 ## Content Quality Constitution (Non-Negotiable)
 

@@ -33,7 +33,9 @@ Trigger: user mentions a tier (tier-1, tier-3) or category code (DSA, JVM, MSG)
 5. Pick ONE category, generate keyword content for ONE entry at a time
 6. Follow all 24 sections in exact sequence per GENERATOR_PROMPT.md
 7. After each entry, update the category `index.md` if needed
-8. Commit pattern: `git add dictionary/ ; git commit -m "feat: add <CODE>-<NNN> <Keyword Name>"`
+8. Commit pattern: batch every **10 created files**, then:
+   `git add dictionary/ ; git commit -m "feat: add <CODE>-<START>-<CODE>-<END> <Category> - batch <N>"`
+   Do NOT commit single files.
 9. Report what was generated and what remains, then continue to next
 
 ### Mode 2 - UPGRADE (tier/category + "upgrade" mentioned)
@@ -45,7 +47,9 @@ Trigger: user mentions upgrade, update, or migrate with a tier/category
 3. Pick ONE entry to upgrade at a time
 4. Read existing content, preserve correct sections, add missing v4.0 sections
 5. Update `version:` field to 4 in frontmatter
-6. Commit pattern: `git add dictionary/ ; git commit -m "feat: upgrade <CODE>-<NNN> to v4.0"`
+6. Commit pattern: batch every **10 created/upgraded files**, then:
+   `git add dictionary/ ; git commit -m "upgrade: ->v4.0 <CODE>-<START>-<CODE>-<END> - batch <N>"`
+   Do NOT commit single files.
 7. Report what was upgraded and what remains, then continue to next
 
 ### Mode 3 - NEW KEYWORDS (new topic, description, or JD text)
@@ -66,7 +70,9 @@ a description/JD like "Strong SQL skills and experience with..."
 7. Generate full content ONE entry at a time per GENERATOR_PROMPT.md
 8. Update the category `index.md` with new entries
 9. Update `dictionary/index.md` navigation table if new category/tier added
-10. Commit pattern: `git add dictionary/ ; git commit -m "feat: add <CODE> <Category Name> - <N> keywords"`
+10. Commit pattern: batch every **10 created files**, then:
+    `git add dictionary/ ; git commit -m "feat: add <CODE> <Category Name> - batch <N>"`
+    Do NOT commit single files.
 
 ## Constraints
 

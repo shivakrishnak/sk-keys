@@ -129,3 +129,15 @@ Difficulty: easy
 ```
 
 Work through keywords in batch. Do NOT attempt all keywords in one pass.
+
+## Commit Rules (Non-Negotiable)
+
+- Commit every **5 created files** (never single files)
+- Only commit files that were **created** (not just modified)
+- If fewer than 5 remain at the end, commit all remaining at once
+- Do NOT `git push`
+
+```pwsh
+git add interview/
+git commit -m "feat: add interview <Topic> - batch <N>"
+```

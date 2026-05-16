@@ -514,18 +514,19 @@ Get-ChildItem -Path interview -Recurse -Filter *.md |
 
 ## Commit Strategy
 
-Batch commits to reduce noise - commit after every **3 or more completed
-files**, or when the entire batch is finished (whichever comes first):
+Batch commits - commit after every **5 created files** (non-negotiable):
 
 ```pwsh
 git add interview/
-git commit -m "feat: add interview content ({list of files})"
+git commit -m "feat: add interview <Topic> - batch <N> ({list of files})"
 ```
 
-- Include short file names in the commit message (e.g., `Basics, Collections, Exceptions`)
-- If fewer than 3 files remain at the end, commit all remaining at once
-- **Run Pre-Commit Frontmatter Verification** before every commit (see above)
-- Do NOT `git push` - commit is sufficient
+- Do NOT commit single files - always wait for batch of 5
+- Only commit files that were **created** (not just modified)
+- Include short file names in the commit message
+- If fewer than 5 files remain at the end, commit all remaining at once
+- **Run Pre-Commit Frontmatter Verification** before every commit
+- Do NOT `git push`
 
 ## Auto-Continue Loop
 

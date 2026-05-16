@@ -85,14 +85,22 @@ python tmp/check_all_categories.py --category {{CODE}} --v3-only
 All files in the batch should now show `v4.0 / complete`.
 H1 count should be 1 per file.
 
-### Step 5 — Commit
+### Step 5 - Commit
+
+Commit in batches of **10 created/upgraded files** (non-negotiable):
 
 ```bash
 git add dictionary/{{TIER}}/{{FOLDER}}/
 git commit -m "upgrade: ->v4.0 {{CODE}}-{{START}}-{{CODE}}-{{END}} {{CATEGORY_NAME}} - batch {{BATCH_N}}"
 ```
 
-This workflow ends after the commit step; do NOT run `git push`.
+**Batch Rules:**
+
+- Do NOT commit single files - wait until 10 files are upgraded
+- If fewer than 10 remain at the end, commit all remaining
+- Do NOT `git push`
+
+This workflow ends after the commit step.
 
 ## Content quality rules (non-negotiable)
 
