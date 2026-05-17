@@ -1,5 +1,5 @@
 ---
-id: OBS-022
+id: OBS-057
 title: Health Check Patterns
 category: Observability & SRE
 tier: tier-6-infrastructure-devops
@@ -19,7 +19,7 @@ version: 4
 layout: default
 parent: "Observability & SRE"
 grand_parent: "Technical Dictionary"
-nav_order: 22
+nav_order: 57
 permalink: /obs/health-check-patterns/
 ---
 

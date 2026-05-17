@@ -1,5 +1,5 @@
 ---
-id: OBS-025
+id: OBS-060
 title: Incident Management Process
 category: Observability & SRE
 tier: tier-6-infrastructure-devops
@@ -19,7 +19,7 @@ version: 4
 layout: default
 parent: "Observability & SRE"
 grand_parent: "Technical Dictionary"
-nav_order: 25
+nav_order: 60
 permalink: /obs/incident-management-process/
 ---
 

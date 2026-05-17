@@ -1,5 +1,5 @@
 ---
-id: OBS-023
+id: OBS-058
 title: "Datadog - Observability Platform"
 category: Observability & SRE
 tier: tier-6-infrastructure-devops
@@ -19,7 +19,7 @@ version: 4
 layout: default
 parent: "Observability & SRE"
 grand_parent: "Technical Dictionary"
-nav_order: 23
+nav_order: 58
 permalink: /obs/datadog-observability-platform/
 ---
 

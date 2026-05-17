@@ -1,5 +1,5 @@
 ---
-id: OBS-024
+id: OBS-059
 title: "Dynatrace - Full-Stack Monitoring"
 category: Observability & SRE
 tier: tier-6-infrastructure-devops
@@ -19,7 +19,7 @@ version: 4
 layout: default
 parent: "Observability & SRE"
 grand_parent: "Technical Dictionary"
-nav_order: 24
+nav_order: 59
 permalink: /obs/dynatrace-full-stack-monitoring/
 ---
 

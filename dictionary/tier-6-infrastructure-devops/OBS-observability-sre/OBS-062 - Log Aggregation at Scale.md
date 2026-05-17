@@ -1,5 +1,5 @@
 ---
-id: OBS-027
+id: OBS-062
 title: Log Aggregation at Scale
 category: Observability & SRE
 tier: tier-6-infrastructure-devops
@@ -19,7 +19,7 @@ version: 4
 layout: default
 parent: "Observability & SRE"
 grand_parent: "Technical Dictionary"
-nav_order: 27
+nav_order: 62
 permalink: /obs/log-aggregation-at-scale/
 ---
 

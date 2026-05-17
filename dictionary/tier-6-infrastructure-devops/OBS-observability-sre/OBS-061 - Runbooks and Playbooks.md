@@ -1,5 +1,5 @@
 ---
-id: OBS-026
+id: OBS-061
 title: Runbooks and Playbooks
 category: Observability & SRE
 tier: tier-6-infrastructure-devops
@@ -19,7 +19,7 @@ version: 4
 layout: default
 parent: "Observability & SRE"
 grand_parent: "Technical Dictionary"
-nav_order: 26
+nav_order: 61
 permalink: /obs/runbooks-and-playbooks/
 ---
 
