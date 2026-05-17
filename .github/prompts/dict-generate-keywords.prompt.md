@@ -1,6 +1,6 @@
 ---
 agent: agent
-description: "Generate keyword entries for a category or tier using Keyword Generator v4.0"
+description: "Generate keyword entries for a category or tier using Keyword Generator v4.1"
 tools:
   - run_in_terminal
   - read_file
@@ -26,7 +26,7 @@ stop and return an error that shows the valid formats.
 ## MASTER SPEC
 
 The full keyword generation specification is in `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`
-(Category Keyword Generator - Master Prompt v4.0). Apply it exactly.
+(Category Keyword Generator - Master Prompt v4.1). Apply it exactly.
 
 Keep the workflow linear and scoped: validate the target, scan the current
 category state, generate only missing keywords, sync `index.md`, and create
