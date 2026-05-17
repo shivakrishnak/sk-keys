@@ -2,93 +2,93 @@
 layout: default
 title: "React"
 parent: "Technical Dictionary"
-nav_order: 44
+nav_order: 40
 has_children: true
 permalink: /react/
 ---
 
 # React
 
-React hooks, fiber architecture, reconciliation, Server Components, SSR, state management, and performance.
+React fundamentals, hooks, component patterns, performance optimisation, concurrent features, server components, and architecture - from first component to production-grade systems.
 
-**Keywords:** RCT-001–RCT-077 (77 terms)
+**Keywords:** RCT-001-RCT-077 (77 terms)
 
-| ID | Keyword | Difficulty |
-|----|---------|------------|
-| RCT-001 | What Is React and the Component Model | ★☆☆ |
-| RCT-002 | The React Mental Model (Declarative UI, Virtual DOM) | ★☆☆ |
-| RCT-003 | React vs Angular vs Vue -- Key Differences | ★☆☆ |
-| RCT-004 | The React Ecosystem Map (Next.js, Redux, React Query) | ★☆☆ |
-| RCT-005 | React in Production -- What to Expect | ★☆☆ |
-| RCT-030 | Prettier | ★☆☆ |
-| RCT-031 | Functional Components | ★☆☆ |
-| RCT-057 | Props and Prop Types | ★☆☆ |
-| RCT-046 | State with useState Hook | ★☆☆ |
-| RCT-032 | Side Effects with useEffect Hook | ★☆☆ |
-| RCT-033 | Event Handling in React | ★☆☆ |
-| RCT-034 | Conditional Rendering | ★☆☆ |
-| RCT-035 | Lists and Keys | ★☆☆ |
-| RCT-036 | React DevTools | ★☆☆ |
-| RCT-037 | React Project Setup (Vite, CRA) | ★☆☆ |
-| RCT-038 | Component Composition | ★☆☆ |
-| RCT-039 | Lifting State Up | ★☆☆ |
-| RCT-040 | React Interview Preparation Guide | ★☆☆ |
-| RCT-041 | ESLint (React) | ★★☆ |
-| RCT-042 | Controlled vs Uncontrolled Components | ★★☆ |
-| RCT-043 | Forms in React | ★★☆ |
-| RCT-044 | Fragments and Portals | ★★☆ |
-| RCT-045 | Children Prop and Render Props | ★★☆ |
-| RCT-063 | React Router (v6) | ★★☆ |
-| RCT-047 | React Context API | ★★☆ |
-| RCT-019 | Custom Hooks Pattern | ★★☆ |
-| RCT-006 | useRef Hook | ★★☆ |
-| RCT-048 | useMemo and useCallback | ★★☆ |
-| RCT-049 | Error Boundaries | ★★☆ |
-| RCT-050 | React Query - TanStack Query | ★★☆ |
-| RCT-051 | Zustand State Management | ★★☆ |
-| RCT-052 | Redux Toolkit | ★★☆ |
-| RCT-053 | React Hook Form | ★★☆ |
-| RCT-054 | Lazy Loading and Code Splitting | ★★☆ |
-| RCT-055 | React.memo and PureComponent | ★★☆ |
-| RCT-058 | React Testing Library Basics | ★★☆ |
-| RCT-059 | Storybook for React Components | ★★☆ |
-| RCT-060 | CSS-in-JS (Styled Components, Emotion) | ★★☆ |
-| RCT-061 | Tailwind CSS with React | ★★☆ |
-| RCT-062 | Next.js Fundamentals (SSR, SSG, ISR) | ★★☆ |
-| RCT-007 | Next.js App Router | ★★☆ |
-| RCT-008 | Vite Build Configuration | ★★☆ |
-| RCT-009 | Environment Variables in React | ★★☆ |
-| RCT-010 | React Strict Mode | ★★☆ |
-| RCT-011 | useReducer Hook | ★★☆ |
-| RCT-012 | React Accessibility (a11y) | ★★★ |
-| RCT-013 | React Performance Profiling (Browser DevTools) | ★★★ |
-| RCT-014 | Apollo Client | ★★★ |
-| RCT-015 | Apollo Federation | ★★★ |
-| RCT-016 | GraphQL with React | ★★★ |
-| RCT-017 | React Architecture Strategy (State Management Selection) | ★★★ |
-| RCT-020 | React Performance Architecture | ★★★ |
-| RCT-021 | React Server Components Strategy | ★★★ |
-| RCT-022 | Micro-Frontend Architecture with React | ★★★ |
-| RCT-023 | React Security Strategy | ★★★ |
-| RCT-024 | React Fiber Architecture Internals | ★★★ |
-| RCT-025 | React Reconciliation Algorithm Deep Dive | ★★★ |
-| RCT-026 | React Concurrent Mode and Scheduler | ★★★ |
-| RCT-027 | React Compiler (React Forget) Research | ★★★ |
-| RCT-028 | React Trade-off Framing (Complexity vs Flexibility) | ★★★ |
-| RCT-029 | State Management Mental Model | ★★★ |
-| RCT-064 | Component Design Thinking | ★★★ |
-| RCT-065 | Compound Components Pattern | ★★★ |
-| RCT-066 | Higher-Order Components (HOC) | ★★★ |
-| RCT-067 | React Suspense and Concurrent Features | ★★★ |
-| RCT-068 | React Performance Optimization Patterns | ★★★ |
-| RCT-069 | State Management Architecture Decisions | ★★★ |
-| RCT-070 | React Server Components (Deep Dive) | ★★★ |
-| RCT-071 | Hydration and Server-Side Rendering Internals | ★★★ |
-| RCT-072 | React Testing Strategies (Unit, Integration) | ★★★ |
-| RCT-073 | React with TypeScript Patterns | ★★★ |
-| RCT-018 | Accessibility Testing in React (axe, jest-axe) | ★★★ |
-| RCT-056 | React Internationalization (i18n) | ★★★ |
-| RCT-074 | React 19 Features (Actions, use() Hook) | ★★★ |
-| RCT-075 | Micro-Frontends with React | ★★★ |
-| RCT-076 | React Testing with React Testing Library | ★★★ |
-| RCT-077 | React Performance Profiling | ★★★ |
+| ID      | Keyword                                                 | Difficulty |
+| ------- | ------------------------------------------------------- | ---------- |
+| RCT-001 | The Frontend Complexity Problem                         | ★☆☆        |
+| RCT-002 | What React Is and Is Not                                | ★☆☆        |
+| RCT-003 | Declarative UI vs Imperative DOM Manipulation           | ★☆☆        |
+| RCT-004 | The Component Mental Model                              | ★☆☆        |
+| RCT-005 | React Ecosystem Landscape                               | ★☆☆        |
+| RCT-006 | React Development Environment Setup                     | ★☆☆        |
+| RCT-007 | Component                                               | ★☆☆        |
+| RCT-008 | JSX                                                     | ★☆☆        |
+| RCT-009 | Props                                                   | ★☆☆        |
+| RCT-010 | State                                                   | ★☆☆        |
+| RCT-011 | Virtual DOM                                             | ★☆☆        |
+| RCT-012 | ReactDOM Rendering                                      | ★☆☆        |
+| RCT-013 | Event Handling in React                                 | ★☆☆        |
+| RCT-014 | Conditional Rendering                                   | ★☆☆        |
+| RCT-015 | List Rendering and the key Prop                         | ★☆☆        |
+| RCT-016 | One-Way Data Binding                                    | ★☆☆        |
+| RCT-017 | Direct DOM Mutation Anti-Pattern                        | ★☆☆        |
+| RCT-018 | React DevTools (Basics)                                 | ★☆☆        |
+| RCT-019 | Vite and Create React App (CRA)                         | ★☆☆        |
+| RCT-020 | useState Hook                                           | ★★☆        |
+| RCT-021 | useEffect Hook                                          | ★★☆        |
+| RCT-022 | useContext Hook                                         | ★★☆        |
+| RCT-023 | useRef Hook                                             | ★★☆        |
+| RCT-024 | Custom Hooks                                            | ★★☆        |
+| RCT-025 | Controlled vs Uncontrolled Components                   | ★★☆        |
+| RCT-026 | Form Handling in React                                  | ★★☆        |
+| RCT-027 | React Router v6 Basics                                  | ★★☆        |
+| RCT-028 | Error Boundaries                                        | ★★☆        |
+| RCT-029 | Lifting State Up                                        | ★★☆        |
+| RCT-030 | Prop Drilling Anti-Pattern                              | ★★☆        |
+| RCT-031 | Styled Components and CSS Modules                       | ★★☆        |
+| RCT-032 | Build a React CRUD App - Phase 1                        | ★★☆        |
+| RCT-033 | React Quick Recall Card                                 | ★★☆        |
+| RCT-034 | useReducer Hook                                         | ★★☆        |
+| RCT-035 | useMemo Hook                                            | ★★☆        |
+| RCT-036 | useCallback Hook                                        | ★★☆        |
+| RCT-037 | React.memo                                              | ★★☆        |
+| RCT-038 | Context API vs State Management Decision Guide          | ★★☆        |
+| RCT-039 | React Reconciliation Algorithm                          | ★★☆        |
+| RCT-040 | Code Splitting with React.lazy                          | ★★☆        |
+| RCT-041 | Suspense                                                | ★★☆        |
+| RCT-042 | Higher-Order Components (HOC)                           | ★★☆        |
+| RCT-043 | Render Props Pattern                                    | ★★☆        |
+| RCT-044 | Compound Components Pattern                             | ★★☆        |
+| RCT-045 | Stale Closure Anti-Pattern in Hooks                     | ★★☆        |
+| RCT-046 | useEffect Overuse Anti-Pattern                          | ★★☆        |
+| RCT-047 | Class Components to Hooks Migration                     | ★★☆        |
+| RCT-048 | Testing React with React Testing Library                | ★★☆        |
+| RCT-049 | React Performance Profiling                             | ★★☆        |
+| RCT-050 | XSS Prevention in React                                 | ★★☆        |
+| RCT-051 | Redux Toolkit and Global State Architecture             | ★★☆        |
+| RCT-052 | React Fiber Architecture                                | ★★★        |
+| RCT-053 | Concurrent Features and Concurrent Rendering            | ★★★        |
+| RCT-054 | React Scheduler Internals and Lane Priority             | ★★★        |
+| RCT-055 | useTransition and useDeferredValue                      | ★★★        |
+| RCT-056 | React Server Components (RSC)                           | ★★★        |
+| RCT-057 | Hydration and Dehydration                               | ★★★        |
+| RCT-058 | Memory Leak Anti-Patterns in React                      | ★★★        |
+| RCT-059 | Bundle Size Analysis and Tree Shaking                   | ★★★        |
+| RCT-060 | Core Web Vitals in React Applications                   | ★★★        |
+| RCT-061 | CSRF and CSP Security in React SPAs                     | ★★★        |
+| RCT-062 | Create React App Deprecation (2023)                     | ★★★        |
+| RCT-063 | React v18 Concurrent Features Migration                 | ★★★        |
+| RCT-064 | Over-engineering Component Abstractions Anti-Pattern    | ★★★        |
+| RCT-065 | React Deep-Dive Interview Questions                     | ★★★        |
+| RCT-066 | Micro-Frontend Architecture with Module Federation      | ★★★        |
+| RCT-067 | State Management Architecture Decision Guide            | ★★★        |
+| RCT-068 | Rendering Strategy Framework                            | ★★★        |
+| RCT-069 | Design System Architecture with React                   | ★★★        |
+| RCT-070 | Staff-Level React Architecture Interview Scenarios      | ★★★        |
+| RCT-071 | React Fiber and Algebraic Effects Research              | ★★★        |
+| RCT-072 | Open Problem - Fine-Grained Reactivity vs Virtual DOM   | ★★★        |
+| RCT-073 | Virtual DOM Comparison Survey                           | ★★★        |
+| RCT-074 | React Hooks RFC and Design Principles                   | ★★★        |
+| RCT-075 | React Reconciliation as the Universal Diff Algorithm    | ★★★        |
+| RCT-076 | Unidirectional Data Flow as Event Sourcing in UI        | ★★★        |
+| RCT-077 | Component Decomposition as System Architecture Thinking | ★★★        |
