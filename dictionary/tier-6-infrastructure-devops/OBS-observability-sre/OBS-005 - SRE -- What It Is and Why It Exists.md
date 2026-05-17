@@ -30,11 +30,11 @@ engineering principles to operations so that reliability
 becomes a measurable, improvable system property rather than
 a reactive heroic effort.
 
-| #005 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability and Why It Matters | |
-| **Used by:** | SLI (Service Level Indicator), SLO (Service Level Objective), SLA (Service Level Agreement) | |
-| **Related:** | What Is Observability and Why It Matters, SLI - Service Level Indicator, SLO - Service Level Objective | |
+| #005            | Category: Observability & SRE                                                                          | Difficulty: ★☆☆ |
+| :-------------- | :----------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability and Why It Matters                                                               |                 |
+| **Used by:**    | SLI (Service Level Indicator), SLO (Service Level Objective), SLA (Service Level Agreement)            |                 |
+| **Related:**    | What Is Observability and Why It Matters, SLI - Service Level Indicator, SLO - Service Level Objective |                 |
 
 ---
 
@@ -131,6 +131,7 @@ tension explicit and manageable rather than political.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. 100% reliability is neither achievable nor desirable - the
    cost approaches infinity as you approach 100%
 2. Reliability must be measured to be improved - without an
@@ -218,6 +219,7 @@ visible and shared between development and operations.
 > driver is blamed for a pit crew timing miss.
 
 Mapping:
+
 - "Pit crew muscle memory" - SRE automation (runbooks,
   auto-scaling, automated remediation)
 - "Tyre wear rate, fuel metrics" - SLIs (measurable
@@ -252,6 +254,7 @@ deployments are paused until reliability improves.
 
 **Level 3 - How it works (mid-level engineer):**
 The SRE practice is built on five concepts:
+
 - SLI: the metric that measures reliability (error rate)
 - SLO: the target for that metric (error rate < 0.1%)
 - Error budget: the allowed failures before SLO breach
@@ -288,6 +291,7 @@ politically about them if the culture of data-driven
 decision-making is not established first.
 
 **EXPERT THINKING CUES:**
+
 - Red flag: SLOs set without measurement of current
   performance. An SLO of 99.9% on a service currently at
   95% reliability is not an SLO - it is aspirational fiction.
@@ -425,8 +429,8 @@ slo:
     # success = HTTP 2xx / total requests
     good_events: "rate(checkout_requests_total{status='2xx'}[5m])"
     total_events: "rate(checkout_requests_total[5m])"
-  objective: 0.999         # 99.9% success rate
-  window: 30d               # monthly rolling window
+  objective: 0.999 # 99.9% success rate
+  window: 30d # monthly rolling window
   error_budget_policy:
     # Freeze deploys when 50% of monthly budget is consumed
     # in less than 10% of the month (5x burn rate)
@@ -440,33 +444,33 @@ slo:
 ```yaml
 # Prometheus rule: page when error budget burns too fast
 groups:
-- name: checkout-slo
-  rules:
-  - alert: CheckoutSLOFastBurn
-    expr: |
-      (
-        rate(checkout_requests_total{status!~"2.."}[1h])
-        / rate(checkout_requests_total[1h])
-      ) > 5 * (1 - 0.999)
-    for: 5m
-    labels:
-      severity: page
-    annotations:
-      summary: "Checkout error budget burning at 5x rate"
-      runbook: "https://wiki/runbooks/checkout-slo"
+  - name: checkout-slo
+    rules:
+      - alert: CheckoutSLOFastBurn
+        expr: |
+          (
+            rate(checkout_requests_total{status!~"2.."}[1h])
+            / rate(checkout_requests_total[1h])
+          ) > 5 * (1 - 0.999)
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "Checkout error budget burning at 5x rate"
+          runbook: "https://wiki/runbooks/checkout-slo"
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Practice | Reliability measure | Ops/dev alignment | Automation focus | Best For |
-|---|---|---|---|---|
-| **SRE** | SLI/SLO/error budget | Error budget policy | High (toil reduction) | Large tech companies |
-| Traditional Ops | Uptime (binary) | Conflict | Low | Small stable systems |
-| DevOps | Deployment frequency | Cultural unity | Medium | Developer-led orgs |
-| ITIL/ITSM | Change success rate | Process gates | Low | Enterprise/regulated |
-| Platform Engineering | Developer experience | Self-service | High | Scale-up orgs |
+| Practice             | Reliability measure  | Ops/dev alignment   | Automation focus      | Best For             |
+| -------------------- | -------------------- | ------------------- | --------------------- | -------------------- |
+| **SRE**              | SLI/SLO/error budget | Error budget policy | High (toil reduction) | Large tech companies |
+| Traditional Ops      | Uptime (binary)      | Conflict            | Low                   | Small stable systems |
+| DevOps               | Deployment frequency | Cultural unity      | Medium                | Developer-led orgs   |
+| ITIL/ITSM            | Change success rate  | Process gates       | Low                   | Enterprise/regulated |
+| Platform Engineering | Developer experience | Self-service        | High                  | Scale-up orgs        |
 
 **How to choose:** SRE is appropriate when reliability
 failures have significant user or business impact and when
@@ -479,14 +483,14 @@ for very simple, low-criticality systems.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| SRE is just a job title for DevOps engineers | SRE is a specific engineering discipline with defined practices (SLIs, SLOs, error budgets, toil). Calling an ops engineer an "SRE" without these practices changes nothing. |
-| 100% availability is the goal | 100% availability is unachievable and unnecessary. The right SLO is the minimum level that keeps users happy. Chasing 100% wastes resources and freezes feature development. |
-| SRE replaces the development team | SRE is responsible for reliability; development is responsible for features. SREs are embedded with development teams but do not own the application code. |
-| Error budgets make reliability worse | Error budgets make the reliability/velocity trade-off explicit and data-driven. Teams without error budgets make the same trade-off implicitly and politically. |
-| Post-mortems assign blame | Blameless post-mortems focus on system conditions, not individual actions. The same human error in a well-designed system has no impact; in a poorly-designed system it causes an outage. The system, not the human, is to blame. |
-| SRE only applies to web services | Any system with measurable reliability - databases, data pipelines, ML models, CI/CD systems - can benefit from SRE practices. |
+| Misconception                                | Reality                                                                                                                                                                                                                           |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SRE is just a job title for DevOps engineers | SRE is a specific engineering discipline with defined practices (SLIs, SLOs, error budgets, toil). Calling an ops engineer an "SRE" without these practices changes nothing.                                                      |
+| 100% availability is the goal                | 100% availability is unachievable and unnecessary. The right SLO is the minimum level that keeps users happy. Chasing 100% wastes resources and freezes feature development.                                                      |
+| SRE replaces the development team            | SRE is responsible for reliability; development is responsible for features. SREs are embedded with development teams but do not own the application code.                                                                        |
+| Error budgets make reliability worse         | Error budgets make the reliability/velocity trade-off explicit and data-driven. Teams without error budgets make the same trade-off implicitly and politically.                                                                   |
+| Post-mortems assign blame                    | Blameless post-mortems focus on system conditions, not individual actions. The same human error in a well-designed system has no impact; in a poorly-designed system it causes an outage. The system, not the human, is to blame. |
+| SRE only applies to web services             | Any system with measurable reliability - databases, data pipelines, ML models, CI/CD systems - can benefit from SRE practices.                                                                                                    |
 
 ---
 
@@ -508,6 +512,7 @@ reliability improvements creates a permanently negative
 error budget.
 
 **Diagnostic Command:**
+
 ```bash
 # Measure actual reliability over the last 30 days
 # to determine if the SLO is achievable
@@ -546,6 +551,7 @@ The team is in a reactive mode: fixing incidents faster
 than automating them.
 
 **Diagnostic Command:**
+
 ```bash
 # Track toil percentage using time recording
 # Week 1: team members log all activities as:
@@ -588,6 +594,7 @@ by name with negative connotation. The blameless principle
 is stated but not practiced.
 
 **Diagnostic Command:**
+
 ```bash
 # Audit post-mortem language for blame patterns
 # (assumes post-mortems stored as markdown files)
@@ -613,11 +620,13 @@ not penalise them.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability and Why It Matters` - SRE uses
   observability as its primary tool for measuring and
   diagnosing reliability
 
 **Builds On This (learn these next):**
+
 - `SLI (Service Level Indicator)` - the metric that SRE
   uses to measure reliability
 - `SLO (Service Level Objective)` - the reliability target
@@ -630,6 +639,7 @@ not penalise them.
   as the primary alerting mechanism
 
 **Alternatives / Comparisons:**
+
 - `Toil Reduction Strategy` - the SRE practice of automating
   repetitive manual work
 - `Post-Mortem and Blameless Culture` - the SRE incident
@@ -675,6 +685,7 @@ not penalise them.
 ```
 
 **If you remember only 3 things:**
+
 1. Reliability is not "up or down" - it is a measurable
    property (SLI) with a target (SLO) and a budget (error
    budget) that balances reliability investment against
@@ -707,6 +718,7 @@ any resource-constrained trade-off: technical debt budget,
 testing coverage target, security review SLA.
 
 **Where else this pattern appears:**
+
 - **Technical debt management** - defining a "technical debt
   budget" (X% of sprint velocity) and enforcing it with the
   same rigour as an error budget converts the invisible
@@ -721,6 +733,7 @@ testing coverage target, security review SLA.
   gap. Same framework, different domain.
 
 **Industry applications:**
+
 - **Financial services** - SRE practices are mandatory for
   payment systems where downtime has direct regulatory and
   financial consequences. SLOs for settlement systems are
@@ -753,6 +766,7 @@ measured - it is decaying.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Explain the error budget concept to a product
    manager who has never heard of SRE, and explain how it
    affects their team's deployment schedule for the next
@@ -786,9 +800,9 @@ The SRE team wants to freeze deployments. The deployment
 contains a critical security patch. How does SRE error budget
 policy handle this situation? What override mechanisms exist,
 and what are the risks of overriding vs not overriding?
-*Hint: Think about what the error budget policy document
+_Hint: Think about what the error budget policy document
 should specify about security patches vs feature deployments.
-Is the error budget a hard stop or a decision framework?*
+Is the error budget a hard stop or a decision framework?_
 
 **Q2.** You are asked to set the SLO for a new service before
 it launches to production. You have no historical performance
@@ -796,11 +810,11 @@ data. Describe the process you would use to determine the
 right initial SLO, the instrumentation you would need before
 launch, and how you would adjust the SLO over the first
 three months of operation.
-*Hint: Consider user expectations (what does a user notice?
+_Hint: Consider user expectations (what does a user notice?
 A 500ms slowdown? A 2-second slowdown?), competitive
 benchmarks, and the cost of reliability at different levels
 (99% vs 99.9% vs 99.99% have very different infrastructure
-and engineering costs).*
+and engineering costs)._
 
 **Q3.** Design a blameless post-mortem for this scenario:
 An engineer deleted the production database instead of the
@@ -810,11 +824,11 @@ engineer had done this procedure 20 times before with no
 incident. Write the post-mortem timeline, contributing
 factors, and at least three system-level (not human-level)
 action items that would prevent recurrence.
-*Hint: Blameless means the action items must not be "the
+_Hint: Blameless means the action items must not be "the
 engineer should be more careful." They must identify what
 system design, tooling, process, or environment made it
 possible for a routine procedure to cause an irreversible
-production outage.*
+production outage._
 
 ---
 
@@ -822,9 +836,10 @@ production outage.*
 
 **Q1: "Explain the relationship between SLIs, SLOs, and
 error budgets. How do they work together in practice?"**
-*Why they ask:* Tests whether the candidate understands
+_Why they ask:_ Tests whether the candidate understands
 SRE's core measurement framework, not just the terminology.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - SLI is the metric (checkout success rate, measured in real
   time from production signals)
 - SLO is the target (99.9% success rate over 30 days)
@@ -837,10 +852,11 @@ SRE's core measurement framework, not just the terminology.
 
 **Q2: "How would you set an SLO for a service that has never
 had one before? Walk me through the process."**
-*Why they ask:* Tests practical SRE experience - candidates
+_Why they ask:_ Tests practical SRE experience - candidates
 who have actually set SLOs know this is hard and involves
 measurement, user research, and iteration.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - First: measure current SLI for 30 days minimum - without
   baseline data, any SLO is aspirational fiction
 - Second: identify what users notice - 500ms p99 latency
@@ -859,10 +875,11 @@ the monthly error budget in 2 hours. The post-mortem finds
 that a configuration change was deployed without a rollback
 plan. What action items do you write, and why are they
 system-level, not human-level?"**
-*Why they ask:* Tests understanding of blameless culture
+_Why they ask:_ Tests understanding of blameless culture
 and whether the candidate can distinguish between human
 errors and system conditions.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - BAD action item: "Engineer must check rollback plan before
   deploying" - this is human-level and will not prevent
   recurrence

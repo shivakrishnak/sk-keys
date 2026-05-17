@@ -29,11 +29,11 @@ path of a request across services by attaching a unique
 trace ID and recording timed spans at every service hop,
 so you can see exactly where latency and errors originate.
 
-| #008 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Three Pillars of Observability, Logging Fundamentals | |
-| **Used by:** | OpenTelemetry, Jaeger, Zipkin, Tempo | |
-| **Related:** | Three Pillars, Logging Fundamentals, Metrics Types | |
+| #008            | Category: Observability & SRE                        | Difficulty: ★☆☆ |
+| :-------------- | :--------------------------------------------------- | :-------------- |
+| **Depends on:** | Three Pillars of Observability, Logging Fundamentals |                 |
+| **Used by:**    | OpenTelemetry, Jaeger, Zipkin, Tempo                 |                 |
+| **Related:**    | Three Pillars, Logging Fundamentals, Metrics Types   |                 |
 
 ---
 
@@ -45,6 +45,7 @@ The checkout service alone takes 200ms. Somewhere in
 the 12 downstream services it calls, 3.8 seconds are
 being consumed. Without distributed tracing, the
 investigation process is:
+
 1. Add timing logs to checkout service
 2. Redeploy checkout service
 3. Observe: checkout calls payment in 50ms
@@ -88,6 +89,7 @@ attaching a unique trace identifier to the request and
 recording timed spans at each service that processes it.
 
 **Core concepts:**
+
 - **Trace:** the complete journey of a single request
   through all services, represented as a tree of spans
 - **Span:** a single unit of work within a trace,
@@ -135,6 +137,7 @@ they are slow.
 **THE CORE MECHANISM:**
 
 A distributed trace works by:
+
 1. Generating a globally unique `trace_id` at the
    request entry point
 2. Attaching the `trace_id` to every outgoing request
@@ -147,13 +150,17 @@ A distributed trace works by:
 **CONTEXT PROPAGATION:**
 The W3C Trace Context standard defines how to propagate
 the trace context:
+
 ```
 traceparent: 00-<trace-id>-<parent-span-id>-<flags>
 ```
+
 Example:
+
 ```
 traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
 ```
+
 This single HTTP header carries the trace ID and the
 parent span ID across service boundaries.
 
@@ -171,6 +178,7 @@ Tracing 100% of requests at high traffic (10,000
 requests/second) generates 10,000 root spans + all
 child spans per second - too expensive. Sampling
 strategies:
+
 - **Head sampling:** decide at the root span (1% of
   requests are traced). Simple but misses rare errors.
 - **Tail sampling:** decide after the trace completes
@@ -196,6 +204,7 @@ is slow for some payment methods.
 **WITH TRACING:**
 The on-call engineer queries Jaeger for slow checkout
 traces (> 2 seconds) from the last hour:
+
 ```
 Trace ID: abc123
   checkout (root): 0ms → 2800ms (2.8s total)
@@ -205,6 +214,7 @@ Trace ID: abc123
     │     └── fraud-check: 160ms → 2750ms (2.59s!)
     └── fulfillment: 2800ms → 2850ms (parallel, ok)
 ```
+
 Root cause: `fraud-check` takes 2.59 seconds on specific
 payment methods. The trace shows this in 30 seconds.
 
@@ -231,6 +241,7 @@ across multiple services.
 > have the complete flight trajectory.
 
 In distributed tracing terms:
+
 - Transponder code = trace_id
 - Each aircraft leg = span
 - Position broadcast = span attributes (service, latency)
@@ -344,6 +355,7 @@ processor) add significant operational complexity.
 ```
 
 **OPENTELEMETRY SDK COMPONENTS:**
+
 - **Tracer:** creates spans in application code
 - **Propagator:** reads/writes trace context from/to
   headers (W3C traceparent format)
@@ -489,22 +501,22 @@ try (Scope scope = ctx.makeCurrent()) {
 
 ### ⚖️ Comparison Table
 
-| Signal | What it captures | Best for | Limitation |
-|---|---|---|---|
-| **Traces** | Request path + timing across services | Latency root cause, service dependencies | Sampling; not all requests traced |
-| **Logs** | Event details with context | What happened at a specific service | Cannot reconstruct cross-service flow |
-| **Metrics** | Aggregated statistics over time | SLO measurement, alerting | No per-request detail |
+| Signal      | What it captures                      | Best for                                 | Limitation                            |
+| ----------- | ------------------------------------- | ---------------------------------------- | ------------------------------------- |
+| **Traces**  | Request path + timing across services | Latency root cause, service dependencies | Sampling; not all requests traced     |
+| **Logs**    | Event details with context            | What happened at a specific service      | Cannot reconstruct cross-service flow |
+| **Metrics** | Aggregated statistics over time       | SLO measurement, alerting                | No per-request detail                 |
 
 **Tracing backend comparison:**
 
-| Backend | Open source | Host | Strengths |
-|---|---|---|---|
-| **Jaeger** | Yes | Self-hosted | Standard, Kubernetes native |
-| **Zipkin** | Yes | Self-hosted | Simple, wide client support |
-| **Grafana Tempo** | Yes | Self-hosted/cloud | Grafana native, cost-efficient |
-| **Honeycomb** | No | SaaS | Best-in-class query UX |
-| **Datadog APM** | No | SaaS | Full observability platform |
-| **AWS X-Ray** | No | AWS-only | Zero setup on AWS Lambda |
+| Backend           | Open source | Host              | Strengths                      |
+| ----------------- | ----------- | ----------------- | ------------------------------ |
+| **Jaeger**        | Yes         | Self-hosted       | Standard, Kubernetes native    |
+| **Zipkin**        | Yes         | Self-hosted       | Simple, wide client support    |
+| **Grafana Tempo** | Yes         | Self-hosted/cloud | Grafana native, cost-efficient |
+| **Honeycomb**     | No          | SaaS              | Best-in-class query UX         |
+| **Datadog APM**   | No          | SaaS              | Full observability platform    |
+| **AWS X-Ray**     | No          | AWS-only          | Zero setup on AWS Lambda       |
 
 ---
 
@@ -548,14 +560,14 @@ try (Scope scope = ctx.makeCurrent()) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Tracing replaces logging" | Tracing and logging are complementary. Traces show the flow and timing across services. Logs show what happened at a specific point. The `trace_id` links them. |
-| "100% sampling is best" | At high traffic, 100% sampling is too expensive. Well-configured tail sampling (100% error traces, 1-5% normal) provides full incident visibility with 10-50x less cost. |
-| "Tracing adds significant latency" | Modern OTel SDK overhead is < 1ms per span for synchronous export. Async export adds < 100 microseconds. For most services, tracing overhead is unmeasurable in production. |
-| "OpenTelemetry only works with Java" | OTel supports 15+ languages with official SDKs (Java, Go, Python, Node.js, .NET, Ruby, Rust, C++). Language SDKs have varying maturity but all support traces. |
-| "Span attributes are free" | Each attribute added to a span increases memory and network cost. High-cardinality attributes (user_id on every span in a high-traffic service) can cause collector memory pressure. |
-| "Tracing shows all code paths" | Without manual instrumentation, auto-instrumentation only creates spans for instrumented frameworks (HTTP, gRPC, JDBC). Internal business logic is invisible unless you add custom spans. |
+| Misconception                        | Reality                                                                                                                                                                                   |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Tracing replaces logging"           | Tracing and logging are complementary. Traces show the flow and timing across services. Logs show what happened at a specific point. The `trace_id` links them.                           |
+| "100% sampling is best"              | At high traffic, 100% sampling is too expensive. Well-configured tail sampling (100% error traces, 1-5% normal) provides full incident visibility with 10-50x less cost.                  |
+| "Tracing adds significant latency"   | Modern OTel SDK overhead is < 1ms per span for synchronous export. Async export adds < 100 microseconds. For most services, tracing overhead is unmeasurable in production.               |
+| "OpenTelemetry only works with Java" | OTel supports 15+ languages with official SDKs (Java, Go, Python, Node.js, .NET, Ruby, Rust, C++). Language SDKs have varying maturity but all support traces.                            |
+| "Span attributes are free"           | Each attribute added to a span increases memory and network cost. High-cardinality attributes (user_id on every span in a high-traffic service) can cause collector memory pressure.      |
+| "Tracing shows all code paths"       | Without manual instrumentation, auto-instrumentation only creates spans for instrumented frameworks (HTTP, gRPC, JDBC). Internal business logic is invisible unless you add custom spans. |
 
 ---
 
@@ -577,6 +589,7 @@ the message. The payment consumer creates a new root
 trace instead of a child trace.
 
 **Diagnostic Command:**
+
 ```bash
 # Check if message headers contain trace context
 # (example: checking a RabbitMQ message)
@@ -612,6 +625,7 @@ The policy samples traces by `status=OK` rather than
 `status=ERROR`. All error traces are being dropped.
 
 **Diagnostic Command:**
+
 ```bash
 # Check OTel Collector tail sampling metrics
 curl -s localhost:8888/metrics | grep \
@@ -623,6 +637,7 @@ curl -s localhost:8888/metrics | grep \
 **Fix:**
 Review the tail sampling policy configuration. The
 correct priority order:
+
 1. Policy 1: `status_code = ERROR` → always sample
 2. Policy 2: `latency > 2000ms` → always sample
 3. Policy 3: default → sample at 1%
@@ -650,6 +665,7 @@ these spans in memory for 30 seconds per trace window.
 attribute = millions of unique strings in memory.
 
 **Diagnostic Command:**
+
 ```bash
 # Check collector memory and identify which pipeline
 # is consuming memory
@@ -674,6 +690,7 @@ with `trace_id` correlation for user-level context.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `The Three Pillars of Observability` - traces are one
   of the three signal types; understand how they
   complement metrics and logs
@@ -682,6 +699,7 @@ with `trace_id` correlation for user-level context.
   the complement to traces
 
 **Builds On This (learn these next):**
+
 - `OpenTelemetry Fundamentals` - the standard SDK and
   collector for distributed tracing
 - `Jaeger and Zipkin` - open-source trace storage and
@@ -690,6 +708,7 @@ with `trace_id` correlation for user-level context.
   auto-propagate trace context without app code changes
 
 **Alternatives / Comparisons:**
+
 - `Logging Fundamentals` - logs provide event details;
   traces provide causal flow. Use both with `trace_id`
   correlation for complete incident visibility
@@ -731,6 +750,7 @@ with `trace_id` correlation for user-level context.
 ```
 
 **If you remember only 3 things:**
+
 1. A trace = tree of spans with a shared `trace_id`.
    Each span = one unit of work with start/end time and
    the service name. Parent-child links reconstruct the
@@ -757,6 +777,7 @@ CQRS event handling (causation IDs), and microservices
 debugging (trace IDs).
 
 **Where else this pattern appears:**
+
 - **Database distributed transactions** - a global
   transaction ID is propagated across all participating
   databases to link log entries and enable recovery.
@@ -797,6 +818,7 @@ no clear cause.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Explain to a developer why the checkout
    request trace appears broken in Jaeger (the checkout
    span ends but there is no payment service span below
@@ -841,10 +863,10 @@ engineer proposes optimising the inventory service from
 this optimisation will not help, identify which service
 is on the critical path, and calculate the maximum
 possible improvement from optimising that service.
-*Hint: Parallel spans do not affect total latency -
+_Hint: Parallel spans do not affect total latency -
 only the slowest one does. The critical path is:
 max(parallel) + sequential. Identify it from the
-trace data provided.*
+trace data provided._
 
 **Q2.** You are seeing fragmented traces in Jaeger:
 checkout service traces terminate at a Kafka publish,
@@ -854,10 +876,10 @@ what code change is needed in the consumer, and how
 would you write an integration test to verify the
 fix works? Provide the specific Java/Spring code for
 both producer and consumer using OpenTelemetry.
-*Hint: Producer must inject W3C traceparent into
+_Hint: Producer must inject W3C traceparent into
 Kafka message headers. Consumer must extract the
 traceparent from Kafka headers and use it as the
-parent context before creating the processing span.*
+parent context before creating the processing span._
 
 **Q3 (TYPE G):** You are designing the observability
 strategy for a new payment platform with these
@@ -870,14 +892,14 @@ sampling policy (head vs tail, rates), backend choice,
 retention policy, how you handle the 7-year error
 retention requirement, and how you test that no error
 traces are being dropped.
-*Hint: At 10,000 TPS, 100% tracing = ~50,000 spans/s
+_Hint: At 10,000 TPS, 100% tracing = ~50,000 spans/s
 (5 services per transaction). At 1KB/span, that is
 50MB/s = 4.3TB/day of trace data. Budget of $50,000/month
 limits retention to ~30 days at $0.10/GB. Tail sampling
 at 1% (+ 100% error) = 430GB/day - manageable. The 7-year
 error retention is a compliance requirement that needs
 separate storage (S3 cold storage) at much lower cost
-than the trace backend.*
+than the trace backend._
 
 ---
 
@@ -885,9 +907,10 @@ than the trace backend.*
 
 **Q1: "What is a span and what information does it contain?
 How do spans relate to a trace?"**
-*Why they ask:* Tests foundational understanding of
+_Why they ask:_ Tests foundational understanding of
 distributed tracing data model.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - A span = one unit of work: single operation within
   a service. Contains: trace_id (same for all spans
   in the trace), span_id (unique), parent_span_id
@@ -903,9 +926,10 @@ distributed tracing data model.
 
 **Q2: "Explain head sampling vs tail sampling.
 Which should you use in production and why?"**
-*Why they ask:* Tests whether the candidate understands
+_Why they ask:_ Tests whether the candidate understands
 the real-world trade-offs of tracing, not just the concept.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Head sampling: decision made at the root span before
   the trace completes. Simple. Consistent (child spans
   are always sampled if parent is). Problem: a 1% head
@@ -926,9 +950,10 @@ the real-world trade-offs of tracing, not just the concept.
 only 3 spans for a request that touches 12 services.
 What are the possible explanations, and how would you
 diagnose each?"**
-*Why they ask:* Tests practical debugging ability with
+_Why they ask:_ Tests practical debugging ability with
 distributed tracing - a common real-world gap.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Possible cause 1: Auto-instrumentation not installed
   on 9 of the services. Diagnosis: check that OTel Java
   agent is in the startup command for each service.

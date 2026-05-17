@@ -29,11 +29,11 @@ permalink: /obs/what-is-observability-and-why-it-matters/
 internal state through external signals so engineers can answer
 any question about production behavior without deploying new code.
 
-| #001 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | (none) | |
-| **Used by:** | The Three Pillars of Observability, Monitoring vs Observability, SRE - What It Is and Why It Exists | |
-| **Related:** | The Three Pillars of Observability, Monitoring vs Observability, The Observability Ecosystem Map | |
+| #001            | Category: Observability & SRE                                                                       | Difficulty: ★☆☆ |
+| :-------------- | :-------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | (none)                                                                                              |                 |
+| **Used by:**    | The Three Pillars of Observability, Monitoring vs Observability, SRE - What It Is and Why It Exists |                 |
+| **Related:**    | The Three Pillars of Observability, Monitoring vs Observability, The Observability Ecosystem Map    |                 |
 
 ---
 
@@ -122,6 +122,7 @@ observability handles surprises.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. You cannot fix what you cannot measure
 2. Production failures are often unexpected - you cannot
    pre-build a dashboard for every future failure mode
@@ -141,6 +142,7 @@ No code deployment should be required to ask a new question.
 
 This is why the three-pillar model emerged - logs, metrics, and
 traces each answer a different class of question:
+
 - Logs: "what happened at this moment in this code path?"
 - Metrics: "how many, how fast, what rate over time?"
 - Traces: "what was the full path of this request through
@@ -217,6 +219,7 @@ structured, correlated, and queryable before the incident.
 > going wrong internally.
 
 Mapping:
+
 - "ICU patient" - the production software system
 - "ECG, oximeter, blood pressure" - metrics, logs, and traces
 - "Attending physician" - the on-call engineer
@@ -286,6 +289,7 @@ captures the interesting cases but requires a buffering
 infrastructure that itself needs to be observable.
 
 **EXPERT THINKING CUES:**
+
 - Experts distinguish between observability as a system
   property (can you answer arbitrary questions?) and
   observability tooling (Datadog, Prometheus). You can have
@@ -308,6 +312,7 @@ collect, store, and query.
 **Stage 1 - Instrumentation (the source):**
 Application code emits signals. Without instrumentation there
 is nothing to observe. Three signal types:
+
 - **Logs:** Structured events (JSON preferred) emitted at
   interesting code execution points. Every log line should
   carry a trace ID, service name, and relevant business context.
@@ -326,6 +331,7 @@ and routing. This layer absorbs traffic spikes and decouples
 the application from storage concerns.
 
 **Stage 3 - Storage:**
+
 - Metrics: time-series databases (Prometheus, Thanos, Cortex,
   VictoriaMetrics)
 - Logs: inverted-index stores (Elasticsearch, OpenSearch, Loki)
@@ -487,13 +493,13 @@ trace lookup without touching the application logs.
 
 ### ⚖️ Comparison Table
 
-| Approach | Ad-hoc queries | Cardinality | Failure type | Best For |
-|---|---|---|---|---|
-| **Observability** | Yes | High | Unknown | Distributed, unknown failures |
-| Traditional Monitoring | No | Low | Known thresholds | Simple uptime and capacity |
-| APM (Datadog, Dynatrace) | Yes | Medium | App performance | App-layer diagnosis, managed |
-| Log Management (ELK) | Yes | High | Events only | Audit trails, text search |
-| Synthetic Monitoring | No | Low | External UX | User-visible uptime checks |
+| Approach                 | Ad-hoc queries | Cardinality | Failure type     | Best For                      |
+| ------------------------ | -------------- | ----------- | ---------------- | ----------------------------- |
+| **Observability**        | Yes            | High        | Unknown          | Distributed, unknown failures |
+| Traditional Monitoring   | No             | Low         | Known thresholds | Simple uptime and capacity    |
+| APM (Datadog, Dynatrace) | Yes            | Medium      | App performance  | App-layer diagnosis, managed  |
+| Log Management (ELK)     | Yes            | High        | Events only      | Audit trails, text search     |
+| Synthetic Monitoring     | No             | Low         | External UX      | User-visible uptime checks    |
 
 **How to choose:** Start with APM if you want fast time-to-value
 and accept vendor lock-in. Choose open-source observability
@@ -513,13 +519,13 @@ Need to test from user's geographic perspective? - Synthetic
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Observability and monitoring are the same thing | Monitoring checks known conditions against thresholds. Observability enables answering unknown questions from raw signals. Both are needed; they are not substitutes. |
-| More logs equals better observability | Unstructured, uncorrelated, high-volume logs are worse than fewer structured logs. Volume without context is noise that buries signal. |
-| Dashboards are observability | Dashboards display pre-known metrics for pre-anticipated failure modes. Observability means you can ask questions your dashboards do not cover. |
-| Observability is only for microservices | Any system where failures are non-obvious benefits from observability. A monolith with complex business logic and external dependencies needs structured signals too. |
-| Observability is too expensive for small teams | OpenTelemetry, Prometheus, Grafana, and Loki are all free and open source. The cost is engineering time, not licensing fees. |
+| Misconception                                   | Reality                                                                                                                                                                                |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Observability and monitoring are the same thing | Monitoring checks known conditions against thresholds. Observability enables answering unknown questions from raw signals. Both are needed; they are not substitutes.                  |
+| More logs equals better observability           | Unstructured, uncorrelated, high-volume logs are worse than fewer structured logs. Volume without context is noise that buries signal.                                                 |
+| Dashboards are observability                    | Dashboards display pre-known metrics for pre-anticipated failure modes. Observability means you can ask questions your dashboards do not cover.                                        |
+| Observability is only for microservices         | Any system where failures are non-obvious benefits from observability. A monolith with complex business logic and external dependencies needs structured signals too.                  |
+| Observability is too expensive for small teams  | OpenTelemetry, Prometheus, Grafana, and Loki are all free and open source. The cost is engineering time, not licensing fees.                                                           |
 | You add observability after the system is built | Retrofitting observability is 5x harder than building it in. Signal structure is determined at code-write time - no infrastructure investment can extract data that was never emitted. |
 
 ---
@@ -542,6 +548,7 @@ headers, so Service B creates a new root span instead of
 creating a child span under the existing trace.
 
 **Diagnostic Command:**
+
 ```bash
 # Check whether trace headers appear in outbound requests
 curl -v https://service-b/health 2>&1 | \
@@ -552,6 +559,7 @@ curl -v https://service-b/health 2>&1 | \
 ```
 
 **Fix:**
+
 ```yaml
 # GOOD: enable W3C trace context propagation in Spring Boot
 management:
@@ -589,6 +597,7 @@ series. 500,000 users on a counter with a `user_id` label =
 500,000 time series for a single metric name.
 
 **Diagnostic Command:**
+
 ```bash
 # Check active series count and head memory
 curl -s localhost:9090/api/v1/status/tsdb \
@@ -601,6 +610,7 @@ curl -s 'localhost:9090/api/v1/query?query=
 ```
 
 **Fix:**
+
 ```java
 // BAD: unbounded cardinality - kills Prometheus at scale
 counter.increment(
@@ -639,6 +649,7 @@ without redaction. A developer adds `log.debug(request)`
 to diagnose a bug and the line is shipped to production.
 
 **Diagnostic Command:**
+
 ```bash
 # Scan logs for potential card number patterns
 grep -E \
@@ -651,6 +662,7 @@ grep -iE '"password"\s*:\s*"[^"]+"|Bearer\s+[A-Za-z0-9]' \
 ```
 
 **Fix:**
+
 ```java
 // BAD: full object serialisation may expose sensitive fields
 log.info("checkout request: {}", request.toString());
@@ -686,6 +698,7 @@ Memory > 80% fires after deployments. The signal-to-noise
 ratio drops below the level where alerts are trusted.
 
 **Diagnostic Command:**
+
 ```bash
 # Audit alert firing frequency in Alertmanager
 curl -s localhost:9093/api/v2/alerts \
@@ -714,6 +727,7 @@ required human action.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Distributed Systems` - observability exists to solve the
   diagnostic challenges unique to distributed failure modes;
   understanding why distributed systems fail explains why
@@ -723,6 +737,7 @@ required human action.
   is a prerequisite for understanding trace correlation
 
 **Builds On This (learn these next):**
+
 - `The Three Pillars of Observability (Logs, Metrics, Traces)` -
   the three signal types that implement observability in practice
 - `SLI (Service Level Indicator)` - how to measure reliability
@@ -735,6 +750,7 @@ required human action.
   actionable alerts without noise
 
 **Alternatives / Comparisons:**
+
 - `Monitoring vs Observability - The Difference` - the precise
   technical distinction and when each approach is sufficient
 - `The Observability Ecosystem Map` - the full landscape of
@@ -775,6 +791,7 @@ required human action.
 ```
 
 **If you remember only 3 things:**
+
 1. Observability is a property of the system, not the tooling.
    A system with Datadog can still be unobservable if its
    signals are unstructured or uncorrelated.
@@ -803,6 +820,7 @@ behaviour so that any question about its state can be answered
 from outside without modifying or restarting the system.
 
 **Where else this pattern appears:**
+
 - **API design** - well-designed APIs return structured error
   responses with machine-readable codes, context fields, and
   trace IDs. A good API explains why it failed, not just that
@@ -816,6 +834,7 @@ from outside without modifying or restarting the system.
   GCC historically emits cryptic, low-context errors.
 
 **Industry applications:**
+
 - **Financial services** - transaction observability is
   regulatory. Every state change in a payment system must be
   auditable. Observability and compliance share the same
@@ -847,6 +866,7 @@ disguised as an operations problem.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Explain the difference between monitoring and
    observability to a junior engineer without jargon, then give
    a concrete production scenario where monitoring fails but
@@ -882,10 +902,10 @@ How does this scenario reveal the gap between monitoring and
 observability? What specifically would you have needed to
 instrument before this incident to diagnose it without a
 code deployment?
-*Hint: Think about the difference between aggregated metrics -
+_Hint: Think about the difference between aggregated metrics -
 which smooth out individual request behaviour - and
 high-cardinality trace data, which can isolate exactly which
-requests are slow and correlate them to a specific code path.*
+requests are slow and correlate them to a specific code path._
 
 **Q2.** At 10 billion spans per day, storing every trace with
 full fidelity costs $200,000 per month. Your team must cut
@@ -893,10 +913,10 @@ costs by 80%. Describe the trade-offs between head-based
 sampling, tail-based sampling, and adaptive sampling. For
 each strategy, identify which class of production failures
 becomes harder or impossible to diagnose.
-*Hint: Consider what happens to intermittent failures that
+_Hint: Consider what happens to intermittent failures that
 occur in 0.01% of requests. Does each sampling strategy
 reliably capture them? What happens to the spans that are
-discarded before the decision is made to keep a trace?*
+discarded before the decision is made to keep a trace?_
 
 **Q3.** Your task: instrument a new order processing service
 before its first production deploy. Define exactly three
@@ -905,10 +925,10 @@ attributes for the checkout trace span, and two structured
 log fields beyond timestamp and message. For each choice,
 justify it against the cardinality constraint, and name one
 candidate you explicitly rejected and why.
-*Hint: The cardinality rule for metrics is strict - any label
+_Hint: The cardinality rule for metrics is strict - any label
 that can take more than roughly 50 unique values in production
 belongs in trace attributes or log fields, not in metric
-labels. Start from the failure scenarios you need to diagnose.*
+labels. Start from the failure scenarios you need to diagnose._
 
 ---
 
@@ -917,10 +937,11 @@ labels. Start from the failure scenarios you need to diagnose.*
 **Q1: "What is the difference between monitoring and
 observability, and when would monitoring alone be
 sufficient?"**
-*Why they ask:* Tests whether the candidate knows both
+_Why they ask:_ Tests whether the candidate knows both
 concepts deeply enough to choose the simpler one correctly,
 not just reach for complex tooling by default.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Monitoring checks known conditions against known thresholds
   and can only alert on pre-anticipated failure modes
 - Observability enables answering unknown questions from raw
@@ -934,10 +955,11 @@ not just reach for complex tooling by default.
 **Q2: "Your team is shipping a new microservice next week.
 What observability do you add before the first deploy
 and why?"**
-*Why they ask:* Separates engineers who treat observability
+_Why they ask:_ Separates engineers who treat observability
 as an afterthought from those who treat it as part of the
 definition of done for every feature shipped.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Structured logs with trace ID, service name, and key
   business context (order ID, user ID, operation name) - no
   freeform text strings
@@ -951,10 +973,11 @@ definition of done for every feature shipped.
 **Q3: "A teammate proposes adding user_id as a Prometheus
 label on your checkout error counter to enable per-user
 error analysis. How do you respond?"**
-*Why they ask:* Tests cardinality awareness - the most common
+_Why they ask:_ Tests cardinality awareness - the most common
 metric instrumentation mistake that causes TSDB memory
 exhaustion and Prometheus crashes at production scale.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - user_id is high-cardinality (millions of unique values =
   millions of time series = Prometheus OOM at production scale)
 - Prometheus time-series databases are not designed for

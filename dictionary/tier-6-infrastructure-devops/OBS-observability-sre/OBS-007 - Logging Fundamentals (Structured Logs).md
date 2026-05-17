@@ -29,11 +29,11 @@ records that replace unstructured text strings so they
 can be queried, filtered, and correlated with other
 signals without fragile regex parsing.
 
-| #007 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | The Three Pillars of Observability | |
-| **Used by:** | Distributed Tracing Fundamentals, Alerting, Log Aggregation | |
-| **Related:** | Three Pillars, Metrics Types, Distributed Tracing | |
+| #007            | Category: Observability & SRE                               | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------------------------- | :-------------- |
+| **Depends on:** | The Three Pillars of Observability                          |                 |
+| **Used by:**    | Distributed Tracing Fundamentals, Alerting, Log Aggregation |                 |
+| **Related:**    | Three Pillars, Metrics Types, Distributed Tracing           |                 |
 
 ---
 
@@ -42,16 +42,21 @@ signals without fragile regex parsing.
 **WORLD WITHOUT IT:**
 A production incident is in progress. The on-call engineer
 runs:
+
 ```bash
 grep "error" /var/log/app.log | tail -100
 ```
+
 The output is 100 lines of free-text strings like:
+
 ```
 2024-01-15 14:23:41 ERROR payment failed user 1234 retry 3
 2024-01-15 14:23:41 ERROR connection timeout after 5000ms
 2024-01-15 14:23:41 ERROR payment failed user 5678 retry 1
 ```
+
 Questions the engineer needs to answer:
+
 - How many distinct users are affected?
 - Is this specific to one payment method?
 - Is this correlated with a specific service instance?
@@ -90,6 +95,7 @@ queried, filtered, and aggregated by log management systems
 without requiring text parsing.
 
 **Key fields in every structured log record:**
+
 - `timestamp`: ISO 8601 with millisecond precision
 - `level`: severity (DEBUG, INFO, WARN, ERROR, FATAL)
 - `message`: human-readable description
@@ -130,6 +136,7 @@ for a single ID.
 
 **WHY STRUCTURE IS NECESSARY:**
 A log event has these properties:
+
 1. It occurred at a specific time (timestamp - structured)
 2. It has a severity (level - structured, finite set)
 3. It has a message (human description - unstructured text)
@@ -160,6 +167,7 @@ fields consistent across services. JSON serialisation has
 CPU and storage cost vs plain text.
 
 **LOG LEVELS (severity semantics):**
+
 - `DEBUG`: developer details, never in production by default
 - `INFO`: normal operations, key business events
 - `WARN`: unexpected but handled condition
@@ -189,12 +197,14 @@ determine root cause or blast radius.
 
 **WITH STRUCTURED LOGS AND A LOG AGGREGATOR:**
 The engineer opens Grafana Loki and queries:
+
 ```logql
 {env="production"} | json
   | level="ERROR"
   | __error__="" # no parse errors
   | line_format "{{.service}}: {{.message}}"
 ```
+
 In 30 seconds, they see that 100% of errors originate in
 the `inventory-service` with `message="SKU lookup timeout"`.
 They filter by `trace_id` to see the full request journey:
@@ -326,12 +336,14 @@ choose log pipelines that match their actual query needs.
 Production logging should be INFO level by default. Many
 structured logging frameworks support runtime log level
 adjustment without restart:
+
 ```bash
 # Change a running service to DEBUG level for 5 minutes
 curl -X POST http://service:8080/actuator/loggers/ROOT \
   -H "Content-Type: application/json" \
   -d '{"configuredLevel":"DEBUG"}'
 ```
+
 This is critical for incident investigation: enable DEBUG
 for 5 minutes on one instance, capture the detailed logs,
 then restore INFO level.
@@ -467,38 +479,38 @@ logging:
 
 ### ⚖️ Comparison Table
 
-| Property | Unstructured (free text) | Structured (JSON) |
-|---|---|---|
-| **Query syntax** | Regex / grep | Field filter: `level=ERROR` |
-| **Field extraction** | Runtime parsing (slow) | Pre-indexed (fast) |
-| **Cross-service correlation** | Manual / impossible | `trace_id` join |
-| **Storage cost** | Low (plain text) | Higher (JSON overhead) |
-| **Human readability** | High (at low volume) | Lower (requires viewer) |
-| **Alerting on fields** | Difficult | Native |
-| **Log aggregation maths** | Regex + awk | Direct aggregation |
-| **Consistent schema** | No (changes silently) | Enforced by library |
+| Property                      | Unstructured (free text) | Structured (JSON)           |
+| ----------------------------- | ------------------------ | --------------------------- |
+| **Query syntax**              | Regex / grep             | Field filter: `level=ERROR` |
+| **Field extraction**          | Runtime parsing (slow)   | Pre-indexed (fast)          |
+| **Cross-service correlation** | Manual / impossible      | `trace_id` join             |
+| **Storage cost**              | Low (plain text)         | Higher (JSON overhead)      |
+| **Human readability**         | High (at low volume)     | Lower (requires viewer)     |
+| **Alerting on fields**        | Difficult                | Native                      |
+| **Log aggregation maths**     | Regex + awk              | Direct aggregation          |
+| **Consistent schema**         | No (changes silently)    | Enforced by library         |
 
 **Log backend comparison:**
 
-| Backend | Best for | Index model | Strengths |
-|---|---|---|---|
-| **Loki** | Kubernetes-native | Labels only (stream) | Low cost, Grafana native |
-| **Elasticsearch** | Rich full-text search | All fields indexed | Powerful queries |
-| **Splunk** | Enterprise compliance | All fields indexed | SIEM, compliance |
-| **CloudWatch Logs** | AWS-native | JSON fields | Zero setup on AWS |
+| Backend             | Best for              | Index model          | Strengths                |
+| ------------------- | --------------------- | -------------------- | ------------------------ |
+| **Loki**            | Kubernetes-native     | Labels only (stream) | Low cost, Grafana native |
+| **Elasticsearch**   | Rich full-text search | All fields indexed   | Powerful queries         |
+| **Splunk**          | Enterprise compliance | All fields indexed   | SIEM, compliance         |
+| **CloudWatch Logs** | AWS-native            | JSON fields          | Zero setup on AWS        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Print statements are fine for debugging" | Print statements are not findable in a distributed system. Structured logs with level=DEBUG, captured by a log aggregator, are searchable across all instances. |
-| "JSON logs are too slow" | Modern structured logging libraries (Logback with encoder, Go's `slog`, Pino) add < 1-2 microseconds per log event. For most services this is negligible compared to I/O operations. |
-| "We don't need trace_id if we have request_id" | Only matters if `request_id` is propagated to every downstream service and included in every log line. If it is - great. If not, `trace_id` from OpenTelemetry is the standard mechanism for this. |
-| "Logging everything at DEBUG is thorough" | DEBUG logging in production typically generates 10-100x the INFO log volume, overwhelming log ingestion pipelines and adding significant cost. Log at INFO in production; enable DEBUG selectively during incidents. |
-| "Log the exception stack trace in every log line" | Log the stack trace once at the point of origin. Re-logging at each call stack level duplicates the same error and obscures the causal chain. |
-| "Structured logs replace distributed tracing" | Logs provide event detail; traces provide causal flow between services. They are complementary. Logs tell you what happened at each service; traces tell you the sequence and timing across services. |
+| Misconception                                     | Reality                                                                                                                                                                                                              |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Print statements are fine for debugging"         | Print statements are not findable in a distributed system. Structured logs with level=DEBUG, captured by a log aggregator, are searchable across all instances.                                                      |
+| "JSON logs are too slow"                          | Modern structured logging libraries (Logback with encoder, Go's `slog`, Pino) add < 1-2 microseconds per log event. For most services this is negligible compared to I/O operations.                                 |
+| "We don't need trace_id if we have request_id"    | Only matters if `request_id` is propagated to every downstream service and included in every log line. If it is - great. If not, `trace_id` from OpenTelemetry is the standard mechanism for this.                   |
+| "Logging everything at DEBUG is thorough"         | DEBUG logging in production typically generates 10-100x the INFO log volume, overwhelming log ingestion pipelines and adding significant cost. Log at INFO in production; enable DEBUG selectively during incidents. |
+| "Log the exception stack trace in every log line" | Log the stack trace once at the point of origin. Re-logging at each call stack level duplicates the same error and obscures the causal chain.                                                                        |
+| "Structured logs replace distributed tracing"     | Logs provide event detail; traces provide causal flow between services. They are complementary. Logs tell you what happened at each service; traces tell you the sequence and timing across services.                |
 
 ---
 
@@ -520,6 +532,7 @@ it easy to log entire objects, which is convenient but
 dangerous when the object contains sensitive data.
 
 **Diagnostic Command:**
+
 ```bash
 # Search for PAN patterns in log storage
 curl -s -XGET "localhost:9200/logs-*/_search" \
@@ -567,6 +580,7 @@ increases log volume from 10,000 to 250,000 lines/second -
 exceeding the ingestion pipeline capacity.
 
 **Diagnostic Command:**
+
 ```bash
 # Check Fluentd dropped events counter
 kubectl exec -n logging fluentd-pod -- \
@@ -603,6 +617,7 @@ processes messages from a queue. The queue message does
 not include the `trace_id` from the original HTTP request.
 
 **Diagnostic Command:**
+
 ```bash
 # Check if trace_id is present in logs
 # A high % of lines missing trace_id = propagation failure
@@ -632,12 +647,14 @@ in all log lines produced by async message handlers.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `The Three Pillars of Observability` - logs are one of
   the three signal types; understanding how they complement
   metrics and traces provides the framework for choosing
   when to log vs when to use another signal
 
 **Builds On This (learn these next):**
+
 - `Distributed Tracing Fundamentals` - trace_id connects
   logs across services; understanding distributed tracing
   explains the correlation model
@@ -647,6 +664,7 @@ in all log lines produced by async message handlers.
   collects, ships, and stores structured logs
 
 **Alternatives / Comparisons:**
+
 - `Distributed Tracing Fundamentals` - when the problem
   is cross-service causal flow, traces are more efficient
   than correlating logs manually
@@ -690,6 +708,7 @@ in all log lines produced by async message handlers.
 ```
 
 **If you remember only 3 things:**
+
 1. Structure every queryable field as a named JSON field,
    not embedded in the message string. The rule: if you
    might filter by it, it must be a field.
@@ -715,6 +734,7 @@ vs EAV schema), API design (explicit fields vs opaque blobs),
 event streaming (Avro/Protobuf schemas vs JSON freeform).
 
 **Where else this pattern appears:**
+
 - **Database indexing** - a free-text `notes` column
   cannot be efficiently queried. Breaking it into structured
   columns (`customer_tier`, `issue_category`) enables
@@ -754,9 +774,10 @@ queries the message field - it queries the structured fields.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Explain to a developer why this log line
    is wrong: `logger.error("Payment failed for user " +
-   userId)` and rewrite it correctly using a structured
+userId)` and rewrite it correctly using a structured
    logging library, including at least 5 relevant context
    fields for a payment event.
 2. **[DEBUG]** Given a Grafana Loki dashboard where
@@ -794,13 +815,13 @@ and when the failures started. Walk through exactly what
 investigation steps you would take with the current
 unstructured logs vs with structured logs. What queries
 would you run? How long would each investigation take?
-*Hint: With unstructured logs, finding "silent failures"
+_Hint: With unstructured logs, finding "silent failures"
 (success logged but payment not processed) requires
 correlating log data with database state - and you need
 the user_id and transaction_id as searchable fields.
 With structured logs, one query can find all transactions
 where `status=success AND duration_ms > 4000` which may
-be a signal for failed-but-logged-success payments.*
+be a signal for failed-but-logged-success payments._
 
 **Q2.** You are designing the logging strategy for a new
 microservices platform with 50 services processing
@@ -812,12 +833,12 @@ justify your choice based on your query patterns and cost
 model, and design a sampling strategy that retains full
 visibility for errors while controlling costs for INFO
 and DEBUG logs.
-*Hint: 100,000 requests/s x 5 lines = 500,000 lines/s
+_Hint: 100,000 requests/s x 5 lines = 500,000 lines/s
 at INFO. At 200 bytes/line = 100 MB/s = 8.6 TB/day.
 At DEBUG level: 864 TB/day. Storage cost and ingestion
 pipeline capacity become critical constraints. Sampling
 strategy: 100% for ERROR/WARN, 100% for sampled traces
-(1-5% of requests, all logs), 1-10% for remaining INFO.*
+(1-5% of requests, all logs), 1-10% for remaining INFO._
 
 **Q3 (TYPE G):** Design a complete logging strategy for
 a healthcare platform that must satisfy these constraints:
@@ -830,13 +851,13 @@ $10,000/month. Specify: what fields to log, what to
 exclude, what backend to use, what retention policy to
 set, and how to separate operational logs from compliance
 audit logs.
-*Hint: Two log pipelines: (1) operational logs - no PHI,
+_Hint: Two log pipelines: (1) operational logs - no PHI,
 short retention (30 days), Loki or S3 for cost, (2) audit
 logs - explicit user action records with masked patient
 identifiers, Elasticsearch or SIEM tool, 7-year retention,
 immutable write. The key insight: compliance audit logs
 are not operational logs - they are a separate concern
-with different schema, retention, and access control.*
+with different schema, retention, and access control._
 
 ---
 
@@ -844,13 +865,14 @@ with different schema, retention, and access control.*
 
 **Q1: "What is structured logging and why should you use
 it instead of string concatenation?"**
-*Why they ask:* Tests practical logging experience.
+_Why they ask:_ Tests practical logging experience.
 Candidates who have debugged production incidents with
 both approaches have strong opinions.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - String concatenation: `logger.error("Failed for user "
-  + userId)` - context is in the message, cannot query by
-  userId, regex-only extraction
+  - userId)` - context is in the message, cannot query by
+    userId, regex-only extraction
 - Structured: `logger.error("Failed", kv("userId", userId))` -
   userId is a named field, directly queryable
 - Key point: in a distributed system with millions of log
@@ -861,9 +883,10 @@ both approaches have strong opinions.
 
 **Q2: "How do you safely log context in a payment service
 without exposing sensitive data?"**
-*Why they ask:* Tests security awareness in a domain with
+_Why they ask:_ Tests security awareness in a domain with
 clear sensitive data (credit card numbers, account numbers).
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Explicit field allowlist: log `card_last4`, never
   `card_number`
 - Never serialize entire request/response objects
@@ -880,9 +903,10 @@ clear sensitive data (credit card numbers, account numbers).
 **Q3: "Explain how trace_id enables cross-service log
 correlation and describe how to implement it in a
 Spring Boot microservice."**
-*Why they ask:* Tests understanding of distributed
+_Why they ask:_ Tests understanding of distributed
 tracing integration with logging - a common gap.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - trace_id is a globally unique identifier generated
   at the request entry point and propagated to every
   downstream service via HTTP headers and message headers

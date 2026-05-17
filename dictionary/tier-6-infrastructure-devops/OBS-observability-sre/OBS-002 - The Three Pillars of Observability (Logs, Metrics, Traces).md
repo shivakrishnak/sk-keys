@@ -29,11 +29,11 @@ permalink: /obs/the-three-pillars-of-observability-logs-metrics-traces/
 much and how fast, and traces follow a request through every
 service - together they answer any production question.
 
-| #002 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability and Why It Matters | |
-| **Used by:** | Logging Fundamentals, Metrics - Types, Distributed Tracing Fundamentals | |
-| **Related:** | What Is Observability and Why It Matters, Prometheus - Metrics Collection, ELK/EFK Stack | |
+| #002            | Category: Observability & SRE                                                            | Difficulty: ★☆☆ |
+| :-------------- | :--------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability and Why It Matters                                                 |                 |
+| **Used by:**    | Logging Fundamentals, Metrics - Types, Distributed Tracing Fundamentals                  |                 |
+| **Related:**    | What Is Observability and Why It Matters, Prometheus - Metrics Collection, ELK/EFK Stack |                 |
 
 ---
 
@@ -53,6 +53,7 @@ guesses.
 **THE BREAKING POINT:**
 Three classes of question emerge in every production incident,
 and no single signal type answers all three:
+
 - "What happened?" (events, state changes, errors)
 - "How much, how fast, how often?" (rates, percentiles, counts)
 - "Which exact request, through which exact path?" (causality)
@@ -120,6 +121,7 @@ permanently unanswerable.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Events (logs) are discrete and have infinite cardinality -
    each event is unique and contains arbitrary key-value fields
 2. Measurements (metrics) must be pre-aggregated to be scalable
@@ -204,6 +206,7 @@ diagnostic chain.
 > what order, and where they went next.
 
 Mapping:
+
 - "Case file / witness notes" - logs (discrete events, context)
 - "Statistics board / crime pattern analysis" - metrics
   (aggregated measurements, trends, rates)
@@ -270,6 +273,7 @@ show as "normal" may require profiling to identify GC pauses
 or CPU starvation in a hot loop.
 
 **EXPERT THINKING CUES:**
+
 - The three pillars are not a checklist - they are a lens. Ask
   "which pillar best answers this specific question?" before
   choosing instrumentation.
@@ -295,6 +299,7 @@ values, time ranges, and patterns.
 **Metrics - pre-aggregated numeric measurements:**
 A metric is a named, typed measurement with labels. Four
 types are standard in Prometheus:
+
 - Counter: monotonically increasing (request count, error count)
 - Gauge: point-in-time value (queue depth, memory usage)
 - Histogram: distribution over buckets (request latency P50/95/99)
@@ -313,6 +318,7 @@ parent span ID, service name, operation name, start time,
 duration, status, and attributes.
 
 Context propagation is the mechanism that links spans:
+
 ```
 Service A span (trace-id: abc, span-id: 1)
   calls Service B with header:
@@ -451,12 +457,12 @@ all log lines from the same request.
 
 ### ⚖️ Comparison Table
 
-| Pillar | Best question answered | Storage cost | Cardinality | Sampling |
-|---|---|---|---|---|
-| **Logs** | What happened, exactly? | High | Unlimited | Recommended |
-| **Metrics** | How many, how fast, what trend? | Low | Low (labels) | Not needed |
-| **Traces** | Which request, through which path? | Medium | High (attributes) | Required at scale |
-| Profiling (4th) | Which code path consumes CPU? | Very high | Medium | Required |
+| Pillar          | Best question answered             | Storage cost | Cardinality       | Sampling          |
+| --------------- | ---------------------------------- | ------------ | ----------------- | ----------------- |
+| **Logs**        | What happened, exactly?            | High         | Unlimited         | Recommended       |
+| **Metrics**     | How many, how fast, what trend?    | Low          | Low (labels)      | Not needed        |
+| **Traces**      | Which request, through which path? | Medium       | High (attributes) | Required at scale |
+| Profiling (4th) | Which code path consumes CPU?      | Very high    | Medium            | Required          |
 
 **How to choose which pillar to query first:**
 Start with metrics - they are always available, fast to query,
@@ -470,13 +476,13 @@ standard incident workflow.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| The three pillars are redundant - one is enough | Each answers a fundamentally different class of question. Metrics cannot show you the specific code path; traces cannot show you trends over time; logs alone cannot reconstruct distributed causality. |
-| Logs are the most important pillar | At scale, logs are the most expensive and most frequently sampled. Metrics provide the fastest alert signal and should be the primary detection mechanism. |
-| Traces replace logs | Traces show the path and timing; logs show the business context and error detail at each step. A trace without correlated logs often cannot explain WHY a span failed, only THAT it did. |
-| Adding more log verbosity improves observability | Unstructured log verbosity increases noise and storage cost without improving diagnostic power. A single structured log line with good fields outperforms 100 unstructured lines. |
-| OpenTelemetry replaces the three-pillar backends | OpenTelemetry is the instrumentation and collection layer. You still need Prometheus, Loki, and Tempo (or equivalents) as the storage and query backends. |
+| Misconception                                    | Reality                                                                                                                                                                                                 |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The three pillars are redundant - one is enough  | Each answers a fundamentally different class of question. Metrics cannot show you the specific code path; traces cannot show you trends over time; logs alone cannot reconstruct distributed causality. |
+| Logs are the most important pillar               | At scale, logs are the most expensive and most frequently sampled. Metrics provide the fastest alert signal and should be the primary detection mechanism.                                              |
+| Traces replace logs                              | Traces show the path and timing; logs show the business context and error detail at each step. A trace without correlated logs often cannot explain WHY a span failed, only THAT it did.                |
+| Adding more log verbosity improves observability | Unstructured log verbosity increases noise and storage cost without improving diagnostic power. A single structured log line with good fields outperforms 100 unstructured lines.                       |
+| OpenTelemetry replaces the three-pillar backends | OpenTelemetry is the instrumentation and collection layer. You still need Prometheus, Loki, and Tempo (or equivalents) as the storage and query backends.                                               |
 
 ---
 
@@ -497,6 +503,7 @@ Log statements do not include the active trace ID. The MDC
 the OpenTelemetry trace ID into the logging framework.
 
 **Diagnostic Command:**
+
 ```bash
 # Check if trace IDs appear in recent log lines
 kubectl logs deploy/checkout-service --tail=50 \
@@ -506,6 +513,7 @@ kubectl logs deploy/checkout-service --tail=50 \
 ```
 
 **Fix:**
+
 ```xml
 <!-- Spring Boot + Logback: bridge OTel trace to MDC -->
 <!-- GOOD: add dependency in pom.xml -->
@@ -539,6 +547,7 @@ analysis belongs in traces, not metrics. Metrics use labels
 for low-cardinality dimensions only.
 
 **Diagnostic Command:**
+
 ```bash
 # Find metric names with most series (potential explosion)
 curl -sg 'localhost:9090/api/v1/query?query=
@@ -573,6 +582,7 @@ headers, and the consumer is not extracting it to create a
 linked span. The trace context is lost at the async boundary.
 
 **Diagnostic Command:**
+
 ```bash
 # Check Kafka message headers for trace context
 kafka-console-consumer --topic orders \
@@ -599,11 +609,13 @@ new services.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability and Why It Matters` - the three
   pillars are the implementation of observability; understand
   the concept before the implementation
 
 **Builds On This (learn these next):**
+
 - `Logging Fundamentals (Structured Logs)` - deep dive into
   the log pillar: structure, ingestion, and query patterns
 - `Metrics - Types (Counter, Gauge, Histogram)` - deep dive
@@ -615,6 +627,7 @@ new services.
 - `Alerting Fundamentals` - how metric signals become alerts
 
 **Alternatives / Comparisons:**
+
 - `The Observability Ecosystem Map` - maps the full tool
   landscape for each pillar to vendors and open-source options
 - `Continuous Profiling (Pyroscope, Parca)` - the emerging
@@ -655,6 +668,7 @@ new services.
 ```
 
 **If you remember only 3 things:**
+
 1. Metrics detect problems (alert when error rate spikes).
    Logs contextualise them (what event happened, with what
    data). Traces explain causality (which path, which hop,
@@ -685,6 +699,7 @@ designed for a specific question class - gives coverage
 that no single comprehensive signal type could provide.
 
 **Where else this pattern appears:**
+
 - **Financial analysis** - balance sheet (point-in-time state,
   like a gauge metric), income statement (change over time,
   like a counter), and cash flow statement (causal path of
@@ -698,6 +713,7 @@ that no single comprehensive signal type could provide.
   security observability.
 
 **Industry applications:**
+
 - **E-commerce** - the three pillars are the foundation of
   every SRE team at Amazon, Google, and Netflix. Traces were
   the key innovation: Google's Dapper paper (2010) inspired
@@ -727,6 +743,7 @@ have done 90% of the work for 10% of the value.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Describe the three pillars to a junior
    engineer and explain which specific production question
    each one is best at answering - with a concrete example
@@ -760,9 +777,9 @@ visible in metrics with the corresponding log lines and trace,
 the events do not align. What class of problems does clock
 skew create across the three pillars, and how would you
 design instrumentation to minimise its impact?
-*Hint: Think about how Prometheus scrape times, OpenTelemetry
+_Hint: Think about how Prometheus scrape times, OpenTelemetry
 span timestamps, and log ingestion times relate to the actual
-wall-clock time of the event in the application.*
+wall-clock time of the event in the application._
 
 **Q2.** At 500,000 requests per second with a 0.05% error rate,
 that is 250 errors per second. You need to investigate a
@@ -771,10 +788,10 @@ specific error type that appears in 10% of those errors -
 is unaffordable. Design a sampling strategy across all three
 pillars that ensures you capture enough signal to diagnose
 the error without breaking your storage budget.
-*Hint: Consider tail-based trace sampling (keep all error
+_Hint: Consider tail-based trace sampling (keep all error
 traces), head-based log sampling (keep a fixed percentage),
 and full-fidelity metrics. Which pillar should never be
-sampled? Why?*
+sampled? Why?_
 
 **Q3.** Implement the three-pillar model for a background job:
 a scheduled order reconciliation task that runs every 5
@@ -783,11 +800,11 @@ downstream accounting service. Define the exact log events,
 metric counters and histograms, and trace spans you would
 instrument. What makes this harder than instrumenting a
 synchronous HTTP endpoint?
-*Hint: Background jobs have no inbound HTTP request to carry
+_Hint: Background jobs have no inbound HTTP request to carry
 trace context. How do you create a root span for a job
 invocation? How do you propagate context to the accounting
 service call? How do you measure "job run duration" vs
-"per-order processing time" in the same metric?*
+"per-order processing time" in the same metric?_
 
 ---
 
@@ -796,10 +813,11 @@ service call? How do you measure "job run duration" vs
 **Q1: "Explain the three pillars of observability and how
 they complement each other. When would you use each one
 during a production incident?"**
-*Why they ask:* Tests foundational observability knowledge and
+_Why they ask:_ Tests foundational observability knowledge and
 whether the candidate uses the pillars as a coherent system
 rather than as independent tools.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Metrics detect the problem (error rate alert fires)
 - Logs provide event context for the time window (what
   happened, with what business data, for which user)
@@ -812,10 +830,11 @@ rather than as independent tools.
 metrics as JSON log events, traces as JSON log events, and
 actual logs as JSON log events. What are the problems
 with this approach?"**
-*Why they ask:* Tests whether the candidate understands why
+_Why they ask:_ Tests whether the candidate understands why
 the pillars require different storage engines, not just
 different data formats.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Metrics in a log store cannot use PromQL or time-series
   aggregation - calculating P99 latency over 1 billion log
   events is extremely expensive vs a TSDB
@@ -830,9 +849,10 @@ different data formats.
 
 **Q3: "How do you ensure the three pillars stay correlated
 when requests cross Kafka topic boundaries?"**
-*Why they ask:* Tests practical distributed tracing knowledge
+_Why they ask:_ Tests practical distributed tracing knowledge
+
 - the hardest correlation challenge in real production systems.
-*Strong answer includes:*
+  _Strong answer includes:_
 - Kafka messages must carry W3C `traceparent` in their headers
 - The producer injects the current span context into message
   headers before publishing

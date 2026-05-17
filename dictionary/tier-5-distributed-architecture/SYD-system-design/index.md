@@ -2,97 +2,99 @@
 layout: default
 title: "System Design"
 parent: "Technical Dictionary"
-nav_order: 23
+nav_order: 19
 has_children: true
-permalink: /system-design/
+permalink: /syd/
 ---
 
 # System Design
 
-Scaling, load balancing, rate limiting, distributed locks, sharding, and classic system design problems.
+System design patterns, scalability strategies, reliability
+engineering, load balancing, distributed data patterns,
+back-of-envelope estimation, and end-to-end case studies.
 
-**Keywords:** SYD-001–SYD-048 (81 terms)
+**Keywords:** SYD-001–SYD-081 (81 terms)
 
 | ID | Keyword | Difficulty |
 |----|---------|------------|
-| SYD-001 | What Is System Design | ★☆☆ |
-| SYD-015 | Vertical Scaling | ★☆☆ |
-| SYD-035 | Horizontal Scaling | ★☆☆ |
-| SYD-016 | Round Robin | ★☆☆ |
-| SYD-017 | What is Scalability (Conceptual) | ★☆☆ |
-| SYD-010 | What is a Cache (System Design Context) | ★☆☆ |
-| SYD-011 | What is a Message Queue (Conceptual) | ★☆☆ |
-| SYD-018 | What is Database Replication (Basic) | ★☆☆ |
-| SYD-012 | System Design Interview Preparation Guide | ★☆☆ |
-| SYD-019 | The System Design Interview Mental Model | ★★☆ |
-| SYD-049 | How to Approach Any System Design Problem | ★★☆ |
-| SYD-016 | Estimation and Back-of-Envelope Thinking | ★★☆ |
-| SYD-020 | The System Design Ecosystem Map | ★★☆ |
-| SYD-037 | Load Balancing | ★★☆ |
-| SYD-021 | Least Connections | ★★☆ |
-| SYD-016 | Sticky Sessions | ★★☆ |
-| SYD-038 | Session Affinity | ★★☆ |
-| SYD-027 | Auto Scaling | ★★☆ |
-| SYD-022 | SLA SLO SLI | ★★☆ |
-| SYD-028 | MTTR MTBF | ★★☆ |
-| SYD-039 | Redundancy Failover | ★★☆ |
-| SYD-050 | Active-Passive | ★★☆ |
-| SYD-051 | Back-of-Envelope Estimation | ★★☆ |
-| SYD-052 | Rate Limiting (System) | ★★☆ |
-| SYD-053 | Read-Heavy vs Write-Heavy Design | ★★☆ |
-| SYD-040 | Push vs Pull Architecture | ★★☆ |
-| SYD-029 | Polling vs Webhooks | ★★☆ |
-| SYD-041 | Idempotency Key | ★★☆ |
-| SYD-054 | URL Shortener Design | ★★☆ |
-| SYD-055 | CDN Architecture Pattern | ★★☆ |
-| SYD-056 | Connection Pooling (System Design) | ★★☆ |
-| SYD-057 | Blob Storage Design | ★★☆ |
-| SYD-042 | System Design Interview Framework | ★★☆ |
-| SYD-058 | URL Shortener System Design | ★★☆ |
-| SYD-059 | Consistent Hashing (Load Balancing) | ★★★ |
-| SYD-023 | Error Budget | ★★★ |
-| SYD-043 | RTO RPO | ★★★ |
-| SYD-024 | Active-Active | ★★★ |
-| SYD-060 | Disaster Recovery | ★★★ |
-| SYD-061 | Geo-Replication | ★★★ |
-| SYD-062 | Multi-Region Architecture | ★★★ |
-| SYD-063 | Thundering Herd | ★★★ |
-| SYD-044 | Capacity Planning | ★★★ |
-| SYD-064 | Token Bucket | ★★★ |
-| SYD-065 | Leaky Bucket | ★★★ |
-| SYD-066 | Sharding (System) | ★★★ |
-| SYD-067 | Hot Shard | ★★★ |
-| SYD-068 | Denormalization for Scale | ★★★ |
-| SYD-069 | Fan-Out on Write vs Read | ★★★ |
-| SYD-070 | Distributed Locks | ★★★ |
-| SYD-071 | Leader-Follower Pattern | ★★★ |
-| SYD-072 | Write-Ahead Logging (System) | ★★★ |
-| SYD-005 | Data Partitioning Strategies | ★★★ |
-| SYD-006 | Rate Limiter Design | ★★★ |
-| SYD-007 | News Feed Design | ★★★ |
-| SYD-008 | Search Autocomplete Design | ★★★ |
-| SYD-030 | Notification System Design | ★★★ |
-| SYD-031 | Chat System Design | ★★★ |
-| SYD-073 | Video Streaming Design | ★★★ |
-| SYD-032 | Ride-Sharing System Design | ★★★ |
-| SYD-074 | System Design at Hyperscale | ★★★ |
-| SYD-075 | Multi-Region Architecture Strategy | ★★★ |
-| SYD-013 | Cost-Performance Trade-off Architecture | ★★★ |
-| SYD-002 | System Evolution Strategy | ★★★ |
-| SYD-003 | Platform Architecture Design | ★★★ |
-| SYD-014 | Emergent Architecture Patterns | ★★★ |
-| SYD-045 | Theoretical Foundations of Scalable Systems | ★★★ |
-| SYD-046 | Formal Capacity Planning Models | ★★★ |
-| SYD-076 | System Design Research and Case Studies | ★★★ |
-| SYD-047 | Constraint-First System Design Thinking | ★★★ |
-| SYD-077 | Scale Estimation Mental Model | ★★★ |
-| SYD-078 | Trade-off Navigation Framework | ★★★ |
-| SYD-079 | Cache Invalidation Strategies | ★★★ |
-| SYD-080 | Payment System Design | ★★★ |
-| SYD-009 | File Storage System Design (Dropbox/S3) | ★★★ |
-| SYD-033 | Email System Design | ★★★ |
-| SYD-080 | Game Leaderboard Design | ★★★ |
-| SYD-004 | Booking and Reservation System Design | ★★★ |
-| SYD-025 | Real-Time Collaboration System Design | ★★★ |
-| SYD-080 | Global Key-Value Store Design | ★★★ |
-| SYD-048 | Design a Chat System | ★★★ |
+| SYD-001 | System Design | ★☆☆ |
+| SYD-002 | Non-Functional Requirements | ★☆☆ |
+| SYD-003 | Availability | ★☆☆ |
+| SYD-004 | Single Point of Failure | ★☆☆ |
+| SYD-005 | Latency vs Throughput | ★★☆ |
+| SYD-006 | Vertical Scaling | ★☆☆ |
+| SYD-007 | Horizontal Scaling | ★☆☆ |
+| SYD-008 | Load Balancing | ★★☆ |
+| SYD-009 | Round Robin | ★☆☆ |
+| SYD-010 | Least Connections | ★★☆ |
+| SYD-011 | Consistent Hashing | ★★★ |
+| SYD-012 | Sticky Sessions | ★★☆ |
+| SYD-013 | Session Affinity | ★★☆ |
+| SYD-014 | Auto Scaling | ★★☆ |
+| SYD-015 | "SLA / SLO / SLI" | ★★☆ |
+| SYD-016 | Error Budget | ★★★ |
+| SYD-017 | "MTTR / MTBF" | ★★☆ |
+| SYD-018 | "RTO / RPO" | ★★★ |
+| SYD-019 | Redundancy and Failover | ★★☆ |
+| SYD-020 | Active-Active | ★★★ |
+| SYD-021 | Active-Passive | ★★☆ |
+| SYD-022 | Disaster Recovery | ★★★ |
+| SYD-023 | Geo-Replication | ★★★ |
+| SYD-024 | Multi-Region Architecture | ★★★ |
+| SYD-025 | Thundering Herd | ★★★ |
+| SYD-026 | Back-of-Envelope Estimation | ★★☆ |
+| SYD-027 | Capacity Planning | ★★★ |
+| SYD-028 | Rate Limiting (System) | ★★☆ |
+| SYD-029 | Token Bucket | ★★★ |
+| SYD-030 | Leaky Bucket | ★★★ |
+| SYD-031 | Sharding | ★★★ |
+| SYD-032 | Hot Shard | ★★★ |
+| SYD-033 | Read-Heavy vs Write-Heavy Design | ★★★ |
+| SYD-034 | Denormalization for Scale | ★★★ |
+| SYD-035 | Fan-Out on Write vs Read | ★★★ |
+| SYD-036 | Push vs Pull Architecture | ★★★ |
+| SYD-037 | Polling vs Webhooks | ★★☆ |
+| SYD-038 | Idempotency Key | ★★★ |
+| SYD-039 | Distributed Locks | ★★★ |
+| SYD-040 | Leader-Follower Pattern | ★★★ |
+| SYD-041 | Write-Ahead Logging (System) | ★★★ |
+| SYD-042 | Data Partitioning Strategies | ★★★ |
+| SYD-043 | URL Shortener Design | ★★☆ |
+| SYD-044 | Rate Limiter Design | ★★★ |
+| SYD-045 | News Feed Design | ★★★ |
+| SYD-046 | Search Autocomplete Design | ★★★ |
+| SYD-047 | Notification System Design | ★★★ |
+| SYD-048 | Chat System Design | ★★★ |
+| SYD-049 | Video Streaming Design | ★★★ |
+| SYD-050 | Ride-Sharing System Design | ★★★ |
+| SYD-051 | Search System Design | ★★★ |
+| SYD-052 | Distributed Cache Design | ★★★ |
+| SYD-053 | Social Network Design | ★★★ |
+| SYD-054 | E-Commerce Platform Design | ★★★ |
+| SYD-055 | Web Crawler Design | ★★★ |
+| SYD-056 | API Gateway Design | ★★★ |
+| SYD-057 | Event-Driven Architecture | ★★★ |
+| SYD-058 | CQRS | ★★★ |
+| SYD-059 | Event Sourcing | ★★★ |
+| SYD-060 | Circuit Breaker (System) | ★★★ |
+| SYD-061 | Bulkhead Pattern | ★★★ |
+| SYD-062 | Saga Pattern | ★★★ |
+| SYD-063 | What is Scalability (Conceptual) | ★☆☆ |
+| SYD-064 | What is a Cache (Conceptual) | ★☆☆ |
+| SYD-065 | What is a Message Queue (Conceptual) | ★☆☆ |
+| SYD-066 | What is Database Replication (Basic) | ★☆☆ |
+| SYD-067 | CDN Architecture Pattern | ★★☆ |
+| SYD-068 | Connection Pooling (System Design) | ★★☆ |
+| SYD-069 | Cache Invalidation Strategies | ★★★ |
+| SYD-070 | Blob Storage Design | ★★☆ |
+| SYD-071 | Payment System Design | ★★★ |
+| SYD-072 | File Storage System Design | ★★★ |
+| SYD-073 | Email System Design | ★★★ |
+| SYD-074 | Game Leaderboard Design | ★★★ |
+| SYD-075 | Booking and Reservation System Design | ★★★ |
+| SYD-076 | Real-Time Collaboration System Design | ★★★ |
+| SYD-077 | Global Key-Value Store Design | ★★★ |
+| SYD-078 | System Design Interview Framework | ★★☆ |
+| SYD-079 | System Design Interview Preparation Guide | ★☆☆ |
+| SYD-080 | Technology Selection Framework | ★★★ |
+| SYD-081 | Microservices vs Monolith Decision | ★★★ |

@@ -29,11 +29,11 @@ harmed right now (SLO burn rate) and are silent when
 everything is within acceptable bounds - not when
 any threshold is breached in a noisy threshold system.
 
-| #009 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Monitoring vs Observability, SRE What It Is, Metrics Types | |
-| **Used by:** | SLI/SLO, Error Budget, On-Call Management | |
-| **Related:** | SRE, Metrics Types, SLI Fundamentals | |
+| #009            | Category: Observability & SRE                              | Difficulty: ★☆☆ |
+| :-------------- | :--------------------------------------------------------- | :-------------- |
+| **Depends on:** | Monitoring vs Observability, SRE What It Is, Metrics Types |                 |
+| **Used by:**    | SLI/SLO, Error Budget, On-Call Management                  |                 |
+| **Related:**    | SRE, Metrics Types, SLI Fundamentals                       |                 |
 
 ---
 
@@ -76,6 +76,7 @@ budget allows."
 **Alerting** is the practice of generating automated
 notifications when a system's observed state warrants
 human attention. Effective alerting has three properties:
+
 1. **High precision:** few false positives (alerts that
    fire when there is no user impact)
 2. **High recall:** few false negatives (alerts that
@@ -84,6 +85,7 @@ human attention. Effective alerting has three properties:
    no alert fires that cannot be actioned
 
 **Alert types by category:**
+
 - **Symptom alerts:** user-visible degradation (error rate,
   latency SLO breach). These are the alerts you page on.
 - **Cause alerts:** internal system conditions (high CPU,
@@ -140,6 +142,7 @@ The ratio is a direct measure of on-call toil.
 **THE MATH OF SLO BURN RATE ALERTS:**
 
 If your monthly SLO is 99.9% (0.1% error budget):
+
 - Monthly error budget: 0.001 x 2,592,000s = 2,592s
   (43.2 minutes)
 - Sustainable burn rate: 1.0 (consuming budget at exactly
@@ -176,6 +179,7 @@ alert fatigue, no direct correlation to user impact.
 Two teams monitor the same checkout service.
 
 **TEAM A: Threshold-based alerting:**
+
 - CPU > 80% → alert
 - Memory > 75% → alert
 - 5xx error count > 10 → alert
@@ -184,6 +188,7 @@ Two teams monitor the same checkout service.
 - Connection pool > 90% → alert
 
 **TEAM B: SLO burn rate alerting:**
+
 - SLO: 99.9% success, P99 < 500ms
 - Alert: error budget burn rate > 14.4x for 5 min (page)
 - Alert: error budget burn rate > 3x for 30 min (page)
@@ -323,6 +328,7 @@ immediate page vs a slower ticket.
 ```
 
 **BURN RATE FORMULA:**
+
 ```
 # Error budget burn rate over window W
 burn_rate(W) = (
@@ -394,15 +400,15 @@ this: if `payment` is firing, inhibit `checkout` alert.
 # It does not tell the engineer what to do.
 # It will cause alert fatigue.
 groups:
-- name: bad-alerts
-  rules:
-  - alert: HighCPU
-    expr: cpu_usage_percent > 80
-    for: 5m
-    annotations:
-      summary: "CPU is high"
-      # What should the engineer do? Unknown.
-      # Is this causing user impact? Unknown.
+  - name: bad-alerts
+    rules:
+      - alert: HighCPU
+        expr: cpu_usage_percent > 80
+        for: 5m
+        annotations:
+          summary: "CPU is high"
+          # What should the engineer do? Unknown.
+          # Is this causing user impact? Unknown.
 ```
 
 **Example 2 - GOOD: SLO burn rate alert:**
@@ -413,49 +419,49 @@ groups:
 # at a rate that threatens the error budget.
 # Includes context for fast diagnosis.
 groups:
-- name: checkout-slo
-  rules:
-  # Page immediately: fast burn (5x for 5min window)
-  - alert: CheckoutSLOFastBurn
-    expr: |
-      (
-        sum(rate(checkout_requests_total{
-          status!~"2.."}[1h]))
-        / sum(rate(checkout_requests_total[1h]))
-      ) / (1 - 0.999) > 14.4
-    for: 5m
-    labels:
-      severity: page
-      service: checkout
-      team: payments
-    annotations:
-      summary: >-
-        Checkout error budget burning at
-        {{ $value | humanize }}x rate
-      description: >-
-        At this burn rate, monthly error budget
-        exhausted in {{ printf "%.1f" (43.2 / $value) }}
-        minutes.
-      runbook: "https://wiki/runbooks/checkout-slo"
-      dashboard: "https://grafana/d/checkout"
+  - name: checkout-slo
+    rules:
+      # Page immediately: fast burn (5x for 5min window)
+      - alert: CheckoutSLOFastBurn
+        expr: |
+          (
+            sum(rate(checkout_requests_total{
+              status!~"2.."}[1h]))
+            / sum(rate(checkout_requests_total[1h]))
+          ) / (1 - 0.999) > 14.4
+        for: 5m
+        labels:
+          severity: page
+          service: checkout
+          team: payments
+        annotations:
+          summary: >-
+            Checkout error budget burning at
+            {{ $value | humanize }}x rate
+          description: >-
+            At this burn rate, monthly error budget
+            exhausted in {{ printf "%.1f" (43.2 / $value) }}
+            minutes.
+          runbook: "https://wiki/runbooks/checkout-slo"
+          dashboard: "https://grafana/d/checkout"
 
-  # Ticket: slow burn (3x for 30min - budget at risk)
-  - alert: CheckoutSLOSlowBurn
-    expr: |
-      (
-        sum(rate(checkout_requests_total{
-          status!~"2.."}[6h]))
-        / sum(rate(checkout_requests_total[6h]))
-      ) / (1 - 0.999) > 3
-    for: 30m
-    labels:
-      severity: ticket
-      service: checkout
-    annotations:
-      summary: "Checkout error budget burn rate elevated"
-      description: >-
-        Budget burning at {{ $value | humanize }}x.
-        Review before budget is exhausted.
+      # Ticket: slow burn (3x for 30min - budget at risk)
+      - alert: CheckoutSLOSlowBurn
+        expr: |
+          (
+            sum(rate(checkout_requests_total{
+              status!~"2.."}[6h]))
+            / sum(rate(checkout_requests_total[6h]))
+          ) / (1 - 0.999) > 3
+        for: 30m
+        labels:
+          severity: ticket
+          service: checkout
+        annotations:
+          summary: "Checkout error budget burn rate elevated"
+          description: >-
+            Budget burning at {{ $value | humanize }}x.
+            Review before budget is exhausted.
 ```
 
 **Example 3 - Multiwindow burn rate alert (best practice):**
@@ -487,35 +493,35 @@ groups:
 
 ### ⚖️ Comparison Table
 
-| Alert approach | Precision | Recall | Alert fatigue | Complexity | Best For |
-|---|---|---|---|---|---|
-| **SLO burn rate** | High | High | Low | High | Production SLOs with metrics |
-| Threshold (cause) | Low | Medium | High | Low | Simple systems, getting started |
-| Threshold (symptom) | Medium | Medium | Medium | Low | No SLO instrumentation |
-| Anomaly detection | Medium | Medium | Medium | High | Dynamic baselines |
-| Composite (AND conditions) | High | Medium | Low | Medium | Correlated conditions |
+| Alert approach             | Precision | Recall | Alert fatigue | Complexity | Best For                        |
+| -------------------------- | --------- | ------ | ------------- | ---------- | ------------------------------- |
+| **SLO burn rate**          | High      | High   | Low           | High       | Production SLOs with metrics    |
+| Threshold (cause)          | Low       | Medium | High          | Low        | Simple systems, getting started |
+| Threshold (symptom)        | Medium    | Medium | Medium        | Low        | No SLO instrumentation          |
+| Anomaly detection          | Medium    | Medium | Medium        | High       | Dynamic baselines               |
+| Composite (AND conditions) | High      | Medium | Low           | Medium     | Correlated conditions           |
 
 **Alert routing tools:**
 
-| Tool | Strengths | Weaknesses |
-|---|---|---|
-| **Alertmanager** | Prometheus native, open source | Complex config, no mobile app |
-| **PagerDuty** | Best on-call scheduling, escalations | Expensive at scale |
-| **OpsGenie** | Flexible routing, good mobile | Less feature-rich than PD |
-| **Grafana Alerting** | Unified UI, multi-datasource | Newer, less mature |
+| Tool                 | Strengths                            | Weaknesses                    |
+| -------------------- | ------------------------------------ | ----------------------------- |
+| **Alertmanager**     | Prometheus native, open source       | Complex config, no mobile app |
+| **PagerDuty**        | Best on-call scheduling, escalations | Expensive at scale            |
+| **OpsGenie**         | Flexible routing, good mobile        | Less feature-rich than PD     |
+| **Grafana Alerting** | Unified UI, multi-datasource         | Newer, less mature            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "More alerts = better monitoring" | More alerts = more alert fatigue = real alerts ignored. Each alert added must justify its existence by having a clear response action and a non-zero historical firing rate on real incidents. |
-| "Every alert should page on-call" | Only page on-call for alerts that require immediate human action (within 15 minutes). Slow burns, predicted issues, and informational alerts belong in Slack or ticketing systems. |
-| "Alerting on error count is equivalent to error rate" | A count of 100 errors/minute means nothing without context. Is that 100 out of 100 requests (100% error rate) or 100 out of 1,000,000 (0.01%)? Always alert on error rate relative to SLO. |
-| "Silence noisy alerts by increasing threshold" | Raising the threshold masks the signal. The correct response to a noisy alert is: either fix the underlying condition causing the false positive, or delete the alert if it has no actionable response. |
-| "Alert on all 5xx errors" | A single 5xx is not an alert. Set an appropriate `for: duration` to require the condition to persist. A 30-second spike might resolve itself; sustained degradation for 5 minutes is actionable. |
-| "Flapping alerts can be ignored" | Flapping alerts indicate an unstable system or an improperly tuned alert. Investigate the cause. Flapping alerts that are silenced train engineers to ignore all alerts. |
+| Misconception                                         | Reality                                                                                                                                                                                                 |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "More alerts = better monitoring"                     | More alerts = more alert fatigue = real alerts ignored. Each alert added must justify its existence by having a clear response action and a non-zero historical firing rate on real incidents.          |
+| "Every alert should page on-call"                     | Only page on-call for alerts that require immediate human action (within 15 minutes). Slow burns, predicted issues, and informational alerts belong in Slack or ticketing systems.                      |
+| "Alerting on error count is equivalent to error rate" | A count of 100 errors/minute means nothing without context. Is that 100 out of 100 requests (100% error rate) or 100 out of 1,000,000 (0.01%)? Always alert on error rate relative to SLO.              |
+| "Silence noisy alerts by increasing threshold"        | Raising the threshold masks the signal. The correct response to a noisy alert is: either fix the underlying condition causing the false positive, or delete the alert if it has no actionable response. |
+| "Alert on all 5xx errors"                             | A single 5xx is not an alert. Set an appropriate `for: duration` to require the condition to persist. A 30-second spike might resolve itself; sustained degradation for 5 minutes is actionable.        |
+| "Flapping alerts can be ignored"                      | Flapping alerts indicate an unstable system or an improperly tuned alert. Investigate the cause. Flapping alerts that are silenced train engineers to ignore all alerts.                                |
 
 ---
 
@@ -537,6 +543,7 @@ None required immediate action. The engineer learned to
 ignore their phone. The real incident alert was missed.
 
 **Diagnostic Command:**
+
 ```bash
 # Count alerts by severity and firing state
 # to measure alert fatigue indicators
@@ -578,6 +585,7 @@ through to a default route that sends to a Slack
 channel no one monitors on evenings.
 
 **Diagnostic Command:**
+
 ```bash
 # Test routing using alertmanager routing debugger
 amtool alert add \
@@ -622,6 +630,7 @@ measured by the alert is: `(3% x 20min + 0% x 40min) /
 The alert threshold is `14.4`. Alert does not fire.
 
 **Diagnostic Command:**
+
 ```promql
 # Compare short window vs long window burn rate
 # to see the dilution effect
@@ -647,6 +656,7 @@ Use 5m and 1h windows simultaneously (both must fire).
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Monitoring vs Observability` - alerting is the
   action layer of monitoring; understanding the
   distinction frames why symptom alerting is superior
@@ -658,6 +668,7 @@ Use 5m and 1h windows simultaneously (both must fire).
   configuration for latency SLOs
 
 **Builds On This (learn these next):**
+
 - `SLI and SLO Fundamentals` - burn rate is calculated
   from the SLO target and current SLI value
 - `On-Call Management and Incident Response` - alerting
@@ -666,6 +677,7 @@ Use 5m and 1h windows simultaneously (both must fire).
   a runbook describing the response procedure
 
 **Alternatives / Comparisons:**
+
 - `Anomaly Detection Alerting` - ML-based alerting can
   detect unusual patterns without predefined thresholds,
   useful for metrics without clear SLOs
@@ -708,6 +720,7 @@ Use 5m and 1h windows simultaneously (both must fire).
 ```
 
 **If you remember only 3 things:**
+
 1. Alert on symptoms (error rate, latency) not causes
    (CPU, disk). Users do not experience your CPU usage;
    they experience your error rate and response time.
@@ -737,6 +750,7 @@ financial systems (transaction failure rate is more
 important than queue depth).
 
 **Where else this pattern appears:**
+
 - **Capacity planning** - plan for user-visible metrics
   (requests/second, concurrent users), not server metrics
   (CPU cores, RAM). Server metrics follow from user
@@ -772,6 +786,7 @@ than a larger, lower-quality one.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Given an alert rule that fires on CPU >
    80%, explain why this alert causes alert fatigue and
    rewrite it as an SLO symptom alert for the same service,
@@ -814,13 +829,13 @@ is "too reliable to need monitoring." How do you respond?
 What is the difference between the current state and the
 SLO target, and what does that difference tell you about
 the alert configuration?
-*Hint: If the service is at 99.99% and the SLO is 99.9%,
+_Hint: If the service is at 99.99% and the SLO is 99.9%,
 the service has 10x more reliability than required. This
 might indicate the SLO is set too low (meaning the
 service is over-invested in reliability) OR that current
 traffic patterns are not representative of peak load.
 The correct response is not to remove alerts but to
-review whether the SLO should be raised to 99.99%.*
+review whether the SLO should be raised to 99.99%._
 
 **Q2.** Design the alerting strategy for a new feature
 (A/B test) rolled out to 5% of users. The A/B test
@@ -830,13 +845,13 @@ that errors from the 5% A/B test variant are reflected
 in your SLO measurement and alerts? If the A/B variant
 has a 2% error rate, does this breach your SLO? Calculate
 the impact on the overall error rate and error budget.
-*Hint: 5% of users at 2% error rate = 0.1% errors from
+_Hint: 5% of users at 2% error rate = 0.1% errors from
 A/B test. 95% of users at 0.01% error rate = ~0.01%
 errors from control. Total error rate = ~0.11%. SLO is
 99.9% = 0.1% error budget. The A/B test alone is consuming
 the entire error budget. Label A/B variant traffic with
 `variant=treatment` and alert separately, or the A/B
-test error rate will trigger SLO alerts on the baseline.*
+test error rate will trigger SLO alerts on the baseline._
 
 **Q3 (TYPE G):** You are the SRE lead for a financial
 trading platform with these characteristics: 50,000
@@ -850,13 +865,13 @@ escalation), and how you handle the challenge that the
 trading window is only 6.5 hours/day. What special
 considerations apply to a service with bursty daily
 traffic patterns vs steady-state traffic?
-*Hint: 99.999% SLO on 5.26 min/year. Daily error budget
+_Hint: 99.999% SLO on 5.26 min/year. Daily error budget
 = 5.26min/365 = 0.86 seconds/day. During the 6.5-hour
 trading window, the entire day's budget is consumed in
 6.5 hours. At 50,000 trades/s: a 1-second outage = 50,000
 missed trades - severe regulatory and financial impact.
 Fast burn threshold needs to be much shorter than the
-standard 1-hour window. Consider 5-minute windows.*
+standard 1-hour window. Consider 5-minute windows._
 
 ---
 
@@ -864,10 +879,11 @@ standard 1-hour window. Consider 5-minute windows.*
 
 **Q1: "Explain the difference between alerting on symptoms
 vs alerting on causes. Give an example of each."**
-*Why they ask:* Tests understanding of alert design
+_Why they ask:_ Tests understanding of alert design
 philosophy. Alert fatigue is one of the most common
 SRE problems.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Cause alert: CPU > 80%, disk > 85%, memory > 75%.
   These measure internal conditions. They may or may
   not affect users. They cause alert fatigue.
@@ -884,9 +900,10 @@ SRE problems.
 
 **Q2: "What is an SLO burn rate and how do you use it
 in an alert rule?"**
-*Why they ask:* Tests whether the candidate understands
+_Why they ask:_ Tests whether the candidate understands
 SLO-based alerting beyond just knowing the term "SLO."
-*Strong answer includes:*
+_Strong answer includes:_
+
 - burn_rate = current_error_rate / (1 - slo_target)
 - Example: SLO=99.9%, current error rate=5%:
   burn_rate = 0.05 / 0.001 = 50x
@@ -902,8 +919,9 @@ SLO-based alerting beyond just knowing the term "SLO."
 **Q3: "How would you reduce alert fatigue in a system
 that is generating 200 alerts per on-call shift with
 a 5% real-incident rate?"**
-*Why they ask:* Tests practical alert tuning experience.
-*Strong answer includes:*
+_Why they ask:_ Tests practical alert tuning experience.
+_Strong answer includes:_
+
 - Step 1: Export all alert firings to a spreadsheet
   for the last 30 days. Label each: real incident or
   not. This data reveals which alerts have low signal.

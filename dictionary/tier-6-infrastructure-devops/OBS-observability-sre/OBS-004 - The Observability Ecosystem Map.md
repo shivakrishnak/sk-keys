@@ -29,11 +29,11 @@ permalink: /obs/the-observability-ecosystem-map/
 collection, storage, and visualisation layers - knowing the
 map prevents vendor lock-in and wrong tool choices.
 
-| #004 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability and Why It Matters, The Three Pillars of Observability | |
-| **Used by:** | Prometheus - Metrics Collection, Grafana - Dashboards, OpenTelemetry - The Standard | |
-| **Related:** | What Is Observability and Why It Matters, The Three Pillars of Observability, Monitoring vs Observability | |
+| #004            | Category: Observability & SRE                                                                             | Difficulty: ★☆☆ |
+| :-------------- | :-------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability and Why It Matters, The Three Pillars of Observability                              |                 |
+| **Used by:**    | Prometheus - Metrics Collection, Grafana - Dashboards, OpenTelemetry - The Standard                       |                 |
+| **Related:**    | What Is Observability and Why It Matters, The Three Pillars of Observability, Monitoring vs Observability |                 |
 
 ---
 
@@ -70,8 +70,7 @@ baseline looks like, and when a vendor solution is worth its
 cost.
 
 **EVOLUTION:**
-The observability tool landscape exploded between 2016 and
-2022. Prometheus (2012) standardised metrics collection. The
+The observability tool landscape exploded between 2016 and 2022. Prometheus (2012) standardised metrics collection. The
 ELK Stack (Elasticsearch/Logstash/Kibana, 2010-2014)
 standardised log management. Jaeger and Zipkin (2015-2016)
 brought distributed tracing to open source. OpenTelemetry
@@ -125,6 +124,7 @@ layers that should be modular.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. The instrumentation layer must be decoupled from the storage
    layer - changing the backend should not require rewriting
    application code
@@ -186,6 +186,7 @@ Loki (free) for logs, Tempo (free) for traces, and Grafana
 the self-hosted stack costs $800/month. Because they used
 OpenTelemetry, if they later want Datadog's AI features,
 migration requires only reconfiguring the OTel collector
+
 - not rewriting application code.
 
 **THE INSIGHT:**
@@ -208,6 +209,7 @@ and visualisation later.
 > an Android without the cell towers changing.
 
 Mapping:
+
 - "Handset / phone app code" - instrumentation SDK
   (OpenTelemetry in application code)
 - "Cell towers" - collectors (OpenTelemetry Collector, agents)
@@ -272,6 +274,7 @@ for cost control). The inflection point is typically around
 $5,000-$10,000/month on observability vendors.
 
 **EXPERT THINKING CUES:**
+
 - Always instrument with OpenTelemetry. Never use a vendor's
   proprietary instrumentation SDK. This is the one decision
   that cannot be undone without rewriting all services.
@@ -289,6 +292,7 @@ The four layers and their standard tools:
 
 **Layer 1 - Instrumentation:**
 Application code emits signals using an SDK.
+
 - Open standard: OpenTelemetry SDK (Java, Go, Python, etc.)
 - Vendor proprietary: Datadog Agent SDK, New Relic Agent
 - Auto-instrumentation: OTel Java Agent (zero-code tracing)
@@ -297,6 +301,7 @@ Application code emits signals using an SDK.
 **Layer 2 - Collection:**
 Agents and collectors receive signals and route them to
 storage backends.
+
 - Open source: OpenTelemetry Collector
 - Log-specific: Fluentd, Fluent Bit, Logstash
 - Metrics-specific: Prometheus (pull-based scraping)
@@ -305,6 +310,7 @@ storage backends.
 
 **Layer 3 - Storage:**
 Signal-type-specific backends:
+
 - Metrics TSDB: Prometheus, Thanos, Cortex, VictoriaMetrics,
   Mimir (open source); Datadog, New Relic (managed)
 - Log store: Loki (open source, label-based),
@@ -313,6 +319,7 @@ Signal-type-specific backends:
   Zipkin; Honeycomb, Datadog APM (managed)
 
 **Layer 4 - Query and Visualisation:**
+
 - Unified dashboard: Grafana (queries all backends)
 - Metrics query: Prometheus UI (PromQL)
 - Log query: Kibana (Lucene/KQL), Grafana Explore (LogQL)
@@ -448,35 +455,36 @@ exporters:
 service:
   pipelines:
     metrics:
-      receivers:  [otlp]
-      exporters:  [prometheusremotewrite]
+      receivers: [otlp]
+      exporters: [prometheusremotewrite]
     logs:
-      receivers:  [otlp]
-      exporters:  [loki]
+      receivers: [otlp]
+      exporters: [loki]
     traces:
-      receivers:  [otlp]
-      exporters:  [otlp/tempo]
+      receivers: [otlp]
+      exporters: [otlp/tempo]
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Stack option | Cost at scale | Ops burden | Lock-in | Best For |
-|---|---|---|---|---|
-| **Open-source (OTel+Grafana stack)** | Low | High | None | Cost control, large teams |
-| Datadog | High | Low | High | Fast setup, AI features |
-| Honeycomb | Medium | Low | Medium | High-cardinality ad-hoc |
-| New Relic | High | Low | High | APM-first teams |
-| AWS CloudWatch | Medium | Low | AWS-only | All-in AWS shops |
-| Grafana Cloud | Medium | Low | Grafana | Open-source + managed |
+| Stack option                         | Cost at scale | Ops burden | Lock-in  | Best For                  |
+| ------------------------------------ | ------------- | ---------- | -------- | ------------------------- |
+| **Open-source (OTel+Grafana stack)** | Low           | High       | None     | Cost control, large teams |
+| Datadog                              | High          | Low        | High     | Fast setup, AI features   |
+| Honeycomb                            | Medium        | Low        | Medium   | High-cardinality ad-hoc   |
+| New Relic                            | High          | Low        | High     | APM-first teams           |
+| AWS CloudWatch                       | Medium        | Low        | AWS-only | All-in AWS shops          |
+| Grafana Cloud                        | Medium        | Low        | Grafana  | Open-source + managed     |
 
 **How to choose:** Instrument with OpenTelemetry regardless
 of which row you choose. At startup scale (under $2k/month
 observability budget): Grafana Cloud or Datadog for
 operational simplicity. At growth scale (over $5k/month):
 evaluate self-hosted open-source (Prometheus + Loki + Tempo
-+ Grafana) to control cost.
+
+- Grafana) to control cost.
 
 **Decision Tree:**
 Need to be operational in 1 day? - Use Datadog or Grafana Cloud
@@ -489,13 +497,13 @@ Need to control costs at 1B+ events/day? - Self-hosted stack
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| OpenTelemetry is an observability backend | OTel is the instrumentation and collection layer only. You still need Prometheus, Loki, and Tempo (or equivalents) as storage and query backends. |
-| Prometheus replaces a log store | Prometheus stores only metrics (numeric time-series). Logs require a separate backend (Loki, Elasticsearch). Using metrics to store log-like data is a cardinality explosion waiting to happen. |
-| Grafana is a data source | Grafana is a visualisation layer only. It queries data from backends (Prometheus, Loki, Tempo) but stores nothing itself. |
-| More tools equals better observability | Each tool added is another operational system. Two tools at 80% coverage is often better than six tools at 100% coverage with triple the operational burden. |
-| OpenTelemetry auto-instrumentation captures everything | Auto-instrumentation captures HTTP, database, and messaging library spans. Business-domain spans (order processed, payment validated) require manual instrumentation. |
+| Misconception                                          | Reality                                                                                                                                                                                         |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OpenTelemetry is an observability backend              | OTel is the instrumentation and collection layer only. You still need Prometheus, Loki, and Tempo (or equivalents) as storage and query backends.                                               |
+| Prometheus replaces a log store                        | Prometheus stores only metrics (numeric time-series). Logs require a separate backend (Loki, Elasticsearch). Using metrics to store log-like data is a cardinality explosion waiting to happen. |
+| Grafana is a data source                               | Grafana is a visualisation layer only. It queries data from backends (Prometheus, Loki, Tempo) but stores nothing itself.                                                                       |
+| More tools equals better observability                 | Each tool added is another operational system. Two tools at 80% coverage is often better than six tools at 100% coverage with triple the operational burden.                                    |
+| OpenTelemetry auto-instrumentation captures everything | Auto-instrumentation captures HTTP, database, and messaging library spans. Business-domain spans (order processed, payment validated) require manual instrumentation.                           |
 
 ---
 
@@ -515,6 +523,7 @@ storage backends. A single misconfigured Collector blocks the
 entire observability pipeline.
 
 **Diagnostic Command:**
+
 ```bash
 # Check OTel Collector health endpoint
 curl -s localhost:13133/
@@ -553,6 +562,7 @@ OpenTelemetry. The vendor SDK emits to the vendor backend
 only and is not re-routable.
 
 **Diagnostic Command:**
+
 ```bash
 # Find services using proprietary Datadog instrumentation
 grep -r "com.datadoghq\|dd-trace\|@Trace" \
@@ -585,6 +595,7 @@ Collector configuration YAML rather than injected via
 environment variables or secrets management.
 
 **Diagnostic Command:**
+
 ```bash
 # Scan git history for potential API key patterns
 git log --all --full-history -- "**/otelcol*" \
@@ -593,6 +604,7 @@ git log --all --full-history -- "**/otelcol*" \
 ```
 
 **Fix:**
+
 ```yaml
 # BAD: credentials in config file
 exporters:
@@ -617,12 +629,14 @@ credentials at runtime via environment variables.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability and Why It Matters` - the concept
   behind the ecosystem
 - `The Three Pillars of Observability (Logs, Metrics, Traces)` -
   the three signal types the ecosystem is built to handle
 
 **Builds On This (learn these next):**
+
 - `Prometheus - Metrics Collection` - deep dive on the
   metrics storage layer
 - `Grafana - Dashboards` - deep dive on the visualisation
@@ -635,6 +649,7 @@ credentials at runtime via environment variables.
   trace storage layer
 
 **Alternatives / Comparisons:**
+
 - `Datadog - Observability Platform` - vertically integrated
   vendor alternative to the open-source stack
 - `Monitoring vs Observability - The Difference` - the
@@ -676,6 +691,7 @@ credentials at runtime via environment variables.
 ```
 
 **If you remember only 3 things:**
+
 1. The ecosystem has four independent layers: instrument,
    collect, store, query. Each layer can be swapped
    independently if you use open standards.
@@ -705,6 +721,7 @@ stack creates lock-in. Layered architectures with open
 standards at the interfaces preserve optionality.
 
 **Where else this pattern appears:**
+
 - **Database abstraction** - ORM frameworks (Hibernate, JPA)
   decouple application code from the specific database
   vendor, just as OpenTelemetry decouples instrumentation
@@ -718,6 +735,7 @@ standards at the interfaces preserve optionality.
   ActiveMQ), enabling backend substitution.
 
 **Industry applications:**
+
 - **FinTech startups** - start with Grafana Cloud (managed,
   low ops burden), instrument with OpenTelemetry, then
   migrate to self-hosted Prometheus + Loki + Tempo when
@@ -750,6 +768,7 @@ worth adopting immediately.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Draw the four-layer ecosystem map from memory
    and name at least two tool options (one open-source, one
    managed) at each layer.
@@ -781,9 +800,9 @@ use the Datadog proprietary Java agent, not OpenTelemetry.
 Walk through a migration strategy that minimises service
 disruption while progressively reducing cost. What is the
 order of operations, and which layer do you migrate first?
-*Hint: The Datadog agent can be configured to export to the
+_Hint: The Datadog agent can be configured to export to the
 OTel Collector via the OTLP exporter. Does this help? What
-does it not solve?*
+does it not solve?_
 
 **Q2.** The OTel Collector is processing 10 million spans per
 minute. During a traffic spike, the Collector falls behind
@@ -792,11 +811,11 @@ configuration changes you would make to the Collector to
 handle this gracefully - considering both the Collector's
 own resource limits and the impact on the downstream trace
 store.
-*Hint: Think about the queue size, batch processor
+_Hint: Think about the queue size, batch processor
 configuration, tail-based sampling, and memory limiter
 processor. What is the correct failure mode when the
 Collector is overloaded - drop signals or backpressure
-to the application?*
+to the application?_
 
 **Q3.** Design the observability stack for a new service that
 will process HIPAA-regulated health data. The stack must
@@ -804,11 +823,11 @@ not send patient data to any third-party vendor. Define
 which layers must be self-hosted, which vendor tools are
 acceptable, and what data redaction must happen in the
 collection layer before signals reach any storage backend.
-*Hint: HIPAA defines protected health information (PHI).
+_Hint: HIPAA defines protected health information (PHI).
 Which pillar is most likely to accidentally capture PHI
 (a patient name in a log line, a user_id that maps to
 a patient record)? Where in the four layers is the
-appropriate redaction point?*
+appropriate redaction point?_
 
 ---
 
@@ -816,9 +835,10 @@ appropriate redaction point?*
 
 **Q1: "Describe the four layers of the observability
 ecosystem and give an open-source tool for each layer."**
-*Why they ask:* Tests whether the candidate has an accurate
+_Why they ask:_ Tests whether the candidate has an accurate
 mental map of the ecosystem, not just tool name knowledge.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Layer 1 (Instrumentation): OpenTelemetry SDK - emits OTLP
   signals from application code
 - Layer 2 (Collection): OpenTelemetry Collector - receives,
@@ -832,9 +852,10 @@ mental map of the ecosystem, not just tool name knowledge.
 
 **Q2: "Why should you always use OpenTelemetry for
 instrumentation even if your company currently uses Datadog?"**
-*Why they ask:* Tests understanding of architectural lock-in
+_Why they ask:_ Tests understanding of architectural lock-in
 and the strategic value of open standards.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - OpenTelemetry is the instrumentation layer; Datadog is a
   storage + visualisation backend
 - Using Datadog's proprietary SDK ties ALL instrumentation
@@ -850,10 +871,11 @@ and the strategic value of open standards.
 **Q3: "Your team is moving from self-hosted Jaeger to
 Grafana Tempo for trace storage. What changes in your
 stack, and what doesn't change?"**
-*Why they ask:* Tests understanding of layer independence -
+_Why they ask:_ Tests understanding of layer independence -
 whether the candidate can identify which layers are affected
 by a storage backend change.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - What does NOT change: application instrumentation (OTel
   SDK), OTel Collector pipeline definition (still receives
   OTLP), Grafana dashboards (Tempo has same Grafana

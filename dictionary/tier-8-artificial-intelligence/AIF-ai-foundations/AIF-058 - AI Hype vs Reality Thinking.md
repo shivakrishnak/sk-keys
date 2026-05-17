@@ -1,5 +1,5 @@
 ---
-id: AIF-009
+id: AIF-058
 title: AI Hype vs Reality Thinking
 category: AI Foundations
 tier: tier-8-artificial-intelligence

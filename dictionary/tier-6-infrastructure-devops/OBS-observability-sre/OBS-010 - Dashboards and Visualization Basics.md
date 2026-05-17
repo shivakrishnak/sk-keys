@@ -29,11 +29,11 @@ of a system at a glance using the right chart type for
 each signal, following a top-down hierarchy from service
 health to component details to infrastructure metrics.
 
-| #010 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Metrics Types, Logging Fundamentals, Alerting Fundamentals | |
-| **Used by:** | SLO Dashboard Design, Incident Response Dashboards | |
-| **Related:** | Metrics Types, Alerting Fundamentals, SLI/SLO | |
+| #010            | Category: Observability & SRE                              | Difficulty: ★☆☆ |
+| :-------------- | :--------------------------------------------------------- | :-------------- |
+| **Depends on:** | Metrics Types, Logging Fundamentals, Alerting Fundamentals |                 |
+| **Used by:**    | SLO Dashboard Design, Incident Response Dashboards         |                 |
+| **Related:**    | Metrics Types, Alerting Fundamentals, SLI/SLO              |                 |
 
 ---
 
@@ -41,12 +41,14 @@ health to component details to infrastructure metrics.
 
 **WORLD WITHOUT IT:**
 An incident is in progress. The on-call engineer runs:
+
 ```bash
 kubectl top pods -n production
 kubectl logs payment-service-7d8f9 --tail=100
 curl payment-service:8080/metrics | grep error
 curl checkout-service:8080/metrics | grep latency
 ```
+
 Four commands, four terminal windows, raw text output.
 The engineer is mentally aggregating: the checkout error
 rate looks high but it might be normal for this time
@@ -83,6 +85,7 @@ of a system, organised to support a specific workflow
 (incident response, capacity planning, SLO review).
 
 **Key concepts:**
+
 - **Panel:** a single visualisation unit (graph, stat,
   table, gauge, heatmap)
 - **Time range:** the window displayed (last 1 hour,
@@ -152,6 +155,7 @@ relevant to the dashboard's workflow.
      trend lines for capacity forecasting
 
 **CHART TYPE SELECTION RULES:**
+
 - **Time series graph:** any metric that changes over time
   (the default choice for metrics)
 - **Stat panel:** single current value with threshold
@@ -192,15 +196,16 @@ it to the metric timestamps manually.
 **TEAM B - GOOD DASHBOARD:**
 Engineer opens the checkout service dashboard. At a
 glance (5 seconds):
+
 - Top-left stat panel: SLO status = AMBER (error budget
   burning at 12x)
 - Centre time series: latency P99 jumps from 200ms to
   1.8s at exactly 14:22
 - Annotation on the graph: "payment-service v2.3.1
   deployed at 14:21"
-Correlation is visual and instant. Root cause hypothesis
-(deployment caused latency spike) takes 5 seconds, not
-8 minutes.
+  Correlation is visual and instant. Root cause hypothesis
+  (deployment caused latency spike) takes 5 seconds, not
+  8 minutes.
 
 **THE INSIGHT:**
 Dashboards compress the cognitive work of multi-source
@@ -225,6 +230,7 @@ into a visual inspection.
 > are visually obvious.
 
 The dashboard design principles from ICU monitors:
+
 - Most critical metrics are largest and most prominent
 - Current value and trend are shown simultaneously
 - Thresholds are marked so deviation is visually instant
@@ -328,6 +334,7 @@ metric and the expected range.
 ```
 
 **VARIABLE INTERPOLATION:**
+
 ```
 Dashboard variable: service = "checkout"
 
@@ -397,9 +404,11 @@ catalogue row.
     {
       "title": "Request Count",
       "type": "stat",
-      "targets": [{
-        "expr": "checkout_requests_total"
-      }]
+      "targets": [
+        {
+          "expr": "checkout_requests_total"
+        }
+      ]
     }
   ]
 }
@@ -423,26 +432,30 @@ catalogue row.
         "defaults": {
           "thresholds": {
             "steps": [
-              {"color": "green",  "value": null},
-              {"color": "yellow", "value": 0.001},
-              {"color": "red",    "value": 0.005}
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 0.001 },
+              { "color": "red", "value": 0.005 }
             ]
           }
         }
       },
-      "targets": [{
-        "expr": "sum(rate(checkout_requests_total{status!~'2..'}[5m])) / sum(rate(checkout_requests_total[5m]))",
-        "legendFormat": "Error Rate"
-      }]
+      "targets": [
+        {
+          "expr": "sum(rate(checkout_requests_total{status!~'2..'}[5m])) / sum(rate(checkout_requests_total[5m]))",
+          "legendFormat": "Error Rate"
+        }
+      ]
     },
     {
       "title": "Request Rate (req/s)",
       "description": "Requests per second. Expected: 1000-1500 during business hours.",
       "type": "timeseries",
-      "targets": [{
-        "expr": "sum(rate(checkout_requests_total[5m]))",
-        "legendFormat": "requests/s"
-      }]
+      "targets": [
+        {
+          "expr": "sum(rate(checkout_requests_total[5m]))",
+          "legendFormat": "requests/s"
+        }
+      ]
     },
     {
       "title": "Latency P99 vs SLO (500ms)",
@@ -452,16 +465,18 @@ catalogue row.
         "defaults": {
           "thresholds": {
             "steps": [
-              {"color": "green", "value": null},
-              {"color": "red",   "value": 0.5}
+              { "color": "green", "value": null },
+              { "color": "red", "value": 0.5 }
             ]
           }
         }
       },
-      "targets": [{
-        "expr": "histogram_quantile(0.99, sum(rate(checkout_duration_seconds_bucket[5m])) by (le))",
-        "legendFormat": "P99 latency"
-      }]
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(checkout_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "P99 latency"
+        }
+      ]
     }
   ]
 }
@@ -479,15 +494,12 @@ catalogue row.
         "datasource": "Prometheus",
         "query": "label_values(up, job)",
         "label": "Service",
-        "current": {"value": "checkout"}
+        "current": { "value": "checkout" }
       },
       {
         "name": "env",
         "type": "custom",
-        "options": [
-          {"value": "production"},
-          {"value": "staging"}
-        ]
+        "options": [{ "value": "production" }, { "value": "staging" }]
       }
     ]
   }
@@ -500,38 +512,38 @@ catalogue row.
 
 ### ⚖️ Comparison Table
 
-| Chart type | Best for | Bad for |
-|---|---|---|
-| **Time series** | Any metric over time | Single current value |
-| **Stat panel** | Current value with threshold | Trends and patterns |
-| **Gauge** | Value within a bounded range (budget %) | Time series |
-| **Bar gauge** | Top-N comparison | Trend analysis |
-| **Table** | Multi-service, multi-metric comparison | Single metric |
-| **Heatmap** | Histogram distribution over time (latency) | Simple rate metrics |
-| **Logs panel** | Recent log entries with level filter | Aggregated metrics |
+| Chart type      | Best for                                   | Bad for              |
+| --------------- | ------------------------------------------ | -------------------- |
+| **Time series** | Any metric over time                       | Single current value |
+| **Stat panel**  | Current value with threshold               | Trends and patterns  |
+| **Gauge**       | Value within a bounded range (budget %)    | Time series          |
+| **Bar gauge**   | Top-N comparison                           | Trend analysis       |
+| **Table**       | Multi-service, multi-metric comparison     | Single metric        |
+| **Heatmap**     | Histogram distribution over time (latency) | Simple rate metrics  |
+| **Logs panel**  | Recent log entries with level filter       | Aggregated metrics   |
 
 **Dashboard tooling comparison:**
 
-| Tool | Strengths | Weaknesses |
-|---|---|---|
-| **Grafana** | Open source, multi-datasource, extensive panel types | Complex to configure at scale |
-| **Datadog** | Unified platform, automatic service maps | Expensive, vendor lock-in |
-| **CloudWatch Dashboards** | Zero setup on AWS | AWS-only, limited visualisations |
-| **Kibana** | Best for log-heavy dashboards (ELK) | Less suited for metrics |
-| **Honeycomb** | Best query experience for traces | Not a general-purpose dashboard |
+| Tool                      | Strengths                                            | Weaknesses                       |
+| ------------------------- | ---------------------------------------------------- | -------------------------------- |
+| **Grafana**               | Open source, multi-datasource, extensive panel types | Complex to configure at scale    |
+| **Datadog**               | Unified platform, automatic service maps             | Expensive, vendor lock-in        |
+| **CloudWatch Dashboards** | Zero setup on AWS                                    | AWS-only, limited visualisations |
+| **Kibana**                | Best for log-heavy dashboards (ELK)                  | Less suited for metrics          |
+| **Honeycomb**             | Best query experience for traces                     | Not a general-purpose dashboard  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "More panels = more visibility" | A dashboard with 40 panels is unreadable during an incident. 8-12 panels covering the most important questions is the target. Discard panels that are never consulted. |
-| "Average latency is sufficient" | Average latency hides outliers. A P99 of 3 seconds can coexist with an average of 200ms. Always show P95 and P99. Use heatmaps to see the full latency distribution. |
-| "Dashboards are for post-incident review only" | The most valuable use of dashboards is real-time incident response. The dashboard is the first thing an on-call engineer should open, not the last. |
-| "Raw counter values on stat panels are useful" | A checkout_requests_total stat showing 1,234,567 tells you nothing. Show the rate (requests/second). Show rate vs a known baseline. The raw counter is noise. |
-| "Time range doesn't matter" | The time range shapes the visual story. A 10-second spike invisible at "last 7 days" scale is obvious at "last 1 hour" scale. Match the time range to the question: incidents use 1-2 hours; capacity planning uses 30-90 days. |
-| "Dashboards in the UI are fine (no code needed)" | Dashboards created manually in the UI are lost on Grafana reinstallation, cannot be code-reviewed, and diverge across environments. All production dashboards should be stored in git as JSON or Jsonnet. |
+| Misconception                                    | Reality                                                                                                                                                                                                                         |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "More panels = more visibility"                  | A dashboard with 40 panels is unreadable during an incident. 8-12 panels covering the most important questions is the target. Discard panels that are never consulted.                                                          |
+| "Average latency is sufficient"                  | Average latency hides outliers. A P99 of 3 seconds can coexist with an average of 200ms. Always show P95 and P99. Use heatmaps to see the full latency distribution.                                                            |
+| "Dashboards are for post-incident review only"   | The most valuable use of dashboards is real-time incident response. The dashboard is the first thing an on-call engineer should open, not the last.                                                                             |
+| "Raw counter values on stat panels are useful"   | A checkout_requests_total stat showing 1,234,567 tells you nothing. Show the rate (requests/second). Show rate vs a known baseline. The raw counter is noise.                                                                   |
+| "Time range doesn't matter"                      | The time range shapes the visual story. A 10-second spike invisible at "last 7 days" scale is obvious at "last 1 hour" scale. Match the time range to the question: incidents use 1-2 hours; capacity planning uses 30-90 days. |
+| "Dashboards in the UI are fine (no code needed)" | Dashboards created manually in the UI are lost on Grafana reinstallation, cannot be code-reviewed, and diverge across environments. All production dashboards should be stored in git as JSON or Jsonnet.                       |
 
 ---
 
@@ -554,6 +566,7 @@ instance is healthy; three are in error state. The
 average masks the failure.
 
 **Diagnostic Command:**
+
 ```promql
 # Check per-instance error rates to reveal masking
 sum by (instance) (
@@ -594,6 +607,7 @@ sent by the deployment tool; they do not appear
 automatically from deployment records.
 
 **Diagnostic Command:**
+
 ```bash
 # Verify annotations API is receiving events
 curl -s "http://grafana:3000/api/annotations?
@@ -606,6 +620,7 @@ curl -s "http://grafana:3000/api/annotations?
 
 **Fix:**
 Add a deployment annotation step to the CI/CD pipeline:
+
 ```bash
 # Send deployment annotation to Grafana
 curl -X POST http://grafana:3000/api/annotations \
@@ -642,6 +657,7 @@ queries timeout because Prometheus cannot process
 them within the 30-second query timeout.
 
 **Diagnostic Command:**
+
 ```bash
 # Test query duration outside of incident
 time curl -sg "localhost:9090/api/v1/query_range?\
@@ -653,17 +669,18 @@ end=$(date +%s)&step=15" > /dev/null
 **Fix:**
 Simplify dashboard queries. Use recording rules to
 pre-compute expensive aggregations:
+
 ```yaml
 # Prometheus recording rule:
 # pre-compute expensive aggregation every 15s
 groups:
-- name: checkout.rules
-  rules:
-  - record: job:checkout_error_rate:rate5m
-    expr: |
-      sum(rate(checkout_requests_total{
-        status!~"2.."}[5m]))
-      / sum(rate(checkout_requests_total[5m]))
+  - name: checkout.rules
+    rules:
+      - record: job:checkout_error_rate:rate5m
+        expr: |
+          sum(rate(checkout_requests_total{
+            status!~"2.."}[5m]))
+          / sum(rate(checkout_requests_total[5m]))
 ```
 
 **Prevention:**
@@ -676,6 +693,7 @@ takes > 2 seconds in normal conditions.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Metrics Types (Counter, Gauge, Histogram)` - PromQL
   query correctness depends on knowing the metric type;
   using wrong operations produces misleading charts
@@ -684,6 +702,7 @@ takes > 2 seconds in normal conditions.
   used in alerts should appear on dashboards for context
 
 **Builds On This (learn these next):**
+
 - `Grafana Fundamentals` - the primary open-source
   tool for building observability dashboards
 - `SLO Dashboard Patterns` - specific dashboard designs
@@ -692,6 +711,7 @@ takes > 2 seconds in normal conditions.
   approach to managing dashboards in version control
 
 **Alternatives / Comparisons:**
+
 - `Datadog Dashboards` - SaaS alternative with automatic
   service topology maps and APM integration
 - `CloudWatch Dashboards` - AWS-native dashboard tool
@@ -738,6 +758,7 @@ takes > 2 seconds in normal conditions.
 ```
 
 **If you remember only 3 things:**
+
 1. Organize dashboards top-down: SLO status (top row) →
    RED metrics → dependencies → infrastructure. Check
    the top row first. If green, stop. If not, drill down.
@@ -766,6 +787,7 @@ financial trading terminals (prices front-and-centre,
 not buried in tables).
 
 **Where else this pattern appears:**
+
 - **Information radiators in agile** - Kanban boards and
   sprint velocity charts are physical dashboards designed
   for rapid team situation assessment. The principle is
@@ -803,6 +825,7 @@ normal patterns that makes anomalies obvious.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Given a Grafana dashboard where the
    SLO status panel shows "healthy" but users are
    reporting errors, identify three possible reasons
@@ -849,14 +872,14 @@ next action? What do you need to determine before
 rolling back vs investigating further? How does the
 dashboard help you make this decision in the next
 60 seconds?
-*Hint: Correlation is not causation. The deployment
+_Hint: Correlation is not causation. The deployment
 at 1:51 AM is suspicious but is it the cause? Check
 the payment service's own dashboard. Did the payment
 service deployment also coincide with an increase in
 payment-specific errors? Or did something else change
 at 1:52 AM (traffic spike, downstream service outage)?
 The dashboard gives you the correlation; investigation
-confirms causation.*
+confirms causation._
 
 **Q2.** Your checkout service dashboard shows these
 metrics simultaneously: request rate is 2x higher than
@@ -867,14 +890,14 @@ How do you use the dashboard to decide whether to wake
 up an engineer, create a ticket, or do nothing?
 What additional context from the dashboard would help
 you make this decision?
-*Hint: High traffic + near-SLO latency + elevated CPU
+_Hint: High traffic + near-SLO latency + elevated CPU
 during a traffic spike might be normal scaling behaviour
 (2x traffic → 2x CPU, latency scaling linearly). Check:
 is there a deployment annotation? Is this a predictable
 traffic pattern (Monday morning, promotion event)? The
 error rate at 0.05% is well within SLO. Decision:
 create a ticket for capacity review if this is unexpected;
-monitor if it matches a known traffic pattern.*
+monitor if it matches a known traffic pattern._
 
 **Q3 (TYPE G):** Design a complete dashboard strategy
 for a platform with 100 microservices. You cannot create
@@ -887,14 +910,14 @@ approach: what tool (Grafonnet, Jsonnet, or Terraform),
 what template parameters, how new services are onboarded
 automatically, and how you ensure all 100 service
 dashboards stay in sync with new metric name changes.
-*Hint: Grafonnet/Jsonnet allows a single template that
+_Hint: Grafonnet/Jsonnet allows a single template that
 takes `service_name` as a parameter and generates the
 full dashboard JSON. CI/CD generates one dashboard per
 service from the template. When the template changes
 (e.g., new panel added), regenerating all 100 dashboards
 is a single CI run. Service onboarding = add service
 name to a list, regenerate. This is the dashboard-as-code
-principle applied at scale.*
+principle applied at scale._
 
 ---
 
@@ -902,9 +925,10 @@ principle applied at scale.*
 
 **Q1: "What is the RED method and how do you apply it
 to a service dashboard?"**
-*Why they ask:* Tests knowledge of dashboard design
+_Why they ask:_ Tests knowledge of dashboard design
 methodology, not just tool proficiency.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - RED = Rate, Errors, Duration. These three metrics
   capture the user-visible health of any service.
 - Rate: requests per second (is the service receiving
@@ -923,9 +947,10 @@ methodology, not just tool proficiency.
 
 **Q2: "Why should you never show a raw counter value
 on a dashboard stat panel?"**
-*Why they ask:* Tests whether the candidate understands
+_Why they ask:_ Tests whether the candidate understands
 metric types and their correct visualisation.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - A raw counter (e.g., `requests_total = 1,234,567`)
   is an ever-increasing number with no intrinsic meaning
   without context: what time period? What baseline?
@@ -944,9 +969,10 @@ metric types and their correct visualisation.
 **Q3: "How would you structure a dashboard for a checkout
 service to support an on-call engineer during an incident
 at 3 AM?"**
-*Why they ask:* Tests practical dashboard design thinking,
+_Why they ask:_ Tests practical dashboard design thinking,
 specifically for the most demanding use case.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - First principle: the engineer needs to assess health
   in < 10 seconds and identify the degraded component
   in < 2 minutes

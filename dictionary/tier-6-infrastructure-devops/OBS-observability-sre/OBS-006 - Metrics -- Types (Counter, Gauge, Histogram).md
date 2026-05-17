@@ -28,11 +28,11 @@ permalink: /obs/metrics-types-counter-gauge-histogram/
 current state, and histograms bucket observations so you can
 calculate latency percentiles and SLOs from raw data.
 
-| #006 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | The Three Pillars of Observability | |
-| **Used by:** | Alerting Fundamentals, Dashboards, SLI | |
-| **Related:** | Three Pillars, SRE, Alerting Fundamentals | |
+| #006            | Category: Observability & SRE             | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------- | :-------------- |
+| **Depends on:** | The Three Pillars of Observability        |                 |
+| **Used by:**    | Alerting Fundamentals, Dashboards, SLI    |                 |
+| **Related:**    | Three Pillars, SRE, Alerting Fundamentals |                 |
 
 ---
 
@@ -77,6 +77,7 @@ low cost, and they support mathematical operations that logs
 cannot.
 
 **The four Prometheus metric types:**
+
 - **Counter:** monotonically increasing value. Only goes up
   (or resets to zero on restart). Examples: total requests,
   total errors, bytes sent.
@@ -123,6 +124,7 @@ which is the source of most incorrect dashboards.
 **WHY THREE TYPES CAPTURE EVERYTHING:**
 
 Every observable system property is either:
+
 1. An accumulation over time (counter) - e.g., "how many
    requests have arrived since this process started?"
 2. A current instantaneous state (gauge) - e.g., "how much
@@ -138,12 +140,14 @@ cannot.
 **THE MATHEMATICS:**
 
 Counter:
+
 ```
 rate(counter[5m]) = per-second rate over 5-minute window
 increase(counter[1h]) = total increase over 1 hour
 ```
 
 Gauge:
+
 ```
 avg_over_time(gauge[1h]) = average over last hour
 max_over_time(gauge[1d]) = peak over last day
@@ -151,6 +155,7 @@ delta(gauge[5m]) = change over 5 minutes
 ```
 
 Histogram:
+
 ```
 histogram_quantile(0.99, rate(histogram_bucket[5m]))
   = P99 latency over 5-minute window
@@ -184,11 +189,13 @@ latency looks fine at 250ms, but several users experience
 5-second checkouts. The gauge average masks the long tail.
 
 **TEAM B ANSWER:**
+
 ```promql
 histogram_quantile(0.99,
   sum(rate(checkout_duration_seconds_bucket
     [1h])) by (le))
 ```
+
 Team B can calculate P99 latency, identify that 1% of
 requests take more than 3.5 seconds, and correlate this
 with a specific region.
@@ -278,6 +285,7 @@ summaries, which cannot be aggregated across instances.
 ### ⚙️ How It Works (Mechanism)
 
 **Counter internals:**
+
 ```
 A counter is a 64-bit float that only increases.
 In Prometheus, the counter is exposed via /metrics as:
@@ -291,6 +299,7 @@ the delta (avoiding a negative rate).
 ```
 
 **Gauge internals:**
+
 ```
 A gauge is the current value at scrape time.
 No rate() needed. Read directly or use avg_over_time.
@@ -298,6 +307,7 @@ No rate() needed. Read directly or use avg_over_time.
 ```
 
 **Histogram internals:**
+
 ```
 A histogram maintains N+3 time series:
   - _bucket{le="0.1"}: count of obs <= 0.1s
@@ -447,14 +457,15 @@ sum(rate(checkout_duration_seconds_bucket{le="0.5"}[5m]))
 
 ### ⚖️ Comparison Table
 
-| Type | What it measures | Resets? | Key PromQL op | Use for |
-|---|---|---|---|---|
-| **Counter** | Total accumulated events | Yes (on restart) | `rate()`, `increase()` | Requests, errors, bytes |
-| **Gauge** | Current instantaneous value | N/A | `avg_over_time()`, `delta()` | Memory, queue depth, connections |
-| **Histogram** | Distribution of observations | Yes (on restart) | `histogram_quantile()` | Latency, response size, SLOs |
-| **Summary** | Pre-calculated quantiles | Yes (on restart) | Direct read | Simple percentiles, no aggregation needed |
+| Type          | What it measures             | Resets?          | Key PromQL op                | Use for                                   |
+| ------------- | ---------------------------- | ---------------- | ---------------------------- | ----------------------------------------- |
+| **Counter**   | Total accumulated events     | Yes (on restart) | `rate()`, `increase()`       | Requests, errors, bytes                   |
+| **Gauge**     | Current instantaneous value  | N/A              | `avg_over_time()`, `delta()` | Memory, queue depth, connections          |
+| **Histogram** | Distribution of observations | Yes (on restart) | `histogram_quantile()`       | Latency, response size, SLOs              |
+| **Summary**   | Pre-calculated quantiles     | Yes (on restart) | Direct read                  | Simple percentiles, no aggregation needed |
 
 **When to choose histogram vs summary:**
+
 - Use histogram when you need to aggregate across multiple
   instances or compute quantiles server-side in Prometheus.
 - Use summary only when the quantile is computed client-side
@@ -497,14 +508,14 @@ sum(rate(checkout_duration_seconds_bucket{le="0.5"}[5m]))
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Use average latency for dashboards" | Average hides outliers. P99 latency is what your slowest 1% of users experience. A 250ms average can coexist with a 5-second P99. Always use histogram percentiles. |
-| "A counter that resets breaks rate()" | Prometheus `rate()` detects counter resets automatically and adjusts the calculation. A restart does not corrupt your rate metric. |
-| "Gauges work for latency tracking" | A gauge stores only the most recent observation. You cannot calculate percentiles. You cannot see the distribution. Use a histogram for any latency measurement. |
-| "Histogram bucket selection doesn't matter" | If buckets are too wide, `histogram_quantile()` interpolates over a large range and is inaccurate. Bucket boundaries should bracket your SLO thresholds. |
-| "Summary and histogram are interchangeable" | Summaries cannot be aggregated across instances (you cannot average pre-calculated quantiles). Histograms can. For any distributed service, use histograms. |
-| "More buckets are always better" | Each histogram bucket adds a time series. With high cardinality labels, many buckets can cause Prometheus memory pressure. Use the minimum number of buckets that cover your SLO thresholds. |
+| Misconception                               | Reality                                                                                                                                                                                      |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Use average latency for dashboards"        | Average hides outliers. P99 latency is what your slowest 1% of users experience. A 250ms average can coexist with a 5-second P99. Always use histogram percentiles.                          |
+| "A counter that resets breaks rate()"       | Prometheus `rate()` detects counter resets automatically and adjusts the calculation. A restart does not corrupt your rate metric.                                                           |
+| "Gauges work for latency tracking"          | A gauge stores only the most recent observation. You cannot calculate percentiles. You cannot see the distribution. Use a histogram for any latency measurement.                             |
+| "Histogram bucket selection doesn't matter" | If buckets are too wide, `histogram_quantile()` interpolates over a large range and is inaccurate. Bucket boundaries should bracket your SLO thresholds.                                     |
+| "Summary and histogram are interchangeable" | Summaries cannot be aggregated across instances (you cannot average pre-calculated quantiles). Histograms can. For any distributed service, use histograms.                                  |
+| "More buckets are always better"            | Each histogram bucket adds a time series. With high cardinality labels, many buckets can cause Prometheus memory pressure. Use the minimum number of buckets that cover your SLO thresholds. |
 
 ---
 
@@ -527,6 +538,7 @@ bucket and interpolates to ~490ms regardless of whether
 the actual P99 is 250ms or 499ms.
 
 **Diagnostic Command:**
+
 ```promql
 # Check raw bucket distribution to see where observations
 # actually fall - look for most traffic in one bucket
@@ -561,6 +573,7 @@ thousands each second. When an instance restarts, it
 introduces a lower counter value, skewing the average.
 
 **Diagnostic Command:**
+
 ```promql
 # Compare the two queries
 avg(checkout_requests_total)       # WRONG - jumps
@@ -593,6 +606,7 @@ and the base series). With 100,000 unique users, a histogram
 with 10 buckets creates 1,300,000 time series.
 
 **Diagnostic Command:**
+
 ```bash
 # Check cardinality of all series
 curl -s localhost:9090/api/v1/label/__name__/values \
@@ -618,12 +632,14 @@ ID, user ID, session ID, or URL path as metric labels.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `The Three Pillars of Observability` - metrics are one
   of the three signal types; understanding their role in
   the observability stack provides context for why type
   correctness matters
 
 **Builds On This (learn these next):**
+
 - `Alerting Fundamentals` - SLO burn rate alerts are built
   on counter and histogram metrics using `rate()` and
   `histogram_quantile()`
@@ -633,6 +649,7 @@ ID, user ID, session ID, or URL path as metric labels.
   queries depend on knowing the metric type
 
 **Alternatives / Comparisons:**
+
 - `StatsD metric types` - similar taxonomy (counter, gauge,
   timer) used by StatsD/Telegraf ecosystem
 - `OpenTelemetry metrics` - extends the Prometheus taxonomy
@@ -677,6 +694,7 @@ ID, user ID, session ID, or URL path as metric labels.
 ```
 
 **If you remember only 3 things:**
+
 1. Counter counts total events (only up). Use `rate()` to
    get a per-second rate. Never use `avg()` on a counter.
 2. Gauge is current state (up or down). Read directly.
@@ -698,6 +716,7 @@ principle applies everywhere: choosing a sorted list vs a
 hash map, or choosing an event log vs a snapshot.
 
 **Where else this pattern appears:**
+
 - **Percentile calculations in statistics** - you cannot
   calculate the median of medians (Savage's inequality).
   To aggregate percentiles, you must aggregate the
@@ -733,6 +752,7 @@ accuracy where it counts most.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Explain to a junior developer why they
    should not use a gauge to track request latency, and
    demonstrate what information is lost compared to a
@@ -772,12 +792,12 @@ for 45 minutes. Walk through exactly what information the
 gauge approach vs the histogram approach gives you during
 the post-mortem. What questions can you answer with one
 but not the other?
-*Hint: Think about: what percentage of requests were
+_Hint: Think about: what percentage of requests were
 affected? When exactly did the spike start? Which region?
 Which service version? The gauge can tell you that the
 last request duration was 3 seconds. The histogram can
 tell you the P99 over time, the bucket distribution, and
-the rate of requests exceeding the SLO.*
+the rate of requests exceeding the SLO._
 
 **Q2.** A Prometheus histogram named `api_latency_seconds`
 has buckets at [0.1, 0.5, 1.0, 5.0, +Inf]. Your SLO is
@@ -788,11 +808,11 @@ SLO." You suspect the bucket configuration is masking
 actual P99 violations. How would you investigate, and how
 would you reconfigure the buckets to get accurate P99
 measurement near the 500ms threshold?
-*Hint: With a bucket at 0.5s (500ms) as the upper bound
+_Hint: With a bucket at 0.5s (500ms) as the upper bound
 for most traffic, `histogram_quantile()` interpolates from
 0 to 500ms. The estimated P99 will always be below 500ms
 unless more than 1% of requests exceed 500ms. Add buckets
-within the 100-500ms range to see the actual distribution.*
+within the 100-500ms range to see the actual distribution._
 
 **Q3 (TYPE G):** Design a metric schema for a payment
 gateway service that receives 10,000 requests per second
@@ -804,12 +824,12 @@ currency. Define each metric (name, type, labels),
 calculate the total number of time series at steady state,
 and identify any cardinality risks. Show the PromQL query
 for each requirement.
-*Hint: 4 payment methods x 3 status labels = 12 counter
+_Hint: 4 payment methods x 3 status labels = 12 counter
 series. 10 histogram buckets x 4 payment methods = 60
 histogram series. Gauge: 1 series. But what if you label
 by user_id? 5 million users x 10 buckets = 50 million
 series - Prometheus OOM. The lesson: labels must be finite,
-bounded, and low-cardinality.*
+bounded, and low-cardinality._
 
 ---
 
@@ -818,9 +838,10 @@ bounded, and low-cardinality.*
 **Q1: "What is the difference between a counter and a
 gauge in Prometheus? Give an example of when you would
 use each."**
-*Why they ask:* Tests whether the candidate has actually
+_Why they ask:_ Tests whether the candidate has actually
 instrumented services, not just read about monitoring.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Counter is monotonically increasing, only resets on
   process restart. Use for: requests_total, errors_total,
   bytes_sent_total. Query with rate() or increase().
@@ -833,10 +854,11 @@ instrumented services, not just read about monitoring.
 
 **Q2: "Why should you use a histogram instead of a gauge
 for request latency?"**
-*Why they ask:* Tests understanding of statistical
+_Why they ask:_ Tests understanding of statistical
 correctness in observability. Candidates who only know
 average latency will fail this question.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Gauge stores only the last observed value - cannot
   calculate P99, P95, or any percentile
 - histogram_quantile(0.99, ...) gives you the latency
@@ -851,9 +873,10 @@ average latency will fail this question.
 **Q3: "Explain why Prometheus histogram quantiles can be
 aggregated across instances but Prometheus summary
 quantiles cannot."**
-*Why they ask:* Tests deep understanding of histogram
+_Why they ask:_ Tests deep understanding of histogram
 internals. This is a senior-level question.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Histograms store bucket counts (how many observations
   <= each threshold). Buckets are identical across all
   instances. You can sum bucket counts across instances:

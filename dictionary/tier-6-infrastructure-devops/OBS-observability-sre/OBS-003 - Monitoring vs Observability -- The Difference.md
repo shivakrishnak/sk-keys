@@ -29,11 +29,11 @@ permalink: /obs/monitoring-vs-observability-the-difference/
 observability lets you answer questions you did not know you
 would need to ask.
 
-| #003 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability and Why It Matters | |
-| **Used by:** | Alerting Fundamentals, SLO - Service Level Objective | |
-| **Related:** | What Is Observability and Why It Matters, The Three Pillars of Observability, The Observability Ecosystem Map | |
+| #003            | Category: Observability & SRE                                                                                 | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | What Is Observability and Why It Matters                                                                      |                 |
+| **Used by:**    | Alerting Fundamentals, SLO - Service Level Objective                                                          |                 |
+| **Related:**    | What Is Observability and Why It Matters, The Three Pillars of Observability, The Observability Ecosystem Map |                 |
 
 ---
 
@@ -122,6 +122,7 @@ not know you would need until the incident is happening.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Monitoring requires a complete enumeration of possible
    failure modes before deployment - it can only check what
    was anticipated
@@ -219,6 +220,7 @@ failure mode does not need to have been anticipated.
 > possible.
 
 Mapping:
+
 - "Smoke detector threshold" - monitoring alert threshold
 - "Pre-set condition: smoke present" - anticipated failure mode
 - "Fire investigator" - on-call engineer using observability
@@ -280,6 +282,7 @@ it is teaching engineers to think in hypotheses rather than
 runbooks.
 
 **EXPERT THINKING CUES:**
+
 - Red flag: "we have dashboards for everything" - this
   describes monitoring, not observability. Observability is
   the ability to ask questions that no dashboard covers.
@@ -296,6 +299,7 @@ runbooks.
 ### ⚙️ How It Works (Mechanism)
 
 **How monitoring works:**
+
 1. Define checks: metrics to poll, thresholds to test,
    health endpoints to probe
 2. A monitoring agent polls these at intervals (Nagios,
@@ -306,6 +310,7 @@ runbooks.
 5. Engineer consults runbook: pre-defined steps for this alert
 
 **How observability works:**
+
 1. Instrument code to emit structured, high-cardinality
    signals at all interesting points
 2. Collect and store signals in queryable backends
@@ -381,15 +386,15 @@ observability for investigation becomes the dominant pattern.
 # BAD: fixed threshold alerts
 # Cannot diagnose any failure outside these conditions
 groups:
-- name: checkout
-  rules:
-  - alert: CheckoutErrorRateHigh
-    expr: rate(checkout_errors_total[5m]) > 0.01
-    # Problem: fires for ALL error types equally
-    # No ability to investigate WHICH errors or WHY
-  - alert: CheckoutLatencyHigh
-    expr: checkout_duration_p99 > 1.0
-    # Problem: no context about cause of latency
+  - name: checkout
+    rules:
+      - alert: CheckoutErrorRateHigh
+        expr: rate(checkout_errors_total[5m]) > 0.01
+        # Problem: fires for ALL error types equally
+        # No ability to investigate WHICH errors or WHY
+      - alert: CheckoutLatencyHigh
+        expr: checkout_duration_p99 > 1.0
+        # Problem: no context about cause of latency
 ```
 
 **Example 2 - GOOD: SLO-based monitoring + observability:**
@@ -397,15 +402,15 @@ groups:
 ```yaml
 # GOOD: SLO burn rate alert (monitoring layer)
 groups:
-- name: checkout-slo
-  rules:
-  - alert: CheckoutErrorBudgetBurning
-    expr: |
-      rate(checkout_errors_total[1h])
-        / rate(checkout_requests_total[1h])
-        > 5 * (1 - 0.999)
-    annotations:
-      runbook: "Query traces: status=error, last 1h"
+  - name: checkout-slo
+    rules:
+      - alert: CheckoutErrorBudgetBurning
+        expr: |
+          rate(checkout_errors_total[1h])
+            / rate(checkout_requests_total[1h])
+            > 5 * (1 - 0.999)
+        annotations:
+          runbook: "Query traces: status=error, last 1h"
 ```
 
 ```java
@@ -426,15 +431,15 @@ span.setAttribute("product.category", category);
 
 ### ⚖️ Comparison Table
 
-| Dimension | Monitoring | Observability |
-|---|---|---|
-| **Question type** | Pre-defined (known) | Arbitrary (any) |
-| **Alert trigger** | Threshold breach | SLO burn rate |
-| **Investigation** | Runbook-driven | Hypothesis-driven |
-| **Failure coverage** | Known modes only | Any failure mode |
-| **Tooling cost** | Low-medium | Medium-high |
-| **Signal cardinality** | Low | High |
-| **Best for** | SLO tracking, uptime | Novel failure diagnosis |
+| Dimension              | Monitoring           | Observability           |
+| ---------------------- | -------------------- | ----------------------- |
+| **Question type**      | Pre-defined (known)  | Arbitrary (any)         |
+| **Alert trigger**      | Threshold breach     | SLO burn rate           |
+| **Investigation**      | Runbook-driven       | Hypothesis-driven       |
+| **Failure coverage**   | Known modes only     | Any failure mode        |
+| **Tooling cost**       | Low-medium           | Medium-high             |
+| **Signal cardinality** | Low                  | High                    |
+| **Best for**           | SLO tracking, uptime | Novel failure diagnosis |
 
 **How to choose:** You need both. SLO-based monitoring for
 alerting. Observability for investigation. They are complements,
@@ -444,13 +449,13 @@ not alternatives.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Observability replaces monitoring | They serve different purposes. Monitoring for fast, reliable SLO alerting. Observability for diagnosing unanticipated failures. Both required. |
-| More dashboards equals more observability | Dashboards are a monitoring artefact. Observability is the ability to ask questions that no dashboard covers. |
-| APM tools provide observability | APM tools provide application performance monitoring - pre-defined performance metrics. True observability requires high-cardinality, ad-hoc queryable signals. |
-| Observability is only for large teams | The principles apply at any scale. A small team benefits from structured logs and basic tracing proportionally to system complexity. |
-| Monitoring is obsolete | SLO-based alerting is still the industry standard for triggering incident response. Observability without alert thresholds means relying on user complaints to detect problems. |
+| Misconception                             | Reality                                                                                                                                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Observability replaces monitoring         | They serve different purposes. Monitoring for fast, reliable SLO alerting. Observability for diagnosing unanticipated failures. Both required.                                  |
+| More dashboards equals more observability | Dashboards are a monitoring artefact. Observability is the ability to ask questions that no dashboard covers.                                                                   |
+| APM tools provide observability           | APM tools provide application performance monitoring - pre-defined performance metrics. True observability requires high-cardinality, ad-hoc queryable signals.                 |
+| Observability is only for large teams     | The principles apply at any scale. A small team benefits from structured logs and basic tracing proportionally to system complexity.                                            |
+| Monitoring is obsolete                    | SLO-based alerting is still the industry standard for triggering incident response. Observability without alert thresholds means relying on user complaints to detect problems. |
 
 ---
 
@@ -470,6 +475,7 @@ thresholds not tied to user-visible impact. Every metric has
 an alert. Most are noise.
 
 **Diagnostic Command:**
+
 ```bash
 # Count alerts by firing frequency (Alertmanager API)
 curl -s localhost:9093/api/v2/alerts \
@@ -505,6 +511,7 @@ The failure mode was not anticipated when monitoring was
 configured. No threshold covers the affected code path.
 
 **Diagnostic Command:**
+
 ```bash
 # Without observability, only manual server inspection
 # is available - this is the monitoring-only failure state
@@ -538,6 +545,7 @@ Monitoring exporters and health check endpoints deployed
 without network-level or authentication controls.
 
 **Diagnostic Command:**
+
 ```bash
 # Test if Prometheus metrics endpoint is publicly exposed
 curl -s https://your-public-domain.com/metrics | head -20
@@ -548,6 +556,7 @@ curl -s https://your-service.com/actuator/prometheus
 ```
 
 **Fix:**
+
 ```yaml
 # Restrict Prometheus scrape to internal monitoring namespace
 apiVersion: networking.k8s.io/v1
@@ -556,14 +565,14 @@ metadata:
   name: allow-prometheus-scrape
 spec:
   podSelector:
-    matchLabels: {app: checkout}
+    matchLabels: { app: checkout }
   ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels: {name: monitoring}
-    ports:
-    - port: 9090
-      protocol: TCP
+    - from:
+        - namespaceSelector:
+            matchLabels: { name: monitoring }
+      ports:
+        - port: 9090
+          protocol: TCP
 ```
 
 **Prevention:**
@@ -576,11 +585,13 @@ in AWS for all observability endpoints.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability and Why It Matters` - understanding
   observability as a concept is required before understanding
   how it differs from monitoring
 
 **Builds On This (learn these next):**
+
 - `Alerting Fundamentals` - how SLO-based alerting bridges
   monitoring and observability for production alert design
 - `SLO (Service Level Objective)` - the bridge between
@@ -590,6 +601,7 @@ in AWS for all observability endpoints.
   for both monitoring and observability approaches
 
 **Alternatives / Comparisons:**
+
 - `The Three Pillars of Observability (Logs, Metrics, Traces)` -
   the three signal types implement observability and are also
   used by monitoring (metrics for alerts)
@@ -635,6 +647,7 @@ in AWS for all observability endpoints.
 ```
 
 **If you remember only 3 things:**
+
 1. Monitoring checks pre-defined conditions (known failure
    modes). Observability enables any query (unknown failure
    modes). Neither replaces the other.
@@ -665,6 +678,7 @@ exploration without detection means relying on users to report
 problems before you detect them.
 
 **Where else this pattern appears:**
+
 - **Security operations** - intrusion detection systems
   (monitoring: known attack signatures) vs security
   information and event management (observability: ad-hoc
@@ -678,6 +692,7 @@ problems before you detect them.
   exploring unknown extreme scenarios).
 
 **Industry applications:**
+
 - **E-commerce SRE** - SLO-based monitoring fires the alert;
   distributed tracing and structured logs answer the
   investigation. Black Friday incidents are diagnosable in
@@ -708,6 +723,7 @@ cannot be packaged into a SaaS product.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Describe to a non-technical manager why
    "buying Datadog" does not automatically give the team
    observability, and what additional investment is required.
@@ -741,9 +757,9 @@ behaviour matches no runbook. Walk through how you would use
 observability to determine whether this is a deployment
 regression, a resource contention issue between account tiers,
 or a data quality issue affecting free-tier records.
-*Hint: Think about what attributes would be present on the
+_Hint: Think about what attributes would be present on the
 slow traces that are absent from fast traces. Which service
-hosts the tier-differentiation logic?*
+hosts the tier-differentiation logic?_
 
 **Q2.** A team argues they can replace their monitoring setup
 with a single "golden metric" - a composite score from 0 to
@@ -751,9 +767,9 @@ with a single "golden metric" - a composite score from 0 to
 alerts. Evaluate this against the monitoring/observability
 distinction. What does it get right? What does it
 fundamentally misunderstand?
-*Hint: Consider what happens when the golden metric score
+_Hint: Consider what happens when the golden metric score
 drops but the composite formula obscures which component
-changed. Is this monitoring, observability, or neither?*
+changed. Is this monitoring, observability, or neither?_
 
 **Q3.** Design both monitoring and observability layers for
 a real-time fraud detection service processing 1,000
@@ -762,9 +778,9 @@ transactions flagged as fraud) and false negative rate
 (fraud allowed through) are both SLOs. Define: two
 SLO-based monitoring alerts and three observability signals
 that would help diagnose unexpected changes in either rate.
-*Hint: Which signals would let you determine whether a rate
+_Hint: Which signals would let you determine whether a rate
 change is caused by a model change, a data drift, or a
-system configuration change?*
+system configuration change?_
 
 ---
 
@@ -773,9 +789,10 @@ system configuration change?*
 **Q1: "What is the difference between monitoring and
 observability? Give an example of a failure that monitoring
 would miss but observability would catch."**
-*Why they ask:* Tests conceptual depth - whether the candidate
+_Why they ask:_ Tests conceptual depth - whether the candidate
 understands the fundamental distinction, not just tool names.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Monitoring checks pre-defined conditions (anticipates failure
   modes); observability enables any query post-hoc
 - Example: database deadlock caused by a new feature flag
@@ -788,9 +805,10 @@ understands the fundamental distinction, not just tool names.
 
 **Q2: "Your team uses Datadog. A senior engineer says,
 'We have Datadog, so we have observability.' Do you agree?"**
-*Why they ask:* Tests whether the candidate understands that
+_Why they ask:_ Tests whether the candidate understands that
 observability is a system property, not a tool property.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Datadog is a tool; observability is a property of how the
   system is instrumented
 - You can have Datadog and be unobservable if signals are
@@ -806,10 +824,11 @@ observability is a system property, not a tool property.
 
 **Q3: "When would threshold-based monitoring be correct
 over SLO-based monitoring? Give a concrete example."**
-*Why they ask:* Tests whether the candidate knows when simpler
+_Why they ask:_ Tests whether the candidate knows when simpler
 approaches are right, not just when to apply modern SRE
 practices.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Threshold-based is appropriate for infrastructure alerts
   where user impact is direct and immediate: disk full at 95%
   will cause service crash within minutes regardless of
