@@ -13,7 +13,7 @@ under `dictionary/` following the v4.0 spec exactly.
 | File                                              | Purpose                                   | When to read                                   |
 | ------------------------------------------------- | ----------------------------------------- | ---------------------------------------------- |
 | `dictionary/_config/GENERATOR_PROMPT.md`          | Master generation spec v4.0 (24 sections) | ALWAYS - before generating any keyword content |
-| `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`  | Keyword list generator v4.0               | When generating NEW keyword lists              |
+| `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`  | Keyword list generator v4.1               | When generating ANY keyword lists (mandatory)  |
 | `dictionary/_config/TECHNICAL_DICTIONARY.md`      | Master keyword list (3638+ entries)       | When checking existing keywords                |
 | `dictionary/_config/CATEGORY_GENERATOR_PROMPT.md` | Single-category generator                 | When generating a full category                |
 | `dictionary/index.md`                             | Navigation root with all tiers/categories | ALWAYS - to understand current structure       |
@@ -76,6 +76,11 @@ a description/JD like "Strong SQL skills and experience with..."
 
 ## Constraints
 
+- ALWAYS use `KEYWORD_GENERATOR_PROMPT.md` v4.1 for ANY keyword generation -
+  regardless of input type (topic, subtopic, microtopic, keyword, skill,
+  language, programming language, CS concept, technology, feature,
+  description, JD text, or anything else). This is NON-NEGOTIABLE.
+  No keyword list may be generated without following this spec in full.
 - NEVER modify files under `interview/` - systems are completely separate
 - NEVER skip reading `GENERATOR_PROMPT.md` before generating content
 - NEVER generate more than ONE keyword entry at a time - complete it fully, then move to next

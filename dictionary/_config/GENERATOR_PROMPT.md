@@ -229,6 +229,55 @@ PRINCIPLE 16: MAKE THE INVISIBLE VISIBLE
   If the failure mode is invisible: add a diagnostic trace.
   "The reader must be able to watch the system think."
 
+PRINCIPLE 17: PATTERN RECOGNITION  [Pillar 9]
+  Every concept IS a structural pattern that recurs across domains.
+  The engineer who names the abstract pattern - not just the
+  specific technology - develops the most transferable intuition.
+  When generating any entry, ask:
+    - What is the ABSTRACT PATTERN this concept exemplifies?
+    - Where does this EXACT structure appear in unrelated domains?
+  Examples: A circuit breaker is "fail fast" - the same structure
+  governs electrical fuses, immune system tolerance, trading halts,
+  and TCP congestion control. A B-Tree's rebalancing strategy is
+  structurally identical to load balancing in distributed systems.
+  Enforce through section 5.20 Transferable Wisdom. If the pattern
+  bridge is non-obvious: make it explicit. This is what separates
+  engineers who learn tools from engineers who learn principles.
+  "The concept is the instance. The pattern is the lesson."
+
+PRINCIPLE 18: CROSS-DOMAIN TRANSFER  [Pillar 10]
+  Insight earned in one domain must be transferable to another.
+  After building intuition, explicitly map the engineering principle
+  to 2-3 other contexts where the SAME reasoning governs decisions.
+  This is not breadth for its own sake. It is proof that the
+  principle is universal - not merely domain-specific.
+  The reader who can transfer concepts solves unfamiliar problems
+  by mapping them to known territory. This is the defining skill
+  of a senior engineer under time pressure.
+  Every entry: after the mechanism, ask "Where else does this
+  principle govern design decisions?" Name the domains. Show the
+  mapping explicitly. The connection must be concrete, not vague.
+  Enforce through section 5.20 "Where else this pattern appears."
+  "If it only applies here, it is a fact. If it applies
+   everywhere, it is a principle."
+
+PRINCIPLE 19: CITE THE ORIGIN  [Pillar 12 - Research Foundations]
+  Every concept was invented by someone, in response to a real
+  problem, at a specific moment. That origin reveals WHY the
+  design looks the way it does.
+  When the origin is documented:
+    - Name the inventor, year, and founding paper or RFC
+    - Show what OPEN PROBLEM the original work left unsolved
+      (this is where the field moves next)
+  The reader who knows the origin understands why the concept's
+  quirks exist - they are not arbitrary, they are artifacts of
+  the problem context at the time of invention.
+  Enforce through section 5.4 EVOLUTION and L6-level detail.
+  Never fabricate citations. If origin is unknown, say so and
+  cite the earliest documented evidence instead.
+  "The inventor's original constraint explains every design
+   decision that feels wrong today."
+
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 2: ID SYSTEM, FILE FORMAT & FOLDER STRUCTURE
 ═══════════════════════════════════════════════════════════════════════════

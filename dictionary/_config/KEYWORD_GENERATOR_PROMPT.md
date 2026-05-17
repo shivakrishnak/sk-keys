@@ -86,7 +86,7 @@ PURPOSE:
     - and long-term retention structures.
 
   SYSTEM INTEGRATION:
-    This system feeds GENERATOR_PROMPT.md v4.1, which uses
+    This system feeds GENERATOR_PROMPT.md v4.0, which uses
     a Topic Type classification (TYPE 1-5) to adapt entry
     section framing. The 12 Mastery Pillars in Section 0
     correspond to GENERATOR_PROMPT.md teaching mechanisms:

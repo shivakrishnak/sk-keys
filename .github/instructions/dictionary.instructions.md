@@ -14,7 +14,7 @@ description: "Rules for generating and editing Technical Dictionary v4.0 entries
 dictionary/
   _config/
     GENERATOR_PROMPT.md               # Master generation spec v4.0
-    KEYWORD_GENERATOR_PROMPT.md       # Category keyword generator v4.0
+    KEYWORD_GENERATOR_PROMPT.md       # Category keyword generator v4.1
     CATEGORY_GENERATOR_PROMPT.md      # Single-category generator v2.0
     TECHNICAL_DICTIONARY.md           # Master keyword list (3638+ entries)
     GENERATE_QUEUE.md                 # Generation queue guide
@@ -47,6 +47,11 @@ dictionary/
 | `STUB_VERSION`         | `0`    | Integer for placeholder stubs                  |
 
 ## Rules Summary (apply in order)
+
+**0. KEYWORD GENERATION (NON-NEGOTIABLE):** Any keyword list - for any
+topic, technology, language, skill, feature, description, JD text, or
+anything else - MUST be generated using `KEYWORD_GENERATOR_PROMPT.md`
+v4.1. All 24 rules, all 18 quality checks. No exceptions.
 
 **1. Content:** All 24 required sections in exact sequence (5.1-5.24). BAD-before-GOOD code. Min 4 misconception rows, min 3 failure modes.
 

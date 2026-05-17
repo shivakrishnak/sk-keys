@@ -115,7 +115,7 @@ Report all sync issues before proceeding.
 
 ## Phase 2 - Generate Keywords
 
-Using `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` v4.0 specification:
+Using `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` v4.1 specification:
 
 1. Set `Starting ID = CODE-{HIGHEST_ID + 1}` (or CODE-001 if new category)
 
@@ -133,9 +133,9 @@ Using `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` v4.0 specification:
    **Relevance criteria:** Include a level if it has at least 3 meaningful keywords
    that a practitioner in this domain would need to know. Omit a level only if it
    produces fewer than 3 meaningful keywords for this specific category.
-3. Apply ALL 22 rules from Section 2
+3. Apply ALL 24 rules from Section 2
 4. Use ALL 12 output components from Section 3
-5. Run ALL 17 quality checks from Section 4
+5. Run ALL 18 quality checks from Section 4
 
 **CRITICAL - New vs Missing keywords:**
 

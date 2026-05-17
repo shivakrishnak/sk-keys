@@ -1,4 +1,18 @@
-﻿# 🎯 Single-Category Keyword Generator - Prompt v2.0
+﻿# 🚫 LEGACY FILE - Single-Category Keyword Generator - Prompt v2.0
+
+> **STATUS: LEGACY / OUTDATED.** This file references an old folder structure
+> (`docs/` paths), old numeric IDs (1-45 categories), and a 20-section entry
+> format. It is retained for historical reference only.
+>
+> **For current keyword generation:** use `KEYWORD_GENERATOR_PROMPT.md` v4.1
+> (24 rules, 18 quality checks, CODE-NNN ID system).
+>
+> **For current entry generation:** use `GENERATOR_PROMPT.md` v4.0
+> (24 sections, 19 teaching principles).
+
+---
+
+# Original: Single-Category Keyword Generator - Prompt v2.0
 
 > **Usage:** Set the `TARGET_CATEGORY_ID` below, then paste this entire prompt into an AI assistant.
 > The agent will generate every missing keyword entry for that category only, 10 files at a time.
