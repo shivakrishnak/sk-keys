@@ -34,11 +34,11 @@ metric, exhausting memory and crashing the metrics
 system. It is the single most common cause of
 production Prometheus outages.
 
-| #032 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Metrics -- Types, Prometheus -- Metrics Collection | |
-| **Used by:** | Observability at Scale, Platform Observability | |
-| **Related:** | Metrics Types, Prometheus, ELK/EFK Stack, Observability at Scale | |
+| #032            | Category: Observability & SRE                                    | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Metrics -- Types, Prometheus -- Metrics Collection               |                 |
+| **Used by:**    | Observability at Scale, Platform Observability                   |                 |
+| **Related:**    | Metrics Types, Prometheus, ELK/EFK Stack, Observability at Scale |                 |
 
 ---
 
@@ -47,6 +47,7 @@ production Prometheus outages.
 **WORLD WITHOUT IT:**
 A developer adds user analytics to a payment service.
 They instrument a counter with a `user_id` label:
+
 ```python
 payment_count = Counter(
   "payments_total",
@@ -54,6 +55,7 @@ payment_count = Counter(
   ["user_id", "currency", "status"]
 )
 ```
+
 The service has 10 million users, 5 currencies, and
 3 status values. Cardinality: 10M x 5 x 3 = 150
 million time series. Each series uses ~500 bytes.
@@ -105,6 +107,7 @@ Example:
 ```
 
 **Time series memory cost:**
+
 - Prometheus: ~500-1,000 bytes per active time series
   (WAL entry + chunk header + label storage)
 - 1 million series = ~500 MB - 1 GB RAM (manageable)
@@ -113,6 +116,7 @@ Example:
 - 1 billion series = ~500 GB RAM (impractical)
 
 **Bounded vs unbounded cardinality:**
+
 - Bounded: finite set of known values (HTTP methods:
   GET/POST/PUT/DELETE/PATCH - at most 5)
 - Unbounded: grows with traffic (user_id, request_id,
@@ -255,6 +259,7 @@ curl -s http://localhost:9090/api/v1/label/__name__/values \
 ```
 
 **Output:**
+
 ```
 45,000,000  payment_processing_duration_seconds (user_id label!)
 30,000,000  recommendation_clicks_total (user_id + item_id)
@@ -458,36 +463,36 @@ print("Cardinality lint passed.")
 # before long-term storage
 
 groups:
-- name: cardinality-reduction
-  rules:
-  # BAD source metric (has pod_name label - grows with deploys)
-  # checkout_requests_total{pod_name, method, status}
-  # = pod_count x 4 methods x 7 statuses = potentially 10,000+
+  - name: cardinality-reduction
+    rules:
+      # BAD source metric (has pod_name label - grows with deploys)
+      # checkout_requests_total{pod_name, method, status}
+      # = pod_count x 4 methods x 7 statuses = potentially 10,000+
 
-  # GOOD recording rule: aggregate across pods
-  - record: checkout:requests:rate5m
-    expr: |
-      sum by (method, status) (
-        rate(checkout_requests_total[5m])
-      )
-    # Result: only 4 x 7 = 28 series
-    # Pod-level data preserved in original metric (short retention)
-    # Aggregated data used for long-term trending
+      # GOOD recording rule: aggregate across pods
+      - record: checkout:requests:rate5m
+        expr: |
+          sum by (method, status) (
+            rate(checkout_requests_total[5m])
+          )
+        # Result: only 4 x 7 = 28 series
+        # Pod-level data preserved in original metric (short retention)
+        # Aggregated data used for long-term trending
 
-  # For per-service dashboard (acceptable cardinality):
-  - record: checkout:requests_by_status:rate5m
-    expr: |
-      sum by (status_class) (
-        label_replace(
-          rate(checkout_requests_total[5m]),
-          "status_class",
-          "${1}xx",
-          "status",
-          "([0-9]).*"
-        )
-      )
-    # Collapses 200,201,204 → 2xx; 400,401,404 → 4xx
-    # 4 status classes instead of 7+ status codes
+      # For per-service dashboard (acceptable cardinality):
+      - record: checkout:requests_by_status:rate5m
+        expr: |
+          sum by (status_class) (
+            label_replace(
+              rate(checkout_requests_total[5m]),
+              "status_class",
+              "${1}xx",
+              "status",
+              "([0-9]).*"
+            )
+          )
+        # Collapses 200,201,204 → 2xx; 400,401,404 → 4xx
+        # 4 status classes instead of 7+ status codes
 ```
 
 ---
@@ -614,67 +619,67 @@ private String normalizeEndpoint(String uri) {
 
 ```yaml
 groups:
-- name: prometheus-cardinality
-  rules:
-  # Alert when total series count exceeds safe threshold
-  - alert: HighMetricsCardinality
-    expr: prometheus_tsdb_head_series > 2000000
-    for: 5m
-    labels:
-      severity: warning
-    annotations:
-      summary: "Prometheus has {{ $value | humanize }} active series"
-      description: |
-        Expected: < 500,000 active series.
-        Current: {{ $value | humanize }} series.
-        Run the TSDB status check to find the offending metric:
-        curl http://prometheus:9090/api/v1/status/tsdb | \
-          jq '.data.seriesCountByMetricName[:5]'
-        Action: identify and remove high-cardinality labels.
+  - name: prometheus-cardinality
+    rules:
+      # Alert when total series count exceeds safe threshold
+      - alert: HighMetricsCardinality
+        expr: prometheus_tsdb_head_series > 2000000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Prometheus has {{ $value | humanize }} active series"
+          description: |
+            Expected: < 500,000 active series.
+            Current: {{ $value | humanize }} series.
+            Run the TSDB status check to find the offending metric:
+            curl http://prometheus:9090/api/v1/status/tsdb | \
+              jq '.data.seriesCountByMetricName[:5]'
+            Action: identify and remove high-cardinality labels.
 
-  - alert: CriticalMetricsCardinality
-    expr: prometheus_tsdb_head_series > 10000000
-    for: 2m
-    labels:
-      severity: page
-    annotations:
-      summary: "Prometheus cardinality CRITICAL: OOM risk"
-      description: |
-        {{ $value | humanize }} active series.
-        Prometheus OOM risk. Immediate action required.
-        Emergency: restart Prometheus with TSDB limit flag
-        --storage.tsdb.max-block-chunk-seg-size=10MB
-        to reduce memory pressure during fix.
+      - alert: CriticalMetricsCardinality
+        expr: prometheus_tsdb_head_series > 10000000
+        for: 2m
+        labels:
+          severity: page
+        annotations:
+          summary: "Prometheus cardinality CRITICAL: OOM risk"
+          description: |
+            {{ $value | humanize }} active series.
+            Prometheus OOM risk. Immediate action required.
+            Emergency: restart Prometheus with TSDB limit flag
+            --storage.tsdb.max-block-chunk-seg-size=10MB
+            to reduce memory pressure during fix.
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Label type | Example | Cardinality | Memory impact | Safe? |
-|---|---|---|---|---|
-| HTTP method | GET, POST, PUT | 5 values | Trivial | Yes |
-| HTTP status class | 2xx, 4xx, 5xx | 5 values | Trivial | Yes |
-| Service name | checkout, payment | 10-50 values | Trivial | Yes |
-| Region | us-east-1, eu-west | 5-20 values | Trivial | Yes |
-| Pod name | checkout-7f4b-xz9p | 100s-1000s, grows | Medium | Caution |
-| Endpoint (normalised) | /api/users/{id} | 20-200 values | Low | Usually |
-| IP address | 203.0.113.42 | 1k-1M values | Medium-High | No |
-| User ID | user-12345 | 1M-100M values | Catastrophic | Never |
-| Request ID | req-abc-123-def | Unique per request | Catastrophic | Never |
-| Exception message | NullPointerException... | Thousands | High | Never |
+| Label type            | Example                 | Cardinality        | Memory impact | Safe?   |
+| --------------------- | ----------------------- | ------------------ | ------------- | ------- |
+| HTTP method           | GET, POST, PUT          | 5 values           | Trivial       | Yes     |
+| HTTP status class     | 2xx, 4xx, 5xx           | 5 values           | Trivial       | Yes     |
+| Service name          | checkout, payment       | 10-50 values       | Trivial       | Yes     |
+| Region                | us-east-1, eu-west      | 5-20 values        | Trivial       | Yes     |
+| Pod name              | checkout-7f4b-xz9p      | 100s-1000s, grows  | Medium        | Caution |
+| Endpoint (normalised) | /api/users/{id}         | 20-200 values      | Low           | Usually |
+| IP address            | 203.0.113.42            | 1k-1M values       | Medium-High   | No      |
+| User ID               | user-12345              | 1M-100M values     | Catastrophic  | Never   |
+| Request ID            | req-abc-123-def         | Unique per request | Catastrophic  | Never   |
+| Exception message     | NullPointerException... | Thousands          | High          | Never   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Adding more labels gives more insight" | Each label multiplies the series count. Adding a 10-value label to a metric with 1,000 series creates 10,000 series. More labels = more memory, not more insight if the labels are high-cardinality. |
-| "Cardinality only matters at large scale" | A 10M user service can OOM a Prometheus instance with a single unbounded label added to one metric. Cardinality issues occur at any scale when unbounded labels are used. |
+| Misconception                                                   | Reality                                                                                                                                                                                                                                                     |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Adding more labels gives more insight"                         | Each label multiplies the series count. Adding a 10-value label to a metric with 1,000 series creates 10,000 series. More labels = more memory, not more insight if the labels are high-cardinality.                                                        |
+| "Cardinality only matters at large scale"                       | A 10M user service can OOM a Prometheus instance with a single unbounded label added to one metric. Cardinality issues occur at any scale when unbounded labels are used.                                                                                   |
 | "I can use high-cardinality labels if the values are temporary" | Prometheus retains series in memory for 2+ hours after last seen. A deployment that creates 100,000 pod-name series keeps those series in memory for 2 hours after the old pods are gone. Churn (frequent creation and deletion of series) is also harmful. |
-| "Recording rules fix cardinality problems" | Recording rules aggregate data, reducing future cardinality. They cannot remove already-created series from the TSDB head. The fix requires removing the high-cardinality label from the source metric and waiting for old series to expire. |
-| "The Prometheus operator or Grafana handles cardinality" | No. Cardinality is a Prometheus TSDB constraint. Neither Grafana (visualisation layer) nor the Prometheus Operator (deployment management) limits or controls cardinality. It is a metric instrumentation design problem. |
+| "Recording rules fix cardinality problems"                      | Recording rules aggregate data, reducing future cardinality. They cannot remove already-created series from the TSDB head. The fix requires removing the high-cardinality label from the source metric and waiting for old series to expire.                |
+| "The Prometheus operator or Grafana handles cardinality"        | No. Cardinality is a Prometheus TSDB constraint. Neither Grafana (visualisation layer) nor the Prometheus Operator (deployment management) limits or controls cardinality. It is a metric instrumentation design problem.                                   |
 
 ---
 
@@ -699,6 +704,7 @@ Over 2 weeks: 50 services x 3 replicas x 14 deployments
 baseline.
 
 **Diagnosis:**
+
 ```bash
 # Check series count trend (growing = leak)
 # Look at Prometheus memory over time in Grafana
@@ -715,6 +721,7 @@ curl http://prometheus:9090/api/v1/status/tsdb | \
 ```
 
 **Fix:**
+
 ```yaml
 # Add recording rule to aggregate pod-level metrics
 # to service-level before long-term retention
@@ -723,6 +730,7 @@ curl http://prometheus:9090/api/v1/status/tsdb | \
     sum without (pod_name, pod, instance) (
       rate(http_requests_total[5m])
     )
+
 # Drop pod_name from original metric after 1h retention
 ```
 
@@ -731,6 +739,7 @@ curl http://prometheus:9090/api/v1/status/tsdb | \
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Metrics -- Types (Counter, Gauge, Histogram)` -
   all metric types are affected by cardinality; the
   label system is the source of the issue
@@ -739,6 +748,7 @@ curl http://prometheus:9090/api/v1/status/tsdb | \
   scaling constraint
 
 **Builds On This (learn these next):**
+
 - `Observability at Scale (Sampling, Aggregation)` -
   managing cardinality is the core challenge of
   scaling Prometheus; aggregation is the solution
@@ -747,6 +757,7 @@ curl http://prometheus:9090/api/v1/status/tsdb | \
   across all services
 
 **Alternatives / Comparisons:**
+
 - `Logs (ELK/EFK)` - the correct storage for high-
   cardinality data (user IDs, request IDs, full URLs).
   Logs are indexed differently: text search, not
@@ -845,9 +856,10 @@ investment in the observability stack.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[CALCULATE]** Given a metric with labels
    `{status_class (5 values), method (5 values),
-   user_id (10M values), service (10 values)}`,
+user_id (10M values), service (10 values)}`,
    calculate the total cardinality and the estimated
    RAM usage at 1KB per series.
 2. **[IDENTIFY]** Review the following metric labels
@@ -876,7 +888,7 @@ cardinality, (b) after a monthly deploy cycle (10
 deployments, 3 new pods each, old pods not immediately
 expired - 2h TTL). How does this compare to budget
 of 1M total series and 4 GB RAM?
-*Hint: (a) Current: 5 x 10 x 20 x (20 services x 3 pods)
+_Hint: (a) Current: 5 x 10 x 20 x (20 services x 3 pods)
 = 5 x 10 x 20 x 60 = 60,000 series. Fine.
 (b) After 10 deploys: each deploy creates 3 new pods per
 service = 3 x 20 = 60 new pod names. With 2h TTL, old
@@ -885,14 +897,14 @@ pods linger for 2h. During active deploy: up to 10 x 60
 series. Still under 1M budget. Memory: 600K x 1KB = 600 MB.
 Acceptable. But at 100 services or 50 metrics sharing
 pod_name: 10x to 60M series and 60 GB → OOM. Pod_name
-is a "caution" label, not "safe."*
+is a "caution" label, not "safe."_
 
 **Q2.** A colleague proposes adding a `trace_id` label
 to a latency histogram metric, arguing "it lets us
 correlate metrics with specific traces for debugging."
 What is wrong with this proposal? What is the correct
 architecture for trace-metric correlation?
-*Hint: trace_id is unique per request = unbounded.
+_Hint: trace_id is unique per request = unbounded.
 10k req/s = 10k new trace_id values per second.
 In 1 hour: 36M series created from this one metric.
 In 2h: 72M series (before old series expire). OOM.
@@ -904,7 +916,7 @@ sample. Exemplars are sparse (1 per histogram bucket, stored
 externally), not a separate time series per trace_id.
 Grafana can follow an exemplar from a metric spike to
 the corresponding Jaeger trace. This is the correct
-metrics-to-trace correlation mechanism.*
+metrics-to-trace correlation mechanism._
 
 **Q3 (TYPE G):** You are the platform SRE lead for
 a company with 500 microservices across 5 engineering
@@ -916,7 +928,7 @@ weeks. Design a cardinality governance programme to:
 fix the existing offenders, (c) prevent future
 occurrences, (d) enforce limits without blocking
 legitimate metric additions.
-*Hint: (a) Immediate: set per-tenant series limit in
+_Hint: (a) Immediate: set per-tenant series limit in
 Cortex/Thanos (if using federation) or add
 --storage.tsdb.max-block-chunk-seg-size limit to
 Prometheus as emergency measure. Deploy cardinality
@@ -932,16 +944,17 @@ Platform team reviews in 48h. If approved: add to
 allowlist. New labels allowed only after review. Metrics
 remain unblocked - only new/unknown labels need review.
 Track compliance: weekly cardinality health report
-per team.*
+per team._
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
 **Q1: "What is cardinality in Prometheus and why is it a problem?"**
-*Why they ask:* One of the most common production Prometheus
+_Why they ask:_ One of the most common production Prometheus
 failure modes. Tests whether the engineer has real experience.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Cardinality = number of unique time series = product
   of unique values per label.
 - Each unique label combination = one time series.
@@ -956,9 +969,10 @@ failure modes. Tests whether the engineer has real experience.
 
 **Q2: "A colleague wants to add a user_id label to your
 payment metric to track per-user payments. How do you respond?"**
-*Why they ask:* Tests ability to reason under pushback
+_Why they ask:_ Tests ability to reason under pushback
 and propose correct alternatives.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Decline the label: user_id is unbounded (10M users =
   10M series per metric per label combination). Will OOM
   Prometheus.
@@ -975,9 +989,10 @@ and propose correct alternatives.
 
 **Q3: "How would you design cardinality governance for
 a team of 50 engineers adding metrics daily?"**
-*Why they ask:* Tests system design thinking for
+_Why they ask:_ Tests system design thinking for
 the observability platform.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - CI lint: Python script scanning metric definitions
   for forbidden labels (user_id, request_id, url, ip).
   Fails the build if detected.

@@ -31,11 +31,11 @@ function is a cleanup that runs before the next effect
 or on unmount; missing dependencies and missing cleanup
 are the two most common bugs.
 
-| #021 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, State, useState Hook | |
-| **Used by:** | useContext Hook, useRef Hook, Custom Hooks, useEffect Overuse Anti-Pattern | |
-| **Related:** | useState Hook, useRef Hook, useEffect Overuse Anti-Pattern | |
+| #021            | Category: React                                                            | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, State, useState Hook                                            |                 |
+| **Used by:**    | useContext Hook, useRef Hook, Custom Hooks, useEffect Overuse Anti-Pattern |                 |
+| **Related:**    | useState Hook, useRef Hook, useEffect Overuse Anti-Pattern                 |                 |
 
 ---
 
@@ -48,8 +48,9 @@ the same JSX. But real applications require impure
 operations: fetching data from a server, subscribing to
 a WebSocket, setting up timers, logging to analytics,
 syncing state to localStorage. These are "side effects"
+
 - operations that interact with the world outside the
-function's input/output contract.
+  function's input/output contract.
 
 Running side effects directly in the function body is
 wrong: they run on every render (including renders
@@ -94,8 +95,8 @@ useEffect(() => { ... }, [id]); // runs when id changes
 
 ```jsx
 useEffect(() => {
-  const sub = subscribe(userId);     // setup
-  return () => sub.unsubscribe();    // cleanup
+  const sub = subscribe(userId); // setup
+  return () => sub.unsubscribe(); // cleanup
 }, [userId]);
 // cleanup runs: when userId changes (before next setup)
 // cleanup runs: when component unmounts
@@ -154,9 +155,9 @@ function UserProfile({ userId }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetchUser(userId)         // reads userId
+    fetchUser(userId) // reads userId
       .then(setUser);
-  }, []);                     // BUG: [] means "never re-run"
+  }, []); // BUG: [] means "never re-run"
   // When userId prop changes (user navigates to another
   // profile), the effect does NOT re-run.
   // Old user data shown for new userId.
@@ -266,20 +267,23 @@ function UserProfile({ userId }) {
     setError(null);
 
     fetchUser(userId)
-      .then(data => {
-        if (!cancelled) {  // prevent stale update
+      .then((data) => {
+        if (!cancelled) {
+          // prevent stale update
           setUser(data);
           setLoading(false);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         if (!cancelled) {
           setError(err.message);
           setLoading(false);
         }
       });
 
-    return () => { cancelled = true; };  // cleanup
+    return () => {
+      cancelled = true;
+    }; // cleanup
   }, [userId]);
 
   if (loading) return <Spinner />;
@@ -296,11 +300,11 @@ useEffect(() => {
     setWindowWidth(window.innerWidth);
   };
 
-  window.addEventListener('resize', handleResize);
+  window.addEventListener("resize", handleResize);
 
   // Cleanup: remove listener on unmount or re-run
   return () => {
-    window.removeEventListener('resize', handleResize);
+    window.removeEventListener("resize", handleResize);
   };
 }, []); // [] - setup once, cleanup on unmount
 ```
@@ -314,13 +318,13 @@ useEffect(() => {
   fetch(`/api/users/${userId}`, {
     signal: controller.signal,
   })
-    .then(r => r.json())
+    .then((r) => r.json())
     .then(setUser)
-    .catch(err => {
-      if (err.name !== 'AbortError') setError(err.message);
+    .catch((err) => {
+      if (err.name !== "AbortError") setError(err.message);
     });
 
-  return () => controller.abort();  // cancels in-flight request
+  return () => controller.abort(); // cancels in-flight request
 }, [userId]);
 ```
 
@@ -399,26 +403,26 @@ function LiveClock() {
 ```jsx
 function SearchResults({ query }) {
   const [results, setResults] = useState([]);
-  const [status, setStatus] = useState('idle');
+  const [status, setStatus] = useState("idle");
 
   useEffect(() => {
     if (!query) {
       setResults([]);
-      setStatus('idle');
-      return;  // early return, no cleanup needed
+      setStatus("idle");
+      return; // early return, no cleanup needed
     }
 
     const controller = new AbortController();
-    setStatus('loading');
+    setStatus("loading");
 
     searchAPI(query, { signal: controller.signal })
-      .then(data => {
+      .then((data) => {
         setResults(data);
-        setStatus('success');
+        setStatus("success");
       })
-      .catch(err => {
-        if (err.name !== 'AbortError') {
-          setStatus('error');
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          setStatus("error");
         }
         // AbortError: request was cancelled, silently ignore
       });
@@ -426,9 +430,9 @@ function SearchResults({ query }) {
     return () => controller.abort();
   }, [query]);
 
-  if (status === 'loading') return <Spinner />;
-  if (status === 'error') return <p>Search failed</p>;
-  if (!results.length && status === 'success') {
+  if (status === "loading") return <Spinner />;
+  if (status === "error") return <p>Search failed</p>;
+  if (!results.length && status === "success") {
     return <p>No results for "{query}"</p>;
   }
   return <ResultsList results={results} />;
@@ -439,12 +443,12 @@ function SearchResults({ query }) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`useEffect` with `[]` is like `componentDidMount`" | Approximate equivalent only. In React 18 Strict Mode, `useEffect` with `[]` runs twice in development (mount, unmount, remount) to detect missing cleanups. `componentDidMount` ran once. This is intentional - if your effect breaks when run twice, it has a missing cleanup. |
-| "Missing dependencies is just a linter warning, not a real bug" | Missing deps is a silent correctness bug. The component appears to work until the dependency changes - then it shows stale data indefinitely. The linter rule is enforcing correctness, not style. |
-| "`useEffect` runs before the browser paints (like synchronous code)" | `useEffect` runs AFTER the browser has committed and painted the DOM. For effects that need to run before paint (to avoid visual flicker), use `useLayoutEffect`. Most effects correctly use `useEffect`. |
-| "I can fix the infinite loop by removing the dependency from the array" | Removing a dependency from the array is suppressing the symptom, not fixing the bug. The correct fix is: if a function is a dep, wrap it in `useCallback`; if an object is a dep, memoize it with `useMemo` or move it outside the component. |
+| Misconception                                                           | Reality                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`useEffect` with `[]` is like `componentDidMount`"                     | Approximate equivalent only. In React 18 Strict Mode, `useEffect` with `[]` runs twice in development (mount, unmount, remount) to detect missing cleanups. `componentDidMount` ran once. This is intentional - if your effect breaks when run twice, it has a missing cleanup. |
+| "Missing dependencies is just a linter warning, not a real bug"         | Missing deps is a silent correctness bug. The component appears to work until the dependency changes - then it shows stale data indefinitely. The linter rule is enforcing correctness, not style.                                                                              |
+| "`useEffect` runs before the browser paints (like synchronous code)"    | `useEffect` runs AFTER the browser has committed and painted the DOM. For effects that need to run before paint (to avoid visual flicker), use `useLayoutEffect`. Most effects correctly use `useEffect`.                                                                       |
+| "I can fix the infinite loop by removing the dependency from the array" | Removing a dependency from the array is suppressing the symptom, not fixing the bug. The correct fix is: if a function is a dep, wrap it in `useCallback`; if an object is a dep, memoize it with `useMemo` or move it outside the component.                                   |
 
 ---
 
@@ -453,10 +457,12 @@ function SearchResults({ query }) {
 **Memory Leak: Missing Cleanup on Unmount**
 
 **Symptom:**
+
 ```
 Warning: Can't perform a React state update on an
 unmounted component.
 ```
+
 (This warning was removed in React 18 but the underlying
 bug - updating state after unmount - still causes issues.)
 
@@ -467,11 +473,16 @@ unmounted component. The update is discarded but React
 logs the warning.
 
 **Fix:**
+
 ```jsx
 useEffect(() => {
   let mounted = true;
-  fetch(url).then(d => { if (mounted) setState(d); });
-  return () => { mounted = false; };
+  fetch(url).then((d) => {
+    if (mounted) setState(d);
+  });
+  return () => {
+    mounted = false;
+  };
 }, [url]);
 ```
 
@@ -483,6 +494,7 @@ useEffect(() => {
 visible in React DevTools Profiler.
 
 **Root Cause patterns:**
+
 - No dependency array: effect sets state → re-render →
   effect runs again
 - Object/function in deps: new reference every render →
@@ -511,11 +523,13 @@ to discard responses from non-latest requests.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Component` - effect is tied to component lifecycle
 - `State (useState)` - effect reads state, triggers re-run
   when state changes
 
 **Builds On:**
+
 - `Custom Hooks` - extract effects + state into reusable
   hooks (e.g., `useFetch`, `useDebounce`)
 - `useRef` - ref values can be read in effects without
@@ -524,6 +538,7 @@ to discard responses from non-latest requests.
   useEffect (derived state, syncing to state)
 
 **Alternatives:**
+
 - `useLayoutEffect` - synchronous after DOM commit, before
   paint (for layout measurement)
 - React Query / SWR - data-fetching libraries that
@@ -558,6 +573,7 @@ to discard responses from non-latest requests.
 ```
 
 **If you remember only 3 things:**
+
 1. Every value read inside the effect must be in the
    dependency array. Missing deps = silent stale data bug.
    The linter rule `exhaustive-deps` detects this.
@@ -631,7 +647,7 @@ manifest in production during React's concurrent rendering
    breaks and the fix.
 5. **DISTINGUISH** between `useEffect` and `useLayoutEffect`
    - explain the paint timing difference and give a
-   scenario where `useLayoutEffect` is required.
+     scenario where `useLayoutEffect` is required.
 
 ---
 

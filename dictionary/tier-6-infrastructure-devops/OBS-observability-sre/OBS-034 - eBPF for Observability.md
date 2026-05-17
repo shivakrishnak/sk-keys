@@ -35,11 +35,11 @@ any system event (network packets, system calls, function
 calls) with near-zero overhead and no code changes
 in applications.
 
-| #034 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Observability Fundamentals, Metrics Types, Tracing, Continuous Profiling | |
-| **Used by:** | Platform Observability, Distributed Tracing Architecture | |
-| **Related:** | Metrics Types, Distributed Tracing, Continuous Profiling, USE Method | |
+| #034            | Category: Observability & SRE                                            | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Observability Fundamentals, Metrics Types, Tracing, Continuous Profiling |                 |
+| **Used by:**    | Platform Observability, Distributed Tracing Architecture                 |                 |
+| **Related:**    | Metrics Types, Distributed Tracing, Continuous Profiling, USE Method     |                 |
 
 ---
 
@@ -87,6 +87,7 @@ and runtimes on Linux.
 **eBPF (extended Berkeley Packet Filter)** is a
 Linux kernel technology that allows loading sandboxed
 user-defined programs into the kernel. An eBPF program:
+
 - Is written in restricted C (or using high-level
   wrappers: BCC Python API, libbpf, Go eBPF library)
 - Is compiled to eBPF bytecode
@@ -100,6 +101,7 @@ user-defined programs into the kernel. An eBPF program:
   stores shared between kernel and userspace)
 
 **eBPF hook types for observability:**
+
 - **kprobe/kretprobe**: attach to any kernel function
   entry or return. Captures arguments and return values.
 - **tracepoint**: stable kernel-defined trace event.
@@ -114,6 +116,7 @@ user-defined programs into the kernel. An eBPF program:
   high-performance packet filtering and network observability.
 
 **Key eBPF observability tools:**
+
 - **Cilium + Tetragon**: Kubernetes networking and
   security observability via eBPF (replaces kube-proxy)
 - **Parca / BPFtrace**: continuous CPU profiling
@@ -257,6 +260,7 @@ for pid, count := range bpfMap.Iterate() {
 A microservice has 50ms P99 latency. An engineer
 suspects a specific kernel function is being called
 inefficiently. Without eBPF:
+
 - Cannot attach a profiler without code changes
 - Cannot observe kernel-level function calls
 - Guesswork: maybe DNS? Maybe TCP? Maybe I/O?
@@ -417,19 +421,19 @@ metadata:
   name: block-unexpected-outbound
 spec:
   kprobes:
-  - call: "tcp_connect"
-    return: false
-    syscall: false
-    args:
-    - index: 0
-      type: "sock"
-    selectors:
-    - matchNamespaces:
-      - namespace: Production
-        values: ["production"]
-      matchActions:
-      - action: Sigkill  # Kill process making unexpected connection
-        # or: action: Post  (alert only)
+    - call: "tcp_connect"
+      return: false
+      syscall: false
+      args:
+        - index: 0
+          type: "sock"
+      selectors:
+        - matchNamespaces:
+            - namespace: Production
+              values: ["production"]
+          matchActions:
+            - action: Sigkill # Kill process making unexpected connection
+              # or: action: Post  (alert only)
 ```
 
 **BPFTRACE - AD-HOC KERNEL TRACING:**
@@ -546,7 +550,7 @@ sudo /usr/share/bcc/tools/biolatency -D
 # -D: show disk names
 # Output (30 seconds):
 # Tracing block device I/O... Hit Ctrl-C to end.
-# 
+#
 # nvme0n1
 # usecs               : count     distribution
 #     0 -> 1          : 0        |                        |
@@ -598,37 +602,37 @@ px.display(df, 'HTTP Overview')
 
 ### ⚖️ Comparison Table
 
-| Approach | Code change? | Overhead | Languages | Kernel visibility | Production safe? |
-|---|---|---|---|---|---|
-| SDK instrumentation | Yes | 1-5% | Language-specific | None | Yes |
-| eBPF (Pixie, Parca) | No | < 1% | Any | Full | Yes (verified) |
-| Kernel module | No | Low-high | Any | Full | Risky (can crash) |
-| ptrace | No | 10-1000x | Any | Full | No (too slow) |
-| sidecar proxy (Istio) | No (but infra change) | 5-15% | Any | Network only | Yes |
-| strace | No | Very high | Any | Syscalls only | No |
+| Approach              | Code change?          | Overhead  | Languages         | Kernel visibility | Production safe?  |
+| --------------------- | --------------------- | --------- | ----------------- | ----------------- | ----------------- |
+| SDK instrumentation   | Yes                   | 1-5%      | Language-specific | None              | Yes               |
+| eBPF (Pixie, Parca)   | No                    | < 1%      | Any               | Full              | Yes (verified)    |
+| Kernel module         | No                    | Low-high  | Any               | Full              | Risky (can crash) |
+| ptrace                | No                    | 10-1000x  | Any               | Full              | No (too slow)     |
+| sidecar proxy (Istio) | No (but infra change) | 5-15%     | Any               | Network only      | Yes               |
+| strace                | No                    | Very high | Any               | Syscalls only     | No                |
 
 **eBPF tool landscape:**
 
-| Tool | Purpose | Kubernetes? | Code change? |
-|---|---|---|---|
-| Pixie | HTTP/gRPC/DNS auto-tracing | Yes | No |
-| Parca | Continuous CPU profiling | Yes (DaemonSet) | No |
-| Cilium Hubble | Network flow visibility | Yes | No |
-| Tetragon/Falco | Security audit | Yes | No |
-| bpftrace | Ad-hoc kernel tracing | Any Linux | No |
-| BCC tools | Pre-built trace scripts | Any Linux | No |
+| Tool           | Purpose                    | Kubernetes?     | Code change? |
+| -------------- | -------------------------- | --------------- | ------------ |
+| Pixie          | HTTP/gRPC/DNS auto-tracing | Yes             | No           |
+| Parca          | Continuous CPU profiling   | Yes (DaemonSet) | No           |
+| Cilium Hubble  | Network flow visibility    | Yes             | No           |
+| Tetragon/Falco | Security audit             | Yes             | No           |
+| bpftrace       | Ad-hoc kernel tracing      | Any Linux       | No           |
+| BCC tools      | Pre-built trace scripts    | Any Linux       | No           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "eBPF requires modifying the kernel" | No. eBPF programs are loaded into the kernel via the `bpf()` syscall. They run in a sandboxed JIT-compiled environment without modifying kernel source. The kernel must be ≥ 4.4 for basic eBPF, ≥ 4.18 for full observability features. |
-| "eBPF programs can crash the kernel" | No. The eBPF verifier ensures safety before loading: no infinite loops, no invalid pointer dereferences, bounded stack usage. A buggy eBPF program is rejected by the verifier, not executed. This is the fundamental difference from kernel modules. |
-| "eBPF replaces SDK instrumentation" | No. eBPF excels at: network flows, syscall tracing, CPU profiling (no code changes). SDK instrumentation excels at: business-level tracing (trace IDs, custom spans, business events), request correlation, custom metrics. Use both. |
-| "eBPF is Linux-only" | True for the original eBPF. Microsoft has eBPF for Windows (preview). macOS uses dtrace (different technology). For cloud-native (Linux-based) deployments: eBPF is the standard. |
-| "eBPF is only for networking (packets)" | eBPF started as a packet filter (BPF in 1992). Extended eBPF (2014+) hooks into any kernel function: file I/O, process events, scheduler, memory, security, CPU performance. Networking is one of many use cases. |
+| Misconception                           | Reality                                                                                                                                                                                                                                               |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "eBPF requires modifying the kernel"    | No. eBPF programs are loaded into the kernel via the `bpf()` syscall. They run in a sandboxed JIT-compiled environment without modifying kernel source. The kernel must be ≥ 4.4 for basic eBPF, ≥ 4.18 for full observability features.              |
+| "eBPF programs can crash the kernel"    | No. The eBPF verifier ensures safety before loading: no infinite loops, no invalid pointer dereferences, bounded stack usage. A buggy eBPF program is rejected by the verifier, not executed. This is the fundamental difference from kernel modules. |
+| "eBPF replaces SDK instrumentation"     | No. eBPF excels at: network flows, syscall tracing, CPU profiling (no code changes). SDK instrumentation excels at: business-level tracing (trace IDs, custom spans, business events), request correlation, custom metrics. Use both.                 |
+| "eBPF is Linux-only"                    | True for the original eBPF. Microsoft has eBPF for Windows (preview). macOS uses dtrace (different technology). For cloud-native (Linux-based) deployments: eBPF is the standard.                                                                     |
+| "eBPF is only for networking (packets)" | eBPF started as a packet filter (BPF in 1992). Extended eBPF (2014+) hooks into any kernel function: file I/O, process events, scheduler, memory, security, CPU performance. Networking is one of many use cases.                                     |
 
 ---
 
@@ -651,6 +655,7 @@ program that passes verification on kernel 5.15
 may fail on 4.19 (common in enterprise Linux).
 
 **Fix:**
+
 ```bash
 # Check kernel version of production nodes:
 kubectl get nodes -o wide | grep VERSION
@@ -685,6 +690,7 @@ x 200 bytes/event = 10 MB/s throughput requirement.
 The ring buffer fills and events are dropped.
 
 **Fix:**
+
 ```bash
 # Increase ring buffer size in eBPF program definition:
 struct {
@@ -708,6 +714,7 @@ vizier-config:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - eBPF provides the kernel-
   layer observability that completes the stack
 - `Distributed Tracing Fundamentals` - eBPF tools
@@ -717,6 +724,7 @@ vizier-config:
   zero-instrumentation CPU profiling
 
 **Builds On This (learn these next):**
+
 - `Platform Observability Engineering` - eBPF is
   the core technology for zero-instrumentation
   platform observability
@@ -725,6 +733,7 @@ vizier-config:
   decisions
 
 **Alternatives / Comparisons:**
+
 - `SDK instrumentation (OpenTelemetry)` - alternative
   for application-level tracing. Higher overhead but
   supports custom business-level spans and events
@@ -825,6 +834,7 @@ agents only.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Describe how the eBPF verifier
    ensures safety. List three specific safety properties
    it enforces and explain why each is necessary for
@@ -856,7 +866,7 @@ all eBPF usage on our Kubernetes nodes." A platform
 engineer says "eBPF is essential for our observability
 and security monitoring." How do you resolve this
 tension? What is the correct security policy?
-*Hint: Both are correct in isolation. Resolution:
+_Hint: Both are correct in isolation. Resolution:
 eBPF with `CAP_SYS_ADMIN` or `CAP_BPF` CAN read SSL
 traffic from processes running on the same node.
 The security policy: (1) restrict eBPF capabilities
@@ -870,7 +880,7 @@ with strict RBAC. (4) The security monitoring agent
 program loads. This way: legitimate observability
 and security tools use eBPF; arbitrary workloads
 cannot. The correct answer is: restrict capability,
-not the technology.*
+not the technology._
 
 **Q2.** You are investigating high P99 latency (800ms)
 in a Go service. Metrics show: CPU 35% (normal),
@@ -878,7 +888,7 @@ memory 60% (normal), network bandwidth 20% (normal).
 The Go profiler shows no hot functions. What kernel-
 level investigation would you perform with bpftrace
 to identify the cause?
-*Hint: Profile normal, CPU/memory/network normal, but
+_Hint: Profile normal, CPU/memory/network normal, but
 P99 high = something is blocking outside of CPU/memory.
 Candidates: (1) network syscall latency (getaddrinfo
 DNS, connect, recv delays), (2) file I/O latency
@@ -891,7 +901,7 @@ bpftrace network I/O: `kprobe:tcp_recvmsg` with latency.
 bpftrace futex: `tracepoint:syscalls:sys_enter_futex` with
 counts and latency. If runqueue: `runqlat` BCC tool to
 measure kernel scheduler latency. Each of these can reveal
-100ms+ delays invisible to Go runtime metrics.*
+100ms+ delays invisible to Go runtime metrics._
 
 **Q3 (TYPE G):** Design a zero-instrumentation
 observability platform for a Kubernetes cluster with
@@ -904,7 +914,7 @@ and memory profiling for all pods, (d) network flow
 topology (which service calls which), (e) security
 audit of all syscalls. Specify the tools, deployment
 architecture, data flows, and limitations.
-*Hint: (a) HTTP latency: Pixie DaemonSet on all nodes.
+_Hint: (a) HTTP latency: Pixie DaemonSet on all nodes.
 Auto-captures HTTP/1.1 and HTTP2 (gRPC) via uprobes
 on kernel network stack. Exports RED metrics per service.
 (b) Distributed tracing: challenging with zero SDK.
@@ -928,7 +938,7 @@ attributes without SDK. (2) No trace context propagation
 without SDK or sidecar. (3) Some HTTP implementations
 (custom or binary protocols) may not be captured by
 Pixie. (4) Requires privileged DaemonSets: security
-review required.*
+review required._
 
 ---
 
@@ -936,9 +946,10 @@ review required.*
 
 **Q1: "What is eBPF and how does it enable observability
 without code changes?"**
-*Why they ask:* Tests understanding of the technology
+_Why they ask:_ Tests understanding of the technology
 architecture, not just "Pixie is a tool that does X."
-*Strong answer includes:*
+_Strong answer includes:_
+
 - eBPF = sandboxed programs loaded into the kernel
   via `bpf()` syscall. Verified for safety before
   execution (no crashes, no infinite loops).
@@ -957,8 +968,9 @@ architecture, not just "Pixie is a tool that does X."
 
 **Q2: "What is the difference between a kprobe and
 a tracepoint in eBPF?"**
-*Why they ask:* Tests depth of eBPF technical knowledge.
-*Strong answer includes:*
+_Why they ask:_ Tests depth of eBPF technical knowledge.
+_Strong answer includes:_
+
 - kprobe: dynamic probe on any kernel function.
   Can attach to any function in the kernel (> 50,000
   possible probe points). Fragile: function names
@@ -978,9 +990,10 @@ a tracepoint in eBPF?"**
 
 **Q3: "When would you choose eBPF observability over
 OpenTelemetry SDK instrumentation?"**
-*Why they ask:* Tests ability to make architectural
+_Why they ask:_ Tests ability to make architectural
 decisions, not just enumerate tools.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Choose eBPF for: (1) services you cannot instrument
   (third-party binaries, legacy code, scripts). (2)
   Network-level observability (TCP flows, DNS latency,

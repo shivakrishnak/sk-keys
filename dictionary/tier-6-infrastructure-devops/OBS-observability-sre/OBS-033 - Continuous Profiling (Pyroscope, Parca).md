@@ -35,11 +35,11 @@ It answers the question that metrics and traces cannot:
 "which function is consuming the CPU during this
 latency spike?"
 
-| #033 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Observability Fundamentals, Three Pillars, Metrics Types, Tracing | |
-| **Used by:** | Platform Observability, Observability System Design | |
-| **Related:** | Metrics Types, eBPF Observability, RED Method, USE Method | |
+| #033            | Category: Observability & SRE                                     | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Observability Fundamentals, Three Pillars, Metrics Types, Tracing |                 |
+| **Used by:**    | Platform Observability, Observability System Design               |                 |
+| **Related:**    | Metrics Types, eBPF Observability, RED Method, USE Method         |                 |
 
 ---
 
@@ -86,6 +86,7 @@ production services and storing them with timestamps,
 enabling historical comparison and regression detection.
 
 **Profile types:**
+
 - **CPU profile**: which functions consume CPU time.
   Captured by statistical sampling (e.g., SIGPROF
   signal at 100 Hz, recording the current call stack).
@@ -111,6 +112,7 @@ functions where optimisation effort will be most
 effective.
 
 **Key tools:**
+
 - **Pyroscope** (Grafana Labs): language-agnostic
   continuous profiling server, stores profiles with
   tags, flame graph UI, diff mode
@@ -164,7 +166,7 @@ Statistical (sampling) profiling:
 Example:
   processRequest() appears in 800/1000 stacks
   → ~80% of CPU time is in processRequest()
-  
+
   parseJSON() appears in 600/1000 stacks
   → ~60% of CPU time is in parseJSON()
   (called within processRequest())
@@ -241,6 +243,7 @@ new feature?"
 
 **Without continuous profiling:**
 3 hypotheses tested over 2 days:
+
 1. Run database slow query logs → no slow queries found
 2. Revert ORM library version in staging → no difference
 3. Profile with JVM flight recorder → snapshot shows
@@ -250,6 +253,7 @@ Result: team cannot identify root cause. Incident
 escalates to engineering manager.
 
 **With continuous profiling (Pyroscope):**
+
 1. Open Pyroscope. Select service: payment-api.
 2. Select "diff" mode. Baseline: 3 weeks ago.
    Compare: today.
@@ -329,10 +333,11 @@ dashboard can show a trace with high latency → click
 a slow span → view the CPU profile from the same
 time window → see which function in that service
 was hot during that span. This triad (trace + metric
-+ profile) is the complete picture: trace shows
-WHERE the latency is (which service, which operation),
-profile shows WHAT CODE is consuming the CPU in
-that service at that time.
+
+- profile) is the complete picture: trace shows
+  WHERE the latency is (which service, which operation),
+  profile shows WHAT CODE is consuming the CPU in
+  that service at that time.
 
 **Level 5 - Platform strategy (staff):**
 Continuous profiling is the fourth pillar of
@@ -437,27 +442,27 @@ metadata:
 spec:
   template:
     spec:
-      hostPID: true    # Required: access host process IDs
+      hostPID: true # Required: access host process IDs
       containers:
-      - name: parca-agent
-        image: ghcr.io/parca-dev/parca-agent:latest
-        args:
-          - --node=$(NODE_NAME)
-          - --remote-store-address=parca.monitoring:7070
-          - --remote-store-bearer-token-file=/var/run/secrets/kubernetes.io/serviceaccount/token
-        securityContext:
-          privileged: true  # Required for eBPF
-          capabilities:
-            add:
-              - SYS_ADMIN    # eBPF map creation
-              - SYS_PTRACE   # Process inspection
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 300m
-            memory: 256Mi
+        - name: parca-agent
+          image: ghcr.io/parca-dev/parca-agent:latest
+          args:
+            - --node=$(NODE_NAME)
+            - --remote-store-address=parca.monitoring:7070
+            - --remote-store-bearer-token-file=/var/run/secrets/kubernetes.io/serviceaccount/token
+          securityContext:
+            privileged: true # Required for eBPF
+            capabilities:
+              add:
+                - SYS_ADMIN # eBPF map creation
+                - SYS_PTRACE # Process inspection
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
 ```
 
 ---
@@ -618,36 +623,36 @@ func processEvents(events <-chan Event) {
 
 ### ⚖️ Comparison Table
 
-| Tool | Approach | Languages | Code change? | Overhead | Best for |
-|---|---|---|---|---|---|
-| Pyroscope | SDK/agent sampling | Java, Go, Python, Ruby, .NET | Agent or SDK | < 1% CPU | Service-level profiling with tags |
-| Parca | eBPF kernel sampling | Any (kernel-level) | None | < 1% CPU | System-wide, no-code profiling |
-| async-profiler | Java agent | Java/JVM | Agent only | < 2% CPU | Deep JVM profiling (JIT, GC) |
-| Go pprof (on-demand) | HTTP endpoint | Go | Import only | 0% at rest | On-demand debugging (not continuous) |
-| Datadog Profiler | Agent | Java, Go, Python | Agent | ~2% CPU | Integrated with Datadog APM |
-| JVM Flight Recorder | JVM built-in | Java | JVM flag | < 1% | Java production profiling |
+| Tool                 | Approach             | Languages                    | Code change? | Overhead   | Best for                             |
+| -------------------- | -------------------- | ---------------------------- | ------------ | ---------- | ------------------------------------ |
+| Pyroscope            | SDK/agent sampling   | Java, Go, Python, Ruby, .NET | Agent or SDK | < 1% CPU   | Service-level profiling with tags    |
+| Parca                | eBPF kernel sampling | Any (kernel-level)           | None         | < 1% CPU   | System-wide, no-code profiling       |
+| async-profiler       | Java agent           | Java/JVM                     | Agent only   | < 2% CPU   | Deep JVM profiling (JIT, GC)         |
+| Go pprof (on-demand) | HTTP endpoint        | Go                           | Import only  | 0% at rest | On-demand debugging (not continuous) |
+| Datadog Profiler     | Agent                | Java, Go, Python             | Agent        | ~2% CPU    | Integrated with Datadog APM          |
+| JVM Flight Recorder  | JVM built-in         | Java                         | JVM flag     | < 1%       | Java production profiling            |
 
 **Profile types and use cases:**
 
-| Profile type | Detects | Primary tool |
-|---|---|---|
-| CPU | Slow functions, inefficient algorithms | Pyroscope CPU, async-profiler |
-| Heap allocation | Memory-heavy code paths, allocation pressure | Pyroscope Alloc, Go pprof |
-| Goroutine/thread | Goroutine leaks, thread pool saturation | Pyroscope Goroutines |
-| Mutex contention | Lock contention causing latency | Pyroscope Mutex, JVM JFR |
-| Block profile | I/O blocking, channel waits | Go pprof block, JVM JFR |
+| Profile type     | Detects                                      | Primary tool                  |
+| ---------------- | -------------------------------------------- | ----------------------------- |
+| CPU              | Slow functions, inefficient algorithms       | Pyroscope CPU, async-profiler |
+| Heap allocation  | Memory-heavy code paths, allocation pressure | Pyroscope Alloc, Go pprof     |
+| Goroutine/thread | Goroutine leaks, thread pool saturation      | Pyroscope Goroutines          |
+| Mutex contention | Lock contention causing latency              | Pyroscope Mutex, JVM JFR      |
+| Block profile    | I/O blocking, channel waits                  | Go pprof block, JVM JFR       |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Profiling in production slows the service" | Continuous (statistical) profiling at 100 Hz has < 1% CPU overhead. This is the standard for Pyroscope, Parca, async-profiler in production mode. Deterministic profiling (records every call) is different - never use that in production. |
-| "Metrics are sufficient to find CPU regressions" | Metrics show that CPU utilization is 80% (high). They do not show which function is consuming the CPU. Profiling shows the function. Without profiling, CPU regression investigation is guesswork. |
-| "I can use traces to find hot code paths" | Traces show which service is slow and which operation type is slow. They do not show which specific function within the service is consuming CPU. A trace span "RecommendationService.getRecommendations" at 400ms is slow - but which of the 50 functions called within that span is the bottleneck? Profiling answers this. |
-| "One-off profiling is sufficient" | Gradual regressions are invisible without historical comparison. A function that grew from 5% to 35% over 3 weeks is impossible to identify with a one-time profile (it shows 35% but you have no baseline to compare). |
-| "Continuous profiling is complex to set up" | Adding a Pyroscope Java agent requires one JVM flag. Adding the Go SDK requires 5 lines of code. Parca requires no code changes. The operational overhead of running the Pyroscope server is comparable to running Prometheus. |
+| Misconception                                    | Reality                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Profiling in production slows the service"      | Continuous (statistical) profiling at 100 Hz has < 1% CPU overhead. This is the standard for Pyroscope, Parca, async-profiler in production mode. Deterministic profiling (records every call) is different - never use that in production.                                                                                   |
+| "Metrics are sufficient to find CPU regressions" | Metrics show that CPU utilization is 80% (high). They do not show which function is consuming the CPU. Profiling shows the function. Without profiling, CPU regression investigation is guesswork.                                                                                                                            |
+| "I can use traces to find hot code paths"        | Traces show which service is slow and which operation type is slow. They do not show which specific function within the service is consuming CPU. A trace span "RecommendationService.getRecommendations" at 400ms is slow - but which of the 50 functions called within that span is the bottleneck? Profiling answers this. |
+| "One-off profiling is sufficient"                | Gradual regressions are invisible without historical comparison. A function that grew from 5% to 35% over 3 weeks is impossible to identify with a one-time profile (it shows 35% but you have no baseline to compare).                                                                                                       |
+| "Continuous profiling is complex to set up"      | Adding a Pyroscope Java agent requires one JVM flag. Adding the Go SDK requires 5 lines of code. Parca requires no code changes. The operational overhead of running the Pyroscope server is comparable to running Prometheus.                                                                                                |
 
 ---
 
@@ -694,6 +699,7 @@ sampling interval. At 100 Hz with many threads, the
 allocation rate from the profiler can be significant.
 
 **Diagnosis:**
+
 ```bash
 # Check Pyroscope allocation overhead
 # Look for pyroscope in heap allocation profile:
@@ -712,6 +718,7 @@ allocation rate from the profiler can be significant.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - profiling as the fourth
   pillar beyond logs, metrics, and traces
 - `Distributed Tracing Fundamentals` - traces show
@@ -719,6 +726,7 @@ allocation rate from the profiler can be significant.
   profiling shows WHAT CODE causes it
 
 **Builds On This (learn these next):**
+
 - `eBPF for Observability` - the kernel-level mechanism
   that Parca uses for zero-code profiling
 - `Platform Observability Engineering` - deploying
@@ -726,6 +734,7 @@ allocation rate from the profiler can be significant.
   all production services
 
 **Alternatives / Comparisons:**
+
 - `JVM Flight Recorder` (Java-only): built into the
   JVM, very low overhead, excellent for Java. Pyroscope
   can use JFR as its backend. Use JFR for Java; Pyroscope
@@ -818,6 +827,7 @@ to `time.Now()` as a bottleneck. The profiler did.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Describe how statistical sampling
    profiling works and why it has < 1% overhead
    compared to deterministic profiling.
@@ -848,7 +858,7 @@ is 85% wide (85% of CPU time), and within it:
 `regexMatcher.match()` is 55% wide. What does this
 tell you? Which function should you optimise first?
 Is the problem definitively `regexMatcher.match()`?
-*Hint: The flame graph shows the call stack distribution.
+_Hint: The flame graph shows the call stack distribution.
 processRequest() being 85% wide means 85% of CPU is
 spent in processRequest() and its callees. Within that,
 validateInput() is 60% wide = 60% of processRequest()'s
@@ -859,7 +869,7 @@ regexMatcher.match(). This is the leaf - the actual hot
 function. Optimise regexMatcher.match() first: pre-compile
 the regex pattern instead of compiling on every call.
 Or: cache the validation results if the same inputs appear
-frequently.*
+frequently._
 
 **Q2.** After a large data import, your service's
 heap allocation profile shows that
@@ -868,7 +878,7 @@ heap allocation profile shows that
 from 20ms to 800ms. What does this pattern tell you?
 What are the two most likely root causes? How do you
 confirm each?
-*Hint: High allocation rate → many short-lived objects
+_Hint: High allocation rate → many short-lived objects
 created → frequent GC → long GC pauses. Root cause 1:
 the new data is larger per record (10,000 items → 1M
 items after import). The same O(n) allocation code
@@ -882,7 +892,7 @@ of data). Confirm: add a counter with record_type label
 to see which types are processed. Fix: reduce allocations
 in the hot path: pool and reuse objects (sync.Pool in
 Go, object pooling in Java) or move to streaming
-processing to avoid holding all data in memory.*
+processing to avoid holding all data in memory._
 
 **Q3 (TYPE G):** You are the platform observability
 lead. Continuous profiling is not deployed anywhere.
@@ -893,7 +903,7 @@ cost (infrastructure, engineering time), (c) the
 incident ROI based on two specific incident types
 it prevents or shortens, (d) the deployment plan,
 (e) the success metrics.
-*Hint: (a) Gap: metrics show WHAT is slow (CPU 80%,
+_Hint: (a) Gap: metrics show WHAT is slow (CPU 80%,
 P99 high). Traces show WHERE the latency is (which
 service, span). But WHICH CODE FUNCTION is causing
 it? Only profiling answers this. Without it: 4-6h
@@ -917,7 +927,7 @@ Success metrics: 90% service coverage (profiling data
 available), MTTI (mean time to identify root cause)
 for CPU-related incidents decreases from 4h to 30min,
 profiling-assisted root cause cited in > 80% of
-CPU/memory-related post-mortems.*
+CPU/memory-related post-mortems._
 
 ---
 
@@ -925,9 +935,10 @@ CPU/memory-related post-mortems.*
 
 **Q1: "What is continuous profiling and how does it
 differ from on-demand profiling?"**
-*Why they ask:* Tests whether the engineer understands
+_Why they ask:_ Tests whether the engineer understands
 the fourth pillar of observability.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - On-demand: capture a profile now, see current state.
   Cannot show historical regression. Must know to
   capture at the right moment.
@@ -946,9 +957,10 @@ the fourth pillar of observability.
 from 150ms to 350ms over 3 weeks. No errors, no
 infrastructure changes. What is your investigation
 approach using continuous profiling?"**
-*Why they ask:* Tests ability to apply the tool to a
+_Why they ask:_ Tests ability to apply the tool to a
 real investigation scenario.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Open Pyroscope, select the service, use diff mode:
   baseline = 3-4 weeks ago, comparison = today.
 - Examine the CPU flame graph diff. Functions in red
@@ -965,9 +977,10 @@ real investigation scenario.
   in minutes, not hours.
 
 **Q3: "What is a flame graph and how do you read it?"**
-*Why they ask:* Baseline technical knowledge for
+_Why they ask:_ Baseline technical knowledge for
 profiling discussions.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Horizontal bars, each representing a function.
 - Width = proportion of CPU time (or memory) consumed
   by that function and all its callees.
@@ -984,6 +997,7 @@ profiling discussions.
   the wide leaf (the actual expensive operation).
   The leaf is where CPU is actually consumed; the
   middle bar is wide because of what it calls.
+
 ---
 
 # OBS-028 - Continuous Profiling (Pyroscope, Parca)

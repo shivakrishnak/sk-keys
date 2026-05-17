@@ -29,11 +29,11 @@ it - routing, forms, data fetching, state, build tools - is
 provided by ecosystem libraries; knowing the landscape prevents
 reinventing solved problems.
 
-| #005 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | What React Is and Is Not, The Component Mental Model | |
-| **Used by:** | Vite and CRA, React Router, Redux Toolkit, Micro-Frontend Architecture | |
-| **Related:** | What React Is and Is Not, Vite and CRA, State Management Architecture Decision Guide | |
+| #005            | Category: React                                                                      | Difficulty: ★☆☆ |
+| :-------------- | :----------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What React Is and Is Not, The Component Mental Model                                 |                 |
+| **Used by:**    | Vite and CRA, React Router, Redux Toolkit, Micro-Frontend Architecture               |                 |
+| **Related:**    | What React Is and Is Not, Vite and CRA, State Management Architecture Decision Guide |                 |
 
 ---
 
@@ -54,10 +54,11 @@ React Query + Apollo all managing overlapping concerns).
 **THE BREAKING POINT:**
 React's "bring your own everything" philosophy is its power
 and its tax. Projects with no ecosystem knowledge suffer from:
+
 - Wrong tool for the job (Redux for data that React Query
   handles better)
 - Multiple layers solving the same problem (client-side state
-  + server-state cache + optimistic updates all competing)
+  - server-state cache + optimistic updates all competing)
 - Build tooling chosen by accident (CRA on a new 2024 project)
 
 **THE INVENTION MOMENT:**
@@ -89,6 +90,7 @@ React is the engine; the ecosystem is everything else needed
 to build a car.
 
 **One analogy:**
+
 > React is like the engine spec for a car. Linux is like the
 > kernel. Neither is usable alone. The ecosystem adds the
 > transmission (routing), fuel system (data fetching), body
@@ -110,21 +112,22 @@ teams end up maintaining legacy toolchains.
 
 **CATEGORY MODEL - What React Does NOT Provide:**
 
-| Category | React Provides | Ecosystem Fills |
-|---|---|---|
-| Build tooling | Nothing | Vite, Next.js, Remix, CRA (deprecated) |
-| Routing | Nothing | React Router v6, TanStack Router |
-| Server-side rendering | Primitives only | Next.js, Remix |
-| Data fetching | Nothing | React Query, SWR, Apollo, RTK Query |
-| Global state | Context (basic) | Redux Toolkit, Zustand, Jotai, Recoil |
-| Forms | Nothing | React Hook Form, Formik |
-| Styling | Nothing | Tailwind, CSS Modules, Styled Components |
-| Testing | Nothing | React Testing Library, Vitest, Jest |
-| Component libraries | Nothing | shadcn/ui, MUI, Chakra UI |
-| Animation | Nothing | Framer Motion, React Spring |
+| Category              | React Provides  | Ecosystem Fills                          |
+| --------------------- | --------------- | ---------------------------------------- |
+| Build tooling         | Nothing         | Vite, Next.js, Remix, CRA (deprecated)   |
+| Routing               | Nothing         | React Router v6, TanStack Router         |
+| Server-side rendering | Primitives only | Next.js, Remix                           |
+| Data fetching         | Nothing         | React Query, SWR, Apollo, RTK Query      |
+| Global state          | Context (basic) | Redux Toolkit, Zustand, Jotai, Recoil    |
+| Forms                 | Nothing         | React Hook Form, Formik                  |
+| Styling               | Nothing         | Tailwind, CSS Modules, Styled Components |
+| Testing               | Nothing         | React Testing Library, Vitest, Jest      |
+| Component libraries   | Nothing         | shadcn/ui, MUI, Chakra UI                |
+| Animation             | Nothing         | Framer Motion, React Spring              |
 
 **STABILITY TIERS:**
 Not all ecosystem choices carry equal switching cost:
+
 - **High lock-in:** Framework choice (Next.js vs Remix vs Vite)
   - expensive to change
 - **Medium lock-in:** State management (Redux vs Zustand) -
@@ -141,6 +144,7 @@ A new engineer joins a React team and asks: "What library
 should I use to load users from a REST API and display them?"
 
 **FIVE WRONG APPROACHES:**
+
 1. `fetch` in `useEffect` with manual loading/error state
    (reinvents React Query for no benefit)
 2. Redux for server data (the wrong tool - Redux is for
@@ -306,12 +310,12 @@ and should coexist, not compete.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "CRA is the standard way to start a React project" | CRA was deprecated in 2023. The React team recommends Vite for SPAs or Next.js for SSR. Using CRA in a new 2024 project means inheriting an unmaintained toolchain. |
-| "Redux is required for React state management" | Redux solves complex client-side state sharing. Simple apps need only useState + Context. Data fetching belongs in React Query, not Redux. Many modern React apps use no Redux at all. |
-| "React Query is a replacement for Redux" | React Query manages server state (remote data, caching, sync). Redux manages client state (UI state, local data not from servers). They serve different purposes and often coexist. |
-| "Next.js is React" | Next.js is a framework that includes React. It adds routing, SSR, SSG, and server components. An application built with Next.js is a Next.js application; React is one of its dependencies. |
+| Misconception                                      | Reality                                                                                                                                                                                     |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "CRA is the standard way to start a React project" | CRA was deprecated in 2023. The React team recommends Vite for SPAs or Next.js for SSR. Using CRA in a new 2024 project means inheriting an unmaintained toolchain.                         |
+| "Redux is required for React state management"     | Redux solves complex client-side state sharing. Simple apps need only useState + Context. Data fetching belongs in React Query, not Redux. Many modern React apps use no Redux at all.      |
+| "React Query is a replacement for Redux"           | React Query manages server state (remote data, caching, sync). Redux manages client state (UI state, local data not from servers). They serve different purposes and often coexist.         |
+| "Next.js is React"                                 | Next.js is a framework that includes React. It adds routing, SSR, SSG, and server components. An application built with Next.js is a Next.js application; React is one of its dependencies. |
 
 ---
 
@@ -331,6 +335,7 @@ in 2019-2021 and never revisited. The project treats these
 as permanent infrastructure.
 
 **Diagnostic Command:**
+
 ```bash
 # Check for known-deprecated dependencies
 npx depcheck
@@ -361,6 +366,7 @@ before React Query existed (pre-2019) and the choice was
 never revisited.
 
 **Diagnostic Command:**
+
 ```bash
 # Red flags in Redux store:
 # - actions named *_FETCH, *_LOADING, *_ERROR
@@ -379,18 +385,21 @@ complex client-only logic (shopping cart, undo/redo).
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What React Is and Is Not` - React's deliberate scope
   boundaries that the ecosystem fills
 - `The Component Mental Model` - the building block all
   ecosystem libraries extend
 
 **Builds On This (learn these next):**
+
 - `Vite and Create React App` - the build tooling layer
 - `React Router v6 Basics` - routing in the ecosystem
 - `Redux Toolkit and Global State Architecture` - state layer
 - `Rendering Strategy Framework` - SSR vs CSR vs SSG decision
 
 **Alternatives / Comparisons:**
+
 - `Angular` - a fully opinionated framework; includes its
   own router, HTTP client, forms, and DI - no ecosystem
   choice needed but also no ecosystem flexibility
@@ -433,6 +442,7 @@ complex client-only logic (shopping cart, undo/redo).
 ```
 
 **If you remember only 3 things:**
+
 1. React provides components and hooks only. Routing, data
    fetching, state management, build tooling, and testing
    all come from ecosystem libraries - and each category
@@ -465,6 +475,7 @@ The first month of a project is the lowest-cost time to
 make the right ecosystem choices.
 
 **Where else this pattern appears:**
+
 - Spring ecosystem (Spring Boot, Spring Data, Spring Security)
   - same pattern: core framework with a mapped ecosystem
 - Kubernetes ecosystem (Helm, Istio, Prometheus, ArgoCD) -
@@ -473,6 +484,7 @@ make the right ecosystem choices.
   - composable tools, each owning one category
 
 **Industry applications:**
+
 - Large engineering teams create "technology radar" documents
   that map the React ecosystem by stability tier: adopt,
   trial, assess, hold. This prevents individuals from
@@ -500,6 +512,7 @@ is far smaller than its historical usage suggests.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **MAP** Draw the ecosystem layer diagram from memory:
    framework/build, routing, data fetching, client state,
    forms, styling, testing - and name the 2024 canonical
@@ -530,17 +543,17 @@ were recommended in the official docs 3 years ago are now
 deprecated (CRA, Enzyme). How should a team manage ecosystem
 evolution in a production codebase? What governance process
 prevents teams from drifting to stale choices?
-*Hint: Technology radar, ADR (Architecture Decision Records),
-dependency review in CI.*
+_Hint: Technology radar, ADR (Architecture Decision Records),
+dependency review in CI._
 
 **Q2.** React Query and Redux are often described as solving
 "different problems," but they can both store the result of
 an API call. When would you deliberately keep API-fetched
 data in Redux rather than in React Query? What makes that
 data "client state" rather than "server state"?
-*Hint: Think about optimistic updates, offline-first
+_Hint: Think about optimistic updates, offline-first
 requirements, and complex multi-step workflows where the
-server is the destination, not the source of truth.*
+server is the destination, not the source of truth._
 
 **Q3.** Next.js now recommends React Server Components for
 data fetching - fetching data directly in server components
@@ -548,5 +561,5 @@ rather than in `useEffect` or React Query. How does this
 change the ecosystem layer model? Which ecosystem libraries
 become less relevant in a Next.js App Router application,
 and which remain essential?
-*Hint: React Query's role changes when the component that
-fetches data runs on the server and never hydrates.*
+_Hint: React Query's role changes when the component that
+fetches data runs on the server and never hydrates._

@@ -30,11 +30,11 @@ calling the setter schedules a re-render with the new
 value; state updates are asynchronous, batched, and the
 setter is the only correct way to change state.
 
-| #020 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, State, Event Handling, One-Way Data Binding | |
-| **Used by:** | useEffect Hook, Controlled Components, Form Handling, useReducer | |
-| **Related:** | State, useEffect Hook, useReducer Hook | |
+| #020            | Category: React                                                  | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, State, Event Handling, One-Way Data Binding           |                 |
+| **Used by:**    | useEffect Hook, Controlled Components, Form Handling, useReducer |                 |
+| **Related:**    | State, useEffect Hook, useReducer Hook                           |                 |
 
 ---
 
@@ -88,6 +88,7 @@ calling `setter(newValue)` re-renders the component with
 the new value. Never mutate the value directly.
 
 **The five rules of useState:**
+
 1. Initial value is used ONLY on first render
 2. Setter replaces state (does not merge like setState)
 3. State updates are asynchronous (read new value next render)
@@ -124,8 +125,8 @@ This is why Hooks must be called in the same order every render:
 const [count, setCount] = useState(0);
 
 const handleClick = () => {
-  setCount(count + 1);  // schedules update: 0 + 1 = 1
-  setCount(count + 1);  // schedules update: 0 + 1 = 1 (same!)
+  setCount(count + 1); // schedules update: 0 + 1 = 1
+  setCount(count + 1); // schedules update: 0 + 1 = 1 (same!)
   // count is STILL 0 in this render's closure
   // both calls see count = 0
   // Result: count becomes 1, not 2
@@ -133,8 +134,8 @@ const handleClick = () => {
 
 // FIX: use functional update form
 const handleClickFixed = () => {
-  setCount(c => c + 1);  // c is the latest value: 0 → 1
-  setCount(c => c + 1);  // c is the latest value: 1 → 2
+  setCount((c) => c + 1); // c is the latest value: 0 → 1
+  setCount((c) => c + 1); // c is the latest value: 1 → 2
   // Result: count becomes 2
 };
 ```
@@ -151,7 +152,7 @@ function Timer() {
 
   useEffect(() => {
     const id = setInterval(() => {
-      setSeconds(seconds + 1);  // BAD: stale closure
+      setSeconds(seconds + 1); // BAD: stale closure
       // seconds is captured from the first render = 0
       // this runs every 1s but seconds is always: 0 + 1 = 1
       // counter shows 1, 1, 1, 1, ... never increases
@@ -168,7 +169,7 @@ function TimerFixed() {
 
   useEffect(() => {
     const id = setInterval(() => {
-      setSeconds(s => s + 1);  // s is always latest value
+      setSeconds((s) => s + 1); // s is always latest value
     }, 1000);
     return () => clearInterval(id);
   }, []);
@@ -267,7 +268,7 @@ a specific escape hatch, not a general pattern.
 const [isOpen, setIsOpen] = useState(false);
 
 // String
-const [query, setQuery] = useState('');
+const [query, setQuery] = useState("");
 
 // Number
 const [count, setCount] = useState(0);
@@ -276,24 +277,24 @@ const [count, setCount] = useState(0);
 const [user, setUser] = useState(null);
 
 // Toggling boolean
-const toggle = () => setIsOpen(prev => !prev);
+const toggle = () => setIsOpen((prev) => !prev);
 
 // Incrementing
-const increment = () => setCount(c => c + 1);
+const increment = () => setCount((c) => c + 1);
 ```
 
 **Object state (keep fields consistent):**
 
 ```jsx
 const [form, setForm] = useState({
-  name: '',
-  email: '',
+  name: "",
+  email: "",
   age: 0,
 });
 
 // Update one field: spread existing, override changed field
 const handleNameChange = (e) => {
-  setForm(prev => ({
+  setForm((prev) => ({
     ...prev,
     name: e.target.value,
   }));
@@ -350,7 +351,7 @@ function Counter() {
   const doubleIncrement = () => {
     // BAD 1: mutation - modifies state in place
     count.value += 1;
-    setCount(count);  // React may not re-render
+    setCount(count); // React may not re-render
     // (same object reference, shallow comparison may miss it)
 
     // BAD 2: stale read - reads count.value twice
@@ -373,8 +374,8 @@ function Counter() {
 
   const doubleIncrement = () => {
     // Functional update: each call gets the latest value
-    setCount(c => c + 1);  // 0 → 1
-    setCount(c => c + 1);  // 1 → 2 (uses updated value)
+    setCount((c) => c + 1); // 0 → 1
+    setCount((c) => c + 1); // 1 → 2 (uses updated value)
     // React batches: count goes 0 → 2 in one render
   };
 
@@ -387,31 +388,33 @@ function Counter() {
 ```jsx
 function ContactForm() {
   const [fields, setFields] = useState({
-    name: '', email: '', message: '',
+    name: "",
+    email: "",
+    message: "",
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const updateField = (field) => (e) => {
-    setFields(prev => ({
+    setFields((prev) => ({
       ...prev,
       [field]: e.target.value,
     }));
     // Clear error when field changes
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!fields.name.trim()) newErrors.name = 'Required';
-    if (!fields.email.includes('@')) {
-      newErrors.email = 'Invalid email';
+    if (!fields.name.trim()) newErrors.name = "Required";
+    if (!fields.email.includes("@")) {
+      newErrors.email = "Invalid email";
     }
     if (fields.message.length < 10) {
-      newErrors.message = 'Too short';
+      newErrors.message = "Too short";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -432,27 +435,27 @@ function ContactForm() {
     <form onSubmit={handleSubmit}>
       <input
         value={fields.name}
-        onChange={updateField('name')}
+        onChange={updateField("name")}
         placeholder="Name"
       />
       {errors.name && <span>{errors.name}</span>}
 
       <input
         value={fields.email}
-        onChange={updateField('email')}
+        onChange={updateField("email")}
         placeholder="Email"
       />
       {errors.email && <span>{errors.email}</span>}
 
       <textarea
         value={fields.message}
-        onChange={updateField('message')}
+        onChange={updateField("message")}
         placeholder="Message"
       />
       {errors.message && <span>{errors.message}</span>}
 
       <button type="submit" disabled={submitting}>
-        {submitting ? 'Sending...' : 'Send'}
+        {submitting ? "Sending..." : "Send"}
       </button>
     </form>
   );
@@ -463,12 +466,12 @@ function ContactForm() {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "setState is synchronous - I can read the new value immediately after calling it" | `setState` schedules an asynchronous update. The state variable still holds the OLD value for the rest of the current render's event handler. The new value is available on the NEXT render. |
-| "Calling setState multiple times causes multiple re-renders" | React batches all `setState` calls in an event handler into a single re-render. React 18 also batches calls in async callbacks (setTimeout, Promises). |
-| "Object and array states update like class component setState (merging fields)" | `useState`'s setter REPLACES the entire state, it does NOT merge. If state is an object, always spread the existing fields: `setForm(prev => ({ ...prev, name: newName }))`. |
-| "The initial value to useState is used on every render" | The initial value is used ONLY on the first render to populate the state slot. On subsequent renders, React reads from its internal state storage. The initial value expression is evaluated every render but the result is thrown away after the first. To avoid evaluation cost, use lazy init: `useState(() => expensiveCompute())`. |
+| Misconception                                                                     | Reality                                                                                                                                                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "setState is synchronous - I can read the new value immediately after calling it" | `setState` schedules an asynchronous update. The state variable still holds the OLD value for the rest of the current render's event handler. The new value is available on the NEXT render.                                                                                                                                            |
+| "Calling setState multiple times causes multiple re-renders"                      | React batches all `setState` calls in an event handler into a single re-render. React 18 also batches calls in async callbacks (setTimeout, Promises).                                                                                                                                                                                  |
+| "Object and array states update like class component setState (merging fields)"   | `useState`'s setter REPLACES the entire state, it does NOT merge. If state is an object, always spread the existing fields: `setForm(prev => ({ ...prev, name: newName }))`.                                                                                                                                                            |
+| "The initial value to useState is used on every render"                           | The initial value is used ONLY on the first render to populate the state slot. On subsequent renders, React reads from its internal state storage. The initial value expression is evaluated every render but the result is thrown away after the first. To avoid evaluation cost, use lazy init: `useState(() => expensiveCompute())`. |
 
 ---
 
@@ -480,19 +483,21 @@ function ContactForm() {
 not re-render. Or re-renders but shows old value.
 
 **Root Cause:**
+
 ```jsx
 // Direct mutation: React uses Object.is() to compare
 // old vs new state. Same reference = no re-render.
-setItems(prev => {
-  prev.push(newItem);  // mutation
-  return prev;         // same array reference
+setItems((prev) => {
+  prev.push(newItem); // mutation
+  return prev; // same array reference
 });
 // React: prev === prev (Object.is) → no update
 ```
 
 **Fix:**
+
 ```jsx
-setItems(prev => [...prev, newItem]); // new array reference
+setItems((prev) => [...prev, newItem]); // new array reference
 ```
 
 ---
@@ -516,8 +521,9 @@ closure's captured value.
 **Performance: Expensive Lazy Init Not Used**
 
 **Symptom:** Slow initial render. `useState(expensiveCompute())`
+
 - the function is called on every render even though
-the result is only used once.
+  the result is only used once.
 
 **Fix:** `useState(() => expensiveCompute())` - pass a
 function (not the result) for lazy initialisation.
@@ -527,18 +533,21 @@ function (not the result) for lazy initialisation.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `State` - the concept; useState is the implementation
 - `Component` - state is per-component-instance
 - `Event Handling` - the trigger for most setState calls
 - `One-Way Data Binding` - state flows down via props
 
 **Builds On:**
+
 - `useEffect Hook` - reads state, triggers on state changes
 - `useReducer Hook` - for complex multi-action state logic
 - `Controlled vs Uncontrolled Components` - useState
   is the mechanism behind controlled inputs
 
 **Related Alternatives:**
+
 - `useReducer` - for state with multiple transition paths
 - `useContext` - sharing state across component tree
 - `Zustand/Redux` - for truly global, cross-component state
@@ -569,13 +578,14 @@ function (not the result) for lazy initialisation.
 ```
 
 **If you remember only 3 things:**
+
 1. `const [val, setVal] = useState(init)`. Call `setVal`
    to update. Never mutate `val` directly.
 2. When the new value depends on the previous value,
    use the functional form: `setVal(prev => prev + 1)`.
    This prevents stale closure bugs.
 3. For object state, always spread: `setState(prev =>
-   ({ ...prev, changedField: newValue }))`. The setter
+({ ...prev, changedField: newValue }))`. The setter
    replaces, it does not merge like class setState.
 
 **Interview one-liner:**
@@ -625,7 +635,7 @@ create new objects unnecessarily in render paths.
 ### ✅ Mastery Checklist
 
 1. **EXPLAIN** why `setCount(count + 1); setCount(count +
-   1)` in an event handler increments count by 1 not 2,
+1)` in an event handler increments count by 1 not 2,
    and rewrite using the functional form to get the
    correct result.
 2. **DIAGNOSE** a timer bug where a counter stops at 1
@@ -636,7 +646,7 @@ create new objects unnecessarily in render paths.
    why `() =>` is required.
 4. **UPDATE** nested object state correctly without
    mutation: given `{ user: { name: '', address: { city:
-   '' } } }`, update only `city` using spread operators.
+'' } } }`, update only `city` using spread operators.
 5. **EXPLAIN** the difference between React 17 and React
    18 batching behaviour, and when `flushSync` is
    appropriate.
@@ -658,12 +668,14 @@ reuse existing state for a component?
 updates are batched, even in async callbacks. Before React
 18, only event handler updates were batched. Consider
 this code:
+
 ```jsx
 setTimeout(() => {
   setA(1);
   setB(2);
 }, 0);
 ```
+
 In React 17: two re-renders. In React 18: one re-render.
 What impact does this have on code that reads state
 immediately after a state setter call, or code that

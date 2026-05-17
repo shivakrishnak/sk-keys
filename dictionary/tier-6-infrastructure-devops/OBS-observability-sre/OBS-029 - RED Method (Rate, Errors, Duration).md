@@ -35,11 +35,11 @@ answer "is this service healthy from the user's
 perspective?" and serve as the starting point for
 every service dashboard and alert.
 
-| #029 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Metrics -- Types, What Is Observability, Three Pillars | |
-| **Used by:** | Dashboards, Golden Signals, SLO-Based Alerting | |
-| **Related:** | Metrics Types, USE Method, Golden Signals, SLI, SLO | |
+| #029            | Category: Observability & SRE                          | Difficulty: ★☆☆ |
+| :-------------- | :----------------------------------------------------- | :-------------- |
+| **Depends on:** | Metrics -- Types, What Is Observability, Three Pillars |                 |
+| **Used by:**    | Dashboards, Golden Signals, SLO-Based Alerting         |                 |
+| **Related:**    | Metrics Types, USE Method, Golden Signals, SLI, SLO    |                 |
 
 ---
 
@@ -80,6 +80,7 @@ based (microservices, APIs, web services) systems:
 
 - **Rate** (R): number of requests per second.
   Answers: "How much traffic is the service handling?"
+
   ```
   rate(http_requests_total[5m])
   ```
@@ -87,6 +88,7 @@ based (microservices, APIs, web services) systems:
 - **Errors** (E): number of failed requests per second
   (or error rate as a percentage of total requests).
   Answers: "How many users are experiencing failures?"
+
   ```
   rate(http_requests_total{status=~"5.."}[5m])
   rate(http_errors_total[5m]) / rate(http_requests_total[5m])
@@ -253,6 +255,7 @@ Duration: P99: 8,200ms | Baseline: 250ms
 ```
 
 **Three numbers. 30 seconds. The engineer knows:**
+
 1. Service is receiving less traffic than usual
 2. 2.1% of requests are failing (21x normal)
 3. ALL requests are slow (not just tail)
@@ -545,7 +548,6 @@ sum by (service) (rate(http_requests_total[5m]))
   for: 5m
   labels:
     severity: page
-
 # DIAGNOSTIC DASHBOARDS (not alerts - for investigation)
 # Row 2 on the dashboard (below RED):
 # - DB connection pool utilization
@@ -566,17 +568,17 @@ panels:
     type: stat
     targets:
       - expr: sum(rate(http_requests_total{
-            service="checkout"}[5m]))
+          service="checkout"}[5m]))
     fieldConfig:
       defaults:
         thresholds:
           steps:
             - value: 0
-              color: red    # Rate = 0 → critical
+              color: red # Rate = 0 → critical
             - value: 100
               color: yellow # Rate low → warning
             - value: 300
-              color: green  # Normal rate
+              color: green # Normal rate
 
   - title: "Checkout Service - Error Rate %"
     type: stat
@@ -622,35 +624,35 @@ panels:
 
 ### ⚖️ Comparison Table
 
-| Framework | Metrics | Target system | Best for |
-|---|---|---|---|
-| RED | Rate, Errors, Duration | Request-based services (APIs, microservices) | User-facing service health |
-| USE | Utilization, Saturation, Errors | Resources (CPU, disk, network, memory) | Infrastructure capacity |
-| Four Golden Signals | Latency, Traffic, Errors, Saturation | Any system | Comprehensive service + resource |
-| LETS | Latency, Errors, Traffic, Saturation | Variation of Golden Signals | (Less common) |
+| Framework           | Metrics                              | Target system                                | Best for                         |
+| ------------------- | ------------------------------------ | -------------------------------------------- | -------------------------------- |
+| RED                 | Rate, Errors, Duration               | Request-based services (APIs, microservices) | User-facing service health       |
+| USE                 | Utilization, Saturation, Errors      | Resources (CPU, disk, network, memory)       | Infrastructure capacity          |
+| Four Golden Signals | Latency, Traffic, Errors, Saturation | Any system                                   | Comprehensive service + resource |
+| LETS                | Latency, Errors, Traffic, Saturation | Variation of Golden Signals                  | (Less common)                    |
 
 **When to use which:**
 
-| Situation | Use |
-|---|---|
-| Is this API healthy? | RED |
-| Is the database server healthy? | USE |
-| Is this Kubernetes node overloaded? | USE |
-| Do I need to scale my service? | RED + USE |
-| Is this microservice SLO being met? | RED (feeds SLI) |
-| Why is this service slow? | RED (identifies slow), then USE (finds resource cause) |
+| Situation                           | Use                                                    |
+| ----------------------------------- | ------------------------------------------------------ |
+| Is this API healthy?                | RED                                                    |
+| Is the database server healthy?     | USE                                                    |
+| Is this Kubernetes node overloaded? | USE                                                    |
+| Do I need to scale my service?      | RED + USE                                              |
+| Is this microservice SLO being met? | RED (feeds SLI)                                        |
+| Why is this service slow?           | RED (identifies slow), then USE (finds resource cause) |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Average latency is good enough" | Average hides tail latency. P99 at 10 seconds with P50 at 50ms gives an average of ~150ms. The 1% of users with 10-second experiences are not visible in the average. Always use percentiles. |
-| "RED is for microservices only" | RED works for any request-based system: monolith HTTP endpoints, gRPC services, message queue consumers (rate = messages/s, errors = processing failures, duration = processing time), batch jobs. |
-| "I need all 43 metrics to know what is wrong" | No. 43 metrics tell you what the infrastructure is doing. RED tells you what the user is experiencing. Use RED to detect, then infrastructure metrics to diagnose. |
-| "Errors means 5xx only" | Errors means "request did not succeed from the user's perspective." This includes: 5xx (server errors), 4xx where appropriate (auth failures may indicate a real issue), timeouts (request timed out at client - logged as error even if server returned 200), and application-level errors (payload with error field even if HTTP 200). |
-| "RED and USE are competing frameworks" | They are complementary. RED is for services (user perspective). USE is for resources (infrastructure perspective). A complete dashboard has both. |
+| Misconception                                 | Reality                                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Average latency is good enough"              | Average hides tail latency. P99 at 10 seconds with P50 at 50ms gives an average of ~150ms. The 1% of users with 10-second experiences are not visible in the average. Always use percentiles.                                                                                                                                            |
+| "RED is for microservices only"               | RED works for any request-based system: monolith HTTP endpoints, gRPC services, message queue consumers (rate = messages/s, errors = processing failures, duration = processing time), batch jobs.                                                                                                                                       |
+| "I need all 43 metrics to know what is wrong" | No. 43 metrics tell you what the infrastructure is doing. RED tells you what the user is experiencing. Use RED to detect, then infrastructure metrics to diagnose.                                                                                                                                                                       |
+| "Errors means 5xx only"                       | Errors means "request did not succeed from the user's perspective." This includes: 5xx (server errors), 4xx where appropriate (auth failures may indicate a real issue), timeouts (request timed out at client - logged as error even if server returned 200), and application-level errors (payload with error field even if HTTP 200). |
+| "RED and USE are competing frameworks"        | They are complementary. RED is for services (user perspective). USE is for resources (infrastructure perspective). A complete dashboard has both.                                                                                                                                                                                        |
 
 ---
 
@@ -660,6 +662,7 @@ panels:
 
 **Symptom:**
 RED dashboard shows:
+
 - Rate: normal (500 req/s)
 - Errors: normal (0.08%)
 - Duration: P50 = 85ms (normal), P99 = 4,200ms (20x normal)
@@ -668,6 +671,7 @@ SLO burn rate is elevated. 1% of users are experiencing
 4-second latency on a service with a 500ms SLO.
 
 **Root Cause candidates:**
+
 1. GC pause (P50 not affected, only requests that
    start during a GC pause are slow)
 2. Specific user data path (certain users trigger
@@ -676,6 +680,7 @@ SLO burn rate is elevated. 1% of users are experiencing
 4. Hot partition in a sharded database
 
 **Diagnosis using traces:**
+
 ```promql
 # Step 1: Confirm via histogram buckets which percentile
 # is affected
@@ -711,12 +716,14 @@ requests (circuit breaker open, or the health check
 is failing and load balancer removed pods from rotation).
 
 This is NOT a RED degradation for the surviving service
+
 - it is a routing/availability failure. The service
-pods are healthy (20ms response = not overloaded),
-but traffic is being lost before or at the load
-balancer.
+  pods are healthy (20ms response = not overloaded),
+  but traffic is being lost before or at the load
+  balancer.
 
 **Diagnosis:**
+
 ```bash
 # Check Kubernetes pod status
 kubectl get pods -n checkout -l app=checkout
@@ -733,6 +740,7 @@ kubectl rollout history deployment/checkout-api -n checkout
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Metrics -- Types (Counter, Gauge, Histogram)` -
   RED metrics use all three: rate() over counters,
   histogram_quantile over histograms
@@ -740,6 +748,7 @@ kubectl rollout history deployment/checkout-api -n checkout
   application of observability to service health
 
 **Builds On This (learn these next):**
+
 - `USE Method` - the complement to RED for resource
   monitoring (CPU, memory, disk, network)
 - `Golden Signals` - the Google SRE Book's four-metric
@@ -748,6 +757,7 @@ kubectl rollout history deployment/checkout-api -n checkout
   directly into SLI calculations for SLO compliance
 
 **Alternatives / Comparisons:**
+
 - `USE Method` - for infrastructure resources
 - `Four Golden Signals` - adds Saturation to RED;
   the Google SRE Book original. Choose Golden Signals
@@ -821,22 +831,24 @@ often omitted from dashboards. Engineers intuitively
 focus on Errors and Duration (things going wrong and
 going slow). But a sudden Rate drop to zero is the
 single fastest indicator of a complete service outage
+
 - often visible 30 seconds before error rates and
-latency metrics become meaningful (no requests means
-no errors to count, no latency to measure). A Rate
-drop to zero means: no traffic is reaching the
-service. Possible causes: DNS failure, load balancer
-misconfiguration, all pods removed from rotation,
-network partition. None of these will show up in
-your error rate metrics if no requests are being
-processed. Always include Rate - and always add
-an alert for "Rate near zero during business hours."
+  latency metrics become meaningful (no requests means
+  no errors to count, no latency to measure). A Rate
+  drop to zero means: no traffic is reaching the
+  service. Possible causes: DNS failure, load balancer
+  misconfiguration, all pods removed from rotation,
+  network partition. None of these will show up in
+  your error rate metrics if no requests are being
+  processed. Always include Rate - and always add
+  an alert for "Rate near zero during business hours."
 
 ---
 
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Describe why average latency is
    insufficient for service health monitoring and
    give a concrete example where average latency
@@ -861,22 +873,23 @@ an alert for "Rate near zero during business hours."
 
 **Q1.** Your service receives 10,000 req/s. Latency
 histogram data for the last 5 minutes:
+
 - `le=0.1`: 6,000 requests (60% under 100ms)
 - `le=0.5`: 8,500 requests (85% under 500ms)
 - `le=1.0`: 9,700 requests (97% under 1s)
 - `le=5.0`: 9,990 requests (99.9% under 5s)
 - `le=+Inf`: 10,000 requests
-Calculate P50, P95, P99. Which users are experiencing
-problems if the SLO is P99 < 1 second?
-*Hint: P50: 60% are below 100ms, P50 is in the
-0-100ms bucket. P95: 97% are below 1s, 95% are
-below 1s (between le=0.5 and le=1.0 - interpolate:
-P95 ≈ 750ms). P99: 99% boundary - 97% are below 1s,
-99.9% below 5s. P99 is between 1s and 5s. With
-histogram_quantile interpolation: P99 ≈ 1.5s. SLO
-P99 < 1s is breached (P99 = 1.5s). 3% of users
-(300/10,000 per second) are experiencing > 1 second
-latency.*
+  Calculate P50, P95, P99. Which users are experiencing
+  problems if the SLO is P99 < 1 second?
+  _Hint: P50: 60% are below 100ms, P50 is in the
+  0-100ms bucket. P95: 97% are below 1s, 95% are
+  below 1s (between le=0.5 and le=1.0 - interpolate:
+  P95 ≈ 750ms). P99: 99% boundary - 97% are below 1s,
+  99.9% below 5s. P99 is between 1s and 5s. With
+  histogram_quantile interpolation: P99 ≈ 1.5s. SLO
+  P99 < 1s is breached (P99 = 1.5s). 3% of users
+  (300/10,000 per second) are experiencing > 1 second
+  latency._
 
 **Q2.** Your checkout service shows this RED state:
 Rate = 50 req/s (baseline: 500 req/s). Error rate =
@@ -884,7 +897,7 @@ Rate = 50 req/s (baseline: 500 req/s). Error rate =
 250ms). What does this pattern tell you about the
 service state? What is the most likely cause? What
 do you do first?
-*Hint: High errors + very LOW latency + very low rate
+_Hint: High errors + very LOW latency + very low rate
 = service is rejecting requests very quickly (not
 processing them slowly). 15ms P99 means requests are
 failing immediately - not being processed and timing
@@ -893,7 +906,7 @@ out. 80% error rate at 15ms = likely 503/429 errors
 failing and LB removed pods). First action: check
 pod readiness and load balancer health check status.
 Not a performance investigation - it is an availability
-investigation.*
+investigation._
 
 **Q3 (TYPE G):** You are standardising observability
 for a 200-service microservices platform. Design a
@@ -905,31 +918,33 @@ dashboard template will be deployed to all services?
 (d) What RED-based alerts will be auto-applied to
 all services? (e) How will the platform team enforce
 compliance across 200 services?
-*Hint: (a) A shared Micrometer/OTel auto-instrumentation
+\*Hint: (a) A shared Micrometer/OTel auto-instrumentation
 library injected via Spring Boot starter or Java agent
+
 - zero-config RED metrics for any HTTP service. (b)
-Convention: http_requests_total{service, method,
-status}, http_errors_total{service, status_class},
-http_duration_seconds{service, le}. Enforced via PR
-template and platform code review. (c) Grafana template:
-service variable, three panels (rate/errors/duration),
-deployed via Grafonnet as code, version-controlled.
-(d) Auto-applied alerts: error_rate > 1% for 3m (page),
-P99 > SLO_threshold for 5m (page), rate < 10% of
-baseline for 5m (page - service gone). SLO thresholds
-configured per service in a service registry. (e)
-Compliance: platform monitoring agent checks if RED
-metrics are present for each registered service.
-Weekly compliance report. Non-compliant services
-flagged in engineering all-hands reliability review.*
+  Convention: http_requests_total{service, method,
+  status}, http_errors_total{service, status_class},
+  http_duration_seconds{service, le}. Enforced via PR
+  template and platform code review. (c) Grafana template:
+  service variable, three panels (rate/errors/duration),
+  deployed via Grafonnet as code, version-controlled.
+  (d) Auto-applied alerts: error_rate > 1% for 3m (page),
+  P99 > SLO_threshold for 5m (page), rate < 10% of
+  baseline for 5m (page - service gone). SLO thresholds
+  configured per service in a service registry. (e)
+  Compliance: platform monitoring agent checks if RED
+  metrics are present for each registered service.
+  Weekly compliance report. Non-compliant services
+  flagged in engineering all-hands reliability review.\*
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
 **Q1: "What is the RED method and when would you use it?"**
-*Why they ask:* Baseline SRE/observability literacy test.
-*Strong answer includes:*
+_Why they ask:_ Baseline SRE/observability literacy test.
+_Strong answer includes:_
+
 - RED = Rate, Errors, Duration. For request-based services.
 - Rate: requests per second (traffic volume, anomaly detection)
 - Errors: failed requests per second or error rate %
@@ -943,9 +958,10 @@ flagged in engineering all-hands reliability review.*
 
 **Q2: "Why are percentiles better than averages for
 latency monitoring?"**
-*Why they ask:* Tests mathematical understanding of
+_Why they ask:_ Tests mathematical understanding of
 monitoring, not just pattern recognition.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Average is distorted by outliers. 990 requests at
   50ms + 10 at 10,000ms = average of ~150ms. The 1%
   experiencing 10s latency are invisible in the average.
@@ -959,9 +975,10 @@ monitoring, not just pattern recognition.
   for SLO compliance, P99.9 for "worst case."
 
 **Q3: "How does RED relate to SLOs?"**
-*Why they ask:* Tests whether the engineer connects
+_Why they ask:_ Tests whether the engineer connects
 RED to the broader reliability framework.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - RED metrics are the natural basis for SLI measurement.
 - Availability SLI = `1 - (errors/total)` = derived
   directly from RED Error metric.

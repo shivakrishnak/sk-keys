@@ -29,11 +29,11 @@ permalink: /react/the-component-mental-model/
 components is composing functions - master this model and
 React's rules all follow logically.
 
-| #004 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | The Frontend Complexity Problem, What React Is and Is Not, Declarative UI vs Imperative DOM | |
-| **Used by:** | Component, Props, State, ReactDOM Rendering, React Reconciliation Algorithm | |
-| **Related:** | Component, One-Way Data Binding, Lifting State Up | |
+| #004            | Category: React                                                                             | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | The Frontend Complexity Problem, What React Is and Is Not, Declarative UI vs Imperative DOM |                 |
+| **Used by:**    | Component, Props, State, ReactDOM Rendering, React Reconciliation Algorithm                 |                 |
+| **Related:**    | Component, One-Way Data Binding, Lifting State Up                                           |                 |
 
 ---
 
@@ -95,6 +95,7 @@ A component is a function that converts data into UI, and a
 React application is a tree of such functions calling each other.
 
 **One analogy:**
+
 > Components are like LEGO bricks. Each brick has a defined
 > shape and connection points (props). You can combine bricks
 > to build larger structures. The large structure does not
@@ -115,6 +116,7 @@ to derive.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. A component is a function: `component(props, state) → UI`.
 2. The same inputs must always produce the same output
    (purity for rendering logic).
@@ -160,6 +162,7 @@ an item list in the body, and a total price in the footer.
 Data source: an array of cart items in state.
 
 **WHAT HAPPENS WITHOUT COMPONENT MODEL:**
+
 - `header.js` reads `window.cart.items.length` to set the badge
 - `cart-list.js` reads `window.cart.items` to render the list
 - `footer.js` reads `window.cart.items` to compute total
@@ -343,6 +346,7 @@ State lives at the lowest common ancestor of the components
 that need it. Display-only components never have state.
 
 **AT SCALE:**
+
 - 100+ component apps: Component splitting decisions
   become performance decisions. Fine-grained components
   = fine-grained re-render boundaries.
@@ -363,8 +367,8 @@ that need it. Display-only components never have state.
 // BAD: One giant component owns everything
 function OrderPage() {
   const [orders, setOrders] = useState([]);
-  const [filter, setFilter] = useState('all');
-  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [user, setUser] = useState(null);
 
@@ -401,7 +405,7 @@ function OrderPage({ userId }) {
 function OrderList({ orders }) {
   return (
     <ul>
-      {orders.map(order => (
+      {orders.map((order) => (
         <OrderItem key={order.id} order={order} />
       ))}
     </ul>
@@ -410,7 +414,11 @@ function OrderList({ orders }) {
 
 function OrderItem({ order }) {
   // Only re-renders when THIS order's data changes
-  return <li>{order.id}: {order.status}</li>;
+  return (
+    <li>
+      {order.id}: {order.status}
+    </li>
+  );
 }
 // Testing: render <OrderItem order={mockOrder} />
 // and assert text content. No page, no global state.
@@ -457,12 +465,12 @@ function Button({
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Each component should be as small as possible" | Splitting every div into its own component creates excessive indirection. Granularity should reflect responsibility: one component = one responsibility, not one element. |
-| "Components are like classes - they have their own DOM" | Components describe a slice of the UI. React owns the DOM. A component's "DOM" is the subset of the real DOM that React renders for it, but the component never owns or directly manipulates DOM nodes. |
-| "Re-rendering means the browser redraws" | React re-renders a component (calls the function) to produce a new virtual DOM. Browser redraws happen only when React commits real DOM mutations - which may be zero if the diff is empty. |
-| "Component = file" | Multiple components may share a file, and a large complex component may be split across helper functions in a single file. The file structure should reflect team conventions, not a 1:1 component-to-file rule. |
+| Misconception                                           | Reality                                                                                                                                                                                                          |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Each component should be as small as possible"         | Splitting every div into its own component creates excessive indirection. Granularity should reflect responsibility: one component = one responsibility, not one element.                                        |
+| "Components are like classes - they have their own DOM" | Components describe a slice of the UI. React owns the DOM. A component's "DOM" is the subset of the real DOM that React renders for it, but the component never owns or directly manipulates DOM nodes.          |
+| "Re-rendering means the browser redraws"                | React re-renders a component (calls the function) to produce a new virtual DOM. Browser redraws happen only when React commits real DOM mutations - which may be zero if the diff is empty.                      |
+| "Component = file"                                      | Multiple components may share a file, and a large complex component may be split across helper functions in a single file. The file structure should reflect team conventions, not a 1:1 component-to-file rule. |
 
 ---
 
@@ -481,6 +489,7 @@ too high - to a parent that also renders expensive siblings.
 Every state change triggers siblings to re-render.
 
 **Diagnostic Command:**
+
 ```bash
 # React DevTools Profiler:
 # Record a keypress interaction.
@@ -511,6 +520,7 @@ where it is used, or the component tree is not structured
 to match the data flow requirements.
 
 **Diagnostic Command:**
+
 ```bash
 # Search for a prop name across the codebase.
 # If it appears in 5+ component files but is only
@@ -531,12 +541,14 @@ truly global.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `The Frontend Complexity Problem` - why encapsulation was
   needed before the component model made sense
 - `Declarative UI vs Imperative DOM Manipulation` - the
   programming model that makes components predictable
 
 **Builds On This (learn these next):**
+
 - `Component` - the implementation mechanics of a component
 - `Props` - how data flows between components
 - `State` - how components maintain their own data
@@ -544,6 +556,7 @@ truly global.
   one-way data flow between components
 
 **Alternatives / Comparisons:**
+
 - `Vue.js Single-File Components` - achieve similar encapsulation
   with a different syntax (template + script + style in one file)
 - `Web Components` - the browser-native component model;
@@ -585,6 +598,7 @@ truly global.
 ```
 
 **If you remember only 3 things:**
+
 1. A component is a function: `(props, state) -> UI`. The same
    inputs must always produce the same output. Side effects
    do not belong in the return - they belong in `useEffect`.
@@ -616,6 +630,7 @@ architecture is defined by how those interfaces connect. React's
 component model is the application of this principle to UI.
 
 **Where else this pattern appears:**
+
 - Unix pipes - each program is a function (stdin -> stdout);
   complex pipelines compose simple functions
 - Microservices - each service has a defined API contract;
@@ -624,6 +639,7 @@ component model is the application of this principle to UI.
   tree is `App = Header o Content o Footer` at the root level
 
 **Industry applications:**
+
 - Design systems (Storybook, Figma components) - design tokens
   and atomic components mirror React's component model, creating
   a shared language between design and engineering
@@ -650,6 +666,7 @@ DOM; no library has replaced the component mental model.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** Articulate to a non-technical stakeholder why
    a design change to one button automatically updates all
    instances across the application - and why this was not
@@ -681,9 +698,9 @@ many pieces of state are "shared" - user authentication,
 feature flags, shopping cart contents. How does the component
 model handle shared state, and what are the trade-offs between
 Context, Redux, and URL state for different kinds of shared data?
-*Hint: "Shared" state has a scope: is it shared by two
+_Hint: "Shared" state has a scope: is it shared by two
 adjacent siblings, or by components 5 levels apart, or by
-components on different routes?*
+components on different routes?_
 
 **Q2.** React's component function is called on every re-render.
 This means any object literal or function defined inside the
@@ -692,7 +709,7 @@ situations does this cause real problems, and at what point
 should you reach for `useMemo` and `useCallback` to stabilise
 references? What is the cost of applying them everywhere
 prematurely?
-*Hint: Object reference equality (`===`) and React.memo.*
+_Hint: Object reference equality (`===`) and React.memo._
 
 **Q3.** The component model says a component is a pure function
 of its inputs. But a real component connected to a REST API
@@ -700,4 +717,4 @@ is not pure - it depends on external state that changes over
 time. How do libraries like React Query model this: what is
 the "state" they give to components, and how does it fit the
 component = function(state) -> UI model?
-*Hint: "server state" vs "client state" distinction.*
+_Hint: "server state" vs "client state" distinction._

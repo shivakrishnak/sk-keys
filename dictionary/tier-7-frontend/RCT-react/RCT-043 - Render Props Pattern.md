@@ -32,11 +32,11 @@ with the shared logic; it solved the same problem as HOCs
 without wrapper nesting, and is now largely superseded
 by custom hooks for logic reuse.
 
-| #043 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | React Components, React.memo, Custom Hooks | |
-| **Used by:** | Compound Components Pattern, Class to Hooks Migration | |
-| **Related:** | Higher-Order Components, Compound Components, Custom Hooks | |
+| #043            | Category: React                                            | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------- | :-------------- |
+| **Depends on:** | React Components, React.memo, Custom Hooks                 |                 |
+| **Used by:**    | Compound Components Pattern, Class to Hooks Migration      |                 |
+| **Related:**    | Higher-Order Components, Compound Components, Custom Hooks |                 |
 
 ---
 
@@ -100,7 +100,9 @@ function App() {
     <MouseTracker
       render={({ x, y }) => (
         // Full control over what to render with x and y
-        <p>Mouse is at ({x}, {y})</p>
+        <p>
+          Mouse is at ({x}, {y})
+        </p>
       )}
     />
   );
@@ -110,7 +112,11 @@ function App() {
 function App() {
   return (
     <MouseTracker>
-      {({ x, y }) => <p>Mouse: ({x}, {y})</p>}
+      {({ x, y }) => (
+        <p>
+          Mouse: ({x}, {y})
+        </p>
+      )}
     </MouseTracker>
   );
 }
@@ -270,10 +276,22 @@ function DataFetcher({ url, children }) {
   useEffect(() => {
     let cancelled = false;
     fetch(url)
-      .then(r => r.json())
-      .then(d => { if (!cancelled) { setData(d); setLoading(false); }})
-      .catch(e => { if (!cancelled) { setError(e); setLoading(false); }});
-    return () => { cancelled = true; };
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled) {
+          setData(d);
+          setLoading(false);
+        }
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setError(e);
+          setLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [url]);
 
   // Calls the children function with current state
@@ -288,16 +306,14 @@ function UserList() {
     if (error) return <ErrorMessage error={error} />;
     return (
       <ul>
-        {data.map(user => <li key={user.id}>{user.name}</li>)}
+        {data.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
       </ul>
     );
   }, []);
 
-  return (
-    <DataFetcher url="/api/users">
-      {renderUsers}
-    </DataFetcher>
-  );
+  return <DataFetcher url="/api/users">{renderUsers}</DataFetcher>;
 }
 
 // Custom hook equivalent (modern preferred approach):
@@ -309,21 +325,39 @@ function useDataFetcher(url) {
   useEffect(() => {
     let cancelled = false;
     fetch(url)
-      .then(r => r.json())
-      .then(d => { if (!cancelled) { setData(d); setLoading(false); }})
-      .catch(e => { if (!cancelled) { setError(e); setLoading(false); }});
-    return () => { cancelled = true; };
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled) {
+          setData(d);
+          setLoading(false);
+        }
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setError(e);
+          setLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [url]);
 
   return { data, loading, error };
 }
 
 function UserList() {
-  const { data, loading, error } = useDataFetcher('/api/users');
+  const { data, loading, error } = useDataFetcher("/api/users");
   // No JSX nesting, no render prop
   if (loading) return <Spinner />;
   if (error) return <ErrorMessage error={error} />;
-  return <ul>{data.map(u => <li key={u.id}>{u.name}</li>)}</ul>;
+  return (
+    <ul>
+      {data.map((u) => (
+        <li key={u.id}>{u.name}</li>
+      ))}
+    </ul>
+  );
 }
 ```
 
@@ -340,9 +374,9 @@ function UserList() {
 function Parent() {
   return (
     <DataFetcher url="/api/users">
-      {({ data }) => (  // new arrow fn every render
-        <UserTable users={data} />
-      )}
+      {(
+        { data }, // new arrow fn every render
+      ) => <UserTable users={data} />}
     </DataFetcher>
   );
 }
@@ -355,14 +389,10 @@ function Parent() {
 function Parent() {
   const renderUsers = useCallback(
     ({ data }) => <UserTable users={data} />,
-    []  // stable: no deps
+    [], // stable: no deps
   );
 
-  return (
-    <DataFetcher url="/api/users">
-      {renderUsers}
-    </DataFetcher>
-  );
+  return <DataFetcher url="/api/users">{renderUsers}</DataFetcher>;
 }
 // DataFetcher wrapped in React.memo will not re-render
 // when Parent re-renders (function reference is stable)
@@ -372,26 +402,26 @@ function Parent() {
 
 ### 📊 Comparison Table
 
-| | Render Props | HOC | Custom Hook |
-|---|---|---|---|
-| Visible in JSX | Yes (function in JSX) | No (wraps silently) | No (hook call in component) |
-| Prop collisions | None | Possible (silent) | None |
-| Works with class components | Yes | Yes | No |
-| Nesting in DevTools | Yes (logic component visible) | Yes (wrapper visible) | No (invisible) |
-| Verbosity | High (function in JSX) | Medium (wraps at module level) | Low (hook call) |
-| Performance risk | Function re-create each render | New component type if defined in render | Stable with no issues |
-| Co-location of logic | In separate component | In separate HOC function | In separate hook |
+|                             | Render Props                   | HOC                                     | Custom Hook                 |
+| --------------------------- | ------------------------------ | --------------------------------------- | --------------------------- |
+| Visible in JSX              | Yes (function in JSX)          | No (wraps silently)                     | No (hook call in component) |
+| Prop collisions             | None                           | Possible (silent)                       | None                        |
+| Works with class components | Yes                            | Yes                                     | No                          |
+| Nesting in DevTools         | Yes (logic component visible)  | Yes (wrapper visible)                   | No (invisible)              |
+| Verbosity                   | High (function in JSX)         | Medium (wraps at module level)          | Low (hook call)             |
+| Performance risk            | Function re-create each render | New component type if defined in render | Stable with no issues       |
+| Co-location of logic        | In separate component          | In separate HOC function                | In separate hook            |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Render props are the same as children" | `children` can be used as a render prop (when it is a function), but not all children usages are render props. `children` as a render prop: `{(state) => <UI />}`. `children` as content: `<p>text</p>`. They are syntactically the same prop but semantically different patterns. |
-| "Render props are obsolete" | Render props remain the right tool for component-level slot patterns (headless UI, render-controlled libraries like react-window) and when working with class components. They are "replaced" only for logic reuse in functional components where hooks are cleaner. |
-| "Render props automatically handle performance" | The opposite - inline render prop functions are new references on every render, causing the logic component to see changed props. Without `useCallback` or defining the render function outside the component, performance can be worse than alternatives. |
-| "You need a prop named 'render' for render props" | The pattern works with any prop name including `children`. React Router's `<Route component={...}>` and `<Route render={...}>` are both render props. The common pattern is to use `children` as the function for cleaner JSX. |
+| Misconception                                     | Reality                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Render props are the same as children"           | `children` can be used as a render prop (when it is a function), but not all children usages are render props. `children` as a render prop: `{(state) => <UI />}`. `children` as content: `<p>text</p>`. They are syntactically the same prop but semantically different patterns. |
+| "Render props are obsolete"                       | Render props remain the right tool for component-level slot patterns (headless UI, render-controlled libraries like react-window) and when working with class components. They are "replaced" only for logic reuse in functional components where hooks are cleaner.               |
+| "Render props automatically handle performance"   | The opposite - inline render prop functions are new references on every render, causing the logic component to see changed props. Without `useCallback` or defining the render function outside the component, performance can be worse than alternatives.                         |
+| "You need a prop named 'render' for render props" | The pattern works with any prop name including `children`. React Router's `<Route component={...}>` and `<Route render={...}>` are both render props. The common pattern is to use `children` as the function for cleaner JSX.                                                     |
 
 ---
 
@@ -422,14 +452,16 @@ re-renders on every parent render.
 (new reference on every parent render), bypassing memo.
 
 **Diagnosis:**
+
 ```jsx
 // Console shows DataFetcher renders on every App render
 // even though url prop has not changed
 ```
 
 **Fix:** Stabilise with `useCallback`:
+
 ```jsx
-const render = useCallback(({data}) => <UI data={data}/>, []);
+const render = useCallback(({ data }) => <UI data={data} />, []);
 ```
 
 ---
@@ -437,11 +469,13 @@ const render = useCallback(({data}) => <UI data={data}/>, []);
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `React Components` - component composition fundamentals
 - `Custom Hooks` - the modern alternative for logic reuse
 - `React.memo` - performance interaction with render props
 
 **Builds On:**
+
 - `Compound Components Pattern` - extends render props
   to a full slot/composition pattern
 - `Class Components to Hooks Migration` - render props in
@@ -465,6 +499,7 @@ const render = useCallback(({data}) => <UI data={data}/>, []);
 ```
 
 **If you remember only 3 things:**
+
 1. Render prop = a component prop whose value is a
    function that returns JSX; called by the component
    with its state; consumer controls the rendered output.

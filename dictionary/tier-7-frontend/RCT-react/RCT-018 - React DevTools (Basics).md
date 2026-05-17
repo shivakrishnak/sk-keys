@@ -30,11 +30,11 @@ the React component tree, props, state, and context) and
 Profiler (record and analyse renders to diagnose performance
 problems).
 
-| #018 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, Props, State | |
-| **Used by:** | React Performance Profiling, Core Web Vitals | |
-| **Related:** | Component, State, React Performance Profiling | |
+| #018            | Category: React                               | Difficulty: ★☆☆ |
+| :-------------- | :-------------------------------------------- | :-------------- |
+| **Depends on:** | Component, Props, State                       |                 |
+| **Used by:**    | React Performance Profiling, Core Web Vitals  |                 |
+| **Related:**    | Component, State, React Performance Profiling |                 |
 
 ---
 
@@ -87,6 +87,7 @@ showing the live React tree with props, state, and context
 values, and a "Profiler" view showing render performance.
 
 **Installation:**
+
 1. Chrome: install "React Developer Tools" from Chrome Web Store
 2. Firefox: install from Firefox Add-ons
 3. Edge: install from Microsoft Edge Add-ons
@@ -94,6 +95,7 @@ values, and a "Profiler" view showing render performance.
    "Profiler" tabs
 
 **Key workflows:**
+
 - Inspect a component: click any DOM element in Elements tab
   → switch to Components tab → React DevTools shows the
   corresponding component
@@ -303,14 +305,14 @@ function useUserData(userId) {
 **Adding debug context with useDebugValue:**
 
 ```jsx
-import { useState, useDebugValue } from 'react';
+import { useState, useDebugValue } from "react";
 
 function useOnlineStatus() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   // useDebugValue adds a label to this hook in DevTools
   // Shows as "Online" or "Offline" next to the hook
-  useDebugValue(isOnline ? 'Online' : 'Offline');
+  useDebugValue(isOnline ? "Online" : "Offline");
 
   // (event listeners omitted for brevity)
   return isOnline;
@@ -326,12 +328,12 @@ function useOnlineStatus() {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "React DevTools shows all components, including production builds" | React DevTools requires development mode. In production builds (`npm run build`), React removes all DevTools hooks for performance and to avoid exposing component structure. DevTools shows nothing for production builds. |
-| "The 'Components' tab shows the DOM structure" | The Components tab shows the React component tree, not the DOM. One React component may render multiple DOM elements. Fragments render multiple DOM nodes with no component wrapper. The component tree is an abstraction above the DOM. |
-| "Editing state in DevTools persists after page refresh" | Edits in DevTools are in-memory only. Refreshing the page resets to the initial state. DevTools editing is for live inspection and testing, not for permanent changes. |
-| "The Profiler panel is for measuring actual user performance" | The Profiler measures React render performance in the developer's browser during a DevTools session. It does not reflect real user performance metrics (which require RUM tools like Datadog, Sentry, or Web Vitals measurement). |
+| Misconception                                                      | Reality                                                                                                                                                                                                                                  |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "React DevTools shows all components, including production builds" | React DevTools requires development mode. In production builds (`npm run build`), React removes all DevTools hooks for performance and to avoid exposing component structure. DevTools shows nothing for production builds.              |
+| "The 'Components' tab shows the DOM structure"                     | The Components tab shows the React component tree, not the DOM. One React component may render multiple DOM elements. Fragments render multiple DOM nodes with no component wrapper. The component tree is an abstraction above the DOM. |
+| "Editing state in DevTools persists after page refresh"            | Edits in DevTools are in-memory only. Refreshing the page resets to the initial state. DevTools editing is for live inspection and testing, not for permanent changes.                                                                   |
+| "The Profiler panel is for measuring actual user performance"      | The Profiler measures React render performance in the developer's browser during a DevTools session. It does not reflect real user performance metrics (which require RUM tools like Datadog, Sentry, or Web Vitals measurement).        |
 
 ---
 
@@ -373,12 +375,14 @@ Context changed. Trace down to find the source.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Component` - the unit displayed in the Components tab
 - `Props` and `State` - the values inspected in DevTools
 - `React Development Environment Setup` - DevTools
   requires development mode
 
 **Used With:**
+
 - `React Performance Profiling` - advanced Profiler use
 - `React.memo, useMemo, useCallback` - the tools applied
   after Profiler identifies unnecessary re-renders
@@ -409,6 +413,7 @@ Context changed. Trace down to find the source.
 ```
 
 **If you remember only 3 things:**
+
 1. Components tab: see the React tree, inspect/edit props
    and state live, navigate to source.
 2. Profiler tab: record renders, see "Why did this

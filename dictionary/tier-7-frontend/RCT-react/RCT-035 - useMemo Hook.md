@@ -32,11 +32,11 @@ reference that prevents unnecessary `React.memo` child
 re-renders; misused, it wastes memory and adds complexity
 with no measurable benefit.
 
-| #035 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | useState Hook, useEffect Hook, React Reconciliation Algorithm | |
-| **Used by:** | useCallback Hook, React.memo, React Performance Profiling | |
-| **Related:** | useCallback Hook, React.memo, React Reconciliation | |
+| #035            | Category: React                                               | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | useState Hook, useEffect Hook, React Reconciliation Algorithm |                 |
+| **Used by:**    | useCallback Hook, React.memo, React Performance Profiling     |                 |
+| **Related:**    | useCallback Hook, React.memo, React Reconciliation            |                 |
 
 ---
 
@@ -78,17 +78,29 @@ function is re-called and the new result is cached.
 // WITHOUT useMemo: filter runs on every render
 function ProductList({ products, category }) {
   // This runs on every re-render, even unrelated ones
-  const filtered = products.filter(p => p.category === category);
-  return <ul>{filtered.map(p => <li key={p.id}>{p.name}</li>)}</ul>;
+  const filtered = products.filter((p) => p.category === category);
+  return (
+    <ul>
+      {filtered.map((p) => (
+        <li key={p.id}>{p.name}</li>
+      ))}
+    </ul>
+  );
 }
 
 // WITH useMemo: filter runs only when products or category changes
 function ProductList({ products, category }) {
   const filtered = useMemo(
-    () => products.filter(p => p.category === category),
-    [products, category]  // re-run only when these change
+    () => products.filter((p) => p.category === category),
+    [products, category], // re-run only when these change
   );
-  return <ul>{filtered.map(p => <li key={p.id}>{p.name}</li>)}</ul>;
+  return (
+    <ul>
+      {filtered.map((p) => (
+        <li key={p.id}>{p.name}</li>
+      ))}
+    </ul>
+  );
 }
 ```
 
@@ -115,7 +127,7 @@ computation, React.memo for expensive component render.
 ```jsx
 // Problem: new object reference on every render
 function Parent({ items }) {
-  const config = { sortBy: 'name', order: 'asc' };  // new each render
+  const config = { sortBy: "name", order: "asc" }; // new each render
   return <ExpensiveChild items={items} config={config} />;
 }
 
@@ -131,8 +143,8 @@ const ExpensiveChild = React.memo(function ({ items, config }) {
 // Fix: stable reference with useMemo
 function Parent({ items }) {
   const config = useMemo(
-    () => ({ sortBy: 'name', order: 'asc' }),
-    []  // no deps: always the same object
+    () => ({ sortBy: "name", order: "asc" }),
+    [], // no deps: always the same object
   );
   return <ExpensiveChild items={items} config={config} />;
 }
@@ -233,20 +245,21 @@ model), not the API syntax.
 function AnalyticsDashboard({ transactions, dateRange }) {
   // Aggregates 50,000 transactions - genuinely expensive
   const stats = useMemo(() => {
-    const filtered = transactions.filter(t =>
-      t.date >= dateRange.start && t.date <= dateRange.end
+    const filtered = transactions.filter(
+      (t) => t.date >= dateRange.start && t.date <= dateRange.end,
     );
     return {
       total: filtered.reduce((sum, t) => sum + t.amount, 0),
       count: filtered.length,
-      avg: filtered.length ? filtered.reduce((s, t) => s + t.amount, 0)
-        / filtered.length : 0,
+      avg: filtered.length
+        ? filtered.reduce((s, t) => s + t.amount, 0) / filtered.length
+        : 0,
       byCategory: filtered.reduce((acc, t) => {
         acc[t.category] = (acc[t.category] || 0) + t.amount;
         return acc;
       }, {}),
     };
-  }, [transactions, dateRange]);  // re-compute only when data changes
+  }, [transactions, dateRange]); // re-compute only when data changes
 
   return <StatsDisplay stats={stats} />;
 }
@@ -255,16 +268,21 @@ function AnalyticsDashboard({ transactions, dateRange }) {
 function FilteredTable({ rows, onSelect }) {
   // Without useMemo, options is a new array on every render
   // → React.memo on TableHeader is bypassed
-  const columns = useMemo(() => [
-    { key: 'name', label: 'Name' },
-    { key: 'email', label: 'Email' },
-    { key: 'status', label: 'Status' },
-  ], []);  // no deps: always the same columns config
+  const columns = useMemo(
+    () => [
+      { key: "name", label: "Name" },
+      { key: "email", label: "Email" },
+      { key: "status", label: "Status" },
+    ],
+    [],
+  ); // no deps: always the same columns config
 
   return (
     <>
-      <TableHeader columns={columns} />  {/* React.memo works */}
-      {rows.map(row => <TableRow key={row.id} row={row} />)}
+      <TableHeader columns={columns} /> {/* React.memo works */}
+      {rows.map((row) => (
+        <TableRow key={row.id} row={row} />
+      ))}
     </>
   );
 }
@@ -283,15 +301,12 @@ function UserCard({ user }) {
   // Adds cognitive complexity for zero measurable benefit.
   const displayName = useMemo(
     () => `${user.firstName} ${user.lastName}`,
-    [user.firstName, user.lastName]
+    [user.firstName, user.lastName],
   );
 
   // Also BAD: useMemo with object that is only used locally
   // (not passed to React.memo child) - no stable ref benefit
-  const style = useMemo(
-    () => ({ color: 'blue', fontSize: '16px' }),
-    []
-  );
+  const style = useMemo(() => ({ color: "blue", fontSize: "16px" }), []);
 
   return <div style={style}>{displayName}</div>;
 }
@@ -299,7 +314,7 @@ function UserCard({ user }) {
 // The correct version (no useMemo needed):
 function UserCard({ user }) {
   const displayName = `${user.firstName} ${user.lastName}`;
-  return <div style={{ color: 'blue', fontSize: '16px' }}>{displayName}</div>;
+  return <div style={{ color: "blue", fontSize: "16px" }}>{displayName}</div>;
 }
 ```
 
@@ -311,17 +326,17 @@ function UserCard({ user }) {
 function OrderHistory({ orders, filter, sortBy }) {
   const processedOrders = useMemo(() => {
     // This was measured at 35ms for 20,000 orders
-    const filtered = orders.filter(o =>
-      filter === 'all' || o.status === filter
+    const filtered = orders.filter(
+      (o) => filter === "all" || o.status === filter,
     );
     return filtered.sort((a, b) =>
-      sortBy === 'date' ? b.date - a.date : b.amount - a.amount
+      sortBy === "date" ? b.date - a.date : b.amount - a.amount,
     );
   }, [orders, filter, sortBy]);
 
   return (
     <ul>
-      {processedOrders.map(order => (
+      {processedOrders.map((order) => (
         <OrderRow key={order.id} order={order} />
       ))}
     </ul>
@@ -333,23 +348,23 @@ function OrderHistory({ orders, filter, sortBy }) {
 
 ### 📊 Comparison Table
 
-| Hook/API | What it caches | Use case |
-|---|---|---|
-| `useMemo` | Return VALUE of a function | Expensive computed value, stable object reference |
-| `useCallback` | Function REFERENCE | Stable handler for React.memo children |
-| `React.memo` | Component RENDER | Skip re-render if props unchanged |
-| `useRef` | Mutable value (no re-render) | DOM refs, interval IDs, non-reactive data |
+| Hook/API      | What it caches               | Use case                                          |
+| ------------- | ---------------------------- | ------------------------------------------------- |
+| `useMemo`     | Return VALUE of a function   | Expensive computed value, stable object reference |
+| `useCallback` | Function REFERENCE           | Stable handler for React.memo children            |
+| `React.memo`  | Component RENDER             | Skip re-render if props unchanged                 |
+| `useRef`      | Mutable value (no re-render) | DOM refs, interval IDs, non-reactive data         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "useMemo skips the component render" | useMemo only skips the computation inside it. The component's function body still runs on every render. To skip the render, use `React.memo` on the component itself. |
-| "useMemo should be used for all expensive operations by default" | useMemo has a cost: memory for cached value, shallow comparison of deps on every render, code complexity. For computations under ~1ms, the overhead may exceed the savings. Profile before adding it. |
-| "useMemo with empty deps `[]` is the same as computing outside the component" | `const x = useMemo(() => expensiveOp(), [])` runs once per component instance (per mount). Computing outside the component body runs once per module import. They differ for per-instance vs per-app computation. |
-| "useMemo guarantees the cache is preserved" | React may evict the useMemo cache in low-memory situations (for example, when offscreen components are suspended). Never use useMemo for correctness (if the value must be computed accurately). Only use it for performance (recomputing would give the same result). |
+| Misconception                                                                 | Reality                                                                                                                                                                                                                                                                |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "useMemo skips the component render"                                          | useMemo only skips the computation inside it. The component's function body still runs on every render. To skip the render, use `React.memo` on the component itself.                                                                                                  |
+| "useMemo should be used for all expensive operations by default"              | useMemo has a cost: memory for cached value, shallow comparison of deps on every render, code complexity. For computations under ~1ms, the overhead may exceed the savings. Profile before adding it.                                                                  |
+| "useMemo with empty deps `[]` is the same as computing outside the component" | `const x = useMemo(() => expensiveOp(), [])` runs once per component instance (per mount). Computing outside the component body runs once per module import. They differ for per-instance vs per-app computation.                                                      |
+| "useMemo guarantees the cache is preserved"                                   | React may evict the useMemo cache in low-memory situations (for example, when offscreen components are suspended). Never use useMemo for correctness (if the value must be computed accurately). Only use it for performance (recomputing would give the same result). |
 
 ---
 
@@ -395,11 +410,13 @@ as well, or restructure the data flow.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `useState Hook` - state that typically drives useMemo deps
 - `React Reconciliation Algorithm` - WHY reference stability
   matters for React.memo skip logic
 
 **Builds On:**
+
 - `useCallback Hook` - the function-reference version of useMemo
 - `React.memo` - the component-level optimisation that useMemo
   enables by providing stable references
@@ -431,6 +448,7 @@ as well, or restructure the data flow.
 ```
 
 **If you remember only 3 things:**
+
 1. `useMemo` caches the return VALUE. It does not skip
    the component render (that is `React.memo`).
 2. Profile FIRST. Only add `useMemo` if the computation

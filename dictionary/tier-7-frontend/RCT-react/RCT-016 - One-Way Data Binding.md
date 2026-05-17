@@ -30,11 +30,11 @@ modify parent state - they signal changes by calling
 callback props; this explicit, traceable flow is what
 makes React applications predictable and debuggable.
 
-| #016 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, Props, State, Event Handling | |
-| **Used by:** | Controlled Components, Form Handling, React Router | |
-| **Related:** | Props, State, Lifting State Up | |
+| #016            | Category: React                                    | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, Props, State, Event Handling            |                 |
+| **Used by:**    | Controlled Components, Form Handling, React Router |                 |
+| **Related:**    | Props, State, Lifting State Up                     |                 |
 
 ---
 
@@ -101,6 +101,7 @@ Data flows down through props; events flow up through
 callbacks; no two-way binding exists in React.
 
 **One insight:**
+
 > If you want a child component to "change" something in
 > its parent, you do not give the child access to the
 > parent's state. You give the child a callback function
@@ -258,7 +259,7 @@ consumer.
 
 ```jsx
 function App() {
-  const [username, setUsername] = useState('Alice');
+  const [username, setUsername] = useState("Alice");
   // Pass state as prop (data flowing down)
   return <UserCard username={username} />;
 }
@@ -276,7 +277,7 @@ function App() {
   const [count, setCount] = useState(0);
 
   // Callback defined in owner component
-  const handleIncrement = () => setCount(c => c + 1);
+  const handleIncrement = () => setCount((c) => c + 1);
 
   // Pass callback as prop (event channel going up)
   return <Counter value={count} onIncrement={handleIncrement} />;
@@ -340,7 +341,7 @@ function ChildInput({ value, setValue }) {
       value={value}
       // Child directly calls parent's state setter
       // No abstraction, no validation, no encapsulation
-      onChange={e => setValue(e.target.value)}
+      onChange={(e) => setValue(e.target.value)}
     />
   );
 }
@@ -356,35 +357,28 @@ function ChildInput({ value, setValue }) {
 ```jsx
 // GOOD: Controlled callback encapsulates the intent
 function ParentForm() {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
 
   // Parent owns validation logic
   const handleEmailChange = (newValue) => {
-    if (newValue.includes('@')) {
-      setError('');
+    if (newValue.includes("@")) {
+      setError("");
     } else if (newValue.length > 0) {
-      setError('Must be a valid email');
+      setError("Must be a valid email");
     }
     setEmail(newValue);
   };
 
   return (
-    <EmailInput
-      value={email}
-      error={error}
-      onChange={handleEmailChange}
-    />
+    <EmailInput value={email} error={error} onChange={handleEmailChange} />
   );
 }
 
 function EmailInput({ value, error, onChange }) {
   return (
     <div>
-      <input
-        value={value}
-        onChange={e => onChange(e.target.value)}
-      />
+      <input value={value} onChange={(e) => onChange(e.target.value)} />
       {error && <span className="error">{error}</span>}
     </div>
   );
@@ -398,23 +392,23 @@ function EmailInput({ value, error, onChange }) {
 
 ### 📊 Comparison Table
 
-| Binding Model | Data Direction | Examples | Debugging Difficulty |
-|---|---|---|---|
-| Two-way binding | Bidirectional (model-view) | Angular ngModel, Vue v-model | High: changes from either direction |
-| One-way (React) | Data down, events up | React props + callbacks | Low: state owned by one component |
-| Unidirectional Flux | Action → Store → View | Redux, Vuex | Low: explicit action names, single flow |
-| MobX observable | Reactive graph (any direction) | MobX stores | Medium: reactive propagation can be implicit |
+| Binding Model       | Data Direction                 | Examples                     | Debugging Difficulty                         |
+| ------------------- | ------------------------------ | ---------------------------- | -------------------------------------------- |
+| Two-way binding     | Bidirectional (model-view)     | Angular ngModel, Vue v-model | High: changes from either direction          |
+| One-way (React)     | Data down, events up           | React props + callbacks      | Low: state owned by one component            |
+| Unidirectional Flux | Action → Store → View          | Redux, Vuex                  | Low: explicit action names, single flow      |
+| MobX observable     | Reactive graph (any direction) | MobX stores                  | Medium: reactive propagation can be implicit |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "One-way binding means you cannot update parent state from a child" | You can update parent state from a child - by calling a callback prop. One-way binding refers to data FLOWING DOWN (not modifications being impossible). The modification path is explicit: callback up, state setter in parent, new props down. |
-| "React forms cannot have two-way behaviour" | Controlled inputs (value + onChange) in React look like two-way binding but are one-way implemented twice: parent state → value prop (down), onChange callback → state setter (up). This is deliberately explicit one-way binding that produces the same UX. |
-| "One-way binding means more code than two-way binding" | For simple cases, yes. For complex cases (validation, derived state, multiple consumers of the same state), one-way binding produces less code overall because there is one authoritative update path to write logic for. |
-| "Redux/Zustand violate one-way binding" | They do not. Redux implements a strict unidirectional flow: dispatch action → reducer updates store → components receive new state via selector. It is one-way binding with a shared store replacing local component state. |
+| Misconception                                                       | Reality                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "One-way binding means you cannot update parent state from a child" | You can update parent state from a child - by calling a callback prop. One-way binding refers to data FLOWING DOWN (not modifications being impossible). The modification path is explicit: callback up, state setter in parent, new props down.             |
+| "React forms cannot have two-way behaviour"                         | Controlled inputs (value + onChange) in React look like two-way binding but are one-way implemented twice: parent state → value prop (down), onChange callback → state setter (up). This is deliberately explicit one-way binding that produces the same UX. |
+| "One-way binding means more code than two-way binding"              | For simple cases, yes. For complex cases (validation, derived state, multiple consumers of the same state), one-way binding produces less code overall because there is one authoritative update path to write logic for.                                    |
+| "Redux/Zustand violate one-way binding"                             | They do not. Redux implements a strict unidirectional flow: dispatch action → reducer updates store → components receive new state via selector. It is one-way binding with a shared store replacing local component state.                                  |
 
 ---
 
@@ -458,12 +452,14 @@ library (for frequently changing shared state).
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Component` - the unit of ownership in one-way binding
 - `Props` - the vehicle for data flowing down
 - `State` - the source of truth that flows down
 - `Event Handling` - the mechanism for events flowing up
 
 **Builds On:**
+
 - `Lifting State Up` - the solution when two components
   need the same piece of data in one-way binding
 - `Prop Drilling Anti-Pattern` - the problem that arises
@@ -495,6 +491,7 @@ library (for frequently changing shared state).
 ```
 
 **If you remember only 3 things:**
+
 1. Data flows DOWN through props. Events flow UP through
    callbacks. This is the entire mental model of React
    data flow.

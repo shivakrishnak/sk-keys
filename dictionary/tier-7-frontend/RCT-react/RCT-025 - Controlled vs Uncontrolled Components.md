@@ -31,11 +31,11 @@ is the React standard because state is the single source
 of truth, but uncontrolled avoids re-renders and is simpler
 for large forms with no real-time validation.
 
-| #025 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | State, Event Handling, useState Hook, useRef Hook | |
-| **Used by:** | Form Handling in React, Redux Toolkit Architecture | |
-| **Related:** | useState Hook, Form Handling in React, useRef Hook | |
+| #025            | Category: React                                    | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------- | :-------------- |
+| **Depends on:** | State, Event Handling, useState Hook, useRef Hook  |                 |
+| **Used by:**    | Form Handling in React, Redux Toolkit Architecture |                 |
+| **Related:**    | useState Hook, Form Handling in React, useRef Hook |                 |
 
 ---
 
@@ -81,11 +81,11 @@ the initial value only.
 **Controlled:**
 
 ```jsx
-const [email, setEmail] = useState('');
+const [email, setEmail] = useState("");
 <input
-  value={email}           // React drives the value
-  onChange={e => setEmail(e.target.value)}  // state update
-/>
+  value={email} // React drives the value
+  onChange={(e) => setEmail(e.target.value)} // state update
+/>;
 // email state IS the input value at all times
 ```
 
@@ -94,9 +94,9 @@ const [email, setEmail] = useState('');
 ```jsx
 const emailRef = useRef(null);
 <input
-  ref={emailRef}          // DOM drives the value
-  defaultValue=""         // initial value only
-/>
+  ref={emailRef} // DOM drives the value
+  defaultValue="" // initial value only
+/>;
 // Read on submit: emailRef.current.value
 // React does not know the current value during typing
 ```
@@ -236,33 +236,33 @@ mode.
 
 ```jsx
 // Text input
-const [name, setName] = useState('');
-<input value={name} onChange={e => setName(e.target.value)} />
+const [name, setName] = useState("");
+<input value={name} onChange={(e) => setName(e.target.value)} />;
 
 // Textarea
-const [bio, setBio] = useState('');
-<textarea value={bio} onChange={e => setBio(e.target.value)} />
+const [bio, setBio] = useState("");
+<textarea value={bio} onChange={(e) => setBio(e.target.value)} />;
 
 // Select
-const [country, setCountry] = useState('US');
-<select value={country} onChange={e => setCountry(e.target.value)}>
+const [country, setCountry] = useState("US");
+<select value={country} onChange={(e) => setCountry(e.target.value)}>
   <option value="US">United States</option>
   <option value="UK">United Kingdom</option>
-</select>
+</select>;
 
 // Checkbox
 const [agreed, setAgreed] = useState(false);
 <input
   type="checkbox"
-  checked={agreed}   // note: "checked", not "value"
-  onChange={e => setAgreed(e.target.checked)}
-/>
+  checked={agreed} // note: "checked", not "value"
+  onChange={(e) => setAgreed(e.target.checked)}
+/>;
 
 // File input: CANNOT be controlled
 // (browser security: value cannot be set by JS)
 // Always uncontrolled:
 const fileRef = useRef(null);
-<input type="file" ref={fileRef} />
+<input type="file" ref={fileRef} />;
 // Read: fileRef.current.files[0]
 ```
 
@@ -320,8 +320,8 @@ function EditProfile({ user }) {
 
   return (
     <input
-      value={email}                                  // controlled
-      onChange={e => setEmail(e.target.value)}       // updater
+      value={email} // controlled
+      onChange={(e) => setEmail(e.target.value)} // updater
       placeholder="Email address"
     />
   );
@@ -361,28 +361,28 @@ function SurveyForm({ onSubmit }) {
 
 ### 📊 Comparison Table
 
-| Feature | Controlled | Uncontrolled |
-|---|---|---|
-| State location | React state | DOM |
-| Re-render on type | Yes (every keystroke) | No |
-| Real-time validation | Yes | No (only on submit) |
-| Programmatic value set | Yes (setState) | Limited (defaultValue once) |
-| Read current value | From state | Via ref.current.value |
-| Boilerplate per field | More (value + onChange) | Less (just ref or name) |
-| Best for | Validated, interactive forms | Simple submit-only forms |
-| Library preference | Formik | React Hook Form |
-| File inputs | Cannot be controlled | Always uncontrolled |
+| Feature                | Controlled                   | Uncontrolled                |
+| ---------------------- | ---------------------------- | --------------------------- |
+| State location         | React state                  | DOM                         |
+| Re-render on type      | Yes (every keystroke)        | No                          |
+| Real-time validation   | Yes                          | No (only on submit)         |
+| Programmatic value set | Yes (setState)               | Limited (defaultValue once) |
+| Read current value     | From state                   | Via ref.current.value       |
+| Boilerplate per field  | More (value + onChange)      | Less (just ref or name)     |
+| Best for               | Validated, interactive forms | Simple submit-only forms    |
+| Library preference     | Formik                       | React Hook Form             |
+| File inputs            | Cannot be controlled         | Always uncontrolled         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`value` without `onChange` is fine for display-only inputs" | React will warn: "You provided a `value` prop to a form field without an `onChange` handler." This produces a read-only input that the user cannot edit. Use `readOnly` prop for intentional read-only inputs, or `defaultValue` for uncontrolled initial values. |
-| "Uncontrolled is always faster" | Uncontrolled avoids re-renders during typing but still re-renders the full component tree when any other state changes. For complex forms embedded in re-rendering parents, both approaches re-render equally for non-typing state changes. |
-| "You must choose: all controlled or all uncontrolled in a form" | You can mix. A form might control some fields (for real-time validation) and leave others uncontrolled (file inputs must be uncontrolled). React Hook Form uses this mixed approach internally. |
-| "defaultValue and value are interchangeable" | `defaultValue` sets the initial value for an uncontrolled input and is NOT updated by React after mount. `value` sets the current value for a controlled input and IS updated by React on every render. They serve different purposes. |
+| Misconception                                                   | Reality                                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`value` without `onChange` is fine for display-only inputs"    | React will warn: "You provided a `value` prop to a form field without an `onChange` handler." This produces a read-only input that the user cannot edit. Use `readOnly` prop for intentional read-only inputs, or `defaultValue` for uncontrolled initial values. |
+| "Uncontrolled is always faster"                                 | Uncontrolled avoids re-renders during typing but still re-renders the full component tree when any other state changes. For complex forms embedded in re-rendering parents, both approaches re-render equally for non-typing state changes.                       |
+| "You must choose: all controlled or all uncontrolled in a form" | You can mix. A form might control some fields (for real-time validation) and leave others uncontrolled (file inputs must be uncontrolled). React Hook Form uses this mixed approach internally.                                                                   |
+| "defaultValue and value are interchangeable"                    | `defaultValue` sets the initial value for an uncontrolled input and is NOT updated by React after mount. `value` sets the current value for a controlled input and IS updated by React on every render. They serve different purposes.                            |
 
 ---
 
@@ -422,12 +422,14 @@ conditionally unmounted.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `State` and `useState Hook` - the source of truth in
   controlled components
 - `Event Handling` - `onChange` that drives controlled inputs
 - `useRef Hook` - the access mechanism for uncontrolled inputs
 
 **Builds On:**
+
 - `Form Handling in React` - applying controlled/uncontrolled
   in complete form patterns with validation
 - `React Hook Form` - library that defaults to uncontrolled
@@ -457,6 +459,7 @@ conditionally unmounted.
 ```
 
 **If you remember only 3 things:**
+
 1. Controlled: `value={state} + onChange` - React owns
    the value, real-time access to what user typed.
 2. Uncontrolled: `ref={inputRef}` - DOM owns the value,

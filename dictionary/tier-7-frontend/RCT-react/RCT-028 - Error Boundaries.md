@@ -32,11 +32,11 @@ app - they are the React equivalent of a try/catch for
 the component tree, but hooks cannot replace them (class
 components only, as of React 18).
 
-| #028 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Class vs Functional Components, React Components, Class Components to Hooks Migration | |
-| **Used by:** | Code Splitting with lazy/Suspense, Concurrent Features, v18 Migration | |
-| **Related:** | Suspense, Class Components, Testing React | |
+| #028            | Category: React                                                                       | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Class vs Functional Components, React Components, Class Components to Hooks Migration |                 |
+| **Used by:**    | Code Splitting with lazy/Suspense, Concurrent Features, v18 Migration                 |                 |
+| **Related:**    | Suspense, Class Components, Testing React                                             |                 |
 
 ---
 
@@ -101,14 +101,14 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return <h2>Something went wrong. Please refresh.</h2>;
     }
-    return this.props.children;  // render children normally
+    return this.props.children; // render children normally
   }
 }
 
 // Wrap any subtree to isolate it
 <ErrorBoundary>
   <UserProfile userId={id} />
-</ErrorBoundary>
+</ErrorBoundary>;
 ```
 
 ---
@@ -283,7 +283,7 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     // Called after commit - safe for side effects
     // errorInfo.componentStack = React component trace
-    console.error('Error Boundary caught:', error, errorInfo);
+    console.error("Error Boundary caught:", error, errorInfo);
     this.props.onError?.(error, errorInfo);
   }
 
@@ -328,19 +328,19 @@ function WidgetErrorFallback({ error, resetError }) {
   onError={(err, info) => sentry.captureException(err, info)}
 >
   <RecentOrdersWidget />
-</ErrorBoundary>
+</ErrorBoundary>;
 ```
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Error Boundaries catch all errors in their children" | They catch errors during: rendering, lifecycle methods, constructors. They do NOT catch: errors in event handlers (`onClick`, etc.), async code (`setTimeout`, `Promise`, `async/await`), server-side rendering errors, or errors thrown in the Error Boundary's own render. Event handler errors need regular `try/catch`. |
-| "Functional components can be Error Boundaries using hooks" | As of React 18, only class components can be Error Boundaries. No hook equivalent exists. Libraries like `react-error-boundary` provide a hooks-friendly API but wrap a class component internally. |
-| "An Error Boundary at the root is sufficient" | A root-level boundary prevents a blank screen, but everything inside it is still a single unit of failure. Strategic per-section boundaries limit damage and allow partial functionality when one area fails. |
-| "Error Boundaries automatically reset when props change" | They do not reset automatically. Once `hasError` is true, it stays true until the component unmounts, `setState({ hasError: false })` is called explicitly, or the boundary is remounted (by changing its `key` prop). |
+| Misconception                                               | Reality                                                                                                                                                                                                                                                                                                                     |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Error Boundaries catch all errors in their children"       | They catch errors during: rendering, lifecycle methods, constructors. They do NOT catch: errors in event handlers (`onClick`, etc.), async code (`setTimeout`, `Promise`, `async/await`), server-side rendering errors, or errors thrown in the Error Boundary's own render. Event handler errors need regular `try/catch`. |
+| "Functional components can be Error Boundaries using hooks" | As of React 18, only class components can be Error Boundaries. No hook equivalent exists. Libraries like `react-error-boundary` provide a hooks-friendly API but wrap a class component internally.                                                                                                                         |
+| "An Error Boundary at the root is sufficient"               | A root-level boundary prevents a blank screen, but everything inside it is still a single unit of failure. Strategic per-section boundaries limit damage and allow partial functionality when one area fails.                                                                                                               |
+| "Error Boundaries automatically reset when props change"    | They do not reset automatically. Once `hasError` is true, it stays true until the component unmounts, `setState({ hasError: false })` is called explicitly, or the boundary is remounted (by changing its `key` prop).                                                                                                      |
 
 ---
 
@@ -357,6 +357,7 @@ during the React render phase. Event handler errors occur
 outside the render phase.
 
 **Fix:**
+
 ```jsx
 // Wrap event handler errors manually
 const handleClick = () => {
@@ -383,11 +384,12 @@ persists.
 **Fix:** Tie the Error Boundary's `key` to the route
 location. When key changes, React unmounts and remounts
 the boundary, clearing error state:
+
 ```jsx
 const location = useLocation();
 <ErrorBoundary key={location.pathname}>
   <RouteContent />
-</ErrorBoundary>
+</ErrorBoundary>;
 ```
 
 ---
@@ -395,12 +397,14 @@ const location = useLocation();
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Class vs Functional Components` - Error Boundaries
   require class component syntax
 - `React Components and Props` - the component model
   that boundaries operate on
 
 **Builds On:**
+
 - `Suspense` - works alongside Error Boundaries; both
   intercept the render phase for different purposes
   (loading vs error)
@@ -433,6 +437,7 @@ const location = useLocation();
 ```
 
 **If you remember only 3 things:**
+
 1. Class component with `getDerivedStateFromError`
    (update state to show fallback) and `componentDidCatch`
    (log the error - side effects here).

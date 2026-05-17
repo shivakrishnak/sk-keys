@@ -31,11 +31,11 @@ changed" (dispatch an action) from "how it changes"
 predictable, testable, and explicit - it is `useState`
 with a state machine model.
 
-| #034 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | useState Hook, useEffect Hook, Lifting State Up | |
-| **Used by:** | useCallback Hook, Redux Toolkit Architecture, React Fiber Architecture | |
-| **Related:** | useState Hook, useCallback Hook, Redux Toolkit | |
+| #034            | Category: React                                                        | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | useState Hook, useEffect Hook, Lifting State Up                        |                 |
+| **Used by:**    | useCallback Hook, Redux Toolkit Architecture, React Fiber Architecture |                 |
+| **Related:**    | useState Hook, useCallback Hook, Redux Toolkit                         |                 |
 
 ---
 
@@ -50,11 +50,11 @@ With `useState`:
 const [loading, setLoading] = useState(false);
 const [data, setData] = useState(null);
 const [error, setError] = useState(null);
-const [status, setStatus] = useState('idle');
+const [status, setStatus] = useState("idle");
 
 // Submit: must update loading, status, clear error
 setLoading(true);
-setStatus('loading');
+setStatus("loading");
 setError(null);
 // What if one of these fails? What if you forget one?
 // State can be in an impossible combination:
@@ -90,16 +90,20 @@ setCount(count + 1);
 // useReducer equivalent:
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'INCREMENT': return { count: state.count + 1 };
-    case 'DECREMENT': return { count: state.count - 1 };
-    case 'RESET':     return { count: 0 };
-    default: return state;
+    case "INCREMENT":
+      return { count: state.count + 1 };
+    case "DECREMENT":
+      return { count: state.count - 1 };
+    case "RESET":
+      return { count: 0 };
+    default:
+      return state;
   }
 };
 
 const [state, dispatch] = useReducer(reducer, { count: 0 });
-dispatch({ type: 'INCREMENT' });
-dispatch({ type: 'RESET' });
+dispatch({ type: "INCREMENT" });
+dispatch({ type: "RESET" });
 // state.count = 0
 ```
 
@@ -168,12 +172,14 @@ Use useReducer:
 An async operation has three flags in useState:
 `loading`, `success`, `error`. There are `2^3 = 8`
 possible combinations. But only 4 are valid:
+
 - `false/false/false` (idle)
 - `true/false/false` (loading)
 - `false/true/false` (success)
 - `false/false/true` (error)
 
 Four combinations are logically impossible:
+
 - `true/true/false` (loading AND success)
 - `false/true/true` (success AND error)
 - etc.
@@ -182,19 +188,26 @@ With three `useState` calls, code can put the component
 in an impossible state if any `set*` call is missed.
 
 With `useReducer`:
+
 ```jsx
-const initialState = { status: 'idle', data: null, error: null };
+const initialState = { status: "idle", data: null, error: null };
 
 function reducer(state, action) {
   switch (action.type) {
-    case 'FETCH_START':   return { status: 'loading', data: null, error: null };
-    case 'FETCH_SUCCESS': return { status: 'success', data: action.data, error: null };
-    case 'FETCH_ERROR':   return { status: 'error', data: null, error: action.error };
-    case 'RESET':         return initialState;
-    default: return state;
+    case "FETCH_START":
+      return { status: "loading", data: null, error: null };
+    case "FETCH_SUCCESS":
+      return { status: "success", data: action.data, error: null };
+    case "FETCH_ERROR":
+      return { status: "error", data: null, error: action.error };
+    case "RESET":
+      return initialState;
+    default:
+      return state;
   }
 }
 ```
+
 One `status` field with 4 valid values. Impossible state
 is structurally prevented. The reducer is the single
 point of truth for every transition.
@@ -266,20 +279,20 @@ function, no side effects in the reducer.
 ```jsx
 // Complete async state machine
 const initialState = {
-  status: 'idle',   // 'idle' | 'loading' | 'success' | 'error'
+  status: "idle", // 'idle' | 'loading' | 'success' | 'error'
   data: null,
   error: null,
 };
 
 function fetchReducer(state, action) {
   switch (action.type) {
-    case 'FETCH_START':
-      return { status: 'loading', data: null, error: null };
-    case 'FETCH_SUCCESS':
-      return { status: 'success', data: action.payload, error: null };
-    case 'FETCH_ERROR':
-      return { status: 'error', data: null, error: action.payload };
-    case 'RESET':
+    case "FETCH_START":
+      return { status: "loading", data: null, error: null };
+    case "FETCH_SUCCESS":
+      return { status: "success", data: action.payload, error: null };
+    case "FETCH_ERROR":
+      return { status: "error", data: null, error: action.payload };
+    case "RESET":
       return initialState;
     default:
       throw new Error(`Unknown action: ${action.type}`);
@@ -291,24 +304,24 @@ function UserProfile({ userId }) {
 
   useEffect(() => {
     let cancelled = false;
-    dispatch({ type: 'FETCH_START' });
+    dispatch({ type: "FETCH_START" });
 
     fetchUser(userId)
-      .then(user => {
-        if (!cancelled)
-          dispatch({ type: 'FETCH_SUCCESS', payload: user });
+      .then((user) => {
+        if (!cancelled) dispatch({ type: "FETCH_SUCCESS", payload: user });
       })
-      .catch(err => {
-        if (!cancelled)
-          dispatch({ type: 'FETCH_ERROR', payload: err.message });
+      .catch((err) => {
+        if (!cancelled) dispatch({ type: "FETCH_ERROR", payload: err.message });
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
-  if (state.status === 'loading') return <Spinner />;
-  if (state.status === 'error') return <ErrorMessage msg={state.error} />;
-  if (state.status === 'idle') return null;
+  if (state.status === "loading") return <Spinner />;
+  if (state.status === "error") return <ErrorMessage msg={state.error} />;
+  if (state.status === "idle") return null;
 
   // status === 'success': state.data is guaranteed non-null here
   return <Profile user={state.data} />;
@@ -333,8 +346,8 @@ function AsyncComponent() {
 
   const load = async () => {
     setLoading(true);
-    setError(null);  // easy to forget this
-    setSuccess(false);  // easy to forget this
+    setError(null); // easy to forget this
+    setSuccess(false); // easy to forget this
     try {
       const result = await fetchData();
       setData(result);
@@ -359,31 +372,33 @@ function AsyncComponent() {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'LOAD':
-      return { status: 'loading', data: null, error: null };
-    case 'SUCCESS':
-      return { status: 'success', data: action.payload, error: null };
-    case 'FAILURE':
-      return { status: 'error', data: null, error: action.payload };
-    case 'RETRY':
-      return { status: 'idle', data: null, error: null };
+    case "LOAD":
+      return { status: "loading", data: null, error: null };
+    case "SUCCESS":
+      return { status: "success", data: action.payload, error: null };
+    case "FAILURE":
+      return { status: "error", data: null, error: action.payload };
+    case "RETRY":
+      return { status: "idle", data: null, error: null };
     default:
       return state;
   }
 };
 
 function AsyncComponent() {
-  const [state, dispatch] = useReducer(reducer,
-    { status: 'idle', data: null, error: null }
-  );
+  const [state, dispatch] = useReducer(reducer, {
+    status: "idle",
+    data: null,
+    error: null,
+  });
 
   const load = async () => {
-    dispatch({ type: 'LOAD' });
+    dispatch({ type: "LOAD" });
     try {
       const result = await fetchData();
-      dispatch({ type: 'SUCCESS', payload: result });
+      dispatch({ type: "SUCCESS", payload: result });
     } catch (err) {
-      dispatch({ type: 'FAILURE', payload: err.message });
+      dispatch({ type: "FAILURE", payload: err.message });
     }
   };
   // state.status is always one of: 'idle', 'loading', 'success', 'error'
@@ -395,12 +410,12 @@ function AsyncComponent() {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "useReducer is more powerful than useState" | They have the same underlying power. `useReducer` can always be expressed as multiple `useState` calls, and vice versa. `useReducer` is a pattern choice (centralised logic, explicit transitions) not a capability upgrade. |
-| "You should always use useReducer for forms" | For simple 2-3 field forms, `useState` per field is clearer. `useReducer` adds value when the form has complex validation dependencies, step-based transitions, or undo/redo requirements. |
-| "The reducer must use a switch statement" | The reducer is just a function: `(state, action) => state`. It can use if/else, object lookup maps, or any other approach. Switch is conventional because it mirrors the Redux community standard, but it is not required. |
-| "dispatch({ type }) is async (like setState)" | `dispatch` is synchronous in the sense that it queues the update. The state value in the current render does not change immediately after `dispatch` (just like `setState`). The new state is available in the NEXT render. |
+| Misconception                                 | Reality                                                                                                                                                                                                                      |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "useReducer is more powerful than useState"   | They have the same underlying power. `useReducer` can always be expressed as multiple `useState` calls, and vice versa. `useReducer` is a pattern choice (centralised logic, explicit transitions) not a capability upgrade. |
+| "You should always use useReducer for forms"  | For simple 2-3 field forms, `useState` per field is clearer. `useReducer` adds value when the form has complex validation dependencies, step-based transitions, or undo/redo requirements.                                   |
+| "The reducer must use a switch statement"     | The reducer is just a function: `(state, action) => state`. It can use if/else, object lookup maps, or any other approach. Switch is conventional because it mirrors the Redux community standard, but it is not required.   |
+| "dispatch({ type }) is async (like setState)" | `dispatch` is synchronous in the sense that it queues the update. The state value in the current render does not change immediately after `dispatch` (just like `setState`). The new state is available in the NEXT render.  |
 
 ---
 
@@ -412,20 +427,22 @@ function AsyncComponent() {
 not re-render. Or state updates are inconsistent.
 
 **Root Cause:**
+
 ```jsx
 // BAD: mutating state directly in reducer
 function reducer(state, action) {
-  if (action.type === 'ADD_ITEM') {
-    state.items.push(action.item);  // MUTATION
-    return state;                   // same reference → no re-render
+  if (action.type === "ADD_ITEM") {
+    state.items.push(action.item); // MUTATION
+    return state; // same reference → no re-render
   }
 }
 ```
 
 **Fix:** Always return new objects/arrays:
+
 ```jsx
 function reducer(state, action) {
-  if (action.type === 'ADD_ITEM') {
+  if (action.type === "ADD_ITEM") {
     return { ...state, items: [...state.items, action.item] };
   }
 }
@@ -436,11 +453,13 @@ function reducer(state, action) {
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `useState Hook` - the simpler alternative for basic state
 - `useEffect Hook` - commonly used with useReducer for async
 - `Lifting State Up` - context + useReducer is a common pattern
 
 **Builds On:**
+
 - `useCallback Hook` - `dispatch` is stable but action
   creators may need `useCallback` when passed as props
 - `Redux Toolkit` - same reducer pattern with global store,
@@ -471,6 +490,7 @@ function reducer(state, action) {
 ```
 
 **If you remember only 3 things:**
+
 1. `(state, action) => newState`. Pure function. No side
    effects. Always return a new object, never mutate.
 2. Use when multiple state variables must transition
@@ -532,7 +552,7 @@ itself belongs to React.
 1. **IMPLEMENT** a multi-step form wizard (3 steps) using
    `useReducer` where the state machine has explicit
    transitions: `(idle → step1 → step2 → step3 → submitting
-   → success/error)`.
+→ success/error)`.
 2. **REFACTOR** a component with 5 `useState` calls for
    an async operation into a single `useReducer` with a
    state machine that eliminates all impossible state

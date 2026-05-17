@@ -30,11 +30,11 @@ unmaintained; Vite has replaced it as the standard - it
 uses native ES modules for near-instant dev server starts
 and is 10-100x faster for large projects.
 
-| #019 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | React Ecosystem Landscape, React Dev Environment Setup | |
-| **Used by:** | Bundle Size Analysis, CRA Deprecation Entry | |
-| **Related:** | React Dev Environment Setup, Bundle Analysis, CRA Deprecation | |
+| #019            | Category: React                                               | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------------ | :-------------- |
+| **Depends on:** | React Ecosystem Landscape, React Dev Environment Setup        |                 |
+| **Used by:**    | Bundle Size Analysis, CRA Deprecation Entry                   |                 |
+| **Related:**    | React Dev Environment Setup, Bundle Analysis, CRA Deprecation |                 |
 
 ---
 
@@ -60,8 +60,7 @@ scaffolding and how it affects developer experience at scale.
 ### 📘 Textbook Definition
 
 **Create React App (CRA)** was the official React project
-scaffolding tool maintained by Facebook/Meta from 2016 to
-2023. It created a zero-configuration Webpack + Babel
+scaffolding tool maintained by Facebook/Meta from 2016 to 2023. It created a zero-configuration Webpack + Babel
 setup. CRA is now deprecated (last meaningful release was
 React Scripts 5 in 2022; the repository is effectively
 unmaintained as of 2023).
@@ -136,7 +135,7 @@ Browser requests:
   5. Browser executes, encounters imports
   6. Browser requests each imported file
   7. Vite transforms each on demand
-  
+
 Result: only files actually used are transformed.
 500 file project: only the ~10 files currently in view
 are transformed. Cold start: milliseconds not seconds.
@@ -247,14 +246,14 @@ my-app/
 **vite.config.js (standard React setup):**
 
 ```js
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
   // Optional: path aliases
   resolve: {
-    alias: { '@': '/src' },
+    alias: { "@": "/src" },
   },
 });
 ```
@@ -264,10 +263,10 @@ export default defineConfig({
 ```json
 {
   "scripts": {
-    "dev": "vite",           // start dev server
-    "build": "vite build",   // production build → dist/
+    "dev": "vite", // start dev server
+    "build": "vite build", // production build → dist/
     "preview": "vite preview", // preview prod build locally
-    "test": "vitest"         // Vitest test runner (Vite-native)
+    "test": "vitest" // Vitest test runner (Vite-native)
   }
 }
 ```
@@ -361,28 +360,28 @@ npm uninstall react-scripts
 
 ### 📊 Comparison Table
 
-| Feature | Create React App | Vite | Next.js |
-|---|---|---|---|
-| Status | Deprecated | Active (recommended) | Active |
-| Dev server | Webpack (slow at scale) | Native ESM (fast) | Turbopack (fast) |
-| Cold start (large project) | 30-60s | ~300ms | ~500ms |
-| HMR | 2-5s | 50-200ms | 50-200ms |
-| SSR support | No (SPA only) | No (SPA only) | Yes (built-in) |
-| File-system routing | No | No | Yes |
-| Bundle for prod | Webpack | Rollup | Webpack/Turbopack |
-| TypeScript | Supported | Supported | Supported |
-| Best for | Legacy projects | SPAs, tools, dashboards | Content sites, full-stack |
+| Feature                    | Create React App        | Vite                    | Next.js                   |
+| -------------------------- | ----------------------- | ----------------------- | ------------------------- |
+| Status                     | Deprecated              | Active (recommended)    | Active                    |
+| Dev server                 | Webpack (slow at scale) | Native ESM (fast)       | Turbopack (fast)          |
+| Cold start (large project) | 30-60s                  | ~300ms                  | ~500ms                    |
+| HMR                        | 2-5s                    | 50-200ms                | 50-200ms                  |
+| SSR support                | No (SPA only)           | No (SPA only)           | Yes (built-in)            |
+| File-system routing        | No                      | No                      | Yes                       |
+| Bundle for prod            | Webpack                 | Rollup                  | Webpack/Turbopack         |
+| TypeScript                 | Supported               | Supported               | Supported                 |
+| Best for                   | Legacy projects         | SPAs, tools, dashboards | Content sites, full-stack |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "CRA is still supported because it is the official React tool" | CRA is officially deprecated. The React docs removed CRA from the Getting Started guide in 2023. The `create-react-app` GitHub repository has had no meaningful releases since December 2022. |
-| "Vite is only for Vue projects (created by the Vue author)" | Vite is framework-agnostic. Official templates exist for React, Vue, Svelte, Solid, Preact, and Vanilla JavaScript. The React template (`@vitejs/plugin-react`) is the most widely used. |
-| "Vite dev and prod build differences cause bugs" | This is a real concern (dev = native ESM; prod = Rollup bundle). Mitigate by always testing the production build (`npm run preview`) before deployment, and configure Vite to use consistent module resolution in both modes. |
-| "Ejecting from CRA gives you full control" | CRA's `eject` command removes the abstraction and exposes raw Webpack/Babel config, but the exposed config is the old CRA config from React Scripts. The result is a complex, hard-to-maintain Webpack setup based on outdated patterns. Migrating to Vite is better than ejecting. |
+| Misconception                                                  | Reality                                                                                                                                                                                                                                                                             |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "CRA is still supported because it is the official React tool" | CRA is officially deprecated. The React docs removed CRA from the Getting Started guide in 2023. The `create-react-app` GitHub repository has had no meaningful releases since December 2022.                                                                                       |
+| "Vite is only for Vue projects (created by the Vue author)"    | Vite is framework-agnostic. Official templates exist for React, Vue, Svelte, Solid, Preact, and Vanilla JavaScript. The React template (`@vitejs/plugin-react`) is the most widely used.                                                                                            |
+| "Vite dev and prod build differences cause bugs"               | This is a real concern (dev = native ESM; prod = Rollup bundle). Mitigate by always testing the production build (`npm run preview`) before deployment, and configure Vite to use consistent module resolution in both modes.                                                       |
+| "Ejecting from CRA gives you full control"                     | CRA's `eject` command removes the abstraction and exposes raw Webpack/Babel config, but the exposed config is the old CRA config from React Scripts. The result is a complex, hard-to-maintain Webpack setup based on outdated patterns. Migrating to Vite is better than ejecting. |
 
 ---
 
@@ -391,6 +390,7 @@ npm uninstall react-scripts
 **CRA: "Digital Envelope Routines" Error on Node 18+**
 
 **Symptom:**
+
 ```
 error:0308010C:digital envelope routines::unsupported
 ```
@@ -399,10 +399,12 @@ error:0308010C:digital envelope routines::unsupported
 MD4 hash algorithm that CRA's Webpack config uses.
 
 **Fix (temporary):**
+
 ```bash
 set NODE_OPTIONS=--openssl-legacy-provider
 npm start
 ```
+
 **Fix (permanent):** Migrate to Vite.
 
 ---
@@ -425,12 +427,14 @@ update references from `process.env.REACT_APP_*` to
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `React Ecosystem Landscape` - the broader context of
   React tooling
 - `React Development Environment Setup` - getting
   started with the development environment
 
 **Builds On:**
+
 - `Bundle Size Analysis and Tree Shaking` - optimising
   the Vite/Rollup production bundle
 - `Create React App Deprecation (2023)` - deeper analysis
@@ -462,6 +466,7 @@ update references from `process.env.REACT_APP_*` to
 ```
 
 **If you remember only 3 things:**
+
 1. CRA is deprecated. Use Vite for new React projects:
    `npm create vite@latest app -- --template react-ts`
 2. Vite is fast because it does not bundle files in dev

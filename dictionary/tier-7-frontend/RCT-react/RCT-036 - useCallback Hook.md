@@ -31,11 +31,11 @@ children from re-rendering due to new function prop
 references; without `React.memo` on the child, `useCallback`
 does nothing useful.
 
-| #036 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | useState Hook, useReducer Hook, useMemo Hook, React Reconciliation | |
-| **Used by:** | React.memo, React Performance Profiling, React Fiber Architecture | |
-| **Related:** | useMemo Hook, React.memo, React Performance Profiling | |
+| #036            | Category: React                                                    | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | useState Hook, useReducer Hook, useMemo Hook, React Reconciliation |                 |
+| **Used by:**    | React.memo, React Performance Profiling, React Fiber Architecture  |                 |
+| **Related:**    | useMemo Hook, React.memo, React Performance Profiling              |                 |
 
 ---
 
@@ -51,13 +51,11 @@ function Parent() {
   const [count, setCount] = useState(0);
 
   // This creates a NEW function on every Parent render:
-  const handleClick = () => setCount(c => c + 1);
+  const handleClick = () => setCount((c) => c + 1);
 
-  return (
-    <ExpensiveChild onClick={handleClick} />
-  );
+  return <ExpensiveChild onClick={handleClick} />;
 }
-const ExpensiveChild = React.memo(function({ onClick }) {
+const ExpensiveChild = React.memo(function ({ onClick }) {
   // ...expensive render...
 });
 ```
@@ -105,7 +103,7 @@ function Parent({ userId }) {
 
   const handleDelete = useCallback(
     (id) => deleteUser(id),
-    []  // no deps: always same function reference
+    [], // no deps: always same function reference
   );
   // handleDelete is the same reference on every render
   // React.memo on UserRow can now skip re-renders
@@ -155,6 +153,7 @@ const fn2 = useMemo(() => (x) => doSomething(x), [dep]);
 
 **THE CRITICAL PREREQUISITE:**
 `useCallback` is ONLY useful when:
+
 1. The function is passed as a prop to a child wrapped
    in `React.memo`, OR
 2. The function is in a `useEffect` dependency array
@@ -243,12 +242,20 @@ on every render:
 
 ```jsx
 // Without useCallback: infinite loop or unintended re-runs
-const fetchData = async () => { /* uses userId */ };
-useEffect(() => { fetchData(); }, [fetchData]);  // fetchData new every render
+const fetchData = async () => {
+  /* uses userId */
+};
+useEffect(() => {
+  fetchData();
+}, [fetchData]); // fetchData new every render
 
 // With useCallback: stable reference, effect runs only when userId changes
-const fetchData = useCallback(async () => { /* uses userId */ }, [userId]);
-useEffect(() => { fetchData(); }, [fetchData]);
+const fetchData = useCallback(async () => {
+  /* uses userId */
+}, [userId]);
+useEffect(() => {
+  fetchData();
+}, [fetchData]);
 ```
 
 **Level 5 (mastery):**
@@ -274,33 +281,40 @@ is the most common subtle bug with `useCallback`.
 //   onDelete function → all ProductRow children re-render
 
 function ProductList({ products, onProductUpdate }) {
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState("all");
 
   // handleDelete is stable: only re-created when
   // onProductUpdate changes (should be stable from parent)
-  const handleDelete = useCallback((id) => {
-    onProductUpdate({ type: 'DELETE', id });
-  }, [onProductUpdate]);
+  const handleDelete = useCallback(
+    (id) => {
+      onProductUpdate({ type: "DELETE", id });
+    },
+    [onProductUpdate],
+  );
 
   // handleToggle is stable: no deps, always the same
-  const handleToggle = useCallback((id) => {
-    onProductUpdate({ type: 'TOGGLE', id });
-  }, [onProductUpdate]);
+  const handleToggle = useCallback(
+    (id) => {
+      onProductUpdate({ type: "TOGGLE", id });
+    },
+    [onProductUpdate],
+  );
 
   const filtered = useMemo(
-    () => filter === 'all' ? products : products.filter(p => p.type === filter),
-    [products, filter]
+    () =>
+      filter === "all" ? products : products.filter((p) => p.type === filter),
+    [products, filter],
   );
 
   return (
     <>
       <FilterBar activeFilter={filter} onFilterChange={setFilter} />
-      {filtered.map(product => (
+      {filtered.map((product) => (
         <ProductRow
           key={product.id}
           product={product}
-          onDelete={handleDelete}   // stable reference
-          onToggle={handleToggle}   // stable reference
+          onDelete={handleDelete} // stable reference
+          onToggle={handleToggle} // stable reference
         />
       ))}
     </>
@@ -309,7 +323,9 @@ function ProductList({ products, onProductUpdate }) {
 
 // React.memo: only re-renders when product, onDelete, or onToggle change
 const ProductRow = React.memo(function ProductRow({
-  product, onDelete, onToggle
+  product,
+  onDelete,
+  onToggle,
 }) {
   return (
     <div>
@@ -333,7 +349,7 @@ const ProductRow = React.memo(function ProductRow({
 // because all components re-render by default
 
 function SearchInput({ onSearch }) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
 
   // useCallback here adds complexity for ZERO benefit
   // SearchButton is not wrapped in React.memo
@@ -344,8 +360,8 @@ function SearchInput({ onSearch }) {
 
   return (
     <div>
-      <input value={query} onChange={e => setQuery(e.target.value)} />
-      <SearchButton onClick={handleSubmit} />  {/* Not React.memo'd */}
+      <input value={query} onChange={(e) => setQuery(e.target.value)} />
+      <SearchButton onClick={handleSubmit} /> {/* Not React.memo'd */}
     </div>
   );
 }
@@ -359,23 +375,23 @@ function SearchInput({ onSearch }) {
 // SearchButton is expensive (complex ripple animation on render)
 
 function SearchInput({ onSearch }) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
 
   // Stable: only re-created when onSearch changes
   const handleSubmit = useCallback(() => {
     onSearch(query);
-  }, [onSearch, query]);  // query must be in deps (used in closure)
+  }, [onSearch, query]); // query must be in deps (used in closure)
 
   return (
     <div>
-      <input value={query} onChange={e => setQuery(e.target.value)} />
+      <input value={query} onChange={(e) => setQuery(e.target.value)} />
       <ExpensiveSearchButton onClick={handleSubmit} />
     </div>
   );
 }
 
 // React.memo: skip re-render if onClick unchanged
-const ExpensiveSearchButton = React.memo(function({ onClick }) {
+const ExpensiveSearchButton = React.memo(function ({ onClick }) {
   // Heavy rendering work
   return <button onClick={onClick}>Search</button>;
 });
@@ -388,23 +404,23 @@ const ExpensiveSearchButton = React.memo(function({ onClick }) {
 
 ### 📊 Comparison Table
 
-| | useCallback | useMemo | React.memo |
-|---|---|---|---|
-| Memoises | Function reference | Computed value | Component render |
-| Use case | Stable handler for React.memo children | Expensive computation, stable object | Skip render when props unchanged |
-| Needs partner | React.memo on child | React.memo child (for ref stability) or expensive compute | useCallback + useMemo on parent |
-| Overhead | Memory + deps comparison | Memory + deps comparison | Props comparison per render |
+|               | useCallback                            | useMemo                                                   | React.memo                       |
+| ------------- | -------------------------------------- | --------------------------------------------------------- | -------------------------------- |
+| Memoises      | Function reference                     | Computed value                                            | Component render                 |
+| Use case      | Stable handler for React.memo children | Expensive computation, stable object                      | Skip render when props unchanged |
+| Needs partner | React.memo on child                    | React.memo child (for ref stability) or expensive compute | useCallback + useMemo on parent  |
+| Overhead      | Memory + deps comparison               | Memory + deps comparison                                  | Props comparison per render      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "All event handler functions should be wrapped in useCallback" | useCallback is only beneficial when passed to a React.memo-wrapped child or used in useEffect deps. Adding it universally wastes memory and adds code complexity with no performance gain in most cases. |
-| "useCallback prevents the function from being re-created" | The function body is not literally "not created." JavaScript still evaluates the arrow function expression. useCallback stores and returns the previous instance. The new function object is created but immediately discarded if deps have not changed. |
-| "useCallback with [] deps means the function never changes" | Correct for the reference, but dangerous: the closure captures variables at the time of first render. If the function reads state or props not in deps, it reads stale values. Use functional setState or include all used values in deps. |
-| "dispatch from useReducer needs useCallback" | No. `dispatch` from `useReducer` is guaranteed to be stable (same reference on every render) by React. There is no need to wrap it in `useCallback`. Wrapping dispatch in useCallback is a common no-op. |
+| Misconception                                                  | Reality                                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "All event handler functions should be wrapped in useCallback" | useCallback is only beneficial when passed to a React.memo-wrapped child or used in useEffect deps. Adding it universally wastes memory and adds code complexity with no performance gain in most cases.                                                 |
+| "useCallback prevents the function from being re-created"      | The function body is not literally "not created." JavaScript still evaluates the arrow function expression. useCallback stores and returns the previous instance. The new function object is created but immediately discarded if deps have not changed. |
+| "useCallback with [] deps means the function never changes"    | Correct for the reference, but dangerous: the closure captures variables at the time of first render. If the function reads state or props not in deps, it reads stale values. Use functional setState or include all used values in deps.               |
+| "dispatch from useReducer needs useCallback"                   | No. `dispatch` from `useReducer` is guaranteed to be stable (same reference on every render) by React. There is no need to wrap it in `useCallback`. Wrapping dispatch in useCallback is a common no-op.                                                 |
 
 ---
 
@@ -417,27 +433,30 @@ const ExpensiveSearchButton = React.memo(function({ onClick }) {
 still uses the old value.
 
 **Root Cause:**
+
 ```jsx
 // BAD: userId in closure but not in deps
 const handleFetch = useCallback(() => {
-  fetchUser(userId);  // captures initial userId (stale)
-}, []);              // [] = never update = always stale userId
+  fetchUser(userId); // captures initial userId (stale)
+}, []); // [] = never update = always stale userId
 ```
 
 **Fix option 1:** Add `userId` to deps (function recreates
 on change, breaks React.memo):
+
 ```jsx
 const handleFetch = useCallback(() => fetchUser(userId), [userId]);
 ```
 
 **Fix option 2:** Use a ref to access the current value
 without making it a dep:
+
 ```jsx
 const userIdRef = useRef(userId);
-useEffect(() => { userIdRef.current = userId; }, [userId]);
-const handleFetch = useCallback(
-  () => fetchUser(userIdRef.current), []
-);
+useEffect(() => {
+  userIdRef.current = userId;
+}, [userId]);
+const handleFetch = useCallback(() => fetchUser(userIdRef.current), []);
 ```
 
 ---
@@ -445,12 +464,14 @@ const handleFetch = useCallback(
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `useMemo Hook` - useCallback is implemented as useMemo
 - `React Reconciliation Algorithm` - why reference equality
   matters in React.memo's shallow comparison
 - `useReducer Hook` - dispatch is already stable (no useCallback needed)
 
 **Builds On:**
+
 - `React.memo` - the consumer of stable function references
 - `React Performance Profiling` - the tool to confirm
   useCallback is having the intended effect
@@ -478,6 +499,7 @@ const handleFetch = useCallback(
 ```
 
 **If you remember only 3 things:**
+
 1. `useCallback` memoises a function REFERENCE. Only useful
    when the child is wrapped in `React.memo` or the function
    is in `useEffect` deps.
@@ -563,8 +585,10 @@ with a different call signature.
 
 ```jsx
 const handleDelete = useCallback(
-  (id) => { setItems(items.filter(i => i.id !== id)); },
-  [items]
+  (id) => {
+    setItems(items.filter((i) => i.id !== id));
+  },
+  [items],
 );
 ```
 

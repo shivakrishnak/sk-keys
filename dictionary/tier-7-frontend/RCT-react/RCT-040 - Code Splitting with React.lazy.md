@@ -31,11 +31,11 @@ in `<Suspense fallback={...}>` to handle the loading
 state; the result is smaller initial bundle and faster
 time-to-interactive by deferring non-critical code.
 
-| #040 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Error Boundaries, Bundle Size Analysis and Tree Shaking | |
-| **Used by:** | Suspense, Bundle Size Analysis and Tree Shaking, Core Web Vitals | |
-| **Related:** | Error Boundaries, Suspense, Bundle Size Analysis | |
+| #040            | Category: React                                                  | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Error Boundaries, Bundle Size Analysis and Tree Shaking          |                 |
+| **Used by:**    | Suspense, Bundle Size Analysis and Tree Shaking, Core Web Vitals |                 |
+| **Related:**    | Error Boundaries, Suspense, Bundle Size Analysis                 |                 |
 
 ---
 
@@ -82,16 +82,16 @@ split the bundle at `import()` boundaries.
 
 ```jsx
 // BEFORE (monolithic): ALL components in one chunk
-import Dashboard from './Dashboard';
-import Settings from './Settings';
-import AdminPanel from './AdminPanel';
+import Dashboard from "./Dashboard";
+import Settings from "./Settings";
+import AdminPanel from "./AdminPanel";
 // All 3 are downloaded on initial page load
 
 // AFTER (code split): each loads independently
-import { Suspense, lazy } from 'react';
-const Dashboard = lazy(() => import('./Dashboard'));
-const Settings = lazy(() => import('./Settings'));
-const AdminPanel = lazy(() => import('./AdminPanel'));
+import { Suspense, lazy } from "react";
+const Dashboard = lazy(() => import("./Dashboard"));
+const Settings = lazy(() => import("./Settings"));
+const AdminPanel = lazy(() => import("./AdminPanel"));
 
 // Dashboard JS is loaded when <Dashboard /> first renders
 // Settings JS is loaded when <Settings /> first renders
@@ -163,9 +163,11 @@ Without code splitting: all 650KB is in the main bundle.
 Every user (99% non-admin) downloads 650KB on first load.
 
 With code splitting:
+
 ```jsx
-const AdminPanel = lazy(() => import('./AdminPanel'));
+const AdminPanel = lazy(() => import("./AdminPanel"));
 ```
+
 The 650KB chunk is only downloaded when a user navigates
 to /admin. For the 99% of non-admin users: 650KB saved
 from initial load. TTI improvement: ~2-3 seconds on
@@ -201,7 +203,8 @@ visible on initial load.
 **Level 1 (concept):**
 Large JavaScript bundles slow initial page load. Lazy
 loading loads component code only when needed. React.lazy
-+ Suspense is the built-in mechanism.
+
+- Suspense is the built-in mechanism.
 
 **Level 2 (usage):**
 Use lazy loading at route boundaries first - that is the
@@ -221,10 +224,12 @@ based on dependencies.
 Code splitting defers loading until needed. But for
 predictable navigation (hover over a link), you can
 prefetch the chunk before the user clicks:
+
 ```jsx
 // Start loading the chunk on hover (before click)
-const onHover = () => import('./Settings');  // prefetch
+const onHover = () => import("./Settings"); // prefetch
 ```
+
 Alternatively, use `<link rel="prefetch">` in HTML for
 critical next-page chunks. The chunk is downloaded in
 the background and cached - by the time the user clicks,
@@ -252,23 +257,19 @@ React.lazy.
 
 ```jsx
 // PRODUCTION PATTERN: lazy + Suspense + Error Boundary
-import { Suspense, lazy } from 'react';
-import ErrorBoundary from './ErrorBoundary';
-import PageSpinner from './PageSpinner';
+import { Suspense, lazy } from "react";
+import ErrorBoundary from "./ErrorBoundary";
+import PageSpinner from "./PageSpinner";
 
-const DashboardPage = lazy(() => import('./DashboardPage'));
-const SettingsPage = lazy(() => import('./SettingsPage'));
+const DashboardPage = lazy(() => import("./DashboardPage"));
+const SettingsPage = lazy(() => import("./SettingsPage"));
 
 // ChunkErrorBoundary: handles network failure on chunk load
 // (user goes offline just as chunk starts loading)
 function LazyRoute({ children }) {
   return (
-    <ErrorBoundary
-      fallback={<p>Failed to load page. Check connection.</p>}
-    >
-      <Suspense fallback={<PageSpinner />}>
-        {children}
-      </Suspense>
+    <ErrorBoundary fallback={<p>Failed to load page. Check connection.</p>}>
+      <Suspense fallback={<PageSpinner />}>{children}</Suspense>
     </ErrorBoundary>
   );
 }
@@ -306,11 +307,13 @@ function App() {
 ```jsx
 // BAD: React.lazy requires DEFAULT export
 // If Component is a named export, this silently fails
-const Settings = lazy(() => import('./Settings'));
+const Settings = lazy(() => import("./Settings"));
 // ERROR: Element type is invalid - module has no default export
 
 // The Settings.js file:
-export function Settings() { return <div>Settings</div>; }
+export function Settings() {
+  return <div>Settings</div>;
+}
 // No default export → React.lazy cannot find the component
 ```
 
@@ -321,12 +324,12 @@ export function Settings() { return <div>Settings</div>; }
 export default function Settings() {
   return <div>Settings</div>;
 }
-const Settings = lazy(() => import('./Settings'));  // works
+const Settings = lazy(() => import("./Settings")); // works
 
 // Option 2: Wrap the named import in a re-export
 const Settings = lazy(async () => {
-  const module = await import('./Settings');
-  return { default: module.Settings };  // adapt named → default
+  const module = await import("./Settings");
+  return { default: module.Settings }; // adapt named → default
 });
 ```
 
@@ -337,14 +340,11 @@ const Settings = lazy(async () => {
 function lazyWithRetry(fn, retries = 3) {
   return lazy(() => {
     const attempts = Array.from({ length: retries }, (_, i) => i);
-    return attempts.reduce(
-      (p) => p.catch(() => fn()),
-      fn()
-    );
+    return attempts.reduce((p) => p.catch(() => fn()), fn());
   });
 }
 
-const Dashboard = lazyWithRetry(() => import('./Dashboard'));
+const Dashboard = lazyWithRetry(() => import("./Dashboard"));
 // On flaky networks: automatically retries chunk load
 // before showing an error to the user
 ```
@@ -353,26 +353,26 @@ const Dashboard = lazyWithRetry(() => import('./Dashboard'));
 
 ### 📊 Comparison Table
 
-| | React.lazy | next/dynamic | Manual dynamic import |
-|---|---|---|---|
-| SSR support | No (client-only) | Yes (SSR + CSR) | Manual setup |
-| Default export required | Yes | No (named export supported) | No |
-| Suspense integration | Built-in | Optional | Manual |
-| Loading state | Suspense fallback | `loading` prop | useState |
-| Error handling | Error Boundary | Error Boundary | try/catch |
-| Preload support | Manual | `next/dynamic` preloading | Manual |
-| Use case | CSR React apps | Next.js apps | Non-component JS splitting |
+|                         | React.lazy        | next/dynamic                | Manual dynamic import      |
+| ----------------------- | ----------------- | --------------------------- | -------------------------- |
+| SSR support             | No (client-only)  | Yes (SSR + CSR)             | Manual setup               |
+| Default export required | Yes               | No (named export supported) | No                         |
+| Suspense integration    | Built-in          | Optional                    | Manual                     |
+| Loading state           | Suspense fallback | `loading` prop              | useState                   |
+| Error handling          | Error Boundary    | Error Boundary              | try/catch                  |
+| Preload support         | Manual            | `next/dynamic` preloading   | Manual                     |
+| Use case                | CSR React apps    | Next.js apps                | Non-component JS splitting |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "React.lazy is only for large libraries" | React.lazy is most impactful for route-level splitting (whole pages). Small UI components (buttons, icons) are not worth splitting - the HTTP request overhead and waterfall effect of loading a tiny chunk can be worse than including it in the main bundle. |
-| "Code splitting always improves performance" | Code splitting trades initial load time for per-route load time. If you split a component that 90% of users visit immediately, you have added a loading spinner without reducing perceived load time. The gain is when deferred code is rarely or predictably accessed. |
-| "Suspense handles network errors for lazy components" | Suspense handles the loading state only. Network errors (chunk fails to load) throw an error - they must be caught by an Error Boundary. Without an Error Boundary above the Suspense, a failed chunk load crashes the UI with an unhandled error. |
-| "React.lazy works the same on the server (SSR)" | React.lazy does not support server-side rendering. If a lazy component is rendered on the server, it throws. Use `next/dynamic` (Next.js) or `@loadable/component` for SSR-compatible code splitting. |
+| Misconception                                         | Reality                                                                                                                                                                                                                                                                 |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "React.lazy is only for large libraries"              | React.lazy is most impactful for route-level splitting (whole pages). Small UI components (buttons, icons) are not worth splitting - the HTTP request overhead and waterfall effect of loading a tiny chunk can be worse than including it in the main bundle.          |
+| "Code splitting always improves performance"          | Code splitting trades initial load time for per-route load time. If you split a component that 90% of users visit immediately, you have added a loading spinner without reducing perceived load time. The gain is when deferred code is rarely or predictably accessed. |
+| "Suspense handles network errors for lazy components" | Suspense handles the loading state only. Network errors (chunk fails to load) throw an error - they must be caught by an Error Boundary. Without an Error Boundary above the Suspense, a failed chunk load crashes the UI with an unhandled error.                      |
+| "React.lazy works the same on the server (SSR)"       | React.lazy does not support server-side rendering. If a lazy component is rendered on the server, it throws. Use `next/dynamic` (Next.js) or `@loadable/component` for SSR-compatible code splitting.                                                                   |
 
 ---
 
@@ -389,6 +389,7 @@ file not found (e.g., new deployment with new chunk
 filenames while user had old HTML).
 
 **Fix:** Wrap lazy imports in Error Boundary:
+
 ```jsx
 // Add error boundary above Suspense for every lazy route
 <ErrorBoundary fallback={<p>Failed to load. Refresh page.</p>}>
@@ -397,11 +398,13 @@ filenames while user had old HTML).
   </Suspense>
 </ErrorBoundary>
 ```
+
 Also consider auto-reload on stale deployment:
+
 ```jsx
 // In the Error Boundary, check if it is a chunk error
 // and offer "refresh" or auto-reload
-if (error.name === 'ChunkLoadError') {
+if (error.name === "ChunkLoadError") {
   window.location.reload();
 }
 ```
@@ -428,12 +431,14 @@ waterfalls.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Error Boundaries` - required to handle chunk load
   failures gracefully
 - `Bundle Size Analysis and Tree Shaking` - understanding
   bundle composition to identify what to split
 
 **Builds On:**
+
 - `Suspense` - the React mechanism that lazy loading
   integrates with for loading state management
 - `Core Web Vitals in React` - code splitting directly
@@ -460,6 +465,7 @@ waterfalls.
 ```
 
 **If you remember only 3 things:**
+
 1. `React.lazy(() => import('./X'))` defers loading X's
    JavaScript until X is first rendered. Requires a
    `<Suspense>` boundary above it.

@@ -32,11 +32,11 @@ it only works correctly when props containing objects,
 arrays, and functions are stabilised with `useMemo` and
 `useCallback` in the parent.
 
-| #037 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Virtual DOM and Reconciliation, useMemo Hook, useCallback Hook, React Reconciliation Algorithm | |
-| **Used by:** | React Performance Profiling, React Fiber Architecture, v18 Concurrent Migration | |
-| **Related:** | useMemo Hook, useCallback Hook, React Performance Profiling | |
+| #037            | Category: React                                                                                | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Virtual DOM and Reconciliation, useMemo Hook, useCallback Hook, React Reconciliation Algorithm |                 |
+| **Used by:**    | React Performance Profiling, React Fiber Architecture, v18 Concurrent Migration                |                 |
+| **Related:**    | useMemo Hook, useCallback Hook, React Performance Profiling                                    |                 |
 
 ---
 
@@ -81,13 +81,21 @@ a wrapper optimisation.
 // regardless of whether its own props changed
 function ExpensiveItem({ item, onDelete }) {
   // ... expensive render work
-  return <div>{item.name} <button onClick={() => onDelete(item.id)}>X</button></div>;
+  return (
+    <div>
+      {item.name} <button onClick={() => onDelete(item.id)}>X</button>
+    </div>
+  );
 }
 
 // With React.memo: only re-renders if item or onDelete changed
-const ExpensiveItem = React.memo(function({ item, onDelete }) {
+const ExpensiveItem = React.memo(function ({ item, onDelete }) {
   // ... expensive render work
-  return <div>{item.name} <button onClick={() => onDelete(item.id)}>X</button></div>;
+  return (
+    <div>
+      {item.name} <button onClick={() => onDelete(item.id)}>X</button>
+    </div>
+  );
 });
 
 // For React.memo to work, the parent must:
@@ -234,37 +242,37 @@ not total render calls.
 // Parent component manages list state
 function TaskManager() {
   const [tasks, setTasks] = useState(initialTasks);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState("all");
 
   // Stable handler: only recreated if setTasks changes (never)
   const handleComplete = useCallback((id) => {
-    setTasks(prev => prev.map(t =>
-      t.id === id ? { ...t, completed: true } : t
-    ));
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, completed: true } : t)),
+    );
   }, []);
 
   // Stable handler: same
   const handleDelete = useCallback((id) => {
-    setTasks(prev => prev.filter(t => t.id !== id));
+    setTasks((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
   // Filtered list: recomputed only when tasks or filter changes
   const visibleTasks = useMemo(() => {
-    if (filter === 'all') return tasks;
-    return tasks.filter(t =>
-      filter === 'active' ? !t.completed : t.completed
+    if (filter === "all") return tasks;
+    return tasks.filter((t) =>
+      filter === "active" ? !t.completed : t.completed,
     );
   }, [tasks, filter]);
 
   return (
     <div>
       <FilterBar filter={filter} onFilterChange={setFilter} />
-      {visibleTasks.map(task => (
+      {visibleTasks.map((task) => (
         <TaskRow
           key={task.id}
           task={task}
-          onComplete={handleComplete}  // stable reference
-          onDelete={handleDelete}      // stable reference
+          onComplete={handleComplete} // stable reference
+          onDelete={handleDelete} // stable reference
         />
       ))}
     </div>
@@ -275,7 +283,7 @@ function TaskManager() {
 // task objects from state are stable references unless that task changed
 const TaskRow = React.memo(function TaskRow({ task, onComplete, onDelete }) {
   return (
-    <div className={task.completed ? 'done' : ''}>
+    <div className={task.completed ? "done" : ""}>
       <span>{task.title}</span>
       <button onClick={() => onComplete(task.id)}>Complete</button>
       <button onClick={() => onDelete(task.id)}>Delete</button>
@@ -293,19 +301,19 @@ const TaskRow = React.memo(function TaskRow({ task, onComplete, onDelete }) {
 ```jsx
 // BAD: React.memo applied but props are new on every render
 function Parent({ items }) {
-  return items.map(item => (
+  return items.map((item) => (
     // New inline function on every render → not stable
     // New inline object on every render → not stable
     // React.memo on Child is COMPLETELY bypassed
     <Child
       key={item.id}
       item={item}
-      config={{ sortable: true }}        // new object each render
-      onSelect={(id) => selectItem(id)}  // new function each render
+      config={{ sortable: true }} // new object each render
+      onSelect={(id) => selectItem(id)} // new function each render
     />
   ));
 }
-const Child = React.memo(function({ item, config, onSelect }) {
+const Child = React.memo(function ({ item, config, onSelect }) {
   // This still re-renders every time Parent renders
   // because config and onSelect are always new references
   return <div>{item.name}</div>;
@@ -316,22 +324,22 @@ const Child = React.memo(function({ item, config, onSelect }) {
 
 ```jsx
 // GOOD: stable config and handlers
-const CHILD_CONFIG = { sortable: true };  // defined outside (module level)
+const CHILD_CONFIG = { sortable: true }; // defined outside (module level)
 // or useMemo inside component
 
 function Parent({ items }) {
   const handleSelect = useCallback((id) => selectItem(id), []);
 
-  return items.map(item => (
+  return items.map((item) => (
     <Child
       key={item.id}
       item={item}
-      config={CHILD_CONFIG}         // always same reference (module const)
-      onSelect={handleSelect}       // stable via useCallback
+      config={CHILD_CONFIG} // always same reference (module const)
+      onSelect={handleSelect} // stable via useCallback
     />
   ));
 }
-const Child = React.memo(function({ item, config, onSelect }) {
+const Child = React.memo(function ({ item, config, onSelect }) {
   // Now correctly skips re-render when only other items change
   return <div>{item.name}</div>;
 });
@@ -341,24 +349,24 @@ const Child = React.memo(function({ item, config, onSelect }) {
 
 ### 📊 Comparison Table
 
-| API | What it guards | Mechanism | React version |
-|---|---|---|---|
-| `React.memo` | Functional component render | Shallow prop equality check | v16.6+ |
-| `PureComponent` | Class component render | Shallow prop + state equality | v15.3+ |
-| `shouldComponentUpdate` | Class component render | Custom boolean logic | v0.13+ |
-| `useMemo` | Value computation | Shallow dep equality check | v16.8+ |
-| `useCallback` | Function reference | Shallow dep equality check | v16.8+ |
+| API                     | What it guards              | Mechanism                     | React version |
+| ----------------------- | --------------------------- | ----------------------------- | ------------- |
+| `React.memo`            | Functional component render | Shallow prop equality check   | v16.6+        |
+| `PureComponent`         | Class component render      | Shallow prop + state equality | v15.3+        |
+| `shouldComponentUpdate` | Class component render      | Custom boolean logic          | v0.13+        |
+| `useMemo`               | Value computation           | Shallow dep equality check    | v16.8+        |
+| `useCallback`           | Function reference          | Shallow dep equality check    | v16.8+        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "React.memo makes components significantly faster" | For components with fast renders (<1ms), React.memo adds overhead (prop comparison cost) that may equal or exceed the saved render time. It is beneficial for expensive renders that happen unnecessarily often. Profile first. |
-| "React.memo works correctly with inline object props" | Inline objects (`<Memo item={{ id: 1 }} />`) create new references every render. React.memo sees a different prop reference and re-renders. For React.memo to work, object props must come from state, useMemo, or external stable sources. |
-| "React.memo is equivalent to useMemo" | They are different tools. React.memo is a Higher-Order Component that guards a component render. useMemo is a hook that guards a computed value inside a component. React.memo is used on the child; useMemo is used in the parent (to stabilise props). |
-| "Wrapping everything in React.memo is a safe optimisation" | React.memo adds a prop comparison cost on every render. For components that almost always re-render (because their props change frequently), this is pure overhead. The optimisation should target components that re-render unnecessarily. |
+| Misconception                                              | Reality                                                                                                                                                                                                                                                  |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "React.memo makes components significantly faster"         | For components with fast renders (<1ms), React.memo adds overhead (prop comparison cost) that may equal or exceed the saved render time. It is beneficial for expensive renders that happen unnecessarily often. Profile first.                          |
+| "React.memo works correctly with inline object props"      | Inline objects (`<Memo item={{ id: 1 }} />`) create new references every render. React.memo sees a different prop reference and re-renders. For React.memo to work, object props must come from state, useMemo, or external stable sources.              |
+| "React.memo is equivalent to useMemo"                      | They are different tools. React.memo is a Higher-Order Component that guards a component render. useMemo is a hook that guards a computed value inside a component. React.memo is used on the child; useMemo is used in the parent (to stabilise props). |
+| "Wrapping everything in React.memo is a safe optimisation" | React.memo adds a prop comparison cost on every render. For components that almost always re-render (because their props change frequently), this is pure overhead. The optimisation should target components that re-render unnecessarily.              |
 
 ---
 
@@ -384,12 +392,14 @@ or move to module-level constant for object/array props.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Virtual DOM and Reconciliation` - why React.memo saves work
   (skipping the reconciliation step entirely)
 - `useMemo Hook` - provides stable value references for props
 - `useCallback Hook` - provides stable function references for props
 
 **Builds On:**
+
 - `React Performance Profiling` - the tooling to verify
   React.memo is having the intended effect
 - `React Fiber Architecture` - understanding when React
@@ -419,6 +429,7 @@ or move to module-level constant for object/array props.
 ```
 
 **If you remember only 3 things:**
+
 1. `React.memo` skips a component render if ALL props
    are shallowly equal. Objects and functions must have
    stable references (useMemo, useCallback in parent).
@@ -506,9 +517,10 @@ everywhere" approach is often a net negative, not positive.
 automatically add the equivalent of `React.memo` everywhere
 it determines it would help. If this works correctly,
 what happens to the manual `React.memo` + `useCallback`
-+ `useMemo` trio that teams currently maintain? Is there
-any scenario where manual memoisation should survive a
-React Compiler migration?
+
+- `useMemo` trio that teams currently maintain? Is there
+  any scenario where manual memoisation should survive a
+  React Compiler migration?
 
 **Q2.** `React.memo` uses shallow equality for prop
 comparison. A component receives a complex configuration

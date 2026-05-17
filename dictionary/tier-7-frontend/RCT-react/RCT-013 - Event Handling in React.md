@@ -30,11 +30,11 @@ the differences from native events - no inline strings, no
 parentheses, preventDefault works differently - prevents
 common early mistakes.
 
-| #013 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, JSX, Props, State | |
-| **Used by:** | Controlled vs Uncontrolled, Form Handling, useCallback Hook | |
-| **Related:** | Props, State, Controlled vs Uncontrolled Components | |
+| #013            | Category: React                                             | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, JSX, Props, State                                |                 |
+| **Used by:**    | Controlled vs Uncontrolled, Form Handling, useCallback Hook |                 |
+| **Related:**    | Props, State, Controlled vs Uncontrolled Components         |                 |
 
 ---
 
@@ -79,6 +79,7 @@ HTML are camelCase names, function references (not strings),
 and that `preventDefault()` works normally.
 
 **One analogy:**
+
 > React event handling is like an airline's centralised
 > check-in system. All passengers (events) go through one
 > central desk (root container listener). The desk looks up
@@ -102,13 +103,13 @@ to prevent default (does not work in React - must call
 
 **KEY DIFFERENCES FROM HTML EVENTS:**
 
-| HTML | React |
-|---|---|
-| `onclick="handleClick()"` | `onClick={handleClick}` |
-| lowercase | camelCase |
-| string value | function reference |
-| `return false` to prevent default | `e.preventDefault()` |
-| Attaches to DOM element | Delegated to root container |
+| HTML                              | React                       |
+| --------------------------------- | --------------------------- |
+| `onclick="handleClick()"`         | `onClick={handleClick}`     |
+| lowercase                         | camelCase                   |
+| string value                      | function reference          |
+| `return false` to prevent default | `e.preventDefault()`        |
+| Attaches to DOM element           | Delegated to root container |
 
 **WHY FUNCTION REFERENCE, NOT CALL:**
 
@@ -155,25 +156,20 @@ function Dropdown() {
   useEffect(() => {
     function handleOutsideClick(event) {
       // If click is outside our dropdown, close it
-      if (ref.current &&
-          !ref.current.contains(event.target)) {
+      if (ref.current && !ref.current.contains(event.target)) {
         setIsOpen(false);
       }
     }
     // Add to document for outside-click detection
-    document.addEventListener('click', handleOutsideClick);
+    document.addEventListener("click", handleOutsideClick);
     return () => {
-      document.removeEventListener(
-        'click', handleOutsideClick
-      );
+      document.removeEventListener("click", handleOutsideClick);
     };
   }, []);
 
   return (
     <div ref={ref}>
-      <button onClick={() => setIsOpen(o => !o)}>
-        Menu
-      </button>
+      <button onClick={() => setIsOpen((o) => !o)}>Menu</button>
       {isOpen && <ul>...</ul>}
     </div>
   );
@@ -359,7 +355,9 @@ function LoginForm() {
       <button onclick="handleLogin()">Login</button>
 
       {/* Wrong: return false doesn't work in React */}
-      <a href="/about" onclick="return false">About</a>
+      <a href="/about" onclick="return false">
+        About
+      </a>
     </form>
   );
 }
@@ -374,25 +372,27 @@ function LoginForm() {
 ```jsx
 // GOOD: React-idiomatic event handling
 function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = (event) => {
-    event.preventDefault();   // correct way to prevent default
+    event.preventDefault(); // correct way to prevent default
     loginUser({ email, password });
   };
 
   return (
-    <form onSubmit={handleSubmit}>  {/* on <form> not <button> */}
+    <form onSubmit={handleSubmit}>
+      {" "}
+      {/* on <form> not <button> */}
       <input
         type="email"
         value={email}
-        onChange={e => setEmail(e.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
       />
       <input
         type="password"
         value={password}
-        onChange={e => setPassword(e.target.value)}
+        onChange={(e) => setPassword(e.target.value)}
       />
       <button type="submit">Login</button>
     </form>
@@ -410,38 +410,30 @@ function FileUploader({
   onUpload: (file: File) => void;
   onError: (message: string) => void;
 }) {
-  const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      onError('File too large. Maximum size is 5MB.');
+    if (file.size > 5 * 1024 * 1024) {
+      // 5MB limit
+      onError("File too large. Maximum size is 5MB.");
       return;
     }
     onUpload(file);
   };
 
-  const handleDrop = (
-    event: React.DragEvent<HTMLDivElement>
-  ) => {
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault(); // prevent browser file open
     const file = event.dataTransfer.files[0];
     if (file) onUpload(file);
   };
 
-  const handleDragOver = (
-    event: React.DragEvent<HTMLDivElement>
-  ) => {
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault(); // required for drop to fire
   };
 
   return (
-    <div
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-    >
+    <div onDrop={handleDrop} onDragOver={handleDragOver}>
       <input type="file" onChange={handleChange} />
     </div>
   );
@@ -452,12 +444,12 @@ function FileUploader({
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`onClick={handleClick()}` passes the handler" | This CALLS `handleClick` during render and passes its return value (usually `undefined`) as the prop. Write `onClick={handleClick}` (no parentheses) to pass the function itself. |
-| "`stopPropagation` stops all event processing" | `stopPropagation` stops the event from bubbling further up the React component tree. The native DOM event has already reached React's root listener. It does NOT prevent the event from reaching document-level native listeners added with `addEventListener`. |
-| "onChange is the same as native input's 'change' event" | React's `onChange` fires on every keystroke (like native 'input' event). Native 'change' fires only on blur/when the value is committed. React normalised this for predictable controlled input behaviour. |
-| "You need to call event.persist() to use the event asynchronously" | React removed the event pooling system in React 17. `event.persist()` is now a no-op. You can safely use event properties in async callbacks in React 17+. |
+| Misconception                                                      | Reality                                                                                                                                                                                                                                                         |
+| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`onClick={handleClick()}` passes the handler"                     | This CALLS `handleClick` during render and passes its return value (usually `undefined`) as the prop. Write `onClick={handleClick}` (no parentheses) to pass the function itself.                                                                               |
+| "`stopPropagation` stops all event processing"                     | `stopPropagation` stops the event from bubbling further up the React component tree. The native DOM event has already reached React's root listener. It does NOT prevent the event from reaching document-level native listeners added with `addEventListener`. |
+| "onChange is the same as native input's 'change' event"            | React's `onChange` fires on every keystroke (like native 'input' event). Native 'change' fires only on blur/when the value is committed. React normalised this for predictable controlled input behaviour.                                                      |
+| "You need to call event.persist() to use the event asynchronously" | React removed the event pooling system in React 17. `event.persist()` is now a no-op. You can safely use event properties in async callbacks in React 17+.                                                                                                      |
 
 ---
 
@@ -475,6 +467,7 @@ handler returning a value that is not a function.
 (parentheses execute it).
 
 **Diagnostic Command:**
+
 ```bash
 # Put a console.log at the top of the handler function.
 # If it logs on page load (not on button click),
@@ -513,12 +506,14 @@ on completion.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Component` and `JSX` - event handlers are JSX props
 - `Props` - event handlers are a specific type of prop
   (function props / callbacks)
 - `State` - event handlers typically call state setters
 
 **Builds On This (learn these next):**
+
 - `Controlled vs Uncontrolled Components` - how `onChange`
   is used to make form inputs controlled
 - `Form Handling in React` - applying event handlers to forms
@@ -526,6 +521,7 @@ on completion.
   component trees
 
 **Alternatives / Comparisons:**
+
 - `Native addEventListener` - the imperative alternative;
   required for events outside React's tree (document-level
   outside-click detection, window resize)
@@ -566,6 +562,7 @@ on completion.
 ```
 
 **If you remember only 3 things:**
+
 1. Event props are camelCase function references:
    `onClick={handleClick}` not `onclick="handleClick()"`.
    No parentheses - parentheses call the function during
@@ -620,6 +617,7 @@ user is typing), you must use `onBlur`, not `onChange`.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** Why `onClick={handleClick()}` is a bug,
    what it does instead of what was intended, and the fix.
 2. **IMPLEMENT** A keyboard shortcut handler that listens
@@ -649,8 +647,8 @@ search input that triggers an API call, you do not want
 to make an API call on every keystroke. What pattern solves
 this, and does it require React's event system or native
 DOM events?
-*Hint: Debouncing; `setTimeout`/`clearTimeout` in the
-onChange handler.*
+_Hint: Debouncing; `setTimeout`/`clearTimeout` in the
+onChange handler._
 
 **Q2.** A component renders a button: `<button onClick={
 () => someExpensiveOperation(item.id) }>`. For each of 1000
@@ -660,9 +658,9 @@ requires a dependency array. If `item.id` is in the
 dependency array, does `useCallback` actually help here?
 When does `useCallback` for event handlers actually provide
 a performance benefit?
-*Hint: useCallback helps when combined with React.memo on
+_Hint: useCallback helps when combined with React.memo on
 the child - the child skips re-render if the callback ref
-is stable.*
+is stable._
 
 **Q3.** React's synthetic event system normalises browser
 differences. One historical normalisation was event pooling:
@@ -672,5 +670,5 @@ was required to retain the event in async callbacks.
 React 17 removed event pooling entirely. What does this
 removal tell you about React's performance philosophy:
 is memory pooling worth the developer experience cost?
-*Hint: Modern JS engines have efficient GC for short-lived
-objects.*
+_Hint: Modern JS engines have efficient GC for short-lived
+objects._

@@ -31,11 +31,11 @@ makes refactoring painful, and is the primary motivation
 for Context API, state management libraries, and component
 composition patterns.
 
-| #030 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Props, One-Way Data Binding, Lifting State Up | |
-| **Used by:** | useContext Hook, useReducer Hook, State Management Decision Guide | |
-| **Related:** | useContext Hook, Lifting State Up, Context API vs State Management | |
+| #030            | Category: React                                                    | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Props, One-Way Data Binding, Lifting State Up                      |                 |
+| **Used by:**    | useContext Hook, useReducer Hook, State Management Decision Guide  |                 |
+| **Related:**    | useContext Hook, Lifting State Up, Context API vs State Management |                 |
 
 ---
 
@@ -85,20 +85,20 @@ props), or restructuring the component hierarchy.
 ```jsx
 // PROP DRILLING: passing user through 3 non-using layers
 function App() {
-  const [user] = useState({ name: 'Alice', role: 'admin' });
-  return <Layout user={user} />;         // Layout doesn't use user
+  const [user] = useState({ name: "Alice", role: "admin" });
+  return <Layout user={user} />; // Layout doesn't use user
 }
 function Layout({ user }) {
-  return <MainContent user={user} />;    // MainContent doesn't use user
+  return <MainContent user={user} />; // MainContent doesn't use user
 }
 function MainContent({ user }) {
-  return <Sidebar user={user} />;        // Sidebar doesn't use user
+  return <Sidebar user={user} />; // Sidebar doesn't use user
 }
 function Sidebar({ user }) {
-  return <UserAvatar user={user} />;     // UserAvatar uses it
+  return <UserAvatar user={user} />; // UserAvatar uses it
 }
 function UserAvatar({ user }) {
-  return <img src={user.avatar} alt={user.name} />;  // FINALLY used
+  return <img src={user.avatar} alt={user.name} />; // FINALLY used
 }
 ```
 
@@ -261,11 +261,11 @@ with composition."
 
 // App provides UserAvatar as children - it has the user
 function App() {
-  const [user] = useState({ name: 'Alice', avatar: '...' });
+  const [user] = useState({ name: "Alice", avatar: "..." });
 
   return (
     <Layout
-      sidebar={<UserAvatar user={user} />}  // composed in
+      sidebar={<UserAvatar user={user} />} // composed in
     >
       <MainContent />
     </Layout>
@@ -277,7 +277,7 @@ function App() {
 function Layout({ children, sidebar }) {
   return (
     <div className="layout">
-      <aside>{sidebar}</aside>   {/* renders UserAvatar */}
+      <aside>{sidebar}</aside> {/* renders UserAvatar */}
       <main>{children}</main>
     </div>
   );
@@ -297,20 +297,20 @@ function UserAvatar({ user }) {
 const UserContext = createContext(null);
 
 function App() {
-  const [user] = useState({ name: 'Alice' });
+  const [user] = useState({ name: "Alice" });
   return (
     <UserContext.Provider value={user}>
-      <Layout />   {/* No user prop - Layout is clean */}
+      <Layout /> {/* No user prop - Layout is clean */}
     </UserContext.Provider>
   );
 }
 
 function Layout() {
-  return <MainContent />;  // No user prop passed
+  return <MainContent />; // No user prop passed
 }
 
 function UserAvatar() {
-  const user = useContext(UserContext);  // reads directly
+  const user = useContext(UserContext); // reads directly
   return <img src={user.avatar} alt={user.name} />;
 }
 ```
@@ -324,7 +324,7 @@ function UserAvatar() {
 ```jsx
 // BAD: currentUser drilled through 3 non-using layers
 function App() {
-  const currentUser = { name: 'Alice', role: 'admin', avatar: '/alice.jpg' };
+  const currentUser = { name: "Alice", role: "admin", avatar: "/alice.jpg" };
   return <Page currentUser={currentUser} />;
 }
 // Page doesn't use currentUser
@@ -359,11 +359,9 @@ function UserMenu({ currentUser }) {
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const currentUser = { name: 'Alice', role: 'admin', avatar: '/alice.jpg' };
+  const currentUser = { name: "Alice", role: "admin", avatar: "/alice.jpg" };
   return (
-    <AuthContext.Provider value={currentUser}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={currentUser}>{children}</AuthContext.Provider>
   );
 }
 
@@ -381,14 +379,21 @@ function App() {
 }
 
 // Page, Header: no currentUser prop needed
-function Page() { return <Header />; }
+function Page() {
+  return <Header />;
+}
 function Header() {
-  return <nav><Logo /><UserMenu /></nav>;
+  return (
+    <nav>
+      <Logo />
+      <UserMenu />
+    </nav>
+  );
 }
 
 // UserMenu reads directly from context - no drilling
 function UserMenu() {
-  const currentUser = useAuth();  // direct read
+  const currentUser = useAuth(); // direct read
   return (
     <div>
       <img src={currentUser.avatar} alt={currentUser.name} />
@@ -403,24 +408,24 @@ function UserMenu() {
 
 ### 📊 Comparison Table
 
-| Solution | Best For | Re-render Cost | Complexity |
-|---|---|---|---|
-| Lift state | 1-2 level sharing, small trees | Low | Low |
-| Component composition | Layout wrappers, slots | Low | Medium |
-| Context API | Auth, theme, locale (app-wide, low-change) | Medium (all consumers) | Medium |
-| Redux Toolkit | Large apps, complex state logic, DevTools needed | Selective (useSelector) | High |
-| Zustand / Jotai | Medium apps, simpler API than Redux | Selective | Low-Medium |
+| Solution              | Best For                                         | Re-render Cost          | Complexity |
+| --------------------- | ------------------------------------------------ | ----------------------- | ---------- |
+| Lift state            | 1-2 level sharing, small trees                   | Low                     | Low        |
+| Component composition | Layout wrappers, slots                           | Low                     | Medium     |
+| Context API           | Auth, theme, locale (app-wide, low-change)       | Medium (all consumers)  | Medium     |
+| Redux Toolkit         | Large apps, complex state logic, DevTools needed | Selective (useSelector) | High       |
+| Zustand / Jotai       | Medium apps, simpler API than Redux              | Selective               | Low-Medium |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Context API completely eliminates prop drilling in all cases" | Context eliminates the forwarding problem but creates a different coupling: all consumers depend on the context shape and re-render when the context value changes. It trades prop coupling for context coupling. Not always the right solution. |
-| "Passing props 2-3 levels is always prop drilling" | Passing props directly to a child that uses them is not drilling. Drilling means passing through layers that do not use the prop. Two layers of direct parent-child (each layer using the prop) is normal composition, not drilling. |
-| "Redux prevents prop drilling" | Redux moves state out of the component tree entirely. Connected components read from the store directly without props. This bypasses the component tree, so it effectively eliminates drilling for global state - but it is not the right tool for component-local or feature-scoped state. |
-| "Prop drilling is always a problem that must be solved" | For small component trees (3-4 levels max), prop drilling is acceptable and explicit - it is clear from the code what data flows where. Introducing Context or a library adds complexity. The trade-off depends on tree depth and how often the shape changes. |
+| Misconception                                                  | Reality                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Context API completely eliminates prop drilling in all cases" | Context eliminates the forwarding problem but creates a different coupling: all consumers depend on the context shape and re-render when the context value changes. It trades prop coupling for context coupling. Not always the right solution.                                            |
+| "Passing props 2-3 levels is always prop drilling"             | Passing props directly to a child that uses them is not drilling. Drilling means passing through layers that do not use the prop. Two layers of direct parent-child (each layer using the prop) is normal composition, not drilling.                                                        |
+| "Redux prevents prop drilling"                                 | Redux moves state out of the component tree entirely. Connected components read from the store directly without props. This bypasses the component tree, so it effectively eliminates drilling for global state - but it is not the right tool for component-local or feature-scoped state. |
+| "Prop drilling is always a problem that must be solved"        | For small component trees (3-4 levels max), prop drilling is acceptable and explicit - it is clear from the code what data flows where. Introducing Context or a library adds complexity. The trade-off depends on tree depth and how often the shape changes.                              |
 
 ---
 
@@ -450,6 +455,7 @@ with selective subscription (`useSelector` in Redux,
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Props and Component Communication` - the mechanism
   being overused in the drilling pattern
 - `One-Way Data Binding` - the constraint that forces
@@ -458,6 +464,7 @@ with selective subscription (`useSelector` in Redux,
   drilling when lifted too high
 
 **Builds On:**
+
 - `useContext Hook` - the primary React solution for
   avoiding drilling
 - `Context API vs State Management Decision Guide` -
@@ -489,6 +496,7 @@ with selective subscription (`useSelector` in Redux,
 ```
 
 **If you remember only 3 things:**
+
 1. Prop drilling = props passed through components that
    do not use them. Symptom: bystander components with
    irrelevant props in their signature.

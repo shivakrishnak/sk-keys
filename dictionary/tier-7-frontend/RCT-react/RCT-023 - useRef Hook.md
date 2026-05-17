@@ -31,11 +31,11 @@ focus, scroll, canvas, third-party libraries) and storing
 mutable values that should not cause re-renders (previous
 value, interval IDs, flags).
 
-| #023 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, State, useState Hook, useEffect Hook | |
-| **Used by:** | Custom Hooks, Stale Closure Anti-Pattern, React Fiber Architecture | |
-| **Related:** | useState Hook, useEffect Hook, Direct DOM Mutation Anti-Pattern | |
+| #023            | Category: React                                                    | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, State, useState Hook, useEffect Hook                    |                 |
+| **Used by:**    | Custom Hooks, Stale Closure Anti-Pattern, React Fiber Architecture |                 |
+| **Related:**    | useState Hook, useEffect Hook, Direct DOM Mutation Anti-Pattern    |                 |
 
 ---
 
@@ -90,7 +90,7 @@ or any mutable value, without triggering re-renders.
 ```jsx
 // Use 1: DOM element access
 const inputRef = useRef(null);
-<input ref={inputRef} />
+<input ref={inputRef} />;
 // inputRef.current → the DOM <input> element
 
 // Use 2: Mutable value that persists (no re-render)
@@ -173,8 +173,8 @@ function PriceDisplay({ price }) {
   const prevPriceRef = useRef(price);
 
   useEffect(() => {
-    prevPriceRef.current = price;  // store for next render
-  });  // no deps: runs after every render
+    prevPriceRef.current = price; // store for next render
+  }); // no deps: runs after every render
 
   const prevPrice = prevPriceRef.current;
   const changed = price !== prevPrice;
@@ -182,11 +182,7 @@ function PriceDisplay({ price }) {
   return (
     <div>
       <span>${price}</span>
-      {changed && (
-        <span className="change">
-          (was ${prevPrice})
-        </span>
-      )}
+      {changed && <span className="change">(was ${prevPrice})</span>}
     </div>
   );
 }
@@ -315,8 +311,8 @@ function usePrevious(value) {
   const ref = useRef(value);
   useEffect(() => {
     ref.current = value;
-  });  // runs after every render, updates after read
-  return ref.current;  // returns value from PREVIOUS render
+  }); // runs after every render, updates after read
+  return ref.current; // returns value from PREVIOUS render
 }
 ```
 
@@ -350,14 +346,14 @@ function TextInput() {
   const inputRef = useRef(null);
 
   // WRONG: accessed during render, before React sets .current
-  console.log(inputRef.current);  // null
+  console.log(inputRef.current); // null
   const length = inputRef.current?.value.length ?? 0;
   // Length is always 0/undefined during render
 
   return (
     <>
       <input ref={inputRef} />
-      <span>Length: {length}</span>  // always 0
+      <span>Length: {length}</span> // always 0
     </>
   );
 }
@@ -411,15 +407,15 @@ function VideoPlayer({ src, onEnd }) {
       onEnd?.();
     };
 
-    video.addEventListener('ended', handleEnded);
-    return () => video.removeEventListener('ended', handleEnded);
+    video.addEventListener("ended", handleEnded);
+    return () => video.removeEventListener("ended", handleEnded);
   }, [onEnd]);
 
   return (
     <div>
       <video ref={videoRef} src={src} />
       <button onClick={isPlaying ? pause : play}>
-        {isPlaying ? 'Pause' : 'Play'}
+        {isPlaying ? "Pause" : "Play"}
       </button>
     </div>
   );
@@ -430,12 +426,12 @@ function VideoPlayer({ src, onEnd }) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Changing `ref.current` updates the UI" | `ref.current` is mutable but NEVER triggers a re-render. If you change `ref.current` and expect the UI to update, use `useState` instead. Refs are for values that need persistence without triggering renders. |
-| "ref.current is available during the first render" | For DOM refs, `.current` is `null` during the first render. React sets it after the DOM is committed. Access refs only in event handlers or `useEffect`. |
-| "useRef is only for DOM elements" | `useRef` is equally valid for any mutable value that should persist across renders without causing re-renders: timer IDs, interval IDs, previous values, form submission flags, canvas contexts, WebSocket connections. |
-| "`ref` on a custom component gives the component instance" | For function components, `ref` does NOT give the component instance (function components have no instance). You must use `forwardRef` to forward the ref to a specific DOM element inside the component. |
+| Misconception                                              | Reality                                                                                                                                                                                                                 |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Changing `ref.current` updates the UI"                    | `ref.current` is mutable but NEVER triggers a re-render. If you change `ref.current` and expect the UI to update, use `useState` instead. Refs are for values that need persistence without triggering renders.         |
+| "ref.current is available during the first render"         | For DOM refs, `.current` is `null` during the first render. React sets it after the DOM is committed. Access refs only in event handlers or `useEffect`.                                                                |
+| "useRef is only for DOM elements"                          | `useRef` is equally valid for any mutable value that should persist across renders without causing re-renders: timer IDs, interval IDs, previous values, form submission flags, canvas contexts, WebSocket connections. |
+| "`ref` on a custom component gives the component instance" | For function components, `ref` does NOT give the component instance (function components have no instance). You must use `forwardRef` to forward the ref to a specific DOM element inside the component.                |
 
 ---
 
@@ -452,9 +448,10 @@ ref is attached to a component instead of a DOM element
 (without `forwardRef`).
 
 **Diagnostic:**
+
 ```jsx
 useEffect(() => {
-  console.log('ref value:', ref.current);
+  console.log("ref value:", ref.current);
   // If null: element is not in DOM at this time
 }, []);
 ```
@@ -471,14 +468,15 @@ stale state values because it is captured in a closure
 from the first render.
 
 **Fix (useRef for latest handler):**
+
 ```jsx
 const handlerRef = useRef(null);
 handlerRef.current = handleKeyPress; // always latest
 
 useEffect(() => {
   const handler = (e) => handlerRef.current(e);
-  window.addEventListener('keydown', handler);
-  return () => window.removeEventListener('keydown', handler);
+  window.addEventListener("keydown", handler);
+  return () => window.removeEventListener("keydown", handler);
 }, []); // stable effect, no re-subscribe on every render
 ```
 
@@ -487,17 +485,20 @@ useEffect(() => {
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Component lifecycle` - refs map to DOM lifecycle
 - `useState Hook` - the alternative when re-render is needed
 - `useEffect Hook` - common partner for ref-based DOM ops
 
 **Builds On:**
+
 - `Custom Hooks` - `usePrevious`, `useDebounce`, and others
   use `useRef` internally
 - `Direct DOM Mutation Anti-Pattern` - useRef is the safe
   escape hatch for legitimate DOM operations
 
 **Related APIs:**
+
 - `forwardRef` - pass ref through component boundaries
 - `useImperativeHandle` - customise what the ref exposes
 
@@ -528,6 +529,7 @@ useEffect(() => {
 ```
 
 **If you remember only 3 things:**
+
 1. `useRef` returns `{ current: value }`. Mutating
    `.current` never triggers re-renders. Use it for
    DOM access (`ref={myRef}`) or mutable instance values.

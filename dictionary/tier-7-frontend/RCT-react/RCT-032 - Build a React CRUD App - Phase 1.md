@@ -31,11 +31,11 @@ useEffect, form handling, list rendering with key props,
 and routing - making it the "proof of concept" exercise
 that confirms whether you can apply React in a real app.
 
-| #032 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | useState Hook, useEffect Hook, Form Handling, React Router v6 | |
-| **Used by:** | React Quick Recall Card, Testing React with RTL, Redux Toolkit | |
-| **Related:** | React Quick Recall Card, Form Handling, React Router v6 | |
+| #032            | Category: React                                                | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------- | :-------------- |
+| **Depends on:** | useState Hook, useEffect Hook, Form Handling, React Router v6  |                 |
+| **Used by:**    | React Quick Recall Card, Testing React with RTL, Redux Toolkit |                 |
+| **Related:**    | React Quick Recall Card, Form Handling, React Router v6        |                 |
 
 ---
 
@@ -149,13 +149,13 @@ TaskForm (create)
 The user clicks "Delete" on a task. Should you:
 
 A) **Pessimistic:** Send DELETE request, wait for response,
-   then remove from state. The item stays visible for
-   200-500ms after click. Feels slow but correct.
+then remove from state. The item stays visible for
+200-500ms after click. Feels slow but correct.
 
 B) **Optimistic:** Remove from state immediately, send
-   DELETE in background. Item disappears instantly. If
-   DELETE fails, re-add to state and show error. Feels
-   fast.
+DELETE in background. Item disappears instantly. If
+DELETE fails, re-add to state and show error. Feels
+fast.
 
 Phase 1 implements pessimistic (simpler). Phase 2 (RCT-033)
 implements optimistic. Understanding the trade-off requires
@@ -242,7 +242,7 @@ makes these abstractions deeply understandable.
 //     LoadingSpinner.jsx
 
 // api/tasks.js - all API calls in one place
-const BASE_URL = 'https://jsonplaceholder.typicode.com';
+const BASE_URL = "https://jsonplaceholder.typicode.com";
 
 export async function fetchTasks() {
   const res = await fetch(`${BASE_URL}/todos?_limit=10`);
@@ -252,8 +252,8 @@ export async function fetchTasks() {
 
 export async function createTask(data) {
   const res = await fetch(`${BASE_URL}/todos`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -262,17 +262,17 @@ export async function createTask(data) {
 
 export async function deleteTask(id) {
   const res = await fetch(`${BASE_URL}/todos/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
 
 // App.jsx - state + routing
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { fetchTasks, createTask, deleteTask } from './api/tasks';
-import TaskList from './components/TaskList';
-import TaskForm from './components/TaskForm';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { fetchTasks, createTask, deleteTask } from "./api/tasks";
+import TaskList from "./components/TaskList";
+import TaskForm from "./components/TaskForm";
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -283,20 +283,28 @@ function App() {
     let cancelled = false;
     setLoading(true);
     fetchTasks()
-      .then(data => { if (!cancelled) setTasks(data); })
-      .catch(err => { if (!cancelled) setError(err.message); })
-      .finally(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };  // cleanup
+      .then((data) => {
+        if (!cancelled) setTasks(data);
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err.message);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    }; // cleanup
   }, []);
 
   const handleCreate = async (formData) => {
     const newTask = await createTask(formData);
-    setTasks(prev => [newTask, ...prev]);
+    setTasks((prev) => [newTask, ...prev]);
   };
 
   const handleDelete = async (id) => {
     await deleteTask(id);
-    setTasks(prev => prev.filter(t => t.id !== id));
+    setTasks((prev) => prev.filter((t) => t.id !== id));
   };
 
   if (loading) return <p>Loading tasks...</p>;
@@ -309,10 +317,7 @@ function App() {
           path="/"
           element={<TaskList tasks={tasks} onDelete={handleDelete} />}
         />
-        <Route
-          path="/new"
-          element={<TaskForm onSubmit={handleCreate} />}
-        />
+        <Route path="/new" element={<TaskForm onSubmit={handleCreate} />} />
       </Routes>
     </BrowserRouter>
   );
@@ -336,14 +341,14 @@ function TaskList() {
     // No error handling - silent failure
     // No cleanup - if component unmounts, setTasks
     //   still runs and causes React warning
-    fetch('https://jsonplaceholder.typicode.com/todos')
-      .then(res => res.json())  // doesn't check res.ok
-      .then(data => setTasks(data));
+    fetch("https://jsonplaceholder.typicode.com/todos")
+      .then((res) => res.json()) // doesn't check res.ok
+      .then((data) => setTasks(data));
   }, []);
 
   return (
     <ul>
-      {tasks.map(task => (
+      {tasks.map((task) => (
         // key is on wrong element and uses index
         <li key={task.index}>{task.title}</li>
       ))}
@@ -366,9 +371,9 @@ function TaskList({ tasks, onDelete, loading, error }) {
 
   return (
     <ul>
-      {tasks.map(task => (
+      {tasks.map((task) => (
         <TaskItem
-          key={task.id}         // unique, stable key from data
+          key={task.id} // unique, stable key from data
           task={task}
           onDelete={onDelete}
         />
@@ -394,7 +399,7 @@ function TaskItem({ task, onDelete }) {
     <li>
       <span>{task.title}</span>
       <button onClick={handleDelete} disabled={deleting}>
-        {deleting ? 'Deleting...' : 'Delete'}
+        {deleting ? "Deleting..." : "Delete"}
       </button>
     </li>
   );
@@ -405,12 +410,12 @@ function TaskItem({ task, onDelete }) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "The CRUD app teaches how React is used in production" | It teaches the patterns. Production apps almost always add React Query or SWR for server state (caching, background refetch, loading states), TypeScript, and a proper API layer. The CRUD app is the conceptual foundation, not the production template. |
-| "You need Redux for a CRUD app" | For a single-resource CRUD app, `useState` in the parent component is sufficient. Redux adds value when you have complex state interactions, multiple resources, DevTools needs, or complex cache invalidation. Adding Redux to a simple CRUD app is over-engineering. |
-| "useEffect with `[]` always runs once" | It runs once per mount. In React 18 strict mode (development), effects run twice intentionally (mount → unmount → mount) to detect side effect bugs. The cleanup function is essential to handle this correctly. |
-| "After a successful POST, the API always returns the created item" | RESTful convention is to return the created resource. But some APIs return `201 Created` with an empty body or a different format. Always read the API docs and handle both the returned ID and the case where the ID must be read from a Location header. |
+| Misconception                                                      | Reality                                                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The CRUD app teaches how React is used in production"             | It teaches the patterns. Production apps almost always add React Query or SWR for server state (caching, background refetch, loading states), TypeScript, and a proper API layer. The CRUD app is the conceptual foundation, not the production template.              |
+| "You need Redux for a CRUD app"                                    | For a single-resource CRUD app, `useState` in the parent component is sufficient. Redux adds value when you have complex state interactions, multiple resources, DevTools needs, or complex cache invalidation. Adding Redux to a simple CRUD app is over-engineering. |
+| "useEffect with `[]` always runs once"                             | It runs once per mount. In React 18 strict mode (development), effects run twice intentionally (mount → unmount → mount) to detect side effect bugs. The cleanup function is essential to handle this correctly.                                                       |
+| "After a successful POST, the API always returns the created item" | RESTful convention is to return the created resource. But some APIs return `201 Created` with an empty body or a different format. Always read the API docs and handle both the returned ID and the case where the ID must be read from a Location header.             |
 
 ---
 
@@ -426,13 +431,16 @@ completes. The `useEffect` callback runs, calls `setTasks`,
 but the component is unmounted.
 
 **Fix:** Use a cleanup function with a cancelled flag:
+
 ```jsx
 useEffect(() => {
   let cancelled = false;
-  fetchTasks().then(data => {
+  fetchTasks().then((data) => {
     if (!cancelled) setTasks(data);
   });
-  return () => { cancelled = true; };
+  return () => {
+    cancelled = true;
+  };
 }, []);
 ```
 
@@ -450,6 +458,7 @@ regardless of when it was sent.
 
 **Fix:** Use the same `cancelled` flag pattern, or use
 `AbortController`:
+
 ```jsx
 useEffect(() => {
   const controller = new AbortController();
@@ -465,12 +474,14 @@ useEffect(() => {
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `useState Hook` - local state for tasks, loading, error
 - `useEffect Hook` - data fetching on mount
 - `Form Handling` - create/edit task forms
 - `React Router v6` - navigation between list and form
 
 **Builds On:**
+
 - `React Quick Recall Card` - synthesis of all CRUD patterns
 - `Testing React with RTL` - testing CRUD operations
 - `Redux Toolkit` - scaling the CRUD state model to
@@ -500,6 +511,7 @@ useEffect(() => {
 ```
 
 **If you remember only 3 things:**
+
 1. Fetch on mount in `useEffect(fn, [])`. Always check
    `res.ok`. Set loading/error states. Use cleanup to
    prevent setState on unmounted component.

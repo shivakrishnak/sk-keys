@@ -31,11 +31,11 @@ reload, and validation state - the patterns scale from
 a simple login form to a 20-field wizard with real-time
 validation and optimistic API submission.
 
-| #026 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Event Handling, One-Way Data Binding, useState Hook, Controlled Components | |
-| **Used by:** | Build a React CRUD App, Testing React | |
-| **Related:** | Controlled vs Uncontrolled, useState Hook, XSS Prevention | |
+| #026            | Category: React                                                            | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Event Handling, One-Way Data Binding, useState Hook, Controlled Components |                 |
+| **Used by:**    | Build a React CRUD App, Testing React                                      |                 |
+| **Related:**    | Controlled vs Uncontrolled, useState Hook, XSS Prevention                  |                 |
 
 ---
 
@@ -46,6 +46,7 @@ Native HTML form submission causes a full page reload.
 Values are sent as URL parameters (GET) or request body
 (POST) to a server that returns a new HTML page. This
 model is incompatible with modern SPAs that want to:
+
 - Validate before submitting
 - Show loading state during API call
 - Display inline error messages
@@ -79,13 +80,13 @@ at any time.
 
 ```jsx
 function LoginForm({ onLogin }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault();           // prevent page reload
-    setError('');
+    e.preventDefault(); // prevent page reload
+    setError("");
     try {
       await loginAPI(email, password);
       onLogin();
@@ -96,9 +97,12 @@ function LoginForm({ onLogin }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input value={email} onChange={e => setEmail(e.target.value)} />
-      <input type="password" value={password}
-        onChange={e => setPassword(e.target.value)} />
+      <input value={email} onChange={(e) => setEmail(e.target.value)} />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
       {error && <p className="error">{error}</p>}
       <button type="submit">Login</button>
     </form>
@@ -170,13 +174,13 @@ const handleSubmit = async (e) => {
   try {
     await paymentAPI(data);
   } finally {
-    setSubmitting(false);  // always re-enable
+    setSubmitting(false); // always re-enable
   }
 };
 
 <button type="submit" disabled={submitting}>
-  {submitting ? 'Processing...' : 'Pay Now'}
-</button>
+  {submitting ? "Processing..." : "Pay Now"}
+</button>;
 ```
 
 This is not just UX - it is a security control against
@@ -246,29 +250,32 @@ require and that form libraries automate.
 ```jsx
 function RegistrationForm() {
   const [form, setForm] = useState({
-    name: '', email: '', password: '', confirmPassword: '',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [status, setStatus] = useState('idle');
+  const [status, setStatus] = useState("idle");
 
   const updateField = (field) => (e) => {
-    setForm(prev => ({ ...prev, [field]: e.target.value }));
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
   const markTouched = (field) => () => {
-    setTouched(prev => ({ ...prev, [field]: true }));
+    setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
   const validate = (values) => {
     const errs = {};
-    if (!values.name.trim()) errs.name = 'Name required';
-    if (!values.email.includes('@')) errs.email = 'Invalid email';
+    if (!values.name.trim()) errs.name = "Name required";
+    if (!values.email.includes("@")) errs.email = "Invalid email";
     if (values.password.length < 8) {
-      errs.password = 'Minimum 8 characters';
+      errs.password = "Minimum 8 characters";
     }
     if (values.password !== values.confirmPassword) {
-      errs.confirmPassword = 'Passwords do not match';
+      errs.confirmPassword = "Passwords do not match";
     }
     return errs;
   };
@@ -279,46 +286,46 @@ function RegistrationForm() {
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
-    setStatus('loading');
+    setStatus("loading");
     try {
       await registerAPI(form);
-      setStatus('success');
+      setStatus("success");
     } catch (err) {
       // Map API field errors back to form
       if (err.fieldErrors) {
         setErrors(err.fieldErrors);
-        setStatus('idle');
+        setStatus("idle");
       } else {
-        setStatus('error');
+        setStatus("error");
       }
     }
   };
 
-  if (status === 'success') {
+  if (status === "success") {
     return <p>Registration successful! Please check your email.</p>;
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      {['name', 'email', 'password', 'confirmPassword'].map(field => (
+      {["name", "email", "password", "confirmPassword"].map((field) => (
         <div key={field}>
           <input
             name={field}
             value={form[field]}
             onChange={updateField(field)}
             onBlur={markTouched(field)}
-            type={field.includes('password') ? 'password' : 'text'}
+            type={field.includes("password") ? "password" : "text"}
           />
           {touched[field] && errors[field] && (
             <span className="error">{errors[field]}</span>
           )}
         </div>
       ))}
-      {status === 'error' && (
+      {status === "error" && (
         <p className="error">Registration failed. Try again.</p>
       )}
-      <button type="submit" disabled={status === 'loading'}>
-        {status === 'loading' ? 'Registering...' : 'Register'}
+      <button type="submit" disabled={status === "loading"}>
+        {status === "loading" ? "Registering..." : "Register"}
       </button>
     </form>
   );
@@ -348,7 +355,9 @@ function LoginForm() {
   };
 
   return (
-    <div>  {/* Not a <form> - loses Enter-key submit */}
+    <div>
+      {" "}
+      {/* Not a <form> - loses Enter-key submit */}
       <input ref={email} />
       <input type="password" ref={password} />
       <button onClick={handleLogin}>Login</button>
@@ -368,26 +377,26 @@ function LoginForm() {
 ```jsx
 // GOOD: Complete login form
 function LoginForm({ onSuccess }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [status, setStatus] = useState('idle');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState("idle");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      setError('All fields required');
+      setError("All fields required");
       return;
     }
-    setStatus('loading');
-    setError('');
+    setStatus("loading");
+    setError("");
     try {
       await loginAPI({ email, password });
-      setStatus('success');
+      setStatus("success");
       onSuccess();
     } catch (err) {
-      setError(err.message || 'Login failed');
-      setStatus('idle');
+      setError(err.message || "Login failed");
+      setStatus("idle");
     }
   };
 
@@ -398,7 +407,7 @@ function LoginForm({ onSuccess }) {
         <input
           type="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"
           required
         />
@@ -408,14 +417,18 @@ function LoginForm({ onSuccess }) {
         <input
           type="password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           autoComplete="current-password"
           required
         />
       </label>
-      {error && <p role="alert" className="error">{error}</p>}
-      <button type="submit" disabled={status === 'loading'}>
-        {status === 'loading' ? 'Logging in...' : 'Login'}
+      {error && (
+        <p role="alert" className="error">
+          {error}
+        </p>
+      )}
+      <button type="submit" disabled={status === "loading"}>
+        {status === "loading" ? "Logging in..." : "Login"}
       </button>
     </form>
   );
@@ -426,12 +439,12 @@ function LoginForm({ onSuccess }) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "onSubmit should be on the button" | `onSubmit` belongs on the `<form>` element. A `<form>` with `onSubmit` captures both button clicks AND Enter-key press in inputs. `onClick` on a button only captures clicks. |
-| "Client-side validation is sufficient security" | Client-side validation is for UX (immediate feedback). Any user can bypass it. Always validate and sanitise on the server. Never trust client-submitted form data. |
-| "You need a form library (Formik/RHF) for all React forms" | Libraries add value for 5+ fields, complex validation, nested field arrays, or wizard forms. For simple 2-3 field forms (login, search), native `useState` + `onSubmit` is simpler and has less bundle overhead. |
-| "reset() must be called manually to clear the form after submit" | For controlled inputs, set all state values back to empty strings after successful submit: `setEmail('')`. For uncontrolled forms, call `formElement.reset()`. There is no automatic reset in React. |
+| Misconception                                                    | Reality                                                                                                                                                                                                          |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "onSubmit should be on the button"                               | `onSubmit` belongs on the `<form>` element. A `<form>` with `onSubmit` captures both button clicks AND Enter-key press in inputs. `onClick` on a button only captures clicks.                                    |
+| "Client-side validation is sufficient security"                  | Client-side validation is for UX (immediate feedback). Any user can bypass it. Always validate and sanitise on the server. Never trust client-submitted form data.                                               |
+| "You need a form library (Formik/RHF) for all React forms"       | Libraries add value for 5+ fields, complex validation, nested field arrays, or wizard forms. For simple 2-3 field forms (login, search), native `useState` + `onSubmit` is simpler and has less bundle overhead. |
+| "reset() must be called manually to clear the form after submit" | For controlled inputs, set all state values back to empty strings after successful submit: `setEmail('')`. For uncontrolled forms, call `formElement.reset()`. There is no automatic reset in React.             |
 
 ---
 
@@ -475,12 +488,14 @@ loading).
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Event Handling` - `onSubmit`, `onChange` mechanisms
 - `One-Way Data Binding` - forms as the primary use case
 - `useState Hook` - field value storage
 - `Controlled vs Uncontrolled` - the input model
 
 **Builds On:**
+
 - `Build a React CRUD App` - forms in the context of
   full data management
 - `XSS Prevention in React` - security for form-submitted
@@ -513,6 +528,7 @@ loading).
 ```
 
 **If you remember only 3 things:**
+
 1. Put `onSubmit` on `<form>`, not `onClick` on the button.
    Call `e.preventDefault()` to prevent page reload.
 2. Disable the submit button while `loading` to prevent

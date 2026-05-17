@@ -35,11 +35,11 @@ many failures). It answers "is this resource a
 bottleneck?" and complements RED (which answers "are
 users affected?").
 
-| #030 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Metrics -- Types, What Is Observability, Three Pillars | |
-| **Used by:** | Golden Signals, Dashboards, Capacity Planning | |
-| **Related:** | Metrics Types, RED Method, Golden Signals, Capacity Planning | |
+| #030            | Category: Observability & SRE                                | Difficulty: ★☆☆ |
+| :-------------- | :----------------------------------------------------------- | :-------------- |
+| **Depends on:** | Metrics -- Types, What Is Observability, Three Pillars       |                 |
+| **Used by:**    | Golden Signals, Dashboards, Capacity Planning                |                 |
+| **Related:**    | Metrics Types, RED Method, Golden Signals, Capacity Planning |                 |
 
 ---
 
@@ -77,6 +77,7 @@ at Sun Microsystems):
 - **Utilization** (U): the percentage of time the
   resource was busy, or the fraction of capacity used.
   Answers: "How much of this resource is being consumed?"
+
   ```
   CPU utilization: cpu_usage_percent
   Disk utilization: disk_io_time_seconds / total_seconds
@@ -87,6 +88,7 @@ at Sun Microsystems):
   has extra work it cannot service yet - a queue.
   High saturation = resource is overloaded.
   Answers: "Is work piling up waiting for this resource?"
+
   ```
   CPU run queue: node_load1 (1-minute load average)
   Disk queue depth: disk_io_queue_length
@@ -301,9 +303,10 @@ row 2: CPU, memory, disk, network for the service
 host/container. For each resource: utilization panel
 (gauge), saturation panel (time series), error panel
 (counter). Use consistent thresholds: utilization
+
 > 80% = yellow, saturation > 0 = yellow, errors > 0
-= red. The USE dashboard is for diagnosis; RED is
-for alerting.
+> = red. The USE dashboard is for diagnosis; RED is
+> for alerting.
 
 **Level 4 - Capacity planning (senior):**
 USE metrics drive capacity planning decisions. CPU
@@ -563,34 +566,34 @@ predict_linear(
 
 ### ⚖️ Comparison Table
 
-| Method | Focus | Metrics | Target | Alert? |
-|---|---|---|---|---|
-| USE | Resources | Utilization, Saturation, Errors | CPU, disk, memory, network, pools | On saturation and errors |
-| RED | Services | Rate, Errors, Duration | HTTP APIs, microservices, queues | On errors and duration |
-| Golden Signals | Both | Latency, Traffic, Errors, Saturation | Any system | On all four |
+| Method         | Focus     | Metrics                              | Target                            | Alert?                   |
+| -------------- | --------- | ------------------------------------ | --------------------------------- | ------------------------ |
+| USE            | Resources | Utilization, Saturation, Errors      | CPU, disk, memory, network, pools | On saturation and errors |
+| RED            | Services  | Rate, Errors, Duration               | HTTP APIs, microservices, queues  | On errors and duration   |
+| Golden Signals | Both      | Latency, Traffic, Errors, Saturation | Any system                        | On all four              |
 
 **USE per resource summary:**
 
-| Resource | Utilization | Saturation | Errors |
-|---|---|---|---|
-| CPU | `cpu_usage_percent` | `node_load1 / nproc` | EDAC errors |
-| Memory | `1 - available/total` | Swap pages/s | EDAC uncorrectable |
-| Disk | `disk_io_time` | `io_queue_length` | SMART errors |
-| Network | `bytes / link_capacity` | `transmit_drop_total` | `transmit_errs_total` |
-| Connection pool | `active / max` | `pending_waits` | `timeout_total` |
-| Thread pool | `active / max` | `queued_tasks` | `rejected_tasks` |
+| Resource        | Utilization             | Saturation            | Errors                |
+| --------------- | ----------------------- | --------------------- | --------------------- |
+| CPU             | `cpu_usage_percent`     | `node_load1 / nproc`  | EDAC errors           |
+| Memory          | `1 - available/total`   | Swap pages/s          | EDAC uncorrectable    |
+| Disk            | `disk_io_time`          | `io_queue_length`     | SMART errors          |
+| Network         | `bytes / link_capacity` | `transmit_drop_total` | `transmit_errs_total` |
+| Connection pool | `active / max`          | `pending_waits`       | `timeout_total`       |
+| Thread pool     | `active / max`          | `queued_tasks`        | `rejected_tasks`      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "High utilization = bottleneck" | High utilization means the resource is being used efficiently. Saturation = bottleneck. A CPU at 80% utilization with zero run queue is healthy. A CPU at 40% utilization with a run queue of 8 is a bottleneck. |
-| "USE is for servers only" | USE applies to any resource: database connection pools (U=active/max, S=pending, E=timeouts), thread pools (U=active/max, S=queue depth, E=rejected tasks), message queue consumer groups (U=consumer utilization, S=consumer lag, E=consumer errors). |
-| "Errors in USE means application errors" | USE Errors are hardware/system/resource-level errors: disk I/O errors, network packet errors, memory hardware errors, connection timeout errors. Application-level business errors are measured in RED. |
-| "USE is old-fashioned (just for bare metal)" | USE is the correct framework for any finite-capacity resource. In Kubernetes: CPU request/limit utilization, memory request/limit utilization, pod OOM kills. In cloud: service quota utilization, API rate limit consumption. |
-| "I need all 50 metrics from my server" | No. Three metrics per resource. The other 47 metrics may be useful for deep diagnosis of a specific bottleneck, but they are not needed for initial triage. Start with USE. |
+| Misconception                                | Reality                                                                                                                                                                                                                                                |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "High utilization = bottleneck"              | High utilization means the resource is being used efficiently. Saturation = bottleneck. A CPU at 80% utilization with zero run queue is healthy. A CPU at 40% utilization with a run queue of 8 is a bottleneck.                                       |
+| "USE is for servers only"                    | USE applies to any resource: database connection pools (U=active/max, S=pending, E=timeouts), thread pools (U=active/max, S=queue depth, E=rejected tasks), message queue consumer groups (U=consumer utilization, S=consumer lag, E=consumer errors). |
+| "Errors in USE means application errors"     | USE Errors are hardware/system/resource-level errors: disk I/O errors, network packet errors, memory hardware errors, connection timeout errors. Application-level business errors are measured in RED.                                                |
+| "USE is old-fashioned (just for bare metal)" | USE is the correct framework for any finite-capacity resource. In Kubernetes: CPU request/limit utilization, memory request/limit utilization, pod OOM kills. In cloud: service quota utilization, API rate limit consumption.                         |
+| "I need all 50 metrics from my server"       | No. Three metrics per resource. The other 47 metrics may be useful for deep diagnosis of a specific bottleneck, but they are not needed for initial triage. Start with USE.                                                                            |
 
 ---
 
@@ -609,16 +612,18 @@ why is disk high when it was fine an hour ago?
 Memory utilization crossed 95%. The Linux kernel
 started swapping memory pages to disk. The "disk
 utilization" spike is not disk I/O from the application
+
 - it is the memory subsystem writing (swap out) and
-reading (swap in) pages constantly. Every application
-memory access that touches a swapped-out page causes
-a disk read. A 100ms operation that accesses 10
-swapped-out memory pages now takes: 100ms + 10 x
-10ms disk latency = 200ms. For cold memory access
-patterns: 100ms + 10 x 50ms = 600ms. 10x latency
-increase from swap.
+  reading (swap in) pages constantly. Every application
+  memory access that touches a swapped-out page causes
+  a disk read. A 100ms operation that accesses 10
+  swapped-out memory pages now takes: 100ms + 10 x
+  10ms disk latency = 200ms. For cold memory access
+  patterns: 100ms + 10 x 50ms = 600ms. 10x latency
+  increase from swap.
 
 **USE Diagnosis:**
+
 ```bash
 # Check memory USE on the server:
 free -h
@@ -638,6 +643,7 @@ rate(node_vmstat_pswpout[5m])  # pages swapped out
 ```
 
 **Fix:**
+
 1. Immediate: identify and kill the memory-heavy
    process (or add swap-prefetching if intentional)
 2. Short term: increase pod memory limit, add more
@@ -657,6 +663,7 @@ The engineering manager raises concern that P99
 has gone from 50ms to 400ms over the past month.
 
 **USE Diagnosis:**
+
 ```promql
 # Historical disk saturation trend
 avg_over_time(
@@ -688,6 +695,7 @@ upgrade to faster storage (higher bandwidth nvme).
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Metrics -- Types (Counter, Gauge, Histogram)` -
   USE metrics use gauges (utilization, saturation)
   and counters (error events)
@@ -695,6 +703,7 @@ upgrade to faster storage (higher bandwidth nvme).
   monitoring layer of the observability hierarchy
 
 **Builds On This (learn these next):**
+
 - `Golden Signals` - extends USE + RED into a unified
   four-metric framework for any system
 - `Capacity Planning with Metrics` - uses USE
@@ -702,6 +711,7 @@ upgrade to faster storage (higher bandwidth nvme).
   forecasting
 
 **Alternatives / Comparisons:**
+
 - `RED Method` - complementary, for services (user
   experience layer). Use RED + USE together for full
   coverage.
@@ -794,6 +804,7 @@ cannot.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Explain why high CPU utilization
    (90%) without saturation is not a bottleneck,
    while low CPU utilization (40%) with saturation
@@ -824,21 +835,22 @@ utilization, load average 1.2/4 cores (normalised:
 0.3), 0 swap pages, no disk errors, disk IO time 45%.
 Is any resource a bottleneck? What is the health
 interpretation?
-*Hint: CPU at 85% with normalised load 0.3 (below 1.0)
+\*Hint: CPU at 85% with normalised load 0.3 (below 1.0)
 = no saturation. Threads are not queuing for CPU.
 The high utilization is efficient use. Memory: 0 swap
 = no saturation. Disk: 45% utilization = within range,
 check queue depth (not given). Overall: no obvious
 bottleneck from the available USE data. If P99 latency
 is elevated, the bottleneck is likely not on this host
-- check downstream dependencies (database, cache).*
+
+- check downstream dependencies (database, cache).\*
 
 **Q2.** A service has 20 database connection pool
 connections (max). Current state: active=18 (90%),
 pending=5, timeouts=0.5/second. Describe the USE
 state of the connection pool. What is the immediate
 impact? What caused it? What are the two fastest fixes?
-*Hint: U=90% (near critical). S=5 pending (CRITICAL -
+_Hint: U=90% (near critical). S=5 pending (CRITICAL -
 requests are blocked). E=0.5/s (timeouts - requests
 are failing). Impact: requests waiting up to connection
 acquisition timeout (e.g., 3s), then failing. Causes:
@@ -848,7 +860,7 @@ connection leak (connections not returned). Fast fixes:
 (1) increase max_pool_size to 30-40 immediately (minutes
 to deploy), (2) identify slow queries holding connections
 (check slow query log on DB). Root fix: optimize slow
-queries so connections are returned faster.*
+queries so connections are returned faster._
 
 **Q3 (TYPE G):** A platform team is responsible for
 infrastructure health across 200 services. They need
@@ -860,7 +872,7 @@ specs (4-core vs 32-core, HDD vs SSD), (d) what
 alerting thresholds to apply, (e) how to produce
 a "capacity headroom" report for each service used
 in quarterly capacity planning.
-*Hint: (a) All services: CPU, memory, disk, network,
+\*Hint: (a) All services: CPU, memory, disk, network,
 connection pool. Database services: + disk IOPs, WAL
 rate. Cache services: + eviction rate, memory used/max.
 (b) Normalised metrics: cpu_saturation=load1/nproc,
@@ -870,22 +882,24 @@ saturation is already normalised (load/nproc). Disk:
 io_time% is hardware-agnostic. Pool: active/max is
 already normalised. Network: bytes/link_speed_bits. (d)
 Alert thresholds: cpu_saturation > 1.0 for 5m = warning,
+
 > 2.0 = page. disk_saturation > 2 for 5m = warning.
-pool_pending > 0 for 2m = warning, > 5 for 5m = page.
-(e) Quarterly report: for each service, show 90-day
-trend of each USE metric. Predict time to saturation
-(regression on saturation metric trend). Flag services
-projected to saturate within 90 days for capacity
-planning.*
+> pool_pending > 0 for 2m = warning, > 5 for 5m = page.
+> (e) Quarterly report: for each service, show 90-day
+> trend of each USE metric. Predict time to saturation
+> (regression on saturation metric trend). Flag services
+> projected to saturate within 90 days for capacity
+> planning.\*
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
 **Q1: "What is the USE method and how does it differ from RED?"**
-*Why they ask:* Tests understanding of the two foundational
+_Why they ask:_ Tests understanding of the two foundational
 monitoring frameworks and their relationship.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - USE = Utilization, Saturation, Errors. For resources
   (CPU, memory, disk, network, connection pools).
 - RED = Rate, Errors, Duration. For services (APIs,
@@ -901,9 +915,10 @@ monitoring frameworks and their relationship.
 
 **Q2: "What is the difference between utilization and
 saturation? Why does it matter for alerting?"**
-*Why they ask:* Discriminates engineers who understand
+_Why they ask:_ Discriminates engineers who understand
 the method from those who just name the letters.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Utilization: how busy the resource is. High utilization
   = efficient usage. Not necessarily a problem.
 - Saturation: work queuing up because the resource
@@ -920,9 +935,10 @@ the method from those who just name the letters.
   queuing. Alert should fire.
 
 **Q3: "A service is slow. How do you use USE to find the bottleneck?"**
-*Why they ask:* Tests ability to apply the method to
+_Why they ask:_ Tests ability to apply the method to
 a real incident, not just recite the acronym.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Step 1: Check RED (P99 latency elevated, error rate
   normal → pure latency issue, not failures).
 - Step 2: USE checklist. Start with most common

@@ -34,11 +34,11 @@ actually detect and respond to those faults correctly.
 It answers: "Do our alerts fire when they should?"
 before a real incident answers it for you.
 
-| #035 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Observability Fundamentals, Alerting Design, Incident Response, Error Budgets | |
-| **Used by:** | Post-Mortem Process, Platform Observability Engineering | |
-| **Related:** | Alerting Design, Incident Response, Error Budgets, Post-Mortem | |
+| #035            | Category: Observability & SRE                                                 | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Observability Fundamentals, Alerting Design, Incident Response, Error Budgets |                 |
+| **Used by:**    | Post-Mortem Process, Platform Observability Engineering                       |                 |
+| **Related:**    | Alerting Design, Incident Response, Error Budgets, Post-Mortem                |                 |
 
 ---
 
@@ -48,6 +48,7 @@ before a real incident answers it for you.
 Every team writes metrics dashboards and alerts with
 confidence that "when the database goes down, we'll
 see it." But in a real incident:
+
 - The alert fires 8 minutes after the outage began.
   The SLA requires page in < 5 minutes.
 - The runbook says "check the database connection
@@ -115,16 +116,16 @@ and alerts on faults.
 
 **Fault types for observability validation:**
 
-| Fault type | What it tests |
-|---|---|
-| Kill a pod/service | Service discovery, upstream alerts |
-| Introduce latency (tc netem) | P99 latency alerts, RED metric alerts |
-| Drop network packets | Timeout alerts, retry metric alerts |
-| Exhaust connection pool | Database alert coverage |
-| Fill disk | Storage monitoring coverage |
-| Spike CPU (stress-ng) | CPU saturation alerts |
-| Return HTTP 500 errors | Error rate alerts |
-| Kill metrics exporter | Monitoring system itself (absent data) |
+| Fault type                   | What it tests                          |
+| ---------------------------- | -------------------------------------- |
+| Kill a pod/service           | Service discovery, upstream alerts     |
+| Introduce latency (tc netem) | P99 latency alerts, RED metric alerts  |
+| Drop network packets         | Timeout alerts, retry metric alerts    |
+| Exhaust connection pool      | Database alert coverage                |
+| Fill disk                    | Storage monitoring coverage            |
+| Spike CPU (stress-ng)        | CPU saturation alerts                  |
+| Return HTTP 500 errors       | Error rate alerts                      |
+| Kill metrics exporter        | Monitoring system itself (absent data) |
 
 **Tools:**
 
@@ -402,38 +403,38 @@ spec:
     appkind: deployment
   chaosServiceAccount: litmus-chaos-serviceaccount
   experiments:
-  - name: pod-delete
-    spec:
-      components:
-        env:
-        # Kill 1 pod from the deployment
-        - name: TOTAL_CHAOS_DURATION
-          value: "120"  # seconds to observe
-        - name: CHAOS_INTERVAL
-          value: "10"   # seconds between kills
-        - name: FORCE
-          value: "false"  # graceful termination
-        - name: PODS_AFFECTED_PERC
-          value: "25"  # kill 25% of pods
+    - name: pod-delete
+      spec:
+        components:
+          env:
+            # Kill 1 pod from the deployment
+            - name: TOTAL_CHAOS_DURATION
+              value: "120" # seconds to observe
+            - name: CHAOS_INTERVAL
+              value: "10" # seconds between kills
+            - name: FORCE
+              value: "false" # graceful termination
+            - name: PODS_AFFECTED_PERC
+              value: "25" # kill 25% of pods
 
   # Hypothesis probe: verify alert fires
   probes:
-  - name: checkout-alert-fired
-    type: promProbe
-    mode: Continuous
-    promProbe/inputs:
-      endpoint: "http://prometheus:9090"
-      query: >
-        ALERTS{alertname="CheckoutServiceDown",
-               alertstate="firing"}
-      comparator:
-        type: int
-        criteria: "=="
-        value: "1"
-    runProperties:
-      probeTimeout: 300s
-      interval: 10s
-      # If alert does not fire within 300s: experiment FAILS
+    - name: checkout-alert-fired
+      type: promProbe
+      mode: Continuous
+      promProbe/inputs:
+        endpoint: "http://prometheus:9090"
+        query: >
+          ALERTS{alertname="CheckoutServiceDown",
+                 alertstate="firing"}
+        comparator:
+          type: int
+          criteria: "=="
+          value: "1"
+      runProperties:
+        probeTimeout: 300s
+        interval: 10s
+        # If alert does not fire within 300s: experiment FAILS
 ```
 
 **TOXIPROXY - NETWORK FAULT INJECTION:**
@@ -486,42 +487,42 @@ curl -X DELETE \
 # Catches: exporter down, network partition, misconfiguration
 
 groups:
-- name: observability-coverage
-  rules:
-  # Alert when a critical service stops reporting metrics
-  - alert: CriticalServiceMetricsAbsent
-    expr: |
-      absent(
-        up{
-          job=~"checkout-api|payment-api|order-api",
-          instance=~".+"
-        }
-      ) == 1
-    for: 2m
-    labels:
-      severity: critical
-      team: platform
-    annotations:
-      summary: "Critical service metrics absent"
-      description: >
-        Metrics from {{ $labels.job }} have not been
-        received for 2 minutes. This may indicate a
-        monitoring blind spot or service crash.
-        Check: kubectl get pods -n {{ $labels.namespace }}
-        and verify metrics endpoint is reachable.
-      runbook_url: "https://runbooks/monitoring/absent-metrics"
+  - name: observability-coverage
+    rules:
+      # Alert when a critical service stops reporting metrics
+      - alert: CriticalServiceMetricsAbsent
+        expr: |
+          absent(
+            up{
+              job=~"checkout-api|payment-api|order-api",
+              instance=~".+"
+            }
+          ) == 1
+        for: 2m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Critical service metrics absent"
+          description: >
+            Metrics from {{ $labels.job }} have not been
+            received for 2 minutes. This may indicate a
+            monitoring blind spot or service crash.
+            Check: kubectl get pods -n {{ $labels.namespace }}
+            and verify metrics endpoint is reachable.
+          runbook_url: "https://runbooks/monitoring/absent-metrics"
 
-  # Alert when Prometheus scrape target is down
-  - alert: ScrapetargetDown
-    expr: up == 0
-    for: 1m
-    labels:
-      severity: warning
-    annotations:
-      summary: "Prometheus scrape target down"
-      description: >
-        Target {{ $labels.instance }} (job={{ $labels.job }})
-        is not responding to Prometheus scrapes.
+      # Alert when Prometheus scrape target is down
+      - alert: ScrapetargetDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Prometheus scrape target down"
+          description: >
+            Target {{ $labels.instance }} (job={{ $labels.job }})
+            is not responding to Prometheus scrapes.
 ```
 
 ---
@@ -585,23 +586,23 @@ groups:
 # BAD: alert written but never tested
 # Team believes this works - but has never verified it
 groups:
-- name: checkout
-  rules:
-  - alert: CheckoutServiceDown
-    # expr references a metric that may not exist
-    # in production (only exists in staging config)
-    expr: checkout_service_up == 0
-    for: 5m
-    # Problem 1: "checkout_service_up" metric was
-    #   in the original service but was renamed to
-    #   "app_service_health" 6 months ago during
-    #   a framework migration. Nobody updated the alert.
-    # Problem 2: for: 5m means 5 minutes pass before
-    #   alert fires. SLA requires page in 2 minutes.
-    # Problem 3: metric was never present in production.
-    #   This alert has never fired. Ever.
-    # This is "zombie alerting": looks real on paper,
-    # does nothing in practice.
+  - name: checkout
+    rules:
+      - alert: CheckoutServiceDown
+        # expr references a metric that may not exist
+        # in production (only exists in staging config)
+        expr: checkout_service_up == 0
+        for: 5m
+        # Problem 1: "checkout_service_up" metric was
+        #   in the original service but was renamed to
+        #   "app_service_health" 6 months ago during
+        #   a framework migration. Nobody updated the alert.
+        # Problem 2: for: 5m means 5 minutes pass before
+        #   alert fires. SLA requires page in 2 minutes.
+        # Problem 3: metric was never present in production.
+        #   This alert has never fired. Ever.
+        # This is "zombie alerting": looks real on paper,
+        # does nothing in practice.
 ```
 
 **Example 2 - GOOD: Alert with corresponding chaos test:**
@@ -611,21 +612,21 @@ groups:
 
 # Alert rule (Prometheus)
 groups:
-- name: checkout-slo
-  rules:
-  - alert: CheckoutServiceDown
-    expr: |
-      absent(up{job="checkout-api"}) == 1
-      or up{job="checkout-api"} == 0
-    for: 1m
-    labels:
-      severity: critical
-      validated: "2024-01-15"  # Last chaos test date
-      experiment: "checkout-pod-kill-v3"
-    annotations:
-      summary: "Checkout service is down or unreachable"
-      runbook_url: "https://runbooks/checkout/service-down"
-      # Runbook VERIFIED to work during chaos test
+  - name: checkout-slo
+    rules:
+      - alert: CheckoutServiceDown
+        expr: |
+          absent(up{job="checkout-api"}) == 1
+          or up{job="checkout-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          validated: "2024-01-15" # Last chaos test date
+          experiment: "checkout-pod-kill-v3"
+        annotations:
+          summary: "Checkout service is down or unreachable"
+          runbook_url: "https://runbooks/checkout/service-down"
+          # Runbook VERIFIED to work during chaos test
 
 # Corresponding chaos experiment result (documentation)
 # chaos-catalogue/checkout-service-down.yaml:
@@ -704,26 +705,26 @@ done
 
 ### ⚖️ Comparison Table
 
-| Tool | Type | Kubernetes native? | Observability focus | Blast radius control |
-|---|---|---|---|---|
-| Litmus Chaos (CNCF) | Kubernetes fault injection | Yes | Probes verify alerts | Good (per-experiment config) |
-| Chaos Toolkit | Declarative YAML | Via plugins | Built-in Prometheus probes | Good (pause/rollback) |
-| Chaos Monkey (Netflix) | Random instance kill | No (VM-level) | Implicit (tests resilience) | Low (random) |
-| toxiproxy (Shopify) | Network fault injection | Via proxy | Network latency/error alerts | Excellent (per-toxic control) |
-| Gremlin | Commercial, full-featured | Yes | Dashboard integration | Excellent (time limits, blast radius config) |
-| tc netem | Linux native | Via pod exec | Any network-level alert | Manual (must revert manually) |
+| Tool                   | Type                       | Kubernetes native? | Observability focus          | Blast radius control                         |
+| ---------------------- | -------------------------- | ------------------ | ---------------------------- | -------------------------------------------- |
+| Litmus Chaos (CNCF)    | Kubernetes fault injection | Yes                | Probes verify alerts         | Good (per-experiment config)                 |
+| Chaos Toolkit          | Declarative YAML           | Via plugins        | Built-in Prometheus probes   | Good (pause/rollback)                        |
+| Chaos Monkey (Netflix) | Random instance kill       | No (VM-level)      | Implicit (tests resilience)  | Low (random)                                 |
+| toxiproxy (Shopify)    | Network fault injection    | Via proxy          | Network latency/error alerts | Excellent (per-toxic control)                |
+| Gremlin                | Commercial, full-featured  | Yes                | Dashboard integration        | Excellent (time limits, blast radius config) |
+| tc netem               | Linux native               | Via pod exec       | Any network-level alert      | Manual (must revert manually)                |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Chaos engineering is for resilience, not observability" | Chaos engineering tests both. When you inject a fault, you test resilience (does the system keep working?) AND observability (does the monitoring detect it?). Treating them as separate misses the combined value. |
-| "We test alerts in staging - that's enough" | Staging only validates if the metric exists and the alert rule is correct. It does not validate: page routing (PagerDuty config), on-call response time, runbook accuracy against real production traffic, or whether the alert is meaningful in context. Full validation requires testing the end-to-end alerting pipeline in production-equivalent conditions. |
+| Misconception                                                | Reality                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Chaos engineering is for resilience, not observability"     | Chaos engineering tests both. When you inject a fault, you test resilience (does the system keep working?) AND observability (does the monitoring detect it?). Treating them as separate misses the combined value.                                                                                                                                                                     |
+| "We test alerts in staging - that's enough"                  | Staging only validates if the metric exists and the alert rule is correct. It does not validate: page routing (PagerDuty config), on-call response time, runbook accuracy against real production traffic, or whether the alert is meaningful in context. Full validation requires testing the end-to-end alerting pipeline in production-equivalent conditions.                        |
 | "Chaos in staging is safe, chaos in production is dangerous" | Both require blast radius control. Staging chaos can destroy your staging environment's reliability, making staging useless for other testing. Production chaos with small blast radius (1% of traffic, single pod, feature-flagged) is often safer than it sounds. Netflix and Amazon routinely run chaos in production. Start with staging but have a plan for production validation. |
-| "If the alert fires, the runbook is fine" | The alert firing is step 1. The runbook is what the engineer does after the alert fires. Chaos experiments should also validate the runbook: run through the runbook during the experiment. Does it lead to the correct diagnosis? Does the runbook assume metrics that are absent? Does it point to the right service? |
-| "Chaos engineering requires a chaos platform tool" | The simplest chaos experiment is `kubectl delete pod`. No tool required. Start with basic fault injection commands and manual hypothesis documentation before investing in Litmus Chaos or Gremlin. |
+| "If the alert fires, the runbook is fine"                    | The alert firing is step 1. The runbook is what the engineer does after the alert fires. Chaos experiments should also validate the runbook: run through the runbook during the experiment. Does it lead to the correct diagnosis? Does the runbook assume metrics that are absent? Does it point to the right service?                                                                 |
+| "Chaos engineering requires a chaos platform tool"           | The simplest chaos experiment is `kubectl delete pod`. No tool required. Start with basic fault injection commands and manual hypothesis documentation before investing in Litmus Chaos or Gremlin.                                                                                                                                                                                     |
 
 ---
 
@@ -745,6 +746,7 @@ scope extended beyond the intended staging boundary
 due to shared infrastructure.
 
 **Prevention:**
+
 ```bash
 # Pre-experiment checklist:
 # 1. Map ALL infrastructure that staging services touch
@@ -787,19 +789,20 @@ Production Prometheus configuration differs from staging:
 minimum.
 
 **Fix:**
+
 ```yaml
 # Prometheus scrape config for critical services
 # in production:
 scrape_configs:
-- job_name: 'payment-api'
-  scrape_interval: 15s  # Critical service: 15s not 60s
-  scrape_timeout: 10s
+  - job_name: "payment-api"
+    scrape_interval: 15s # Critical service: 15s not 60s
+    scrape_timeout: 10s
 
-# Alert rule: ensure for: matches scrape_interval
-- alert: PaymentServiceDown
-  expr: up{job="payment-api"} == 0
-  for: 45s  # 3x scrape interval, not 5m
-  # At 15s scrape: first detect at 15s + 45s = 60s max
+  # Alert rule: ensure for: matches scrape_interval
+  - alert: PaymentServiceDown
+    expr: up{job="payment-api"} == 0
+    for: 45s # 3x scrape interval, not 5m
+    # At 15s scrape: first detect at 15s + 45s = 60s max
 
 # Lesson learned: chaos tests must mirror EXACT
 # production configuration. The scrape_interval is
@@ -812,6 +815,7 @@ scrape_configs:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Alerting Design and Best Practices` - before
   validating alerts, understand how to design them:
   correct thresholds, for: durations, routing
@@ -823,6 +827,7 @@ scrape_configs:
   experiments can consume.
 
 **Builds On This (learn these next):**
+
 - `Post-Mortem and Blameless Culture` - chaos
   experiments produce findings that feed into
   structured improvement processes
@@ -876,22 +881,23 @@ scrape_configs:
 
 **Reusable Engineering Principle:**
 "Trust but verify" for monitoring becomes "never trust
+
 - always verify." An alert rule that has not been
-exercised is a hypothesis, not a fact. The same
-principle applies across engineering: automated tests
-for code (unit tests verify code behaviour), load
-tests for infrastructure (verify behaviour under
-stress), penetration tests for security (verify
-controls under attack). Observability chaos engineering
-applies this "experimental validation" discipline to
-the monitoring stack itself. In every engineering
-domain, the cost of discovering a gap in production
-(during a real incident, with real customer impact)
-is orders of magnitude higher than the cost of
-discovering it in a controlled experiment. The practice
-of systematic experimental validation of safety
-mechanisms - whether smoke detectors, circuit breakers,
-or alert rules - is a universal engineering discipline.
+  exercised is a hypothesis, not a fact. The same
+  principle applies across engineering: automated tests
+  for code (unit tests verify code behaviour), load
+  tests for infrastructure (verify behaviour under
+  stress), penetration tests for security (verify
+  controls under attack). Observability chaos engineering
+  applies this "experimental validation" discipline to
+  the monitoring stack itself. In every engineering
+  domain, the cost of discovering a gap in production
+  (during a real incident, with real customer impact)
+  is orders of magnitude higher than the cost of
+  discovering it in a controlled experiment. The practice
+  of systematic experimental validation of safety
+  mechanisms - whether smoke detectors, circuit breakers,
+  or alert rules - is a universal engineering discipline.
 
 ---
 
@@ -925,6 +931,7 @@ tests both approaches.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Describe the difference between
    chaos engineering for resilience and chaos engineering
    for observability. Why must observability itself
@@ -957,7 +964,7 @@ You have 1 day per quarter for chaos work. How do
 you prioritise which alerts to test first? What
 criteria determine priority? How do you handle alerts
 that cannot be safely tested?
-*Hint: Priority criteria: (1) P0/P1 incidents - any
+_Hint: Priority criteria: (1) P0/P1 incidents - any
 alert that, if incorrect, causes customer-impacting
 delay in detection = top priority. Test these every
 quarter. (2) Alerts that have never fired in production
@@ -971,7 +978,7 @@ semantic errors in PromQL). For alerts that cannot
 be safely tested (production-only metrics, no staging
 equivalent): test in production with minimal blast
 radius (1 pod, 30 seconds, during low-traffic window)
-with pre-approved change management.*
+with pre-approved change management._
 
 **Q2.** During a chaos experiment, you discover that
 the `PaymentServiceDown` alert fires correctly in
@@ -981,7 +988,7 @@ The alert fired in Prometheus. Where are the possible
 failure points between "alert fires in Prometheus"
 and "on-call engineer receives page"? How do you
 test each failure point?
-*Hint: The pipeline: Prometheus fires alert → Alertmanager
+_Hint: The pipeline: Prometheus fires alert → Alertmanager
 receives alert → Alertmanager routes to correct route →
 Alertmanager sends to PagerDuty (or similar) → PagerDuty
 creates incident → PagerDuty pages on-call schedule →
@@ -997,7 +1004,7 @@ Test: view schedule in PagerDuty UI during experiment.
 to manager? Test: ignore the page during experiment and
 verify escalation fires. Most teams only test step 1
 (Prometheus → Alertmanager). The full pipeline from
-alert to human requires end-to-end testing.*
+alert to human requires end-to-end testing._
 
 **Q3 (TYPE G):** Build the business case for a quarterly
 observability chaos programme for a 50-engineer
@@ -1008,7 +1015,7 @@ required per quarter, (c) the measurable outcomes
 that justify the investment, (d) the first-quarter
 execution plan, (e) the metrics that demonstrate
 ROI to the VP of Engineering after 4 quarters.
-*Hint: (a) Gap: untested alert rules. Study: ~30% of
+_Hint: (a) Gap: untested alert rules. Study: ~30% of
 alert rules target missing or incorrect metrics (common
 finding). Example: a P0 incident goes undetected for
 12 minutes because the ServiceDown alert was targeting
@@ -1035,7 +1042,7 @@ GameDay, we discovered X was not alerting on Y. In
 Q3, Y actually happened in production - but the alert
 fired correctly in 68 seconds because we fixed it
 in GameDay. Before the programme: this would have
-been a 15-minute detection gap."*
+been a 15-minute detection gap."_
 
 ---
 
@@ -1043,9 +1050,10 @@ been a 15-minute detection gap."*
 
 **Q1: "What is chaos engineering for observability
 and how does it differ from standard resilience testing?"**
-*Why they ask:* Tests understanding of observability
+_Why they ask:_ Tests understanding of observability
 as a first-class discipline, not just an afterthought.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Resilience testing asks: "Does the system SURVIVE
   this fault?" Observability chaos asks: "Does the
   monitoring DETECT this fault correctly?"
@@ -1061,9 +1069,10 @@ as a first-class discipline, not just an afterthought.
 **Q2: "What is the most critical observability blind
 spot you have discovered or know about? How would
 you test for it systematically?"**
-*Why they ask:* Tests practical experience with
+_Why they ask:_ Tests practical experience with
 monitoring gaps, not just theoretical knowledge.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - "Absent data = healthy" assumption. Grafana shows
   "No Data" - teams assume the service is fine.
   Actually the metrics exporter crashed.
@@ -1078,9 +1087,10 @@ monitoring gaps, not just theoretical knowledge.
 
 **Q3: "Describe how you would run a chaos engineering
 GameDay for your team to validate observability coverage."**
-*Why they ask:* Tests practical execution capability,
+_Why they ask:_ Tests practical execution capability,
 not just theoretical knowledge.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Preparation: write 5-10 hypothesis statements.
   Define blast radius limits. Write rollback commands.
   Verify staging is production-equivalent in config.

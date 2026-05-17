@@ -25,14 +25,15 @@ permalink: /react/what-react-is-and-is-not/
 # RCT-002 - WHAT REACT IS AND IS NOT
 
 ⚡ TL;DR - React is a JavaScript library for building UI components
-- not a framework, not a language, not a solution for routing,
-data fetching, or state management on its own.
 
-| #002 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | The Frontend Complexity Problem | |
-| **Used by:** | Declarative UI vs Imperative DOM, The Component Mental Model, Component | |
-| **Related:** | The Frontend Complexity Problem, Declarative UI vs Imperative DOM, React Ecosystem Landscape | |
+- not a framework, not a language, not a solution for routing,
+  data fetching, or state management on its own.
+
+| #002            | Category: React                                                                              | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | The Frontend Complexity Problem                                                              |                 |
+| **Used by:**    | Declarative UI vs Imperative DOM, The Component Mental Model, Component                      |                 |
+| **Related:**    | The Frontend Complexity Problem, Declarative UI vs Imperative DOM, React Ecosystem Landscape |                 |
 
 ---
 
@@ -57,11 +58,12 @@ that causes pain later.
 
 **THE BREAKING POINT:**
 The confusion manifests in two failure modes. Beginners over-reach
+
 - they try to use React state for things that belong in a URL, a
-server, or a form library, creating unnecessary complexity.
-Experienced engineers from full-framework backgrounds under-reach
+  server, or a form library, creating unnecessary complexity.
+  Experienced engineers from full-framework backgrounds under-reach
 - they expect React to handle concerns it deliberately delegates
-to the ecosystem, then feel betrayed when it does not.
+  to the ecosystem, then feel betrayed when it does not.
 
 **THE INVENTION MOMENT:**
 This is exactly why understanding React's precise scope matters.
@@ -103,6 +105,7 @@ React is a library for building UI components - it handles
 the view layer and nothing else by default.
 
 **One analogy:**
+
 > React is like a LEGO brick system. It gives you the bricks
 > (components) and the rules for connecting them (props, state).
 > It does not give you a specific thing to build. If you want a
@@ -122,6 +125,7 @@ will not make them for you.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. React handles exactly one concern: rendering UI as a function
    of state and props.
 2. React makes no assumptions about the rest of the application
@@ -203,6 +207,7 @@ lifetime.
 > build the car.
 
 Mapping:
+
 - "Engine" → React (converts state into rendered UI)
 - "Steering system" → React Router (navigation)
 - "Fuel delivery" → React Query / SWR (data fetching)
@@ -368,14 +373,14 @@ management touches every part of the application.
 
 ### ⚖️ Comparison Table
 
-| | React | Angular | Vue | Svelte |
-|---|---|---|---|---|
-| Type | Library (UI only) | Full framework | Progressive framework | Compiler + library |
-| Routing included | No | Yes (Angular Router) | No (Vue Router separate) | No (SvelteKit adds it) |
-| State management | Hooks / external | RxJS / NgRx | Vuex / Pinia | Stores (built-in) |
-| HTTP client | External (fetch, Axios) | Built-in (HttpClient) | External | External |
-| Opinion level | Low | High | Medium | Medium |
-| **Best For** | Teams wanting control | Enterprise with strong conventions | Balanced choice | Performance-critical |
+|                  | React                   | Angular                            | Vue                      | Svelte                 |
+| ---------------- | ----------------------- | ---------------------------------- | ------------------------ | ---------------------- |
+| Type             | Library (UI only)       | Full framework                     | Progressive framework    | Compiler + library     |
+| Routing included | No                      | Yes (Angular Router)               | No (Vue Router separate) | No (SvelteKit adds it) |
+| State management | Hooks / external        | RxJS / NgRx                        | Vuex / Pinia             | Stores (built-in)      |
+| HTTP client      | External (fetch, Axios) | Built-in (HttpClient)              | External                 | External               |
+| Opinion level    | Low                     | High                               | Medium                   | Medium                 |
+| **Best For**     | Teams wanting control   | Enterprise with strong conventions | Balanced choice          | Performance-critical   |
 
 **How to choose:** If your team needs conventions enforced and
 prefers batteries-included, choose Angular (enterprise) or
@@ -386,13 +391,13 @@ to choose best-in-class for each concern, use React directly.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "React is a framework" | React is a library. It provides the component model and rendering only. The full application stack requires additional libraries for routing, data fetching, and state. |
-| "React includes routing" | React has no routing built in. React Router, TanStack Router, or a meta-framework like Next.js provides routing. |
-| "React and Next.js are the same thing" | Next.js is a framework built on top of React. React is the rendering layer; Next.js adds routing, SSR, file-based conventions, and build optimisations. |
-| "useState is enough for all state" | React's useState manages local component state. Server state (API data), URL state, and global app state each require different solutions. |
-| "Learning React means you can build a full app" | React is one piece of the stack. A production app requires additional decisions about routing, data fetching, styling, testing, and deployment. |
+| Misconception                                   | Reality                                                                                                                                                                 |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "React is a framework"                          | React is a library. It provides the component model and rendering only. The full application stack requires additional libraries for routing, data fetching, and state. |
+| "React includes routing"                        | React has no routing built in. React Router, TanStack Router, or a meta-framework like Next.js provides routing.                                                        |
+| "React and Next.js are the same thing"          | Next.js is a framework built on top of React. React is the rendering layer; Next.js adds routing, SSR, file-based conventions, and build optimisations.                 |
+| "useState is enough for all state"              | React's useState manages local component state. Server state (API data), URL state, and global app state each require different solutions.                              |
+| "Learning React means you can build a full app" | React is one piece of the stack. A production app requires additional decisions about routing, data fetching, styling, testing, and deployment.                         |
 
 ---
 
@@ -485,18 +490,21 @@ passing data down the tree. Never store credentials in Context.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `The Frontend Complexity Problem` - the problem React was
   invented to solve; context for why React's scope is what it is
 - `JavaScript Functions` - React components are JavaScript
   functions; the function model is the foundation
 
 **Builds On This (learn these next):**
+
 - `React Ecosystem Landscape` - the full map of what React
   combines with
 - `Component` - the core primitive React provides
 - `JSX` - React's syntax extension for describing UI
 
 **Alternatives / Comparisons:**
+
 - `Angular` - full framework that includes routing, HTTP, forms,
   and DI; opinionated where React is flexible
 - `Next.js` - React with framework-level opinions added;
@@ -541,6 +549,7 @@ passing data down the tree. Never store credentials in Context.
 ```
 
 **If you remember only 3 things:**
+
 1. React is a library, not a framework - it handles the view
    layer only. Routing, data fetching, and styling require
    separate ecosystem choices.
@@ -570,6 +579,7 @@ adequately. The cost is that composition requires more
 architectural decisions upfront.
 
 **Where else this pattern appears:**
+
 - Unix philosophy - small tools that do one thing well,
   composed via pipes; `grep`, `sed`, `awk` are React's
   philosophical cousins
@@ -580,6 +590,7 @@ architectural decisions upfront.
   orchestration layer is separate
 
 **Industry applications:**
+
 - Startups - React's flexibility means architectural decisions
   can be deferred or changed cheaply as the product evolves
 - Large enterprises - React's ecosystem means best-in-class
@@ -609,6 +620,7 @@ none of which are frameworks.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** List exactly what React handles (component
    rendering, state, effects) and exactly what requires an
    external library (routing, HTTP, forms), with one concrete
@@ -639,16 +651,16 @@ and optimistic updates. At 100 concurrent users editing shared
 data, which caching model (query-key-based invalidation vs
 subscription-based vs polling) leads to the fewest UI
 inconsistencies, and why?
-*Hint: Think about what "stale" means differently in each model
-and what server-sent updates require.*
+_Hint: Think about what "stale" means differently in each model
+and what server-sent updates require._
 
 **Q2.** A new team is starting a React project. They are debating
 whether to use raw React + Vite, or Next.js. The team has 5
 engineers, 2 of whom are junior. The application is a B2B SaaS
 dashboard that needs auth, routing, and API data. Which choice
 minimises total time to first production feature and why?
-*Hint: Consider decision overhead, convention vs configuration,
-and onboarding cost as measurable inputs to the estimate.*
+_Hint: Consider decision overhead, convention vs configuration,
+and onboarding cost as measurable inputs to the estimate._
 
 **Q3.** Build a tiny two-page React app (without Next.js) that
 navigates between a list page and a detail page. The URL must
@@ -657,6 +669,6 @@ bookmarkable. Then add data fetching for the detail page using
 `useEffect` + `useState`. Identify the three most dangerous
 failure modes in your `useEffect` data fetching implementation
 and fix them.
-*Hint: Look up "race condition in useEffect," "stale closure in
+_Hint: Look up "race condition in useEffect," "stale closure in
 useEffect cleanup," and "React 18 strict mode double invocation"
-before building.*
+before building._

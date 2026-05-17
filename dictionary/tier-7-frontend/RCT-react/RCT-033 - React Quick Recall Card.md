@@ -26,15 +26,16 @@ permalink: /react/react-quick-recall-card/
 
 ⚡ TL;DR - A dense cross-referencing map of React's
 core concepts, hooks, patterns, and gotchas in one place
-- for review before interviews, refreshing memory after
-a framework break, or quickly locating which concept
-to study when debugging a specific class of React problem.
 
-| #033 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | All foundational React entries (RCT-001 through RCT-032) | |
-| **Used by:** | Testing React, React Deep-Dive Interview Questions | |
-| **Related:** | React Deep-Dive Interview Questions, Staff-Level Scenarios | |
+- for review before interviews, refreshing memory after
+  a framework break, or quickly locating which concept
+  to study when debugging a specific class of React problem.
+
+| #033            | Category: React                                            | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------- | :-------------- |
+| **Depends on:** | All foundational React entries (RCT-001 through RCT-032)   |                 |
+| **Used by:**    | Testing React, React Deep-Dive Interview Questions         |                 |
+| **Related:**    | React Deep-Dive Interview Questions, Staff-Level Scenarios |                 |
 
 ---
 
@@ -264,23 +265,26 @@ Read async resource during render   use() (React 19)
 
 ```jsx
 // A component that uses most core patterns correctly
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
 
 function ProductSearch({ onSelect }) {
   // State
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-  const [status, setStatus] = useState('idle');
+  const [status, setStatus] = useState("idle");
 
   // Ref for focus management (DOM access)
   const inputRef = useRef(null);
 
   // Stable callback for child (useCallback for React.memo child)
-  const handleSelect = useCallback((product) => {
-    onSelect(product);
-    setQuery('');
-    setResults([]);
-  }, [onSelect]);
+  const handleSelect = useCallback(
+    (product) => {
+      onSelect(product);
+      setQuery("");
+      setResults([]);
+    },
+    [onSelect],
+  );
 
   // Side effect: fetch on query change
   useEffect(() => {
@@ -290,40 +294,49 @@ function ProductSearch({ onSelect }) {
     }
     let cancelled = false;
     const controller = new AbortController();
-    setStatus('loading');
-    fetch(`/api/products?q=${encodeURIComponent(query)}`,
-      { signal: controller.signal }
-    )
-      .then(res => { if (!res.ok) throw new Error(res.status); return res.json(); })
-      .then(data => { if (!cancelled) { setResults(data); setStatus('idle'); } })
-      .catch(err => {
-        if (err.name !== 'AbortError') {
-          if (!cancelled) setStatus('error');
+    setStatus("loading");
+    fetch(`/api/products?q=${encodeURIComponent(query)}`, {
+      signal: controller.signal,
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(res.status);
+        return res.json();
+      })
+      .then((data) => {
+        if (!cancelled) {
+          setResults(data);
+          setStatus("idle");
+        }
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          if (!cancelled) setStatus("error");
         }
       });
-    return () => { cancelled = true; controller.abort(); };
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [query]);
 
   // Focus on mount
-  useEffect(() => { inputRef.current?.focus(); }, []);
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   return (
     <div>
       <input
         ref={inputRef}
         value={query}
-        onChange={e => setQuery(e.target.value)}
+        onChange={(e) => setQuery(e.target.value)}
         placeholder="Search products..."
       />
-      {status === 'loading' && <span>Searching...</span>}
-      {status === 'error' && <span>Search failed</span>}
+      {status === "loading" && <span>Searching...</span>}
+      {status === "error" && <span>Search failed</span>}
       <ul>
-        {results.map(p => (
-          <ProductItem
-            key={p.id}
-            product={p}
-            onSelect={handleSelect}
-          />
+        {results.map((p) => (
+          <ProductItem key={p.id} product={p} onSelect={handleSelect} />
         ))}
       </ul>
     </div>
@@ -346,30 +359,30 @@ const ProductItem = React.memo(function ProductItem({ product, onSelect }) {
 
 ### 📊 Comparison Table
 
-| Concept | When to use | Common mistake | Entry |
-|---|---|---|---|
-| useState | Local synchronous state | Mutating state directly | RCT-020 |
-| useEffect | Side effects after render | Missing/wrong deps | RCT-021 |
-| useContext | Cross-tree shared state | High-freq state in context | RCT-022 |
-| useRef | DOM access, mutable non-state | Using for state (causes bugs) | RCT-023 |
-| useMemo | Expensive computed values | Premature optimisation | RCT-035 |
-| useCallback | Stable fn ref for React.memo | Without React.memo on child | RCT-036 |
-| React.memo | Skip expensive child re-renders | Without useCallback on handlers | RCT-037 |
-| useReducer | State machines, complex transitions | Using where useState is enough | RCT-034 |
-| Error Boundary | Render-phase error containment | Expecting it to catch async errors | RCT-028 |
-| Lifting state | Sibling communication | Lifting too high (causes prop drill) | RCT-029 |
-| Context | Cross-cutting concerns | High-frequency values (perf issue) | RCT-022 |
+| Concept        | When to use                         | Common mistake                       | Entry   |
+| -------------- | ----------------------------------- | ------------------------------------ | ------- |
+| useState       | Local synchronous state             | Mutating state directly              | RCT-020 |
+| useEffect      | Side effects after render           | Missing/wrong deps                   | RCT-021 |
+| useContext     | Cross-tree shared state             | High-freq state in context           | RCT-022 |
+| useRef         | DOM access, mutable non-state       | Using for state (causes bugs)        | RCT-023 |
+| useMemo        | Expensive computed values           | Premature optimisation               | RCT-035 |
+| useCallback    | Stable fn ref for React.memo        | Without React.memo on child          | RCT-036 |
+| React.memo     | Skip expensive child re-renders     | Without useCallback on handlers      | RCT-037 |
+| useReducer     | State machines, complex transitions | Using where useState is enough       | RCT-034 |
+| Error Boundary | Render-phase error containment      | Expecting it to catch async errors   | RCT-028 |
+| Lifting state  | Sibling communication               | Lifting too high (causes prop drill) | RCT-029 |
+| Context        | Cross-cutting concerns              | High-frequency values (perf issue)   | RCT-022 |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "React re-renders are expensive and must be minimised with useMemo everywhere" | Re-renders are cheap in React for most components. The bottleneck is usually the DOM update, not the JavaScript re-render. Profile before optimising. Premature useMemo adds cost (the memoization itself) and complexity without benefit. |
-| "useEffect runs after every render by default" | useEffect with `[]` runs once (mount). With `[deps]`, it runs when deps change. With no argument, it runs after every render - which is rarely what you want and usually a bug waiting to happen. |
-| "Context causes the entire app to re-render" | Only components that call `useContext(SomeContext)` re-render when that context's value changes. Components that do not consume the context are unaffected. The risk is if many components consume the same context with a high-frequency value. |
-| "React.memo makes components never re-render" | React.memo skips re-render if props are shallowly equal (same references). Passing a new object/array/function literal as a prop every render defeats React.memo because `{} !== {}` (new reference each render). |
+| Misconception                                                                  | Reality                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "React re-renders are expensive and must be minimised with useMemo everywhere" | Re-renders are cheap in React for most components. The bottleneck is usually the DOM update, not the JavaScript re-render. Profile before optimising. Premature useMemo adds cost (the memoization itself) and complexity without benefit.       |
+| "useEffect runs after every render by default"                                 | useEffect with `[]` runs once (mount). With `[deps]`, it runs when deps change. With no argument, it runs after every render - which is rarely what you want and usually a bug waiting to happen.                                                |
+| "Context causes the entire app to re-render"                                   | Only components that call `useContext(SomeContext)` re-render when that context's value changes. Components that do not consume the context are unaffected. The risk is if many components consume the same context with a high-frequency value. |
+| "React.memo makes components never re-render"                                  | React.memo skips re-render if props are shallowly equal (same references). Passing a new object/array/function literal as a prop every render defeats React.memo because `{} !== {}` (new reference each render).                                |
 
 ---
 
@@ -378,13 +391,15 @@ const ProductItem = React.memo(function ProductItem({ product, onSelect }) {
 **Infinite useEffect Loop**
 
 **Pattern that causes it:**
+
 ```jsx
 // This loops forever:
 const [data, setData] = useState({});
 useEffect(() => {
   setData({ processed: true });
-}, [data]);  // data changes → effect runs → setData → data changes → ...
+}, [data]); // data changes → effect runs → setData → data changes → ...
 ```
+
 **Diagnosis:** React DevTools shows rapid re-renders.
 **Fix:** Review the dependency array. Remove the circular
 dep or use a ref to break the cycle.
@@ -394,6 +409,7 @@ dep or use a ref to break the cycle.
 **Stale Closure in useEffect**
 
 **Pattern that causes it:**
+
 ```jsx
 const [count, setCount] = useState(0);
 useEffect(() => {
@@ -401,8 +417,9 @@ useEffect(() => {
     console.log(count); // always logs 0 (stale closure!)
   }, 1000);
   return () => clearInterval(id);
-}, []);  // count not in deps - closure captures initial value
+}, []); // count not in deps - closure captures initial value
 ```
+
 **Fix:** Add `count` to deps (re-creates interval on change).
 Or use functional setState: `setCount(prev => prev + 1)`.
 
@@ -411,12 +428,14 @@ Or use functional setState: `setCount(prev => prev + 1)`.
 ### 🔗 Related Keywords
 
 **This card synthesises:**
+
 - Core: RCT-001 through RCT-010 (fundamentals)
 - Hooks: RCT-020 through RCT-024
 - Patterns: RCT-025 through RCT-032
 - Performance: RCT-035, RCT-036, RCT-037, RCT-039
 
 **Leads to:**
+
 - `React Deep-Dive Interview Questions` (RCT-065)
 - `Staff-Level React Architecture Interview Scenarios` (RCT-070)
 - `Testing React with RTL` (RCT-048)
@@ -448,6 +467,7 @@ Or use functional setState: `setCount(prev => prev + 1)`.
 ```
 
 **If you remember only 3 things:**
+
 1. Every re-render is a function call. Hooks call order
    must be stable. Deps array controls when effects run.
 2. Data flows down (props), up (callbacks), wide (Context).

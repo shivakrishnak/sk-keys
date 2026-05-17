@@ -29,11 +29,11 @@ Node.js LTS + Vite (or Next.js for SSR), TypeScript, ESLint,
 Prettier, and React DevTools - avoiding deprecated CRA from
 the start saves significant rework.
 
-| #006 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | What React Is and Is Not, React Ecosystem Landscape | |
-| **Used by:** | Component, JSX, Vite and Create React App | |
-| **Related:** | React Ecosystem Landscape, Vite and Create React App | |
+| #006            | Category: React                                      | Difficulty: ★☆☆ |
+| :-------------- | :--------------------------------------------------- | :-------------- |
+| **Depends on:** | What React Is and Is Not, React Ecosystem Landscape  |                 |
+| **Used by:**    | Component, JSX, Vite and Create React App            |                 |
+| **Related:**    | React Ecosystem Landscape, Vite and Create React App |                 |
 
 ---
 
@@ -83,6 +83,7 @@ TypeScript template, install React DevTools, and you have a
 production-grade starting point.
 
 **One analogy:**
+
 > Setting up a React environment is like setting up a
 > workshop. Node.js is the electricity. Vite is the workbench.
 > TypeScript is the safety goggles. ESLint is the quality
@@ -151,6 +152,7 @@ Developer A: uses default `create-react-app`.
 Developer B: uses Vite with TypeScript template.
 
 **THREE MONTHS LATER:**
+
 - Developer A: 45-second cold build times, no type checking,
   tests using Enzyme (CRA default), no hot reload after
   config changes. They open a ticket: "builds are too slow."
@@ -168,9 +170,9 @@ choices compounds every day the project exists.
 
 > The development environment is the inner feedback loop.
 > Think of feedback loops at different timescales:
-> 
+>
 > - IDE type error: 0ms (as you type)
-> - ESLint error: 0ms (as you type)  
+> - ESLint error: 0ms (as you type)
 > - HMR update: < 50ms (as you save)
 > - Test run: < 200ms (Vitest watch mode)
 > - CI check: 2-5 minutes (on push)
@@ -257,6 +259,7 @@ npm run dev
 ```
 
 **Essential VS Code Extensions:**
+
 - ESLint (Microsoft)
 - Prettier - Code Formatter
 - ES7+ React/Redux/React-Native snippets
@@ -376,11 +379,7 @@ echo "20" > .nvmrc
     "prettier"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "react-hooks",
-    "@typescript-eslint",
-    "jsx-a11y"
-  ],
+  "plugins": ["react-hooks", "@typescript-eslint", "jsx-a11y"],
   "rules": {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn"
@@ -395,12 +394,12 @@ echo "20" > .nvmrc
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Create React App is still the recommended setup" | CRA was deprecated by the React team in 2023. The official React docs now recommend framework-based solutions (Next.js, Remix) or Vite for custom setups. |
-| "TypeScript is optional for small projects" | TypeScript's value is highest at the beginning of a project when types are cheapest to add. Retrofitting TypeScript onto 50,000 lines of existing JS is expensive. Start with TypeScript always. |
+| Misconception                                      | Reality                                                                                                                                                                                                                               |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Create React App is still the recommended setup"  | CRA was deprecated by the React team in 2023. The official React docs now recommend framework-based solutions (Next.js, Remix) or Vite for custom setups.                                                                             |
+| "TypeScript is optional for small projects"        | TypeScript's value is highest at the beginning of a project when types are cheapest to add. Retrofitting TypeScript onto 50,000 lines of existing JS is expensive. Start with TypeScript always.                                      |
 | "ESLint and Prettier are redundant - just use one" | ESLint catches code quality issues (unused variables, hooks violations). Prettier formats code style. They serve different purposes. Use `eslint-config-prettier` to disable ESLint formatting rules and let Prettier own formatting. |
-| "React DevTools only helps beginners" | The React DevTools Profiler is an essential performance tool for senior engineers. It shows render times, which components re-rendered, and why. It is the first tool to open when investigating performance issues. |
+| "React DevTools only helps beginners"              | The React DevTools Profiler is an essential performance tool for senior engineers. It shows render times, which components re-rendered, and why. It is the first tool to open when investigating performance issues.                  |
 
 ---
 
@@ -418,6 +417,7 @@ The project uses Create React App (webpack-based), which
 bundles everything on startup and on every change.
 
 **Diagnostic Command:**
+
 ```bash
 # Check if project uses CRA
 cat package.json | grep react-scripts
@@ -453,6 +453,7 @@ silenced. The developer wrote the empty array deliberately or
 by accident without understanding the bug it creates.
 
 **Diagnostic Command:**
+
 ```bash
 # Run ESLint with hooks rules
 npx eslint src --ext .ts,.tsx --rule \
@@ -471,10 +472,12 @@ dependency.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `React Ecosystem Landscape` - the landscape that
   defines which tools appear in this setup
 
 **Builds On This (learn these next):**
+
 - `Vite and Create React App` - the build tooling layer
   in detail
 - `Component` - the first React code written in this
@@ -483,6 +486,7 @@ dependency.
   in the React context
 
 **Alternatives / Comparisons:**
+
 - `Next.js` - replaces Vite for projects needing SSR;
   includes its own routing, build pipeline, and server
   infrastructure
@@ -525,6 +529,7 @@ dependency.
 ```
 
 **If you remember only 3 things:**
+
 1. Use `npm create vite@latest -- --template react-ts` for
    new SPAs. Never `create-react-app` in 2024.
 2. Always enable TypeScript strict mode from day one. Adding

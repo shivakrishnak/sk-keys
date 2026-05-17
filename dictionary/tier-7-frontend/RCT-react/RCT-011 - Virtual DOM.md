@@ -30,11 +30,11 @@ the real DOM; diffing the virtual tree before touching
 the real DOM makes updates efficient and the declarative
 model practical.
 
-| #011 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Declarative UI vs Imperative DOM, Component, JSX | |
-| **Used by:** | ReactDOM Rendering, List Rendering and the key Prop, React Reconciliation Algorithm, React Fiber Architecture | |
-| **Related:** | React Reconciliation Algorithm, React Fiber Architecture, Virtual DOM Comparison Survey | |
+| #011            | Category: React                                                                                               | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Declarative UI vs Imperative DOM, Component, JSX                                                              |                 |
+| **Used by:**    | ReactDOM Rendering, List Rendering and the key Prop, React Reconciliation Algorithm, React Fiber Architecture |                 |
+| **Related:**    | React Reconciliation Algorithm, React Fiber Architecture, Virtual DOM Comparison Survey                       |                 |
 
 ---
 
@@ -94,6 +94,7 @@ React diffs before touching actual DOM nodes - like preparing
 edits on a draft before publishing.
 
 **One analogy:**
+
 > The virtual DOM is like a recipe draft. When you want to
 > change a recipe, you write out the full new version on a
 > blank piece of paper, compare it to the current printed
@@ -147,6 +148,7 @@ of them is a simple property comparison.
 The virtual DOM diff algorithm uses heuristics to achieve
 O(n) complexity (rather than the theoretical O(n³) for
 general tree diffing):
+
 1. Elements of different types are always different trees
    (no subtree comparison needed)
 2. Keys identify stable elements across list re-orderings
@@ -169,6 +171,7 @@ A list of 1000 items. One item's text changes.
 
 **WITHOUT VIRTUAL DOM:**
 If React re-rendered by clearing and rebuilding:
+
 - All 1000 DOM nodes destroyed
 - All 1000 DOM nodes recreated
 - Browser repaints entire list area
@@ -176,6 +179,7 @@ If React re-rendered by clearing and rebuilding:
 - Scroll position may jump
 
 **WITH VIRTUAL DOM:**
+
 - React computes new virtual DOM tree (JS objects - cheap)
 - Diff against previous virtual tree
 - Finds: only item 42's text content changed
@@ -292,7 +296,7 @@ DIFF PHASE:
   Compare new tree vs currentVDOM:
   currentVDOM: { type: 'div', props: { children: "Alice" } }
   newVDOM:     { type: 'div', props: { children: "Bob" } }
-  
+
   node at root: same type 'div', same position -> update
   child: text "Alice" -> "Bob" -> text node mutation needed
 
@@ -376,7 +380,7 @@ function Parent({ items }) {
 
   return (
     <ul>
-      {items.map(item => (
+      {items.map((item) => (
         <ListItem key={item.id} item={item} />
       ))}
     </ul>
@@ -401,7 +405,7 @@ function ListItem({ item }) {
 function Parent({ items }) {
   return (
     <ul>
-      {items.map(item => (
+      {items.map((item) => (
         <ListItem key={item.id} item={item} />
       ))}
     </ul>
@@ -420,7 +424,7 @@ function Parent({ items }) {
 function UserProfile({ userId }) {
   return (
     <ProfileForm
-      key={userId}  // <- changing key forces full remount
+      key={userId} // <- changing key forces full remount
       userId={userId}
     />
   );
@@ -437,24 +441,24 @@ function UserProfile({ userId }) {
 
 ### ⚖️ Comparison Table
 
-| Approach | Virtual DOM (React) | No vDOM - Compile-time (Svelte) | Fine-grained Signals (SolidJS) |
-|---|---|---|---|
-| **Update strategy** | Diff JS trees, apply patch | Compiled surgically precise DOM ops | Signals update only subscribed DOM nodes |
-| **Runtime overhead** | Medium (diffing cost) | Minimal (no diffing) | Very low (signal subscriptions) |
-| **Bundle size** | Larger (reconciler included) | Smaller (no runtime) | Small (signals runtime) |
-| **Mental model** | Declarative, re-render-based | Declarative, compiled | Reactive signals |
-| **Best for** | Complex dynamic UIs (React ecosystem) | Small-to-medium apps, performance | High-frequency updates |
+| Approach             | Virtual DOM (React)                   | No vDOM - Compile-time (Svelte)     | Fine-grained Signals (SolidJS)           |
+| -------------------- | ------------------------------------- | ----------------------------------- | ---------------------------------------- |
+| **Update strategy**  | Diff JS trees, apply patch            | Compiled surgically precise DOM ops | Signals update only subscribed DOM nodes |
+| **Runtime overhead** | Medium (diffing cost)                 | Minimal (no diffing)                | Very low (signal subscriptions)          |
+| **Bundle size**      | Larger (reconciler included)          | Smaller (no runtime)                | Small (signals runtime)                  |
+| **Mental model**     | Declarative, re-render-based          | Declarative, compiled               | Reactive signals                         |
+| **Best for**         | Complex dynamic UIs (React ecosystem) | Small-to-medium apps, performance   | High-frequency updates                   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Virtual DOM makes React the fastest framework" | Virtual DOM is a performance strategy but not the fastest possible approach. Compile-time frameworks (Svelte) and fine-grained reactivity (SolidJS) can be significantly faster because they eliminate the diffing step entirely. React's virtual DOM is "fast enough" for most applications. |
-| "React re-renders the whole DOM" | React re-renders components (calls functions, produces virtual DOM). The real DOM is only touched where the diff finds changes. A component re-rendering does not mean its DOM subtree is recreated. |
-| "The virtual DOM is always in sync with the real DOM" | The virtual DOM reflects what React last committed. If you manually mutate the real DOM via refs or imperative code, the virtual DOM becomes stale and subsequent diffs produce incorrect patches. |
-| "Skipping re-renders (React.memo) bypasses the virtual DOM" | React.memo skips the RENDER phase (calling the function) for a component if its props have not changed. Without a new render, there is no new virtual DOM to diff. React.memo is a way to reduce reconciliation work, not to bypass the virtual DOM mechanism. |
+| Misconception                                               | Reality                                                                                                                                                                                                                                                                                       |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Virtual DOM makes React the fastest framework"             | Virtual DOM is a performance strategy but not the fastest possible approach. Compile-time frameworks (Svelte) and fine-grained reactivity (SolidJS) can be significantly faster because they eliminate the diffing step entirely. React's virtual DOM is "fast enough" for most applications. |
+| "React re-renders the whole DOM"                            | React re-renders components (calls functions, produces virtual DOM). The real DOM is only touched where the diff finds changes. A component re-rendering does not mean its DOM subtree is recreated.                                                                                          |
+| "The virtual DOM is always in sync with the real DOM"       | The virtual DOM reflects what React last committed. If you manually mutate the real DOM via refs or imperative code, the virtual DOM becomes stale and subsequent diffs produce incorrect patches.                                                                                            |
+| "Skipping re-renders (React.memo) bypasses the virtual DOM" | React.memo skips the RENDER phase (calling the function) for a component if its props have not changed. Without a new render, there is no new virtual DOM to diff. React.memo is a way to reduce reconciliation work, not to bypass the virtual DOM mechanism.                                |
 
 ---
 
@@ -476,6 +480,7 @@ When items move, same-position matching causes incorrect
 diffs.
 
 **Diagnostic Command:**
+
 ```bash
 # React DevTools will warn in the console:
 # "Warning: Each child in a list should have a unique 'key' prop."
@@ -515,6 +520,7 @@ third-party libraries that control their own DOM subtree.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Declarative UI vs Imperative DOM Manipulation` - why
   the virtual DOM exists as the implementation of the
   declarative model
@@ -522,6 +528,7 @@ third-party libraries that control their own DOM subtree.
   nodes
 
 **Builds On This (learn these next):**
+
 - `React Reconciliation Algorithm` - the diffing algorithm
   in detail
 - `List Rendering and the key Prop` - how keys guide the
@@ -530,6 +537,7 @@ third-party libraries that control their own DOM subtree.
   Concurrent rendering possible
 
 **Alternatives / Comparisons:**
+
 - `Svelte (no vDOM)` - compile-time approach that generates
   targeted DOM mutations without a runtime virtual DOM
 - `SolidJS (signals)` - fine-grained reactive model where
@@ -571,6 +579,7 @@ third-party libraries that control their own DOM subtree.
 ```
 
 **If you remember only 3 things:**
+
 1. The virtual DOM is a JavaScript object tree. Creating
    and diffing JS objects is cheap; mutating the real DOM
    is expensive. The vDOM enables "compute desired UI, apply
@@ -607,6 +616,7 @@ pattern appears in many systems: git diff, CRDT merging,
 database replication.
 
 **Where else this pattern appears:**
+
 - Git - computes diffs between commits; stores only deltas
   not full file copies for most operations
 - React Native - virtual DOM translates to native widget
@@ -637,6 +647,7 @@ imagined.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** Draw the virtual DOM update cycle from
    `setState()` to real DOM mutation, naming the Render,
    Reconciliation, and Commit phases and what is different
@@ -667,7 +678,7 @@ like `{isAdmin ? <AdminPanel /> : <UserPanel />}` flips?
 Both components are at the same tree position but are
 different types. Trace through the reconciliation process:
 what DOM operations happen, and what state is preserved?
-*Hint: Type change = full subtree replace.*
+_Hint: Type change = full subtree replace._
 
 **Q2.** React Fiber changed the internals of the virtual
 DOM from a recursive synchronous process to a work-loop
@@ -676,7 +687,7 @@ the virtual DOM model looks the same: components return JSX,
 React diffs it. What visible developer-facing behaviour
 changed with Concurrent Mode that is attributable to this
 internal change in how the virtual DOM is processed?
-*Hint: Transitions, Suspense fallbacks, useTransition.*
+_Hint: Transitions, Suspense fallbacks, useTransition._
 
 **Q3.** The virtual DOM is often described as an
 "abstraction over the DOM." React Native uses the same
@@ -685,5 +696,5 @@ Android widgets, not HTML DOM elements. What does this
 tell you about where the "virtual DOM" model ends and where
 the platform-specific rendering begins? What is the correct
 name for the layer that actually does platform rendering?
-*Hint: react-dom vs react-native renderer; React itself
-is renderer-agnostic.*
+_Hint: react-dom vs react-native renderer; React itself
+is renderer-agnostic._

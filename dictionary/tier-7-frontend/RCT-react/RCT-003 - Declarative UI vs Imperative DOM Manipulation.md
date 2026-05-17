@@ -28,11 +28,11 @@ permalink: /react/declarative-ui-vs-imperative-dom/
 code says "this is what I want" - React's declarative model is
 what makes UIs predictable and maintainable at scale.
 
-| #003 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | The Frontend Complexity Problem, What React Is and Is Not | |
-| **Used by:** | Component, JSX, Virtual DOM, React Reconciliation Algorithm | |
-| **Related:** | The Frontend Complexity Problem, Virtual DOM, One-Way Data Binding | |
+| #003            | Category: React                                                    | Difficulty: ★☆☆ |
+| :-------------- | :----------------------------------------------------------------- | :-------------- |
+| **Depends on:** | The Frontend Complexity Problem, What React Is and Is Not          |                 |
+| **Used by:**    | Component, JSX, Virtual DOM, React Reconciliation Algorithm        |                 |
+| **Related:**    | The Frontend Complexity Problem, Virtual DOM, One-Way Data Binding |                 |
 
 ---
 
@@ -103,6 +103,7 @@ Imperative code says "do steps A, B, C"; declarative code says
 "I want this result - figure out the steps yourself."
 
 **One analogy:**
+
 > Imperative is driving directions: "Turn left on Oak St, drive
 > 200 metres, turn right at the light, park on the left." You
 > describe every step. Declarative is typing an address into
@@ -125,6 +126,7 @@ correct by construction.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. At any moment, a UI has exactly one correct visual state
    given the application data.
 2. Moving from one state to another requires specific DOM
@@ -173,13 +175,13 @@ show blue text. Clicked again: show red.
 ```js
 // Imperative approach
 let isRed = true;
-button.addEventListener('click', () => {
-  const text = document.getElementById('text');
+button.addEventListener("click", () => {
+  const text = document.getElementById("text");
   if (isRed) {
-    text.style.color = 'blue';
+    text.style.color = "blue";
     isRed = false;
   } else {
-    text.style.color = 'red';
+    text.style.color = "red";
     isRed = true;
   }
 });
@@ -197,10 +199,8 @@ function Toggle() {
   const [isRed, setIsRed] = useState(true);
   return (
     <div>
-      <p style={{ color: isRed ? 'red' : 'blue' }}>Text</p>
-      <button onClick={() => setIsRed(prev => !prev)}>
-        Toggle
-      </button>
+      <p style={{ color: isRed ? "red" : "blue" }}>Text</p>
+      <button onClick={() => setIsRed((prev) => !prev)}>Toggle</button>
     </div>
   );
 }
@@ -228,6 +228,7 @@ break-even point is lower than most developers expect.
 > mutations are macros.
 
 Mapping:
+
 - "Formula" → React component (declares output from input)
 - "Input cell value changing" → React state update
 - "Formula recalculating" → component re-rendering
@@ -431,7 +432,7 @@ function Counter() {
     <div>
       {/* React derives this from count - no manual DOM write */}
       <span>{count}</span>
-      <button onClick={() => setCount(c => c + 1)}>+</button>
+      <button onClick={() => setCount((c) => c + 1)}>+</button>
     </div>
   );
 }
@@ -448,7 +449,7 @@ mutation logic:**
 function UserProfile({ user, isLoading, error }) {
   // Describe every state; React computes DOM transitions
   if (isLoading) return <Spinner />;
-  if (error)     return <ErrorMessage message={error.message} />;
+  if (error) return <ErrorMessage message={error.message} />;
   return (
     <div>
       <h1>{user.name}</h1>
@@ -473,12 +474,12 @@ the declarative output.
 
 ### ⚖️ Comparison Table
 
-| Model | Code Style | Complexity Growth | Debug Effort | Best For |
-|---|---|---|---|---|
-| **Imperative (jQuery)** | "Do X then Y" | O(n²) state transitions | Hard - trace mutation paths | Simple, isolated interactions |
-| **Declarative (React)** | "Looks like Z for state S" | O(n) state descriptions | Easier - inspect state | Complex interactive UIs |
-| **Two-way binding (Angular 1)** | "Keep X in sync with Y" | O(n) but unpredictable | Hard - digest cycle | CRUD forms |
-| **Observable (RxJS)** | "When A changes, map to B" | O(n) + composition | Very hard at scale | Event streams, time-based |
+| Model                           | Code Style                 | Complexity Growth       | Debug Effort                | Best For                      |
+| ------------------------------- | -------------------------- | ----------------------- | --------------------------- | ----------------------------- |
+| **Imperative (jQuery)**         | "Do X then Y"              | O(n²) state transitions | Hard - trace mutation paths | Simple, isolated interactions |
+| **Declarative (React)**         | "Looks like Z for state S" | O(n) state descriptions | Easier - inspect state      | Complex interactive UIs       |
+| **Two-way binding (Angular 1)** | "Keep X in sync with Y"    | O(n) but unpredictable  | Hard - digest cycle         | CRUD forms                    |
+| **Observable (RxJS)**           | "When A changes, map to B" | O(n) + composition      | Very hard at scale          | Event streams, time-based     |
 
 **How to choose:** Use the declarative React model for all UI
 rendering. Use imperative code only where necessary: DOM
@@ -490,12 +491,12 @@ and documented.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Declarative is always better than imperative" | Declarative models trade control for abstraction. For simple single-state interactions, imperative is sometimes clearer. The break-even favours declarative sooner than most developers expect. |
-| "useEffect is declarative" | useEffect is the imperative escape hatch in an otherwise declarative model. It runs side effects in response to renders - it is intentionally imperative. |
-| "React re-renders the whole DOM" | React re-renders the virtual DOM (a JS object tree), then computes the minimal real DOM patch. The real DOM is only touched where changes occurred. |
-| "Declarative means no control over what happens" | Declarative means the runtime owns the transition computation. You control the inputs (state, props) and the outputs (what the UI should look like). The how is delegated, not lost. |
+| Misconception                                    | Reality                                                                                                                                                                                         |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Declarative is always better than imperative"   | Declarative models trade control for abstraction. For simple single-state interactions, imperative is sometimes clearer. The break-even favours declarative sooner than most developers expect. |
+| "useEffect is declarative"                       | useEffect is the imperative escape hatch in an otherwise declarative model. It runs side effects in response to renders - it is intentionally imperative.                                       |
+| "React re-renders the whole DOM"                 | React re-renders the virtual DOM (a JS object tree), then computes the minimal real DOM patch. The real DOM is only touched where changes occurred.                                             |
+| "Declarative means no control over what happens" | Declarative means the runtime owns the transition computation. You control the inputs (state, props) and the outputs (what the UI should look like). The how is delegated, not lost.            |
 
 ---
 
@@ -515,6 +516,7 @@ React state. React's vDOM snapshot is out of sync with the real
 DOM. Subsequent renders restore the stale state.
 
 **Diagnostic Command:**
+
 ```bash
 # In React DevTools, inspect the component tree.
 # If React's state value is correct but the DOM shows
@@ -549,6 +551,7 @@ using it incorrectly reintroduces all the transition-management
 problems the declarative model was designed to eliminate.
 
 **Diagnostic Command:**
+
 ```bash
 # Add console.log to the top of the useEffect body.
 # If it logs more than expected times, the dependency
@@ -572,12 +575,14 @@ eliminated.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `The Frontend Complexity Problem` - the motivation for why
   the declarative model was needed
 - `JavaScript Functions` - React components are functions;
   understanding how functions work is prerequisite
 
 **Builds On This (learn these next):**
+
 - `Virtual DOM` - the implementation that makes the declarative
   model performant
 - `React Reconciliation Algorithm` - the diff algorithm that
@@ -585,6 +590,7 @@ eliminated.
 - `JSX` - the syntax that makes declarative UI readable
 
 **Alternatives / Comparisons:**
+
 - `Svelte` - achieves the same declarative model by compiling
   reactivity at build time, eliminating the virtual DOM runtime
   overhead
@@ -628,6 +634,7 @@ eliminated.
 ```
 
 **If you remember only 3 things:**
+
 1. Imperative = you specify each step. Declarative = you
    describe the target. React is declarative for rendering,
    imperative only for `useEffect` and `useRef`.
@@ -658,15 +665,17 @@ specification of transitions between them. Transitions are
 O(n²); state descriptions are O(n).
 
 **Where else this pattern appears:**
+
 - SQL vs loops - `SELECT ... WHERE condition` (declarative)
   vs iterating rows manually (imperative); SQL wins at scale
 - CSS Flexbox vs float layouts - `display: flex; justify-content:
-  space-between` (declarative) vs calculating pixel offsets
+space-between` (declarative) vs calculating pixel offsets
   (imperative)
 - Infrastructure as Code (Terraform) - declaring desired
   infrastructure state vs scripting every provisioning step
 
 **Industry applications:**
+
 - Animation systems - CSS animations and keyframes are
   declarative; you describe start/end states, the browser
   interpolates. React Spring and Framer Motion apply the same
@@ -698,6 +707,7 @@ expect.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** Describe to a junior developer why their bug
    (a UI element not updating after a click) is caused by
    imperative DOM mutation rather than state, and walk them
@@ -729,8 +739,8 @@ explicitly imperative - it runs side effects in response to
 renders. At what point does a React codebase become "mostly
 imperative" again through overuse of `useEffect`, and how would
 you measure this?
-*Hint: Count the ratio of useEffect to useState usages in a
-codebase. What ratio triggers a refactoring conversation?*
+_Hint: Count the ratio of useEffect to useState usages in a
+codebase. What ratio triggers a refactoring conversation?_
 
 **Q2.** React's declarative model is excellent at managing
 component-level state transitions. At the scale of a large SPA
@@ -739,8 +749,8 @@ between "global states" still need to be specified somewhere.
 Where does that specification live in a well-architected React
 application, and how does it compare to React's own
 reconciliation approach?
-*Hint: Compare Redux reducer transitions vs React's own
-reconcile-from-scratch approach.*
+_Hint: Compare Redux reducer transitions vs React's own
+reconcile-from-scratch approach._
 
 **Q3.** Take a form with 5 fields, 3 conditional sections, and
 2 validation modes (submit-time and live). Implement it first
@@ -748,5 +758,5 @@ using direct DOM manipulation (jQuery-style), then using React
 declarative state. Count the code paths that must be audited
 if you need to add a sixth field. What does the count tell you
 about the break-even point for adopting the declarative model?
-*Hint: A "code path to audit" is any place that reads or writes
-the field's visible state.*
+_Hint: A "code path to audit" is any place that reads or writes
+the field's visible state._

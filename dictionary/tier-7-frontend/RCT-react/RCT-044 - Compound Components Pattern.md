@@ -33,11 +33,11 @@ consumers full control over the composition and order
 of sub-components while encapsulating all coordination
 logic in the parent.
 
-| #044 | Category: React | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | useContext Hook, Custom Hooks, Render Props Pattern | |
-| **Used by:** | Design System Architecture with React | |
-| **Related:** | Higher-Order Components, Render Props, useContext Hook | |
+| #044            | Category: React                                        | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------- | :-------------- |
+| **Depends on:** | useContext Hook, Custom Hooks, Render Props Pattern    |                 |
+| **Used by:**    | Design System Architecture with React                  |                 |
+| **Related:**    | Higher-Order Components, Render Props, useContext Hook |                 |
 
 ---
 
@@ -51,15 +51,16 @@ The obvious implementation: pass all options as a prop.
 // NAIVE: monolithic API
 <Select
   options={[
-    { label: 'Apple', value: 'apple', disabled: false },
-    { label: 'Banana', value: 'banana', disabled: true },
-    { label: 'Cherry', value: 'cherry', disabled: false },
+    { label: "Apple", value: "apple", disabled: false },
+    { label: "Banana", value: "banana", disabled: true },
+    { label: "Cherry", value: "cherry", disabled: false },
   ]}
   onSelect={handleSelect}
 />
 ```
 
 The problem surfaces when consumers need customisation:
+
 - Add an icon to one option
 - Group options by category
 - Add a "create new" option at the bottom
@@ -96,16 +97,12 @@ coordination between the sub-components.
 ```jsx
 // Compound Components usage:
 <Select value={selected} onChange={setSelected}>
-  <Select.Option value="apple">
-    🍎 Apple
-  </Select.Option>
+  <Select.Option value="apple">🍎 Apple</Select.Option>
   <Select.Option value="banana" disabled>
     🍌 Banana (out of stock)
   </Select.Option>
-  <Select.Separator />  {/* Custom content between options */}
-  <Select.Option value="cherry">
-    🍒 Cherry
-  </Select.Option>
+  <Select.Separator /> {/* Custom content between options */}
+  <Select.Option value="cherry">🍒 Cherry</Select.Option>
 </Select>
 
 // Benefits:
@@ -161,6 +158,7 @@ Compound Components work via React Context:
 
 **THE TABS COMPONENT FLEXIBILITY TEST:**
 A design system's `<Tabs>` component needs to support:
+
 - Regular tabs (tabs above content)
 - Vertical tabs (tabs on the left)
 - Tabs with icons
@@ -176,6 +174,7 @@ these. The component author must anticipate every use case.
 Users who need combinations of these features may be stuck.
 
 With Compound Components:
+
 ```jsx
 <Tabs defaultTab="tab1">
   <Tabs.List>
@@ -183,7 +182,9 @@ With Compound Components:
       <BellIcon /> Notifications
       <Badge count={5} />
     </Tabs.Tab>
-    <Tabs.Tab value="tab2" disabled>Settings</Tabs.Tab>
+    <Tabs.Tab value="tab2" disabled>
+      Settings
+    </Tabs.Tab>
   </Tabs.List>
   <Tabs.Panel value="tab1">
     <NotificationList />
@@ -193,6 +194,7 @@ With Compound Components:
   </Tabs.Panel>
 </Tabs>
 ```
+
 The consumer adds icons, badges, and disabled state without
 any new props. The Tabs parent handles selection state
 and ARIA. Each piece is independently customisable.
@@ -241,10 +243,11 @@ Sub-components should validate that they are used inside
 the correct parent. If `useContext(SelectContext)` returns
 `null` (no parent Select), the sub-component is being
 used incorrectly. Throw a useful error:
+
 ```jsx
 const context = useContext(SelectContext);
 if (context === null) {
-  throw new Error('Select.Option must be used inside <Select>');
+  throw new Error("Select.Option must be used inside <Select>");
 }
 ```
 
@@ -268,7 +271,7 @@ consumer needs without constant new API additions.
 **Full Compound Component implementation:**
 
 ```jsx
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from "react";
 
 // 1. Create the context (null default triggers validation error)
 const SelectContext = createContext(null);
@@ -277,9 +280,7 @@ const SelectContext = createContext(null);
 function useSelectContext() {
   const context = useContext(SelectContext);
   if (!context) {
-    throw new Error(
-      'Select sub-components must be used inside <Select>'
-    );
+    throw new Error("Select sub-components must be used inside <Select>");
   }
   return context;
 }
@@ -296,9 +297,9 @@ function Option({ value, children, disabled = false }) {
       aria-disabled={disabled}
       onClick={() => !disabled && onSelect(value)}
       style={{
-        fontWeight: isSelected ? 'bold' : 'normal',
+        fontWeight: isSelected ? "bold" : "normal",
         opacity: disabled ? 0.5 : 1,
-        cursor: disabled ? 'not-allowed' : 'pointer',
+        cursor: disabled ? "not-allowed" : "pointer",
       }}
     >
       {children}
@@ -324,9 +325,7 @@ function Select({ value, onChange, defaultValue, children }) {
 
   return (
     <SelectContext.Provider value={{ selected, onSelect }}>
-      <ul role="listbox">
-        {children}
-      </ul>
+      <ul role="listbox">{children}</ul>
     </SelectContext.Provider>
   );
 }
@@ -350,12 +349,14 @@ function Select({ options, renderOption, header, footer, onSelect }) {
   return (
     <ul>
       {header && <li>{header}</li>}
-      {options.map(o =>
-        renderOption
-          ? renderOption(o)
-          : <li key={o.value} onClick={() => onSelect(o.value)}>
-              {o.label}
-            </li>
+      {options.map((o) =>
+        renderOption ? (
+          renderOption(o)
+        ) : (
+          <li key={o.value} onClick={() => onSelect(o.value)}>
+            {o.label}
+          </li>
+        ),
       )}
       {footer && <li>{footer}</li>}
     </ul>
@@ -372,9 +373,9 @@ function Select({ options, renderOption, header, footer, onSelect }) {
 // GOOD: consumer has full structural control
 <Select onChange={setSelected} defaultValue="apple">
   <Select.Option value="apple">
-    🍎 Apple <NewBadge />  {/* badge just works */}
+    🍎 Apple <NewBadge /> {/* badge just works */}
   </Select.Option>
-  <Select.Separator />  {/* insert anywhere */}
+  <Select.Separator /> {/* insert anywhere */}
   <Select.Option value="cherry">🍒 Cherry</Select.Option>
 </Select>
 // No new props needed for badge, separator, or icons
@@ -385,26 +386,26 @@ function Select({ options, renderOption, header, footer, onSelect }) {
 
 ### 📊 Comparison Table
 
-| | Compound Components | Render Props | Config Props |
-|---|---|---|---|
-| Consumer control | Full layout control | Partial (inside render fn) | Limited (via config props) |
-| Customisation surface | Unlimited (compose children freely) | What the render fn exposes | What props expose |
-| API surface (on parent) | Small (context + children) | Medium (render prop signature) | Large (many props) |
-| Learning curve | Higher (must know sub-components) | Medium | Low (just pass props) |
-| Sub-component validation | Yes (useContext null check) | N/A | N/A |
-| ARIA/a11y management | Centralised in parent | Split between parent/render | Centralised |
-| Used by | Radix UI, Headless UI, Ant Design | react-window, older Formik | MUI (many props) |
+|                          | Compound Components                 | Render Props                   | Config Props               |
+| ------------------------ | ----------------------------------- | ------------------------------ | -------------------------- |
+| Consumer control         | Full layout control                 | Partial (inside render fn)     | Limited (via config props) |
+| Customisation surface    | Unlimited (compose children freely) | What the render fn exposes     | What props expose          |
+| API surface (on parent)  | Small (context + children)          | Medium (render prop signature) | Large (many props)         |
+| Learning curve           | Higher (must know sub-components)   | Medium                         | Low (just pass props)      |
+| Sub-component validation | Yes (useContext null check)         | N/A                            | N/A                        |
+| ARIA/a11y management     | Centralised in parent               | Split between parent/render    | Centralised                |
+| Used by                  | Radix UI, Headless UI, Ant Design   | react-window, older Formik     | MUI (many props)           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Compound Components require Context" | Not strictly - the original pattern used `React.Children` + `cloneElement` to pass state to children directly. Context is the modern, cleaner implementation. `cloneElement` has limitations: only works with direct children (not wrapped/nested children), and is considered legacy. Context works regardless of nesting depth. |
-| "Sub-components can be used independently anywhere" | Sub-components are designed to be used inside their parent and read from its context. Using `<Select.Option>` outside `<Select>` should throw an error (if context validation is implemented). This is a feature - it makes misuse obvious. |
+| Misconception                                         | Reality                                                                                                                                                                                                                                                                                                                             |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Compound Components require Context"                 | Not strictly - the original pattern used `React.Children` + `cloneElement` to pass state to children directly. Context is the modern, cleaner implementation. `cloneElement` has limitations: only works with direct children (not wrapped/nested children), and is considered legacy. Context works regardless of nesting depth.   |
+| "Sub-components can be used independently anywhere"   | Sub-components are designed to be used inside their parent and read from its context. Using `<Select.Option>` outside `<Select>` should throw an error (if context validation is implemented). This is a feature - it makes misuse obvious.                                                                                         |
 | "Compound Components are only for complex components" | The pattern is valuable whenever a component has multiple related pieces that share state. A simple `<Accordion>` with `<Accordion.Item>` and `<Accordion.Panel>` is a legitimate compound component. The threshold is: if you need more than 2-3 config props and consumers want layout flexibility, consider compound components. |
-| "Compound Components prevent TypeScript typing" | TypeScript can fully type compound components. The sub-components are typed individually, and the parent's static property types are inferred automatically when you attach them with `Parent.Child = Child`. The context type from `createContext<ContextType>` provides full type safety inside sub-components. |
+| "Compound Components prevent TypeScript typing"       | TypeScript can fully type compound components. The sub-components are typed individually, and the parent's static property types are inferred automatically when you attach them with `Parent.Child = Child`. The context type from `createContext<ContextType>` provides full type safety inside sub-components.                   |
 
 ---
 
@@ -420,13 +421,14 @@ provider). Without validation, `useContext` returns null
 and the onClick handler silently does nothing.
 
 **Fix:** Add the null check:
+
 ```jsx
 const context = useContext(SelectContext);
 if (!context) {
   throw new Error(
-    'Select.Option must be used within <Select>. ' +
-    'Check that you are not using Select.Option ' +
-    'outside the Select component tree.'
+    "Select.Option must be used within <Select>. " +
+      "Check that you are not using Select.Option " +
+      "outside the Select component tree.",
   );
 }
 ```
@@ -458,6 +460,7 @@ NOT read from context, memo works correctly.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `useContext Hook` - the mechanism for sharing state
   between parent and sub-components
 - `Custom Hooks` - often used to encapsulate the context
@@ -466,6 +469,7 @@ NOT read from context, memo works correctly.
   Compound Components extend
 
 **Builds On:**
+
 - `Design System Architecture with React` - Compound
   Components are the foundation of flexible design system
   component APIs
@@ -490,6 +494,7 @@ NOT read from context, memo works correctly.
 ```
 
 **If you remember only 3 things:**
+
 1. Parent provides state via Context. Sub-components
    (`Parent.Child`) consume context implicitly. Consumers
    compose sub-components in any order.

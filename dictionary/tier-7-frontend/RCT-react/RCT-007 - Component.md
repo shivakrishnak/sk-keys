@@ -29,11 +29,11 @@ accepts props and returns JSX; every piece of UI in a React
 application is a component - get the rules and conventions
 right here and everything else builds on this foundation.
 
-| #007 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Declarative UI vs Imperative DOM, The Component Mental Model, React Dev Environment Setup | |
-| **Used by:** | Props, State, ReactDOM Rendering, Event Handling, Conditional Rendering, List Rendering | |
-| **Related:** | The Component Mental Model, Props, Class Components to Hooks Migration | |
+| #007            | Category: React                                                                           | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Declarative UI vs Imperative DOM, The Component Mental Model, React Dev Environment Setup |                 |
+| **Used by:**    | Props, State, ReactDOM Rendering, Event Handling, Conditional Rendering, List Rendering   |                 |
+| **Related:**    | The Component Mental Model, Props, Class Components to Hooks Migration                    |                 |
 
 ---
 
@@ -76,6 +76,7 @@ A component is a function named with a capital letter that
 returns JSX.
 
 **One analogy:**
+
 > A component is like a custom HTML tag that you build
 > yourself. `<button>` is a browser-built-in element.
 > `<UserCard>` is a component you build. Both can appear
@@ -99,7 +100,7 @@ produces incorrect output.
 1. **Must be a function named with a capital letter**
    - `function UserCard() {}` - valid component
    - `function userCard() {}` - valid function, not a component
-   
+
 2. **Must return valid React output**
    - JSX: `return <div>Hello</div>;`
    - Array: `return [<a key="1"/>, <b key="2"/>];`
@@ -149,10 +150,7 @@ function SaveButton({ onSave, label = "Save" }) {
   };
 
   return (
-    <button
-      onClick={handleSave}
-      disabled={isSaving}
-    >
+    <button onClick={handleSave} disabled={isSaving}>
       {isSaving ? "Saving..." : label}
     </button>
   );
@@ -175,7 +173,7 @@ to make. The component is the unit of reuse.
 ### 🧠 Mental Model / Analogy
 
 > A component is a function. When React encounters `<UserCard
-> name="Alice" />` in JSX, it translates that to a function
+name="Alice" />` in JSX, it translates that to a function
 > call: `UserCard({ name: "Alice" })`. The return value is
 > either a React element (which eventually becomes a DOM node)
 > or more components to call recursively.
@@ -255,7 +253,7 @@ function Welcome({ name }) {
 
 // What the TypeScript/Babel compiler produces:
 function Welcome({ name }) {
-  return React.createElement('h1', null, 'Hello, ', name, '!');
+  return React.createElement("h1", null, "Hello, ", name, "!");
 }
 // React.createElement(type, props, ...children)
 // -> returns a plain JS object (React element):
@@ -365,7 +363,7 @@ interface UserCardProps {
 function UserCard({
   name,
   email,
-  avatarUrl = '/avatars/default.jpg',
+  avatarUrl = "/avatars/default.jpg",
   isLoading = false,
 }: UserCardProps) {
   if (isLoading) {
@@ -374,12 +372,7 @@ function UserCard({
 
   return (
     <div className="user-card">
-      <img
-        src={avatarUrl}
-        alt={`${name}'s avatar`}
-        width={48}
-        height={48}
-      />
+      <img src={avatarUrl} alt={`${name}'s avatar`} width={48} height={48} />
       <h2 className="user-card__name">{name}</h2>
       <p className="user-card__email">{email}</p>
     </div>
@@ -393,19 +386,17 @@ export default UserCard;
 
 ```tsx
 // React Testing Library: test from user perspective
-import { render, screen } from '@testing-library/react';
+import { render, screen } from "@testing-library/react";
 
-test('renders user name and email', () => {
+test("renders user name and email", () => {
   render(<UserCard name="Alice" email="alice@co.com" />);
-  expect(screen.getByRole('heading')).toHaveTextContent('Alice');
-  expect(screen.getByText('alice@co.com')).toBeInTheDocument();
+  expect(screen.getByRole("heading")).toHaveTextContent("Alice");
+  expect(screen.getByText("alice@co.com")).toBeInTheDocument();
 });
 
-test('renders skeleton when loading', () => {
+test("renders skeleton when loading", () => {
   render(<UserCard name="Alice" email="" isLoading={true} />);
-  expect(
-    screen.getByTestId('skeleton')
-  ).toBeInTheDocument();
+  expect(screen.getByTestId("skeleton")).toBeInTheDocument();
 });
 ```
 
@@ -413,12 +404,12 @@ test('renders skeleton when loading', () => {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Class components are deprecated" | Class components still work and will not be removed. The React team recommends function components for new code. Existing class components do not need to be migrated unless there is another reason to touch them. |
-| "A component can only return one element" | A component can return an array (with `key` props), a Fragment (`<>...</>`), null, a string, or a Portal. The "one element" limitation was React < 16; it no longer exists. |
-| "Every time state changes, the whole app re-renders" | Only the component that owns the changed state and its descendants re-render. Siblings and ancestors are unaffected unless they also consume the changed state. |
-| "Component files must match component names" | Convention strongly suggests this (one component per file, filename = component name) but React does not enforce it. A single file can export multiple components. |
+| Misconception                                        | Reality                                                                                                                                                                                                             |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Class components are deprecated"                    | Class components still work and will not be removed. The React team recommends function components for new code. Existing class components do not need to be migrated unless there is another reason to touch them. |
+| "A component can only return one element"            | A component can return an array (with `key` props), a Fragment (`<>...</>`), null, a string, or a Portal. The "one element" limitation was React < 16; it no longer exists.                                         |
+| "Every time state changes, the whole app re-renders" | Only the component that owns the changed state and its descendants re-render. Siblings and ancestors are unaffected unless they also consume the changed state.                                                     |
+| "Component files must match component names"         | Convention strongly suggests this (one component per file, filename = component name) but React does not enforce it. A single file can export multiple components.                                                  |
 
 ---
 
@@ -441,7 +432,8 @@ and unmounts/remounts the entire subtree.
 ```jsx
 // BAD: InputField is a new function on every render
 function Form() {
-  function InputField({ value, onChange }) { // <- WRONG
+  function InputField({ value, onChange }) {
+    // <- WRONG
     return <input value={value} onChange={onChange} />;
   }
   return <InputField value={name} onChange={setName} />;
@@ -483,13 +475,11 @@ If rich text is required, sanitise using a dedicated library
 (DOMPurify) before setting:
 
 ```jsx
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 
 function RichText({ html }) {
   const clean = DOMPurify.sanitize(html);
-  return (
-    <div dangerouslySetInnerHTML={{ __html: clean }} />
-  );
+  return <div dangerouslySetInnerHTML={{ __html: clean }} />;
 }
 // DOMPurify removes script tags, event handlers, etc.
 ```
@@ -499,18 +489,21 @@ function RichText({ html }) {
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Declarative UI vs Imperative DOM Manipulation` - the
   programming model that makes components predictable
 - `The Component Mental Model` - the conceptual framework
   before the implementation details
 
 **Builds On This (learn these next):**
+
 - `JSX` - the syntax for describing what a component returns
 - `Props` - how data is passed into components
 - `State` - how components maintain data that changes
 - `Event Handling in React` - how components respond to user actions
 
 **Alternatives / Comparisons:**
+
 - `Class Component` - the pre-2019 alternative to function
   components; uses lifecycle methods instead of hooks; still
   valid but not recommended for new code
@@ -552,6 +545,7 @@ function RichText({ html }) {
 ```
 
 **If you remember only 3 things:**
+
 1. A component is a function with a capital letter that
    returns JSX. React calls it; you do not call it directly.
    `<UserCard />` = `UserCard({...props})` in React's eyes.
@@ -583,6 +577,7 @@ the benefit is a single point of change. React's component
 model makes this cost explicit.
 
 **Where else this pattern appears:**
+
 - CSS variables / design tokens - define once, use everywhere;
   changing the token changes all usages
 - Database stored procedures - encapsulate business logic;
@@ -609,6 +604,7 @@ team makes, not a React rule.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** To a developer from a jQuery background: why
    a React component loses its state when the parent
    re-renders and creates a new component type at the same
@@ -639,8 +635,8 @@ A common bug: rendering a list of items without keys causes
 React to reuse component instances for different items when
 the list order changes. How does this manifest as a bug,
 and what is the correct mental model for when to use `key`?
-*Hint: An input inside a list item that retains its value
-when items are reordered.*
+_Hint: An input inside a list item that retains its value
+when items are reordered._
 
 **Q2.** A component is required to be pure during rendering.
 But what does "pure" really mean for a React component when
@@ -648,8 +644,8 @@ it calls `useState`? Calling `useState` with the same
 argument on subsequent renders does NOT return the same
 value - it returns the current state. How does this fit
 the "pure function" model?
-*Hint: React's definition of purity is about not having
-side effects, not about referential transparency.*
+_Hint: React's definition of purity is about not having
+side effects, not about referential transparency._
 
 **Q3.** React's Strict Mode intentionally calls your component
 function twice in development (but not production) to help
@@ -658,5 +654,5 @@ detect impure rendering. If your component has a
 testing for with the double invocation, and why would a
 pure render function produce identical results both times
 while an impure one would not?
-*Hint: Think about a component that increments a counter
-variable declared outside the component.*
+_Hint: Think about a component that increments a counter
+variable declared outside the component._

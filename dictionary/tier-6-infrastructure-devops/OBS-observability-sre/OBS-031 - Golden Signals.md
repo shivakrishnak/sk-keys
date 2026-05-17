@@ -35,11 +35,11 @@ Traffic + Errors) and USE Method (Saturation) into
 one framework that covers both user experience and
 resource health.
 
-| #031 | Category: Observability & SRE | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Metrics -- Types, Observability, RED Method, USE Method | |
-| **Used by:** | Dashboards, SLO-Based Alerting, Platform Observability | |
-| **Related:** | Metrics Types, RED Method, USE Method, SLI, SLO | |
+| #031            | Category: Observability & SRE                           | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------ | :-------------- |
+| **Depends on:** | Metrics -- Types, Observability, RED Method, USE Method |                 |
+| **Used by:**    | Dashboards, SLO-Based Alerting, Platform Observability  |                 |
+| **Related:**    | Metrics Types, RED Method, USE Method, SLI, SLO         |                 |
 
 ---
 
@@ -81,6 +81,7 @@ Chapter 6 "Monitoring Distributed Systems"):
   Distinguish successful-request latency from failed-
   request latency (a fast error is a different problem
   from a slow success).
+
   ```
   histogram_quantile(0.99, rate(duration_bucket[5m]))
   ```
@@ -89,6 +90,7 @@ Chapter 6 "Monitoring Distributed Systems"):
   placed on the system. For web services: requests/s.
   For audio/video: network I/O rate. For storage:
   transactions/s. Varies by system type.
+
   ```
   sum(rate(requests_total[5m]))
   ```
@@ -97,6 +99,7 @@ Chapter 6 "Monitoring Distributed Systems"):
   explicitly (HTTP 500), implicitly (200 with wrong
   content), or by policy (any response > 1s violates
   the SLO).
+
   ```
   rate(requests_total{status=~"5.."}[5m])
   / rate(requests_total[5m])
@@ -255,7 +258,7 @@ Scenario C: Saturation building
   Interpretation: Latency slightly elevated, Traffic
   slightly higher, no Errors yet, but Saturation
   approaching limit. The service is operating normally
-  but is near capacity. 
+  but is near capacity.
   Cause: traffic growth hitting resource limits.
   Action: scale before Latency and Errors spike.
   This is saturation's unique value: predicts
@@ -325,15 +328,16 @@ before Latency degrades).
 
 **Level 4 - SLO alignment (senior):**
 Each Golden Signal maps to an SLI type:
+
 - Latency → Latency SLI (P99 < threshold)
 - Errors → Availability SLI (1 - error_rate)
 - Traffic → not typically an SLI (context metric)
 - Saturation → predictive SLI (saturation < threshold
   before degradation)
-Alerting strategy: Errors and Latency → SLO burn rate
-alerts (page). Traffic anomalies → ticket (routing
-investigation). Saturation approaching limits → ticket
-(capacity planning).
+  Alerting strategy: Errors and Latency → SLO burn rate
+  alerts (page). Traffic anomalies → ticket (routing
+  investigation). Saturation approaching limits → ticket
+  (capacity planning).
 
 **Level 5 - Organisational standards (staff):**
 Enforce Golden Signals as the organisational monitoring
@@ -409,62 +413,62 @@ node_load1
 
 ```yaml
 groups:
-- name: golden-signals-checkout
-  rules:
-  # Latency SLO breach alert (burn rate)
-  - alert: CheckoutLatencyBurnRate
-    expr: |
-      histogram_quantile(0.99,
-        sum by (le) (rate(
-          checkout_duration_seconds_bucket[1h]
-        ))
-      ) > 1.0    # P99 > 1s (SLO threshold)
-      AND
-      histogram_quantile(0.99,
-        sum by (le) (rate(
-          checkout_duration_seconds_bucket[5m]
-        ))
-      ) > 1.0
-    labels:
-      severity: page
-      signal: latency
+  - name: golden-signals-checkout
+    rules:
+      # Latency SLO breach alert (burn rate)
+      - alert: CheckoutLatencyBurnRate
+        expr: |
+          histogram_quantile(0.99,
+            sum by (le) (rate(
+              checkout_duration_seconds_bucket[1h]
+            ))
+          ) > 1.0    # P99 > 1s (SLO threshold)
+          AND
+          histogram_quantile(0.99,
+            sum by (le) (rate(
+              checkout_duration_seconds_bucket[5m]
+            ))
+          ) > 1.0
+        labels:
+          severity: page
+          signal: latency
 
-  # Error SLO burn rate alert
-  - alert: CheckoutErrorBurnRate
-    expr: |
-      (
-        (1 - sum(rate(checkout_ok_total[1h]))
-        / sum(rate(checkout_requests_total[1h])))
-      ) / (1 - 0.999) > 14.4
-      AND
-      (
-        (1 - sum(rate(checkout_ok_total[5m]))
-        / sum(rate(checkout_requests_total[5m])))
-      ) / (1 - 0.999) > 14.4
-    labels:
-      severity: page
-      signal: errors
+      # Error SLO burn rate alert
+      - alert: CheckoutErrorBurnRate
+        expr: |
+          (
+            (1 - sum(rate(checkout_ok_total[1h]))
+            / sum(rate(checkout_requests_total[1h])))
+          ) / (1 - 0.999) > 14.4
+          AND
+          (
+            (1 - sum(rate(checkout_ok_total[5m]))
+            / sum(rate(checkout_requests_total[5m])))
+          ) / (1 - 0.999) > 14.4
+        labels:
+          severity: page
+          signal: errors
 
-  # Traffic anomaly alert (not SLO, but routing signal)
-  - alert: CheckoutTrafficDrop
-    expr: |
-      sum(rate(checkout_requests_total[5m]))
-      < sum(rate(checkout_requests_total[1h] offset 5m))
-        * 0.5    # 50% traffic drop vs 1h-ago baseline
-    for: 5m
-    labels:
-      severity: page
-      signal: traffic
+      # Traffic anomaly alert (not SLO, but routing signal)
+      - alert: CheckoutTrafficDrop
+        expr: |
+          sum(rate(checkout_requests_total[5m]))
+          < sum(rate(checkout_requests_total[1h] offset 5m))
+            * 0.5    # 50% traffic drop vs 1h-ago baseline
+        for: 5m
+        labels:
+          severity: page
+          signal: traffic
 
-  # Saturation alert (predictive - before degradation)
-  - alert: CheckoutConnectionPoolSaturation
-    expr: hikaricp_connections_pending > 3
-    for: 2m
-    labels:
-      severity: warning
-      signal: saturation
-    annotations:
-      summary: "Connection pool saturated - scale before latency spike"
+      # Saturation alert (predictive - before degradation)
+      - alert: CheckoutConnectionPoolSaturation
+        expr: hikaricp_connections_pending > 3
+        for: 2m
+        labels:
+          severity: warning
+          signal: saturation
+        annotations:
+          summary: "Connection pool saturated - scale before latency spike"
 ```
 
 ---
@@ -600,34 +604,34 @@ predict_linear(
 
 ### ⚖️ Comparison Table
 
-| Signal | Framework source | Primary alert? | Diagnostic use |
-|---|---|---|---|
-| Latency | RED + Golden Signals | Yes - SLO latency breach | Distinguish slow vs fast failures |
-| Traffic | RED + Golden Signals | Yes - traffic drop (routing) | Context for all other signals |
-| Errors | RED + Golden Signals | Yes - SLO availability breach | Primary customer impact signal |
-| Saturation | USE + Golden Signals | Yes - predictive (before degradation) | Capacity planning, bottleneck ID |
+| Signal     | Framework source     | Primary alert?                        | Diagnostic use                    |
+| ---------- | -------------------- | ------------------------------------- | --------------------------------- |
+| Latency    | RED + Golden Signals | Yes - SLO latency breach              | Distinguish slow vs fast failures |
+| Traffic    | RED + Golden Signals | Yes - traffic drop (routing)          | Context for all other signals     |
+| Errors     | RED + Golden Signals | Yes - SLO availability breach         | Primary customer impact signal    |
+| Saturation | USE + Golden Signals | Yes - predictive (before degradation) | Capacity planning, bottleneck ID  |
 
 **Which framework to use:**
 
-| Need | Use |
-|---|---|
-| Monitoring a microservice | RED (subset of Golden Signals) |
-| Monitoring infrastructure (CPU, disk) | USE |
-| Unified service + infra monitoring | Golden Signals |
-| SLO compliance monitoring | Golden Signals (Latency + Errors → SLIs) |
-| Capacity planning | Golden Signals (Saturation + Traffic trend) |
+| Need                                  | Use                                         |
+| ------------------------------------- | ------------------------------------------- |
+| Monitoring a microservice             | RED (subset of Golden Signals)              |
+| Monitoring infrastructure (CPU, disk) | USE                                         |
+| Unified service + infra monitoring    | Golden Signals                              |
+| SLO compliance monitoring             | Golden Signals (Latency + Errors → SLIs)    |
+| Capacity planning                     | Golden Signals (Saturation + Traffic trend) |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Average latency is sufficient for Latency signal" | No. Average hides tail latency. The Google SRE Book explicitly recommends percentiles (P50, P95, P99). Use histogram_quantile over rate(histogram_bucket[5m]). |
-| "Saturation is just CPU utilization" | Saturation is the most constrained resource for the given service. For database-backed services: connection pool saturation matters more than CPU. For memory-heavy: swap onset. For IO-heavy: disk queue depth. Choose the resource most likely to become the bottleneck. |
-| "Errors should include all 4xx responses" | No. 4xx are usually client errors (bad requests, missing auth). 5xx are server failures. The Errors signal is server-side failures. 4xx spikes may warrant investigation but are not typically SLO-impacting. Exception: 429 rate limiting errors indicate saturation. |
-| "Golden Signals replace RED and USE" | Golden Signals extend them. RED is sufficient for pure service monitoring. USE is the correct framework for infrastructure-only monitoring. Golden Signals is the unified framework when you need both. Use whichever fits the context. |
-| "If Latency is fine, the service is fine" | Not if Saturation is approaching 100%. A service at 98% connection pool saturation with good Latency has 5-10 minutes before a traffic spike triggers a cascade failure. Saturation is the signal Latency does not capture until it is too late. |
+| Misconception                                      | Reality                                                                                                                                                                                                                                                                    |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Average latency is sufficient for Latency signal" | No. Average hides tail latency. The Google SRE Book explicitly recommends percentiles (P50, P95, P99). Use histogram_quantile over rate(histogram_bucket[5m]).                                                                                                             |
+| "Saturation is just CPU utilization"               | Saturation is the most constrained resource for the given service. For database-backed services: connection pool saturation matters more than CPU. For memory-heavy: swap onset. For IO-heavy: disk queue depth. Choose the resource most likely to become the bottleneck. |
+| "Errors should include all 4xx responses"          | No. 4xx are usually client errors (bad requests, missing auth). 5xx are server failures. The Errors signal is server-side failures. 4xx spikes may warrant investigation but are not typically SLO-impacting. Exception: 429 rate limiting errors indicate saturation.     |
+| "Golden Signals replace RED and USE"               | Golden Signals extend them. RED is sufficient for pure service monitoring. USE is the correct framework for infrastructure-only monitoring. Golden Signals is the unified framework when you need both. Use whichever fits the context.                                    |
+| "If Latency is fine, the service is fine"          | Not if Saturation is approaching 100%. A service at 98% connection pool saturation with good Latency has 5-10 minutes before a traffic spike triggers a cascade failure. Saturation is the signal Latency does not capture until it is too late.                           |
 
 ---
 
@@ -676,7 +680,7 @@ dashboards show everything is fine."
 Average latency masks tail latency. With 99% of
 requests at 50ms and 1% at 8,000ms:
 Average = (99 x 50 + 1 x 8000) / 100 = (4950+8000)/100
-        = 129.5ms. Looks normal compared to 85ms baseline.
+= 129.5ms. Looks normal compared to 85ms baseline.
 
 **Fix:**
 Replace average latency with `histogram_quantile(0.99, ...)`
@@ -705,6 +709,7 @@ Timer.builder("request_duration_seconds")
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Metrics -- Types (Counter, Gauge, Histogram)` -
   all four signals use these metric types
 - `RED Method` - subset of Golden Signals (Rate +
@@ -712,6 +717,7 @@ Timer.builder("request_duration_seconds")
 - `USE Method` - source of the Saturation signal
 
 **Builds On This (learn these next):**
+
 - `SLO-Based Alerting Strategy` - each signal feeds
   into SLO burn rate alerting
 - `Platform Observability Engineering` - applying
@@ -720,6 +726,7 @@ Timer.builder("request_duration_seconds")
   implementation of Golden Signals in Grafana
 
 **Alternatives / Comparisons:**
+
 - `RED Method` - simpler (3 signals). Use when
   Saturation monitoring is out of scope.
 - `USE Method` - infrastructure-only (3 signals).
@@ -778,16 +785,17 @@ any fewer signals leave gaps (no Saturation = missing
 predictive signal), and adding more signals without
 a framework creates noise that slows triage. This
 principle - minimum sufficient set for complete coverage
+
 - applies to: code review checklist (correctness,
-security, performance, maintainability = the four
-things every code change must be reviewed for), API
-design (naming, versioning, error handling, authentication
-= four areas every API must address), incident management
-(detect, diagnose, resolve, prevent = four phases
-every incident must go through). Design the minimum
-sufficient checklist for your domain; resist the urge
-to add more items beyond what is needed for complete
-coverage.
+  security, performance, maintainability = the four
+  things every code change must be reviewed for), API
+  design (naming, versioning, error handling, authentication
+  = four areas every API must address), incident management
+  (detect, diagnose, resolve, prevent = four phases
+  every incident must go through). Design the minimum
+  sufficient checklist for your domain; resist the urge
+  to add more items beyond what is needed for complete
+  coverage.
 
 ---
 
@@ -816,6 +824,7 @@ alerts before Latency and Errors are affected.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Name the Four Golden Signals, explain
    what each measures, and explain why all four are
    needed (what gap each one fills that the others
@@ -847,7 +856,7 @@ a checkout service. The dashboard shows: Error rate
 a scenario where the missing signal would have
 prevented an incident that the three monitored signals
 would have missed until it was too late.
-*Hint: Missing: Saturation. Scenario: checkout service
+_Hint: Missing: Saturation. Scenario: checkout service
 connection pool is at 85% and growing (traffic spike
 from a sale). Errors: 0.05% (normal). Latency P99:
 150ms (normal). Traffic: 600 req/s (slightly elevated).
@@ -855,7 +864,7 @@ Without Saturation, no alert fires. In 8 minutes,
 pool hits 100%, requests start waiting, P99 spikes to
 3s, errors spike to 12%. With Saturation alert at
 80%, the team gets a warning-level alert 8 minutes
-earlier - enough time to scale before degradation.*
+earlier - enough time to scale before degradation._
 
 **Q2.** Two services show identical Red/Error metrics:
 both have 5% error rate and P99 latency 500ms. But
@@ -863,7 +872,7 @@ Service A has Traffic = 10 req/s, Service B has
 Traffic = 10,000 req/s. How does the Traffic signal
 change the severity interpretation of the same
 Error and Latency values?
-*Hint: Service A: 5% of 10 req/s = 0.5 errors/s.
+_Hint: Service A: 5% of 10 req/s = 0.5 errors/s.
 At 500ms P99: 1-2 users affected at any time. Minor
 incident, likely a test service or low-criticality
 endpoint. Service B: 5% of 10,000 req/s = 500 errors/s.
@@ -872,7 +881,7 @@ responses every second. This is a major incident. Same
 Error% and Latency values = completely different severity
 without Traffic context. Traffic signal provides the
 scale factor that converts percentages into absolute
-user impact.*
+user impact._
 
 **Q3 (TYPE G):** You are joining a 300-person engineering
 organisation. They have 150 services with inconsistent
@@ -887,7 +896,7 @@ governance model (how new services adopt the standard),
 (d) the cross-service dashboard (how leadership sees
 the organisational health), (e) the incentive structure
 (why teams will comply).
-*Hint: Month 1: Design the shared library (OTel
+_Hint: Month 1: Design the shared library (OTel
 instrumentation, metric naming standard, the four
 signals pre-wired for HTTP services). Month 2-3:
 Pilot with 10 willing teams. Fix issues. Month 3-4:
@@ -903,7 +912,7 @@ quarterly reliability health score published per team,
 Golden Signals compliance is a prerequisite for reliability
 score computation. Teams without compliant monitoring
 receive "monitoring debt" label in engineering
-all-hands.*
+all-hands._
 
 ---
 
@@ -911,8 +920,9 @@ all-hands.*
 
 **Q1: "What are the Four Golden Signals and why
 were they defined?"**
-*Why they ask:* Standard SRE vocabulary test.
-*Strong answer includes:*
+_Why they ask:_ Standard SRE vocabulary test.
+_Strong answer includes:_
+
 - Latency, Traffic, Errors, Saturation. Google SRE Book.
 - Latency: how long requests take (successful and failed separately)
 - Traffic: how much demand (req/s for web, transactions for storage, etc.)
@@ -924,9 +934,10 @@ were they defined?"**
 
 **Q2: "What is the difference between Latency in Golden
 Signals and Duration in RED Method?"**
-*Why they ask:* Tests depth of understanding, not just
+_Why they ask:_ Tests depth of understanding, not just
 term recitation.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Functionally equivalent. Both measure request processing time.
 - Golden Signals adds one nuance: track successful-request
   latency and failed-request latency separately.
@@ -942,9 +953,10 @@ term recitation.
 
 **Q3: "How does the Saturation signal differ from
 Errors and Latency, and what unique value does it provide?"**
-*Why they ask:* Discriminates engineers who understand
+_Why they ask:_ Discriminates engineers who understand
 the predictive nature of Saturation.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Latency and Errors are reactive: they show a problem
   AFTER it has happened and users are affected.
 - Saturation is predictive: it shows a resource is
@@ -961,6 +973,7 @@ the predictive nature of Saturation.
   → 10-15 min to scale → 10-15 min of user impact.
 - Best Saturation metric varies by service type: choose
   the most constrained resource for each specific service.
+
 ---
 
 # OBS-026 - Golden Signals

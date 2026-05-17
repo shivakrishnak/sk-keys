@@ -29,11 +29,11 @@ over time and drives re-renders; the fundamental rules -
 never mutate directly, batching, one source of truth - are
 what prevent the most common React bugs.
 
-| #010 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, Props | |
-| **Used by:** | useState Hook, useEffect Hook, Controlled vs Uncontrolled, Form Handling, Lifting State Up, useReducer Hook | |
-| **Related:** | Props, useState Hook, Lifting State Up | |
+| #010            | Category: React                                                                                             | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, Props                                                                                            |                 |
+| **Used by:**    | useState Hook, useEffect Hook, Controlled vs Uncontrolled, Form Handling, Lifting State Up, useReducer Hook |                 |
+| **Related:**    | Props, useState Hook, Lifting State Up                                                                      |                 |
 
 ---
 
@@ -81,6 +81,7 @@ declares it: it is not visible to parents or siblings unless
 explicitly passed down as props or shared via Context.
 State updates in React are **asynchronous** (batched since
 React 18) and **must not mutate the existing state value**
+
 - a new value or reference must always be provided.
 
 ---
@@ -92,6 +93,7 @@ State is data owned by a component that, when changed via
 its setter, triggers a re-render to reflect the new data.
 
 **One analogy:**
+
 > State is like the position of a dial on a piece of
 > equipment. The dial has a current position (the state
 > value). You can turn it (call the setter). When you turn
@@ -115,6 +117,7 @@ this notification.
 **WHAT STATE IS:**
 State is the data that makes a UI interactive. When any
 of the following changes, the UI must update:
+
 - Whether a modal is open
 - What text a user has typed
 - The currently selected tab
@@ -126,6 +129,7 @@ Each of these is a candidate for state. The question
 update?" defines what should be state.
 
 **WHAT STATE IS NOT:**
+
 - Data that can be computed from other state or props
   (derived value; compute, not store)
 - Data that is not used in the render output (use a ref
@@ -180,9 +184,9 @@ function Counter() {
 ```jsx
 // GOOD: functional updater - reads latest queued value
 const incrementThree = () => {
-  setCount(c => c + 1); // queues: prev -> prev + 1
-  setCount(c => c + 1); // queues on top: prev -> prev + 1
-  setCount(c => c + 1); // queues on top: prev -> prev + 1
+  setCount((c) => c + 1); // queues: prev -> prev + 1
+  setCount((c) => c + 1); // queues on top: prev -> prev + 1
+  setCount((c) => c + 1); // queues on top: prev -> prev + 1
 };
 // React processes the queue: 0 -> 1 -> 2 -> 3 ✓
 ```
@@ -207,7 +211,7 @@ Initial: count = 0
 
 Click "increment 3":
   Queue: [c=>c+1, c=>c+1, c=>c+1]
-  
+
 React processes queue:
   0 -> 1 -> 2 -> 3
 
@@ -215,9 +219,10 @@ Next render: count = 3
 ```
 
 Compare to non-functional form:
+
 ```
   Queue: [1, 1, 1]    <- all based on snapshot value 0
-  
+
 React: last write wins
   count = 1
 ```
@@ -305,16 +310,16 @@ Re-render:
 ```jsx
 // In React 18, all of these are batched into ONE render:
 function handleEvent() {
-  setCount(c => c + 1);    // batched
-  setName("Alice");         // batched
-  setLoading(false);        // batched
+  setCount((c) => c + 1); // batched
+  setName("Alice"); // batched
+  setLoading(false); // batched
   // ONE re-render with all three updates applied
 }
 
 // Even async callbacks are now batched in React 18:
 setTimeout(() => {
-  setCount(c => c + 1);    // batched (React 18 only)
-  setName("Alice");         // batched (React 18 only)
+  setCount((c) => c + 1); // batched (React 18 only)
+  setName("Alice"); // batched (React 18 only)
 }, 0);
 ```
 
@@ -365,14 +370,14 @@ setTimeout(() => {
 // BAD: Direct mutation - React will NOT detect the change
 function TodoList() {
   const [todos, setTodos] = useState([
-    { id: 1, text: "Buy milk", done: false }
+    { id: 1, text: "Buy milk", done: false },
   ]);
 
   const toggleDone = (id) => {
     // WRONG: mutating the existing array/object
-    const todo = todos.find(t => t.id === id);
-    todo.done = true;     // mutates existing object
-    setTodos(todos);      // same reference - no re-render
+    const todo = todos.find((t) => t.id === id);
+    todo.done = true; // mutates existing object
+    setTodos(todos); // same reference - no re-render
   };
   // Bug: React sees prevState === newState (same ref)
   // No re-render triggered. UI doesn't update.
@@ -385,17 +390,18 @@ function TodoList() {
 // GOOD: create new references - React detects the change
 function TodoList() {
   const [todos, setTodos] = useState([
-    { id: 1, text: "Buy milk", done: false }
+    { id: 1, text: "Buy milk", done: false },
   ]);
 
   const toggleDone = (id) => {
     // Create new array with new object for changed item
-    setTodos(prev =>
-      prev.map(todo =>
-        todo.id === id
-          ? { ...todo, done: !todo.done } // new object
-          : todo                          // same ref OK
-      )
+    setTodos((prev) =>
+      prev.map(
+        (todo) =>
+          todo.id === id
+            ? { ...todo, done: !todo.done } // new object
+            : todo, // same ref OK
+      ),
     );
   };
   // React sees prevState !== newState (new array ref)
@@ -410,31 +416,29 @@ initialization:**
 interface FilterState {
   query: string;
   category: string | null;
-  sortBy: 'name' | 'date' | 'price';
+  sortBy: "name" | "date" | "price";
   page: number;
 }
 
 const DEFAULT_FILTERS: FilterState = {
-  query: '',
+  query: "",
   category: null,
-  sortBy: 'date',
+  sortBy: "date",
   page: 1,
 };
 
 function SearchPage() {
-  const [filters, setFilters] = useState<FilterState>(
-    DEFAULT_FILTERS
-  );
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
 
   const updateFilter = <K extends keyof FilterState>(
     key: K,
-    value: FilterState[K]
+    value: FilterState[K],
   ) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [key]: value,
       // Reset page on filter changes (not on page changes)
-      ...(key !== 'page' ? { page: 1 } : {}),
+      ...(key !== "page" ? { page: 1 } : {}),
     }));
   };
 
@@ -442,7 +446,7 @@ function SearchPage() {
     <div>
       <SearchInput
         value={filters.query}
-        onChange={q => updateFilter('query', q)}
+        onChange={(q) => updateFilter("query", q)}
       />
       {/* filters.category, filters.sortBy, etc. */}
     </div>
@@ -454,24 +458,24 @@ function SearchPage() {
 
 ### ⚖️ Comparison Table
 
-| Type | useState | useReducer | External Store (Redux/Zustand) |
-|---|---|---|---|
-| **Best for** | Simple, independent values | Complex interdependent state | Shared global state |
-| **Updates** | Direct setter | Dispatch action | Dispatch / set |
-| **Complexity** | Low | Medium | High (setup) |
-| **Testability** | Easy (render + interact) | Easy (reducer is pure fn) | Medium (requires store setup) |
-| **Derived state** | Compute inline | Compute in reducer | Selectors |
+| Type              | useState                   | useReducer                   | External Store (Redux/Zustand) |
+| ----------------- | -------------------------- | ---------------------------- | ------------------------------ |
+| **Best for**      | Simple, independent values | Complex interdependent state | Shared global state            |
+| **Updates**       | Direct setter              | Dispatch action              | Dispatch / set                 |
+| **Complexity**    | Low                        | Medium                       | High (setup)                   |
+| **Testability**   | Easy (render + interact)   | Easy (reducer is pure fn)    | Medium (requires store setup)  |
+| **Derived state** | Compute inline             | Compute in reducer           | Selectors                      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                                         | Reality                                                                                                                                                                                                                                              |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "setState is synchronous - I can read the new value after calling it" | State updates are asynchronous. After `setCount(5)`, reading `count` on the next line still returns the old value. The new value is available on the NEXT render. Use the functional updater if you need to base the new state on the current value. |
-| "I can store anything in state - including DOM references" | DOM references belong in `useRef`, not state. `useRef` provides a mutable box without triggering re-renders. If you put a DOM ref in state, updating it causes unnecessary re-renders. |
-| "Multiple setState calls cause multiple re-renders" | Since React 18, all state updates are batched - even in async callbacks. Multiple setState calls in one event handler result in ONE re-render. |
-| "State is shared across component instances" | State is per-instance. Two `<Counter />` components each have their own independent count state. Rendering `<Counter />` twice gives two counters that do not share state. |
+| "I can store anything in state - including DOM references"            | DOM references belong in `useRef`, not state. `useRef` provides a mutable box without triggering re-renders. If you put a DOM ref in state, updating it causes unnecessary re-renders.                                                               |
+| "Multiple setState calls cause multiple re-renders"                   | Since React 18, all state updates are batched - even in async callbacks. Multiple setState calls in one event handler result in ONE re-render.                                                                                                       |
+| "State is shared across component instances"                          | State is per-instance. Two `<Counter />` components each have their own independent count state. Rendering `<Counter />` twice gives two counters that do not share state.                                                                           |
 
 ---
 
@@ -506,6 +510,7 @@ function Counter() {
 ```
 
 **Fix options:**
+
 1. Use a ref to always have the latest value:
    `const countRef = useRef(count); countRef.current = count;`
 2. Add `count` to the useEffect dependency array (re-registers
@@ -536,6 +541,7 @@ useEffect(() => {
 ```
 
 **Diagnostic Command:**
+
 ```bash
 # In React DevTools Profiler, record a few seconds.
 # Infinite re-renders appear as a continuous flame chart.
@@ -553,17 +559,20 @@ list them.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Component` - state lives inside components
 - `Props` - the distinction between what a component
   receives (props) and what it owns (state)
 
 **Builds On This (learn these next):**
+
 - `useState Hook` - the primary API for state management
 - `useEffect Hook` - how side effects respond to state changes
 - `Lifting State Up` - when sibling components need shared state
 - `useReducer Hook` - complex state transitions
 
 **Alternatives / Comparisons:**
+
 - `MobX` - observable state model; mutations are tracked
   automatically (no immutability requirement); very different
   mental model from React's snapshot model
@@ -605,6 +614,7 @@ list them.
 ```
 
 **If you remember only 3 things:**
+
 1. Never mutate state. Objects and arrays must be replaced
    with new references: `setItems([...items, newItem])` not
    `items.push(newItem); setItems(items)`.
@@ -640,6 +650,7 @@ sourcing (immutable event log), Redux (immutable state
 trees), and Kafka (immutable message log).
 
 **Where else this pattern appears:**
+
 - Clojure's persistent data structures - structural sharing
   creates new references efficiently when parts of a
   structure change; same pattern as React's immutable state
@@ -670,9 +681,10 @@ component instance.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** Describe what "state is a snapshot" means
    to a developer who is confused about why `setCount(count
-   + 1)` called three times in a row only increments by 1.
+   - 1)` called three times in a row only increments by 1.
 2. **DEBUG** Given a component with an infinite re-render
    loop, use React DevTools Profiler to identify the
    causative `useEffect` and add the correct dependency
@@ -701,8 +713,8 @@ issues in upgraded apps, or silently break code that relied
 on intermediate renders between updates. How would you
 audit a codebase for code that relies on non-batched async
 state updates before upgrading to React 18?
-*Hint: Look for state reads immediately after async setState
-calls, or effects that depend on specific intermediate states.*
+_Hint: Look for state reads immediately after async setState
+calls, or effects that depend on specific intermediate states._
 
 **Q2.** The React team's rule of thumb is: "if it's used
 in the render output, it's state; if it's not, it's a ref
@@ -711,7 +723,7 @@ is used in the render output AND is intentionally not
 reactive: default values, initial configuration, static
 lookup tables. Where should this data live, and what are
 the performance implications of each option?
-*Hint: Module-level constants vs useState vs useMemo.*
+_Hint: Module-level constants vs useState vs useMemo._
 
 **Q3.** React's state model works well for client-owned
 data (what the user has typed, which tab is selected).
@@ -721,5 +733,5 @@ components, needs caching, and can be invalidated by
 other actions. Why does storing server state in `useState`
 lead to problems, and what does React Query do differently
 to model server state correctly?
-*Hint: Compare `useState(null)` + `useEffect` fetch vs
-React Query's `useQuery`.*
+_Hint: Compare `useState(null)` + `useEffect` fetch vs
+React Query's `useQuery`._

@@ -29,11 +29,11 @@ to a child component; they are the contract between parent
 and child and the mechanism for one-way data flow - mutating
 props is a common mistake that breaks the data flow model.
 
-| #009 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, JSX | |
-| **Used by:** | State, Event Handling, Conditional Rendering, List Rendering, One-Way Data Binding, Controlled vs Uncontrolled, Lifting State Up | |
-| **Related:** | One-Way Data Binding, Controlled vs Uncontrolled, Lifting State Up | |
+| #009            | Category: React                                                                                                                  | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, JSX                                                                                                                   |                 |
+| **Used by:**    | State, Event Handling, Conditional Rendering, List Rendering, One-Way Data Binding, Controlled vs Uncontrolled, Lifting State Up |                 |
+| **Related:**    | One-Way Data Binding, Controlled vs Uncontrolled, Lifting State Up                                                               |                 |
 
 ---
 
@@ -77,6 +77,7 @@ Props are the parameters of a component function - they pass
 data from parent to child and are read-only.
 
 **One analogy:**
+
 > Props are like function arguments. You call a function with
 > arguments; React renders a component with props. The
 > function body does not modify its arguments; the component
@@ -135,12 +136,7 @@ function Parent() {
 
 // Child receives state as a prop AND a way to update it
 function Child({ name, onNameChange }) {
-  return (
-    <input
-      value={name}
-      onChange={e => onNameChange(e.target.value)}
-    />
-  );
+  return <input value={name} onChange={(e) => onNameChange(e.target.value)} />;
 }
 // Data flows DOWN: name prop
 // Events flow UP: onNameChange callback
@@ -262,8 +258,8 @@ avoids the need for named slots (a Vue/Angular concept).
 
 ```tsx
 interface ButtonProps {
-  variant?: 'primary' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "primary" | "secondary";
+  size?: "sm" | "md" | "lg";
   disabled?: boolean;
   onClick?: () => void;
   children: React.ReactNode;
@@ -273,13 +269,9 @@ interface ButtonProps {
 
 // Spreading native button props (type-safe with Omit):
 type SafeButtonProps = ButtonProps &
-  Omit<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    keyof ButtonProps
-  >;
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonProps>;
 
-function Button({ variant = 'primary', children,
-                  ...rest }: SafeButtonProps) {
+function Button({ variant = "primary", children, ...rest }: SafeButtonProps) {
   return (
     <button className={`btn btn--${variant}`} {...rest}>
       {children}
@@ -306,7 +298,7 @@ function Card({ title, children }) {
 <Card title="Profile">
   <UserAvatar url={user.avatarUrl} />
   <UserBio text={user.bio} />
-</Card>
+</Card>;
 ```
 
 ---
@@ -371,9 +363,7 @@ function UserCard(props) {
 ```jsx
 // GOOD: derive without mutation - compute, don't mutate
 function UserCard({ name, isAdmin = false }) {
-  const displayName = isAdmin
-    ? `${name} (Admin)`
-    : name;
+  const displayName = isAdmin ? `${name} (Admin)` : name;
 
   return <div>{displayName}</div>;
 }
@@ -389,30 +379,20 @@ interface UserCardProps {
     id: string;
     name: string;
     email: string;
-    role: 'admin' | 'user' | 'guest';
+    role: "admin" | "user" | "guest";
     avatarUrl?: string;
   };
   onEdit?: (userId: string) => void;
   compact?: boolean;
 }
 
-function UserCard({
-  user,
-  onEdit,
-  compact = false,
-}: UserCardProps) {
+function UserCard({ user, onEdit, compact = false }: UserCardProps) {
   return (
-    <article className={`card ${compact ? 'card--sm' : ''}`}>
+    <article className={`card ${compact ? "card--sm" : ""}`}>
       <h2>{user.name}</h2>
       <p>{user.email}</p>
-      {user.role === 'admin' && (
-        <span className="badge">Admin</span>
-      )}
-      {onEdit && (
-        <button onClick={() => onEdit(user.id)}>
-          Edit
-        </button>
-      )}
+      {user.role === "admin" && <span className="badge">Admin</span>}
+      {onEdit && <button onClick={() => onEdit(user.id)}>Edit</button>}
     </article>
   );
 }
@@ -422,24 +402,24 @@ function UserCard({
 
 ### ⚖️ Comparison Table
 
-| Concept | Props | State | Context |
-|---|---|---|---|
-| **Owner** | Parent | Component itself | Provider above in tree |
-| **Mutability** | Read-only to child | Read/write via setter | Read-only to consumers |
-| **Triggers re-render** | When parent re-renders | When setter called | When context value changes |
-| **Scope** | Single parent-to-child path | Local to component | Any descendant |
-| **Use for** | Passing data down | Local changeable data | Cross-tree shared data |
+| Concept                | Props                       | State                 | Context                    |
+| ---------------------- | --------------------------- | --------------------- | -------------------------- |
+| **Owner**              | Parent                      | Component itself      | Provider above in tree     |
+| **Mutability**         | Read-only to child          | Read/write via setter | Read-only to consumers     |
+| **Triggers re-render** | When parent re-renders      | When setter called    | When context value changes |
+| **Scope**              | Single parent-to-child path | Local to component    | Any descendant             |
+| **Use for**            | Passing data down           | Local changeable data | Cross-tree shared data     |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Props and state are the same thing" | Props come from the parent and are read-only to the child. State is owned and mutated by the component itself. A prop cannot be modified by the component that receives it. |
-| "I can pass any value as a prop" | You can pass any valid JavaScript value as a prop: strings, numbers, booleans, objects, arrays, functions, React elements, even other components. Functions as props (callbacks) are the mechanism for child-to-parent communication. |
-| "Updating a prop updates the parent's state" | Props are a snapshot. Modifying a prop in the child does not propagate back to the parent. To notify the parent, call a callback function that the parent passed as a prop. |
-| "Default props require defaultProps" | `defaultProps` (a React class component feature) is not needed for function components. Use JavaScript default parameter syntax: `function Btn({ color = "blue" })`. |
+| Misconception                                | Reality                                                                                                                                                                                                                               |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Props and state are the same thing"         | Props come from the parent and are read-only to the child. State is owned and mutated by the component itself. A prop cannot be modified by the component that receives it.                                                           |
+| "I can pass any value as a prop"             | You can pass any valid JavaScript value as a prop: strings, numbers, booleans, objects, arrays, functions, React elements, even other components. Functions as props (callbacks) are the mechanism for child-to-parent communication. |
+| "Updating a prop updates the parent's state" | Props are a snapshot. Modifying a prop in the child does not propagate back to the parent. To notify the parent, call a callback function that the parent passed as a prop.                                                           |
+| "Default props require defaultProps"         | `defaultProps` (a React class component feature) is not needed for function components. Use JavaScript default parameter syntax: `function Btn({ color = "blue" })`.                                                                  |
 
 ---
 
@@ -457,6 +437,7 @@ handlers), the callback closes over props from a previous
 render. When the callback fires, it reads the stale closure.
 
 **Diagnostic Command:**
+
 ```bash
 # Add a console.log inside the event handler:
 # console.log('prop at click time:', propValue);
@@ -484,6 +465,7 @@ The component tree is not structured to match the data flow
 requirements. Or the feature genuinely requires deep sharing.
 
 **Fix:**
+
 - If the data is needed by closely related components:
   restructure the tree (extract a compound component)
 - If the data is needed by many unrelated components:
@@ -495,10 +477,12 @@ requirements. Or the feature genuinely requires deep sharing.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Component` - props are how components receive external data
 - `JSX` - the syntax for passing props as JSX attributes
 
 **Builds On This (learn these next):**
+
 - `State` - what a component owns vs what it receives via props
 - `One-Way Data Binding` - the data flow model that props implement
 - `Lifting State Up` - when two siblings need the same data
@@ -506,6 +490,7 @@ requirements. Or the feature genuinely requires deep sharing.
 - `Controlled vs Uncontrolled Components` - form inputs and props
 
 **Alternatives / Comparisons:**
+
 - `Context API` - a mechanism to pass values deeply without
   threading them through every intermediate component
 - `Redux/Zustand` - global state accessible without props
@@ -545,6 +530,7 @@ requirements. Or the feature genuinely requires deep sharing.
 ```
 
 **If you remember only 3 things:**
+
 1. Props are read-only. Never mutate `props.x = newValue`
    in the child. Compute new values from props: create a
    local variable with the derived result.
@@ -577,6 +563,7 @@ is almost always preferable to passing React elements as
 named props (`content={<Comp />}`).
 
 **Where else this pattern appears:**
+
 - Function signatures in FP - pure functions receive all
   inputs as arguments; they do not reach for external state
 - REST API request parameters - clients pass query params
@@ -604,6 +591,7 @@ props (for named slots).
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** Describe the flow of data from a user's
    keystroke in a child input up to a parent's state update,
    naming the two props involved (controlled value and
@@ -634,8 +622,8 @@ both. What are the trade-offs between React's one-way model
 and Angular's two-way model for a complex form with 20
 fields, where every field change needs to update shared
 validation state?
-*Hint: Consider debugging complexity when an unexpected
-value appears in a field.*
+_Hint: Consider debugging complexity when an unexpected
+value appears in a field._
 
 **Q2.** TypeScript allows you to type props as `Readonly<T>`.
 In practice, the TypeScript compiler enforces this at the
@@ -643,7 +631,7 @@ call site, but JavaScript does not enforce it at runtime.
 What is the consequence of relying solely on TypeScript's
 compile-time enforcement for props immutability in a
 codebase that includes some JavaScript files or uses `any`?
-*Hint: `Object.freeze(props)` in development mode.*
+_Hint: `Object.freeze(props)` in development mode._
 
 **Q3.** React's `children` prop is typed as `React.ReactNode`,
 which includes `null`, `undefined`, strings, numbers, JSX
@@ -652,5 +640,5 @@ cause subtle bugs: rendering `{children}` when `children`
 might be a string, number, or array. When does this become
 a problem, and what patterns (TypeScript discriminated unions,
 React.Children API) help manage the ambiguity?
-*Hint: A `Tooltip` component that expects exactly one child
-to attach its ref to.*
+_Hint: A `Tooltip` component that expects exactly one child
+to attach its ref to._

@@ -29,11 +29,11 @@ JavaScript expressions inside JSX: the `&&` operator for
 simple show/hide, ternary for if/else, and early returns
 from the component function for entire block exclusion.
 
-| #014 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, JSX, Props, State | |
-| **Used by:** | Controlled Components, Form Handling, React Router | |
-| **Related:** | List Rendering, State, JSX | |
+| #014            | Category: React                                    | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, JSX, Props, State                       |                 |
+| **Used by:**    | Controlled Components, Form Handling, React Router |                 |
+| **Related:**    | List Rendering, State, JSX                         |                 |
 
 ---
 
@@ -81,12 +81,13 @@ Use `{condition && <El />}` for simple show/hide, ternary
 before the JSX for complex logic.
 
 **One insight:**
+
 > `{0 && <Component />}` renders `0` on the screen.
 > This is the most common conditional rendering bug.
 > `&&` short-circuits to the falsy value if the condition
 > is falsy. `0` is falsy but is a valid React child (renders
 > as `"0"`). Always use booleans: `{items.length > 0 &&
-> <List />}` or `{!!items.length && <List />}`.
+<List />}` or `{!!items.length && <List />}`.
 
 ---
 
@@ -118,12 +119,20 @@ false      → nothing rendered
 ```jsx
 // TRAP: 0 renders as "0" on screen
 const count = 0;
-{count && <List />}  // renders "0", not nothing!
+{
+  count && <List />;
+} // renders "0", not nothing!
 
 // SAFE: comparison produces boolean, not number
-{count > 0 && <List />}  // renders nothing
-{!!count && <List />}    // renders nothing
-{Boolean(count) && <List />} // renders nothing
+{
+  count > 0 && <List />;
+} // renders nothing
+{
+  !!count && <List />;
+} // renders nothing
+{
+  Boolean(count) && <List />;
+} // renders nothing
 ```
 
 ---
@@ -243,18 +252,19 @@ switches in specific use cases.
 
 ```jsx
 // Show a badge only when there are notifications
-{notifications.length > 0 && (
-  <span className="badge">{notifications.length}</span>
-)}
+{
+  notifications.length > 0 && (
+    <span className="badge">{notifications.length}</span>
+  );
+}
 ```
 
 **Pattern 2 - Ternary (if/else):**
 
 ```jsx
 // Show either the authenticated or unauthenticated menu
-{isLoggedIn
-  ? <UserMenu username={user.name} />
-  : <LoginButton />
+{
+  isLoggedIn ? <UserMenu username={user.name} /> : <LoginButton />;
 }
 ```
 
@@ -307,15 +317,17 @@ function Dashboard({ user, permissions }) {
 function ProductStatus({ product }) {
   return (
     <div>
-      {product.stock ? product.stock > 10
-        ? <span>In Stock</span>
-        : <span>Low Stock</span>
-        : <span>Out of Stock</span>
-      }
-      {/* BAD: renders "0" when count is 0 */}
-      {product.reviewCount && (
-        <span>{product.reviewCount} reviews</span>
+      {product.stock ? (
+        product.stock > 10 ? (
+          <span>In Stock</span>
+        ) : (
+          <span>Low Stock</span>
+        )
+      ) : (
+        <span>Out of Stock</span>
       )}
+      {/* BAD: renders "0" when count is 0 */}
+      {product.reviewCount && <span>{product.reviewCount} reviews</span>}
     </div>
   );
 }
@@ -336,9 +348,7 @@ function ProductStatus({ product }) {
     <div>
       {getStockStatus()}
       {/* GOOD: boolean comparison avoids 0-renders-as-0 */}
-      {product.reviewCount > 0 && (
-        <span>{product.reviewCount} reviews</span>
-      )}
+      {product.reviewCount > 0 && <span>{product.reviewCount} reviews</span>}
     </div>
   );
 }
@@ -349,33 +359,36 @@ function ProductStatus({ product }) {
 ```jsx
 function OrderHistory({ customerId }) {
   const [state, setState] = useState({
-    status: 'idle',   // idle | loading | error | success
+    status: "idle", // idle | loading | error | success
     orders: [],
     error: null,
   });
 
   useEffect(() => {
-    setState(s => ({ ...s, status: 'loading' }));
+    setState((s) => ({ ...s, status: "loading" }));
     fetchOrders(customerId)
-      .then(orders => setState({
-        status: 'success', orders, error: null,
-      }))
-      .catch(err => setState({
-        status: 'error', orders: [], error: err.message,
-      }));
+      .then((orders) =>
+        setState({
+          status: "success",
+          orders,
+          error: null,
+        }),
+      )
+      .catch((err) =>
+        setState({
+          status: "error",
+          orders: [],
+          error: err.message,
+        }),
+      );
   }, [customerId]);
 
-  if (state.status === 'idle') return null;
-  if (state.status === 'loading') {
+  if (state.status === "idle") return null;
+  if (state.status === "loading") {
     return <LoadingSpinner label="Loading orders..." />;
   }
-  if (state.status === 'error') {
-    return (
-      <ErrorMessage
-        title="Could not load orders"
-        detail={state.error}
-      />
-    );
+  if (state.status === "error") {
+    return <ErrorMessage title="Could not load orders" detail={state.error} />;
   }
   if (state.orders.length === 0) {
     return <EmptyState message="No orders found." />;
@@ -388,24 +401,24 @@ function OrderHistory({ customerId }) {
 
 ### 📊 Comparison Table
 
-| Pattern | Syntax | Best For | Readability at Scale |
-|---|---|---|---|
-| `&&` operator | `{cond && <A />}` | Simple show/hide | Good for 1 condition |
-| Ternary | `{c ? <A /> : <B />}` | Two clear alternatives | Degrades with nesting |
-| Early return | `if...return` before JSX | Multiple branches, guards | Best for 3+ branches |
-| Helper function | `{renderContent()}` | Complex multi-state | Best for state machines |
-| Separate component | `<ConditionalComp />` | Reused conditional logic | Best for complex trees |
+| Pattern            | Syntax                   | Best For                  | Readability at Scale    |
+| ------------------ | ------------------------ | ------------------------- | ----------------------- |
+| `&&` operator      | `{cond && <A />}`        | Simple show/hide          | Good for 1 condition    |
+| Ternary            | `{c ? <A /> : <B />}`    | Two clear alternatives    | Degrades with nesting   |
+| Early return       | `if...return` before JSX | Multiple branches, guards | Best for 3+ branches    |
+| Helper function    | `{renderContent()}`      | Complex multi-state       | Best for state machines |
+| Separate component | `<ConditionalComp />`    | Reused conditional logic  | Best for complex trees  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`{false}` renders the text 'false'" | `false`, `null`, and `undefined` render as empty (no DOM node). Only `0` is a falsy value that does render visibly as the character `"0"`. |
-| "You cannot use if/else inside JSX" | You cannot use `if` STATEMENTS as JSX expressions (inside `{}`). You CAN use an `if` block in the function body before the `return`, or call a function inside `{}` that contains `if`/`else`. |
-| "Conditional rendering with `&&` is equivalent to ternary with null" | `{cond && <A />}` and `{cond ? <A /> : null}` are functionally identical for boolean `cond`. The `&&` version is shorter. The difference only matters when `cond` is a non-boolean falsy value (0, empty string). |
-| "A component that returns null is unmounted" | A component that `return null` is still mounted in React's component tree - it just renders nothing to the DOM. State and effects are preserved. Only removing the component from JSX (via conditional) actually unmounts it. |
+| Misconception                                                        | Reality                                                                                                                                                                                                                       |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`{false}` renders the text 'false'"                                 | `false`, `null`, and `undefined` render as empty (no DOM node). Only `0` is a falsy value that does render visibly as the character `"0"`.                                                                                    |
+| "You cannot use if/else inside JSX"                                  | You cannot use `if` STATEMENTS as JSX expressions (inside `{}`). You CAN use an `if` block in the function body before the `return`, or call a function inside `{}` that contains `if`/`else`.                                |
+| "Conditional rendering with `&&` is equivalent to ternary with null" | `{cond && <A />}` and `{cond ? <A /> : null}` are functionally identical for boolean `cond`. The `&&` version is shorter. The difference only matters when `cond` is a non-boolean falsy value (0, empty string).             |
+| "A component that returns null is unmounted"                         | A component that `return null` is still mounted in React's component tree - it just renders nothing to the DOM. State and effects are preserved. Only removing the component from JSX (via conditional) actually unmounts it. |
 
 ---
 
@@ -416,14 +429,20 @@ function OrderHistory({ customerId }) {
 **Symptom:** A `0` appears in the UI unexpectedly.
 
 **Root Cause:**
+
 ```jsx
-{items.length && <List />}
+{
+  items.length && <List />;
+}
 // When items.length is 0: renders "0" as text
 ```
 
 **Fix:**
+
 ```jsx
-{items.length > 0 && <List />}
+{
+  items.length > 0 && <List />;
+}
 ```
 
 ---
@@ -460,11 +479,13 @@ with if/return chains for state machines.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Component` - the function that contains conditional logic
 - `JSX` - the syntax where conditionals are expressed
 - `State` and `Props` - the data conditions are based on
 
 **Builds On:**
+
 - `List Rendering` - pairs with conditional rendering for
   "show list only if items exist" patterns
 - `Error Boundaries` - handles rendering errors, a
@@ -473,6 +494,7 @@ with if/return chains for state machines.
   async loading states
 
 **Tooling:**
+
 - `React DevTools` - inspect what a component rendered;
   confirm conditional branches are working as expected
 
@@ -497,6 +519,7 @@ with if/return chains for state machines.
 ```
 
 **If you remember only 3 things:**
+
 1. Use `&&` for simple show/hide, ternary for two options,
    `if`/early return for 3+ branches.
 2. `{0 && <Component />}` renders `"0"` - always use a

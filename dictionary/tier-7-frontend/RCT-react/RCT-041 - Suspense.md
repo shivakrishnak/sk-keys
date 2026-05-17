@@ -32,11 +32,11 @@ React 18+ frameworks; it is the cornerstone of Concurrent
 Mode because suspended components let React work on
 other tasks while waiting.
 
-| #041 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Error Boundaries, Code Splitting with React.lazy, useTransition and useDeferredValue | |
-| **Used by:** | Concurrent Features, useTransition and useDeferredValue, React Server Components, Hydration | |
-| **Related:** | Error Boundaries, Code Splitting, useTransition | |
+| #041            | Category: React                                                                             | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | Error Boundaries, Code Splitting with React.lazy, useTransition and useDeferredValue        |                 |
+| **Used by:**    | Concurrent Features, useTransition and useDeferredValue, React Server Components, Hydration |                 |
+| **Related:**    | Error Boundaries, Code Splitting, useTransition                                             |                 |
 
 ---
 
@@ -56,8 +56,14 @@ function UserProfile({ userId }) {
 
   useEffect(() => {
     fetchUser(userId)
-      .then(u => { setUser(u); setLoading(false); })
-      .catch(e => { setError(e); setLoading(false); });
+      .then((u) => {
+        setUser(u);
+        setLoading(false);
+      })
+      .catch((e) => {
+        setError(e);
+        setLoading(false);
+      });
   }, [userId]);
 
   if (loading) return <Spinner />;
@@ -95,20 +101,20 @@ Next.js fetch in RSC, or React 18's `use()` hook).
 ### ⏱️ Understand It in 30 Seconds
 
 ```jsx
-import { Suspense, lazy } from 'react';
-const SlowComponent = lazy(() => import('./SlowComponent'));
+import { Suspense, lazy } from "react";
+const SlowComponent = lazy(() => import("./SlowComponent"));
 
 // Suspense: shows fallback while SlowComponent loads
 function Page() {
   return (
     <div>
-      <Header />  {/* Renders immediately */}
+      <Header /> {/* Renders immediately */}
       <Suspense fallback={<Spinner />}>
         {/* Shows <Spinner /> while SlowComponent's JS loads */}
         {/* Shows <SlowComponent /> once loaded */}
         <SlowComponent />
       </Suspense>
-      <Footer />  {/* Renders immediately */}
+      <Footer /> {/* Renders immediately */}
     </div>
   );
 }
@@ -119,10 +125,10 @@ function Dashboard() {
     <Suspense fallback={<DashboardSkeleton />}>
       {/* Top-level skeleton while any dashboard child loads */}
       <Suspense fallback={<ChartSkeleton />}>
-        <Charts />  {/* Independent: shows ChartSkeleton */}
+        <Charts /> {/* Independent: shows ChartSkeleton */}
       </Suspense>
       <Suspense fallback={<TableSkeleton />}>
-        <DataTable />  {/* Independent: shows TableSkeleton */}
+        <DataTable /> {/* Independent: shows TableSkeleton */}
       </Suspense>
     </Suspense>
   );
@@ -185,6 +191,7 @@ Suspense (declarative):
 **THE LOADING WATERFALL PROBLEM:**
 A page renders Parent → Child → Grandchild, each fetching
 data:
+
 - Parent fetches user profile (300ms)
 - Child fetches user's posts (200ms) - starts AFTER Parent
 - Grandchild fetches post comments (150ms) - starts AFTER Child
@@ -331,9 +338,7 @@ function Page() {
 function SafeSuspense({ fallback, errorFallback, children }) {
   return (
     <ErrorBoundary fallback={errorFallback}>
-      <Suspense fallback={fallback}>
-        {children}
-      </Suspense>
+      <Suspense fallback={fallback}>{children}</Suspense>
     </ErrorBoundary>
   );
 }
@@ -354,24 +359,24 @@ function Page() {
 
 ### 📊 Comparison Table
 
-| | Suspense | useEffect + useState | SuspenseList (experimental) |
-|---|---|---|---|
-| Loading state location | Tree (declarative) | Component (imperative) | Coordinated across boundaries |
-| Waterfall prevention | With Relay/RSC (not useEffect) | No | No |
-| Error handling | Error Boundary required | try/catch or error state | Error Boundary required |
-| SSR support | Yes (React 18 streaming) | Yes (renders during SSR) | Experimental |
-| Library support required | Yes (lazy or data library) | No (works with raw fetch) | N/A |
+|                          | Suspense                       | useEffect + useState      | SuspenseList (experimental)   |
+| ------------------------ | ------------------------------ | ------------------------- | ----------------------------- |
+| Loading state location   | Tree (declarative)             | Component (imperative)    | Coordinated across boundaries |
+| Waterfall prevention     | With Relay/RSC (not useEffect) | No                        | No                            |
+| Error handling           | Error Boundary required        | try/catch or error state  | Error Boundary required       |
+| SSR support              | Yes (React 18 streaming)       | Yes (renders during SSR)  | Experimental                  |
+| Library support required | Yes (lazy or data library)     | No (works with raw fetch) | N/A                           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Suspense works with useEffect-based data fetching" | Suspense does NOT integrate with `useEffect` + `useState` data fetching. Only `React.lazy()`, `use()` (React 18), and libraries explicitly built for Suspense (React Query v5, SWR, Relay) trigger the Suspense protocol. `useEffect` runs after render, not during it. |
+| Misconception                                           | Reality                                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Suspense works with useEffect-based data fetching"     | Suspense does NOT integrate with `useEffect` + `useState` data fetching. Only `React.lazy()`, `use()` (React 18), and libraries explicitly built for Suspense (React Query v5, SWR, Relay) trigger the Suspense protocol. `useEffect` runs after render, not during it.                                 |
 | "Suspense prevents all loading spinners from appearing" | With `useTransition`, React can hold the current UI while the new tree suspends - this prevents spinner flicker for fast loads. But this requires wrapping the navigation/state update in `startTransition`. Without transitions, every navigation to a suspended route shows the fallback immediately. |
-| "The fallback must be a spinner" | The fallback can be any React element: a skeleton screen, a low-fidelity version of the content, a blurred placeholder, or even null (to show nothing). Skeleton screens that match the shape of the content provide better perceived performance than spinners. |
-| "Suspense replaces Error Boundaries" | Suspense handles the loading state (promise pending). Error Boundaries handle the error state (promise rejected or render error). They are complementary, not interchangeable. Every Suspense boundary should have an Error Boundary ancestor. |
+| "The fallback must be a spinner"                        | The fallback can be any React element: a skeleton screen, a low-fidelity version of the content, a blurred placeholder, or even null (to show nothing). Skeleton screens that match the shape of the content provide better perceived performance than spinners.                                        |
+| "Suspense replaces Error Boundaries"                    | Suspense handles the loading state (promise pending). Error Boundaries handle the error state (promise rejected or render error). They are complementary, not interchangeable. Every Suspense boundary should have an Error Boundary ancestor.                                                          |
 
 ---
 
@@ -387,11 +392,12 @@ immediately when a child suspends. For fast loads, the
 fallback appears for 50-100ms - enough to see a flash.
 
 **Fix:** Use `useTransition` for navigations:
+
 ```jsx
 const [isPending, startTransition] = useTransition();
 
 // On navigate: wrap state update in startTransition
-startTransition(() => setCurrentPage('dashboard'));
+startTransition(() => setCurrentPage("dashboard"));
 // React shows the OLD page (not the Suspense fallback)
 // until DashboardPage finishes loading
 // isPending is true during the transition (show a subtle indicator)
@@ -402,10 +408,12 @@ startTransition(() => setCurrentPage('dashboard'));
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Error Boundaries` - required above Suspense for error handling
 - `Code Splitting with React.lazy` - the primary use case for Suspense
 
 **Builds On:**
+
 - `useTransition and useDeferredValue` - prevent Suspense
   fallback flicker with concurrent transitions
 - `React Server Components` - Suspense enables streaming SSR
@@ -428,6 +436,7 @@ startTransition(() => setCurrentPage('dashboard'));
 ```
 
 **If you remember only 3 things:**
+
 1. Suspense shows `fallback` while children suspend.
    Works with `React.lazy`, `use()`, and Suspense-aware
    libraries. NOT with raw `useEffect` fetching.

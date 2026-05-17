@@ -31,11 +31,11 @@ shared data (theme, locale, auth user); every context
 consumer re-renders when the context value changes, so
 it is not suitable for high-frequency state updates.
 
-| #022 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, State, One-Way Data Binding, useState, useEffect | |
-| **Used by:** | useRef Hook, Custom Hooks, Context API vs State Decision Guide | |
-| **Related:** | useState Hook, Context API vs State Decision Guide, Prop Drilling Anti-Pattern | |
+| #022            | Category: React                                                                | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, State, One-Way Data Binding, useState, useEffect                    |                 |
+| **Used by:**    | useRef Hook, Custom Hooks, Context API vs State Decision Guide                 |                 |
+| **Related:**    | useState Hook, Context API vs State Decision Guide, Prop Drilling Anti-Pattern |                 |
 
 ---
 
@@ -71,12 +71,12 @@ nearest Provider's value.
 
 ```jsx
 // 1. Create
-const ThemeContext = createContext('light'); // default if no provider
+const ThemeContext = createContext("light"); // default if no provider
 
 // 2. Provide
 <ThemeContext.Provider value="dark">
   <App />
-</ThemeContext.Provider>
+</ThemeContext.Provider>;
 
 // 3. Consume
 function Button() {
@@ -95,6 +95,7 @@ read `v` anywhere in that subtree with
 `useContext(MyContext)` - no prop threading needed.
 
 **Performance caveat:**
+
 > Every component that calls `useContext(MyContext)` re-renders
 > whenever the Provider's `value` prop changes. If the value
 > is an object created inline (`value={{ user, setUser }}`),
@@ -142,10 +143,7 @@ function App() {
 // Fix: memoize the context value
 function App() {
   const [user, setUser] = useState(null);
-  const authValue = useMemo(
-    () => ({ user, setUser }),
-    [user]
-  );
+  const authValue = useMemo(() => ({ user, setUser }), [user]);
   return (
     <AuthContext.Provider value={authValue}>
       <Routes />
@@ -277,21 +275,17 @@ export function AuthProvider({ children }) {
   // Memoize to prevent unnecessary consumer re-renders
   const value = useMemo(
     () => ({ user, loading, login, logout }),
-    [user, loading]
+    [user, loading],
   );
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 // Custom hook: encapsulates context access
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === null) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 }
@@ -325,7 +319,7 @@ function UserAvatar() {
 ```jsx
 // BAD: new object every render = all consumers re-render
 function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState("light");
 
   return (
     // { theme, setTheme } is a new object on every render
@@ -342,28 +336,26 @@ function ThemeProvider({ children }) {
 ```jsx
 // GOOD: memoized value - only changes when theme changes
 function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState("light");
 
   const value = useMemo(
     () => ({ theme, setTheme }),
-    [theme]       // setTheme is stable (from useState)
+    [theme], // setTheme is stable (from useState)
   );
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 
 // OR: split read and write into separate contexts
 // Readers only re-render when theme changes
 // Components that only call setTheme never re-render
-const ThemeValueContext = createContext('light');
+const ThemeValueContext = createContext("light");
 const ThemeSetContext = createContext(() => {});
 
 function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState("light");
   return (
     <ThemeValueContext.Provider value={theme}>
       <ThemeSetContext.Provider value={setTheme}>
@@ -378,24 +370,24 @@ function ThemeProvider({ children }) {
 
 ### 📊 Comparison Table
 
-| Approach | Prop drilling | Context | Redux/Zustand |
-|---|---|---|---|
-| Best for | Shallow trees, few consumers | Infrequent global data | High-frequency, complex state |
-| Re-render control | Fine-grained (props) | All consumers on change | Selector-based |
-| Boilerplate | Low | Medium | Medium-High |
-| DevTools support | Props visible | React DevTools | Redux DevTools |
-| Cross-component access | Explicit prop chain | Any descendant | Any component |
+| Approach               | Prop drilling                | Context                 | Redux/Zustand                 |
+| ---------------------- | ---------------------------- | ----------------------- | ----------------------------- |
+| Best for               | Shallow trees, few consumers | Infrequent global data  | High-frequency, complex state |
+| Re-render control      | Fine-grained (props)         | All consumers on change | Selector-based                |
+| Boilerplate            | Low                          | Medium                  | Medium-High                   |
+| DevTools support       | Props visible                | React DevTools          | Redux DevTools                |
+| Cross-component access | Explicit prop chain          | Any descendant          | Any component                 |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Context is a state management solution like Redux" | Context is a data transport mechanism (makes data available anywhere in the tree). It is not a state management system. State still lives in useState/useReducer. Context delivers that state without prop drilling. Redux has a global store, optimised subscription model, and DevTools. |
-| "useContext causes unnecessary re-renders only if I pass objects" | ANY context value change triggers all consumers to re-render. Even passing a primitive (a number that changes from 0 to 1) re-renders every consumer. Object values that are recreated each render re-render consumers even when the data is semantically the same. |
-| "Context.defaultValue is used when no Provider exists in the tree" | The default value is only used when a component calls `useContext` with NO Provider anywhere above it in the tree. When a Provider is present with `value={undefined}`, consumers receive `undefined`, NOT the default value. |
-| "Context replaces the need for state lifting" | Context and lifting state up solve different problems. Lifting state solves ownership (where does the state live?). Context solves access (how does a distant component read the state?). Both are often used together. |
+| Misconception                                                      | Reality                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Context is a state management solution like Redux"                | Context is a data transport mechanism (makes data available anywhere in the tree). It is not a state management system. State still lives in useState/useReducer. Context delivers that state without prop drilling. Redux has a global store, optimised subscription model, and DevTools. |
+| "useContext causes unnecessary re-renders only if I pass objects"  | ANY context value change triggers all consumers to re-render. Even passing a primitive (a number that changes from 0 to 1) re-renders every consumer. Object values that are recreated each render re-render consumers even when the data is semantically the same.                        |
+| "Context.defaultValue is used when no Provider exists in the tree" | The default value is only used when a component calls `useContext` with NO Provider anywhere above it in the tree. When a Provider is present with `value={undefined}`, consumers receive `undefined`, NOT the default value.                                                              |
+| "Context replaces the need for state lifting"                      | Context and lifting state up solve different problems. Lifting state solves ownership (where does the state live?). Context solves access (how does a distant component read the state?). Both are often used together.                                                                    |
 
 ---
 
@@ -411,6 +403,7 @@ change in the parent, even unrelated changes.
 on every parent render.
 
 **Fix:**
+
 1. Wrap the context value in `useMemo`
 2. Split frequently-changing state into separate contexts
 3. Consider a state management library with selectors
@@ -438,6 +431,7 @@ Add an error guard in the custom hook:
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Component` - context lives in component instances
 - `One-Way Data Binding` - context is an alternative
   delivery mechanism for the same one-way flow
@@ -445,6 +439,7 @@ Add an error guard in the custom hook:
   useState
 
 **Builds On:**
+
 - `Context API vs State Management Decision Guide` -
   when to use Context vs Redux/Zustand
 - `Prop Drilling Anti-Pattern` - the problem Context solves
@@ -475,6 +470,7 @@ Add an error guard in the custom hook:
 ```
 
 **If you remember only 3 things:**
+
 1. `createContext` + `Provider` + `useContext` forms the
    trio. Always wrap `useContext` in a custom hook for a
    cleaner API and error boundary.
@@ -492,9 +488,10 @@ needed by many components (auth user, theme, locale).
 The key performance issue: every consumer re-renders
 when the Provider value changes. Stabilise object values
 with `useMemo`. Context is not a state management system
+
 - it is a data transport. State still lives in useState.
-For high-frequency updates, use Zustand or Redux with
-selector-based subscriptions."
+  For high-frequency updates, use Zustand or Redux with
+  selector-based subscriptions."
 
 ---
 

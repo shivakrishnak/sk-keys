@@ -30,11 +30,11 @@ causing divergence between React's internal representation and
 the actual DOM - leading to bugs, lost renders, and undefined
 behaviour.
 
-| #017 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, State, Virtual DOM, One-Way Data Binding | |
-| **Used by:** | useRef Hook, Memory Leak Patterns, Stale Closure | |
-| **Related:** | Virtual DOM, One-Way Data Binding, useRef Hook | |
+| #017            | Category: React                                     | Difficulty: ★☆☆ |
+| :-------------- | :-------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, State, Virtual DOM, One-Way Data Binding |                 |
+| **Used by:**    | useRef Hook, Memory Leak Patterns, Stale Closure    |                 |
+| **Related:**    | Virtual DOM, One-Way Data Binding, useRef Hook      |                 |
 
 ---
 
@@ -78,6 +78,7 @@ nodes directly is like editing a compiled binary to change
 program behaviour instead of editing the source code.
 
 **One insight:**
+
 > React's reconciler only compares its Virtual DOM to the
 > previous Virtual DOM - it does not read back from the
 > real DOM to detect external changes. If you hide a modal
@@ -146,7 +147,7 @@ function Counter() {
 
   const badReset = () => {
     // Direct DOM mutation: sets text to "0"
-    document.querySelector('.count-display').textContent = '0';
+    document.querySelector(".count-display").textContent = "0";
     // React state still says count = 5 (or whatever)
   };
 
@@ -157,7 +158,7 @@ function Counter() {
   return (
     <div>
       <span className="count-display">{count}</span>
-      <button onClick={() => setCount(c => c + 1)}>+</button>
+      <button onClick={() => setCount((c) => c + 1)}>+</button>
       <button onClick={badReset}>Bad Reset</button>
       <button onClick={goodReset}>Good Reset</button>
     </div>
@@ -166,6 +167,7 @@ function Counter() {
 ```
 
 **What happens with `badReset`:**
+
 1. User clicks "+": count = 1, DOM shows "1" ✅
 2. User clicks bad reset: DOM shows "0" ✅ (looks correct)
 3. User clicks "+": setCount(1 + 1) = 2, React re-renders
@@ -205,8 +207,9 @@ or `element.style` to change things React is managing.
 For every DOM manipulation use case, there is a React
 alternative: show/hide → conditional rendering with state,
 add class → `className` expression, focus element → `useRef`
-+ `element.focus()`, animate → CSS transitions or
-animation libraries.
+
+- `element.focus()`, animate → CSS transitions or
+  animation libraries.
 
 **Level 3 (mechanism):**
 React's reconciler diffs its current Virtual DOM against
@@ -275,10 +278,12 @@ function Modal({ title, content }) {
 // Using className (React way)
 function Button({ variant, disabled, children }) {
   const classes = [
-    'btn',
-    variant === 'primary' ? 'btn-primary' : 'btn-secondary',
-    disabled ? 'btn-disabled' : '',
-  ].filter(Boolean).join(' ');
+    "btn",
+    variant === "primary" ? "btn-primary" : "btn-secondary",
+    disabled ? "btn-disabled" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <button className={classes} disabled={disabled}>
@@ -321,19 +326,19 @@ function SearchBox() {
 // BAD: React component mixing DOM manipulation
 function NotificationBanner({ message, type }) {
   const showBanner = () => {
-    const el = document.getElementById('banner');
-    el.textContent = message;         // mutation 1
-    el.style.display = 'block';       // mutation 2
-    el.className = `banner ${type}`;  // mutation 3
+    const el = document.getElementById("banner");
+    el.textContent = message; // mutation 1
+    el.style.display = "block"; // mutation 2
+    el.className = `banner ${type}`; // mutation 3
 
     setTimeout(() => {
-      el.style.display = 'none';      // mutation 4
+      el.style.display = "none"; // mutation 4
     }, 3000);
   };
 
   return (
     <div>
-      <div id="banner" style={{ display: 'none' }}></div>
+      <div id="banner" style={{ display: "none" }}></div>
       <button onClick={showBanner}>Trigger</button>
     </div>
   );
@@ -361,11 +366,7 @@ function NotificationBanner({ message, type }) {
 
   return (
     <div>
-      {visible && (
-        <div className={`banner banner-${type}`}>
-          {message}
-        </div>
-      )}
+      {visible && <div className={`banner banner-${type}`}>{message}</div>}
       <button onClick={showBanner}>Trigger</button>
     </div>
   );
@@ -379,20 +380,20 @@ function NotificationBanner({ message, type }) {
 
 ```jsx
 // Pattern: use ref for external library, not React content
-import { useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto';
+import { useEffect, useRef } from "react";
+import Chart from "chart.js/auto";
 
 function SalesChart({ data }) {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
 
   useEffect(() => {
-    const ctx = canvasRef.current.getContext('2d');
+    const ctx = canvasRef.current.getContext("2d");
     // Chart.js creates its own DOM inside canvas
     // React does not manage canvas internals
     // useRef is the correct escape hatch here
     chartRef.current = new Chart(ctx, {
-      type: 'bar',
+      type: "bar",
       data: data,
     });
 
@@ -420,12 +421,12 @@ function SalesChart({ data }) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Using `useRef` to change DOM content is fine because refs give you real DOM access" | Refs are the correct tool for DOM API calls (focus, scroll, measurement) or external library integration. Using refs to change rendered content (innerHTML, textContent, style) bypasses React's model - same anti-pattern, just via ref instead of querySelector. |
-| "`innerHTML` is fine for displaying server-rendered HTML safely" | `innerHTML` bypasses React's control AND creates XSS risk. For server-rendered HTML in React, use `dangerouslySetInnerHTML={{ __html: sanitisedString }}` - the deliberate API name is the warning. Always sanitise with DOMPurify before use. |
-| "Direct DOM mutations are OK in componentDidMount / useEffect when the component is done rendering" | Effects run after render, but React continues to render on state changes. Direct mutations in effects will be overwritten by any subsequent render. The only safe DOM API calls in effects are those React does not manage (focus, scroll, external libraries). |
-| "jQuery can be used in React components for DOM manipulation" | jQuery DOM manipulation conflicts with React's Virtual DOM for any React-managed elements. Using jQuery for DOM manipulation on React-managed nodes produces the same divergence bug, potentially on every user interaction. |
+| Misconception                                                                                       | Reality                                                                                                                                                                                                                                                            |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Using `useRef` to change DOM content is fine because refs give you real DOM access"                | Refs are the correct tool for DOM API calls (focus, scroll, measurement) or external library integration. Using refs to change rendered content (innerHTML, textContent, style) bypasses React's model - same anti-pattern, just via ref instead of querySelector. |
+| "`innerHTML` is fine for displaying server-rendered HTML safely"                                    | `innerHTML` bypasses React's control AND creates XSS risk. For server-rendered HTML in React, use `dangerouslySetInnerHTML={{ __html: sanitisedString }}` - the deliberate API name is the warning. Always sanitise with DOMPurify before use.                     |
+| "Direct DOM mutations are OK in componentDidMount / useEffect when the component is done rendering" | Effects run after render, but React continues to render on state changes. Direct mutations in effects will be overwritten by any subsequent render. The only safe DOM API calls in effects are those React does not manage (focus, scroll, external libraries).    |
+| "jQuery can be used in React components for DOM manipulation"                                       | jQuery DOM manipulation conflicts with React's Virtual DOM for any React-managed elements. Using jQuery for DOM manipulation on React-managed nodes produces the same divergence bug, potentially on every user interaction.                                       |
 
 ---
 
@@ -488,6 +489,7 @@ with a cleanup function that removes them on unmount.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Virtual DOM` - the mechanism that direct mutation
   bypasses and corrupts
 - `State` - the correct source of truth for UI changes
@@ -495,12 +497,14 @@ with a cleanup function that removes them on unmount.
   direct mutation violates
 
 **Alternatives (what to do instead):**
+
 - `useRef Hook` - the controlled escape hatch for
   legitimate DOM API access
 - `Conditional Rendering` - React way of show/hide
 - `State` - React way of dynamic content
 
 **Related Anti-Patterns:**
+
 - `Stale Closure Anti-Pattern in Hooks` - another way
   to produce incorrect behaviour by bypassing React's
   model
@@ -536,6 +540,7 @@ with a cleanup function that removes them on unmount.
 ```
 
 **If you remember only 3 things:**
+
 1. Never use `document.querySelector`, `innerHTML`, or
    `element.style` on DOM nodes that React manages. React
    will overwrite your changes on the next render.
@@ -589,7 +594,7 @@ library (DOMPurify, sanitize-html) to prevent XSS.
 ### ✅ Mastery Checklist
 
 1. **EXPLAIN** why `document.querySelector('.modal').style.
-   display = 'none'` in a React event handler will not
+display = 'none'` in a React event handler will not
    reliably hide a modal - trace exactly what React does
    on the next re-render and why it overwrites the change.
 2. **REFACTOR** a component that uses `innerHTML` to inject

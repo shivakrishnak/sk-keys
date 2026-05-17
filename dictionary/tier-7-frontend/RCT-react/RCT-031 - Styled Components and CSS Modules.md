@@ -32,11 +32,11 @@ global CSS namespace collisions but with different trade-offs:
 CSS Modules = zero runtime cost, Styled Components =
 dynamic styles from props, larger JS bundle.
 
-| #031 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JSX, React Components | |
-| **Used by:** | Build a React CRUD App, Bundle Size Analysis, Design System Architecture | |
-| **Related:** | Bundle Size Analysis, Design System Architecture, XSS Prevention | |
+| #031            | Category: React                                                          | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | JSX, React Components                                                    |                 |
+| **Used by:**    | Build a React CRUD App, Bundle Size Analysis, Design System Architecture |                 |
+| **Related:**    | Bundle Size Analysis, Design System Architecture, XSS Prevention         |                 |
 
 ---
 
@@ -50,10 +50,16 @@ teams inevitably get:
 
 ```css
 /* TeamA writes this */
-.button { background: blue; padding: 8px 16px; }
+.button {
+  background: blue;
+  padding: 8px 16px;
+}
 
 /* TeamB writes this in a different file */
-.button { background: red; border-radius: 4px; }
+.button {
+  background: red;
+  border-radius: 4px;
+}
 /* Now ALL .button elements are red with border-radius */
 ```
 
@@ -99,11 +105,13 @@ but maximum flexibility.
 ```
 
 ```jsx
-import styles from './Button.module.css';
+import styles from "./Button.module.css";
 
 function Button({ variant }) {
   return (
-    <button className={`${styles.button} ${variant === 'danger' ? styles.danger : ''}`}>
+    <button
+      className={`${styles.button} ${variant === "danger" ? styles.danger : ""}`}
+    >
       Click me
     </button>
   );
@@ -114,10 +122,10 @@ function Button({ variant }) {
 **Styled Components:**
 
 ```jsx
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const Button = styled.button`
-  background: ${props => props.danger ? 'red' : 'blue'};
+  background: ${(props) => (props.danger ? "red" : "blue")};
   padding: 8px 16px;
 `;
 
@@ -269,18 +277,23 @@ whether your component library is compatible with RSC.
 // .sm, .md, .lg { ... }
 // .disabled { ... }
 
-import styles from './Button.module.css';
-import clsx from 'clsx';
+import styles from "./Button.module.css";
+import clsx from "clsx";
 
-function Button({ variant = 'primary', size = 'md',
-  disabled, children, onClick }) {
+function Button({
+  variant = "primary",
+  size = "md",
+  disabled,
+  children,
+  onClick,
+}) {
   return (
     <button
       className={clsx(
         styles.base,
-        styles[variant],  // styles.primary, styles.danger
-        styles[size],     // styles.sm, styles.md, styles.lg
-        { [styles.disabled]: disabled }
+        styles[variant], // styles.primary, styles.danger
+        styles[size], // styles.sm, styles.md, styles.lg
+        { [styles.disabled]: disabled },
       )}
       disabled={disabled}
       onClick={onClick}
@@ -294,29 +307,32 @@ function Button({ variant = 'primary', size = 'md',
 **Styled Components with theme and variants:**
 
 ```jsx
-import styled, { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from "styled-components";
 
 const theme = {
-  colors: { primary: '#0070f3', danger: '#e00' },
-  spacing: { sm: '4px 8px', md: '8px 16px' },
+  colors: { primary: "#0070f3", danger: "#e00" },
+  spacing: { sm: "4px 8px", md: "8px 16px" },
 };
 
 const Button = styled.button`
   background: ${({ variant, theme }) =>
     theme.colors[variant] || theme.colors.primary};
-  padding: ${({ size, theme }) =>
-    theme.spacing[size] || theme.spacing.md};
+  padding: ${({ size, theme }) => theme.spacing[size] || theme.spacing.md};
   border: none;
   border-radius: 4px;
-  cursor: ${({ disabled }) => disabled ? 'not-allowed' : 'pointer'};
-  opacity: ${({ disabled }) => disabled ? 0.5 : 1};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 `;
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Button variant="primary" size="md">Save</Button>
-      <Button variant="danger" disabled>Delete</Button>
+      <Button variant="primary" size="md">
+        Save
+      </Button>
+      <Button variant="danger" disabled>
+        Delete
+      </Button>
     </ThemeProvider>
   );
 }
@@ -326,28 +342,28 @@ function App() {
 
 ### 📊 Comparison Table
 
-| Feature | CSS Modules | Styled Components | Tailwind CSS |
-|---|---|---|---|
-| Scoping mechanism | Build-time class rename | Runtime class generation | Utility class naming |
-| Runtime overhead | None | Yes (hashing, injection) | None |
-| Dynamic styles from props | Inline styles needed | Native (template fn) | Limited |
-| SSR compatibility | Full | Requires setup | Full |
-| RSC compatibility | Full | No (needs context) | Full |
-| Bundle size | Small | +13KB gzipped | Varies (PurgeCSS) |
-| Co-location with JS | Separate file | Same file | Via className |
-| Theming | CSS custom properties | ThemeProvider | tailwind.config.js |
-| Best for | Most projects | Component libraries (legacy) | Utility-first apps |
+| Feature                   | CSS Modules             | Styled Components            | Tailwind CSS         |
+| ------------------------- | ----------------------- | ---------------------------- | -------------------- |
+| Scoping mechanism         | Build-time class rename | Runtime class generation     | Utility class naming |
+| Runtime overhead          | None                    | Yes (hashing, injection)     | None                 |
+| Dynamic styles from props | Inline styles needed    | Native (template fn)         | Limited              |
+| SSR compatibility         | Full                    | Requires setup               | Full                 |
+| RSC compatibility         | Full                    | No (needs context)           | Full                 |
+| Bundle size               | Small                   | +13KB gzipped                | Varies (PurgeCSS)    |
+| Co-location with JS       | Separate file           | Same file                    | Via className        |
+| Theming                   | CSS custom properties   | ThemeProvider                | tailwind.config.js   |
+| Best for                  | Most projects           | Component libraries (legacy) | Utility-first apps   |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "CSS Modules are compiled away and have zero output" | CSS Modules produce real CSS files in the build output. The class names are transformed (scoped), but the CSS is still in a `.css` file loaded by the browser, not injected by JavaScript. |
-| "Styled Components generate new classes on every render" | Styled Components cache generated class names. A given combination of prop values always produces the same class name (hash of template literal + interpolated values). Re-renders with the same props do not generate new styles. |
-| "CSS Modules cannot do dynamic styles" | CSS Modules cannot compute styles from JavaScript values at runtime. But you can: use CSS custom properties (change a CSS variable via inline style `style={{ '--width': progress + '%' }}`), or apply different CSS module classes conditionally. |
-| "styled-components v6 works with React Server Components" | As of React 18 / Next.js 13+, styled-components requires React context for theming (ThemeProvider). Server Components do not support context. Styled-components can be used only in Client Components in an RSC app. |
+| Misconception                                             | Reality                                                                                                                                                                                                                                            |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "CSS Modules are compiled away and have zero output"      | CSS Modules produce real CSS files in the build output. The class names are transformed (scoped), but the CSS is still in a `.css` file loaded by the browser, not injected by JavaScript.                                                         |
+| "Styled Components generate new classes on every render"  | Styled Components cache generated class names. A given combination of prop values always produces the same class name (hash of template literal + interpolated values). Re-renders with the same props do not generate new styles.                 |
+| "CSS Modules cannot do dynamic styles"                    | CSS Modules cannot compute styles from JavaScript values at runtime. But you can: use CSS custom properties (change a CSS variable via inline style `style={{ '--width': progress + '%' }}`), or apply different CSS module classes conditionally. |
+| "styled-components v6 works with React Server Components" | As of React 18 / Next.js 13+, styled-components requires React context for theming (ThemeProvider). Server Components do not support context. Styled-components can be used only in Client Components in an RSC app.                               |
 
 ---
 
@@ -361,10 +377,11 @@ users inject CSS properties that affect the layout or
 visibility of other elements.
 
 **Root Cause:**
+
 ```jsx
 // VULNERABLE: user input in CSS template literal
 const UserCard = styled.div`
-  color: ${props => props.userColor};
+  color: ${(props) => props.userColor};
 `;
 // If userColor = "red; position: fixed; top: 0; width: 100vw"
 // The entire component tree layout can be attacked
@@ -373,9 +390,10 @@ const UserCard = styled.div`
 **Prevention:** Never interpolate user-supplied values
 directly into styled-component CSS. Validate or sanitise
 values. Use a safe set of allowed values:
+
 ```jsx
 // SAFE: only allow from known-good set
-const safeColor = ALLOWED_COLORS.includes(userColor) ? userColor : 'black';
+const safeColor = ALLOWED_COLORS.includes(userColor) ? userColor : "black";
 ```
 
 ---
@@ -389,12 +407,14 @@ HTML before styles appear.
 after HTML is parsed. The HTML renders first without styles.
 
 **Fix (Next.js pages router):** Use `ServerStyleSheet`:
+
 ```jsx
 // _document.js
-import { ServerStyleSheet } from 'styled-components';
+import { ServerStyleSheet } from "styled-components";
 // getInitialProps collects styles during SSR
 // and injects them into the <head> before HTML is sent
 ```
+
 In App Router, use only CSS Modules or zero-runtime
 CSS-in-JS for RSC-compatible styling.
 
@@ -403,11 +423,13 @@ CSS-in-JS for RSC-compatible styling.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `JSX and Expressions` - applying class names in JSX
 - `React Components and Props` - where props flow for
   dynamic Styled Components styling
 
 **Builds On:**
+
 - `Bundle Size Analysis and Tree Shaking` - CSS-in-JS
   bundle overhead analysis
 - `Design System Architecture with React` - choosing
@@ -439,6 +461,7 @@ CSS-in-JS for RSC-compatible styling.
 ```
 
 **If you remember only 3 things:**
+
 1. CSS Modules: `.module.css` file, import as object,
    apply as `className={styles.name}`. Build-time scoping.
    Zero runtime cost.

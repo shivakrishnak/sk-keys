@@ -33,11 +33,11 @@ largely replaced by custom hooks in functional components,
 but remain relevant for component-level concerns that
 hooks cannot express (wrapping component lifecycle).
 
-| #042 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | React Components, React.memo, useEffect Hook | |
-| **Used by:** | Render Props Pattern, Compound Components, Class to Hooks Migration | |
-| **Related:** | Render Props Pattern, Compound Components, Custom Hooks | |
+| #042            | Category: React                                                     | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | React Components, React.memo, useEffect Hook                        |                 |
+| **Used by:**    | Render Props Pattern, Compound Components, Class to Hooks Migration |                 |
+| **Related:**    | Render Props Pattern, Compound Components, Custom Hooks             |                 |
 
 ---
 
@@ -57,6 +57,7 @@ or Render Props. HOCs became the standard pattern for
 
 In 2024, custom hooks solve most of these for functional
 components. But HOCs are still the ONLY option when:
+
 - The enhancement must be at the component (tree) level
   (you cannot use a hook to wrap another component's render)
 - Working with class components
@@ -160,6 +161,7 @@ This is "HOC wrapper hell" - the component tree shows
 and prop naming conflicts can silently override each other.
 
 The custom hook equivalent:
+
 ```jsx
 function Page() {
   const { isAuthenticated } = useAuth();
@@ -169,6 +171,7 @@ function Page() {
   // No nesting, no prop forwarding, no wrapper hell
 }
 ```
+
 This is why hooks replaced HOCs for most use cases.
 
 ---
@@ -213,6 +216,7 @@ HOCs break ref forwarding. When a parent passes a `ref`
 to `<EnhancedComponent ref={ref}>`, the ref lands on
 the HOC wrapper, not the wrapped component. Fix: use
 `React.forwardRef` in the HOC:
+
 ```jsx
 function withAuth(WrappedComponent) {
   const AuthComponent = React.forwardRef((props, ref) => {
@@ -243,11 +247,11 @@ MobX's `observer()`, some analytics libraries).
 **HOC with ref forwarding and displayName:**
 
 ```jsx
-import React from 'react';
-import { hoistNonReactStatics } from 'hoist-non-react-statics';
+import React from "react";
+import { hoistNonReactStatics } from "hoist-non-react-statics";
 
 function withPermission(requiredPermission) {
-  return function(WrappedComponent) {
+  return function (WrappedComponent) {
     // forwardRef so HOC does not break ref passing
     const PermissionComponent = React.forwardRef(
       function PermissionWrapper(props, ref) {
@@ -258,14 +262,13 @@ function withPermission(requiredPermission) {
         }
 
         return <WrappedComponent {...props} ref={ref} />;
-      }
+      },
     );
 
     // Display name for React DevTools
-    PermissionComponent.displayName =
-      `withPermission(${
-        WrappedComponent.displayName || WrappedComponent.name
-      })`;
+    PermissionComponent.displayName = `withPermission(${
+      WrappedComponent.displayName || WrappedComponent.name
+    })`;
 
     // Copy static methods from WrappedComponent
     // (e.g. getInitialProps in Next.js pages)
@@ -276,7 +279,7 @@ function withPermission(requiredPermission) {
 }
 
 // Usage (curried, allows pre-configuring the permission):
-const AdminOnly = withPermission('admin');
+const AdminOnly = withPermission("admin");
 const EditPost = AdminOnly(PostEditor);
 ```
 
@@ -290,11 +293,11 @@ const EditPost = AdminOnly(PostEditor);
 // BAD: mutates the input component (violates HOC contract)
 function withLogger(WrappedComponent) {
   // Directly modifying the prototype - mutation!
-  WrappedComponent.prototype.componentDidMount = function() {
-    console.log('mounted');
+  WrappedComponent.prototype.componentDidMount = function () {
+    console.log("mounted");
   };
   // Returns the SAME component, not a new one
-  return WrappedComponent;  // mutation: breaks composability
+  return WrappedComponent; // mutation: breaks composability
 }
 // Problem: if another HOC does the same mutation, one
 // will silently overwrite the other's componentDidMount
@@ -307,8 +310,7 @@ function withLogger(WrappedComponent) {
 function withLogger(WrappedComponent) {
   function LoggedComponent(props) {
     useEffect(() => {
-      const name = WrappedComponent.displayName
-        || WrappedComponent.name;
+      const name = WrappedComponent.displayName || WrappedComponent.name;
       console.log(`${name} mounted`);
       return () => console.log(`${name} unmounted`);
     }, []);
@@ -316,10 +318,9 @@ function withLogger(WrappedComponent) {
     return <WrappedComponent {...props} />;
   }
 
-  LoggedComponent.displayName =
-    `withLogger(${
-      WrappedComponent.displayName || WrappedComponent.name
-    })`;
+  LoggedComponent.displayName = `withLogger(${
+    WrappedComponent.displayName || WrappedComponent.name
+  })`;
 
   return LoggedComponent;
 }
@@ -330,27 +331,27 @@ function withLogger(WrappedComponent) {
 
 ### 📊 Comparison Table
 
-| | HOC | Custom Hook | Render Props |
-|---|---|---|---|
-| Wraps component lifecycle | Yes | No | No |
-| Can use hooks internally | Yes (if functional wrapper) | Yes | Yes (if functional) |
-| Visible in React DevTools | Yes (as wrapper) | No (logic only) | Yes (as render function) |
-| Works with class components | Yes | No | Yes |
-| Prop naming conflicts | Possible | No | No |
-| Ref forwarding | Requires forwardRef | N/A | N/A |
-| Composition | Nested (wrapper hell) | Flat (hook calls) | Nested JSX |
-| Best for | Component-level wrapping | Logic reuse | Render-time injection |
+|                             | HOC                         | Custom Hook       | Render Props             |
+| --------------------------- | --------------------------- | ----------------- | ------------------------ |
+| Wraps component lifecycle   | Yes                         | No                | No                       |
+| Can use hooks internally    | Yes (if functional wrapper) | Yes               | Yes (if functional)      |
+| Visible in React DevTools   | Yes (as wrapper)            | No (logic only)   | Yes (as render function) |
+| Works with class components | Yes                         | No                | Yes                      |
+| Prop naming conflicts       | Possible                    | No                | No                       |
+| Ref forwarding              | Requires forwardRef         | N/A               | N/A                      |
+| Composition                 | Nested (wrapper hell)       | Flat (hook calls) | Nested JSX               |
+| Best for                    | Component-level wrapping    | Logic reuse       | Render-time injection    |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "HOCs are deprecated and should never be used" | HOCs are not deprecated - they remain the correct pattern for component-level wrapping (auth gating, error boundaries, class component integration). Many third-party libraries still expose HOC APIs. Custom hooks are preferred for logic reuse but cannot replace HOCs for all use cases. |
-| "HOCs and hooks are interchangeable" | They solve different problems. Hooks share STATEFUL LOGIC between components - the calling component owns the state. HOCs share COMPONENT BEHAVIOUR - the HOC wrapper controls rendering (can block render, add lifecycle). Use hooks when you want the component to own the logic. Use HOCs when you want to intercept rendering. |
-| "Props are automatically forwarded through HOCs" | Only if you explicitly spread `{...props}`. A HOC that does not spread props will silently swallow all props passed to the enhanced component - the wrapped component receives nothing. This is a common bug. |
-| "HOCs defined inside a component are fine" | Defining an HOC inside a component means React sees a NEW component type on every render (the HOC function recreates a new function each time). React will unmount and remount the wrapped component on every render. HOCs must always be defined at the module level. |
+| Misconception                                    | Reality                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "HOCs are deprecated and should never be used"   | HOCs are not deprecated - they remain the correct pattern for component-level wrapping (auth gating, error boundaries, class component integration). Many third-party libraries still expose HOC APIs. Custom hooks are preferred for logic reuse but cannot replace HOCs for all use cases.                                       |
+| "HOCs and hooks are interchangeable"             | They solve different problems. Hooks share STATEFUL LOGIC between components - the calling component owns the state. HOCs share COMPONENT BEHAVIOUR - the HOC wrapper controls rendering (can block render, add lifecycle). Use hooks when you want the component to own the logic. Use HOCs when you want to intercept rendering. |
+| "Props are automatically forwarded through HOCs" | Only if you explicitly spread `{...props}`. A HOC that does not spread props will silently swallow all props passed to the enhanced component - the wrapped component receives nothing. This is a common bug.                                                                                                                      |
+| "HOCs defined inside a component are fine"       | Defining an HOC inside a component means React sees a NEW component type on every render (the HOC function recreates a new function each time). React will unmount and remount the wrapped component on every render. HOCs must always be defined at the module level.                                                             |
 
 ---
 
@@ -362,6 +363,7 @@ function withLogger(WrappedComponent) {
 state and DOM focus on every parent render.
 
 **Root Cause:**
+
 ```jsx
 // BAD: HOC defined inside a render function
 function ParentComponent() {
@@ -374,6 +376,7 @@ function ParentComponent() {
 ```
 
 **Fix:** Move HOC creation to module level:
+
 ```jsx
 // GOOD: HOC created once at module level
 const AuthenticatedDashboard = withAuth(DashboardPage);
@@ -393,6 +396,7 @@ silently overridden by the HOC with a different value.
 
 **Root Cause:** HOC injects a prop with the same name
 as a prop passed from the parent:
+
 ```jsx
 // HOC injects 'data' prop:
 return <WrappedComponent {...props} data={fetchedData} />;
@@ -409,11 +413,13 @@ prefixed or namespaced props. Document injected props.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `React Components` - component composition fundamentals
 - `React.memo` - HOC composition with memoisation
 - `useEffect Hook` - HOCs often contain lifecycle effects
 
 **Builds On:**
+
 - `Render Props Pattern` - alternative composition pattern
   that avoids HOC nesting
 - `Custom Hooks` - the modern replacement for HOC logic reuse
@@ -440,6 +446,7 @@ prefixed or namespaced props. Document injected props.
 ```
 
 **If you remember only 3 things:**
+
 1. HOC = function that takes a component, returns a new
    enhanced component. MUST spread `{...props}` through.
 2. Never define an HOC inside a render function - it

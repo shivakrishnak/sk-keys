@@ -29,11 +29,11 @@ DOM and the browser's real DOM; `createRoot().render()` is
 how a React application mounts, and understanding this
 bridge explains hydration, portals, and Concurrent Mode.
 
-| #012 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, Virtual DOM | |
-| **Used by:** | Code Splitting with React.lazy, Suspense, Hydration and Dehydration | |
-| **Related:** | Virtual DOM, Code Splitting with React.lazy, Hydration and Dehydration | |
+| #012            | Category: React                                                        | Difficulty: ★☆☆ |
+| :-------------- | :--------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, Virtual DOM                                                 |                 |
+| **Used by:**    | Code Splitting with React.lazy, Suspense, Hydration and Dehydration    |                 |
+| **Related:**    | Virtual DOM, Code Splitting with React.lazy, Hydration and Dehydration |                 |
 
 ---
 
@@ -80,6 +80,7 @@ is the entry point that connects your React component tree
 to the real browser DOM.
 
 **One analogy:**
+
 > React is a film script. ReactDOM is the production team
 > that turns the script into a real movie (DOM). The same
 > script (React components) can be produced in different
@@ -144,8 +145,8 @@ StrictMode
 
 ```jsx
 // Old API - do not use for new code
-import ReactDOM from 'react-dom';
-ReactDOM.render(<App />, document.getElementById('root'));
+import ReactDOM from "react-dom";
+ReactDOM.render(<App />, document.getElementById("root"));
 // Problems: does not support Concurrent features
 // React 18 will work but shows deprecation warning
 // Will be removed in a future React major version
@@ -171,15 +172,11 @@ different deployment cycles).
 
 ```jsx
 // Widget A team's code:
-const rootA = createRoot(
-  document.getElementById('widget-metrics')
-);
+const rootA = createRoot(document.getElementById("widget-metrics"));
 rootA.render(<MetricsWidget />);
 
 // Widget B team's code:
-const rootB = createRoot(
-  document.getElementById('widget-notifications')
-);
+const rootB = createRoot(document.getElementById("widget-notifications"));
 rootB.render(<NotificationsWidget />);
 
 // Two independent React roots coexist on the same page.
@@ -296,7 +293,7 @@ Why at the root container (not document)?
 ```jsx
 // Portal renders in a different DOM location
 // But events still bubble through React's component tree
-import { createPortal } from 'react-dom';
+import { createPortal } from "react-dom";
 
 function Modal({ children, onClose }) {
   return createPortal(
@@ -304,7 +301,7 @@ function Modal({ children, onClose }) {
       <button onClick={onClose}>Close</button>
       {children}
     </div>,
-    document.getElementById('modal-root') // outside #root
+    document.getElementById("modal-root"), // outside #root
   );
 }
 
@@ -362,12 +359,9 @@ State change in App (or any descendant):
 
 ```jsx
 // BAD: Legacy API - no Concurrent features, deprecated
-import ReactDOM from 'react-dom';
+import ReactDOM from "react-dom";
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-);
+ReactDOM.render(<App />, document.getElementById("root"));
 // This API:
 // - Blocks main thread during render
 // - Does not support useTransition or Suspense streaming
@@ -402,15 +396,12 @@ root.render(
 micro-frontend cleanup:**
 
 ```tsx
-import { createRoot, Root } from 'react-dom/client';
+import { createRoot, Root } from "react-dom/client";
 
 // Registry pattern for micro-frontends
 const roots = new Map<string, Root>();
 
-export function mount(
-  containerId: string,
-  element: React.ReactElement
-): void {
+export function mount(containerId: string, element: React.ReactElement): void {
   const container = document.getElementById(containerId);
   if (!container) {
     throw new Error(`Container #${containerId} not found`);
@@ -429,20 +420,20 @@ export function unmount(containerId: string): void {
 }
 
 // Usage:
-mount('widget-metrics', <MetricsWidget />);
+mount("widget-metrics", <MetricsWidget />);
 // Later, when navigating away:
-unmount('widget-metrics');
+unmount("widget-metrics");
 ```
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "react-dom is the same as react" | They are separate packages. `react` provides the component model, hooks, and virtual DOM. `react-dom` is the browser-specific renderer. You import hooks from `react`, not `react-dom`. |
-| "You can only have one React root per page" | Multiple independent React roots can coexist on a page. Each has its own Fiber tree and event system. This is the foundation of micro-frontend patterns with React. |
-| "StrictMode affects production behaviour" | StrictMode is entirely a development-only tool. It has zero effect on production builds. It calls render functions and effects twice (discarding the first) to detect side effects. |
+| Misconception                                 | Reality                                                                                                                                                                                       |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "react-dom is the same as react"              | They are separate packages. `react` provides the component model, hooks, and virtual DOM. `react-dom` is the browser-specific renderer. You import hooks from `react`, not `react-dom`.       |
+| "You can only have one React root per page"   | Multiple independent React roots can coexist on a page. Each has its own Fiber tree and event system. This is the foundation of micro-frontend patterns with React.                           |
+| "StrictMode affects production behaviour"     | StrictMode is entirely a development-only tool. It has zero effect on production builds. It calls render functions and effects twice (discarding the first) to detect side effects.           |
 | "ReactDOM.render() is deprecated in React 18" | It is not removed, but it is legacy. It shows a deprecation warning and does not support Concurrent features. The recommendation is to migrate to `createRoot()` before the eventual removal. |
 
 ---
@@ -465,6 +456,7 @@ differences, random IDs, `typeof window !== 'undefined'`
 checks producing different results.
 
 **Diagnostic Command:**
+
 ```bash
 # The console error will indicate which component
 # produced the mismatch and what the expected vs actual
@@ -494,6 +486,7 @@ a context where `document` is not available (Node.js,
 Jest without jsdom, Deno).
 
 **Diagnostic Command:**
+
 ```bash
 # Check your test environment configuration:
 # jest.config.ts -> testEnvironment: 'jsdom'
@@ -511,10 +504,12 @@ Add jsdom as the test environment. For SSR, use
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Component` - the tree of components that ReactDOM renders
 - `Virtual DOM` - what ReactDOM commits to the real DOM
 
 **Builds On This (learn these next):**
+
 - `Code Splitting with React.lazy` - lazy loading components
   within the ReactDOM rendering tree
 - `Suspense` - declarative loading states in the ReactDOM tree
@@ -522,6 +517,7 @@ Add jsdom as the test environment. For SSR, use
   that uses `hydrateRoot` instead of `createRoot`
 
 **Alternatives / Comparisons:**
+
 - `react-dom/server` - server-side rendering counterpart;
   produces HTML strings or streams, not live DOM nodes
 - `React Native` - alternative renderer for iOS/Android
@@ -561,6 +557,7 @@ Add jsdom as the test environment. For SSR, use
 ```
 
 **If you remember only 3 things:**
+
 1. `createRoot(el).render(<App />)` is the React 18
    entry point. It replaces legacy `ReactDOM.render()`.
    Without `createRoot`, Concurrent features do not work.
@@ -595,6 +592,7 @@ consider the same separation: define the "what to render"
 as data, and the "how to render" as a pluggable layer.
 
 **Where else this pattern appears:**
+
 - Kotlin Multiplatform - business logic shared across
   Android/iOS; platform-specific UI adapters are separate
 - Qt - same C++ UI logic targets Windows/Mac/Linux/embedded
@@ -624,6 +622,7 @@ it has not been stopped in the DOM.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** Describe to a developer from an Angular
    background how React's `createRoot` compares to
    Angular's `bootstrapApplication` and what the conceptual
@@ -654,7 +653,7 @@ React roots on a page (e.g., React 15 and React 17 running
 side by side for a gradual migration), what problems could
 arise from both attaching listeners to `document`? How
 did the React 17 change specifically address this?
-*Hint: Event order, stopPropagation across versions.*
+_Hint: Event order, stopPropagation across versions._
 
 **Q2.** `createRoot` returns an object with `.render()` and
 `.unmount()`. If you call `.render()` multiple times on the
@@ -662,8 +661,8 @@ same root with different elements, React updates the tree
 instead of creating a new one. What is the use case for
 calling `.render()` multiple times on the same root, and how
 does this differ from updating state inside the component?
-*Hint: Theme changes at the application level, A/B test
-variant switching.*
+_Hint: Theme changes at the application level, A/B test
+variant switching._
 
 **Q3.** React's `StrictMode` double-invokes component
 functions and effects. If you have a `useEffect` that
@@ -672,5 +671,5 @@ twice and close it once (running cleanup from the first
 invocation). What does this reveal about the contract of
 `useEffect`, and what would a correctly implemented
 WebSocket effect look like under StrictMode?
-*Hint: Every setup in useEffect must have a corresponding
-cleanup that fully reverses the setup.*
+_Hint: Every setup in useEffect must have a corresponding
+cleanup that fully reverses the setup._

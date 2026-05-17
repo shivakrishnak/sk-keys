@@ -31,11 +31,11 @@ achieve O(n) complexity instead of O(n^3): same-type
 elements are updated in place (not replaced), and the
 `key` prop identifies stable list elements across renders.
 
-| #039 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Virtual DOM and Reconciliation, List Rendering and key Prop | |
-| **Used by:** | useMemo Hook, useCallback Hook, React.memo, React Fiber Architecture, Concurrent Features | |
-| **Related:** | Virtual DOM, React Fiber Architecture, React.memo | |
+| #039            | Category: React                                                                           | Difficulty: ★★☆ |
+| :-------------- | :---------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Virtual DOM and Reconciliation, List Rendering and key Prop                               |                 |
+| **Used by:**    | useMemo Hook, useCallback Hook, React.memo, React Fiber Architecture, Concurrent Features |                 |
+| **Related:**    | Virtual DOM, React Fiber Architecture, React.memo                                         |                 |
 
 ---
 
@@ -192,12 +192,17 @@ shows the billing form's data - or the user's shipping
 entry was silently preserved in the billing form.
 
 With distinct keys:
+
 ```jsx
-{showShipping
-  ? <AddressForm key="shipping" formType="shipping" />
-  : <AddressForm key="billing" formType="billing" />
+{
+  showShipping ? (
+    <AddressForm key="shipping" formType="shipping" />
+  ) : (
+    <AddressForm key="billing" formType="billing" />
+  );
 }
 ```
+
 Different keys force React to unmount shipping form and
 mount a fresh billing form. State is correctly isolated.
 
@@ -359,7 +364,7 @@ function TodoList({ todos }) {
 function TodoList({ todos }) {
   return (
     <ul>
-      {todos.map(todo => (
+      {todos.map((todo) => (
         // key from todo.id: React matches element to ID
         // Prepend D → D is new (create), A/B/C are moved
         // Checkbox state follows the correct todo item
@@ -374,12 +379,12 @@ function TodoList({ todos }) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "The key prop is just for suppressing React warnings" | The key prop fundamentally changes how reconciliation matches elements. Without it (or with index keys), prepending/inserting items causes the wrong component instances to receive the wrong data. This is a correctness bug, not a cosmetic warning. |
-| "Same type means the DOM node is exactly the same - no updates happen" | Same type means React keeps the DOM node (updates it rather than replacing it). React still diffs the attributes and children. If `className` changed, React updates the DOM node's class attribute. Reconciliation updates; it does not skip. |
-| "React's diff is O(n^2) because it compares every element" | React's reconciliation is O(n) by design, using the two heuristics (type match + key match). It does NOT compare every old element with every new element. It traverses both trees simultaneously, comparing corresponding positions and key matches. |
-| "Using a random key (Math.random()) forces a fresh component" | Yes, but it also re-mounts the component on every render (destroys all state, re-runs all effects). This is sometimes intentional (force reset) but usually a bug. Use a meaningful stable key, and if you need a reset, use a data-derived key that changes only when reset is desired. |
+| Misconception                                                          | Reality                                                                                                                                                                                                                                                                                  |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The key prop is just for suppressing React warnings"                  | The key prop fundamentally changes how reconciliation matches elements. Without it (or with index keys), prepending/inserting items causes the wrong component instances to receive the wrong data. This is a correctness bug, not a cosmetic warning.                                   |
+| "Same type means the DOM node is exactly the same - no updates happen" | Same type means React keeps the DOM node (updates it rather than replacing it). React still diffs the attributes and children. If `className` changed, React updates the DOM node's class attribute. Reconciliation updates; it does not skip.                                           |
+| "React's diff is O(n^2) because it compares every element"             | React's reconciliation is O(n) by design, using the two heuristics (type match + key match). It does NOT compare every old element with every new element. It traverses both trees simultaneously, comparing corresponding positions and key matches.                                    |
+| "Using a random key (Math.random()) forces a fresh component"          | Yes, but it also re-mounts the component on every render (destroys all state, re-runs all effects). This is sometimes intentional (force reset) but usually a bug. Use a meaningful stable key, and if you need a reset, use a data-derived key that changes only when reset is desired. |
 
 ---
 
@@ -392,6 +397,7 @@ causes the form to lose all entered data.
 
 **Root Cause:** A conditional expression changes the
 element type at the same position:
+
 ```jsx
 // The input or div at position 0 changes type:
 return condition ? <input value={text} /> : <div>{text}</div>;
@@ -399,6 +405,7 @@ return condition ? <input value={text} /> : <div>{text}</div>;
 ```
 
 **Fix:** Keep the same type at the same position:
+
 ```jsx
 return (
   <>
@@ -432,12 +439,14 @@ as the key.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Virtual DOM and Reconciliation` - the VDOM model
   that reconciliation operates on
 - `List Rendering and the key Prop` - the practical
   application of key-based reconciliation
 
 **Builds On:**
+
 - `React Fiber Architecture` - the Fiber reconciler that
   implements this algorithm with interruptibility
 - `Concurrent Features` - how React 18 uses Fiber's
@@ -468,6 +477,7 @@ as the key.
 ```
 
 **If you remember only 3 things:**
+
 1. Same element type = update in place (state preserved).
    Different type = unmount + remount (state LOST).
 2. `key` prop tells reconciliation which item is which.

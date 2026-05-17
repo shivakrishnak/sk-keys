@@ -30,11 +30,11 @@ pattern for sharing stateful logic between components
 without wrapper components; each call creates isolated
 state (no sharing between callers).
 
-| #024 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | useState Hook, useEffect Hook, useContext Hook, useRef Hook | |
-| **Used by:** | Controlled Components, Form Handling, React Router, Context API | |
-| **Related:** | useEffect Hook, useRef Hook, Context API | |
+| #024            | Category: React                                                 | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------- | :-------------- |
+| **Depends on:** | useState Hook, useEffect Hook, useContext Hook, useRef Hook     |                 |
+| **Used by:**    | Controlled Components, Form Handling, React Router, Context API |                 |
+| **Related:**    | useEffect Hook, useRef Hook, Context API                        |                 |
 
 ---
 
@@ -88,7 +88,10 @@ function ComponentA() {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
-    fetchUser(userId).then(d => { setData(d); setLoading(false); });
+    fetchUser(userId).then((d) => {
+      setData(d);
+      setLoading(false);
+    });
   }, [userId]);
   // ...same 8 lines in ComponentB, ComponentC
 }
@@ -99,13 +102,20 @@ function useUser(userId) {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
-    fetchUser(userId).then(d => { setData(d); setLoading(false); });
+    fetchUser(userId).then((d) => {
+      setData(d);
+      setLoading(false);
+    });
   }, [userId]);
   return { data, loading };
 }
 
-function ComponentA() { const { data } = useUser(userId); }
-function ComponentB() { const { data } = useUser(userId); }
+function ComponentA() {
+  const { data } = useUser(userId);
+}
+function ComponentB() {
+  const { data } = useUser(userId);
+}
 // Each has its own independent state
 ```
 
@@ -172,6 +182,7 @@ three separate additions.
 With `useFetch(url)` custom hook: each widget is 2 lines.
 Bug fixes apply in one place. New features (retry, caching)
 added once. The three widgets are now purely presentational
+
 - they declare what data they need, not how to fetch it.
 
 ---
@@ -232,6 +243,7 @@ for debounced values. They encapsulate state AND behavior
 (the effect that drives the state). They expose a stable
 API regardless of implementation. Testing custom hooks
 directly is cleaner than testing them through components
+
 - use the `renderHook` utility from React Testing Library.
 
 **Level 5 (mastery):**
@@ -265,16 +277,16 @@ function useFetch(url) {
     setError(null);
 
     fetch(url, { signal: controller.signal })
-      .then(r => {
+      .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       })
-      .then(json => {
+      .then((json) => {
         setData(json);
         setLoading(false);
       })
-      .catch(err => {
-        if (err.name !== 'AbortError') {
+      .catch((err) => {
+        if (err.name !== "AbortError") {
           setError(err.message);
           setLoading(false);
         }
@@ -288,9 +300,7 @@ function useFetch(url) {
 
 // Usage in any component:
 function UserPage({ userId }) {
-  const { data: user, loading, error } = useFetch(
-    `/api/users/${userId}`
-  );
+  const { data: user, loading, error } = useFetch(`/api/users/${userId}`);
   if (loading) return <Spinner />;
   if (error) return <Error message={error} />;
   return <Profile user={user} />;
@@ -307,12 +317,13 @@ function useWindowSize() {
   });
 
   useEffect(() => {
-    const handleResize = () => setSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const handleResize = () =>
+      setSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return size;
@@ -345,7 +356,7 @@ function useLocalStorage(key, initialValue) {
 }
 
 // Usage:
-const [theme, setTheme] = useLocalStorage('theme', 'light');
+const [theme, setTheme] = useLocalStorage("theme", "light");
 ```
 
 ---
@@ -359,23 +370,35 @@ const [theme, setTheme] = useLocalStorage('theme', 'light');
 function UserList() {
   const [users, setUsers] = useState([]);
   useEffect(() => {
-    const unsub = db.collection('users').onSnapshot(s => {
-      setUsers(s.docs.map(d => d.data()));
+    const unsub = db.collection("users").onSnapshot((s) => {
+      setUsers(s.docs.map((d) => d.data()));
     });
     return unsub;
   }, []);
-  return <ul>{users.map(u => <li key={u.id}>{u.name}</li>)}</ul>;
+  return (
+    <ul>
+      {users.map((u) => (
+        <li key={u.id}>{u.name}</li>
+      ))}
+    </ul>
+  );
 }
 
 function AdminList() {
   const [admins, setAdmins] = useState([]);
   useEffect(() => {
-    const unsub = db.collection('admins').onSnapshot(s => {
-      setAdmins(s.docs.map(d => d.data()));
+    const unsub = db.collection("admins").onSnapshot((s) => {
+      setAdmins(s.docs.map((d) => d.data()));
     });
     return unsub;
   }, []);
-  return <ul>{admins.map(a => <li key={a.id}>{a.name}</li>)}</ul>;
+  return (
+    <ul>
+      {admins.map((a) => (
+        <li key={a.id}>{a.name}</li>
+      ))}
+    </ul>
+  );
 }
 // Same 7-line pattern duplicated. Bugs fixed twice.
 // Adding error handling: done twice.
@@ -390,11 +413,10 @@ function useCollection(collectionName) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const unsub = db.collection(collectionName)
-      .onSnapshot(
-        snapshot => setItems(snapshot.docs.map(d => d.data())),
-        err => setError(err.message)
-      );
+    const unsub = db.collection(collectionName).onSnapshot(
+      (snapshot) => setItems(snapshot.docs.map((d) => d.data())),
+      (err) => setError(err.message),
+    );
     return unsub;
   }, [collectionName]);
 
@@ -402,13 +424,25 @@ function useCollection(collectionName) {
 }
 
 function UserList() {
-  const { items: users } = useCollection('users');
-  return <ul>{users.map(u => <li key={u.id}>{u.name}</li>)}</ul>;
+  const { items: users } = useCollection("users");
+  return (
+    <ul>
+      {users.map((u) => (
+        <li key={u.id}>{u.name}</li>
+      ))}
+    </ul>
+  );
 }
 
 function AdminList() {
-  const { items: admins } = useCollection('admins');
-  return <ul>{admins.map(a => <li key={a.id}>{a.name}</li>)}</ul>;
+  const { items: admins } = useCollection("admins");
+  return (
+    <ul>
+      {admins.map((a) => (
+        <li key={a.id}>{a.name}</li>
+      ))}
+    </ul>
+  );
 }
 // Logic written once. Error handling written once.
 // Behaviour fixed in one place.
@@ -418,12 +452,12 @@ function AdminList() {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Custom hooks share state between all components that use them" | Each call to a custom hook creates INDEPENDENT state. Calling `useCounter()` in ComponentA and ComponentB gives each its own counter. To share state, use Context or external state management inside the hook. |
-| "Custom hooks are a React feature that needs special setup" | Custom hooks are plain JavaScript functions. The `use` prefix is a naming convention. No special setup, no API import. The only requirement: call hooks inside and name the function `useSomething`. |
-| "Custom hooks can only be used in components" | Custom hooks can call other custom hooks. The rule is: hooks must be called from a React function component OR from another custom hook. `useX` calling `useY` is valid. |
-| "Custom hooks are equivalent to HOCs - same pattern, different syntax" | HOCs wrap components (adding nesting to the component tree). Custom hooks extract logic without any component wrapping. They are fundamentally different: hooks compose logic, HOCs compose components. |
+| Misconception                                                          | Reality                                                                                                                                                                                                         |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Custom hooks share state between all components that use them"        | Each call to a custom hook creates INDEPENDENT state. Calling `useCounter()` in ComponentA and ComponentB gives each its own counter. To share state, use Context or external state management inside the hook. |
+| "Custom hooks are a React feature that needs special setup"            | Custom hooks are plain JavaScript functions. The `use` prefix is a naming convention. No special setup, no API import. The only requirement: call hooks inside and name the function `useSomething`.            |
+| "Custom hooks can only be used in components"                          | Custom hooks can call other custom hooks. The rule is: hooks must be called from a React function component OR from another custom hook. `useX` calling `useY` is valid.                                        |
+| "Custom hooks are equivalent to HOCs - same pattern, different syntax" | HOCs wrap components (adding nesting to the component tree). Custom hooks extract logic without any component wrapping. They are fundamentally different: hooks compose logic, HOCs compose components.         |
 
 ---
 
@@ -473,11 +507,13 @@ internally. Or use an external state manager.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `useState Hook` - the state primitive custom hooks use
 - `useEffect Hook` - the side effect primitive
 - `useRef Hook` - the persistence primitive
 
 **Builds On:**
+
 - `Custom Hooks testing` - `renderHook` from React
   Testing Library for unit testing custom hooks in isolation
 - `Context API` - extend custom hooks with context for
@@ -486,6 +522,7 @@ internally. Or use an external state manager.
   pattern that custom hooks replaced
 
 **Library Examples:**
+
 - React Query's `useQuery`, SWR's `useSWR` - custom hooks
   that encapsulate the fetch-cache pattern
 - React Router's `useNavigate`, `useParams` - custom hooks
@@ -517,6 +554,7 @@ internally. Or use an external state manager.
 ```
 
 **If you remember only 3 things:**
+
 1. A custom hook is a function named `use...` that calls
    React hooks. No special API, just a naming convention.
 2. Each component call to a custom hook gets INDEPENDENT
@@ -529,12 +567,13 @@ internally. Or use an external state manager.
 "A custom hook is a function named `useSomething` that
 calls React hooks. It extracts stateful logic for reuse
 across components. Each call creates independent state
+
 - no sharing unless you add Context or an external store.
-Custom hooks replaced Higher-Order Components as the
-primary logic-sharing pattern: same capability, no
-component wrapper nesting, easier to test with
-`renderHook`. The `use` prefix enables the React hooks
-linter to apply rules to the function."
+  Custom hooks replaced Higher-Order Components as the
+  primary logic-sharing pattern: same capability, no
+  component wrapper nesting, easier to test with
+  `renderHook`. The `use` prefix enables the React hooks
+  linter to apply rules to the function."
 
 ---
 

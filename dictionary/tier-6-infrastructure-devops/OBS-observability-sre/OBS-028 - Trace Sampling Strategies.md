@@ -35,11 +35,11 @@ traces you need when an incident happens - or whether
 the interesting traces (errors, slow paths) were
 silently discarded.
 
-| #028 | Category: Observability & SRE | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Distributed Tracing Fundamentals, OpenTelemetry, Jaeger/Zipkin | |
-| **Used by:** | Observability at Scale, Distributed Tracing Architecture | |
-| **Related:** | Distributed Tracing, OpenTelemetry, eBPF Observability | |
+| #028            | Category: Observability & SRE                                  | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Distributed Tracing Fundamentals, OpenTelemetry, Jaeger/Zipkin |                 |
+| **Used by:**    | Observability at Scale, Distributed Tracing Architecture       |                 |
+| **Related:**    | Distributed Tracing, OpenTelemetry, eBPF Observability         |                 |
 
 ---
 
@@ -79,6 +79,7 @@ distributed traces to record, transmit, and store.
 
 **Sampling rate**: the fraction of requests that
 produce a complete stored trace.
+
 - `1.0` = 100% (all traces stored)
 - `0.01` = 1% (1 in 100 traces stored)
 - `0.001` = 0.1% (1 in 1000 traces stored)
@@ -91,6 +92,7 @@ traceparent or B3 headers) so all spans in a trace
 are consistently recorded or discarded.
 
 **Sampling taxonomy:**
+
 - **Head-based**: decision made at request start
 - **Tail-based**: decision made after request completes
   (when full trace is available)
@@ -149,11 +151,13 @@ At trace completion:
 ```
 
 **Advantages:**
+
 - Zero overhead for unsampled requests (no-op spans)
 - Simple to implement in OpenTelemetry SDK
 - Low latency: no buffering needed
 
 **Disadvantage:**
+
 - Decision made before outcome is known. An error
   that happens 200ms after the request starts was
   already sampled (or not) before it occurred.
@@ -188,6 +192,7 @@ Matching trace:
 ```
 
 **Advantages:**
+
 - Keeps 100% of error traces, 100% of slow traces
 - The traces you actually want are almost never
   discarded
@@ -195,6 +200,7 @@ Matching trace:
   service, tag value
 
 **Disadvantage:**
+
 - Memory overhead: entire trace buffered until root
   span arrives. At 50,000 req/s with average 500ms
   duration: buffer size = 50,000 x 0.5 x 5KB = 125MB
@@ -286,6 +292,7 @@ that shows the bug path.
 
 With tail-based sampling (rule: keep all errors +
 slow requests):
+
 - All 3 buggy traces are errors → 100% kept
 - On day 1 you have evidence. Root cause found.
 
@@ -394,8 +401,8 @@ processors:
   # (Use load_balancing exporter upstream for this)
 
   tail_sampling:
-    decision_wait: 30s   # Wait 30s for root span
-    num_traces: 50000    # Max traces buffered in memory
+    decision_wait: 30s # Wait 30s for root span
+    num_traces: 50000 # Max traces buffered in memory
     expected_new_traces_per_sec: 1000
     policies:
       # Policy 1: Always keep error traces
@@ -598,33 +605,33 @@ print(f"Required Collector RAM: {total_memory_gb:.1f} GB")
 
 ### ⚖️ Comparison Table
 
-| Strategy | Decision point | Keeps errors? | Memory | Complexity | Best for |
-|---|---|---|---|---|---|
-| Head-based (random) | Request start | 1% of errors lost | Low | Simple | Dev/staging; baseline telemetry |
-| Head-based (rate limit) | Request start | 1% of errors lost | Low | Simple | Traffic smoothing |
-| Tail-based (rules) | Request complete | 100% of errors kept | High (1-10 GB) | High | Production debugging |
-| Adaptive | Request start | 1% of errors lost | Low | Medium | Autoscaling services |
-| Always-on | N/A | 100% kept | Very high | None | Dev only, low traffic |
+| Strategy                | Decision point   | Keeps errors?       | Memory         | Complexity | Best for                        |
+| ----------------------- | ---------------- | ------------------- | -------------- | ---------- | ------------------------------- |
+| Head-based (random)     | Request start    | 1% of errors lost   | Low            | Simple     | Dev/staging; baseline telemetry |
+| Head-based (rate limit) | Request start    | 1% of errors lost   | Low            | Simple     | Traffic smoothing               |
+| Tail-based (rules)      | Request complete | 100% of errors kept | High (1-10 GB) | High       | Production debugging            |
+| Adaptive                | Request start    | 1% of errors lost   | Low            | Medium     | Autoscaling services            |
+| Always-on               | N/A              | 100% kept           | Very high      | None       | Dev only, low traffic           |
 
 **Sampling rate vs storage cost (1000 req/s, 5KB/trace):**
 
 | Rate | Traces/day | Storage/day | Storage/month | Cost/month (S3) |
-|---|---|---|---|---|
-| 100% | 86.4M | 432 GB | 13 TB | $302 |
-| 10% | 8.64M | 43.2 GB | 1.3 TB | $30 |
-| 1% | 864K | 4.32 GB | 130 GB | $3 |
-| 0.1% | 86.4K | 432 MB | 13 GB | $0.30 |
+| ---- | ---------- | ----------- | ------------- | --------------- |
+| 100% | 86.4M      | 432 GB      | 13 TB         | $302            |
+| 10%  | 8.64M      | 43.2 GB     | 1.3 TB        | $30             |
+| 1%   | 864K       | 4.32 GB     | 130 GB        | $3              |
+| 0.1% | 86.4K      | 432 MB      | 13 GB         | $0.30           |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "1% sampling means I see 1% of errors" | With random head-based sampling, yes. With tail-based error sampling, you see 100% of errors (that is the point). |
-| "Higher sampling rate = more useful traces" | Not if the extra traces are all routine successful requests. A 1% tail-sampled store with 100% error capture is more useful than 10% random with 90% errors missing. |
-| "ParentBased sampler is optional" | Without it, every service samples independently and produces broken traces. ParentBased is required for multi-service tracing. |
-| "Tail-based sampling is always better" | Tail-based requires 1-10 GB Collector RAM, stateful Collector tier, and consistent hash routing. For small traffic or simple systems, head-based is simpler and sufficient. |
+| Misconception                                      | Reality                                                                                                                                                                       |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "1% sampling means I see 1% of errors"             | With random head-based sampling, yes. With tail-based error sampling, you see 100% of errors (that is the point).                                                             |
+| "Higher sampling rate = more useful traces"        | Not if the extra traces are all routine successful requests. A 1% tail-sampled store with 100% error capture is more useful than 10% random with 90% errors missing.          |
+| "ParentBased sampler is optional"                  | Without it, every service samples independently and produces broken traces. ParentBased is required for multi-service tracing.                                                |
+| "Tail-based sampling is always better"             | Tail-based requires 1-10 GB Collector RAM, stateful Collector tier, and consistent hash routing. For small traffic or simple systems, head-based is simpler and sufficient.   |
 | "The sampling decision is hidden in SDK internals" | The decision is explicitly propagated in the W3C traceparent header (`traceflags` byte, last bit = sampled flag). Every service in the chain can inspect and must respect it. |
 
 ---
@@ -652,6 +659,7 @@ no-op spans. So the trace has A's span, nothing from
 B, and nothing from C.
 
 **Diagnosis:**
+
 ```bash
 # Check sampler configuration across services
 # In OTel SDK logs (DEBUG level):
@@ -666,6 +674,7 @@ B, and nothing from C.
 ```
 
 **Fix:**
+
 ```java
 // Replace in all downstream services:
 // BEFORE (broken):
@@ -697,15 +706,18 @@ averaged 5 KB), but a new microservice was deployed
 with verbose spans, increasing average trace size 3x.
 
 **Fix:**
+
 ```yaml
 # Reduce num_traces or increase memory limit
 tail_sampling:
-  decision_wait: 10s   # Reduce from 30s to 10s
-                       # Clears buffer 3x faster
-  num_traces: 100000   # Reduce from 250,000
-                       # Monitor buffer utilization metric:
-                       # otelcol_processor_tail_sampling_
-                       #   sampling_decision_timer_latency
+  decision_wait:
+    10s # Reduce from 30s to 10s
+    # Clears buffer 3x faster
+  num_traces:
+    100000 # Reduce from 250,000
+    # Monitor buffer utilization metric:
+    # otelcol_processor_tail_sampling_
+    #   sampling_decision_timer_latency
 
 # Also: add a head-based pre-filter before tail sampling
 # to reduce the volume entering the Collector:
@@ -718,6 +730,7 @@ tail_sampling:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Distributed Tracing Fundamentals` - traces, spans,
   context propagation - the base that sampling builds on
 - `OpenTelemetry -- The Standard` - the SDK and
@@ -726,6 +739,7 @@ tail_sampling:
   backends that store sampled traces
 
 **Builds On This (learn these next):**
+
 - `Observability at Scale (Sampling, Aggregation)` -
   combines trace sampling with metrics aggregation
   for high-scale observability architecture
@@ -734,6 +748,7 @@ tail_sampling:
   storage backends
 
 **Alternatives / Comparisons:**
+
 - `eBPF for Observability` - kernel-level tracing that
   captures traces without SDK instrumentation. Does
   not require sampling decisions in application code,
@@ -822,6 +837,7 @@ the specific failure path you need.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[EXPLAIN]** Describe the difference between
    head-based and tail-based sampling, including
    why tail-based requires a stateful Collector
@@ -854,7 +870,7 @@ do you expect to have in Jaeger? If a bug occurs
 for exactly 10 minutes (causing 5% error rate, 50
 errors/minute), how many error traces from that
 10-minute window do you expect to have?
-*Hint: Normal: 0.2% error rate x 1% sample = 0.002%
+_Hint: Normal: 0.2% error rate x 1% sample = 0.002%
 of all requests are sampled error traces. In 1 hour
 = 3,600 seconds x 1,000 req/s = 3.6M requests.
 Sampled errors: 3.6M x 0.002% = 72 error traces.
@@ -866,7 +882,7 @@ the bug vs 500 traces showing it. For diagnosis:
 5 may be enough, but there is a 36.6% chance that
 ZERO of the 5 captured traces show the exact stack
 path causing the bug if the bug is rare within
-the error traces.*
+the error traces._
 
 **Q2.** Your Collector is configured with
 `decision_wait: 30s` and `num_traces: 100,000` at
@@ -874,7 +890,7 @@ the error traces.*
 that can be safely buffered in 4 GB of RAM? If a
 new verbose service doubles the average trace size,
 what happens and how do you detect it before OOM?
-*Hint: Max buffer: 4 GB / 100,000 traces = 40 KB/trace
+_Hint: Max buffer: 4 GB / 100,000 traces = 40 KB/trace
 (with no overhead). With 2x overhead: 20 KB/trace
 max. If verbose service doubles from 10 KB to 20 KB:
 buffer = 100,000 x 20 KB x 2 = 4 GB → borderline.
@@ -882,7 +898,7 @@ Detect early: monitor `otelcol_processor_tail_sampling_
 sampling_decision_timer_latency` metric and Collector
 RSS memory. Alert when Collector RAM > 70% of limit.
 Fix: reduce decision_wait to 10s (reduces concurrent
-traces 3x) or increase Collector memory.*
+traces 3x) or increase Collector memory._
 
 **Q3 (TYPE G):** Design a complete trace sampling
 strategy for a global payments platform that: processes
@@ -894,7 +910,7 @@ a complaint), must stay within $5,000/month trace
 storage, and must not use more than 32 GB total
 Collector RAM. Show the architecture, the Collector
 config, and the cost model.
-*Hint: Two tiers. Tier 1 (edge, head-based): 2%
+_Hint: Two tiers. Tier 1 (edge, head-based): 2%
 random sampling → reduces 500k to 10k req/s entering
 Collector tier. Tier 2 (Collector, tail-based): rules:
 errors (100% kept from 10k/s sample), latency > 500ms
@@ -907,7 +923,7 @@ x 2.5 = 250 MB per Collector instance. Very manageable.
 Storage: errors: 50/s x 86400 x 30 x 5KB = 648 GB/month.
 Slow traces: estimate 0.1% of 500k = 500/s... 6.5 TB/month.
 Too high. Cap slow traces at 100% of error-sampled + 10%
-of slow. Cost math included.*
+of slow. Cost math included._
 
 ---
 
@@ -915,9 +931,10 @@ of slow. Cost math included.*
 
 **Q1: "What is the difference between head-based
 and tail-based trace sampling?"**
-*Why they ask:* Tests deep understanding of distributed
+_Why they ask:_ Tests deep understanding of distributed
 tracing infrastructure, not just surface API usage.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Head-based: decision at request start, propagated
   in traceparent header. Simple, low overhead. Cannot
   guarantee error traces are kept (they are sampled
@@ -935,9 +952,10 @@ tracing infrastructure, not just surface API usage.
 
 **Q2: "Why do broken traces (missing spans) appear
 in Jaeger, and how do you fix them?"**
-*Why they ask:* Common production problem that reveals
+_Why they ask:_ Common production problem that reveals
 whether the engineer understands propagation mechanics.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Most common cause: independent sampling in each
   service instead of ParentBased. Service A samples
   at 50%, Service B independently samples at 50%.
@@ -954,9 +972,10 @@ whether the engineer understands propagation mechanics.
 
 **Q3: "How would you design trace sampling for a
 service handling 100,000 requests per second?"**
-*Why they ask:* Tests ability to reason about cost,
+_Why they ask:_ Tests ability to reason about cost,
 architecture, and trade-offs at scale.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - 100% sampling at 100k req/s = 100k x 5KB x 86400s
   = 43 TB/day. Not feasible.
 - Strategy: hybrid. Head-based at edge (5%) reduces

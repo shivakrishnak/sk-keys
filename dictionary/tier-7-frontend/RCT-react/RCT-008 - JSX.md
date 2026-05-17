@@ -30,11 +30,11 @@ compilation step prevents the class/className confusion,
 explains the one-root-element rule, and demystifies XSS
 protection.
 
-| #008 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Component | |
-| **Used by:** | Props, State, Event Handling, Conditional Rendering, List Rendering, XSS Prevention | |
-| **Related:** | Component, Virtual DOM, XSS Prevention in React | |
+| #008            | Category: React                                                                     | Difficulty: ★☆☆ |
+| :-------------- | :---------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Component                                                                           |                 |
+| **Used by:**    | Props, State, Event Handling, Conditional Rendering, List Rendering, XSS Prevention |                 |
+| **Related:**    | Component, Virtual DOM, XSS Prevention in React                                     |                 |
 
 ---
 
@@ -46,11 +46,11 @@ Without JSX, creating a React UI element requires writing
 
 ```javascript
 React.createElement(
-  'div',
-  { className: 'card' },
-  React.createElement('h2', null, 'Alice'),
-  React.createElement('p', null, 'alice@co.com')
-)
+  "div",
+  { className: "card" },
+  React.createElement("h2", null, "Alice"),
+  React.createElement("p", null, "alice@co.com"),
+);
 ```
 
 For a non-trivial UI with 5 levels of nesting, this is
@@ -91,6 +91,7 @@ JSX is HTML-like syntax in JS files that your build tool
 compiles into `React.createElement()` calls.
 
 **One analogy:**
+
 > JSX is like SCSS - it is not something the browser
 > understands directly. It is a notation that a build tool
 > (Vite, TypeScript) transforms into something the browser
@@ -164,7 +165,7 @@ A malicious user registers with the name:
 
 ```javascript
 // VULNERABLE
-document.getElementById('username').innerHTML = user.name;
+document.getElementById("username").innerHTML = user.name;
 // Renders the <img> tag in the DOM
 // onerror fires, cookies are stolen
 ```
@@ -201,6 +202,7 @@ exactly the right security design.
 
 **Where this model breaks:**
 JSX looks like HTML but it is not HTML. Unlike HTML:
+
 - You must close all tags (`<br />` not `<br>`)
 - You must use `className` not `class`
 - You must use `htmlFor` not `for`
@@ -266,10 +268,10 @@ function App() {
 }
 
 // Compiler produces (automatic import, no React import needed):
-import { jsx as _jsx } from 'react/jsx-runtime';
+import { jsx as _jsx } from "react/jsx-runtime";
 
 function App() {
-  return _jsx('div', { children: 'Hello' });
+  return _jsx("div", { children: "Hello" });
 }
 ```
 
@@ -357,11 +359,7 @@ function Form() {
   return (
     <form>
       <label htmlFor="email">Email</label>
-      <input
-        className="input-field"
-        type="email"
-        id="email"
-      />
+      <input className="input-field" type="email" id="email" />
     </form>
   );
 }
@@ -375,7 +373,7 @@ function Form() {
 interface User {
   id: string;
   name: string;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
   isActive: boolean;
 }
 
@@ -389,12 +387,10 @@ function UserList({ users }: { users: User[] }) {
       {users.map((user) => (
         <li
           key={user.id}
-          className={`user-item ${
-            user.isActive ? 'user-item--active' : ''
-          }`}
+          className={`user-item ${user.isActive ? "user-item--active" : ""}`}
         >
           <span>{user.name}</span>
-          {user.role === 'admin' && (
+          {user.role === "admin" && (
             <span className="badge badge--admin">Admin</span>
           )}
         </li>
@@ -408,26 +404,26 @@ function UserList({ users }: { users: User[] }) {
 
 ### ⚖️ Comparison Table
 
-| Feature | JSX | HTML | Template Literals |
-|---|---|---|---|
-| **XSS safety** | Auto-escaped in `{}` | Manual | Manual |
-| **Compiled** | Yes (to JS) | No | No |
-| **Type checking** | Yes (TypeScript) | No | No |
-| **Expressions** | Full JS in `{}` | None | Full JS in `${}` |
-| **Conditional rendering** | `&&` / ternary | None | String concat |
-| **IDE support** | Excellent | Excellent | Poor |
-| **Attribute names** | `className` / `htmlFor` | `class` / `for` | N/A |
+| Feature                   | JSX                     | HTML            | Template Literals |
+| ------------------------- | ----------------------- | --------------- | ----------------- |
+| **XSS safety**            | Auto-escaped in `{}`    | Manual          | Manual            |
+| **Compiled**              | Yes (to JS)             | No              | No                |
+| **Type checking**         | Yes (TypeScript)        | No              | No                |
+| **Expressions**           | Full JS in `{}`         | None            | Full JS in `${}`  |
+| **Conditional rendering** | `&&` / ternary          | None            | String concat     |
+| **IDE support**           | Excellent               | Excellent       | Poor              |
+| **Attribute names**       | `className` / `htmlFor` | `class` / `for` | N/A               |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "JSX is HTML" | JSX is JavaScript syntax. It compiles to function calls. Attribute names differ from HTML. Boolean attributes work differently. Comments use `{/* */}` not `<!-- -->`. |
-| "JSX requires React to be imported" | With the React 17+ automatic JSX transform, `import React from 'react'` is no longer needed. The compiler inserts the import from `react/jsx-runtime` automatically. |
-| "JSX is safe from XSS by default for all values" | JSX auto-escapes values in `{}`. But `dangerouslySetInnerHTML={{ __html: userInput }}` bypasses this completely. Any use of `dangerouslySetInnerHTML` requires manual sanitisation. |
-| "You must return one JSX element from a component" | You must return one root node, but that can be a Fragment (`<>...</>`), which renders to no DOM element. Fragments let you return multiple siblings without a wrapper `<div>`. |
+| Misconception                                      | Reality                                                                                                                                                                             |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "JSX is HTML"                                      | JSX is JavaScript syntax. It compiles to function calls. Attribute names differ from HTML. Boolean attributes work differently. Comments use `{/* */}` not `<!-- -->`.              |
+| "JSX requires React to be imported"                | With the React 17+ automatic JSX transform, `import React from 'react'` is no longer needed. The compiler inserts the import from `react/jsx-runtime` automatically.                |
+| "JSX is safe from XSS by default for all values"   | JSX auto-escapes values in `{}`. But `dangerouslySetInnerHTML={{ __html: userInput }}` bypasses this completely. Any use of `dangerouslySetInnerHTML` requires manual sanitisation. |
+| "You must return one JSX element from a component" | You must return one root node, but that can be a Fragment (`<>...</>`), which renders to no DOM element. Fragments let you return multiple siblings without a wrapper `<div>`.      |
 
 ---
 
@@ -484,7 +480,7 @@ JSX's auto-escaping.
 Sanitise before setting. Use DOMPurify:
 
 ```tsx
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 
 function RichContent({ html }: { html: string }) {
   return (
@@ -504,10 +500,12 @@ function RichContent({ html }: { html: string }) {
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Component` - JSX is what components return; understanding
   components first gives context for JSX's role
 
 **Builds On This (learn these next):**
+
 - `Props` - JSX attribute syntax directly corresponds to
   props passed to components
 - `Conditional Rendering` - how `&&` and ternary work in JSX
@@ -516,6 +514,7 @@ function RichContent({ html }: { html: string }) {
 - `XSS Prevention in React` - the security model built into JSX
 
 **Alternatives / Comparisons:**
+
 - `Hyperscript` (`h()`) - the function-based API that JSX
   compiles to; used directly in Preact and SolidJS
 - `Vue templates` - declarative template syntax with
@@ -559,6 +558,7 @@ function RichContent({ html }: { html: string }) {
 ```
 
 **If you remember only 3 things:**
+
 1. JSX compiles to `React.createElement()`. The browser
    never sees JSX - only JavaScript. This means every JSX
    feature is a JavaScript feature in disguise.
@@ -594,6 +594,7 @@ with raw SQL injection-prone paths requiring an explicit
 unsafe method.
 
 **Where else this pattern appears:**
+
 - Python's `markupsafe.Markup` - escapes HTML strings by
   default; bypass requires explicit `Markup()` wrapper
 - Go's `html/template` package - auto-escapes by context;
@@ -621,6 +622,7 @@ which runtime they are using.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **EXPLAIN** Write the `React.createElement()` equivalent
    of a given JSX snippet with two levels of nesting, showing
    the exact function call structure.
@@ -648,15 +650,15 @@ not to attribute values like `href`. If an attacker controls
 the value of `href` in `<a href={userInput}>`, could they
 execute JavaScript? What attack vector does this represent,
 and how should `href` values be validated?
-*Hint: `javascript:alert(1)` is a valid URL.*
+_Hint: `javascript:alert(1)` is a valid URL._
 
 **Q2.** JSX uses `&&` for conditional rendering:
 `{isLoading && <Spinner />}`. In JavaScript, `0 && expr`
 evaluates to `0`. What happens when React renders `{0}` in
 JSX? This is a known JSX gotcha. How should the conditional
 be written to avoid it?
-*Hint: JSX renders numbers as text. `{0}` renders "0" in
-the UI.*
+_Hint: JSX renders numbers as text. `{0}` renders "0" in
+the UI._
 
 **Q3.** The modern JSX transform (React 17+) removed the
 need to `import React from 'react'` at the top of every
@@ -664,4 +666,4 @@ file. If you are working on a large codebase that still has
 these imports everywhere, is removing them a safe
 refactoring? What would break if you removed them, and
 how would you automate the cleanup?
-*Hint: `react-codemod` has a transform for this.*
+_Hint: `react-codemod` has a transform for this._

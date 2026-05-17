@@ -33,11 +33,11 @@ subscription, and DevTools for complex or high-frequency
 global state; the decision depends on update frequency,
 state complexity, and team size.
 
-| #038 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | useContext Hook, Lifting State Up, Prop Drilling, useReducer Hook | |
-| **Used by:** | Redux Toolkit Architecture, State Management Architecture Decision Guide | |
-| **Related:** | useContext Hook, Redux Toolkit Architecture, State Management Architecture Guide | |
+| #038            | Category: React                                                                  | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | useContext Hook, Lifting State Up, Prop Drilling, useReducer Hook                |                 |
+| **Used by:**    | Redux Toolkit Architecture, State Management Architecture Decision Guide         |                 |
+| **Related:**    | useContext Hook, Redux Toolkit Architecture, State Management Architecture Guide |                 |
 
 ---
 
@@ -232,14 +232,15 @@ apps use both.
 
 **Level 5 (mastery):**
 The modern stack (2024) for a production React app:
+
 - `useState`/`useReducer` for component-local state
 - React Query for all server state (caching, mutations)
 - Zustand or Jotai for complex UI state (selection, modals,
   multi-step wizards)
 - Context for truly cross-cutting concerns (auth, theme)
-Redux remains relevant for large teams with complex state
-and strong DevTools requirements. The trend is smaller,
-composable tools over one large global store.
+  Redux remains relevant for large teams with complex state
+  and strong DevTools requirements. The trend is smaller,
+  composable tools over one large global store.
 
 ---
 
@@ -253,7 +254,7 @@ const UserContext = createContext(null);
 
 function UserProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [onlineStatus, setOnlineStatus] = useState('offline');
+  const [onlineStatus, setOnlineStatus] = useState("offline");
   // onlineStatus updates every 5 seconds
   // All consumers re-render every 5 seconds
 
@@ -265,18 +266,15 @@ function UserProvider({ children }) {
 }
 
 // GOOD: Split contexts by update frequency
-const UserIdentityContext = createContext(null);  // slow-changing
-const UserPresenceContext = createContext(null);  // fast-changing
+const UserIdentityContext = createContext(null); // slow-changing
+const UserPresenceContext = createContext(null); // fast-changing
 
 function UserProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [onlineStatus, setOnlineStatus] = useState('offline');
+  const [onlineStatus, setOnlineStatus] = useState("offline");
 
   // Memoize identity value (only changes on login/logout)
-  const identityValue = useMemo(
-    () => ({ user, setUser }),
-    [user]
-  );
+  const identityValue = useMemo(() => ({ user, setUser }), [user]);
 
   return (
     <UserIdentityContext.Provider value={identityValue}>
@@ -294,28 +292,30 @@ function UserProvider({ children }) {
 **Zustand for shared UI state:**
 
 ```jsx
-import { create } from 'zustand';
+import { create } from "zustand";
 
 // Store definition - outside React component tree
 const useCartStore = create((set, get) => ({
   items: [],
-  addItem: (product) => set(state => ({
-    items: [...state.items, { ...product, qty: 1 }]
-  })),
-  removeItem: (id) => set(state => ({
-    items: state.items.filter(i => i.id !== id)
-  })),
+  addItem: (product) =>
+    set((state) => ({
+      items: [...state.items, { ...product, qty: 1 }],
+    })),
+  removeItem: (id) =>
+    set((state) => ({
+      items: state.items.filter((i) => i.id !== id),
+    })),
   total: () => get().items.reduce((s, i) => s + i.price * i.qty, 0),
 }));
 
 // Usage in any component - no Provider needed
 function CartIcon() {
-  const count = useCartStore(state => state.items.length);  // selective
+  const count = useCartStore((state) => state.items.length); // selective
   return <span>Cart ({count})</span>;
 }
 
 function AddToCartButton({ product }) {
-  const addItem = useCartStore(state => state.addItem);  // stable fn
+  const addItem = useCartStore((state) => state.addItem); // stable fn
   return <button onClick={() => addItem(product)}>Add to Cart</button>;
 }
 // CartIcon only re-renders when item count changes
@@ -326,26 +326,26 @@ function AddToCartButton({ product }) {
 
 ### 📊 Comparison Table
 
-| | Context API | Redux Toolkit | Zustand | Jotai | React Query |
-|---|---|---|---|---|---|
-| Bundle size | 0 (built-in) | ~11KB | ~1KB | ~3KB | ~13KB |
-| Boilerplate | Low | Medium | Very Low | Low | Low |
-| Selective subscription | No (all consumers re-render) | Yes (useSelector) | Yes (selector fn) | Yes (atoms) | Yes (query key) |
-| DevTools | No | Excellent | Limited | Limited | Excellent |
-| Server state | No | RTK Query | No | No | Yes (primary purpose) |
-| No Provider needed | No | No | Yes | No | No (QueryClient) |
-| Best for | Auth, theme, locale | Large teams, complex state | Medium apps, simple API | Atomic state | API data caching |
+|                        | Context API                  | Redux Toolkit              | Zustand                 | Jotai        | React Query           |
+| ---------------------- | ---------------------------- | -------------------------- | ----------------------- | ------------ | --------------------- |
+| Bundle size            | 0 (built-in)                 | ~11KB                      | ~1KB                    | ~3KB         | ~13KB                 |
+| Boilerplate            | Low                          | Medium                     | Very Low                | Low          | Low                   |
+| Selective subscription | No (all consumers re-render) | Yes (useSelector)          | Yes (selector fn)       | Yes (atoms)  | Yes (query key)       |
+| DevTools               | No                           | Excellent                  | Limited                 | Limited      | Excellent             |
+| Server state           | No                           | RTK Query                  | No                      | No           | Yes (primary purpose) |
+| No Provider needed     | No                           | No                         | Yes                     | No           | No (QueryClient)      |
+| Best for               | Auth, theme, locale          | Large teams, complex state | Medium apps, simple API | Atomic state | API data caching      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                        | Reality                                                                                                                                                                                                                                                         |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | "Redux is overkill but Context scales to everything" | Context has a performance cliff for high-frequency updates. At scale, Context with many consumers and frequent updates requires manual optimisation (memoisation, context splitting) that is more complex than using Zustand's built-in selective subscription. |
-| "You need Redux for large apps" | Large app size alone does not require Redux. What matters is: complexity of state interactions, team size (consistency), DevTools needs, and server state patterns. Many large apps run well with React Query + Zustand + Context. |
-| "Context is free (zero cost)" | Context has a subscription mechanism. When the provider's value changes (even if the same reference is passed), React traverses the tree to find all consumers and re-renders them. For 50 consumers updating 30x/second, this is 1,500 re-renders per second. |
-| "React Query replaces Redux" | They solve different problems. React Query manages server state (async API data with caching). Redux/Zustand manages client state (UI interactions, non-async). Most production apps with React Query still need a client state solution for non-API state. |
+| "You need Redux for large apps"                      | Large app size alone does not require Redux. What matters is: complexity of state interactions, team size (consistency), DevTools needs, and server state patterns. Many large apps run well with React Query + Zustand + Context.                              |
+| "Context is free (zero cost)"                        | Context has a subscription mechanism. When the provider's value changes (even if the same reference is passed), React traverses the tree to find all consumers and re-renders them. For 50 consumers updating 30x/second, this is 1,500 re-renders per second.  |
+| "React Query replaces Redux"                         | They solve different problems. React Query manages server state (async API data with caching). Redux/Zustand manages client state (UI interactions, non-async). Most production apps with React Query still need a client state solution for non-API state.     |
 
 ---
 
@@ -358,6 +358,7 @@ still poor. All context consumers re-render on every
 parent render.
 
 **Root Cause:**
+
 ```jsx
 // BAD: new value object on every render
 function Provider({ children }) {
@@ -368,6 +369,7 @@ function Provider({ children }) {
 ```
 
 **Fix:** Stabilise the value with `useMemo`:
+
 ```jsx
 const value = useMemo(() => ({ user, setUser }), [user]);
 return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
@@ -378,11 +380,13 @@ return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `useContext Hook` - the consumption mechanism for Context
 - `Prop Drilling Anti-Pattern` - the problem Context solves
 - `useReducer Hook` - commonly paired with Context for complex state
 
 **Builds On:**
+
 - `Redux Toolkit and Global State Architecture` - the full
   Redux Toolkit pattern with slices and RTK Query
 - `State Management Architecture Decision Guide` - staff-level
@@ -411,6 +415,7 @@ return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 ```
 
 **If you remember only 3 things:**
+
 1. Context: zero deps, great for auth/theme (low frequency).
    Performance problem with high-frequency updates (all
    consumers re-render).

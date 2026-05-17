@@ -31,11 +31,11 @@ and `useParams()` for URL parameters - all without page
 reloads, making SPAs feel like multi-page apps by
 synchronising URL and rendered component.
 
-| #027 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | JSX, React Components, ReactDOM Rendering | |
-| **Used by:** | React CRUD App, Micro-Frontend Architecture | |
-| **Related:** | Code Splitting with lazy, React Server Components | |
+| #027            | Category: React                                   | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------ | :-------------- |
+| **Depends on:** | JSX, React Components, ReactDOM Rendering         |                 |
+| **Used by:**    | React CRUD App, Micro-Frontend Architecture       |                 |
+| **Related:**    | Code Splitting with lazy, React Server Components |                 |
 
 ---
 
@@ -46,6 +46,7 @@ A React SPA renders everything in one HTML page. Without
 a router, the URL is always `example.com/` regardless
 of whether the user is viewing a dashboard, a user profile,
 or a settings page. This means:
+
 - Browser back/forward button does nothing useful
 - Sharing a link always opens the home page
 - Search engines cannot index individual pages
@@ -78,7 +79,7 @@ nested routes, and hooks (`useNavigate`, `useParams`,
 // 1. Wrap app with BrowserRouter (once, at root)
 <BrowserRouter>
   <App />
-</BrowserRouter>
+</BrowserRouter>;
 
 // 2. Define routes in App
 function App() {
@@ -93,7 +94,7 @@ function App() {
 }
 
 // 3. Navigate with Link
-<Link to="/users">Users</Link>
+<Link to="/users">Users</Link>;
 
 // 4. Read URL params
 function UserDetail() {
@@ -228,25 +229,24 @@ Next.js App Router but in a client-side-only setup.
 
 ```jsx
 // main.jsx - root setup
-import { createBrowserRouter, RouterProvider } from
-  'react-router-dom';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <RootLayout />,    // Always renders
+    path: "/",
+    element: <RootLayout />, // Always renders
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
       {
-        path: 'users',
+        path: "users",
         element: <UsersLayout />,
         children: [
           { index: true, element: <UserList /> },
-          { path: ':id', element: <UserDetail /> },
+          { path: ":id", element: <UserDetail /> },
         ],
       },
-      { path: 'settings', element: <Settings /> },
+      { path: "settings", element: <Settings /> },
     ],
   },
 ]);
@@ -264,7 +264,7 @@ function RootLayout() {
         <Link to="/users">Users</Link>
         <Link to="/settings">Settings</Link>
       </nav>
-      <Outlet />  {/* child route renders here */}
+      <Outlet /> {/* child route renders here */}
     </>
   );
 }
@@ -274,7 +274,7 @@ function UsersLayout() {
   return (
     <div>
       <h1>Users Section</h1>
-      <Outlet />  {/* UserList or UserDetail renders here */}
+      <Outlet /> {/* UserList or UserDetail renders here */}
     </div>
   );
 }
@@ -284,26 +284,26 @@ function UsersLayout() {
 
 ### 📊 Comparison Table
 
-| Feature | React Router v6 | Next.js App Router |
-|---|---|---|
-| Route definition | Declarative JSX or config object | File-system based |
-| Data loading | `loader` functions (v6.4+) | `async` components, `fetch` |
-| Server rendering | Client-side only | Full SSR/SSG/ISR support |
-| Nested layouts | `<Outlet>` | Nested `layout.tsx` files |
-| Code splitting | Manual with `lazy()` | Automatic per segment |
-| Use case | CSR React apps, Vite | Full-stack React apps |
-| Bundle | ~50KB | Included in Next.js |
+| Feature          | React Router v6                  | Next.js App Router          |
+| ---------------- | -------------------------------- | --------------------------- |
+| Route definition | Declarative JSX or config object | File-system based           |
+| Data loading     | `loader` functions (v6.4+)       | `async` components, `fetch` |
+| Server rendering | Client-side only                 | Full SSR/SSG/ISR support    |
+| Nested layouts   | `<Outlet>`                       | Nested `layout.tsx` files   |
+| Code splitting   | Manual with `lazy()`             | Automatic per segment       |
+| Use case         | CSR React apps, Vite             | Full-stack React apps       |
+| Bundle           | ~50KB                            | Included in Next.js         |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "`<Switch>` was renamed to `<Routes>` in v6" | Not just a rename. `<Routes>` uses relative path matching, ranks routes by specificity (no order-dependence), and renders only the first match. `<Switch>` required `exact` and order-based first-match. v6 is a fundamentally different matching algorithm. |
-| "React Router handles 404s automatically for direct navigation" | Direct navigation (`example.com/users/5`) reaches the server, not React Router. The server must be configured to return `index.html` for all paths. React Router then handles the path. Without server config, direct navigation returns 404. |
-| "useNavigate is just useHistory renamed" | `useNavigate()` returns a function. `navigate('/path')` replaces `history.push('/path')`. `navigate(-1)` replaces `history.goBack()`. Navigation state: `navigate('/path', { state: { data } })` read via `useLocation().state`. Functionally similar but different API. |
-| "Nested routes require nested `<Routes>` elements" | In v6, nested routes use `<Outlet />` in the parent component. The child routes are defined as children of the parent `<Route>` - not inside a second `<Routes>`. One `<Routes>` at the root handles the entire route tree. |
+| Misconception                                                   | Reality                                                                                                                                                                                                                                                                  |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "`<Switch>` was renamed to `<Routes>` in v6"                    | Not just a rename. `<Routes>` uses relative path matching, ranks routes by specificity (no order-dependence), and renders only the first match. `<Switch>` required `exact` and order-based first-match. v6 is a fundamentally different matching algorithm.             |
+| "React Router handles 404s automatically for direct navigation" | Direct navigation (`example.com/users/5`) reaches the server, not React Router. The server must be configured to return `index.html` for all paths. React Router then handles the path. Without server config, direct navigation returns 404.                            |
+| "useNavigate is just useHistory renamed"                        | `useNavigate()` returns a function. `navigate('/path')` replaces `history.push('/path')`. `navigate(-1)` replaces `history.goBack()`. Navigation state: `navigate('/path', { state: { data } })` read via `useLocation().state`. Functionally similar but different API. |
+| "Nested routes require nested `<Routes>` elements"              | In v6, nested routes use `<Outlet />` in the parent component. The child routes are defined as children of the parent `<Route>` - not inside a second `<Routes>`. One `<Routes>` at the root handles the entire route tree.                                              |
 
 ---
 
@@ -321,15 +321,18 @@ React Router only runs in the browser after `index.html`
 is served.
 
 **Fix (nginx):**
+
 ```nginx
 location / {
   try_files $uri $uri/ /index.html;
 }
 ```
+
 **Fix (Express):**
+
 ```js
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 ```
 
@@ -356,11 +359,13 @@ matching.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `React Components` - what routes render
 - `JSX and Expressions` - the `element` prop syntax
 - `ReactDOM Rendering` - the browser DOM that routing operates on
 
 **Builds On:**
+
 - `Code Splitting with React.lazy` - lazy-load heavy route
   components to reduce initial bundle size
 - `React Server Components` - Next.js App Router as a
@@ -394,6 +399,7 @@ matching.
 ```
 
 **If you remember only 3 things:**
+
 1. `<Routes>` + `<Route path element>` defines routes.
    `<Link to>` navigates. `useParams()` reads `:param`.
 2. Server must serve `index.html` for all paths or direct

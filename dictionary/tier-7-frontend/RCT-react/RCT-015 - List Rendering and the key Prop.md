@@ -30,11 +30,11 @@ prop so React can identify which items changed, were added,
 or removed - using index as key causes subtle bugs when
 items reorder or the list changes.
 
-| #015 | Category: React | Difficulty: ★☆☆ |
-|:---|:---|:---|
-| **Depends on:** | Component, JSX, Props, Virtual DOM | |
-| **Used by:** | Form Handling, useReducer, Render Props Pattern | |
-| **Related:** | Conditional Rendering, Virtual DOM, React Reconciliation | |
+| #015            | Category: React                                          | Difficulty: ★☆☆ |
+| :-------------- | :------------------------------------------------------- | :-------------- |
+| **Depends on:** | Component, JSX, Props, Virtual DOM                       |                 |
+| **Used by:**    | Form Handling, useReducer, Render Props Pattern          |                 |
+| **Related:**    | Conditional Rendering, Virtual DOM, React Reconciliation |                 |
 
 ---
 
@@ -86,6 +86,7 @@ Use `.map()` to render arrays, and give every element a
 data (database ID, not array index).
 
 **One trap:**
+
 > Using array index as `key` (the "it works" shortcut)
 > causes incorrect behaviour when items reorder or are
 > inserted/deleted. Index 0 always refers to "first item
@@ -250,10 +251,8 @@ identity of the element in the animation graph.
 function TodoList({ todos }) {
   return (
     <ul>
-      {todos.map(todo => (
-        <li key={todo.id}>
-          {todo.text}
-        </li>
+      {todos.map((todo) => (
+        <li key={todo.id}>{todo.text}</li>
       ))}
     </ul>
   );
@@ -266,10 +265,10 @@ function TodoList({ todos }) {
 function TodoList({ todos, onDelete }) {
   return (
     <ul>
-      {todos.map(todo => (
+      {todos.map((todo) => (
         <TodoItem
-          key={todo.id}      // React identity
-          id={todo.id}       // pass as separate prop if needed
+          key={todo.id} // React identity
+          id={todo.id} // pass as separate prop if needed
           text={todo.text}
           onDelete={onDelete}
         />
@@ -285,11 +284,11 @@ function TodoList({ todos, onDelete }) {
 function FilteredList({ items, showCompleted }) {
   const visible = showCompleted
     ? items
-    : items.filter(item => !item.completed);
+    : items.filter((item) => !item.completed);
 
   return (
     <ul>
-      {visible.map(item => (
+      {visible.map((item) => (
         <li key={item.id}>{item.name}</li>
       ))}
     </ul>
@@ -355,14 +354,10 @@ function TodoList({ todos }) {
 function TodoList({ todos }) {
   return (
     <ul>
-      {todos.map(todo => (
+      {todos.map((todo) => (
         <li key={todo.id}>
           {/* Controlled input: state in component */}
-          <TodoInput
-            key={todo.id}
-            initialText={todo.text}
-            todoId={todo.id}
-          />
+          <TodoInput key={todo.id} initialText={todo.text} todoId={todo.id} />
         </li>
       ))}
     </ul>
@@ -378,7 +373,7 @@ function TodoList({ todos }) {
 // Pattern: force reset by changing key
 // Useful when form should fully reset on selected item change
 function ItemEditor({ selectedItemId, items }) {
-  const item = items.find(i => i.id === selectedItemId);
+  const item = items.find((i) => i.id === selectedItemId);
 
   return (
     // key change unmounts old form, mounts fresh one
@@ -392,9 +387,9 @@ function ItemEditor({ selectedItemId, items }) {
 
 ```jsx
 // BAD: Math.random() as key
-{todos.map(todo => (
-  <TodoItem key={Math.random()} todo={todo} />
-))}
+{
+  todos.map((todo) => <TodoItem key={Math.random()} todo={todo} />);
+}
 // Every render generates new keys
 // React sees ALL items as new every render
 // Unmounts and remounts every list item on every state change
@@ -405,12 +400,12 @@ function ItemEditor({ selectedItemId, items }) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Index keys are fine if the list never changes" | Acceptable only for truly static lists that never reorder, add, or remove items. If there is any chance of mutation, use a stable ID. |
-| "key must be unique across the entire page" | Keys must be unique among SIBLINGS only. The same key value can be used in different list renders without conflict. |
-| "`key` is accessible as `props.key` in the component" | `key` is consumed by React and NOT passed to the component as a prop. If you need the ID inside the component, pass it as a separate prop: `<Item key={item.id} id={item.id} />`. |
-| "Adding a key to JSX requires using data arrays" | The `key` prop is relevant anywhere you return multiple sibling elements from a loop or condition. But you only need keys when rendering arrays - individual static siblings do not need keys. |
+| Misconception                                         | Reality                                                                                                                                                                                        |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Index keys are fine if the list never changes"       | Acceptable only for truly static lists that never reorder, add, or remove items. If there is any chance of mutation, use a stable ID.                                                          |
+| "key must be unique across the entire page"           | Keys must be unique among SIBLINGS only. The same key value can be used in different list renders without conflict.                                                                            |
+| "`key` is accessible as `props.key` in the component" | `key` is consumed by React and NOT passed to the component as a prop. If you need the ID inside the component, pass it as a separate prop: `<Item key={item.id} id={item.id} />`.              |
+| "Adding a key to JSX requires using data arrays"      | The `key` prop is relevant anywhere you return multiple sibling elements from a loop or condition. But you only need keys when rendering arrays - individual static siblings do not need keys. |
 
 ---
 
@@ -461,11 +456,13 @@ Prefix keys from different sources: `key={source + '-' + id}`.
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Component` and `JSX` - list rendering produces JSX
 - `Props` - `key` is a special prop
 - `Virtual DOM` - keys enable efficient Virtual DOM diffing
 
 **Builds On:**
+
 - `React Reconciliation Algorithm` - the full algorithm
   that uses keys as identity hints
 - `useReducer` - often used to manage complex list state
@@ -474,6 +471,7 @@ Prefix keys from different sources: `key={source + '-' + id}`.
   list items from re-rendering when unchanged
 
 **Related Concepts:**
+
 - `Conditional Rendering` - often combined with list
   rendering (show empty state when list is empty)
 
@@ -502,6 +500,7 @@ Prefix keys from different sources: `key={source + '-' + id}`.
 ```
 
 **If you remember only 3 things:**
+
 1. Use `.map()` for arrays; every mapped element needs a
    `key` prop set to a unique, stable ID from your data.
 2. Never use `Math.random()` or array index as key (except
@@ -527,6 +526,7 @@ is also used intentionally to force component remounts."
 
 The `key` problem is fundamentally about **stable identity
 in mutable sequences**. This pattern appears everywhere:
+
 - Database rows have primary keys for stable identity
 - React list items need `key` props
 - HTTP caches use URL as stable key

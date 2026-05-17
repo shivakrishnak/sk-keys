@@ -30,11 +30,11 @@ ancestor, then distributes it via props - the canonical
 React pattern for sibling-to-sibling communication and
 the prerequisite concept before Context API and Redux.
 
-| #029 | Category: React | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | Props, React Components, useState Hook, One-Way Data Binding | |
-| **Used by:** | Prop Drilling Anti-Pattern, useContext Hook, useReducer Hook | |
-| **Related:** | Prop Drilling Anti-Pattern, useContext Hook, useReducer Hook | |
+| #029            | Category: React                                              | Difficulty: ★★☆ |
+| :-------------- | :----------------------------------------------------------- | :-------------- |
+| **Depends on:** | Props, React Components, useState Hook, One-Way Data Binding |                 |
+| **Used by:**    | Prop Drilling Anti-Pattern, useContext Hook, useReducer Hook |                 |
+| **Related:**    | Prop Drilling Anti-Pattern, useContext Hook, useReducer Hook |                 |
 
 ---
 
@@ -77,8 +77,8 @@ single source of truth for all its children.
 ```jsx
 // BEFORE: State duplicated in siblings (bad - out of sync)
 function Filters() {
-  const [query, setQuery] = useState(''); // own state
-  return <input value={query} onChange={e => setQuery(e.target.value)} />;
+  const [query, setQuery] = useState(""); // own state
+  return <input value={query} onChange={(e) => setQuery(e.target.value)} />;
 }
 function ProductList() {
   // Can't access Filters' query!
@@ -87,7 +87,7 @@ function ProductList() {
 
 // AFTER: State lifted to parent (correct)
 function ProductPage() {
-  const [query, setQuery] = useState(''); // parent owns state
+  const [query, setQuery] = useState(""); // parent owns state
 
   return (
     <>
@@ -235,8 +235,8 @@ function Tab({ label }) {
   const [isActive, setIsActive] = useState(false);
   return (
     <button
-      onClick={() => setIsActive(prev => !prev)}
-      className={isActive ? 'active' : ''}
+      onClick={() => setIsActive((prev) => !prev)}
+      className={isActive ? "active" : ""}
     >
       {label}
     </button>
@@ -245,13 +245,13 @@ function Tab({ label }) {
 
 // After lifting - parent owns which tab is active
 function TabContainer() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
 
   return (
     <div>
       {/* Tab buttons: read activeTab, call setActiveTab */}
       <TabBar
-        tabs={['overview', 'details', 'reviews']}
+        tabs={["overview", "details", "reviews"]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
@@ -264,11 +264,11 @@ function TabContainer() {
 function TabBar({ tabs, activeTab, onTabChange }) {
   return (
     <nav>
-      {tabs.map(tab => (
+      {tabs.map((tab) => (
         <button
           key={tab}
           onClick={() => onTabChange(tab)}
-          className={activeTab === tab ? 'active' : ''}
+          className={activeTab === tab ? "active" : ""}
         >
           {tab}
         </button>
@@ -280,9 +280,9 @@ function TabBar({ tabs, activeTab, onTabChange }) {
 function TabPanel({ activeTab }) {
   return (
     <div>
-      {activeTab === 'overview' && <Overview />}
-      {activeTab === 'details' && <Details />}
-      {activeTab === 'reviews' && <Reviews />}
+      {activeTab === "overview" && <Overview />}
+      {activeTab === "details" && <Details />}
+      {activeTab === "reviews" && <Reviews />}
     </div>
   );
 }
@@ -297,26 +297,26 @@ function TabPanel({ activeTab }) {
 ```jsx
 // BAD: each sibling owns its own copy of the filter
 function FilterBar() {
-  const [category, setCategory] = useState('all');
+  const [category, setCategory] = useState("all");
   // ... renders category buttons
   // Products has no access to this 'category' value
 }
 
 function ProductGrid() {
-  const [category, setCategory] = useState('all');
+  const [category, setCategory] = useState("all");
   // This is a DIFFERENT state from FilterBar's category!
   // Changing FilterBar's state does NOT update ProductGrid's
   // They will always be out of sync
   return products
-    .filter(p => category === 'all' || p.category === category)
-    .map(p => <ProductCard key={p.id} product={p} />);
+    .filter((p) => category === "all" || p.category === category)
+    .map((p) => <ProductCard key={p.id} product={p} />);
 }
 
 function ShopPage() {
   return (
     <>
-      <FilterBar />      {/* owns its own category */}
-      <ProductGrid />    {/* owns its own category */}
+      <FilterBar /> {/* owns its own category */}
+      <ProductGrid /> {/* owns its own category */}
     </>
   );
 }
@@ -327,15 +327,12 @@ function ShopPage() {
 ```jsx
 // GOOD: parent owns the category state (single source of truth)
 function ShopPage() {
-  const [category, setCategory] = useState('all');
+  const [category, setCategory] = useState("all");
 
   return (
     <>
       {/* FilterBar reads + updates via callback */}
-      <FilterBar
-        activeCategory={category}
-        onCategoryChange={setCategory}
-      />
+      <FilterBar activeCategory={category} onCategoryChange={setCategory} />
       {/* ProductGrid reads to filter */}
       <ProductGrid category={category} />
     </>
@@ -343,14 +340,14 @@ function ShopPage() {
 }
 
 function FilterBar({ activeCategory, onCategoryChange }) {
-  const categories = ['all', 'shoes', 'clothing', 'accessories'];
+  const categories = ["all", "shoes", "clothing", "accessories"];
   return (
     <nav>
-      {categories.map(cat => (
+      {categories.map((cat) => (
         <button
           key={cat}
           onClick={() => onCategoryChange(cat)}
-          className={activeCategory === cat ? 'active' : ''}
+          className={activeCategory === cat ? "active" : ""}
         >
           {cat}
         </button>
@@ -361,11 +358,11 @@ function FilterBar({ activeCategory, onCategoryChange }) {
 
 function ProductGrid({ category }) {
   const filtered = products.filter(
-    p => category === 'all' || p.category === category
+    (p) => category === "all" || p.category === category,
   );
   return (
     <ul>
-      {filtered.map(p => (
+      {filtered.map((p) => (
         <li key={p.id}>{p.name}</li>
       ))}
     </ul>
@@ -377,12 +374,12 @@ function ProductGrid({ category }) {
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Lifting state up always means lifting to `<App>`" | Lift to the LOWEST common ancestor. Lifting to `<App>` when only two sibling components need the state causes all of `<App>`'s children to re-render on every state change. Identify the lowest parent that contains all the components that need the state. |
-| "After lifting, both children will re-render on every change" | Yes - and this is correct. The re-render is necessary to propagate the new state to both. Optimise with `React.memo` if sibling re-renders are expensive and the sibling's props did not change. |
-| "Lifting state is only needed when two components both need to WRITE the state" | Lifting is needed when any two siblings need to READ the same state, even if only one writes. A display component and an edit component both need the same data value - lift it even if only the edit component changes it. |
-| "Context API replaces lifting state up" | Context eliminates prop drilling (passing through intermediate components that do not use the state). But the state still needs to live somewhere - typically in a parent that provides the context. Lifting state and Context often work together. |
+| Misconception                                                                   | Reality                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| "Lifting state up always means lifting to `<App>`"                              | Lift to the LOWEST common ancestor. Lifting to `<App>` when only two sibling components need the state causes all of `<App>`'s children to re-render on every state change. Identify the lowest parent that contains all the components that need the state. |
+| "After lifting, both children will re-render on every change"                   | Yes - and this is correct. The re-render is necessary to propagate the new state to both. Optimise with `React.memo` if sibling re-renders are expensive and the sibling's props did not change.                                                             |
+| "Lifting state is only needed when two components both need to WRITE the state" | Lifting is needed when any two siblings need to READ the same state, even if only one writes. A display component and an edit component both need the same data value - lift it even if only the edit component changes it.                                  |
+| "Context API replaces lifting state up"                                         | Context eliminates prop drilling (passing through intermediate components that do not use the state). But the state still needs to live somewhere - typically in a parent that provides the context. Lifting state and Context often work together.          |
 
 ---
 
@@ -404,6 +401,7 @@ keystroke, check which components re-rendered. Expensive
 re-renders will have a high render time.
 
 **Fix:** Wrap the non-changing sibling in `React.memo`:
+
 ```jsx
 const ProductGrid = React.memo(function ProductGrid({ category }) {
   // Now only re-renders when `category` prop changes
@@ -432,6 +430,7 @@ deep sharing, use Context API (RCT-022).
 ### 🔗 Related Keywords
 
 **Prerequisites:**
+
 - `Props and Component Communication` - props are the
   mechanism for distributing lifted state
 - `React Components` - the component tree structure
@@ -441,6 +440,7 @@ deep sharing, use Context API (RCT-022).
   lifting state (no two-way binding)
 
 **Builds On:**
+
 - `Prop Drilling Anti-Pattern` - what happens when lifted
   state must pass through too many intermediate layers
 - `useContext Hook` - the solution when prop passing
@@ -468,6 +468,7 @@ deep sharing, use Context API (RCT-022).
 ```
 
 **If you remember only 3 things:**
+
 1. Move shared state to the lowest common ancestor of
    all components that need it.
 2. Pass value down via props. Pass update handler down
