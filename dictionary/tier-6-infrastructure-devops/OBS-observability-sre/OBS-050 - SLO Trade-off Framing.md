@@ -31,14 +31,15 @@ permalink: /obs/slo-trade-off-framing/
 evaluating any engineering decision through the lens of
 its error budget impact: "is the potential reliability
 cost of this change worth the potential velocity gain?"
-- turning reliability vs. velocity into an explicit,
-budget-bounded decision rather than an implicit gut call.
 
-| #050 | Category: Observability & SRE | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | SLO, Error Budget, Formal SLO Theory, SRE Book Core Principles | |
-| **Used by:** | Formal SLO Theory, Service Level Objectives Deep Dive, Error Budgets | |
-| **Related:** | SLO-Based Alerting Strategy, Alerting Fundamentals, Reliability Mental Model | |
+- turning reliability vs. velocity into an explicit,
+  budget-bounded decision rather than an implicit gut call.
+
+| #050            | Category: Observability & SRE                                                | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | SLO, Error Budget, Formal SLO Theory, SRE Book Core Principles               |                 |
+| **Used by:**    | Formal SLO Theory, Service Level Objectives Deep Dive, Error Budgets         |                 |
+| **Related:**    | SLO-Based Alerting Strategy, Alerting Fundamentals, Reliability Mental Model |                 |
 
 ---
 
@@ -103,6 +104,7 @@ SLO trade-off framing converts "is this risky?" into
 the business value worth it?"
 
 **One analogy:**
+
 > SLO trade-off framing is like using a fuel budget for
 > a road trip. Without a fuel budget, every detour decision
 > is an argument: one person wants to see the scenic route,
@@ -133,6 +135,7 @@ which leaves 85% for everything else this month."
 **1. Deployment risk assessment:**
 Before any deployment, estimate the error budget cost
 of the worst likely failure scenario:
+
 - What is the expected rollback time? (estimate: 10 min)
 - What is the expected partial degradation duration? (5 min)
 - What is the error rate during that scenario? (100%)
@@ -340,11 +343,13 @@ reliability consumption for the period.
 **THE FORMAL TRADE-OFF MODEL:**
 
 For a decision D with:
+
 - Expected error budget cost: E[cost(D)] as % of budget
 - Expected business value: V(D) in business units
 - Alternative (not doing D): cost(alt) in business units
 
 The decision framework:
+
 ```
 Deploy D if:
   V(D) - cost(alt) > V(not_D)
@@ -386,7 +391,7 @@ BUDGET STATUS DASHBOARD:
   - Projected budget at end of window (if current burn rate
     continues)
   - Recent high-cost events (top 5 incidents this month)
-  
+
   This makes budget status ambient knowledge, not a
   number that must be looked up on demand.
 ```
@@ -443,13 +448,13 @@ fi
 
 ### ⚖️ Comparison Table
 
-| Decision Framework | Reliability/Velocity Balance | Objectivity | Adoption Complexity |
-|---|---|---|---|
-| **SLO trade-off framing** | Explicit, budget-bounded | High | Medium (requires SLO infra) |
-| Change freeze rules (e.g., no Friday deploys) | Blunt, binary | Medium | Low |
-| CAB (Change Advisory Board) | Process-heavy, often delays | Low (subjective) | High |
-| No rules (trust engineers) | Velocity-biased | Low | Very low |
-| Risk-based deployment scoring | Partial (no budget tie-in) | Medium | Medium |
+| Decision Framework                            | Reliability/Velocity Balance | Objectivity      | Adoption Complexity         |
+| --------------------------------------------- | ---------------------------- | ---------------- | --------------------------- |
+| **SLO trade-off framing**                     | Explicit, budget-bounded     | High             | Medium (requires SLO infra) |
+| Change freeze rules (e.g., no Friday deploys) | Blunt, binary                | Medium           | Low                         |
+| CAB (Change Advisory Board)                   | Process-heavy, often delays  | Low (subjective) | High                        |
+| No rules (trust engineers)                    | Velocity-biased              | Low              | Very low                    |
+| Risk-based deployment scoring                 | Partial (no budget tie-in)   | Medium           | Medium                      |
 
 **How to choose:**
 Use SLO trade-off framing once the team has defined SLOs
@@ -463,12 +468,12 @@ exceed the budget thresholds of the automated gate.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| SLO trade-off framing eliminates all deployment risk | It makes risk explicit and bounded, but does not eliminate risk. The goal is informed decision-making, not risk-free deployment |
-| A high SLO target means more budget for experiments | Higher SLO targets give less budget (99.9% has 43.2 min; 99.99% has 4.3 min). Tight SLO targets constrain experimentation more, not less |
+| Misconception                                           | Reality                                                                                                                                                                                                        |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SLO trade-off framing eliminates all deployment risk    | It makes risk explicit and bounded, but does not eliminate risk. The goal is informed decision-making, not risk-free deployment                                                                                |
+| A high SLO target means more budget for experiments     | Higher SLO targets give less budget (99.9% has 43.2 min; 99.99% has 4.3 min). Tight SLO targets constrain experimentation more, not less                                                                       |
 | Error budget framing always favors the engineering team | Error budget framing favors neither side - it gives both product and engineering a shared unit for discussing the trade-off. Product may reasonably choose to accept high budget costs for high-value features |
-| SLO trade-off framing requires complex tooling | The minimum viable implementation is: know your error budget in minutes, track budget consumed, estimate deployment risk. A spreadsheet works initially; tooling helps at scale |
+| SLO trade-off framing requires complex tooling          | The minimum viable implementation is: know your error budget in minutes, track budget consumed, estimate deployment risk. A spreadsheet works initially; tooling helps at scale                                |
 
 ---
 
@@ -492,6 +497,7 @@ The SLO budget of 0.1% is only 0.02% above the natural
 floor. Any incident exhausts the budget immediately.
 
 **Diagnosis:**
+
 ```
 Measure natural error rate:
   p_natural = average error rate over last 90 days
@@ -507,7 +513,7 @@ Fix:
     budget = 0.3% × 43200 min = 129.6 minutes
   Margin above natural rate: 129.6 - 34.6 = 95 minutes
   This is a usable budget for incidents and experiments
-  
+
   Tighten SLO quarterly as reliability improves.
 ```
 
@@ -516,18 +522,21 @@ Fix:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `SLO` - the reliability target that defines the budget
 - `Error Budget` - the resource that trade-off framing reasons about
 - `Formal SLO Theory` - the mathematical foundation
 - `SRE Book Core Principles` - the organizational model
 
 **Builds On This (learn these next):**
+
 - `Formal SLO Theory` - the math behind the framing
 - `Service Level Objectives (SLOs) Deep Dive` - the lifecycle
   that this framing is applied across
 - `Error Budgets` - the operational practice of budget management
 
 **Alternatives / Comparisons:**
+
 - `SLO-Based Alerting Strategy` - the alerting complement
   to the deployment decision framing
 - `Alerting Fundamentals` - the threshold-based alternative
@@ -568,6 +577,7 @@ Fix:
 ```
 
 **If you remember only 3 things:**
+
 1. The key question: "How many % of our error budget does
    this decision risk?" Converts vague "is this risky?"
    into a concrete bounded number.

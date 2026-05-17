@@ -36,11 +36,11 @@ immediate mitigation, when to escalate, and what to
 check to confirm resolution. They are treated as code:
 version-controlled, PR-reviewed, and tested quarterly.
 
-| #056 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, SLO, Error Budget, Alerting Fundamentals, Incident Management, Incident Retrospectives, SRE Book Core Principles, Error Budgets | |
-| **Used by:** | Reliability Mental Model | |
-| **Related:** | Observability-Driven Development, Observability-First Thinking, Chaos Engineering | |
+| #056            | Category: Observability & SRE                                                                                                                          | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability, SLO, Error Budget, Alerting Fundamentals, Incident Management, Incident Retrospectives, SRE Book Core Principles, Error Budgets |                 |
+| **Used by:**    | Reliability Mental Model                                                                                                                               |                 |
+| **Related:**    | Observability-Driven Development, Observability-First Thinking, Chaos Engineering                                                                      |                 |
 
 ---
 
@@ -104,6 +104,7 @@ the responder is smarter, but because the procedure
 is already written.
 
 **One analogy:**
+
 > A runbook is like an airplane emergency checklist.
 > Pilots don't improvise during a hydraulic failure
 > at 35,000 feet - they execute a published, tested,
@@ -124,7 +125,7 @@ is already written.
    "High error rate" is not enough. The runbook must
    explain the specific failure mode this alert
    represents.
-   
+
    Good: "This alert fires when the checkout service
          is returning > 5% HTTP 5xx responses over a
          5-minute window. Common causes in order of
@@ -133,13 +134,13 @@ is already written.
          2. Database connection pool exhaustion (30%)
          3. Upstream rate limiting from fraud detection (15%)
          4. Application bug / regression (5%)"
-   
+
    Bad: "Error rate is high."
 
 2. WHAT IS THE IMMEDIATE MITIGATION?
    Before root cause is known, what reduces user impact?
    This is the "stop the bleeding" phase.
-   
+
    Good: "If payment processor is the cause:
           Enable static fallback response:
           kubectl set env deployment/checkout \
@@ -149,13 +150,13 @@ is already written.
           User impact reduced from 'cannot checkout'
           to 'payment processed within 5 minutes.'
           Inform product team immediately."
-   
+
    Bad: "Try to fix the issue."
 
 3. WHEN TO ESCALATE?
    Clear criteria: what the responder cannot resolve
    independently, and exactly who to call.
-   
+
    Good: "Escalate to payment team (@payment-oncall)
           if error rate does not drop below 2% within
           10 minutes of enabling fallback.
@@ -165,12 +166,12 @@ is already written.
           Escalate to SRE (@sre-oncall) if:
           - Multiple services are affected simultaneously
           - The issue is not covered by this runbook"
-   
+
    Bad: "Escalate if needed."
 
 4. HOW TO VERIFY RESOLUTION?
    Specific, measurable criteria for "the incident is over."
-   
+
    Good: "Resolution confirmed when ALL of the following
           are true for at least 10 minutes:
           - checkout_error_rate < 0.5%
@@ -178,7 +179,7 @@ is already written.
           - Error budget burn rate < 2
           - Payment processor returns 200 for health check
           Dashboard: https://grafana.company.com/d/checkout-slo"
-   
+
    Bad: "Check if it looks normal."
 ```
 
@@ -236,26 +237,26 @@ within 15 minutes?
 
 1. "We don't have a runbook for that alert."
    → First alert without a runbook: acceptable.
-     Second time the same alert fires without a runbook:
-     failure of the retrospective process.
+   Second time the same alert fires without a runbook:
+   failure of the retrospective process.
 
 2. "We have a runbook but nobody found it."
    → Runbook link must be in the alert annotation.
-     PagerDuty runbook URL field must be populated.
+   PagerDuty runbook URL field must be populated.
 
 3. "The runbook was outdated - the dashboard moved."
    → Runbooks need the same maintenance as code.
-     PR review and quarterly exercises keep them fresh.
+   PR review and quarterly exercises keep them fresh.
 
 4. "The runbook covered the wrong scenario."
    → Runbooks must be alert-specific, not service-generic.
-     "Checkout service runbook" is too broad.
-     "Checkout error rate high" runbook is correct granularity.
+   "Checkout service runbook" is too broad.
+   "Checkout error rate high" runbook is correct granularity.
 
 5. "The runbook was perfect - incident resolved in 8 minutes."
    → This is the goal. Document that the runbook worked.
-     Include the resolution time in the runbook header
-     as "expected MTTR with this runbook: 8-15 minutes."
+   Include the resolution time in the runbook header
+   as "expected MTTR with this runbook: 8-15 minutes."
 
 ---
 
@@ -354,7 +355,7 @@ What is the user impact? How frequently does it fire?]
 ## Common Causes (in order of frequency)
 
 1. [Cause 1] - [% of cases]
-2. [Cause 2] - [% of cases]  
+2. [Cause 2] - [% of cases]
 3. [Cause 3] - [% of cases]
 
 ---
@@ -362,15 +363,18 @@ What is the user impact? How frequently does it fire?]
 ## Step-by-Step Diagnosis
 
 ### Step 1: Confirm the alert is real (not flapping)
+
 [Exact query or dashboard check. Expected: what does
 "real" look like vs. "flapping"?]
 
 ### Step 2: Identify the cause
+
 [Exact queries, commands, dashboard panels in order.
 Decision tree: if [X], proceed to [section].
 If [Y], proceed to [section].]
 
 ### Step 3: Apply immediate mitigation
+
 [Exact commands for each cause identified in Step 2.
 Include expected outcome and timeframe.]
 
@@ -378,12 +382,13 @@ Include expected outcome and timeframe.]
 
 ## Escalation
 
-| Condition | Escalate To | How | SLA |
-|---|---|---|---|
-| [When to escalate] | @team | PD P2 | 10 min |
-| [When to escalate] | @team | PD P1 | 5 min |
+| Condition          | Escalate To | How   | SLA    |
+| ------------------ | ----------- | ----- | ------ |
+| [When to escalate] | @team       | PD P2 | 10 min |
+| [When to escalate] | @team       | PD P1 | 5 min  |
 
 Include in escalation page:
+
 - Incident ID
 - Current metric values
 - Steps already taken
@@ -394,6 +399,7 @@ Include in escalation page:
 
 The incident is resolved when ALL of the following
 are true for at least 10 minutes:
+
 - [Metric 1] is [threshold]
 - [Metric 2] is [threshold]
 - [Metric 3] is [threshold]
@@ -422,7 +428,7 @@ Stage 1 - Alert Creation (pre-production):
     → SRE reviewer checks: runbook link in annotation?
       Four sections present? 3am test passes?
     → Cannot merge alert without runbook (CI check)
-  
+
 Stage 2 - First Fire (incident response):
   When: alert fires for first time in production
   Who: on-call engineer
@@ -476,24 +482,24 @@ and the complete runbook template in "How It Works in Practice."
 
 ### ⚖️ Comparison Table
 
-| Incident Response Approach | MTTR | Knowledge Sharing | Consistency | Maintenance |
-|---|---|---|---|---|
-| **Runbook-driven (OBS-056)** | Low (8-15 min typical) | High (documented) | High | Medium (quarterly exercises) |
-| Expert-driven (call the author) | Variable | None | None | Zero |
-| Wiki pages (unstructured) | Medium | Partial | Low | Low (no testing) |
-| Tribal knowledge (undocumented) | High (40+ min) | None | None | N/A |
-| Automated remediation (no runbook) | Very low | None | High | High (code maintenance) |
+| Incident Response Approach         | MTTR                   | Knowledge Sharing | Consistency | Maintenance                  |
+| ---------------------------------- | ---------------------- | ----------------- | ----------- | ---------------------------- |
+| **Runbook-driven (OBS-056)**       | Low (8-15 min typical) | High (documented) | High        | Medium (quarterly exercises) |
+| Expert-driven (call the author)    | Variable               | None              | None        | Zero                         |
+| Wiki pages (unstructured)          | Medium                 | Partial           | Low         | Low (no testing)             |
+| Tribal knowledge (undocumented)    | High (40+ min)         | None              | None        | N/A                          |
+| Automated remediation (no runbook) | Very low               | None              | High        | High (code maintenance)      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Runbooks replace expertise | Runbooks capture expertise and make it accessible. They reduce the minimum expertise required to execute a known procedure, but novel incidents still require expert judgment |
+| Misconception                            | Reality                                                                                                                                                                                   |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Runbooks replace expertise               | Runbooks capture expertise and make it accessible. They reduce the minimum expertise required to execute a known procedure, but novel incidents still require expert judgment             |
 | A single "service runbook" is sufficient | Runbooks should be alert-specific. A "checkout service runbook" covering all scenarios becomes a large, slow-to-navigate document. One runbook per alert class is the correct granularity |
-| Runbooks only benefit junior engineers | Senior engineers executing runbooks at 3am benefit equally. Cognitive load reduction is valuable regardless of experience level |
-| Once written, runbooks are done | Runbooks rot. Dashboards move, commands change, services evolve. Quarterly exercises catch rot. Runbooks without test dates are liabilities |
+| Runbooks only benefit junior engineers   | Senior engineers executing runbooks at 3am benefit equally. Cognitive load reduction is valuable regardless of experience level                                                           |
+| Once written, runbooks are done          | Runbooks rot. Dashboards move, commands change, services evolve. Quarterly exercises catch rot. Runbooks without test dates are liabilities                                               |
 
 ---
 
@@ -518,6 +524,7 @@ rotatable across all senior engineers (not just the
 two "experts" who knew all the services).
 
 **Action:**
+
 1. Created a mandatory runbook template with four
    required sections (what is broken, immediate mitigation,
    escalation criteria, resolution verification). The
@@ -557,6 +564,7 @@ more reliability gaps per hour than any other practice.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - the monitoring stack the
   runbook directs engineers to use
 - `SLO` - the service level target runbooks protect
@@ -571,10 +579,12 @@ more reliability gaps per hour than any other practice.
 - `Error Budgets` - the budget governance context
 
 **Builds On This (learn these next):**
+
 - `Reliability Mental Model` - runbooks as the
   "response culture" component of the four-force model
 
 **Alternatives / Comparisons:**
+
 - `Observability-Driven Development` - the proactive
   complement to reactive runbooks
 - `Observability-First Thinking` - the cultural shift
@@ -622,6 +632,7 @@ more reliability gaps per hour than any other practice.
 ```
 
 **If you remember only 3 things:**
+
 1. Every runbook must answer four questions: what is broken,
    what is the immediate mitigation, when to escalate,
    how to verify resolution. Missing any one of these

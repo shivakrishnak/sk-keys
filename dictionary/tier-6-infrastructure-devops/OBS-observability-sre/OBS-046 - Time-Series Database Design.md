@@ -35,11 +35,11 @@ through delta encoding, stores data in immutable time-
 partitioned blocks, and answers range queries by scanning
 only the blocks covering the requested time range.
 
-| #046 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, Prometheus, Metrics and Time-Series Monitoring, Capacity Planning with Metrics, Observability at Scale | |
-| **Used by:** | Observability System Design Internals, Distributed Tracing System Architecture | |
-| **Related:** | Platform Observability Engineering, Alerting Fundamentals, Service Level Objectives Deep Dive | |
+| #046            | Category: Observability & SRE                                                                                                 | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability, Prometheus, Metrics and Time-Series Monitoring, Capacity Planning with Metrics, Observability at Scale |                 |
+| **Used by:**    | Observability System Design Internals, Distributed Tracing System Architecture                                                |                 |
+| **Related:**    | Platform Observability Engineering, Alerting Fundamentals, Service Level Objectives Deep Dive                                 |                 |
 
 ---
 
@@ -109,6 +109,7 @@ read is always range-by-time, and both operations are
 is fixed and the storage is optimized for exactly this pattern.
 
 **One analogy:**
+
 > A TSDB is like a scientific data logger, not a general
 > ledger. A general ledger (relational DB) supports any
 > combination of operations: insert, update, delete, join
@@ -143,6 +144,7 @@ makes this economically viable - Prometheus achieves
 
 **Pillar 1 - Append-only write path:**
 Metrics are immutable once written. This enables:
+
 - No lock contention (readers don't block writers)
 - Efficient WAL (write-ahead log = sequential disk write)
 - Block compaction (merge multiple small files offline)
@@ -168,6 +170,7 @@ Column storage: [T1, T2, T3, ...] | [V1, V2, V3, ...]
 ```
 
 **Pillar 3 - Time-partitioned blocks:**
+
 ```
 Data organized as:
   block_00h-02h/ (compact, immutable)
@@ -182,6 +185,7 @@ Query for [10h-14h]:
 ```
 
 **Pillar 4 - Inverted label index:**
+
 ```
 Metric: http_requests_total{method="GET", status="200"}
         http_requests_total{method="POST", status="500"}
@@ -200,6 +204,7 @@ Time complexity: O(matching series), not O(all series)
 ```
 
 **Pillar 5 - Tiered retention:**
+
 ```
 Hot tier (in RAM):
   Last 2h of data in head block
@@ -236,12 +241,14 @@ global aggregation).
 **DESIGN: A TSDB from scratch for 1M series at 10s intervals**
 
 Requirements:
+
 - 1M time series, 1 sample every 10 seconds
 - Query: "all series matching {env="prod"} in last 1 hour"
 - Query: "max value of metric X over last 30 days"
 - Cost: < $500/month for 1 year of retention
 
 **DATA VOLUME ANALYSIS:**
+
 ```
 Write rate: 1M series × (1 sample/10s) = 100K samples/s
 Raw size: 16 bytes/sample × 100K/s = 1.6 MB/s raw
@@ -251,7 +258,7 @@ Annual volume: 11.8 × 365 = 4.3 TB/year compressed
 
 Storage cost (S3 standard at $0.023/GB/month):
   4.3TB × $0.023 × 12 = $1,186/year
-  
+
   Reduce by downsampling: after 7 days, keep 1h resolution
   instead of 10s. 1h/10s = 360x fewer samples for old data.
   Total: 7 days × 11.8GB/day (full) +
@@ -261,6 +268,7 @@ Storage cost (S3 standard at $0.023/GB/month):
 ```
 
 **QUERY PERFORMANCE ANALYSIS:**
+
 ```
 Query: {env="prod"} in last 1 hour
   1M series × 10% in prod = 100K series to scan
@@ -571,11 +579,11 @@ Symptom:
 Root Cause:
   A deployment pushed a service with 5M unique series
   (user_id label on all metrics).
-  
+
   Prometheus head block capacity exceeded:
     Default max series: 2M (configurable via
     --storage.tsdb.max-block-duration)
-  
+
   When head fills: Prometheus stops accepting new series
   WAL falls behind, write queue backs up
   Scrapes timeout → gaps in data
@@ -584,7 +592,7 @@ Diagnosis:
   # Head series count
   prometheus_tsdb_head_series
   # Should be < 2M for healthy operation
-  
+
   # Series created per minute (churn)
   rate(prometheus_tsdb_head_series_created_total[5m])
   # Spike = new high-cardinality series being created
@@ -606,13 +614,13 @@ Fix (permanent):
 
 ### ⚖️ Comparison Table
 
-| TSDB | Write Model | Query Language | Scale Model | Best For |
-|---|---|---|---|---|
-| **Prometheus TSDB** | Pull-based scraping | PromQL | Single-node + Thanos/Cortex for global | Kubernetes metrics, standard SRE |
-| **InfluxDB (IOx)** | Push (line protocol) | InfluxQL / Flux | Serverless | IoT, developer-friendly |
-| **TimescaleDB** | Push (SQL INSERT) | SQL + time functions | PostgreSQL scaling | Teams with SQL expertise |
-| **VictoriaMetrics** | Prometheus-compatible | MetricsQL | Cluster mode built-in | High-volume Prometheus replacement |
-| **QuestDB** | Push (SQL/line protocol) | SQL | Single-node | High-speed ingestion, analytics |
+| TSDB                | Write Model              | Query Language       | Scale Model                            | Best For                           |
+| ------------------- | ------------------------ | -------------------- | -------------------------------------- | ---------------------------------- |
+| **Prometheus TSDB** | Pull-based scraping      | PromQL               | Single-node + Thanos/Cortex for global | Kubernetes metrics, standard SRE   |
+| **InfluxDB (IOx)**  | Push (line protocol)     | InfluxQL / Flux      | Serverless                             | IoT, developer-friendly            |
+| **TimescaleDB**     | Push (SQL INSERT)        | SQL + time functions | PostgreSQL scaling                     | Teams with SQL expertise           |
+| **VictoriaMetrics** | Prometheus-compatible    | MetricsQL            | Cluster mode built-in                  | High-volume Prometheus replacement |
+| **QuestDB**         | Push (SQL/line protocol) | SQL                  | Single-node                            | High-speed ingestion, analytics    |
 
 **How to choose:**
 Use Prometheus TSDB for Kubernetes-native environments.
@@ -625,12 +633,12 @@ Use InfluxDB for IoT or heterogeneous sensor data.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                       | Reality                                                                                                                                                                                       |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | TSDBs are just regular databases with a time column | TSDBs use specialized data structures (XOR encoding, immutable blocks, inverted label index) that general-purpose databases cannot replicate at comparable performance and storage efficiency |
-| Prometheus is a TSDB cluster | Prometheus is single-node by design. Clustering requires Thanos, Cortex, or Mimir on top. This is a deliberate design choice for operational simplicity |
-| More retention requires proportionally more storage | Downsampling older data (5-min resolution after 7 days, 1-hour resolution after 30 days) reduces storage by 360x for the oldest data, making years of retention practical |
-| TSDB is only useful for metrics | Log systems (Loki) and trace systems (Tempo) use TSDB-like design principles (time-partitioned blocks, append-only, columnar compression) - the pattern is general |
+| Prometheus is a TSDB cluster                        | Prometheus is single-node by design. Clustering requires Thanos, Cortex, or Mimir on top. This is a deliberate design choice for operational simplicity                                       |
+| More retention requires proportionally more storage | Downsampling older data (5-min resolution after 7 days, 1-hour resolution after 30 days) reduces storage by 360x for the oldest data, making years of retention practical                     |
+| TSDB is only useful for metrics                     | Log systems (Loki) and trace systems (Tempo) use TSDB-like design principles (time-partitioned blocks, append-only, columnar compression) - the pattern is general                            |
 
 ---
 
@@ -651,6 +659,7 @@ incomplete (missing the index or checksum file). The WAL
 was not fully checkpointed before the kill.
 
 **Diagnosis:**
+
 ```bash
 # List Prometheus data directory for corrupt blocks
 ls -la /prometheus/data/
@@ -662,6 +671,7 @@ ls -la /prometheus/data/
 ```
 
 **Fix:**
+
 ```bash
 # Delete the incomplete block
 rm -rf /prometheus/data/01HB_incomplete/
@@ -679,6 +689,7 @@ rm -rf /prometheus/data/01HB_incomplete/
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - the context for why TSDBs exist
 - `Prometheus` - the primary TSDB in the SRE ecosystem
 - `Metrics and Time-Series Monitoring` - the data the TSDB stores
@@ -686,12 +697,14 @@ rm -rf /prometheus/data/01HB_incomplete/
 - `Observability at Scale` - the scaling problems TSDBs solve
 
 **Builds On This (learn these next):**
+
 - `Observability System Design Internals` - how TSDB internals
   combine with log and trace storage
 - `Distributed Tracing System Architecture` - comparable
   design principles for trace data
 
 **Alternatives / Comparisons:**
+
 - `Platform Observability Engineering` - running TSDBs
   at organizational scale
 - `Alerting Fundamentals` - the primary real-time consumer
@@ -739,6 +752,7 @@ rm -rf /prometheus/data/01HB_incomplete/
 ```
 
 **If you remember only 3 things:**
+
 1. TSDBs use XOR delta-of-delta compression achieving
    ~1.37 bytes/sample (vs 16 bytes raw). Columnar storage
    per series is what makes this compression possible.

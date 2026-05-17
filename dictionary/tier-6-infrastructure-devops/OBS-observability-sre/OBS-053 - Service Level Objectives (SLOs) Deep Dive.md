@@ -34,11 +34,11 @@ calibrated to natural reliability, measuring with recording
 rules, communicating budget status in real-time, and
 continuously tightening targets as reliability improves.
 
-| #053 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | SLO, Error Budget, SLO-Based Alerting Strategy, Formal SLO Theory, SLO Trade-off Framing | |
-| **Used by:** | Error Budgets | |
-| **Related:** | Alerting Fundamentals, SRE Book Core Principles, Reliability Mental Model | |
+| #053            | Category: Observability & SRE                                                            | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | SLO, Error Budget, SLO-Based Alerting Strategy, Formal SLO Theory, SLO Trade-off Framing |                 |
+| **Used by:**    | Error Budgets                                                                            |                 |
+| **Related:**    | Alerting Fundamentals, SRE Book Core Principles, Reliability Mental Model                |                 |
 
 ---
 
@@ -82,13 +82,14 @@ service-level objectives as living reliability commitments
 that evolve with the service. The lifecycle has five phases:
 (1) **SLI definition** - identifying the user-perspective
 metric that captures service quality; (2) **target calibration**
+
 - setting the threshold at natural reliability baseline
-plus margin; (3) **measurement implementation** - Prometheus
-recording rules that accurately compute the SLI; (4)
-**communication** - making error budget status ambient knowledge
-through dashboards and alerts; (5) **continuous improvement**
+  plus margin; (3) **measurement implementation** - Prometheus
+  recording rules that accurately compute the SLI; (4)
+  **communication** - making error budget status ambient knowledge
+  through dashboards and alerts; (5) **continuous improvement**
 - quarterly SLO reviews that tighten targets and address
-recurring budget exhaustion patterns.
+  recurring budget exhaustion patterns.
 
 ---
 
@@ -101,6 +102,7 @@ The lifecycle makes SLOs living, measurable, visible, and
 continuously improving.
 
 **One analogy:**
+
 > SLO lifecycle is like an organization's financial budget
 > cycle: not a one-time document but a living process.
 > The initial budget (SLO definition) is set based on
@@ -134,7 +136,7 @@ GOOD SLI: "user-journey completion rate"
     - Response not an error (status < 500): YES
     - Response is valid (not empty body): YES
   ALL conditions must be true for "good event"
-  
+
 EVEN BETTER: "synthetic canary SLI"
   Run a synthetic transaction (automated user simulation)
   every 60 seconds against production.
@@ -152,7 +154,7 @@ EVEN BETTER: "synthetic canary SLI"
 ```
 Step 1: Measure baseline reliability (90-day window)
   p_natural = avg(SLI over last 90 days excluding incidents)
-  
+
   Example: baseline SLI = 99.87% (natural error rate 0.13%)
 
 Step 2: Measure incident impact (last 12 months)
@@ -166,12 +168,12 @@ Step 2: Measure incident impact (last 12 months)
 Step 3: Set initial target
   natural_error_rate = 0.0013
   incident_buffer = 4.25 min / 43.2 min = 9.8% monthly
-  
+
   Available budget at 99.9%: 43.2 min
   Natural consumption: 43.2 × 0.13% = 0.056% (0.56 min)
   Incident consumption: ~4.25 min
   Total typical consumption: ~4.3 min (10% of budget)
-  
+
   99.9% budget (43.2 min) leaves 90% margin above typical.
   Good starting point. First month: observe and adjust.
 
@@ -306,6 +308,7 @@ organizational trust.
 **THE MULTI-DEPENDENCY SLO PROBLEM:**
 
 The checkout service has an SLO of 99.9%. It depends on:
+
 - Payment processor (external, 99.5% SLO from vendor)
 - Inventory service (internal, 99.8% SLO)
 - User service (internal, 99.95% SLO)
@@ -327,13 +330,13 @@ combined availability of 99.25%.
 1. Set checkout SLO at 99.2% (reflects actual dependency chain)
    - Transparent to users (SLA set accordingly)
    - Engineering does not burn budget on external failures
-   
+
 2. Exclude dependency failures from checkout SLO
    - Define: checkout SLI = success rate EXCLUDING responses
      where payment processor returned error (not checkout's fault)
    - Use SLO attribution: track checkout-caused errors separately
    - Checkout SLO = 99.9% on its own errors only
-   
+
 3. Implement retry/fallback to absorb dependency failures
    - For 80% of payment processor errors, checkout can retry
    - Effective availability = 0.995^2 = 0.990 (better but not 99.9%)
@@ -384,6 +387,7 @@ Review the SLO every quarter with your team.
 **Level 3 - How it works (mid-level engineer):**
 The measurement implementation is the critical phase.
 The recording rule must compute the SLI correctly:
+
 - Use `rate()` not `increase()` for recording rules
   (rate is per-second, composable; increase is absolute count)
 - Include all error types in the error numerator (5xx AND
@@ -427,6 +431,7 @@ inconsistent with the implementation).
 The SLO's value is its alignment with user experience.
 An SLO that measures server-side success rate and an SLO
 that measures user-observed success rate diverge whenever:
+
 - Internal retries absorb errors (server sees success,
   user experiences latency)
 - Error responses have status 200 with error body
@@ -456,9 +461,9 @@ Where:
 Example:
   natural_baseline = 99.87%
   natural_variation = 0.03% (σ of monthly SLI values)
-  
+
   Effective SLO = 99.87% - (2 × 0.03%) = 99.81%
-  
+
   This means: natural variation will exhaust budget
   less than 2.3% of months (2-sigma boundary).
   Incidents are distinguishable from natural variation.
@@ -474,10 +479,10 @@ Example:
 Dependency SLO composition:
   Service A depends on Services B, C, D.
   SLO(A) ≤ SLO(B) × SLO(C) × SLO(D) × own_reliability(A)
-  
+
   Setting SLO(A) higher than this theoretical max
   = budget consumed every month by dependency failures
-  
+
   Solution options:
   1. Attribution: track "caused by B" vs "caused by A"
      separately. SLO(A) measures only A's own errors.
@@ -490,7 +495,7 @@ Multi-dimensional SLOs:
   Availability SLO: 99.9% success rate
   Latency SLO: 95% of requests < 300ms
   Throughput SLO: can handle 10K RPS without degradation
-  
+
   Each has its own error budget.
   Monitoring must cover all three.
   Page when ANY budget burns fast.
@@ -522,7 +527,7 @@ spec:
     99.9% of checkout requests succeed (non-5xx, < 500ms)
   target: "99.9"
   window: 30d
-  
+
   # The SLI definition - this is the critical part
   indicator:
     ratio:
@@ -537,7 +542,7 @@ spec:
           http_requests_total{
             job="checkout-service"
           }
-      
+
   # Pyrra auto-generates:
   # - 5 recording rules (5m, 30m, 1h, 6h, 30d windows)
   # - P1 burn rate alert (> 14.4 in 5m AND 1h)
@@ -550,23 +555,23 @@ spec:
 
 ### ⚖️ Comparison Table
 
-| SLO Approach | Definition Quality | Measurement Accuracy | Improvement Mechanism |
-|---|---|---|---|
-| **Full lifecycle (OBS-053)** | User-perspective SLI | Recording rules | Quarterly review with calibration |
-| Initial SLO (spreadsheet) | Server-side proxy | Ad-hoc queries | None |
-| Vendor SLA | Customer-facing SLA | Usually uptime only | Contract-driven |
-| DORA metrics | Deployment velocity + stability | Automated | CI/CD data |
+| SLO Approach                 | Definition Quality              | Measurement Accuracy | Improvement Mechanism             |
+| ---------------------------- | ------------------------------- | -------------------- | --------------------------------- |
+| **Full lifecycle (OBS-053)** | User-perspective SLI            | Recording rules      | Quarterly review with calibration |
+| Initial SLO (spreadsheet)    | Server-side proxy               | Ad-hoc queries       | None                              |
+| Vendor SLA                   | Customer-facing SLA             | Usually uptime only  | Contract-driven                   |
+| DORA metrics                 | Deployment velocity + stability | Automated            | CI/CD data                        |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                                    | Reality                                                                                                                                                                                              |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 99.9% is the standard right SLO for all services | SLO target depends on natural reliability, user expectations, and dependency availability. An internal tool used by 10 people may have a 99% SLO; a payment API serving 10M users may require 99.99% |
-| SLO = SLA | SLO is the internal engineering target; SLA is the contractual commitment to customers. SLO is typically stricter than SLA (the gap is the buffer) |
-| The SLI measurement is straightforward | The SLI definition is the hardest and most important decision. Server-side metrics frequently diverge from user-perceived reliability |
-| Once defined, SLOs don't change | SLOs should tighten quarterly as reliability improves. Stale SLOs lose credibility and usefulness |
+| SLO = SLA                                        | SLO is the internal engineering target; SLA is the contractual commitment to customers. SLO is typically stricter than SLA (the gap is the buffer)                                                   |
+| The SLI measurement is straightforward           | The SLI definition is the hardest and most important decision. Server-side metrics frequently diverge from user-perceived reliability                                                                |
+| Once defined, SLOs don't change                  | SLOs should tighten quarterly as reliability improves. Stale SLOs lose credibility and usefulness                                                                                                    |
 
 ---
 
@@ -588,6 +593,7 @@ for certain failure modes (a common anti-pattern in legacy
 APIs). These are counted as "good" events in the SLI.
 
 **Diagnosis:**
+
 ```promql
 # Check if there are 200 responses with error bodies
 # (requires application-level error metric, not HTTP status)
@@ -604,6 +610,7 @@ sum(rate(
 
 **Fix:**
 Redefine the SLI to include all user-visible failures:
+
 ```promql
 # Good events: HTTP 200 AND not a business error
 sum(rate(
@@ -624,6 +631,7 @@ checkout and measures end-to-end success.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `SLO` - the fundamental concept
 - `Error Budget` - the budget mechanism
 - `SLO-Based Alerting Strategy` - the alerting implementation
@@ -631,9 +639,11 @@ checkout and measures end-to-end success.
 - `SLO Trade-off Framing` - the decision framework
 
 **Builds On This (learn these next):**
+
 - `Error Budgets` - the operational budget management practice
 
 **Alternatives / Comparisons:**
+
 - `Alerting Fundamentals` - the pre-SLO alerting approach
 - `SRE Book Core Principles` - the organizational model
   that SLO lifecycle is part of
@@ -677,6 +687,7 @@ checkout and measures end-to-end success.
 ```
 
 **If you remember only 3 things:**
+
 1. SLI must be user-perspective, not server-perspective.
    HTTP 200 does not mean user success. Synthetic canaries
    and response body checks capture what server status codes miss.
@@ -695,6 +706,7 @@ natural variation), implement as Prometheus recording rules
 (not ad-hoc queries), make budget status ambient via dashboard
 (gauge: % remaining, sparkline: burn rate), and quarterly
 review (tighten when budget < 30% consumed, investigate when
+
 > 100%). Key failure: SLI measuring server success while users
-experience failures - always validate SLI against support
-ticket correlation."
+> experience failures - always validate SLI against support
+> ticket correlation."

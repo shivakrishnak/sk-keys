@@ -33,11 +33,11 @@ services and billions of events per hour - which requires
 sampling, aggregation, and intelligent routing to avoid
 the cost and noise of capturing everything at full fidelity.
 
-| #039 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, Prometheus, Distributed Tracing, Log Aggregation at Scale | |
-| **Used by:** | Observability Platform Architecture, Platform Observability Engineering, Observability System Design Internals | |
-| **Related:** | Trace Sampling Strategies, Cardinality in Metrics Systems, Time-Series Database Design, Distributed Tracing System Architecture | |
+| #039            | Category: Observability & SRE                                                                                                   | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | What Is Observability, Prometheus, Distributed Tracing, Log Aggregation at Scale                                                |                 |
+| **Used by:**    | Observability Platform Architecture, Platform Observability Engineering, Observability System Design Internals                  |                 |
+| **Related:**    | Trace Sampling Strategies, Cardinality in Metrics Systems, Time-Series Database Design, Distributed Tracing System Architecture |                 |
 
 ---
 
@@ -93,12 +93,13 @@ and tiered storage routing.
 operational discipline of maintaining sufficient visibility
 into a large-scale distributed system to answer diagnostic
 questions about service behavior, performance, and failure
+
 - while managing the data volume, cost, and operational
-complexity of the observability infrastructure through
-sampling (probabilistic event selection), aggregation
-(computing statistics at collection time rather than query
-time), and intelligent routing (directing data to storage
-tiers based on diagnostic value).
+  complexity of the observability infrastructure through
+  sampling (probabilistic event selection), aggregation
+  (computing statistics at collection time rather than query
+  time), and intelligent routing (directing data to storage
+  tiers based on diagnostic value).
 
 ---
 
@@ -110,6 +111,7 @@ right things: sampled traces, aggregated metrics, and
 indexed critical logs.
 
 **One analogy:**
+
 > Observability at scale is like a statistical poll.
 > A pollster cannot interview all 330 million Americans,
 > but they can interview 2,000 carefully selected ones
@@ -136,6 +138,7 @@ strategies leads to either data blindness or cost explosion.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Data volume grows super-linearly with system complexity:
    1,000 services with cross-calls produce more than 100x
    the trace data of 10 services
@@ -148,6 +151,7 @@ strategies leads to either data blindness or cost explosion.
 
 **DERIVED DESIGN:**
 These invariants drive the three scale strategies:
+
 - **Metrics aggregation**: never store raw events for metrics;
   compute counters, histograms, and gauges at scrape time;
   Prometheus TSDB compresses 1 billion raw events into
@@ -209,8 +213,8 @@ traces captured by chance.
 
 **OPTION C: Tail-based sampling (keep all errors + 1% success)**
 Storage: 1% of normal + 100% of errors.
-10 errors/sec * 100% = 10 error traces/sec (always captured).
-99,990 success/sec * 1% = 1,000 traces/sec.
+10 errors/sec _ 100% = 10 error traces/sec (always captured).
+99,990 success/sec _ 1% = 1,000 traces/sec.
 Total: 1,010 traces/sec. Negligible cost increase vs B.
 Diagnostic value: EVERY error is captured. Statistical
 view of normal traffic preserved. Best of both worlds.
@@ -227,16 +231,18 @@ maximizes diagnostic value per byte stored.
 
 > Observability at scale is like a hospital triage system.
 > Not every patient gets an MRI (full-fidelity capture)
+>
 > - that would be impossibly expensive and slow. Instead,
-> vital signs are taken for everyone (metrics aggregation -
-> cheap, always-on), chest X-rays for concerning cases
-> (logs for WARN/ERROR), and MRI only for high-priority
-> diagnoses (trace capture for errors and anomalies). The
-> triage decision routes each patient to the right level
-> of diagnostic investigation. You get 90% of the diagnostic
-> value at 10% of the cost.
+>   vital signs are taken for everyone (metrics aggregation -
+>   cheap, always-on), chest X-rays for concerning cases
+>   (logs for WARN/ERROR), and MRI only for high-priority
+>   diagnoses (trace capture for errors and anomalies). The
+>   triage decision routes each patient to the right level
+>   of diagnostic investigation. You get 90% of the diagnostic
+>   value at 10% of the cost.
 
 Element mapping:
+
 - "Vital signs for everyone" → metrics aggregation (cheap, universal)
 - "Chest X-ray for concerning cases" → log indexing for WARN/ERROR
 - "MRI for high priority" → trace capture for errors/anomalies
@@ -445,8 +451,8 @@ the global query layer for cross-cluster metrics.
 # otel-collector-config.yaml
 processors:
   tail_sampling:
-    decision_wait: 30s    # wait for all spans
-    num_traces: 100000    # buffer size
+    decision_wait: 30s # wait for all spans
+    num_traces: 100000 # buffer size
     expected_new_traces_per_sec: 10000
     policies:
       # Always keep traces with errors
@@ -515,13 +521,13 @@ traces matches the unsampled distribution statistically.
 
 ### ⚖️ Comparison Table
 
-| Strategy | Cost | Diagnostic Completeness | Complexity | Best For |
-|---|---|---|---|---|
-| **Full fidelity (no sampling)** | Very high | 100% | Low | <100 RPS, dev only |
-| Head-based sampling (1%) | Low | ~1% | Low | Simple, stateless |
-| Consistent head-based | Low | ~1% (coherent) | Medium | Distributed correctness |
-| **Tail-based sampling** | Low | 100% errors + 1% normal | High | Production at scale |
-| Adaptive sampling | Medium | Configurable | Very high | Very large scale |
+| Strategy                        | Cost      | Diagnostic Completeness | Complexity | Best For                |
+| ------------------------------- | --------- | ----------------------- | ---------- | ----------------------- |
+| **Full fidelity (no sampling)** | Very high | 100%                    | Low        | <100 RPS, dev only      |
+| Head-based sampling (1%)        | Low       | ~1%                     | Low        | Simple, stateless       |
+| Consistent head-based           | Low       | ~1% (coherent)          | Medium     | Distributed correctness |
+| **Tail-based sampling**         | Low       | 100% errors + 1% normal | High       | Production at scale     |
+| Adaptive sampling               | Medium    | Configurable            | Very high  | Very large scale        |
 
 **How to choose:**
 Start with 10% head-based for all services. As volume grows
@@ -533,13 +539,13 @@ only with dedicated platform engineering support.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
+| Misconception                               | Reality                                                                                                              |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | Higher sampling rate = better observability | Above a threshold, more samples add cost without adding diagnostic value; 1% gives 99%+ statistical accuracy for P99 |
-| Sampling means missing errors | Tail-based sampling captures 100% of error traces by design |
-| Metrics and traces need the same strategy | Metrics: aggregate (never sample); Traces: sample; Logs: tier-route |
-| Sampling rates should be fixed | Adaptive rates per service volume are more efficient |
-| Reducing log volume = better observability | Discarding WARN/ERROR to save cost is trading reliability for savings |
+| Sampling means missing errors               | Tail-based sampling captures 100% of error traces by design                                                          |
+| Metrics and traces need the same strategy   | Metrics: aggregate (never sample); Traces: sample; Logs: tier-route                                                  |
+| Sampling rates should be fixed              | Adaptive rates per service volume are more efficient                                                                 |
+| Reducing log volume = better observability  | Discarding WARN/ERROR to save cost is trading reliability for savings                                                |
 
 ---
 
@@ -552,12 +558,14 @@ Engineer searches Jaeger for a trace_id from an error log.
 Trace not found. The error log clearly shows the trace_id.
 
 **Root Cause (two causes):**
+
 1. Head-based sampling discarded the trace before the error
    occurred
 2. Downstream services are not instrumented; trace is
    incomplete and was filtered out
 
 **Diagnostic Steps:**
+
 ```bash
 # Check if trace exists anywhere
 curl "http://jaeger:16686/api/traces/${TRACE_ID}"
@@ -582,6 +590,7 @@ A developer added `user_id` as a metric label. 100K users
 = 100K time series from a single metric.
 
 **Diagnostic Command:**
+
 ```bash
 # Find highest cardinality metrics
 curl -s 'http://prometheus:9090/api/v1/query?query=
@@ -596,6 +605,7 @@ to link metrics to individual trace_ids instead.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - the three-pillar model that
   observability at scale must address
 - `Prometheus - Metrics Collection` - primary metrics aggregation
@@ -604,6 +614,7 @@ to link metrics to individual trace_ids instead.
 - `Log Aggregation at Scale` - log routing foundation
 
 **Builds On This (learn these next):**
+
 - `Observability Platform Architecture Design` - full
   platform architecture implementing scale strategies
 - `Platform Observability Engineering` - running observability
@@ -612,6 +623,7 @@ to link metrics to individual trace_ids instead.
   how each scale component works
 
 **Alternatives / Comparisons:**
+
 - `Trace Sampling Strategies` - dedicated deep-dive on
   head-based vs tail-based vs adaptive sampling
 - `Cardinality in Metrics Systems` - the specific cardinality
@@ -660,6 +672,7 @@ to link metrics to individual trace_ids instead.
 ```
 
 **If you remember only 3 things:**
+
 1. Metrics: aggregate (never sample). Traces: tail-sample
    (100% errors, 1% normal). Logs: tier-route (hot for
    ERROR/WARN, cold archive for all). Three signals, three
@@ -696,6 +709,7 @@ This principle applies to network packet capture, financial
 transaction monitoring, genomics, and sensor networks.
 
 **Where else this pattern applies:**
+
 - **Network monitoring** - flow sampling (NetFlow) captures
   1 in 1,000 packets to characterize network behavior
 - **A/B testing** - statistical sampling theory defines
@@ -724,6 +738,7 @@ always much lower than engineers intuitively assume.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. [EXPLAIN] Explain why metrics should never be sampled
    while traces should be sampled, using the difference in
    how each signal type is used for diagnostics
@@ -749,7 +764,8 @@ always much lower than engineers intuitively assume.
 **Q1: Your observability costs doubled last quarter without
 a corresponding doubling in services. How do you diagnose
 the cause?**
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Check Prometheus series count trend (cardinality explosion?)
 - Check Jaeger trace volume (new high-traffic service added
   with 100% sampling?)
@@ -760,7 +776,8 @@ the cause?**
 
 **Q2: Explain the trade-off between head-based and tail-based
 trace sampling in production.**
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Head-based: zero buffer overhead, but may discard error
   traces before they are known to be errors
 - Tail-based: captures 100% of errors because decision is
@@ -772,7 +789,8 @@ trace sampling in production.**
 
 **Q3: Your Prometheus cluster is at 80% memory and growing.
 How do you reduce cardinality without losing diagnostic value?**
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Find high-cardinality metrics using Prometheus API
 - Identify which labels have unbounded values
 - Remove the label from the metric; use tracing for

@@ -30,14 +30,15 @@ permalink: /obs/slo-based-alerting-strategy/
 ⚡ TL;DR - SLO-based alerting replaces arbitrary threshold
 alerts with burn rate alerts that fire only when error
 budget consumption is fast enough to cause an SLO breach
-- eliminating alert fatigue while ensuring you are paged
-for every incident that actually matters.
 
-| #042 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | SLO, Error Budget, Alerting Fundamentals, Prometheus Alerting | |
-| **Used by:** | Platform Observability Engineering, Formal SLO Theory, SLO Deep Dive | |
-| **Related:** | Actionable Alerting Patterns, SRE Book Core Principles, SLO Trade-off Framing | |
+- eliminating alert fatigue while ensuring you are paged
+  for every incident that actually matters.
+
+| #042            | Category: Observability & SRE                                                 | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | SLO, Error Budget, Alerting Fundamentals, Prometheus Alerting                 |                 |
+| **Used by:**    | Platform Observability Engineering, Formal SLO Theory, SLO Deep Dive          |                 |
+| **Related:**    | Actionable Alerting Patterns, SRE Book Core Principles, SLO Trade-off Framing |                 |
 
 ---
 
@@ -116,6 +117,7 @@ fast enough to exhaust your SLO budget before the window
 ends - no more, no less.
 
 **One analogy:**
+
 > Burn rate alerting is like a car's fuel consumption
 > warning system - but smarter than a simple "low fuel"
 > light. Instead of alerting when the tank is at 10%
@@ -143,6 +145,7 @@ user-observable reliability degradation.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Error budget is a finite resource in a time window;
    burning it too fast is the event worth detecting
 2. Alert precision (signal-to-noise ratio) and recall
@@ -162,11 +165,11 @@ user-observable reliability degradation.
 For SLO = 99.9% (0.1% error budget), 30-day window:
 
 - Error budget = 0.1% = 1 minute per 16.67 hours
-- Budget per hour = 0.1% / (30 * 24) = 0.000139%/hour
+- Budget per hour = 0.1% / (30 \* 24) = 0.000139%/hour
 - Alert threshold: burn fast enough to consume 5% in 1 hour
 - Required burn rate: 5% budget / 1 hour / 0.000139%/hour
   = **burn rate of 14.4**
-- Burn rate 14.4 = error rate of 14.4 * 0.1% = **1.44%**
+- Burn rate 14.4 = error rate of 14.4 \* 0.1% = **1.44%**
 
 This means: if the error rate exceeds 1.44% sustained
 for 1 hour, that will consume 5% of the monthly error
@@ -198,36 +201,36 @@ Your service has a 99.9% availability SLO over 30 days.
 Two scenarios:
 
 **Scenario A**: Error rate spikes to 20% for exactly 5 minutes.
-Budget impact: 5 min * 20% = 1 minute of errors consumed.
-Total budget: 30 days * 24h * 60min * 0.1% = 43.2 minutes.
+Budget impact: 5 min _ 20% = 1 minute of errors consumed.
+Total budget: 30 days _ 24h _ 60min _ 0.1% = 43.2 minutes.
 Budget consumed: 1/43.2 = 2.3% of monthly budget.
 Should this page? NO - it consumed 2.3% of budget.
-Burn rate over 1 hour: 12 min (5 min * 20% * 12x) would be
+Burn rate over 1 hour: 12 min (5 min _ 20% _ 12x) would be
 projected if sustained, but it only lasted 5 min.
 Short window (1h) check: too much noise from transient spikes.
 
 **Scenario B**: Error rate sits at 2% for 6 hours.
-Budget impact: 6 * 60min * 2% = 7.2 minutes of errors.
+Budget impact: 6 _ 60min _ 2% = 7.2 minutes of errors.
 Budget consumed: 7.2/43.2 = 16.7% of monthly budget.
 Should this page? YES - this is a material budget drain.
 Burn rate: 2% / 0.1% = 20 (burning 20x the sustainable rate).
 
 **THE MULTI-WINDOW ANSWER:**
 A 1-hour window (short) checks: is burn rate > 14.4?
-  Scenario A: brief spike may briefly show high burn rate
-  in 1h window - but the 5-minute spike over 60 minutes
-  averages to: (5min * 20% + 55min * 0%) / 60min = 1.7%.
-  Burn rate: 1.7% / 0.1% = 17. Exceeds 14.4. Fires.
-  This is a false positive from a 5-minute spike.
+Scenario A: brief spike may briefly show high burn rate
+in 1h window - but the 5-minute spike over 60 minutes
+averages to: (5min _ 20% + 55min _ 0%) / 60min = 1.7%.
+Burn rate: 1.7% / 0.1% = 17. Exceeds 14.4. Fires.
+This is a false positive from a 5-minute spike.
 
 The 5-minute window (very short) check: if sustained for
 1h at this rate, would budget be consumed by >2%?
-  Scenario A: 5-min window shows 20% - burn rate 200.
-  But the long window (6h) shows: averaged 0.28%.
-  Multi-window: BOTH short AND long must exceed threshold.
-  Scenario A: 6h window = very low. Does NOT fire. Correct.
-  Scenario B: 1h window = 2% (burn rate 20). 6h window =
-  2% sustained (burn rate 20). Both fire. Pages. Correct.
+Scenario A: 5-min window shows 20% - burn rate 200.
+But the long window (6h) shows: averaged 0.28%.
+Multi-window: BOTH short AND long must exceed threshold.
+Scenario A: 6h window = very low. Does NOT fire. Correct.
+Scenario B: 1h window = 2% (burn rate 20). 6h window =
+2% sustained (burn rate 20). Both fire. Pages. Correct.
 
 ---
 
@@ -247,6 +250,7 @@ The 5-minute window (very short) check: if sustained for
 > that a genuine fuel emergency is underway.
 
 Element mapping:
+
 - "Fuel" → error budget
 - "10% fuel warning" → threshold alerting
 - "Fuel flow rate" → burn rate
@@ -283,6 +287,7 @@ Prometheus alerting rules from your SLO definition.
 A 30-day 99.9% SLO has an error budget of 43.2 minutes.
 At burn rate 1.0, it takes 30 days to exhaust. At burn
 rate 14.4, it takes 2 days. The MWMBA approach:
+
 - Page-worthy (P1): burn rate > 14.4 in both 1h and 5min
   windows (will exhaust 5% budget in 1 hour)
 - Warning (P2): burn rate > 6 in both 6h and 30min windows
@@ -544,6 +549,7 @@ spec:
           http_requests_total{
             job="payment-api"
           }
+
 # Pyrra generates recording rules and all MWMBA alerts
 # automatically from this single YAML definition
 ```
@@ -562,13 +568,13 @@ threshold from a 30-second spike, preventing false positive).
 
 ### ⚖️ Comparison Table
 
-| Alerting Strategy | Noise | Recall | Calibration | Best For |
-|---|---|---|---|---|
-| **Burn rate (MWMBA)** | Very low | High | SLO-driven | Production on-call |
-| Threshold alerting | High | Medium | Ad hoc | Simple systems |
-| Anomaly detection | Medium | Very high | ML model | Unpredictable workloads |
-| Composite alerts | Medium | Medium | Complex | Specific known failure modes |
-| No alerts (ticket only) | None | Low | N/A | Non-production environments |
+| Alerting Strategy       | Noise    | Recall    | Calibration | Best For                     |
+| ----------------------- | -------- | --------- | ----------- | ---------------------------- |
+| **Burn rate (MWMBA)**   | Very low | High      | SLO-driven  | Production on-call           |
+| Threshold alerting      | High     | Medium    | Ad hoc      | Simple systems               |
+| Anomaly detection       | Medium   | Very high | ML model    | Unpredictable workloads      |
+| Composite alerts        | Medium   | Medium    | Complex     | Specific known failure modes |
+| No alerts (ticket only) | None     | Low       | N/A         | Non-production environments  |
 
 **How to choose:**
 Use MWMBA burn rate alerting as the primary alerting strategy
@@ -583,13 +589,13 @@ pages - its high recall produces too many false positives.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Burn rate alerting requires complex tooling | The math is 3-4 Prometheus recording rules; tools like Pyrra/Sloth auto-generate them from a YAML SLO definition |
-| A high burn rate always requires immediate action | A burn rate of 15 that lasts 30 seconds is not actionable; the `for:` duration in Prometheus ensures the condition must persist |
-| MWMBA only works with Prometheus | The same approach works with Datadog SLO monitors, Grafana Alerting, and any alerting system that supports multiple time windows |
-| SLO-based alerting replaces all other alerts | Burn rate alerts cover SLO-impact events; you still need process-level alerts (OOM, disk full) that predict SLO impact but are not captured by error rate |
-| Lower burn rate threshold = more thorough monitoring | Lower thresholds increase false positives and alert fatigue; the 14.4/6 calibration from the SRE Workbook is empirically derived |
+| Misconception                                        | Reality                                                                                                                                                   |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Burn rate alerting requires complex tooling          | The math is 3-4 Prometheus recording rules; tools like Pyrra/Sloth auto-generate them from a YAML SLO definition                                          |
+| A high burn rate always requires immediate action    | A burn rate of 15 that lasts 30 seconds is not actionable; the `for:` duration in Prometheus ensures the condition must persist                           |
+| MWMBA only works with Prometheus                     | The same approach works with Datadog SLO monitors, Grafana Alerting, and any alerting system that supports multiple time windows                          |
+| SLO-based alerting replaces all other alerts         | Burn rate alerts cover SLO-impact events; you still need process-level alerts (OOM, disk full) that predict SLO impact but are not captured by error rate |
+| Lower burn rate threshold = more thorough monitoring | Lower thresholds increase false positives and alert fatigue; the 14.4/6 calibration from the SRE Workbook is empirically derived                          |
 
 ---
 
@@ -611,6 +617,7 @@ The 5% error rate was visible in a different metric not
 included in the alert computation.
 
 **Diagnostic Questions:**
+
 - Do the SLI metrics in the alert expression cover all
   failure modes the users experience?
 - Is the error_rate recording rule tested with synthetic
@@ -642,6 +649,7 @@ NaN, which compares as greater than any threshold.
 The alert fires whenever request volume is near-zero.
 
 **Diagnostic Command:**
+
 ```promql
 # Check if the denominator is near zero
 rate(http_requests_total{job="payment-api"}[5m])
@@ -650,6 +658,7 @@ rate(http_requests_total{job="payment-api"}[5m])
 ```
 
 **Fix:**
+
 ```promql
 # Add a minimum request threshold to the recording rule
 rate(http_requests_total{status=~"5.."}[5m]) /
@@ -665,12 +674,14 @@ rate(http_requests_total{status=~"5.."}[5m]) /
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `SLO` - the reliability target that burn rate is computed from
 - `Error Budget` - the budget being "burned" that triggers alerts
 - `Prometheus - Alerting Rules` - the implementation technology
 - `Alerting Fundamentals` - the base concepts this builds on
 
 **Builds On This (learn these next):**
+
 - `Platform Observability Engineering` - organizational
   practice of running SLO alerting at scale
 - `Formal SLO Theory` - mathematical foundations of
@@ -679,6 +690,7 @@ rate(http_requests_total{status=~"5.."}[5m]) /
   SLO lifecycle that alerting is part of
 
 **Alternatives / Comparisons:**
+
 - `Actionable Alerting Patterns` - complementary strategies
   for non-SLO operational alerts
 - `SRE Book - Core Principles` - the organizational model
@@ -728,6 +740,7 @@ rate(http_requests_total{status=~"5.."}[5m]) /
 ```
 
 **If you remember only 3 things:**
+
 1. Burn rate = (error_rate) / (error_budget_rate). P1 threshold
    is 14.4x for a 99.9% SLO, 30-day window. This means
    error rate > 1.44% is page-worthy.

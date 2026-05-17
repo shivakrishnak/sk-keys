@@ -34,11 +34,11 @@ through the four-force model of observability, error
 budgets, on-call culture, and continuous improvement -
 each force reinforcing the others.
 
-| #051 | Category: Observability & SRE | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, SLO, SRE Book Core Principles, Formal SLO Theory, Observability-First Thinking, SLO Trade-off Framing, Platform Observability Engineering, Observability System Design Internals | |
-| **Used by:** | (synthesis - relies on all OBS entries) | |
-| **Related:** | Post-Mortem and Blameless Culture, Toil Reduction Strategy, Observability-Driven Development Strategy, Service Level Objectives Deep Dive, Error Budgets | |
+| #051            | Category: Observability & SRE                                                                                                                                                                           | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | What Is Observability, SLO, SRE Book Core Principles, Formal SLO Theory, Observability-First Thinking, SLO Trade-off Framing, Platform Observability Engineering, Observability System Design Internals |                 |
+| **Used by:**    | (synthesis - relies on all OBS entries)                                                                                                                                                                 |                 |
+| **Related:**    | Post-Mortem and Blameless Culture, Toil Reduction Strategy, Observability-Driven Development Strategy, Service Level Objectives Deep Dive, Error Budgets                                                |                 |
 
 ---
 
@@ -82,17 +82,18 @@ for understanding distributed system reliability as an
 emergent property of four interdependent forces: (1)
 **observability** - the ability to understand the system's
 state from its external signals; (2) **accountability**
+
 - the SLO/error budget system that defines what "reliable"
-means and when it is being violated; (3) **response
-culture** - the on-call and incident management practices
-that convert observability + accountability into timely
-corrective action; (4) **learning** - the postmortem
-and continuous improvement practices that prevent recurrence
-and reduce toil. Each force depends on the others: you
-cannot have effective incident response without observability;
-you cannot learn from incidents without accountability;
-you cannot continuously improve without a culture of
-learning.
+  means and when it is being violated; (3) **response
+  culture** - the on-call and incident management practices
+  that convert observability + accountability into timely
+  corrective action; (4) **learning** - the postmortem
+  and continuous improvement practices that prevent recurrence
+  and reduce toil. Each force depends on the others: you
+  cannot have effective incident response without observability;
+  you cannot learn from incidents without accountability;
+  you cannot continuously improve without a culture of
+  learning.
 
 ---
 
@@ -104,6 +105,7 @@ response culture, and continuous learning work together -
 remove any one and the system degrades.
 
 **One analogy:**
+
 > The reliability mental model is like the four chambers
 > of a heart. Each chamber performs a distinct function:
 > right atrium receives (monitoring collects signals),
@@ -152,6 +154,7 @@ in any specific organization's reliability failure.
 **Force 1 - OBSERVABILITY:**
 The ability to ask any question about the system's state
 and get an answer from its external signals. Requires:
+
 - Structured logs with correlation IDs
 - RED metrics for all service boundaries
 - Distributed traces covering all service hops
@@ -163,6 +166,7 @@ and take 10x longer to resolve.
 **Force 2 - ACCOUNTABILITY:**
 The SLO/error budget system that defines "reliable" and
 tracks compliance. Requires:
+
 - SLO targets calibrated to user expectations
 - Error budget tracking with remaining budget visible
 - Budget-aware deployment and change management
@@ -174,6 +178,7 @@ have no common language for trade-off decisions.
 
 **Force 3 - RESPONSE CULTURE:**
 The practices that convert signals into action. Requires:
+
 - On-call rotation that distributes knowledge and burden
 - Alert quality that eliminates noise (burn rate alerting)
 - Incident management process (ICS-like role clarity)
@@ -186,6 +191,7 @@ SLO is violated repeatedly without correction.
 
 **Force 4 - LEARNING:**
 The practices that prevent recurrence and reduce toil. Requires:
+
 - Blameless postmortems after every significant incident
 - Action items tracked to completion
 - Toil automation (eliminate repeated manual work)
@@ -222,6 +228,7 @@ Learning × Observability:
 **DIAGNOSE THE FAILURE:**
 
 Organization A has:
+
 - ✅ Excellent Prometheus metrics + Grafana dashboards
 - ✅ PagerDuty alerting with sophisticated alert routing
 - ❌ No SLOs defined (no error budgets)
@@ -229,6 +236,7 @@ Organization A has:
 - Symptom: on-call constantly paged, same issues recur
 
 **Diagnosis using four-force model:**
+
 - Observability: strong
 - Response culture: moderate (alerts work, engineers respond)
 - Accountability: MISSING (no SLO means no budget-aware
@@ -239,6 +247,7 @@ Organization A has:
   has had time/process to address root causes)
 
 **Prescription:**
+
 1. Define SLOs for the top 5 services (immediate)
 2. Implement error budget tracking (visible on every dashboard)
 3. Start postmortems for every P1 incident (establish the habit)
@@ -349,6 +358,7 @@ where O = observability, A = accountability, RC = response
 culture, L = learning.
 
 The partial derivatives reveal interdependencies:
+
 - $\partial R / \partial O$ is high when RC and A are in place
   (can respond to what is seen, and have clear targets)
   but near-zero when RC = 0 (observability without response
@@ -360,6 +370,7 @@ The partial derivatives reveal interdependencies:
   a target you can't measure)
 
 The non-linear interdependencies mean:
+
 - Investing in one weak force has high marginal return
 - Investing more in an already-strong force has low marginal return
 - The optimal investment strategy is to identify and strengthen
@@ -439,6 +450,7 @@ Not applicable as the primary example - the Reliability
 Mental Model is a conceptual synthesis. The implementation
 is the four-force assessment above and the specific
 practices in the prerequisite entries:
+
 - OBS-001: observability three pillars
 - OBS-012: SLO definition and measurement
 - OBS-036: blameless postmortem practice
@@ -455,13 +467,13 @@ the four-force assessment template above.
 
 ### ⚖️ Comparison Table
 
-| Reliability Model | Focus | Coverage | Organizational Level |
-|---|---|---|---|
-| **Four-Force Mental Model (OBS-051)** | Synthesis of all forces | Complete | All levels |
-| SRE Book (Google) | Practice catalog | Complete | Engineering/Ops |
-| DORA Metrics | Delivery performance | Velocity + stability | Engineering/Leadership |
-| ITIL | Change management | Process-heavy | Enterprise IT |
-| Chaos Engineering | Resilience testing | Testing only | Engineering |
+| Reliability Model                     | Focus                   | Coverage             | Organizational Level   |
+| ------------------------------------- | ----------------------- | -------------------- | ---------------------- |
+| **Four-Force Mental Model (OBS-051)** | Synthesis of all forces | Complete             | All levels             |
+| SRE Book (Google)                     | Practice catalog        | Complete             | Engineering/Ops        |
+| DORA Metrics                          | Delivery performance    | Velocity + stability | Engineering/Leadership |
+| ITIL                                  | Change management       | Process-heavy        | Enterprise IT          |
+| Chaos Engineering                     | Resilience testing      | Testing only         | Engineering            |
 
 **How to choose:**
 Use the four-force mental model as the synthesis layer
@@ -477,12 +489,12 @@ the learning force.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| More monitoring tools = better reliability | Tools address observability but not accountability, response culture, or learning. Adding the 5th monitoring tool to an organization with weak learning force will not improve reliability |
-| SRE team = reliability | An SRE team addresses specific forces (on-call, postmortems, toil) but reliability is a property of the whole organization. Product, development, and infrastructure teams all own parts of the four forces |
-| Reliability requires a dedicated team | Small organizations can achieve high reliability without an SRE team if all four forces are addressed within the development teams directly |
-| The four forces are sequential | They are simultaneous and interdependent. You don't "finish" observability before starting accountability. They must develop together for the feedback loop to function |
+| Misconception                              | Reality                                                                                                                                                                                                     |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| More monitoring tools = better reliability | Tools address observability but not accountability, response culture, or learning. Adding the 5th monitoring tool to an organization with weak learning force will not improve reliability                  |
+| SRE team = reliability                     | An SRE team addresses specific forces (on-call, postmortems, toil) but reliability is a property of the whole organization. Product, development, and infrastructure teams all own parts of the four forces |
+| Reliability requires a dedicated team      | Small organizations can achieve high reliability without an SRE team if all four forces are addressed within the development teams directly                                                                 |
+| The four forces are sequential             | They are simultaneous and interdependent. You don't "finish" observability before starting accountability. They must develop together for the feedback loop to function                                     |
 
 ---
 
@@ -498,6 +510,7 @@ P1 incident fires. The on-call engineer ignores it as
 noise. 40 minutes later, the CEO calls.
 
 **Diagnosis using four-force model:**
+
 - Observability: probably OK (systems emit metrics and alerts)
 - Accountability: WEAK (no burn rate alerting - alerts fire
   on arbitrary thresholds not calibrated to SLO impact;
@@ -508,6 +521,7 @@ noise. 40 minutes later, the CEO calls.
   false-positive alerts, the team would have fixed them)
 
 **Fix sequence:**
+
 1. Immediate: categorize all alerts into P1 (genuine SLO
    threat) and P2/noise. Silence P2/noise temporarily.
 2. Week 1: implement burn rate alerting for top 3 services
@@ -525,6 +539,7 @@ More monitoring tools will not fix alert fatigue.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - Force 1 (observability)
 - `SLO` - Force 2 (accountability)
 - `SRE Book Core Principles` - the organizational model
@@ -545,6 +560,7 @@ None - this is the synthesis entry. Return to specific
 OBS entries for depth on any of the four forces.
 
 **Alternatives / Comparisons:**
+
 - `Post-Mortem and Blameless Culture` - the learning
   force in depth
 - `Toil Reduction Strategy` - the learning force applied
@@ -593,6 +609,7 @@ OBS entries for depth on any of the four forces.
 ```
 
 **If you remember only 3 things:**
+
 1. The four forces: observability (see it), accountability
    (measure it), response culture (act on it), learning
    (prevent it). All four are required. Missing any one

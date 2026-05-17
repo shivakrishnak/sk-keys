@@ -36,11 +36,11 @@ billions of data points under 1 second, and correlating
 three separate data streams (metrics, logs, traces) by
 time and trace ID.
 
-| #045 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, Prometheus, Distributed Tracing, Grafana, Log Aggregation at Scale, Observability at Scale, Observability Platform Architecture, Time-Series Database Design, Distributed Tracing System Architecture | |
-| **Used by:** | Reliability Mental Model | |
-| **Related:** | Platform Observability Engineering, Capacity Planning with Metrics, SRE Book Core Principles | |
+| #045            | Category: Observability & SRE                                                                                                                                                                                                | Difficulty: ★★★ |
+| :-------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability, Prometheus, Distributed Tracing, Grafana, Log Aggregation at Scale, Observability at Scale, Observability Platform Architecture, Time-Series Database Design, Distributed Tracing System Architecture |                 |
+| **Used by:**    | Reliability Mental Model                                                                                                                                                                                                     |                 |
+| **Related:**    | Platform Observability Engineering, Capacity Planning with Metrics, SRE Book Core Principles                                                                                                                                 |                 |
 
 ---
 
@@ -106,6 +106,7 @@ data" work at 10 million series without collapsing under
 its own memory pressure.
 
 **One analogy:**
+
 > Understanding observability internals is like understanding
 > how a library's card catalog works, not just how to use
 > the library. A library patron just asks the librarian
@@ -137,11 +138,12 @@ enormously - Prometheus achieves 1.37 bytes per sample
 **The memory-to-disk problem:**
 A time series is an ordered sequence of (timestamp, value)
 pairs. Naive storage: 16 bytes per sample (8-byte timestamp
-+ 8-byte float64 value). At 1M active series × 1 sample/15s
-over 2 hours (in-memory window): 1M × 480 samples × 16B
-= 7.6GB of raw data in RAM just for 2 hours of metrics.
-Prometheus uses head blocks (in RAM) with XOR compression
-from the Gorilla paper (Facebook 2015):
+
+- 8-byte float64 value). At 1M active series × 1 sample/15s
+  over 2 hours (in-memory window): 1M × 480 samples × 16B
+  = 7.6GB of raw data in RAM just for 2 hours of metrics.
+  Prometheus uses head blocks (in RAM) with XOR compression
+  from the Gorilla paper (Facebook 2015):
 
 ```
 Delta-of-delta timestamp encoding:
@@ -161,6 +163,7 @@ XOR value encoding:
 ```
 
 **Chunk lifecycle:**
+
 ```
 Head block (in RAM): last 2h of data
   ├── Chunks: 120-sample segments, XOR-compressed
@@ -176,7 +179,7 @@ Block compaction:
   Level 1: 6h compacted blocks
   Level 2: 24h compacted blocks
   Level 3: 1-week blocks (max)
-  
+
 Tombstones: deleted series marked but not removed
   until next compaction (immutable block design)
 ```
@@ -200,11 +203,11 @@ Query execution:
           for matching stream labels
   Step 2: Retrieve chunks from S3 in parallel
   Step 3: Decompress and grep for "ERROR"
-  
+
   Fast because: S3 chunks retrieved in parallel,
   only relevant streams fetched (label filtering),
   recent chunks cached in local disk (cache hit rate ~80%)
-  
+
   Slow queries: no label filter (full scan) or
   regex on very high-cardinality log field
 ```
@@ -222,7 +225,7 @@ Tempo's approach: object storage + local bloom filter
   2. Every N minutes: flush to S3 as block
      - Block has: trace_id → offset index (sorted)
      - Bloom filter per block covering all trace IDs
-  
+
   Query for trace ID:
     Check bloom filter for each block
     (~80-90% of blocks eliminated without S3 reads)
@@ -242,6 +245,7 @@ Tempo's approach: object storage + local bloom filter
 **DESIGN CHALLENGE: 10TB/day log ingestion**
 
 You receive 10TB of application logs per day. Requirements:
+
 - Query any log line from the last 90 days in < 2 seconds
 - Cost: < $2,000/month for storage
 - No data loss
@@ -372,14 +376,14 @@ If v₁ = 1234.5 and v₂ = 1234.6:
   1234.5 = 0x4093400000000000
   1234.6 = 0x40934666...
   XOR   = 0x00000666...
-  
+
   Leading zeros: 40 bits
   Trailing zeros: 10 bits
   Meaningful bits: 14 bits
-  
+
   Storage: {40 leading zeros, 14 meaningful bits}
   = ~2 bytes vs 8 bytes raw
-  
+
   For metrics that barely change (e.g., CPU at 23.1%
   for many samples), XOR produces near-zero output
   → compressed to 1-2 bits per sample in best case
@@ -461,7 +465,7 @@ Step 5: Verify scope
     > 5) by (pod) → shows all pods affected
   - Loki: {app="payment-service"} |= "pool exhausted"
     | count_over_time[1h] → how many requests affected?
-    
+
 Total investigation time: 12 minutes
 Enabled by: trace → log (trace_id in both),
             log → metric (same time range),
@@ -484,11 +488,10 @@ Enabled by: trace → log (trace_id in both),
   "timestamp": "2024-01-01T14:32:00Z",
   "message": "Payment processed",
   "stream_labels": {
-    "app": "payment",
-    "request_id": "uuid-a1b2c3d4"  # WRONG: unique per request
-  }
+      "app": "payment",
+      "request_id": "uuid-a1b2c3d4", # WRONG: unique per request
+    },
 }
-
 # Impact: 1000 RPS × 86400s/day = 86M unique streams/day
 # Loki index cannot handle this
 # Query performance degrades to minutes, then OOM
@@ -505,17 +508,16 @@ Enabled by: trace → log (trace_id in both),
   "timestamp": "2024-01-01T14:32:00Z",
   "message": "Payment processed",
   "stream_labels": {
-    "app": "payment",          # ~10 apps - LOW cardinality
-    "env": "production",       # 3 values - VERY LOW
-    "namespace": "checkout"    # ~50 namespaces - LOW
-  },
+      "app": "payment", # ~10 apps - LOW cardinality
+      "env": "production", # 3 values - VERY LOW
+      "namespace": "checkout", # ~50 namespaces - LOW
+    },
   "log_content": {
-    "request_id": "uuid-a1b2c3d4",   # High cardinality
-    "user_id": "user-789",            # High cardinality
-    "trace_id": "xyz789abc"           # Unique per request
-  }
+      "request_id": "uuid-a1b2c3d4", # High cardinality
+      "user_id": "user-789", # High cardinality
+      "trace_id": "xyz789abc", # Unique per request
+    },
 }
-
 # Stream count: 10 apps × 3 envs × 50 namespaces = 1500
 # Fully manageable by Loki's index
 # To find specific request: query content filter |= "uuid-a1b2c3d4"
@@ -558,7 +560,7 @@ Symptom:
   Prometheus pod restarts every 6 hours (OOM-killed)
   Memory usage grows linearly: 2GB → 16GB over 6 hours
   Kubernetes OOM killer terminates at 16GB (container limit)
-  
+
 Root Cause:
   A developer added `user_id` label to a business metric
   with 1M active users → 1M unique label combinations
@@ -571,11 +573,11 @@ Diagnostic:
   # Check active series count
   prometheus_tsdb_head_series
   # If > 10M → investigate cardinality
-  
+
   # Check series per metric
   topk(20, count by (__name__)({__name__=~".+"}))
   # Find the metric that grew 1M series
-  
+
   # Check churn rate (new series per 5min)
   rate(prometheus_tsdb_head_series_created_total[5m])
   # High churn = labels with short-lived unique values
@@ -592,13 +594,13 @@ Fix:
 
 ### ⚖️ Comparison Table
 
-| Storage System | Data Type | Primary Index | Compression | Query Performance |
-|---|---|---|---|---|
-| **Prometheus TSDB** | Metrics | Label-set → chunk | XOR delta-of-delta | O(1) by labels, O(range) by time |
-| **Loki** | Logs | Stream labels only | zstd chunks | Fast with labels, linear for content |
-| **Tempo** | Traces | Bloom filter per block | Parquet (v2) | O(1) by trace ID, O(n) for content |
-| **Elasticsearch** | Logs | Full inverted index | LZ4/zstd | Fast for any field, 10x more RAM |
-| **ClickHouse** | Logs/Metrics | Sparse + bloom | LZ4 | Very fast for analytics, not streaming |
+| Storage System      | Data Type    | Primary Index          | Compression        | Query Performance                      |
+| ------------------- | ------------ | ---------------------- | ------------------ | -------------------------------------- |
+| **Prometheus TSDB** | Metrics      | Label-set → chunk      | XOR delta-of-delta | O(1) by labels, O(range) by time       |
+| **Loki**            | Logs         | Stream labels only     | zstd chunks        | Fast with labels, linear for content   |
+| **Tempo**           | Traces       | Bloom filter per block | Parquet (v2)       | O(1) by trace ID, O(n) for content     |
+| **Elasticsearch**   | Logs         | Full inverted index    | LZ4/zstd           | Fast for any field, 10x more RAM       |
+| **ClickHouse**      | Logs/Metrics | Sparse + bloom         | LZ4                | Very fast for analytics, not streaming |
 
 **How to choose:**
 Use Prometheus + Loki + Tempo (LGTM stack) for self-hosted
@@ -614,12 +616,12 @@ over real-time streaming.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| More series = more RAM linearly | Prometheus RAM scales with active series in head block (last 2h). 1M series ≈ 3GB RAM. But series that stop receiving samples are evicted from head, so churn (series created and deleted rapidly) is worse than having many stable series |
-| Loki is just "cheap Elasticsearch" | Loki is architecturally different: minimal indexing trades full-text search capability for drastically lower operational cost. Good choice when label-filtered queries suffice; wrong choice when you need arbitrary field search |
-| Trace storage requires much disk | Traces are typically high-cardinality but low-volume (1 trace per request, not 50 metric samples per request per metric). At 1000 RPS with 50 spans/trace and 500 bytes/span, trace volume is 25MB/s = 2.1TB/day uncompressed, ~300GB/day compressed - similar to logs |
-| Delta encoding only works for stable metrics | XOR encoding works for any float64 data; it just achieves better compression when consecutive values are close. Even volatile metrics (CPU usage) compress well because consecutive float64 values share most of their bits |
+| Misconception                                | Reality                                                                                                                                                                                                                                                                |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| More series = more RAM linearly              | Prometheus RAM scales with active series in head block (last 2h). 1M series ≈ 3GB RAM. But series that stop receiving samples are evicted from head, so churn (series created and deleted rapidly) is worse than having many stable series                             |
+| Loki is just "cheap Elasticsearch"           | Loki is architecturally different: minimal indexing trades full-text search capability for drastically lower operational cost. Good choice when label-filtered queries suffice; wrong choice when you need arbitrary field search                                      |
+| Trace storage requires much disk             | Traces are typically high-cardinality but low-volume (1 trace per request, not 50 metric samples per request per metric). At 1000 RPS with 50 spans/trace and 500 bytes/span, trace volume is 25MB/s = 2.1TB/day uncompressed, ~300GB/day compressed - similar to logs |
+| Delta encoding only works for stable metrics | XOR encoding works for any float64 data; it just achieves better compression when consecutive values are close. Even volatile metrics (CPU usage) compress well because consecutive float64 values share most of their bits                                            |
 
 ---
 
@@ -643,10 +645,12 @@ Add recording rules that pre-aggregate the 30-day data
 daily. Instead of computing `sum(http_requests_total)
 over 30 days` at query time, compute it every hour
 as a recording rule:
+
 ```promql
 record: job:http_requests:rate1h
 expr: rate(http_requests_total[1h])
 ```
+
 Then query the pre-aggregated metric for the 30-day view.
 Query time: O(30 data points) vs O(30-day raw series).
 
@@ -668,6 +672,7 @@ sample, but the user expects all matches.
 
 **Diagnostic:**
 Check if results hit the limit:
+
 ```
 # In Loki query log:
 msg="query stats" entries=5000  # exactly at limit = truncated
@@ -680,6 +685,7 @@ msg="query stats" entries=5000  # exactly at limit = truncated
 **Fix:**
 For large result sets, use aggregation instead of raw
 line queries:
+
 ```logql
 # BAD: returns raw lines (hits 5000 limit)
 {app="api"} |= "ERROR"
@@ -697,6 +703,7 @@ sum by (level) (
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - the three pillars these systems store
 - `Prometheus` - metrics TSDB in detail
 - `Distributed Tracing` - trace data model before the storage internals
@@ -708,10 +715,12 @@ sum by (level) (
 - `Distributed Tracing System Architecture` - trace storage deep dive
 
 **Builds On This (learn these next):**
+
 - `Reliability Mental Model` - how understanding internals
   informs reliability decisions
 
 **Alternatives / Comparisons:**
+
 - `Platform Observability Engineering` - operational practice
   that runs these systems at scale
 - `Capacity Planning with Metrics` - uses these query
@@ -760,6 +769,7 @@ sum by (level) (
 ```
 
 **If you remember only 3 things:**
+
 1. Prometheus RAM cost = active series × ~3KB. Cardinality
    is the primary scaling limit. High-cardinality labels
    cause OOM; drop them with relabeling or recording rules.

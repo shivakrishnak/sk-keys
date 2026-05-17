@@ -31,11 +31,11 @@ punishing people - the distinction is that individual mistakes
 are treated as evidence of systemic failure, not personal
 negligence.
 
-| #036 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | SRE, Incident Management Process, SLO | |
-| **Used by:** | Toil Reduction Strategy, SRE Book Core Principles, Observability-Driven Development | |
-| **Related:** | Runbooks and Playbooks, Reliability Mental Model, Observability-First Thinking | |
+| #036            | Category: Observability & SRE                                                       | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | SRE, Incident Management Process, SLO                                               |                 |
+| **Used by:**    | Toil Reduction Strategy, SRE Book Core Principles, Observability-Driven Development |                 |
+| **Related:**    | Runbooks and Playbooks, Reliability Mental Model, Observability-First Thinking      |                 |
 
 ---
 
@@ -107,6 +107,7 @@ A blameless postmortem investigates what went wrong in
 the system so you can fix the system, not the person.
 
 **One analogy:**
+
 > Aviation safety investigations are blameless by law in
 > most countries. When a plane crashes, the investigation
 > asks: "What in the aircraft design, crew training, air
@@ -133,6 +134,7 @@ improve their systems.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Engineers make mistakes because the system allowed or
    invited the mistake - system design is the root cause,
    not human error
@@ -145,6 +147,7 @@ improve their systems.
 
 **DERIVED DESIGN:**
 These invariants lead to the blameless postmortem structure:
+
 - **Timeline**: factual, chronological sequence of events
   (no editorializing, no "should have")
 - **Impact assessment**: business and user impact quantified
@@ -233,6 +236,7 @@ safer for all future engineers.
 > concerns.
 
 Element mapping:
+
 - "Building collapse" → production incident
 - "Forensic soil scientist" → postmortem facilitator
 - "Foundation analysis" → root cause analysis (Five Whys)
@@ -414,6 +418,7 @@ Incident occurs → Resolved → Postmortem written →
 
 **WHERE IT BREAKS DOWN:**
 Three common failure points:
+
 1. **Blame under pressure**: senior leader attends postmortem,
    asks "who made this decision?" - instantly destroys blameless
    culture in the room and signals to engineers to be defensive
@@ -422,7 +427,7 @@ Three common failure points:
 3. **Template compliance theater**: postmortems are written to
    satisfy a process requirement, not to understand the incident
    - five generic "lessons learned" that apply to every incident
-   and no specific systemic improvements
+     and no specific systemic improvements
 
 **HEALTHY vs DEGRADED:**
 Healthy: Postmortems are published within 48 hours, action
@@ -444,13 +449,13 @@ organizational process with no code API.
 
 ### ⚖️ Comparison Table
 
-| Approach | Safety Learning | Recurrence Prevention | Culture Impact | Best For |
-|---|---|---|---|---|
-| **Blameless postmortem (SRE)** | High | High | Positive (trust) | Any engineering organization |
-| Blame-based review | Low | Low | Negative (fear) | Organizations that do not need to improve |
-| ITIL Major Incident Review | Medium | Medium | Neutral | Regulated industries |
-| No review | None | None | Neutral | Solo projects only |
-| Chaos engineering (proactive) | Very high | Very high | Positive | Mature SRE orgs |
+| Approach                       | Safety Learning | Recurrence Prevention | Culture Impact   | Best For                                  |
+| ------------------------------ | --------------- | --------------------- | ---------------- | ----------------------------------------- |
+| **Blameless postmortem (SRE)** | High            | High                  | Positive (trust) | Any engineering organization              |
+| Blame-based review             | Low             | Low                   | Negative (fear)  | Organizations that do not need to improve |
+| ITIL Major Incident Review     | Medium          | Medium                | Neutral          | Regulated industries                      |
+| No review                      | None            | None                  | Neutral          | Solo projects only                        |
+| Chaos engineering (proactive)  | Very high       | Very high             | Positive         | Mature SRE orgs                           |
 
 **How to choose:**
 Use blameless postmortems for all SEV1 and SEV2 incidents.
@@ -462,14 +467,14 @@ discover failure modes before they become incidents.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Blameless" means no one is accountable | Blameless means no personal punishment for honest mistakes that reveal system gaps; individuals ARE accountable for completing their action items and for not repeating known mistakes |
-| Only SEV1 incidents deserve postmortems | High-value learning often comes from SEV2/3 incidents that are early warning signs; near-misses often produce the most systemic insight |
-| Postmortems should only be written for external customer-facing incidents | Internal incidents (staging environment down for 2 days, internal tool failing) also reveal systemic gaps worth fixing |
-| A good postmortem identifies the root cause | Root cause is almost always plural - a single incident typically has 3-7 contributing factors across different system layers |
-| Writing the postmortem is the end of the process | The postmortem is worth nothing if action items are not completed; the learning is in the remediation, not the document |
-| Senior engineers should write all postmortems | Rotating postmortem authorship across the team builds a culture where everyone understands failure analysis; it is also a training mechanism |
+| Misconception                                                             | Reality                                                                                                                                                                                |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Blameless" means no one is accountable                                   | Blameless means no personal punishment for honest mistakes that reveal system gaps; individuals ARE accountable for completing their action items and for not repeating known mistakes |
+| Only SEV1 incidents deserve postmortems                                   | High-value learning often comes from SEV2/3 incidents that are early warning signs; near-misses often produce the most systemic insight                                                |
+| Postmortems should only be written for external customer-facing incidents | Internal incidents (staging environment down for 2 days, internal tool failing) also reveal systemic gaps worth fixing                                                                 |
+| A good postmortem identifies the root cause                               | Root cause is almost always plural - a single incident typically has 3-7 contributing factors across different system layers                                                           |
+| Writing the postmortem is the end of the process                          | The postmortem is worth nothing if action items are not completed; the learning is in the remediation, not the document                                                                |
+| Senior engineers should write all postmortems                             | Rotating postmortem authorship across the team builds a culture where everyone understands failure analysis; it is also a training mechanism                                           |
 
 ---
 
@@ -550,6 +555,7 @@ exceed their deadline by more than 1 week.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `SRE` - blameless postmortems are a core SRE operational
   practice defined in the Google SRE Book
 - `Incident Management Process` - postmortems close the loop
@@ -558,6 +564,7 @@ exceed their deadline by more than 1 week.
   require mandatory postmortems
 
 **Builds On This (learn these next):**
+
 - `Toil Reduction Strategy` - postmortem action items
   frequently identify toil that should be automated
 - `SRE Book - Core Principles Deep Dive` - the foundational
@@ -566,6 +573,7 @@ exceed their deadline by more than 1 week.
   identify gaps in observability that prevention requires
 
 **Alternatives / Comparisons:**
+
 - `Runbooks and Playbooks` - runbooks encode the learnings
   from postmortems into actionable on-call documentation
 - `Reliability Mental Model` - postmortems feed the mental
@@ -613,6 +621,7 @@ exceed their deadline by more than 1 week.
 ```
 
 **If you remember only 3 things:**
+
 1. Blameless culture is destroyed by a single blame event
    from leadership - it takes months of consistent blameless
    behavior to build and seconds to destroy.
@@ -644,6 +653,7 @@ where accurate information requires honesty that carries
 personal risk.
 
 **Where else this pattern applies:**
+
 - **Aviation just culture** - airlines that penalize pilots
   for reporting near-misses get fewer reports and more
   crashes; airlines with just culture get more reports and
@@ -658,6 +668,7 @@ personal risk.
   as staff reported more honestly
 
 **Industry applications:**
+
 - **Financial services** - post-trade reconciliation failures
   require blameless reviews because blame causes traders to
   hide errors, which compounds into regulatory reporting issues
@@ -692,6 +703,7 @@ incidents.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. [EXPLAIN] Explain to a skeptical VP why blameless postmortems
    reduce recurrence rate more than accountability-based reviews,
    using a specific example showing how the two approaches
@@ -728,9 +740,9 @@ Five Whys technique four more times from the starting point
 of "the engineer ran the query in production" and identify
 the actual systemic root causes that the postmortem should
 address. What action items would you create?
-*Hint: Think about environment isolation, query confirmation
+_Hint: Think about environment isolation, query confirmation
 dialogs, access control boundaries, and how the staging vs
-production database connection strings are managed.*
+production database connection strings are managed._
 
 **Q2.** Your organization has run blameless postmortems for
 18 months. You analyze the corpus of 80 postmortems and
@@ -740,10 +752,10 @@ monitoring coverage as a contributing factor, and 15% involve
 missing rollback procedures. What does this data tell you
 about the three biggest reliability gaps in your engineering
 practice, and what structural changes would address each?
-*Hint: These three patterns reveal specific engineering
+_Hint: These three patterns reveal specific engineering
 discipline failures, not just incident management failures.
 What process or tooling would make these failures structurally
-impossible?*
+impossible?_
 
 **Q3.** You join an organization where blame culture is
 deeply entrenched. Engineers write defensive postmortems,
@@ -753,11 +765,11 @@ Design your intervention plan - what do you do in the first
 30 days, the next 30 days, and the final 30 days? What
 cultural and structural changes do you make? How do you
 measure progress?
-*Hint: Consider that cultural change requires changing
+_Hint: Consider that cultural change requires changing
 behaviors and incentives, not just announcing new policies.
 Think about what leadership behaviors would signal safety
 vs fear, and how you would make blamelessness structurally
-enforced rather than optional.*
+enforced rather than optional._
 
 ---
 
@@ -765,10 +777,11 @@ enforced rather than optional.*
 
 **Q1: Tell me about a time you were involved in a production
 incident and what the post-incident review revealed.**
-*Why they ask:* Tests real production experience and whether
+_Why they ask:_ Tests real production experience and whether
 the candidate has experienced blameless culture in practice
 (STAR format).
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Situation: specific incident type (not vague), real impact
 - Task: your specific role (IC, responder, postmortem author)
 - Action: what the postmortem process produced specifically -
@@ -779,11 +792,12 @@ the candidate has experienced blameless culture in practice
 
 **Q2: How do you write a postmortem when a vendor's external
 service caused the incident, not your code?**
-*Why they ask:* Tests whether the candidate understands that
+_Why they ask:_ Tests whether the candidate understands that
 blameless postmortems still apply even when the immediate
 cause is external, and that systemic improvement means
 improving your dependency handling, not just blaming the vendor.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - The vendor's failure is a triggering condition, not a root cause
 - Root causes lie in your own system: did you have a circuit
   breaker? Did you have degraded mode behavior? Did your SLO
@@ -797,9 +811,10 @@ improving your dependency handling, not just blaming the vendor.
 **Q3: How do you balance blameless culture with engineering
 accountability? If an engineer repeatedly causes incidents,
 what do you do?**
-*Why they ask:* Tests nuanced understanding of the boundary
+_Why they ask:_ Tests nuanced understanding of the boundary
 between blameless culture and performance management.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Blameless applies to honest mistakes in good faith; it
   does not apply to intentional rule violations, negligence,
   or repeated failure to act on known patterns

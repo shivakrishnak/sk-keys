@@ -35,11 +35,11 @@ storage (Tempo/Jaeger writing spans to object storage
 indexed by bloom filter), and query (TraceQL/trace ID
 lookup with exemplar links from metrics).
 
-| #047 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, Distributed Tracing, OpenTelemetry, Grafana, Observability at Scale, Observability Platform Architecture | |
-| **Used by:** | Observability System Design Internals | |
-| **Related:** | Platform Observability Engineering, Time-Series Database Design, Service Level Objectives Deep Dive | |
+| #047            | Category: Observability & SRE                                                                                                   | Difficulty: ★★★ |
+| :-------------- | :------------------------------------------------------------------------------------------------------------------------------ | :-------------- |
+| **Depends on:** | What Is Observability, Distributed Tracing, OpenTelemetry, Grafana, Observability at Scale, Observability Platform Architecture |                 |
+| **Used by:**    | Observability System Design Internals                                                                                           |                 |
+| **Related:**    | Platform Observability Engineering, Time-Series Database Design, Service Level Objectives Deep Dive                             |                 |
 
 ---
 
@@ -119,6 +119,7 @@ every service it touches and records a timeline of every
 operation, making cross-service latency visible.
 
 **One analogy:**
+
 > Distributed tracing is like a flight's journey log for
 > a package in a courier network. The package gets a
 > tracking number (trace ID) at the first sorting center.
@@ -153,7 +154,7 @@ a centralized index.
 Trace (one per request):
   trace_id: a128-bit random ID, same for all spans
   spans: array of Span objects
-  
+
 Span (one per service boundary / operation):
   span_id: 64-bit random ID, unique per span
   parent_span_id: span_id of the caller (nil for root)
@@ -184,15 +185,15 @@ HTTP request flow:
   Frontend sends to APIGateway:
     Header: traceparent: 00-TRACEID-SPANID-01
     (W3C TraceContext format)
-    
+
   APIGateway reads header:
     - Extracts trace_id and parent_span_id
     - Creates its own span (with parent = frontend span)
     - Passes new traceparent to CheckoutService:
       traceparent: 00-TRACEID-APIGATEWAY_SPANID-01
-    
+
   Each service continues the chain.
-  
+
   This propagation is automatic with OTel auto-instrumentation
   for HTTP clients/servers, gRPC, AMQP, Kafka.
 ```
@@ -234,10 +235,10 @@ Solutions:
 Data volume:
   100M traces/day × 50 spans/trace × 500 bytes/span
   = 2.5 TB/day uncompressed
-  
+
   With zstd compression (~3:1 for JSON span data):
   ~830 GB/day compressed
-  
+
   S3 cost ($0.023/GB/month):
   90 days × 830 GB/day = 74.7 TB
   74.7 TB × $0.023 = $1,718/month
@@ -516,21 +517,21 @@ public class CheckoutService {
     // OTel Tracer for custom business spans
     private final Tracer tracer = GlobalOpenTelemetry
         .getTracer("checkout-service");
-    
+
     public CheckoutResult checkout(CheckoutRequest req) {
         // OTel auto-instrumentation intercepts this call:
         // reads traceparent from incoming request,
         // creates "CheckoutService.checkout" span as child
-        
+
         // Custom span for business-level operation
         Span span = tracer.spanBuilder("validate_cart")
             .setAttribute("cart.items", req.getItems().size())
             .setAttribute("cart.value", req.getTotalValue())
             .startSpan();
-        
+
         try (Scope scope = span.makeCurrent()) {
             validateCart(req.getItems());
-            
+
             // OTel HTTP client auto-instrumentation:
             // injects traceparent with current span as parent
             // Payment service receives and creates child span
@@ -539,7 +540,7 @@ public class CheckoutService {
                 req.getPaymentDetails(),
                 HttpResponse.class
             );
-            
+
             span.setStatus(StatusCode.OK);
             return parse(response);
         } catch (Exception e) {
@@ -562,8 +563,8 @@ public class CheckoutService {
 
 processors:
   tail_sampling:
-    decision_wait: 10s     # Wait 10s for trace to complete
-    num_traces: 100000     # Buffer up to 100K traces in memory
+    decision_wait: 10s # Wait 10s for trace to complete
+    num_traces: 100000 # Buffer up to 100K traces in memory
     expected_new_traces_per_sec: 1000
     policies:
       # Always keep traces with errors
@@ -597,7 +598,7 @@ processors:
 ```
 Symptom:
   Traces for async order processing are fragmented.
-  The producer span (OrderService sends to Kafka) 
+  The producer span (OrderService sends to Kafka)
   and consumer span (FulfillmentService processes)
   appear as separate unlinked traces.
   Cannot determine which fulfillment operation
@@ -627,7 +628,7 @@ ConsumerRecord<K,V> record = consumer.poll(...).first();
 // Even though they are in different processes/times,
 // the trace tree is linked via the span link
 
-  Result: Full trace from order submission through 
+  Result: Full trace from order submission through
   fulfillment visible in one trace tree (via span links)
 ```
 
@@ -635,13 +636,13 @@ ConsumerRecord<K,V> record = consumer.poll(...).first();
 
 ### ⚖️ Comparison Table
 
-| Backend | Storage Model | Scale | Query Language | Cost |
-|---|---|---|---|---|
-| **Grafana Tempo** | Object storage (S3) | Horizontal (sharded) | TraceQL | Very low ($) |
-| **Jaeger** | Cassandra / Elasticsearch / Badger | Moderate | Jaeger UI (limited) | Medium ($$) |
-| **Zipkin** | Cassandra / Elasticsearch | Moderate | Zipkin UI (limited) | Medium ($$) |
-| **AWS X-Ray** | Managed (proprietary) | Managed | X-Ray Analytics | Low (pay-per-trace) |
-| **Honeycomb** | Proprietary columnar | Very high | BQL (powerful) | High ($$$) |
+| Backend           | Storage Model                      | Scale                | Query Language      | Cost                |
+| ----------------- | ---------------------------------- | -------------------- | ------------------- | ------------------- |
+| **Grafana Tempo** | Object storage (S3)                | Horizontal (sharded) | TraceQL             | Very low ($)        |
+| **Jaeger**        | Cassandra / Elasticsearch / Badger | Moderate             | Jaeger UI (limited) | Medium ($$)         |
+| **Zipkin**        | Cassandra / Elasticsearch          | Moderate             | Zipkin UI (limited) | Medium ($$)         |
+| **AWS X-Ray**     | Managed (proprietary)              | Managed              | X-Ray Analytics     | Low (pay-per-trace) |
+| **Honeycomb**     | Proprietary columnar               | Very high            | BQL (powerful)      | High ($$$)          |
 
 **How to choose:**
 Use Tempo for cost-effective self-hosted tracing (especially
@@ -654,12 +655,12 @@ queries across trace data beyond simple trace ID lookup.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Distributed tracing requires sampling from day one | Start with 100% sampling at low volume; implement tail-based sampling when ingestion cost becomes material. Starting with head-based sampling often means missing critical traces |
-| All spans in a trace arrive together | Spans arrive independently from different services; the collector must buffer and wait for the trace to be "complete" (configurable timeout) before making a tail-sampling decision |
-| Trace context propagation requires changes to all services | OTel auto-instrumentation handles propagation for HTTP, gRPC, Kafka, and many other protocols automatically - no code changes required for standard clients |
-| Tempo only supports trace ID lookup | TraceQL (introduced in Tempo 2.0) supports content-based queries: find all traces where a span attribute matches a condition, with arbitrary filters across trace data |
+| Misconception                                              | Reality                                                                                                                                                                             |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Distributed tracing requires sampling from day one         | Start with 100% sampling at low volume; implement tail-based sampling when ingestion cost becomes material. Starting with head-based sampling often means missing critical traces   |
+| All spans in a trace arrive together                       | Spans arrive independently from different services; the collector must buffer and wait for the trace to be "complete" (configurable timeout) before making a tail-sampling decision |
+| Trace context propagation requires changes to all services | OTel auto-instrumentation handles propagation for HTTP, gRPC, Kafka, and many other protocols automatically - no code changes required for standard clients                         |
+| Tempo only supports trace ID lookup                        | TraceQL (introduced in Tempo 2.0) supports content-based queries: find all traces where a span attribute matches a condition, with arbitrary filters across trace data              |
 
 ---
 
@@ -681,6 +682,7 @@ header), OR (2) a load balancer or API gateway is stripping
 custom headers before forwarding to the service.
 
 **Diagnostic:**
+
 ```bash
 # Check if traceparent header reaches the service
 kubectl exec -n production payment-service-pod -- \
@@ -698,6 +700,7 @@ kubectl describe pod checkout-service-pod | \
 
 **Fix:**
 Add OTel Java agent as JVM argument:
+
 ```yaml
 # k8s deployment env for Java services
 env:
@@ -716,6 +719,7 @@ env:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - the three pillars tracing supports
 - `Distributed Tracing` - the concepts before the system design
 - `OpenTelemetry` - the standard API for tracing instrumentation
@@ -724,10 +728,12 @@ env:
 - `Observability Platform Architecture Design` - where tracing fits in the platform
 
 **Builds On This (learn these next):**
+
 - `Observability System Design Internals` - the full system
   combining trace with metric and log internals
 
 **Alternatives / Comparisons:**
+
 - `Platform Observability Engineering` - running the trace
   system as part of the platform product
 - `Time-Series Database Design` - comparable storage design
@@ -774,6 +780,7 @@ env:
 ```
 
 **If you remember only 3 things:**
+
 1. Trace context propagation is the fundamental mechanism:
    trace_id + parent_span_id propagated via W3C traceparent
    header through every service boundary. If propagation

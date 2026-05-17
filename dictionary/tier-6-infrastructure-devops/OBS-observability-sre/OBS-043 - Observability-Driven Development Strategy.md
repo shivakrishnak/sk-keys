@@ -33,11 +33,11 @@ feature code - treating observability as a first-class
 deliverable, not a post-launch patch - because code that
 cannot be debugged in production is not finished.
 
-| #043 | Category: Observability & SRE | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, SLO, Post-Mortem and Blameless Culture, Toil Reduction Strategy | |
-| **Used by:** | Platform Observability Engineering, Observability-First Thinking | |
-| **Related:** | Runbooks and Playbooks, SRE Book Core Principles, Reliability Mental Model | |
+| #043            | Category: Observability & SRE                                                          | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability, SLO, Post-Mortem and Blameless Culture, Toil Reduction Strategy |                 |
+| **Used by:**    | Platform Observability Engineering, Observability-First Thinking                       |                 |
+| **Related:**    | Runbooks and Playbooks, SRE Book Core Principles, Reliability Mental Model             |                 |
 
 ---
 
@@ -106,9 +106,11 @@ development, not added after incidents reveal its absence.
 
 **One line:**
 A feature is not done until you can debug it in production
+
 - and that means shipping the instrumentation with the code.
 
 **One analogy:**
+
 > ODD is like a surgeon who refuses to operate without
 > the monitoring equipment set up first. You don't start
 > a surgery and then connect the heart monitor after you
@@ -123,16 +125,18 @@ A feature is not done until you can debug it in production
 **One insight:**
 The key insight is that observability-driven development
 is NOT about adding more instrumentation for its own sake
+
 - it is about asking "what would I need to know to debug
-this in production?" before deploying, and ensuring that
-question can be answered. This produces lean, purposeful
-instrumentation rather than noise.
+  this in production?" before deploying, and ensuring that
+  question can be answered. This produces lean, purposeful
+  instrumentation rather than noise.
 
 ---
 
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. All production code will fail eventually; the only
    question is whether you will be able to diagnose why
 2. Instrumentation added in a panic during an incident is
@@ -147,6 +151,7 @@ instrumentation rather than noise.
 
 **DERIVED PRACTICE:**
 These invariants drive the ODD practice:
+
 - **Before coding**: ask "what metrics/logs/traces will I need
   to diagnose failures in production?" and sketch the answer
 - **During coding**: write instrumentation as you write
@@ -179,18 +184,19 @@ explicit observability.
 
 **TEAM A (ODD approach):**
 Before coding: "What would I need to debug checkout failures?
+
 - Payment processor response codes and latencies
 - Cart value and item count per checkout (for anomaly detection)
 - Error types and which step in the payment flow they occur
 - Trace spanning from frontend click to payment processor
   response to database commit"
-During coding: Team A writes structured log statements and
-metrics as they code. Checkout flow emits:
+  During coding: Team A writes structured log statements and
+  metrics as they code. Checkout flow emits:
   `{"event":"payment_initiated","cart_id":"...",
    "amount":150,"trace_id":"..."}`
   `{"event":"payment_response","status":"DECLINED",
    "processor_code":"insufficient_funds","duration_ms":230}`
-Metrics: `checkout_payment_attempts_total{result}` counter.
+  Metrics: `checkout_payment_attempts_total{result}` counter.
 
 **TEAM B (no ODD):**
 Ships the feature. Logs say: "Processing payment." "Done."
@@ -228,6 +234,7 @@ of investigation for the same root cause.
 > observability instruments are installed and functioning.
 
 Element mapping:
+
 - "Pre-flight checklist" → ODD definition-of-done checklist
 - "Altimeter, fuel gauge, airspeed" → metrics, logs, traces
 - "Taking off without checking instruments" → shipping
@@ -398,6 +405,7 @@ HOW IT BREAKS DOWN:
 
 Not applicable as a primary example - ODD is a development
 practice, not a specific technology API. See:
+
 - Code examples in `OBS-001 What Is Observability` for
   structured logging patterns
 - Code examples in `OBS-006 Prometheus` for RED metric
@@ -411,36 +419,28 @@ The ODD-specific artifact is the PR checklist:
 ## PR Observability Checklist (Definition of Done)
 
 ### Required for all new features:
-- [ ] Structured log events at key operation entry/exit
-      - Include: operation name, key inputs, result, duration_ms
-      - No PII (user_id OK, email/SSN/CC NOT OK)
-- [ ] RED metrics for all new endpoints:
-      - Rate: request counter (success + error)
-      - Errors: error counter (by error type/code)
-      - Duration: histogram with standard buckets
-- [ ] Trace span for all external calls
-      - Service name, operation name, success/error attribute
+
+- [ ] Structured log events at key operation entry/exit - Include: operation name, key inputs, result, duration_ms - No PII (user_id OK, email/SSN/CC NOT OK)
+- [ ] RED metrics for all new endpoints: - Rate: request counter (success + error) - Errors: error counter (by error type/code) - Duration: histogram with standard buckets
+- [ ] Trace span for all external calls - Service name, operation name, success/error attribute
 
 ### Required for high-risk features:
-- [ ] Runbook update in operations wiki
-      - How to diagnose failures with the new metrics/logs
-- [ ] Grafana dashboard panel added to service dashboard
-      - Shows the RED metrics for the new feature
-- [ ] SLO impact assessed
-      - Does this feature change the service's error rate SLI?
-      - Update SLO measurement query if needed
+
+- [ ] Runbook update in operations wiki - How to diagnose failures with the new metrics/logs
+- [ ] Grafana dashboard panel added to service dashboard - Shows the RED metrics for the new feature
+- [ ] SLO impact assessed - Does this feature change the service's error rate SLI? - Update SLO measurement query if needed
 ```
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Practice | Observability Timing | Operational Debt | MTTR Impact | Engineering Overhead |
-|---|---|---|---|---|
-| **ODD (observability-first)** | During development | Very low | Very low | 10-20% per feature |
-| Reactive observability | After incidents | High (compounds) | High | Emergency overhead |
-| Post-launch instrumentation | After launch | Medium | Medium | Planned sprint work |
-| Platform auto-instrumentation only | Zero dev effort | Low (limited depth) | Medium | Near zero |
+| Practice                           | Observability Timing | Operational Debt    | MTTR Impact | Engineering Overhead |
+| ---------------------------------- | -------------------- | ------------------- | ----------- | -------------------- |
+| **ODD (observability-first)**      | During development   | Very low            | Very low    | 10-20% per feature   |
+| Reactive observability             | After incidents      | High (compounds)    | High        | Emergency overhead   |
+| Post-launch instrumentation        | After launch         | Medium              | Medium      | Planned sprint work  |
+| Platform auto-instrumentation only | Zero dev effort      | Low (limited depth) | Medium      | Near zero            |
 
 **How to choose:**
 Use ODD as the default for all new features. Use platform
@@ -453,12 +453,12 @@ that auto-instrumentation cannot know about).
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| ODD means adding more logs | ODD means adding the RIGHT logs - purposeful, structured, queryable events at key business operations; not volume |
-| Auto-instrumentation makes ODD unnecessary | Auto-instrumentation handles generic infrastructure signals; it cannot know when a payment was declined vs when a DB call was slow - business-level observability requires ODD |
-| ODD is only for on-call engineers | ODD benefits the developer who wrote the code: when the feature behaves unexpectedly in production, structured instrumentation enables the developer to understand it without guessing |
-| ODD adds 50% development time | Well-practiced ODD adds 10-20% to feature development time; this is recovered many times over in reduced incident investigation time |
+| Misconception                              | Reality                                                                                                                                                                                |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ODD means adding more logs                 | ODD means adding the RIGHT logs - purposeful, structured, queryable events at key business operations; not volume                                                                      |
+| Auto-instrumentation makes ODD unnecessary | Auto-instrumentation handles generic infrastructure signals; it cannot know when a payment was declined vs when a DB call was slow - business-level observability requires ODD         |
+| ODD is only for on-call engineers          | ODD benefits the developer who wrote the code: when the feature behaves unexpectedly in production, structured instrumentation enables the developer to understand it without guessing |
+| ODD adds 50% development time              | Well-practiced ODD adds 10-20% to feature development time; this is recovered many times over in reduced incident investigation time                                                   |
 
 ---
 
@@ -486,6 +486,7 @@ with `[REDACTED]`). Add PII field list to the ODD
 PR checklist as a blocking requirement.
 
 **Prevention:**
+
 ```java
 // BAD: logging the raw request object
 log.info("Checkout request", request);
@@ -506,6 +507,7 @@ log.info("Checkout request",
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - the three pillars that ODD
   instrumentation implements
 - `SLO` - ODD features are designed to be measurable
@@ -516,12 +518,14 @@ log.info("Checkout request",
   investigation toil through better instrumentation
 
 **Builds On This (learn these next):**
+
 - `Platform Observability Engineering` - the organizational
   practice of enabling ODD at scale through platform tooling
 - `Observability-First Thinking` - the mental model that
   ODD produces in experienced engineers
 
 **Alternatives / Comparisons:**
+
 - `Runbooks and Playbooks` - runbooks encode the knowledge
   of how to diagnose failures; ODD ensures that knowledge
   can be discovered in production data
@@ -572,6 +576,7 @@ log.info("Checkout request",
 ```
 
 **If you remember only 3 things:**
+
 1. A feature is not done until it is observable in production.
    The definition of "done" must explicitly include structured
    logs, RED metrics, and trace spans.
@@ -608,6 +613,7 @@ incident is 10x higher and the quality is lower because
 the developer no longer has full context of the code.
 
 **Where else this pattern applies:**
+
 - **Test-driven development (TDD)** - same philosophy:
   write tests before or alongside code, not after, for
   the same reason (the developer has peak understanding
@@ -645,6 +651,7 @@ instrumentation was written.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. [EXPLAIN] Explain the specific information required to
    debug a checkout flow failure at 3am with zero prior
    knowledge of the codebase - and design the log structure
@@ -675,7 +682,7 @@ instrumentation was written.
 
 **Q1: Tell me about a time you improved observability for
 a system that was difficult to debug in production.**
-*STAR format for strong answer:*
+_STAR format for strong answer:_
 
 **Situation:** A payment checkout feature was shipped without
 structured logging or metrics. Over 6 months, on-call
@@ -706,7 +713,8 @@ instrumentation or developer involvement.
 
 **Q2: How do you balance the overhead of ODD against shipping
 velocity, especially under deadline pressure?**
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Quantify the ROI: 10-20% development overhead vs 3-hour
   MTTR reduction. Break-even at the first incident (typically
   within weeks for any production service).

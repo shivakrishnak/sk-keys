@@ -33,11 +33,11 @@ when a system will exhaust capacity - before it does -
 and provisioning ahead of the saturation point, not after
 the outage that reveals it.
 
-| #038 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | Prometheus - Metrics Collection, Grafana - Dashboards, USE Method | |
-| **Used by:** | Observability at Scale, Observability Platform Architecture, Platform Observability Engineering | |
-| **Related:** | Toil Reduction Strategy, Time-Series Database Design, Formal SLO Theory | |
+| #038            | Category: Observability & SRE                                                                   | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | Prometheus - Metrics Collection, Grafana - Dashboards, USE Method                               |                 |
+| **Used by:**    | Observability at Scale, Observability Platform Architecture, Platform Observability Engineering |                 |
+| **Related:**    | Toil Reduction Strategy, Time-Series Database Design, Formal SLO Theory                         |                 |
 
 ---
 
@@ -111,6 +111,7 @@ your resource trends are heading, not just where they
 are now, so you add capacity before you run out.
 
 **One analogy:**
+
 > Capacity planning is like a car fuel gauge combined
 > with a trip computer. The fuel gauge shows current
 > level (point-in-time monitoring). The trip computer
@@ -136,6 +137,7 @@ IS the safety margin for forecast error.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Every resource has a saturation point where performance
    degrades non-linearly (CPU at 90% produces much worse
    latency than CPU at 70%)
@@ -144,13 +146,14 @@ IS the safety margin for forecast error.
 3. Provisioning takes time (minutes for pod scaling, hours
    for database scaling, days/weeks for hardware procurement)
    - the lead time determines how far in advance you must
-   plan
+     plan
 4. Traffic is not uniform - it has daily, weekly, and
    seasonal patterns that must be modeled separately from
    the baseline trend
 
 **DERIVED DESIGN:**
 These invariants drive the capacity planning process:
+
 - **Measure**: collect utilization time-series for all resources
 - **Trend**: apply linear or non-linear regression to find
   the growth rate
@@ -193,8 +196,8 @@ of planning, approval, and migration time.
 Current free space: 400GB = 409,600MB
 Growth rate: 500MB/day
 Time to 80% threshold (safe ceiling):
-  Target: 800GB used = 409,600MB - 204,800MB free
-  204,800MB / 500MB/day = 409 days at current growth rate
+Target: 800GB used = 409,600MB - 204,800MB free
+204,800MB / 500MB/day = 409 days at current growth rate
 But growth rate is accelerating with new features: 10%
 increase per month in data volume.
 
@@ -233,6 +236,7 @@ during scheduled maintenance window.
 > is an incident.
 
 Element mapping:
+
 - "Asteroid's current position" → current utilization (point-in-time)
 - "Orbital mechanics calculation" → predict_linear() / regression
 - "Collision course" → resource approaching saturation
@@ -473,7 +477,7 @@ for red items requiring immediate action.
       node_filesystem_free_bytes[24h],
       30 * 24 * 3600
     ) < node_filesystem_size_bytes * 0.2
-  for: 2h           # must persist for 2h (not spike)
+  for: 2h # must persist for 2h (not spike)
   labels:
     severity: warning
   annotations:
@@ -574,13 +578,13 @@ backtest calibrates your confidence in the forecast model.
 
 ### ⚖️ Comparison Table
 
-| Approach | Planning Horizon | Accuracy | Automation | Best For |
-|---|---|---|---|---|
-| **predict_linear() alerts** | Days to weeks | Medium | High | Linear growth resources |
-| Holt-Winters forecasting | Weeks to months | High (seasonal) | Medium | Periodic traffic patterns |
-| Manual trend review | Ad hoc | Low | None | Small teams, simple infra |
-| Cloud auto-scaling | Minutes (reactive) | High (current) | High | Stateless compute bursts |
-| Annual capacity planning | 12 months | Low | None | Data center hardware |
+| Approach                    | Planning Horizon   | Accuracy        | Automation | Best For                  |
+| --------------------------- | ------------------ | --------------- | ---------- | ------------------------- |
+| **predict_linear() alerts** | Days to weeks      | Medium          | High       | Linear growth resources   |
+| Holt-Winters forecasting    | Weeks to months    | High (seasonal) | Medium     | Periodic traffic patterns |
+| Manual trend review         | Ad hoc             | Low             | None       | Small teams, simple infra |
+| Cloud auto-scaling          | Minutes (reactive) | High (current)  | High       | Stateless compute bursts  |
+| Annual capacity planning    | 12 months          | Low             | None       | Data center hardware      |
 
 **How to choose:**
 Use `predict_linear()` alerts for all resource types as a
@@ -595,13 +599,13 @@ planning, not ad hoc.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Auto-scaling eliminates capacity planning | Auto-scaling handles stateless compute; databases, queues, disks, and network don't auto-scale - they all require capacity planning |
-| Monitor at 90% utilization and act then | At 90% utilization, you often have <1 week to provision; planned provisioning requires 30+ days lead time in most environments |
-| Capacity planning is an annual process | Resources grow continuously; capacity planning must be a continuous automated process with weekly alert reviews |
+| Misconception                                     | Reality                                                                                                                                |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Auto-scaling eliminates capacity planning         | Auto-scaling handles stateless compute; databases, queues, disks, and network don't auto-scale - they all require capacity planning    |
+| Monitor at 90% utilization and act then           | At 90% utilization, you often have <1 week to provision; planned provisioning requires 30+ days lead time in most environments         |
+| Capacity planning is an annual process            | Resources grow continuously; capacity planning must be a continuous automated process with weekly alert reviews                        |
 | Linear regression is sufficient for all resources | Resources with periodic patterns (weekly peaks, seasonal growth) require seasonal decomposition - linear regression will underforecast |
-| Capacity planning is only for storage | CPU, memory, database connections, message queue depth, and API rate limits all require capacity planning |
+| Capacity planning is only for storage             | CPU, memory, database connections, message queue depth, and API rate limits all require capacity planning                              |
 
 ---
 
@@ -622,6 +626,7 @@ account for the launch because it was not in the historical
 data used for projection.
 
 **Diagnostic Questions:**
+
 - Was there a recent deployment that changed data growth rate?
 - Is the growth rate consistent with the pre-launch trend
   or has it changed slope?
@@ -662,6 +667,7 @@ reached but did not predict the non-linear degradation
 starting at 85%.
 
 **Diagnostic Commands:**
+
 ```bash
 # PostgreSQL: check for query queue buildup
 SELECT count(*) FROM pg_stat_activity
@@ -683,6 +689,7 @@ linear-degradation assumption: alert at 70% rather than
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `Prometheus - Metrics Collection` - the primary data source
   for resource utilization time-series
 - `Grafana - Dashboards and Visualization` - dashboards
@@ -691,6 +698,7 @@ linear-degradation assumption: alert at 70% rather than
   to monitor for capacity planning (utilization, saturation)
 
 **Builds On This (learn these next):**
+
 - `Observability at Scale` - at-scale capacity planning
   requires automated reporting and ticket routing
 - `Observability Platform Architecture Design` - capacity
@@ -699,6 +707,7 @@ linear-degradation assumption: alert at 70% rather than
   integrated into the platform engineering workflow
 
 **Alternatives / Comparisons:**
+
 - `Toil Reduction Strategy` - capacity exhaustion incidents
   are toil; capacity planning eliminates that class of toil
 - `Time-Series Database Design` - the storage system for
@@ -747,6 +756,7 @@ linear-degradation assumption: alert at 70% rather than
 ```
 
 **If you remember only 3 things:**
+
 1. Use `predict_linear()` for early warning alerts - fire
    at 30+ days to threshold, not at 90% current utilization.
    By 90%, you are already in emergency mode.
@@ -782,6 +792,7 @@ system resources, financial reserves, and organizational
 headcount planning.
 
 **Where else this pattern applies:**
+
 - **DNS TTL and rate limits** - API rate limits (e.g.,
   Kubernetes API server request rate) require the same
   trend analysis; a linearly growing number of controllers
@@ -794,6 +805,7 @@ headcount planning.
   when monthly cloud spend will breach budget
 
 **Industry applications:**
+
 - **Streaming media** - video encoding queues are capacity-
   planned 90 days ahead to handle major sports or entertainment
   events that drive 10x-50x normal encoding volume

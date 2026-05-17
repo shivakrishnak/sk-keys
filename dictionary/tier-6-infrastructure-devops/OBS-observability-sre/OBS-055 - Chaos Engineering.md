@@ -43,11 +43,11 @@ whether the hypothesis holds, and fix what breaks.
 > fault injection, hypothesis-driven experiments, blast
 > radius management, and the organizational maturity model.
 
-| #055 | Category: Observability & SRE | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, SLO, Error Budget, Chaos Engineering for Observability, Error Budgets | |
-| **Used by:** | Reliability Mental Model | |
-| **Related:** | Alerting Fundamentals, SRE Book Core Principles, Distributed Tracing System Architecture | |
+| #055            | Category: Observability & SRE                                                                | Difficulty: ★★☆ |
+| :-------------- | :------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability, SLO, Error Budget, Chaos Engineering for Observability, Error Budgets |                 |
+| **Used by:**    | Reliability Mental Model                                                                     |                 |
+| **Related:**    | Alerting Fundamentals, SRE Book Core Principles, Distributed Tracing System Architecture     |                 |
 
 ---
 
@@ -118,6 +118,7 @@ a controlled way to find the weaknesses before production
 finds them for you, uncontrolled.
 
 **One analogy:**
+
 > Chaos engineering is like fire drills. Fires are rare
 > but catastrophic. Fire drills expose whether evacuation
 > routes are blocked, whether people know the assembly point,
@@ -140,11 +141,11 @@ Five-step experiment process:
    What does "normal" look like?
    Measurable: p99 latency < 200ms, SLI > 99.9%
    Baseline: record steady state metrics for 30 min before
-   
+
 2. FORM HYPOTHESIS
    "We believe that if [failure condition], then
     [observable behavior], because [mechanism]."
-   
+
    Example:
    "We believe that if the payment-processor service
     becomes unavailable (HTTP 503 for all requests),
@@ -153,7 +154,7 @@ Five-step experiment process:
     opens after 5 failures and the 5s fallback cache
     activates, and the SLI will remain > 99.5%, because
     the fallback serves the majority of traffic."
-   
+
 3. DESIGN EXPERIMENT
    Define:
    - Failure type (network partition, latency, HTTP error,
@@ -162,11 +163,11 @@ Five-step experiment process:
    - Duration (2 minutes, 5 minutes)
    - Rollback trigger (if SLI drops below 99.0%: abort)
    - Observer role (who watches and calls abort if needed)
-   
+
 4. RUN EXPERIMENT
    Inject failure → observe metrics → record results
    Rollback immediately if rollback trigger fires.
-   
+
 5. LEARN AND HARDEN
    Did hypothesis hold?
    YES → confidence increased, document results
@@ -248,7 +249,7 @@ Blast radius: minimal
   Impact scope: write operations to checkout DB only
                (read operations route to replica)
   Duration: self-recovering (Patroni re-elects in ~15s)
-  
+
 Observer: SRE engineer watching checkout_latency and
           checkout_error_rate dashboards
 
@@ -258,7 +259,7 @@ Rollback trigger: error_rate > 5% for > 2 minutes
 Steady state baseline (30 min prior):
   p99 latency: 180ms
   error rate: 0.1%
-  
+
 Injection: kubectl delete pod checkout-db-primary
 ```
 
@@ -281,7 +282,7 @@ Total error rate spike: 8% peak
 HYPOTHESIS FAILED:
   Expected: < 5% error rate spike
   Actual: 8% error rate spike
-  
+
 ROOT CAUSE: Connection pool has 20 connections, all trying
   to reconnect to old primary simultaneously.
   Thundering herd: 20 simultaneous reconnect attempts
@@ -474,17 +475,17 @@ spec:
     appns: production
     applabel: "app=checkout-db"
     appkind: statefulset
-  
+
   # CRITICAL: abort if steady state is already unhealthy
   jobCleanUpPolicy: delete
-  
+
   monitoring: true
   engineState: active
-  
+
   components:
     runner:
       image: litmuschaos/chaos-runner:latest
-  
+
   experiments:
     - name: pod-delete
       spec:
@@ -494,21 +495,21 @@ spec:
             - name: TARGET_PODS
               value: "checkout-db-primary-0"
             - name: CHAOS_INTERVAL
-              value: "60"    # wait 60s, then re-check
+              value: "60" # wait 60s, then re-check
             - name: TOTAL_CHAOS_DURATION
-              value: "30"    # inject fault for 30 seconds
+              value: "30" # inject fault for 30 seconds
             - name: FORCE
               value: "false" # graceful shutdown (not SIGKILL)
-            
+
             # BLAST RADIUS CONTROL
             - name: PODS_AFFECTED_PERC
-              value: "100"   # 100% of matched pods (= 1 pod)
-        
+              value: "100" # 100% of matched pods (= 1 pod)
+
         probe:
           # Pre-chaos steady state check
           - name: checkout-sli-check
             type: promProbe
-            mode: Edge      # check before AND after
+            mode: Edge # check before AND after
             promProbe/inputs:
               endpoint: >
                 http://prometheus:9090
@@ -526,7 +527,7 @@ spec:
               comparator:
                 type: float
                 criteria: ">="
-                value: "0.995"  # abort if SLI < 99.5%
+                value: "0.995" # abort if SLI < 99.5%
             runProperties:
               probeTimeout: 10
               interval: 30
@@ -545,19 +546,20 @@ metadata:
 spec:
   action: delay
   mode: fixed
-  value: "1"           # affect exactly 1 pod
+  value: "1" # affect exactly 1 pod
   selector:
     namespaces:
       - production
     labelSelectors:
       "app": "payment-processor"
   delay:
-    latency: "2000ms"  # inject 2s latency
+    latency: "2000ms" # inject 2s latency
     correlation: "100" # 100% of packets affected
-    jitter: "500ms"    # ±500ms variance
-  duration: "5m"       # run for 5 minutes
+    jitter: "500ms" # ±500ms variance
+  duration: "5m" # run for 5 minutes
   scheduler:
-    cron: "@once"      # run once, not recurring
+    cron: "@once" # run once, not recurring
+
 
 # MONITOR DURING THIS EXPERIMENT:
 # watch 'curl -s http://grafana:3000/api/datasources/...'
@@ -603,24 +605,24 @@ FIX: Always configure automated abort triggers:
 
 ### ⚖️ Comparison Table
 
-| Resilience Validation Method | Realism | Control | Learning | Effort |
-|---|---|---|---|---|
+| Resilience Validation Method              | Realism                    | Control             | Learning                   | Effort                  |
+| ----------------------------------------- | -------------------------- | ------------------- | -------------------------- | ----------------------- |
 | **Chaos engineering (hypothesis-driven)** | High (production behavior) | High (blast radius) | High (specific hypotheses) | High (design + observe) |
-| Load testing | Medium (volume only) | High | Medium | Medium |
-| Tabletop exercise (GameDay lite) | Low (theoretical) | Full | Medium | Low |
-| Waiting for production incidents | Very high | None | High (expensive) | Zero prep |
-| Integration tests | Low (mocked deps) | Full | Low (synthetic) | Medium |
+| Load testing                              | Medium (volume only)       | High                | Medium                     | Medium                  |
+| Tabletop exercise (GameDay lite)          | Low (theoretical)          | Full                | Medium                     | Low                     |
+| Waiting for production incidents          | Very high                  | None                | High (expensive)           | Zero prep               |
+| Integration tests                         | Low (mocked deps)          | Full                | Low (synthetic)            | Medium                  |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Chaos engineering = randomly breaking production | Chaos engineering is a scientific discipline with defined hypotheses, controlled blast radius, and abort triggers. Random destruction is not chaos engineering - it is recklessness |
-| Chaos engineering requires specialized tooling | GameDays can start with `kubectl delete pod` and a Grafana dashboard. Tooling (Litmus Chaos, Chaos Mesh, Gremlin) adds automation and observability but is not required to start |
+| Misconception                                                    | Reality                                                                                                                                                                                                 |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chaos engineering = randomly breaking production                 | Chaos engineering is a scientific discipline with defined hypotheses, controlled blast radius, and abort triggers. Random destruction is not chaos engineering - it is recklessness                     |
+| Chaos engineering requires specialized tooling                   | GameDays can start with `kubectl delete pod` and a Grafana dashboard. Tooling (Litmus Chaos, Chaos Mesh, Gremlin) adds automation and observability but is not required to start                        |
 | You need mature infrastructure before starting chaos engineering | The opposite: start when infrastructure is young, before bad assumptions calcify into production debt. Discovering that your circuit breaker isn't configured is better before your first traffic spike |
-| Chaos engineering is for Netflix-scale organizations | The blast radius principle works at any scale. A 5-person startup running 10 services can run `kubectl delete pod` in staging to validate recovery behavior |
+| Chaos engineering is for Netflix-scale organizations             | The blast radius principle works at any scale. A 5-person startup running 10 services can run `kubectl delete pod` in staging to validate recovery behavior                                             |
 
 ---
 
@@ -656,6 +658,7 @@ findings, not as failures of the team.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - the monitoring stack used to
   observe experiments
 - `SLO` - the steady state definition for abort triggers
@@ -667,10 +670,12 @@ findings, not as failures of the team.
   when chaos experiments are safe to run
 
 **Builds On This (learn these next):**
+
 - `Reliability Mental Model` - chaos engineering as the
   "learning force" in the four-force reliability model
 
 **Alternatives / Comparisons:**
+
 - `Alerting Fundamentals` - the detection layer that chaos
   experiments validate
 - `SRE Book Core Principles` - the organizational model
@@ -721,6 +726,7 @@ findings, not as failures of the team.
 ```
 
 **If you remember only 3 things:**
+
 1. Always form a hypothesis before running an experiment.
    A hypothesis makes the experiment falsifiable: you know
    what success looks like before you start.

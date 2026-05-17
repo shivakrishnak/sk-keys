@@ -33,11 +33,11 @@ before asking "does this work in tests?" - treating
 debuggability as a first-class design constraint, not
 an afterthought.
 
-| #049 | Category: Observability & SRE | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, Observability-Driven Development Strategy, Platform Observability Engineering, Post-Mortem and Blameless Culture | |
-| **Used by:** | Reliability Mental Model | |
-| **Related:** | SRE Book Core Principles, Toil Reduction Strategy, Runbooks and Playbooks | |
+| #049            | Category: Observability & SRE                                                                                                           | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability, Observability-Driven Development Strategy, Platform Observability Engineering, Post-Mortem and Blameless Culture |                 |
+| **Used by:**    | Reliability Mental Model                                                                                                                |                 |
+| **Related:**    | SRE Book Core Principles, Toil Reduction Strategy, Runbooks and Playbooks                                                               |                 |
 
 ---
 
@@ -105,6 +105,7 @@ Observability-first thinking treats "can I understand this
 in production?" as a design requirement, not an afterthought.
 
 **One analogy:**
+
 > Observability-first thinking is the engineering equivalent
 > of a surgeon's "read-back" protocol in the operating room.
 > Before making any incision, the surgical team verifies
@@ -157,12 +158,13 @@ this system emits. Can they diagnose the failure? If not,
 what additional instrumentation is needed?
 
 **THE MINDSET DIFFERENCE:**
+
 ```
 Debug-first thinking:
   "I'll add logging if we have a production problem"
   "The test passes, so it's fine"
   "We can always add metrics later"
-  
+
 Observability-first thinking:
   "What will the on-call engineer need to see?"
   "The test passing doesn't mean I can debug it in prod"
@@ -409,6 +411,7 @@ HOW IT STALLS:
 Not applicable as a primary example - Observability-First
 Thinking is a mindset, not a specific API. The practice is
 demonstrated through code review patterns. See:
+
 - `OBS-043 Observability-Driven Development Strategy`
   for the concrete implementation of OFT in development
 - `OBS-001 What Is Observability` for the three pillars
@@ -422,20 +425,20 @@ BEFORE SHIPPING ANY CODE:
 The 3am Test:
   Imagine an on-call engineer, never seen this code,
   woken at 3am, user is angry.
-  
+
   Q: Can they find the error in < 5 minutes?
      Answer MUST be yes. If no → add structured log
      events with specific error codes and context.
-     
+
   Q: Can they determine scope (one user or many)?
      Answer MUST be yes. If no → add metrics counting
      occurrences by error type.
-     
+
   Q: Can they tell if the problem is in this service
      or an upstream dependency?
      Answer MUST be yes. If no → add trace spans
      for all external calls with timing and status.
-     
+
   Q: Are there any fields in the logs that might
      contain user PII?
      Answer MUST be no. If yes → redact before shipping.
@@ -447,12 +450,12 @@ If ANY answer is wrong, the code is not done.
 
 ### ⚖️ Comparison Table
 
-| Mindset | When Observability Added | MTTR for Novel Incidents | Example Practice |
-|---|---|---|---|
-| **Observability-first** | During development | Low (< 30 min) | OFT code review checklist, ODD |
-| Monitoring-after | After first incident | High (first time) then low | Classic Ops model |
-| Reactive-only | After every incident | High (every novel failure) | No systematic practice |
-| Platform-only | Auto-instrumentation only | Medium (generic signals) | Full OTel agent, no custom |
+| Mindset                 | When Observability Added  | MTTR for Novel Incidents   | Example Practice               |
+| ----------------------- | ------------------------- | -------------------------- | ------------------------------ |
+| **Observability-first** | During development        | Low (< 30 min)             | OFT code review checklist, ODD |
+| Monitoring-after        | After first incident      | High (first time) then low | Classic Ops model              |
+| Reactive-only           | After every incident      | High (every novel failure) | No systematic practice         |
+| Platform-only           | Auto-instrumentation only | Medium (generic signals)   | Full OTel agent, no custom     |
 
 **How to choose:**
 Observability-first thinking produces the best MTTR outcomes
@@ -467,12 +470,12 @@ auto-instrumentation is the ideal.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| OFT means adding logs everywhere | OFT means adding the RIGHT information at the RIGHT places - purposeful instrumentation answering specific debugging questions, not verbose logging noise |
-| OFT is only for on-call engineers | OFT benefits the developer: understanding production behavior of your own code improves design decisions and reduces re-discovery of the same bugs |
-| Platform auto-instrumentation achieves OFT | Auto-instrumentation covers infrastructure signals; it cannot know "did the payment succeed?" or "which validation rule failed?" - these business signals require OFT practice |
-| OFT requires expertise in observability tools | OFT requires only the ability to ask "if this fails, what will I need to see?" - a mindset question, not a tool expertise question |
+| Misconception                                 | Reality                                                                                                                                                                        |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| OFT means adding logs everywhere              | OFT means adding the RIGHT information at the RIGHT places - purposeful instrumentation answering specific debugging questions, not verbose logging noise                      |
+| OFT is only for on-call engineers             | OFT benefits the developer: understanding production behavior of your own code improves design decisions and reduces re-discovery of the same bugs                             |
+| Platform auto-instrumentation achieves OFT    | Auto-instrumentation covers infrastructure signals; it cannot know "did the payment succeed?" or "which validation rule failed?" - these business signals require OFT practice |
+| OFT requires expertise in observability tools | OFT requires only the ability to ask "if this fails, what will I need to see?" - a mindset question, not a tool expertise question                                             |
 
 ---
 
@@ -496,6 +499,7 @@ objects that contained PII fields.
 **Fix:**
 Add a mandatory PII field checklist to the OFT code
 review process:
+
 ```java
 // BAD: log the raw request (contains PII)
 log.info("Checkout", "request", checkoutRequest);
@@ -516,6 +520,7 @@ log.info("Checkout",
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - the three pillars that OFT ensures
   are implemented
 - `Observability-Driven Development Strategy` - the specific
@@ -526,10 +531,12 @@ log.info("Checkout",
   that exposes OFT gaps and drives cultural reinforcement
 
 **Builds On This (learn these next):**
+
 - `Reliability Mental Model` - the broader mental model
   that OFT is part of
 
 **Alternatives / Comparisons:**
+
 - `SRE Book Core Principles` - the organizational framework
   in which OFT is a developer-side practice
 - `Toil Reduction Strategy` - OFT reduces on-call toil through
@@ -573,6 +580,7 @@ log.info("Checkout",
 ```
 
 **If you remember only 3 things:**
+
 1. The 3am test: "Can an on-call engineer with no context
    diagnose this in 15 minutes from telemetry alone?" If
    not, the code needs more instrumentation before shipping.
@@ -617,6 +625,7 @@ reactive quality activities are always more expensive,
 less effective, and more stressful than proactive ones.
 
 **Where else this pattern applies:**
+
 - TDD: write tests before code → catch bugs at design time
 - Threat modeling: model attack surface before deployment
 - Accessibility-first: design for accessibility in initial
@@ -650,6 +659,7 @@ exclusively through telemetry, not debuggers.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. [REVIEW] Conduct an observability-first code review
    of a payment processing PR, identifying all failure
    modes that are not observable and proposing specific

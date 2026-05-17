@@ -34,11 +34,11 @@ budget is the complement of that threshold - a finite
 amount of "bad" experience that can be tolerated before
 the SLO is violated.
 
-| #048 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | SLO, Error Budget, SLO-Based Alerting Strategy, SLO Trade-off Framing, Service Level Objectives Deep Dive | |
-| **Used by:** | Service Level Objectives (SLOs) Deep Dive, Error Budgets | |
-| **Related:** | SRE Book Core Principles, Alerting Fundamentals, Reliability Mental Model | |
+| #048            | Category: Observability & SRE                                                                             | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | SLO, Error Budget, SLO-Based Alerting Strategy, SLO Trade-off Framing, Service Level Objectives Deep Dive |                 |
+| **Used by:**    | Service Level Objectives (SLOs) Deep Dive, Error Budgets                                                  |                 |
+| **Related:**    | SRE Book Core Principles, Alerting Fundamentals, Reliability Mental Model                                 |                 |
 
 ---
 
@@ -68,6 +68,7 @@ the error budget dynamics?"
 **THE INVENTION MOMENT:**
 Formal SLO theory makes reliability mathematically
 tractable. The key formalizations:
+
 1. Reliability as a property of the SLI distribution
 2. Error budget as a derived quantity with computable value
 3. Burn rate as a continuous-time rate process on the budget
@@ -111,6 +112,7 @@ exactly how much reliability you have, how fast you are
 losing it, and when you will run out.
 
 **One analogy:**
+
 > Formal SLO theory is like the physics of a bank account.
 > Without the math, you know "I have money and I spend it."
 > With the physics: the account starts at $1,000 (error
@@ -160,6 +162,7 @@ the SLO is met when SLI ≥ T.
 $$\text{budget}(W) = (1 - T) \times E[\text{total\_events}(W)]$$
 
 For SLO = 99.9%, W = 30 days, 1000 RPS:
+
 - Total events = 1000 × 86400 × 30 = 2.592 billion
 - Budget = 0.001 × 2.592B = 2.592 million bad events
 - Budget in time = 2.592M / 1000 = 43.2 minutes of 100% errors
@@ -206,6 +209,7 @@ by whichever SLI degrades first.
 **THE WINDOW CHOICE PROBLEM:**
 
 You can express the same SLO as:
+
 - 99.9% over 30 days (monthly rolling window)
 - 99.9% over 90 days (quarterly rolling window)
 - 99.9% over 7 days (weekly rolling window)
@@ -215,16 +219,19 @@ You can express the same SLO as:
 They are NOT equivalent. The formal difference:
 
 **Error budget absolute size:**
+
 - 30-day: 43.2 minutes of budget
 - 90-day: 129.6 minutes of budget (3x larger)
 - 7-day: 10.1 minutes of budget (2.3x smaller)
 
 **Burn rate calibration:**
+
 - PAGE_BURN_RATE = 14.4 works for any window because
   14.4x exhausts 5% of budget in 1/14.4 of the window
   (approximately 50 hours for 30 days, 150 hours for 90 days)
 
 **Recovery dynamics:**
+
 - 30-day window: an incident consuming 50% budget (21.6 min
   of 100% errors) takes 30 days to "roll out" of the window
   as new time replaces old time
@@ -234,6 +241,7 @@ They are NOT equivalent. The formal difference:
   - very short memory, may encourage tactical patching
 
 **PRACTICAL IMPLICATION:**
+
 - 7-day windows make SLO gaming easy (be reliable every
   week except Monday night; each week resets)
 - 90-day windows are punishing - a single major incident
@@ -370,6 +378,7 @@ optimal point on the detection speed vs. noise trade-off.
 
 **THE MATHEMATICAL PROOF (simplified):**
 A transient spike lasting t_spike minutes at burn rate B:
+
 - 5-minute window shows: B × (t_spike / 5) if t_spike < 5
 - 1-hour window shows: B × (t_spike / 60) if t_spike < 60
 - Multi-window threshold: BOTH windows > 14.4
@@ -392,7 +401,7 @@ Pattern 1: Request/Response SLI
   SLI = HTTP responses with status < 500
          and latency_p99 < 500ms
        / total_HTTP_responses
-  
+
   Good for: APIs, web services
   Challenge: latency_p99 threshold is a percentile, not
   a per-request measurement. Better: use latency as a
@@ -401,10 +410,10 @@ Pattern 1: Request/Response SLI
 Pattern 2: Availability × Latency Composite
   SLI_avail = non-error responses / total
   SLI_latency = responses < threshold / total
-  
+
   Composite SLO: SLI_avail >= 99.9%
                  AND SLI_latency >= 95%
-  
+
   Each SLI depletes its own error budget.
   On-call is paged when EITHER budget is on fast burn.
   This covers: "service is up but slow" (latency budget burns)
@@ -413,7 +422,7 @@ Pattern 2: Availability × Latency Composite
 Pattern 3: User-Journey SLI (synthetic canary)
   SLI = synthetic transaction success rate
         measured end-to-end from user perspective
-  
+
   Advantage: captures failures invisible to per-service SLIs
              (e.g., config change breaks user flow but
              no individual service reports errors)
@@ -445,7 +454,7 @@ WHY THIS SPECIFIC CALIBRATION:
   One incident per month is normal operating rate → review
   Two incidents (50%) = elevated rate → corrective action
   Four incidents (100%) = chronic reliability problem → freeze
-  
+
   The policy is derived from the budget math, not arbitrary.
 ```
 
@@ -456,6 +465,7 @@ WHY THIS SPECIFIC CALIBRATION:
 Not applicable as the primary example - Formal SLO Theory
 is a conceptual framework. See the mathematical derivations
 in the sections above and the implementation in:
+
 - `OBS-042 SLO-Based Alerting Strategy` for Prometheus
   burn rate alert rules
 - `OBS-053 Service Level Objectives (SLOs) Deep Dive`
@@ -471,11 +481,11 @@ def error_budget_minutes(slo_target: float,
                           window_days: int) -> float:
     """
     Compute error budget in minutes.
-    
+
     Args:
         slo_target: e.g., 0.999 for 99.9%
         window_days: e.g., 30
-    
+
     Returns:
         Error budget in minutes
     """
@@ -493,11 +503,11 @@ def burn_rate(current_error_rate: float,
               slo_target: float) -> float:
     """
     Compute current burn rate.
-    
+
     Args:
         current_error_rate: e.g., 0.02 for 2%
         slo_target: e.g., 0.999 for 99.9% SLO
-    
+
     Returns:
         Burn rate (1.0 = sustainable rate)
     """
@@ -529,12 +539,12 @@ print(time_to_budget_exhaustion_hours(0.5))   # infinite (not consuming)
 
 ### ⚖️ Comparison Table
 
-| SLO Model | Formalism Level | Practical Adoption | Use Case |
-|---|---|---|---|
-| **Formal SLO (error budget + burn rate)** | High | Industry standard (Google SRE) | All production services with on-call |
-| Threshold SLA (e.g., "99.9% uptime") | Low | Traditional enterprise | Contractual SLAs with customers |
-| Percentile latency targets (p99 < 300ms) | Medium | Common in engineering teams | Latency-focused services |
-| None (no formal reliability target) | None | Common in early-stage | Very early stage, no on-call |
+| SLO Model                                 | Formalism Level | Practical Adoption             | Use Case                             |
+| ----------------------------------------- | --------------- | ------------------------------ | ------------------------------------ |
+| **Formal SLO (error budget + burn rate)** | High            | Industry standard (Google SRE) | All production services with on-call |
+| Threshold SLA (e.g., "99.9% uptime")      | Low             | Traditional enterprise         | Contractual SLAs with customers      |
+| Percentile latency targets (p99 < 300ms)  | Medium          | Common in engineering teams    | Latency-focused services             |
+| None (no formal reliability target)       | None            | Common in early-stage          | Very early stage, no on-call         |
 
 **How to choose:**
 Use formal SLO with error budget for any service with
@@ -549,12 +559,12 @@ lower than the internal SLO, with the gap being the buffer).
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| SLO = SLA | SLO is internal reliability target; SLA is the contractual agreement with customers. SLO is typically stricter. Breaching SLO triggers internal action; breaching SLA triggers customer compensation |
+| Misconception                           | Reality                                                                                                                                                                                                           |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SLO = SLA                               | SLO is internal reliability target; SLA is the contractual agreement with customers. SLO is typically stricter. Breaching SLO triggers internal action; breaching SLA triggers customer compensation              |
 | Error budget is just "allowed downtime" | Error budget is a rate-based model: it measures bad events per total events, not just downtime. A service that is "up" but returns errors or high latency consumes its error budget just as a "down" service does |
-| Higher SLO target = better reliability | Higher SLO targets constrain innovation (less budget for risky deployments). The correct SLO is calibrated to what users actually notice and value, not to the highest achievable number |
-| 100% reliability is achievable | 100% availability SLO means zero tolerance for any failure - including planned maintenance windows. No real production system achieves this. The practical upper bound is 99.999% (5 nines = 5.2 min/year) |
+| Higher SLO target = better reliability  | Higher SLO targets constrain innovation (less budget for risky deployments). The correct SLO is calibrated to what users actually notice and value, not to the highest achievable number                          |
+| 100% reliability is achievable          | 100% availability SLO means zero tolerance for any failure - including planned maintenance windows. No real production system achieves this. The practical upper bound is 99.999% (5 nines = 5.2 min/year)        |
 
 ---
 
@@ -577,6 +587,7 @@ every incident because its natural error rate (0.2%) is
 already 2x the budget rate (0.1%).
 
 **Fix:**
+
 1. Measure the service's baseline reliability over 3 months.
 2. Set the initial SLO target at baseline reliability minus
    1-sigma of variation. This ensures budget is not consumed
@@ -596,6 +607,7 @@ successful response?) not the implementation outcome
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `SLO` - the basic SLO concept before formal theory
 - `Error Budget` - the budget concept before formal derivation
 - `SLO-Based Alerting Strategy` - the alerting application
@@ -606,11 +618,13 @@ successful response?) not the implementation outcome
   this theory formalizes
 
 **Builds On This (learn these next):**
+
 - `Service Level Objectives (SLOs) Deep Dive` - applying
   this theory to the full SLO lifecycle
 - `Error Budgets` - the operational use of the budget concept
 
 **Alternatives / Comparisons:**
+
 - `SRE Book Core Principles` - the organizational context
   in which this theory is applied
 - `Alerting Fundamentals` - pre-burn-rate alerting that
@@ -652,6 +666,7 @@ successful response?) not the implementation outcome
 ```
 
 **If you remember only 3 things:**
+
 1. Error budget = (1 - SLO) × window. For 99.9% over 30 days:
    43.2 minutes. This is the finite resource on-call engineers
    are custodians of.

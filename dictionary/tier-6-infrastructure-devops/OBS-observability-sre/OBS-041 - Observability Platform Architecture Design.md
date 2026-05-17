@@ -34,11 +34,11 @@ processing, and storage to queryable dashboards - with
 explicit decisions on HA, retention, cost, and the
 collection/query separation that makes it scale.
 
-| #041 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, Prometheus, Distributed Tracing, OpenTelemetry, Log Aggregation at Scale, Observability at Scale | |
-| **Used by:** | Platform Observability Engineering, Observability System Design Internals | |
-| **Related:** | Time-Series Database Design, Distributed Tracing System Architecture, Capacity Planning with Metrics | |
+| #041            | Category: Observability & SRE                                                                                           | Difficulty: ★★★ |
+| :-------------- | :---------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability, Prometheus, Distributed Tracing, OpenTelemetry, Log Aggregation at Scale, Observability at Scale |                 |
+| **Used by:**    | Platform Observability Engineering, Observability System Design Internals                                               |                 |
+| **Related:**    | Time-Series Database Design, Distributed Tracing System Architecture, Capacity Planning with Metrics                    |                 |
 
 ---
 
@@ -119,6 +119,7 @@ that makes every service in your organization debuggable
 from a single pane of glass.
 
 **One analogy:**
+
 > An observability platform is like a city's traffic
 > management center. Individual cars (services) have
 > sensors (OTel SDKs) that report speed and position.
@@ -146,6 +147,7 @@ overhead minimal.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Collection must be service-local (agent per pod/node)
    to handle service failures without central dependency
 2. The collection pipeline must be decoupled from storage
@@ -159,6 +161,7 @@ overhead minimal.
 
 **DERIVED ARCHITECTURE:**
 These invariants drive the four-layer architecture:
+
 - **Instrumentation layer**: OTel SDK embedded in each service;
   zero-latency local emission; no network call in hot path
 - **Collection layer**: OTel Collector as DaemonSet (per node)
@@ -199,8 +202,9 @@ P99 trace retention for 7 days, all logs for 90 days,
 error logs for 1 year, $500K/year platform budget.
 
 **DESIGN DECISIONS:**
+
 1. **Collection**: OTel Collector DaemonSet per cluster
-   (3 clusters * 20 nodes each = 60 collector instances)
+   (3 clusters \* 20 nodes each = 60 collector instances)
    - lightweight, per-node overhead only
 
 2. **Metrics storage**: Per-cluster Prometheus (scrape local
@@ -249,6 +253,7 @@ engineers vs vendor support.
 > SDK standard).
 
 Element mapping:
+
 - "Building" → individual service
 - "Power generation" → OTel SDK instrumentation
 - "Transmission lines" → OTel Collector + Kafka
@@ -374,8 +379,7 @@ processors:
   # Add Kubernetes metadata to all telemetry
   k8sattributes:
     extract:
-      metadata: [k8s.pod.name, k8s.namespace.name,
-                 k8s.deployment.name]
+      metadata: [k8s.pod.name, k8s.namespace.name, k8s.deployment.name]
 
   # Tail-based trace sampling
   tail_sampling:
@@ -579,13 +583,13 @@ links.
 
 ### ⚖️ Comparison Table
 
-| Platform Approach | Cost | Engineering Effort | Vendor Lock-in | Scale |
-|---|---|---|---|---|
-| **Grafana stack (OSS)** | Low ($) | High (platform team) | Low (OTel) | Very high |
-| Datadog (SaaS) | Very high ($$$) | Low (no infra) | High | Very high |
-| AWS CloudWatch | Medium | Medium (AWS-native) | High | High (AWS only) |
-| New Relic (SaaS) | High ($$) | Low | High | High |
-| Hybrid (OSS + SaaS) | Medium | Medium | Medium | High |
+| Platform Approach       | Cost            | Engineering Effort   | Vendor Lock-in | Scale           |
+| ----------------------- | --------------- | -------------------- | -------------- | --------------- |
+| **Grafana stack (OSS)** | Low ($)         | High (platform team) | Low (OTel)     | Very high       |
+| Datadog (SaaS)          | Very high ($$$) | Low (no infra)       | High           | Very high       |
+| AWS CloudWatch          | Medium          | Medium (AWS-native)  | High           | High (AWS only) |
+| New Relic (SaaS)        | High ($$)       | Low                  | High           | High            |
+| Hybrid (OSS + SaaS)     | Medium          | Medium               | Medium         | High            |
 
 **How to choose:**
 Choose SaaS (Datadog/New Relic) when: engineering bandwidth
@@ -601,13 +605,13 @@ keeps the backend decision reversible.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| More data = better observability | More data increases cost and noise; structured, purposeful signals with trace correlation produce better incident investigation than data volume |
-| One backend for all signals | Metrics (time-series), traces (DAG traversal), logs (full-text search) have fundamentally different access patterns; no single backend optimizes all three |
-| SaaS platforms eliminate all platform work | SaaS platforms still require: instrumentation standards, sampling policy, cardinality limits, cost governance - they just eliminate infrastructure management |
-| OpenTelemetry is only for traces | OTel covers all three pillars: metrics, traces, and logs - it is the universal collection SDK |
-| Platform architecture is a one-time decision | Observability platforms evolve as systems scale; the architecture must be designed with migration paths in mind |
+| Misconception                                | Reality                                                                                                                                                       |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| More data = better observability             | More data increases cost and noise; structured, purposeful signals with trace correlation produce better incident investigation than data volume              |
+| One backend for all signals                  | Metrics (time-series), traces (DAG traversal), logs (full-text search) have fundamentally different access patterns; no single backend optimizes all three    |
+| SaaS platforms eliminate all platform work   | SaaS platforms still require: instrumentation standards, sampling policy, cardinality limits, cost governance - they just eliminate infrastructure management |
+| OpenTelemetry is only for traces             | OTel covers all three pillars: metrics, traces, and logs - it is the universal collection SDK                                                                 |
+| Platform architecture is a one-time decision | Observability platforms evolve as systems scale; the architecture must be designed with migration paths in mind                                               |
 
 ---
 
@@ -630,6 +634,7 @@ drop telemetry when the Collector endpoint is unavailable
 (non-blocking mode) rather than buffering for retry.
 
 **Diagnostic Commands:**
+
 ```bash
 # Check DaemonSet pod status
 kubectl get pods -n observability -l app=otel-collector
@@ -644,6 +649,7 @@ kubectl describe pod -n observability otel-collector-<node> | \
 ```
 
 **Fix:**
+
 ```yaml
 # otel-collector DaemonSet resource limits
 resources:
@@ -651,7 +657,7 @@ resources:
     memory: 256Mi
     cpu: 100m
   limits:
-    memory: 1Gi    # prevent OOMKill
+    memory: 1Gi # prevent OOMKill
     cpu: 500m
 # Also configure retry on application SDK side:
 # exporter.retry_on_failure.enabled: true
@@ -674,6 +680,7 @@ is trying to restart but the PVC is unavailable.
 No HA was configured.
 
 **Fix:**
+
 ```yaml
 # Prometheus HA with Thanos sidecar
 # Run 2 Prometheus replicas with Thanos deduplication
@@ -681,12 +688,12 @@ No HA was configured.
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 spec:
-  replicas: 2         # HA replicas
+  replicas: 2 # HA replicas
   thanos:
     baseImage: quay.io/thanos/thanos
     objectStorageConfig:
       name: thanos-objstore-config
-      key: objstore.yml  # S3 bucket config
+      key: objstore.yml # S3 bucket config
 ```
 
 ---
@@ -694,6 +701,7 @@ spec:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - the three-pillar model this
   platform implements
 - `Prometheus - Metrics Collection` - the metrics backend
@@ -704,12 +712,14 @@ spec:
   strategies this architecture implements
 
 **Builds On This (learn these next):**
+
 - `Platform Observability Engineering` - the organizational
   practice of running this architecture
 - `Observability System Design Internals` - the internal
   design of each platform component
 
 **Alternatives / Comparisons:**
+
 - `Time-Series Database Design` - the storage layer for
   metrics in the platform
 - `Distributed Tracing System Architecture` - the trace
@@ -757,6 +767,7 @@ spec:
 ```
 
 **If you remember only 3 things:**
+
 1. Use OpenTelemetry as the instrumentation standard - it
    keeps backend decisions reversible. Vendor-specific agents
    lock 500 services into one vendor contract.
@@ -793,6 +804,7 @@ applies to any system where the producer must be decoupled
 from the consumer's implementation details.
 
 **Where else this pattern applies:**
+
 - **Database driver abstraction** - JDBC/JPA abstract
   application code from PostgreSQL/MySQL specifics;
   switching databases requires changing the driver config,
@@ -813,7 +825,7 @@ architecture is not the choice of backend - it is the
 choice of instrumentation SDK. Once 500 services are
 instrumented with Datadog's proprietary agents (dd-trace),
 the instrumentation cost to switch to any other backend
-is 500 services * average 2-3 engineering days each =
+is 500 services \* average 2-3 engineering days each =
 1,000-1,500 engineer-days of migration work. At $500/day
 fully-loaded cost per engineer, this is a $500,000-
 $750,000 hidden cost of the original instrumentation

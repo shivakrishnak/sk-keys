@@ -35,11 +35,11 @@ as the detection layer, and automation as the replacement
 for toil - each one is meaningless in isolation but
 powerful as a system.
 
-| #040 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, SLO, Error Budget, Post-Mortem and Blameless Culture | |
-| **Used by:** | Observability Platform Architecture, SLO-Based Alerting, Observability-Driven Development, Formal SLO Theory | |
-| **Related:** | Toil Reduction Strategy, Observability-First Thinking, Reliability Mental Model | |
+| #040            | Category: Observability & SRE                                                                                | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability, SLO, Error Budget, Post-Mortem and Blameless Culture                                  |                 |
+| **Used by:**    | Observability Platform Architecture, SLO-Based Alerting, Observability-Driven Development, Formal SLO Theory |                 |
+| **Related:**    | Toil Reduction Strategy, Observability-First Thinking, Reliability Mental Model                              |                 |
 
 ---
 
@@ -96,6 +96,7 @@ that applies software engineering principles to infrastructure
 and operations problems, with the goal of creating scalable
 and highly reliable software systems. Google's SRE model
 is defined by six core principles:
+
 1. **SLOs and SLAs** - mathematical definitions of acceptable
    reliability
 2. **Error budgets** - the authorized reliability degradation
@@ -119,6 +120,7 @@ run operations, using math (SLOs + error budgets) to
 replace the ops/dev conflict with a shared optimization.
 
 **One analogy:**
+
 > The SRE model is like a central bank managing monetary
 > policy. The error budget is the interest rate - a single
 > number that encodes the current "reliability temperature"
@@ -146,6 +148,7 @@ primary organizational innovation of SRE.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. 100% reliability is not achievable or desirable - users
    cannot distinguish 99.99% from 100%, but the cost and
    development speed penalty is enormous
@@ -162,6 +165,7 @@ primary organizational innovation of SRE.
 **DERIVED DESIGN:**
 These invariants produce the six SRE principles as a
 coherent system:
+
 - SLOs define the reliability contract (what is acceptable)
 - Error budgets operationalize the contract (how much failure
   is the current account balance?)
@@ -247,6 +251,7 @@ constraint rather than a subjective ops vs dev conflict.
 > system toward the setpoint.
 
 Element mapping:
+
 - "Setpoint" → SLO target (99.9% availability)
 - "Current state measurement" → monitoring and alerting
 - "Deviation computation" → error budget tracking
@@ -453,6 +458,7 @@ BAD: "SRE team reviews and approves all architecture"
 
 Not applicable as primary - SRE Book principles are
 organizational and architectural in nature. See:
+
 - `Error Budget` (OBS-020) for code examples of SLO tracking
 - `Toil Reduction Strategy` (OBS-037) for automation examples
 - `Log Aggregation at Scale` (OBS-027) for monitoring setup
@@ -477,7 +483,7 @@ slos:
         sum(rate(http_requests_total{
           service="payment-api"
         }[5m]))
-    target: 0.999    # 99.9%
+    target: 0.999 # 99.9%
     window: 30d
 
   - name: latency_p99
@@ -488,7 +494,7 @@ slos:
             service="payment-api"
           }[5m]))
     threshold_ms: 300
-    target: 0.95     # 95% of requests <300ms
+    target: 0.95 # 95% of requests <300ms
     window: 30d
 
 error_budget_policy:
@@ -502,12 +508,12 @@ error_budget_policy:
 
 ### ⚖️ Comparison Table
 
-| Model | Ops/Dev Relationship | Reliability Mechanism | Development Speed | Scalability |
-|---|---|---|---|---|
-| **SRE (Google model)** | Embedded SRE, shared ownership | Error budget (math-driven) | High (within budget) | Scales with automation |
-| Traditional Ops | Separate team, gatekeeping | Change freezes, CAB | Low (bottleneck) | Does not scale |
-| NoOps/DevOps | Dev owns ops entirely | Individual team discipline | High (no gatekeeping) | Variable (discipline-dependent) |
-| Platform Engineering | Dev self-service via platform | Platform reliability guarantees | Very high | High (platform scales) |
+| Model                  | Ops/Dev Relationship           | Reliability Mechanism           | Development Speed     | Scalability                     |
+| ---------------------- | ------------------------------ | ------------------------------- | --------------------- | ------------------------------- |
+| **SRE (Google model)** | Embedded SRE, shared ownership | Error budget (math-driven)      | High (within budget)  | Scales with automation          |
+| Traditional Ops        | Separate team, gatekeeping     | Change freezes, CAB             | Low (bottleneck)      | Does not scale                  |
+| NoOps/DevOps           | Dev owns ops entirely          | Individual team discipline      | High (no gatekeeping) | Variable (discipline-dependent) |
+| Platform Engineering   | Dev self-service via platform  | Platform reliability guarantees | Very high             | High (platform scales)          |
 
 **How to choose:**
 SRE is the right model for organizations large enough to
@@ -520,14 +526,14 @@ very large organizations (1,000+ engineers).
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| SRE is just a job title for DevOps engineers | SRE is a disciplined engineering practice with specific tools (SLOs, error budgets, toil reduction) - not just a label |
-| The 50% toil cap is aspirational | Google treats the 50% cap as a hard operational rule: SRE teams refuse new onboarding when toil exceeds 50% |
-| SLOs should be set to the highest achievable reliability | SLOs that are too high waste engineering investment on reliability nobody needs; set at the minimum acceptable to users |
-| Error budgets prevent outages | Error budgets don't prevent outages; they make the cost of outages visible and create incentives to prevent the next one |
-| SRE requires a dedicated SRE team | Embedded SRE models (SREs within product teams) often produce better outcomes than centralized SRE teams |
-| Five nines is the goal | 99.999% (5.26 min/year downtime) is rarely the right target; the right target is the minimum reliability users notice |
+| Misconception                                            | Reality                                                                                                                  |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| SRE is just a job title for DevOps engineers             | SRE is a disciplined engineering practice with specific tools (SLOs, error budgets, toil reduction) - not just a label   |
+| The 50% toil cap is aspirational                         | Google treats the 50% cap as a hard operational rule: SRE teams refuse new onboarding when toil exceeds 50%              |
+| SLOs should be set to the highest achievable reliability | SLOs that are too high waste engineering investment on reliability nobody needs; set at the minimum acceptable to users  |
+| Error budgets prevent outages                            | Error budgets don't prevent outages; they make the cost of outages visible and create incentives to prevent the next one |
+| SRE requires a dedicated SRE team                        | Embedded SRE models (SREs within product teams) often produce better outcomes than centralized SRE teams                 |
+| Five nines is the goal                                   | 99.999% (5.26 min/year downtime) is rarely the right target; the right target is the minimum reliability users notice    |
 
 ---
 
@@ -554,6 +560,7 @@ integration with the engineering backlog or sprint planning.
 SRE is compliance theater rather than engineering practice.
 
 **Diagnostic Questions:**
+
 - Does error budget exhaustion actually pause deployments?
 - Are postmortem action items prioritized in sprint backlogs?
 - Are SRE engineers embedded with product teams or siloed?
@@ -601,6 +608,7 @@ engineering investment.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - observability provides the
   measurement layer that SLO tracking requires
 - `SLO` - the core metric at the center of the SRE model
@@ -610,6 +618,7 @@ engineering investment.
   that completes the SRE feedback loop
 
 **Builds On This (learn these next):**
+
 - `Observability Platform Architecture Design` - the
   technical architecture that implements SRE at scale
 - `SLO-Based Alerting Strategy` - how SLO math drives
@@ -618,6 +627,7 @@ engineering investment.
   development practice that SRE principles produce
 
 **Alternatives / Comparisons:**
+
 - `Toil Reduction Strategy` - the SRE toil concept deep-dive
 - `Reliability Mental Model` - the philosophical underpinning
   of the SRE reliability approach
@@ -668,6 +678,7 @@ engineering investment.
 ```
 
 **If you remember only 3 things:**
+
 1. The error budget is the key organizational innovation:
    it converts the subjective ops/dev conflict into an
    objective, math-driven shared constraint. Both sides
@@ -709,6 +720,7 @@ targets: shared objective metrics create alignment where
 competing subjective targets create friction.
 
 **Where else this pattern applies:**
+
 - **Financial risk management** - the risk budget (VaR limit)
   is an error budget equivalent for trading desks: traders
   can take risk freely until the budget is depleted, then
@@ -745,6 +757,7 @@ protect reliability was actually creating it.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. [EXPLAIN] Explain to a VP Engineering why the error
    budget policy - specifically the deployment freeze when
    budget is depleted - is the key mechanism that makes
@@ -776,9 +789,10 @@ protect reliability was actually creating it.
 
 **Q1: Explain the error budget and why it is the most
 important innovation in the SRE Book.**
-*Why they ask:* Core SRE concept; tests whether the candidate
+_Why they ask:_ Core SRE concept; tests whether the candidate
 understands SRE principles at depth or just the terminology.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Error budget = 1 - SLO target (the authorized failure budget)
 - Before error budgets: ops/dev conflict was subjective
   (ops wanted stability, dev wanted speed, no shared metric)
@@ -792,9 +806,10 @@ understands SRE principles at depth or just the terminology.
 
 **Q2: How would you set an SLO for a new service launching
 in 3 months with no historical data?**
-*Why they ask:* Tests practical SLO implementation knowledge
+_Why they ask:_ Tests practical SLO implementation knowledge
 beyond theory.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Option A: baseline from a similar existing service in
   the portfolio as a starting point
 - Option B: user journey mapping - what reliability level
@@ -808,9 +823,10 @@ beyond theory.
 **Q3: How do you handle the situation where the error budget
 is depleted and the CEO demands a feature deployment to meet
 a competitive deadline?**
-*Why they ask:* Tests understanding of SRE organizational
+_Why they ask:_ Tests understanding of SRE organizational
 dynamics and the real-world tension of enforcing the policy.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Acknowledge the business pressure is real
 - Present the error budget data as objective, not as an
   ops team blocker: "The service has consumed its full

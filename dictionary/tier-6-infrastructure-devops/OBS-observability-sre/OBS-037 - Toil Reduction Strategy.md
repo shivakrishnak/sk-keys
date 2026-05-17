@@ -32,11 +32,11 @@ and Google SRE has a hard rule: if toil exceeds 50% of an
 SRE team's time, the team is in crisis and must stop
 accepting new services until toil is reduced.
 
-| #037 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, Post-Mortem and Blameless Culture, SLO | |
-| **Used by:** | SRE Book Core Principles, Observability-Driven Development, Observability-First Thinking | |
-| **Related:** | Runbooks and Playbooks, Capacity Planning with Metrics, Platform Observability Engineering | |
+| #037            | Category: Observability & SRE                                                              | Difficulty: ★★★ |
+| :-------------- | :----------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability, Post-Mortem and Blameless Culture, SLO                              |                 |
+| **Used by:**    | SRE Book Core Principles, Observability-Driven Development, Observability-First Thinking   |                 |
+| **Related:**    | Runbooks and Playbooks, Capacity Planning with Metrics, Platform Observability Engineering |                 |
 
 ---
 
@@ -111,6 +111,7 @@ instead of engineers; toil reduction is the program
 to make that happen.
 
 **One analogy:**
+
 > Toil reduction is like replacing a factory worker who
 > spends all day manually typing invoices into a database
 > with an OCR scanner that does it automatically. The worker
@@ -135,6 +136,7 @@ returns compounding value as the system grows.
 ### 🔩 First Principles Explanation
 
 **CORE INVARIANTS:**
+
 1. Toil grows linearly (or worse) with system scale; engineering
    work produces systems that handle growth without scaling effort
 2. Engineers have a fixed budget of time; every hour spent on
@@ -146,6 +148,7 @@ returns compounding value as the system grows.
 
 **DERIVED DESIGN:**
 These invariants drive the toil reduction cycle:
+
 1. **Identify**: catalog all recurring manual tasks the team performs
 2. **Qualify**: apply the six toil tests to determine what is
    truly toil vs necessary engineering judgment work
@@ -226,6 +229,7 @@ Toil reduction is a compounding return investment.
 > value instead of walking back and forth.
 
 Element mapping:
+
 - "Walking messenger" → SRE doing manual operational work
 - "Memos delivered" → operational tasks completed (toil)
 - "Email setup" → 2-week automation investment
@@ -459,14 +463,14 @@ metadata:
   namespace: production
 spec:
   secretName: api-tls-secret
-  duration: 2160h       # 90 days
-  renewBefore: 360h     # Renew 15 days before expiry
+  duration: 2160h # 90 days
+  renewBefore: 360h # Renew 15 days before expiry
   subject:
     organizations: [Company Inc]
   dnsNames:
     - api.company.com
   issuerRef:
-    name: vault-issuer   # Vault PKI auto-signs
+    name: vault-issuer # Vault PKI auto-signs
     kind: ClusterIssuer
 
 # cert-manager monitors expiry and rotates automatically
@@ -535,13 +539,13 @@ the automation stopped working).
 
 ### ⚖️ Comparison Table
 
-| Strategy | Toil Impact | Engineering Cost | Durability | Best For |
-|---|---|---|---|---|
-| **Automation scripts** | Medium | Low | Medium | Single-task toil |
-| Self-service portal | High | High | High | Access, provisioning toil |
-| Platform engineering | Very high | Very high | Very high | Org-wide toil at scale |
-| Runbook optimization | Low | Very low | Low | Reducing error rate in toil |
-| Toil externalization (vendors) | High | Medium | Medium | Commodity operational work |
+| Strategy                       | Toil Impact | Engineering Cost | Durability | Best For                    |
+| ------------------------------ | ----------- | ---------------- | ---------- | --------------------------- |
+| **Automation scripts**         | Medium      | Low              | Medium     | Single-task toil            |
+| Self-service portal            | High        | High             | High       | Access, provisioning toil   |
+| Platform engineering           | Very high   | Very high        | Very high  | Org-wide toil at scale      |
+| Runbook optimization           | Low         | Very low         | Low        | Reducing error rate in toil |
+| Toil externalization (vendors) | High        | Medium           | Medium     | Commodity operational work  |
 
 **How to choose:**
 Start with automation scripts for single high-volume toil
@@ -553,13 +557,13 @@ when developer toil (not just SRE toil) is the bottleneck.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| All operational work is toil | Only work meeting all six toil tests is toil; work requiring engineering judgment (incident response, capacity planning decisions) is NOT toil - it is engineering work |
-| Eliminating all toil is the goal | Some toil provides operational context; SRE needs ground-level contact with production behavior to build effective reliability systems |
-| Automation is always better than manual | Automation that breaks silently can create worse outcomes than a manual process that produces visible errors; production-grade automation requires monitoring and alerting |
-| Toil reduction only matters for SRE teams | Developer experience toil (complex deploy procedures, manual environment setup, manual debugging workflows) has the same structural problems and the same fix |
-| You can automate your way out of bad architecture | High-toil architectures often reflect underlying design problems (tight coupling, missing APIs, absent self-service) that automation only papers over |
+| Misconception                                     | Reality                                                                                                                                                                    |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| All operational work is toil                      | Only work meeting all six toil tests is toil; work requiring engineering judgment (incident response, capacity planning decisions) is NOT toil - it is engineering work    |
+| Eliminating all toil is the goal                  | Some toil provides operational context; SRE needs ground-level contact with production behavior to build effective reliability systems                                     |
+| Automation is always better than manual           | Automation that breaks silently can create worse outcomes than a manual process that produces visible errors; production-grade automation requires monitoring and alerting |
+| Toil reduction only matters for SRE teams         | Developer experience toil (complex deploy procedures, manual environment setup, manual debugging workflows) has the same structural problems and the same fix              |
+| You can automate your way out of bad architecture | High-toil architectures often reflect underlying design problems (tight coupling, missing APIs, absent self-service) that automation only papers over                      |
 
 ---
 
@@ -583,6 +587,7 @@ fails, it fails silently or with cryptic error messages.
 The team manually investigates and patches it weekly.
 
 **Diagnostic Questions:**
+
 - Is the automation monitored for failures?
 - Is there alerting when the automation fails?
 - Does the automation have a runbook for when it breaks?
@@ -619,6 +624,7 @@ Actual toil was 65%, but only 35% was visible in the
 measurement.
 
 **Diagnostic Questions:**
+
 - Does toil measurement capture ALL recurring operational
   tasks, or only the formally tracked ones?
 - Are Slack message requests, verbal requests, and "quick
@@ -636,6 +642,7 @@ small tasks. This produces the true toil baseline.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - understanding operational
   context helps identify which work is judgment-based
   vs automatable toil
@@ -645,6 +652,7 @@ small tasks. This produces the true toil baseline.
   is toil by definition
 
 **Builds On This (learn these next):**
+
 - `SRE Book - Core Principles Deep Dive` - the foundational
   text that defines the toil concept and 50% cap
 - `Observability-Driven Development Strategy` - reducing
@@ -653,6 +661,7 @@ small tasks. This produces the true toil baseline.
   create toil (manual investigation replacing automated detection)
 
 **Alternatives / Comparisons:**
+
 - `Runbooks and Playbooks` - runbooks are the first step in
   toil reduction (document the manual process as the basis
   for automating it)
@@ -703,6 +712,7 @@ small tasks. This produces the true toil baseline.
 ```
 
 **If you remember only 3 things:**
+
 1. The six toil tests: manual, repetitive, automatable,
    tactical, no enduring value, scales with growth. If all
    six apply, automate it - no exceptions.
@@ -732,13 +742,14 @@ when it breaks silently, toil returns invisibly."
 **Reusable Engineering Principle:**
 Manual processes that scale with system volume are
 liabilities that compound over time. The correct investment
-pattern is: document the manual process (runbook) → 
+pattern is: document the manual process (runbook) →
 automate the manual process (script) → systematize the
 automation (production service with monitoring). Each
 level of systematization produces compounding returns
 as volume grows.
 
 **Where else this pattern applies:**
+
 - **Software testing** - manual test execution is toil;
   automated test suites eliminate it permanently and
   scale with code volume
@@ -750,6 +761,7 @@ as volume grows.
   CI/CD eliminate it
 
 **Industry applications:**
+
 - **E-commerce** - Black Friday scaling decisions made
   manually by engineers watching dashboards and calling
   in capacity are toil; auto-scaling policies with
@@ -781,6 +793,7 @@ in automation breaks this trap.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. [EXPLAIN] Apply the six toil tests to a specific
    operational task and distinguish between what is genuine
    toil and what is judgment-based engineering work that
@@ -815,8 +828,8 @@ via tickets). A self-service access portal project is estimated
 at 3 engineer-weeks. Calculate the break-even point in weeks.
 If the team grows to 20 services in 1 year and access requests
 scale proportionally, what is the 1-year ROI of the automation?
-*Hint: Time investment = 3 engineers * 40 hours = 120 hours.
-Weekly savings = 4 engineers * 4 hours = 16 hours/week.*
+_Hint: Time investment = 3 engineers _ 40 hours = 120 hours.
+Weekly savings = 4 engineers _ 4 hours = 16 hours/week._
 
 **Q2.** You are the SRE lead. Toil measurement shows your
 team at 65% toil. You want to refuse new service onboarding
@@ -825,9 +838,9 @@ launch is business-critical and cannot be delayed. Design
 your negotiation strategy: what information do you present,
 what alternatives do you propose, and what do you accept
 as a compromise?
-*Hint: The SRE Book explicitly says the onboarding refusal
+_Hint: The SRE Book explicitly says the onboarding refusal
 is the escalation mechanism - but it requires you to quantify
-what accepting the new service will cost in toil and reliability.*
+what accepting the new service will cost in toil and reliability._
 
 **Q3.** One year ago, your team automated its top 5 toil
 categories. Toil dropped from 60% to 35%. But the automation
@@ -836,10 +849,10 @@ updates when APIs change, and generate false-positive alerts.
 Total maintenance time for the 5 automation systems is 8
 hours/week. Apply the six toil tests to "maintaining the
 automation." What is the right response?
-*Hint: Is automation maintenance itself toil? What are the
+_Hint: Is automation maintenance itself toil? What are the
 implications if automation maintenance IS toil by the six
 tests? What does that tell you about the quality of the
-automation and the correct architectural response?*
+automation and the correct architectural response?_
 
 ---
 
@@ -847,9 +860,10 @@ automation and the correct architectural response?*
 
 **Q1: How did you reduce toil at your previous company?
 Give a specific example with before/after metrics.**
-*Why they ask:* Tests real SRE experience with automation
+_Why they ask:_ Tests real SRE experience with automation
 and whether the candidate can measure engineering impact.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Specific toil category identified with time measurement
 - Automation approach chosen and why
 - Implementation approach and time investment
@@ -858,10 +872,11 @@ and whether the candidate can measure engineering impact.
 
 **Q2: How do you distinguish between toil and legitimate
 operational work that requires engineering judgment?**
-*Why they ask:* Tests nuanced understanding of the toil
+_Why they ask:_ Tests nuanced understanding of the toil
 definition and ensures the candidate won't over-automate
 judgment-based decisions.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Reference to the six toil tests
 - Specific example of work that looks like toil but
   requires judgment (e.g., incident response requires
@@ -872,9 +887,10 @@ judgment-based decisions.
 **Q3: Your team's on-call is extremely noisy - 20-30
 alerts per night, most are false positives. How do you
 address this as a toil reduction problem?**
-*Why they ask:* Tests whether the candidate applies toil
+_Why they ask:_ Tests whether the candidate applies toil
 thinking to alert fatigue, a common SRE problem.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Alert fatigue IS toil: manual, repetitive, automatable,
   no enduring value, scales with service growth
 - Measure alert-to-action ratio (what % of alerts require

@@ -34,11 +34,11 @@ tooling so that application teams ship observable services
 by default - with zero infrastructure setup, because the
 platform handles it automatically.
 
-| #044 | Category: Observability & SRE | Difficulty: ★★★ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, Prometheus, Distributed Tracing, Grafana, OpenTelemetry, Log Aggregation at Scale, Observability at Scale, Observability Platform Architecture | |
-| **Used by:** | Observability-First Thinking, Reliability Mental Model | |
-| **Related:** | Toil Reduction Strategy, SRE Book Core Principles, Observability-Driven Development Strategy | |
+| #044            | Category: Observability & SRE                                                                                                                                         | Difficulty: ★★★ |
+| :-------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability, Prometheus, Distributed Tracing, Grafana, OpenTelemetry, Log Aggregation at Scale, Observability at Scale, Observability Platform Architecture |                 |
+| **Used by:**    | Observability-First Thinking, Reliability Mental Model                                                                                                                |                 |
+| **Related:**    | Toil Reduction Strategy, SRE Book Core Principles, Observability-Driven Development Strategy                                                                          |                 |
 
 ---
 
@@ -121,6 +121,7 @@ so application teams only need to instrument their code -
 the rest is automatic.
 
 **One analogy:**
+
 > Platform observability engineering is like a city's
 > electrical grid. Individual buildings (application teams)
 > do not build their own power plants. They plug into the
@@ -149,6 +150,7 @@ to observe it at scale.
 ### 🔩 First Principles Explanation
 
 **THE FOUR PLATFORM INVARIANTS:**
+
 1. **Standardization**: all services emit telemetry in a
    common format (OTel) enabling cross-service correlation
    and consistent query semantics
@@ -167,6 +169,7 @@ to observe it at scale.
 
 **DERIVED ARCHITECTURE:**
 These invariants drive the platform architecture:
+
 - OTel SDK + OTel Collector as the standard collection
   layer (satisfies standardization)
 - Kubernetes DaemonSet or sidecar OTel Collector deployment
@@ -240,6 +243,7 @@ application team action in most cases.
 > conventions) or they cannot be delivered.
 
 Element mapping:
+
 - "Sender" → application team
 - "Envelope format" → OTel semantic conventions
 - "Mail sorting center" → OTel Collector pipeline
@@ -438,13 +442,14 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus-config
-  namespace: team-payments  # Each team runs their own!
+  namespace: team-payments # Each team runs their own!
 data:
   prometheus.yml: |
     scrape_configs:
       - job_name: 'payment-service'
         static_configs:
           - targets: ['payment-svc:8080']
+
 # Result: 50 services × 50 Prometheus instances
 # = 50x operations overhead, no cross-service queries,
 # no trace correlation, inconsistent retention policies
@@ -461,7 +466,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: otel-collector-config
-  namespace: observability-platform   # Platform team owns
+  namespace: observability-platform # Platform team owns
 data:
   collector.yaml: |
     receivers:
@@ -596,12 +601,12 @@ Fix: Platform must be deployed with:
 
 ### ⚖️ Comparison Table
 
-| Approach | Setup Cost | Operational Overhead | Cross-Service Correlation | Standardization |
-|---|---|---|---|---|
-| **Platform observability** | High (initial) | Low (shared) | Full | Enforced |
-| Per-team observability | Low (initial) | High (duplicated) | Difficult | None |
-| Vendor SaaS (Datadog) | Low | Very low | Vendor-dependent | Vendor-imposed |
-| Hybrid (platform + team-owned) | Medium | Medium | Partial | Partial |
+| Approach                       | Setup Cost     | Operational Overhead | Cross-Service Correlation | Standardization |
+| ------------------------------ | -------------- | -------------------- | ------------------------- | --------------- |
+| **Platform observability**     | High (initial) | Low (shared)         | Full                      | Enforced        |
+| Per-team observability         | Low (initial)  | High (duplicated)    | Difficult                 | None            |
+| Vendor SaaS (Datadog)          | Low            | Very low             | Vendor-dependent          | Vendor-imposed  |
+| Hybrid (platform + team-owned) | Medium         | Medium               | Partial                   | Partial         |
 
 **How to choose:**
 Use platform observability for organizations with 20+
@@ -617,12 +622,12 @@ The self-hosted platform approach pays off at high scale
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| The platform team is responsible for instrumenting application code | The platform team owns the infrastructure; application teams own their instrumentation. The split is: "what to observe" (app team) vs "how to collect/store" (platform team) |
-| Platform observability means one-size-fits-all | The platform sets standards and provides defaults; application teams can customize within those bounds (e.g., custom dashboards, custom alert rules built on platform infrastructure) |
-| Auto-instrumentation makes ODD unnecessary | Auto-instrumentation covers generic signals (HTTP, DB); it cannot know business-specific semantics (e.g., payment declined vs payment succeeded is application knowledge) |
-| A single OTel Collector handles everything | At scale, the Collector fleet requires capacity planning, sharding by service/namespace, and HA configuration. A single instance is a SPOF |
+| Misconception                                                       | Reality                                                                                                                                                                               |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The platform team is responsible for instrumenting application code | The platform team owns the infrastructure; application teams own their instrumentation. The split is: "what to observe" (app team) vs "how to collect/store" (platform team)          |
+| Platform observability means one-size-fits-all                      | The platform sets standards and provides defaults; application teams can customize within those bounds (e.g., custom dashboards, custom alert rules built on platform infrastructure) |
+| Auto-instrumentation makes ODD unnecessary                          | Auto-instrumentation covers generic signals (HTTP, DB); it cannot know business-specific semantics (e.g., payment declined vs payment succeeded is application knowledge)             |
+| A single OTel Collector handles everything                          | At scale, the Collector fleet requires capacity planning, sharding by service/namespace, and HA configuration. A single instance is a SPOF                                            |
 
 ---
 
@@ -642,6 +647,7 @@ Every unique request has a unique ID. Over 48 hours, this
 generates millions of unique label combinations.
 
 **Diagnostic Query:**
+
 ```promql
 # Find highest-cardinality metrics
 topk(20,
@@ -652,14 +658,15 @@ topk(20,
 ```
 
 **Fix:**
+
 ```yaml
 # OTel Collector drop rule: block high-cardinality labels
 processors:
   attributes:
     actions:
-      - key: request_id      # Never a valid metric label
+      - key: request_id # Never a valid metric label
         action: delete
-      - key: user_id         # Also high cardinality
+      - key: user_id # Also high cardinality
         action: delete
 ```
 
@@ -688,6 +695,7 @@ At peak traffic, buffer fills the memory limit and
 causes OOM-kill.
 
 **Diagnostic:**
+
 ```bash
 # Check Collector memory usage over time
 kubectl top pods -n observability-platform
@@ -702,6 +710,7 @@ curl localhost:8888/metrics | grep \
 **Fix:**
 Increase memory limit to 2Gi. Configure exporter
 max queue size to prevent unbounded growth:
+
 ```yaml
 exporters:
   prometheusremotewrite:
@@ -719,6 +728,7 @@ exporters:
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - the three pillars the platform serves
 - `Prometheus` - primary metrics storage in most platforms
 - `Distributed Tracing` - trace storage and correlation
@@ -730,11 +740,13 @@ exporters:
   this engineering practice implements
 
 **Builds On This (learn these next):**
+
 - `Observability-First Thinking` - organizational mindset this enables
 - `Reliability Mental Model` - how platform observability
   supports organizational reliability practices
 
 **Alternatives / Comparisons:**
+
 - `Toil Reduction Strategy` - platform observability is one of
   the highest-ROI toil reduction investments
 - `SRE Book Core Principles` - platform observability is the
@@ -784,6 +796,7 @@ exporters:
 ```
 
 **If you remember only 3 things:**
+
 1. Platform team owns the telemetry pipeline (collection,
    storage, querying, alerting). Application teams own
    the instrumentation code. This split is non-negotiable.

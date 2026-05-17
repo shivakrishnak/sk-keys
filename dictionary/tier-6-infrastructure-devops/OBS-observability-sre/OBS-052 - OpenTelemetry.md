@@ -39,11 +39,11 @@ backends - decoupling instrumentation code from backend choices.
 > This entry focuses on the Collector architecture,
 > SDK configuration, and production tuning.
 
-| #052 | Category: Observability & SRE | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | What Is Observability, OpenTelemetry - The Standard, Prometheus, Distributed Tracing, Grafana, Platform Observability Engineering, Observability Platform Architecture | |
-| **Used by:** | Distributed Tracing System Architecture | |
-| **Related:** | Observability at Scale, Observability System Design Internals, Service Level Objectives Deep Dive | |
+| #052            | Category: Observability & SRE                                                                                                                                          | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | What Is Observability, OpenTelemetry - The Standard, Prometheus, Distributed Tracing, Grafana, Platform Observability Engineering, Observability Platform Architecture |                 |
+| **Used by:**    | Distributed Tracing System Architecture                                                                                                                                |                 |
+| **Related:**    | Observability at Scale, Observability System Design Internals, Service Level Objectives Deep Dive                                                                      |                 |
 
 ---
 
@@ -106,6 +106,7 @@ to it once, and it sends to every backend you need, now
 or in the future - without touching your application code.
 
 **One analogy:**
+
 > The OTel Collector is like an email server with flexible
 > routing rules. Your email client (OTel SDK) sends mail
 > to one address (the Collector). The mail server applies
@@ -211,8 +212,10 @@ Requires 200 deployments, coordination across 30 teams,
 2-week migration window.
 
 **COLLECTOR APPROACH:**
+
 1. Add VictoriaMetrics exporter to Collector config alongside
    existing Prometheus remote write exporter:
+
 ```yaml
 exporters:
   prometheusremotewrite/old:
@@ -221,9 +224,10 @@ exporters:
     endpoint: "http://victoriametrics:8428/api/v1/write"
 pipelines:
   metrics:
-    exporters: [prometheusremotewrite/old,
-                prometheusremotewrite/victoriametrics]
+    exporters:
+      [prometheusremotewrite/old, prometheusremotewrite/victoriametrics]
 ```
+
 2. Roll out new Collector config (zero application changes)
 3. Validate VictoriaMetrics has correct data (2 weeks)
 4. Remove the old Prometheus exporter from Collector config
@@ -264,9 +268,11 @@ service code.
 
 **Level 2 - How to use it (junior developer):**
 Configure your OTel SDK to point to the local Collector:
+
 ```
 OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
 ```
+
 The Collector is typically deployed as a DaemonSet (one
 per node) or sidecar (one per pod). The platform team
 manages the Collector config. Your service just sends
@@ -328,7 +334,7 @@ OTLP (OpenTelemetry Protocol):
     - Port 4317 (standard)
     - Uses protobuf encoding
     - Bi-directional streaming
-  
+
   HTTP transport: better firewall compatibility
     - Port 4318 (standard)
     - Supports both JSON and protobuf bodies
@@ -600,20 +606,20 @@ Root Cause:
 
 Fix:
   Add memory_limiter as FIRST processor in all pipelines:
-  
+
   processors:
     memory_limiter:
       check_interval: 1s
       limit_mib: 400        # 80% of container limit (500MB)
       spike_limit_mib: 100  # refuse new data when within
                             # 100MB of limit
-  
+
   When limit is reached:
   - Collector returns "ResourceExhausted" gRPC status
   - SDK receives error and buffers locally (bounded)
   - New data may be dropped at SDK buffer boundary
   - This is preferable to Collector OOM and full data loss
-  
+
   Alert on memory_limiter drops:
     otelcol_processor_dropped_metric_points > 0
     → pages platform team when data is being dropped
@@ -623,13 +629,13 @@ Fix:
 
 ### ⚖️ Comparison Table
 
-| Collection Architecture | Vendor Lock-in | Operational Complexity | Policy Control | Fan-out |
-|---|---|---|---|---|
-| **OTel Collector** | None | Medium | Centralized | Yes (multi-exporter) |
-| Vendor agent (Datadog, NR) | High | Low | Per-vendor | Limited |
-| Direct SDK to backend | High | Low (no collector) | None | No |
-| Fluentd/Logstash (logs only) | Low | High | Partial | Yes |
-| Custom pipeline (Kafka-based) | None | Very high | Full | Yes |
+| Collection Architecture       | Vendor Lock-in | Operational Complexity | Policy Control | Fan-out              |
+| ----------------------------- | -------------- | ---------------------- | -------------- | -------------------- |
+| **OTel Collector**            | None           | Medium                 | Centralized    | Yes (multi-exporter) |
+| Vendor agent (Datadog, NR)    | High           | Low                    | Per-vendor     | Limited              |
+| Direct SDK to backend         | High           | Low (no collector)     | None           | No                   |
+| Fluentd/Logstash (logs only)  | Low            | High                   | Partial        | Yes                  |
+| Custom pipeline (Kafka-based) | None           | Very high              | Full           | Yes                  |
 
 **How to choose:**
 Use OTel Collector for all new observability infrastructure.
@@ -644,12 +650,12 @@ by OTel Collector.
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| OTel Collector and OTel SDK are the same thing | SDK = language library in application code (creates spans, meters, logs). Collector = separate process/binary that receives and routes telemetry. They are independent components that work together |
-| The Collector adds significant latency | The Collector typically adds 1-5ms of latency per telemetry batch. For tracing, this is negligible. For metrics, it is invisible (scraping intervals are 15-60s). The async export model means the Collector never blocks application request processing |
-| Each service needs its own Collector config | The platform team manages one Collector config for all services. Individual services don't need to know about backend routing. The SDK config (OTEL_EXPORTER_OTLP_ENDPOINT) is the only service-specific config needed |
-| The Collector must be on the same node as the application | DaemonSet deployment (same node) is the most efficient; standalone deployment (remote) also works with slightly higher network overhead |
+| Misconception                                             | Reality                                                                                                                                                                                                                                                  |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OTel Collector and OTel SDK are the same thing            | SDK = language library in application code (creates spans, meters, logs). Collector = separate process/binary that receives and routes telemetry. They are independent components that work together                                                     |
+| The Collector adds significant latency                    | The Collector typically adds 1-5ms of latency per telemetry batch. For tracing, this is negligible. For metrics, it is invisible (scraping intervals are 15-60s). The async export model means the Collector never blocks application request processing |
+| Each service needs its own Collector config               | The platform team manages one Collector config for all services. Individual services don't need to know about backend routing. The SDK config (OTEL_EXPORTER_OTLP_ENDPOINT) is the only service-specific config needed                                   |
+| The Collector must be on the same node as the application | DaemonSet deployment (same node) is the most efficient; standalone deployment (remote) also works with slightly higher network overhead                                                                                                                  |
 
 ---
 
@@ -670,19 +676,21 @@ in-memory only and is lost on Collector restart.
 
 **Fix:**
 Configure persistent queue and retry policy:
+
 ```yaml
 exporters:
   prometheusremotewrite:
     endpoint: "https://grafana-cloud:443/api/v1/write"
     retry_on_failure:
       enabled: true
-      max_elapsed_time: 300s  # retry for 5 minutes
+      max_elapsed_time: 300s # retry for 5 minutes
       max_interval: 30s
     sending_queue:
       enabled: true
-      queue_size: 10000       # 10K batches in memory
-      storage: file_storage   # persist to disk
-                              # requires file_storage extension
+      queue_size: 10000 # 10K batches in memory
+      storage:
+        file_storage # persist to disk
+        # requires file_storage extension
 
 extensions:
   file_storage:
@@ -700,6 +708,7 @@ of < 22 minutes is handled with no data loss.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `What Is Observability` - the three pillars the Collector routes
 - `OpenTelemetry - The Standard` (OBS-017) - the SDK and
   protocol before the Collector deep dive
@@ -712,10 +721,12 @@ of < 22 minutes is handled with no data loss.
   Collector fits in the full stack
 
 **Builds On This (learn these next):**
+
 - `Distributed Tracing System Architecture` - how traces flow
   through the Collector to Tempo storage
 
 **Alternatives / Comparisons:**
+
 - `Observability at Scale` - the sampling and cardinality
   controls the Collector implements at scale
 - `Observability System Design Internals` - the full data
@@ -763,6 +774,7 @@ of < 22 minutes is handled with no data loss.
 ```
 
 **If you remember only 3 things:**
+
 1. The Collector separates "what to observe" (SDK in app
    code) from "where to send it" (Collector config). This
    enables zero-application-change backend migrations.
@@ -777,11 +789,11 @@ of < 22 minutes is handled with no data loss.
 **Interview one-liner:**
 "The OTel Collector is a telemetry routing pipeline with
 three stages: receivers (OTLP, Prometheus, Kafka), processors
-(memory_limiter MUST be first, then k8sattributes enrichment,
+(memory*limiter MUST be first, then k8sattributes enrichment,
 filter, batch, tail_sampling for traces), and exporters
 (fan-out to Prometheus, Tempo, Loki, Datadog simultaneously).
 Key operational concern: memory_limiter prevents OOM under
 load spikes. Key architectural value: switching backends
 requires only Collector config change - zero application code
 changes. Self-monitor with otelcol_exporter_queue_size and
-otelcol_processor_dropped_* metrics."
+otelcol_processor_dropped*\* metrics."

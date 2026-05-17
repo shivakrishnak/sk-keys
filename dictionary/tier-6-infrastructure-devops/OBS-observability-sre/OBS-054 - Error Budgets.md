@@ -36,11 +36,11 @@ a deliberate trade-off; running out stops all deployments.
 The budget makes reliability a shared engineering and
 product decision, not a unilateral SRE veto.
 
-| #054 | Category: Observability & SRE | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | SLO, Error Budget (basic), SLO Deep Dive, Formal SLO Theory, SLO Trade-off Framing | |
-| **Used by:** | SRE Book Core Principles | |
-| **Related:** | Alerting Fundamentals, SLO-Based Alerting Strategy, Reliability Mental Model | |
+| #054            | Category: Observability & SRE                                                      | Difficulty: ★★☆ |
+| :-------------- | :--------------------------------------------------------------------------------- | :-------------- |
+| **Depends on:** | SLO, Error Budget (basic), SLO Deep Dive, Formal SLO Theory, SLO Trade-off Framing |                 |
+| **Used by:**    | SRE Book Core Principles                                                           |                 |
+| **Related:**    | Alerting Fundamentals, SLO-Based Alerting Strategy, Reliability Mental Model       |                 |
 
 ---
 
@@ -103,6 +103,7 @@ the SLO - 99.9% availability = 43.2 minutes/month to spend
 on failures from any cause.
 
 **One analogy:**
+
 > The error budget is like a vacation allowance. Each
 > employee has 20 days per year of paid leave (error budget).
 > Taking a sick day consumes leave (incident consumes budget).
@@ -124,13 +125,13 @@ on failures from any cause.
 Error budget from SLO:
 
   SLO = 99.9%  →  allowed_error_rate = 0.1%
-  
+
   Monthly budget (minutes):
     30 days × 24 hours × 60 minutes × 0.001 = 43.2 minutes
-  
+
   Budget consumed so far this month:
     (1 - current_30d_SLI) × window_minutes
-    
+
   Example: current 30d SLI = 99.87%
     consumed = (1 - 0.9987) × 43200 min = 56.2 minutes
     budget remaining = 43.2 - 56.2 = -13 minutes (EXHAUSTED)
@@ -138,14 +139,14 @@ Error budget from SLO:
   Budget remaining %:
     = max(0, (error_budget_available - consumed) /
               error_budget_available) × 100
-    
+
   Equivalent Prometheus query:
     (
       (1 - job:svc:ratio_rate30d) -
       (1 - 0.999)
     ) /
     (1 - 0.999) × 100
-    
+
     → positive: % remaining
     → negative: % over budget
 ```
@@ -156,7 +157,7 @@ Error budget from SLO:
 Burn rate measures how fast the budget is being consumed.
 
   burn_rate = error_rate / (1 - SLO_target)
-  
+
   At burn rate 1:  consuming exactly at SLO error rate.
                    Budget lasts exactly the full window.
   At burn rate 14.4: consuming 14.4x the allowed rate.
@@ -216,11 +217,13 @@ You have a critical feature that has been in development
 for 3 months. The product team wants to deploy today.
 
 **Historical data for this service:**
+
 - 70% of deployments: no incidents (0 budget consumed)
 - 25% of deployments: minor rollback (3-5 minutes consumed)
 - 5% of deployments: major incident (15-30 minutes consumed)
 
 **Expected budget consumption:**
+
 ```
 E[budget_consumed] = 0.70 × 0 + 0.25 × 4 + 0.05 × 20
                    = 0 + 1.0 + 1.0
@@ -235,6 +238,7 @@ Remaining budget after deploy (expected):
 ```
 
 **The decision framework:**
+
 - 5 remaining days in month, 5 minutes of budget left
 - Average daily natural consumption: 0.1 × 43.2 / 30 = 0.14 min
 - Remaining 5 days natural consumption: 5 × 0.14 = 0.7 min
@@ -331,6 +335,7 @@ velocity is important). Both are correct and irresolvable
 through argument.
 
 With the error budget, the debate becomes concrete:
+
 - "We have 30% budget remaining. This deploy historically
   costs 5-8% budget. We have 3 deploys queued.
   Expected remaining at month end: ~9%. Above threshold."
@@ -346,6 +351,7 @@ team is under pressure and governance breaks down.
 
 A 30-day rolling window (continuous) is more operationally
 useful than a calendar month reset:
+
 ```
 Calendar month reset:
   - Teams deploy aggressively on day 1 (full budget)
@@ -407,7 +413,6 @@ Architecture decision:
 groups:
   - name: error-budget-management
     rules:
-
       # Budget state 3 - Warning: < 20% remaining
       # Not a page - notifies team channel
       - alert: ErrorBudgetCritical
@@ -417,7 +422,7 @@ groups:
             -
             (1 - 0.999)
           ) / (1 - 0.999) * 100 < 20
-        for: 0m   # immediate - budget is depleting
+        for: 0m # immediate - budget is depleting
         labels:
           severity: warning
           team: checkout
@@ -488,23 +493,23 @@ groups:
 
 ### ⚖️ Comparison Table
 
-| Approach | Velocity-Reliability Balance | Objectivity | Shared Ownership |
-|---|---|---|---|
-| **Error budget policy** | Explicit, data-driven | High (computed from SLI) | Product + Engineering |
-| SRE veto power | Ad-hoc, subjective | Low | SRE only |
-| No reliability governance | Velocity always wins | N/A | None |
-| Change advisory board | Process-heavy, slow | Medium | Operations focus |
+| Approach                  | Velocity-Reliability Balance | Objectivity              | Shared Ownership      |
+| ------------------------- | ---------------------------- | ------------------------ | --------------------- |
+| **Error budget policy**   | Explicit, data-driven        | High (computed from SLI) | Product + Engineering |
+| SRE veto power            | Ad-hoc, subjective           | Low                      | SRE only              |
+| No reliability governance | Velocity always wins         | N/A                      | None                  |
+| Change advisory board     | Process-heavy, slow          | Medium                   | Operations focus      |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| Error budget freeze = SRE blocking product | The freeze is an automatic consequence of a pre-agreed policy. SRE doesn't "block" anyone; the shared governance agreement blocks deployments when the budget is exhausted |
-| Unused budget is wasted | Unused budget means you over-engineered (or under-utilized). It's a signal to loosen the SLO or invest reliability effort elsewhere. Not a problem, but worth understanding |
-| Budget exhaustion = outage | Budget exhaustion means the SLO target was missed for the window. Individual users may have experienced failures, but "exhausted" ≠ "down". It means accumulated failures exceeded the allowed threshold |
-| The budget only tracks incidents | Budget is consumed by all causes: incidents, risky deployments, planned maintenance, dependency failures. Any event that causes the SLI to drop below the target consumes budget |
+| Misconception                              | Reality                                                                                                                                                                                                  |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Error budget freeze = SRE blocking product | The freeze is an automatic consequence of a pre-agreed policy. SRE doesn't "block" anyone; the shared governance agreement blocks deployments when the budget is exhausted                               |
+| Unused budget is wasted                    | Unused budget means you over-engineered (or under-utilized). It's a signal to loosen the SLO or invest reliability effort elsewhere. Not a problem, but worth understanding                              |
+| Budget exhaustion = outage                 | Budget exhaustion means the SLO target was missed for the window. Individual users may have experienced failures, but "exhausted" ≠ "down". It means accumulated failures exceeded the allowed threshold |
+| The budget only tracks incidents           | Budget is consumed by all causes: incidents, risky deployments, planned maintenance, dependency failures. Any event that causes the SLI to drop below the target consumes budget                         |
 
 ---
 
@@ -521,12 +526,14 @@ improvement.
 
 **Root Cause Analysis:**
 Two possibilities:
+
 1. SLO target is calibrated above natural reliability baseline
    (the service cannot achieve 99.9% naturally).
 2. Specific recurring failure modes consume the majority
    of budget (the same incidents happen repeatedly).
 
 **Diagnosis:**
+
 ```promql
 # Check natural reliability (baseline without incidents)
 # Use percentile of 7-day windows over 90 days
@@ -560,6 +567,7 @@ Require this to be fixed before feature work resumes.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `SLO` - the target the budget is derived from
 - `Error Budget` (OBS-020) - the basic concept
 - `SLO Deep Dive` - the SLI definition and measurement
@@ -568,10 +576,12 @@ Require this to be fixed before feature work resumes.
 - `SLO Trade-off Framing` - the decision framework
 
 **Builds On This (learn these next):**
+
 - `SRE Book Core Principles` - the organizational model
   that error budgets are part of
 
 **Alternatives / Comparisons:**
+
 - `Alerting Fundamentals` - pre-SLO alerting without budget framing
 - `SLO-Based Alerting Strategy` - burn rate alerting that
   acts before budget is exhausted
@@ -616,6 +626,7 @@ Require this to be fixed before feature work resumes.
 ```
 
 **If you remember only 3 things:**
+
 1. Error budget = (1 - SLO_target) × window. 99.9% =
    43.2 minutes/month. This is the allowance for ALL
    causes: incidents, deployments, maintenance.
