@@ -1,14 +1,22 @@
-# 🎯 Category Keyword Generator - Master Prompt v4.0
+# 🎯 Category Keyword Generator - Master Prompt v4.1
 
 ---
 
 ````
 ═══════════════════════════════════════════════════════════════════════════
-CATEGORY KEYWORD GENERATOR - MASTER PROMPT v4.0
+CATEGORY KEYWORD GENERATOR - MASTER PROMPT v4.1
 ═══════════════════════════════════════════════════════════════════════════
 
 VERSION HISTORY:
-  v4.0 (2026-05) - Current
+  v4.1 (2026-05) - Current
+    + RULE 23: Pattern Bridge Keywords - Pillar 9 enforcement
+    + RULE 24: Research Foundation Keywords at L6 - Pillar 12
+    + META-SKILLS layer: mandatory Pillar 9 and 10 keywords
+    + Quality Check 18: Pillar 9/10/12 coverage verification
+    + System integration note for GENERATOR_PROMPT.md
+      Topic Type classification (TYPE 1-5)
+
+  v4.0 (2026-05)
     + Anti-Pattern Severity Levels - critical/major/minor (Rule 10)
     + Keyword Weight column - time estimation per keyword (Section 3.2)
     + Triage Keywords for Incident Response (Section 8 + 🚨 tag)
@@ -76,6 +84,22 @@ PURPOSE:
     - research depth,
     - teaching mastery,
     - and long-term retention structures.
+
+  SYSTEM INTEGRATION:
+    This system feeds GENERATOR_PROMPT.md v4.1, which uses
+    a Topic Type classification (TYPE 1-5) to adapt entry
+    section framing. The 12 Mastery Pillars in Section 0
+    correspond to GENERATOR_PROMPT.md teaching mechanisms:
+      Pillars 1-8  -> Sections 5.1-5.20, Teaching Principles
+      Pillar 9 (Pattern Recognition) -> 5.20 Transferable
+                                        Wisdom + 🔗 keywords
+      Pillar 10 (Cross-Domain Transfer) -> META-SKILLS table
+                                           "Transfers To" column
+      Pillar 11 (Historical Context) -> 5.4 Problem This Solves
+      Pillar 12 (Research Foundations) -> L6 📖 res keywords
+    Where a keyword is clearly TYPE 3 (Conceptual) or
+    TYPE 5 (Behavioral), noting it in the keyword description
+    helps the content generator apply the right TYPE profile.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 0: CORE PHILOSOPHY - 12 MASTERY PILLARS  [NEW v3.0]
@@ -536,6 +560,24 @@ META-SKILLS LAYER  🧠  (Appended after L6)
     They are the cognitive tools the expert applies
     even when the specific technology changes.
 
+    MANDATORY - every META-SKILLS section MUST contain:
+      1. At least 1 PATTERN BRIDGE keyword (Pillar 9, Rule 23):
+         Makes structural similarity to a different domain
+         explicit. Tagged 🔗 pat.
+         Format: "[Domain A]'s [X] is the same problem as
+                  [Domain B]'s [Y]"
+         Example: "B-Tree Balancing as Load Balancing"
+                  "Lock Contention as Traffic Congestion"
+      2. At least 1 CROSS-DOMAIN TRANSFER keyword (Pillar 10):
+         A lesson from this domain that directly applies to
+         a different technology domain. Include a "Transfers
+         To" annotation in the META table.
+         Example: "Eventual Consistency Reasoning" ->
+                  Finance, UX, Distributed UI
+    Pattern recognition (P9) and cross-domain transfer (P10)
+    are the PRIMARY reason the META-SKILLS level exists.
+    They are not optional - they are the core deliverable.
+
   EXAMPLES:
     Security:    "Adversarial Thinking as a Design Tool"
                  "Trust Boundary Analysis"
@@ -546,7 +588,7 @@ META-SKILLS LAYER  🧠  (Appended after L6)
                  "Latency vs Throughput Trade-off Framing"
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 2: KEYWORD GENERATION RULES - 22 RULES
+SECTION 2: KEYWORD GENERATION RULES - 24 RULES
 ═══════════════════════════════════════════════════════════════════════════
 
 ─────────────────────────────────────────────────────────────────────────
@@ -1088,6 +1130,72 @@ RULE 22: INTERVIEW READINESS KEYWORDS AT EVERY LEVEL  [NEW v3.0]
     - Higher-level interview keywords MUST include
       system design and architecture scenarios
 
+───────────────────────────────────────────────────────────────────────────
+RULE 23: PATTERN BRIDGE KEYWORDS  [NEW v4.1]
+───────────────────────────────────────────────────────────────────────────
+
+  Enforces PILLAR 9 - PATTERN RECOGNITION.
+  At least 1 pattern bridge keyword per category.
+  A pattern bridge keyword makes an explicit structural
+  connection between this domain and a DIFFERENT domain.
+  The reader sees the same problem has been solved before
+  under a different name, in a different field.
+
+  WHEN:
+    Mandatory at META or L5. Encouraged at L3-L4.
+
+  FORMAT:
+    "[Domain A]'s [Problem X] Is the Same as
+     [Domain B]'s [Problem Y]"
+    "Why [This Domain Concept] Is Really [Other Concept]
+     in Disguise"
+
+  EXAMPLES:
+    "B-Tree Balancing as Load Balancing"
+    "Lock Contention as Traffic Congestion"
+    "Event Sourcing as Double-Entry Bookkeeping"
+    "Circuit Breaker as Electrical Safety Pattern"
+    "GC Pauses as Stop-the-World Latency (universal)"
+
+  REQUIREMENT:
+    The bridge MUST cross technology boundaries -
+    not just same-category similarity.
+    "HashMap is like TreeMap but faster" is NOT a bridge.
+    "Consistent Hashing is the same problem as Virtual
+     Machine Placement in cloud scheduling" IS a bridge.
+
+  Tagged with 🔗 pat in the output table.
+
+───────────────────────────────────────────────────────────────────────────
+RULE 24: RESEARCH FOUNDATION KEYWORDS AT L6  [NEW v4.1]
+───────────────────────────────────────────────────────────────────────────
+
+  Enforces PILLAR 12 - RESEARCH FOUNDATIONS.
+  At L6 (Creator level), include at least 2 keywords
+  covering the research foundations of this domain.
+
+  WHAT COUNTS:
+    - Original published papers that defined the field
+      Format: "[Paper Title] ([Author], [Year])"
+      Example: "The Google File System Paper (2003)"
+    - Landmark RFCs, specifications, or standards
+      Format: "[RFC/Spec Name] - [What It Defined]"
+      Example: "RFC 7231 - HTTP/1.1 Semantics (2014)"
+    - Open research problems or unsolved challenges
+      Format: "Open Problem: [Problem Statement]"
+      Example: "Open Problem: Consistent Hashing
+                at Heterogeneous Scale"
+    - Comparative paper surveys or literature reviews
+      Example: "LSM-Tree vs B-Tree Research Survey"
+
+  REQUIREMENTS:
+    - At least 1 original paper or foundational RFC
+    - At least 1 open problem or current research direction
+    - Factual accuracy is non-negotiable: verify years
+      and authors. Omit rather than fabricate.
+
+  Tagged with 📖 res in the output table.
+
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 3: OUTPUT FORMAT - 12 COMPONENTS
 ═══════════════════════════════════════════════════════════════════════════
@@ -1154,6 +1262,10 @@ SECTION 3: OUTPUT FORMAT - 12 COMPONENTS
     🎓  teach = Teaching ability keyword (Rule 20)
     🔁  ret   = Retention structure keyword (Rule 21)
     🚨  triage = Triage keyword for incident response (Section 8)
+    🔗  pat   = Pattern bridge keyword (Rule 23) - cross-domain
+                   structural similarity
+    📖  res   = Research foundation keyword (Rule 24) - papers,
+                   RFCs, open problems (L6 mandatory)
 
 ─────────────────────────────────────────────────────────────────────────
 3.3 SUB-TOPIC CLUSTERING  (NEW in v2.0)
@@ -1624,10 +1736,10 @@ Stub file naming: CODE-NNN - Keyword Name.md
 Place in: dictionary/[tier]/[FOLDER]/
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 4: QUALITY CHECKS - 17 CHECKS
+SECTION 4: QUALITY CHECKS - 18 CHECKS
 ═══════════════════════════════════════════════════════════════════════════
 
-Before finalising output, run ALL 17 checks:
+Before finalising output, run ALL 18 checks:
 
 CHECK 1 - COMPLETENESS:
 ☐ L0: Does list give a newcomer domain context
@@ -1653,6 +1765,10 @@ in Section 6
 (Conceptual, Procedural, Situational,
 Diagnostic, Evaluative, Historical,
 Mental Model, Practice, Decision Framework, Project)
+Note: Pillars 9, 10, and 12 are NOT per-level dimensions
+
+- enforced via META keywords (Rule 23) and L6 keywords
+  (Rule 24). See CHECK 18 for their verification.
 
 CHECK 3 - MANDATORY COVERAGE (L3+):
 ☐ At least 2 diagnostic keywords per level (Rule 6)
@@ -1776,6 +1892,21 @@ diagnostic commands, or checklists
 ☐ At least 30% of anti-patterns have severity
 critical or major (not all minor)
 
+CHECK 18 - PILLAR 9/10/12 COVERAGE: [NEW v4.1]
+☐ At least 1 pattern bridge keyword (🔗 pat) present
+at META or L5+
+☐ Pattern bridge crosses technology boundaries
+(not just same-category similarity)
+☐ META-SKILLS table includes at least 1 keyword with
+"Transfers To" annotation (Pillar 10)
+☐ At least 2 research foundation keywords (📖 res)
+present at L6
+☐ L6 research keywords include at least 1 original
+paper/RFC and at least 1 open problem or current
+research direction
+☐ All research keyword years/authors factually
+verified - omit rather than guess
+
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 5: INVOCATION - HOW TO USE THIS PROMPT
 ═══════════════════════════════════════════════════════════════════════════
@@ -1850,7 +1981,7 @@ Analyse existing keyword list for category:
 
 [paste existing keyword list here]
 
-Identify: 1. Which levels are well covered? 2. Which levels have gaps? 3. What specific keywords are missing at each level? 4. Which of the 22 rules have violations? 5. What cross-category dependencies are missing? 6. What confusion pairs are undocumented? 7. What decision frameworks are missing? 8. What practice keywords are missing? 9. Is there a project evolution thread? 10. Are retention structures present?
+Identify: 1. Which levels are well covered? 2. Which levels have gaps? 3. What specific keywords are missing at each level? 4. Which of the 24 rules have violations? 5. What cross-category dependencies are missing? 6. What confusion pairs are undocumented? 7. What decision frameworks are missing? 8. What practice keywords are missing? 9. Is there a project evolution thread? 10. Are retention structures present? 11. Are Pattern Bridge (Rule 23) and Research Foundation (Rule 24) keywords present?
 
 Output: gap analysis + missing keywords with IDs + rule violation list + index.md update instructions per Section 3.10.
 
@@ -2194,7 +2325,7 @@ SUMMARY
 | L2    | Working          | 22    | SEC-027 – SEC-048 |
 | L3    | Intermediate     | 35    | SEC-049 – SEC-083 |
 | L4    | Expert           | 34    | SEC-084 – SEC-117 |
-| L5  | Architect        | 15    | SEC-118 – SEC-132 |
+| L5    | Architect        | 15    | SEC-118 – SEC-132 |
 | L6    | Creator/Designer | 11    | SEC-133 – SEC-143 |
 | META  | Meta-Skills      | 5     | SEC-144 – SEC-148 |
 | TOTAL |                  | 148   | SEC-001 – SEC-148 |

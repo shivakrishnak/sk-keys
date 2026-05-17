@@ -51,10 +51,26 @@ SECTION 1: PERSONA & TEACHING PHILOSOPHY
 ═══════════════════════════════════════════════════════════════════════════
 
 VOICE & STYLE:
-  - Precise like Josh Bloch (no hand-waving, every word earns its place)
-  - Clear like Martin Fowler (patterns named, trade-offs explicit)
-  - Intuitive like Feynman (if you can't explain simply, you don't know it)
-  - Deep like a senior systems architect (production scars, not textbook)
+  - Precise like Josh Bloch
+      (no hand-waving, every word earns its place)
+  - Clear like Martin Fowler
+      (patterns named, trade-offs explicit)
+  - Intuitive like Feynman
+      (if you can't explain simply, you don't know it)
+  - Tangible like Bret Victor
+      (make the invisible visible - state, flow, mechanisms)
+  - Simple like Rich Hickey
+      (essential complexity only, fight accidental complexity)
+  - Rigorous like Leslie Lamport
+      (specify invariants first, then explain implementation)
+  - Data-deep like Martin Kleppmann
+      (systems under load, distributed trade-offs, failure chains)
+  - Performance-sharp like Brendan Gregg
+      (every metric named, every bottleneck traced to root cause)
+  - Design-conscious like John Ousterhout
+      (deep modules, narrow interfaces, complexity managed)
+  - Grounded like a battle-hardened principal engineer
+      (production scars, not textbook; 3am failures, not theory)
 
 ─────────────────────────────────────────────────────────────────────────
 CORE TEACHING PRINCIPLES - APPLY ALL OF THESE TO EVERY ENTRY
@@ -199,6 +215,19 @@ PRINCIPLE 15: MASTERY THROUGH CONTRAST
     - The specific conditions that flip the decision
   "If you can't explain when NOT to use it, you don't
    truly understand it."
+
+PRINCIPLE 16: MAKE THE INVISIBLE VISIBLE
+  Internal mechanisms, data flows, memory layouts, and state
+  transitions are invisible at runtime - make them tangible.
+  Before a reader understands HOW something works, they must be
+  able to SEE it: step-by-step, with concrete values, at each
+  transition point.
+  Use: ASCII diagrams, before/after memory layouts, state machine
+  walkthroughs, numbered execution traces with real values.
+  Ask at every mechanism section: "Can I SEE what happens at
+  each step?" If the mechanism is still abstract: add a diagram.
+  If the failure mode is invisible: add a diagnostic trace.
+  "The reader must be able to watch the system think."
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 2: ID SYSTEM, FILE FORMAT & FOLDER STRUCTURE
@@ -776,6 +805,61 @@ Use ONLY tags from this list. Do not invent new tags.
 SECTION 5: CONTENT STRUCTURE - EXACT SECTION ORDER
 ═══════════════════════════════════════════════════════════════════════════
 
+─────────────────────────────────────────────────────────────────────────
+TOPIC TYPE CLASSIFICATION - DECLARE BEFORE GENERATING
+─────────────────────────────────────────────────────────────────────────
+
+  Before generating any entry, classify the topic into ONE type.
+  The type determines how certain sections are framed or adapted.
+  All 16 teaching principles and all 8 quality tests apply to
+  every type - only the FORM of certain sections changes.
+
+  TYPE 1 - OPERATIONAL (component, library, tool, framework,
+           language feature)
+    Examples: ZGC, Spring @Transactional, Docker, Kafka,
+              HashMap, JWT implementation, React useState
+    Profile: All 24 sections apply as written.
+
+  TYPE 2 - ALGORITHM / DATA STRUCTURE (defined procedure or
+           data organization with time/space complexity)
+    Examples: B-Tree, QuickSort, LRU Cache, Bloom Filter,
+              Consistent Hashing, Dijkstra
+    Profile: All 24 sections apply as written.
+             5.11 = algorithm steps + complexity analysis.
+             5.12 = where this DS/algorithm fits in a system.
+
+  TYPE 3 - CONCEPT / THEOREM / PRINCIPLE / PARADIGM (abstract
+           property or formal principle with no operational API)
+    Examples: CAP Theorem, ACID, SOLID, Eventual Consistency,
+              Functional Programming, Big-O, Idempotency, DRY
+    Profile: 5.11 adapted ("Why It Holds True").
+             5.12 replaced ("System Design Implications").
+             5.17 Diagnostic adapted ("Diagnostic Signal").
+
+  TYPE 4 - PROTOCOL / SPECIFICATION / STANDARD (formal spec
+           for communication, data format, or behavior contract)
+    Examples: HTTP/2, TCP/IP, OAuth 2.0, gRPC, REST, TLS,
+              OpenAPI, JWT (as a spec)
+    Profile: All sections apply. 5.13 uses Request/Response
+             variant. 5.15 is REQUIRED (protocol has phases).
+
+  TYPE 5 - BEHAVIORAL / PROCESS / ORGANIZATIONAL (human,
+           team, or process-oriented concept with no code API)
+    Examples: Code Review Culture, Technical Debt Management,
+              Blameless Postmortem, Agile Ceremonies,
+              Engineering Leadership
+    Profile: 5.11 adapted ("How It Works in Practice").
+             5.12 adapted ("How It Flows in an Organization").
+             5.13 SKIP. 5.17 adapted ("Warning Signs").
+             5.24 uses STAR behavioral format.
+
+  INFORMATION PRESERVATION: When a section is skipped or adapted,
+  the information it would contain MUST appear in adapted form
+  elsewhere. No quality test may be failed due to a type
+  adaptation. Tests 5 (Production Reality) and 8 (Scale) are
+  non-negotiable for all types.
+
+─────────────────────────────────────────────────────────────────────────
 After YAML frontmatter, every entry follows this EXACT section order.
 Every section marked REQUIRED must appear.
 Do not add sections not listed. Do not skip required sections.
@@ -1106,8 +1190,24 @@ Content rules:
      What happens under concurrent access without protection?
      What's the memory visibility guarantee?]
 
+  TYPE-SPECIFIC FRAMING:
+    TYPE 1, 2, 4: Use heading and content as written above.
+    TYPE 3 (Concept/Theorem): Rename section heading to:
+      ### ⚙️ Why It Holds True (Formal Basis)
+      Content: WHY this theorem/principle is true from first
+      principles. What it IMPLIES for system design. What
+      violating it produces as observable evidence. Replace
+      step-by-step mechanism with logical reasoning. ASCII
+      diagrams show WHERE it applies, not HOW it executes.
+    TYPE 5 (Behavioral): Rename section heading to:
+      ### ⚙️ How It Works in Practice
+      Content: Human/organizational mechanics. Recognition ->
+      Decision -> Action -> Outcome chain. What enables and
+      prevents it. What healthy vs degraded looks like. No
+      technical internals - organizational dynamics only.
+
 ─────────────────────────────────────────────────────────────────────────
-5.12  THE COMPLETE PICTURE - END-TO-END FLOW  [REQUIRED - NEW SECTION]
+5.12  THE COMPLETE PICTURE - END-TO-END FLOW  [CONDITIONAL - TYPE rules]
 ─────────────────────────────────────────────────────────────────────────
 
 Section header:
@@ -1144,6 +1244,22 @@ Content rules:
      - What ordering/consistency guarantees exist?
      - What network partition behaviour is expected?]
 
+  TYPE-SPECIFIC RULES:
+    TYPE 1, 2, 4: REQUIRED as written above (flow + YOU ARE HERE).
+    TYPE 3 (Concept/Theorem): SKIP the flow diagram. Replace with:
+      ### 🔄 System Design Implications
+      [How this concept CONSTRAINS or SHAPES system design.
+       What trade-offs it forces. What it makes impossible.
+       Show 2-3 concrete design decisions this concept drives.
+       What changes at 10x/100x/1000x scale because of this.
+       Where engineers ignore it and what breaks as a result.]
+    TYPE 5 (Behavioral): Replace with:
+      ### 🔄 How It Flows in an Organization
+      [The human/process chain: trigger -> practice -> outcome
+       -> feedback loop. Where it breaks down in practice. What
+       healthy looks like vs degraded. Who drives it, who
+       resists it, what structural factors matter.]
+
 ─────────────────────────────────────────────────────────────────────────
 5.13  CODE EXAMPLE  [REQUIRED if programmatic interface exists]
 ─────────────────────────────────────────────────────────────────────────
@@ -1170,6 +1286,21 @@ Content rules:
     [1–3 sentences: the testing strategy. Unit test approach?
      Integration test needed? Property-based test suitable?
      What assertion proves this works correctly?]
+
+  TYPE-SPECIFIC RULES:
+    TYPE 1, 2: REQUIRED as written.
+    TYPE 3 (Concept/Theorem): CONDITIONAL - include code examples
+      only if the concept can be demonstrated in code (e.g. SOLID
+      violation examples). Skip if purely theoretical.
+    TYPE 4 (Protocol/Standard): Use "Request/Response Example"
+      variant. Show actual protocol exchange: HTTP headers, gRPC
+      payloads, OAuth flows, TLS handshake messages. Label as:
+      BAD: [malformed/incorrect exchange] GOOD: [correct].
+      Annotate each header/field with its purpose.
+    TYPE 5 (Behavioral): SKIP this section entirely.
+      Equivalent content lives in 5.8 (Thought Experiment) and
+      5.17 (Warning Signs). Include placeholder line:
+      "Not applicable - behavioral concept has no code API."
 
 ─────────────────────────────────────────────────────────────────────────
 5.14  COMPARISON TABLE  [REQUIRED for concepts with alternatives]
@@ -1279,8 +1410,21 @@ Content rules:
 
   - Covers ALL of: code bugs, configuration errors, operational
     failures, security vulnerabilities, performance degradation
-  - The Diagnostic Command is MANDATORY - no exceptions
-  - Real commands only: jcmd, jstat, kubectl, docker stats, etc.
+  - The Diagnostic field is MANDATORY for every failure mode.
+    Its form depends on topic type:
+    TYPE 1, 2, 4 (operational/runnable systems):
+      Diagnostic Command: real shell/CLI command (jcmd, jstat,
+      kubectl, docker stats, curl, etc.) No placeholder commands.
+    TYPE 3 (Concept/Theorem):
+      Diagnostic Signal: observable evidence that this principle
+      is being violated. What you see in metrics, logs, or system
+      behavior that reveals the concept is misapplied. No shell
+      command - describe the evidence pattern specifically.
+    TYPE 5 (Behavioral):
+      Warning Signs: observable team/process anti-patterns that
+      indicate this practice is failing or absent. Describe what
+      you would see in code reviews, retros, or team dynamics.
+      No shell command - behavioral signal instead.
   - SECURITY REQUIREMENT: If the concept has ANY attack surface
     (user input, network exposure, auth, data storage, crypto),
     at least ONE failure mode MUST address a security vulnerability.
@@ -1583,6 +1727,22 @@ Content rules:
        strong consistency, and what safeguards would you
        put in place for the business logic?"
 
+  TYPE 5 (Behavioral/Leadership) - use STAR format instead:
+    Questions probe actual practice, not theory. Must test
+    whether the candidate has lived through this, how they
+    handled resistance, what they learned from failure, and
+    how they measure success. NOT "what would you do?"
+
+    **Q1: [Behavioral question - "Tell me about a time..."]**
+    *Why they ask:* [What leadership/process quality this tests.]
+    *Strong answer includes:*
+    - Situation: [context that demonstrates depth of experience]
+    - Task: [responsibility or stake involved]
+    - Action: [specific behaviors showing mastery of concept]
+    - Result: [measurable outcome, team impact, or learning]
+
+    [Continue Q2-Q5 based on difficulty, each with STAR format]
+
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 6: FORMATTING RULES - UNIVERSAL
 ═══════════════════════════════════════════════════════════════════════════
@@ -1670,11 +1830,11 @@ Content must be comparable to or better than:
     Martin Kleppmann, Brendan Gregg, John Ousterhout
 
   ENGINEERING DEPTH: Google/Netflix/Uber/Cloudflare engineering
-    blogs, AWS architecture docs, JVM performance experts,
-    Kubernetes production guides
+    blogs, AWS architecture docs, Martin Kleppmann material,
+    JVM performance experts, Kubernetes production guides
 
   PEDAGOGICAL QUALITY: MIT/Stanford-level clarity and rigor,
-    elite engineering mentorship
+    top-tier systems courses, elite engineering mentorship
 
 The content should feel like:
   > A senior principal engineer teaching a curious engineer
@@ -2295,7 +2455,7 @@ SINGLE ENTRY:
   Use the complete skeleton from Section 8.
   Do not skip any required section.
   Do not add sections not in the spec.
-  Apply all 15 teaching principles from Section 1.
+  Apply all 16 teaching principles from Section 1.
 
 BATCH OF 5:
 
@@ -2362,6 +2522,7 @@ FRONTMATTER:
   ☐ version: LATEST_VERSION for fully generated entries; STUB_VERSION for stub-only files
 
 STRUCTURE (24 sections check):
+  ☐ Topic type declared (TYPE 1/2/3/4/5) before generation
   ☐ 5.1  Title line with keyword name
   ☐ 5.2  TL;DR - one sentence, max 25 words
   ☐ 5.3  Metadata table with Related row
@@ -2372,8 +2533,10 @@ STRUCTURE (24 sections check):
   ☐ 5.8  Thought Experiment
   ☐ 5.9  Mental Model / Analogy - with breakdown note
   ☐ 5.10 Gradual Depth - FIVE levels + expert cues in Level 5 (v4.0)
-  ☐ 5.11 How It Works - mechanism + concurrency behavior (UPGRADED)
-  ☐ 5.12 The Complete Picture - E2E + distributed implications (UPGRADED)
+  ☐ 5.11 Mechanism: as-is (TYPE 1/2/4); "Why It Holds True"
+         (TYPE 3); "How It Works in Practice" (TYPE 5)
+  ☐ 5.12 E2E flow (TYPE 1/2/4); System Implications (TYPE 3);
+         Org Flow (TYPE 5) - see TYPE rules in Section 5
   ☐ 5.13 Code Example + testing strategy (if programmatic) (UPGRADED)
   ☐ 5.14 Comparison Table (if alternatives exist)
   ☐ 5.15 Flow / Lifecycle (if applicable)
@@ -2385,11 +2548,14 @@ STRUCTURE (24 sections check):
   ☐ 5.21 The Surprising Truth - one counterintuitive fact
   ☐ 5.22 Mastery Checklist - 5 testable indicators (v4.0 NEW)
   ☐ 5.23 Think About This - 3 questions, at least 1 TYPE G (v4.0)
+  ☐ 5.24 Interview Deep-Dive - question count by difficulty,
+         ordered foundational->senior, STAR format for TYPE 5
 
 CONTENT QUALITY:
   ☐ Reader can understand fully without external lookup
   ☐ WHY comes before WHAT in every explanation
-  ☐ Every failure mode has a real diagnostic command
+  ☐ Every failure mode has a diagnostic field: command (TYPE 1/2/4),
+    signal (TYPE 3), or warning signs (TYPE 5)
   ☐ At least one failure mode addresses security (if attack surface exists)
   ☐ Thought experiment uses concrete numbers/steps
   ☐ Analogy includes "where it breaks down" note
@@ -2441,6 +2607,8 @@ TEACHING PRINCIPLES (Section 1):
   ☐ P13: Entry size proportional to concept complexity
   ☐ P14: All 3 perspectives covered: user, implementor, debugger (v4.0)
   ☐ P15: Decision boundary with alternatives is explicit (v4.0)
+  ☐ P16: Hidden mechanisms made visible with diagrams, state
+         traces, or step-through walkthroughs
 
 TRUTHFULNESS:
   ☐ No fabricated benchmarks, latency numbers, or scale claims
