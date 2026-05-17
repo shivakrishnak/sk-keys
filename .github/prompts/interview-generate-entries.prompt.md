@@ -169,6 +169,7 @@ git commit -m "feat: add interview <Topic> - batch <N>"
 ```
 
 **Batch Rules:**
+
 - Do NOT commit single files - wait until 5 files are created
 - Only count **created** files (not just modified)
 - If fewer than 5 remain at the end, commit all remaining

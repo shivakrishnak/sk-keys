@@ -33,11 +33,11 @@ It transforms reliability from a political debate
 into a data-driven governance tool that balances
 feature velocity against system stability.
 
-| #020 | Category: Observability & SRE | Difficulty: ★★☆ |
-|:---|:---|:---|
-| **Depends on:** | SLI, SLO, SLA | |
-| **Used by:** | Alerting Fundamentals, Alerting Anti-Patterns | |
-| **Related:** | SLI, SLO, SLA, Alerting Fundamentals | |
+| #020            | Category: Observability & SRE                 | Difficulty: ★★☆ |
+| :-------------- | :-------------------------------------------- | :-------------- |
+| **Depends on:** | SLI, SLO, SLA                                 |                 |
+| **Used by:**    | Alerting Fundamentals, Alerting Anti-Patterns |                 |
+| **Related:**    | SLI, SLO, SLA, Alerting Fundamentals          |                 |
 
 ---
 
@@ -91,6 +91,7 @@ is breached.
 
 **Budget consumption:** any event that reduces the
 SLI below 100% consumes budget:
+
 - Incidents (service outages, elevated error rates)
 - Planned maintenance windows (if not excluded from SLO)
 - Failed deployments that cause brief degradation
@@ -98,6 +99,7 @@ SLI below 100% consumes budget:
 
 **Budget remaining:** how much budget is left in
 the current window:
+
 ```
 Budget remaining = Error budget - Budget consumed so far
 Burn rate = Budget consumed rate / Budget accrual rate
@@ -343,43 +345,43 @@ a platform SLO breach.
 # Fast: fires when budget will be exhausted in ~2 days
 # Slow: fires when budget will be exhausted in ~3 days
 groups:
-- name: checkout-error-budget
-  rules:
-  - alert: CheckoutFastBurnRate
-    expr: |
-      (
-        (1 - sum(rate(checkout_ok[1h]))
-        / sum(rate(checkout_total[1h])))
-        / (1 - 0.999)
-      ) > 14.4    # budget exhausted in <2 days at this rate
-      AND
-      (
-        (1 - sum(rate(checkout_ok[5m]))
-        / sum(rate(checkout_total[5m])))
-        / (1 - 0.999)
-      ) > 14.4
-    labels:
-      severity: page
-    annotations:
-      summary: "Checkout SLO fast burn: deploy freeze triggered"
+  - name: checkout-error-budget
+    rules:
+      - alert: CheckoutFastBurnRate
+        expr: |
+          (
+            (1 - sum(rate(checkout_ok[1h]))
+            / sum(rate(checkout_total[1h])))
+            / (1 - 0.999)
+          ) > 14.4    # budget exhausted in <2 days at this rate
+          AND
+          (
+            (1 - sum(rate(checkout_ok[5m]))
+            / sum(rate(checkout_total[5m])))
+            / (1 - 0.999)
+          ) > 14.4
+        labels:
+          severity: page
+        annotations:
+          summary: "Checkout SLO fast burn: deploy freeze triggered"
 
-  - alert: CheckoutSlowBurnRate
-    expr: |
-      (
-        (1 - sum(rate(checkout_ok[6h]))
-        / sum(rate(checkout_total[6h])))
-        / (1 - 0.999)
-      ) > 6       # budget exhausted in <5 days at this rate
-      AND
-      (
-        (1 - sum(rate(checkout_ok[30m]))
-        / sum(rate(checkout_total[30m])))
-        / (1 - 0.999)
-      ) > 6
-    labels:
-      severity: ticket
-    annotations:
-      summary: "Checkout SLO slow burn: deployment review required"
+      - alert: CheckoutSlowBurnRate
+        expr: |
+          (
+            (1 - sum(rate(checkout_ok[6h]))
+            / sum(rate(checkout_total[6h])))
+            / (1 - 0.999)
+          ) > 6       # budget exhausted in <5 days at this rate
+          AND
+          (
+            (1 - sum(rate(checkout_ok[30m]))
+            / sum(rate(checkout_total[30m])))
+            / (1 - 0.999)
+          ) > 6
+        labels:
+          severity: ticket
+        annotations:
+          summary: "Checkout SLO slow burn: deployment review required"
 ```
 
 ---
@@ -520,34 +522,34 @@ echo "Error budget check passed. Deployment approved."
 
 ### ⚖️ Comparison Table
 
-| Budget state | Budget remaining | Action | Who decides |
-|---|---|---|---|
-| Healthy | > 50% | Deploy freely, accept risk | Team |
-| Caution | 20-50% | Deployment review required | Team + SRE review |
-| Warning | 5-20% | Only low-risk deployments | SRE sign-off required |
-| Exhausted | < 0% | Feature freeze, reliability sprint | SRE team authority |
-| Exception | Exhausted + urgent | Security patch only | VP Engineering sign-off |
+| Budget state | Budget remaining   | Action                             | Who decides             |
+| ------------ | ------------------ | ---------------------------------- | ----------------------- |
+| Healthy      | > 50%              | Deploy freely, accept risk         | Team                    |
+| Caution      | 20-50%             | Deployment review required         | Team + SRE review       |
+| Warning      | 5-20%              | Only low-risk deployments          | SRE sign-off required   |
+| Exhausted    | < 0%               | Feature freeze, reliability sprint | SRE team authority      |
+| Exception    | Exhausted + urgent | Security patch only                | VP Engineering sign-off |
 
 **Error budget policies across organisations:**
 
-| Style | Enforcement | Benefit | Risk |
-|---|---|---|---|
-| Advisory | Documented, no gate | Low friction | Ignored under pressure |
-| Automated gate | CI/CD blocks deploy | Consistent | May block urgent fixes |
-| Review board | Human approval for caution/exhausted | Contextual | Bottleneck, slow |
-| Hybrid | Gate + override + audit | Balanced | Requires governance setup |
+| Style          | Enforcement                          | Benefit      | Risk                      |
+| -------------- | ------------------------------------ | ------------ | ------------------------- |
+| Advisory       | Documented, no gate                  | Low friction | Ignored under pressure    |
+| Automated gate | CI/CD blocks deploy                  | Consistent   | May block urgent fixes    |
+| Review board   | Human approval for caution/exhausted | Contextual   | Bottleneck, slow          |
+| Hybrid         | Gate + override + audit              | Balanced     | Requires governance setup |
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-| Misconception | Reality |
-|---|---|
-| "Error budget = allowed downtime" | Error budget is allowed bad events (errors, slow requests), not just downtime. A 1% error rate for 1 hour consumes budget even if the service was technically "up." |
-| "Exhausting the budget is a failure" | Error budgets are designed to be occasionally exhausted. The budget exists to govern risk-taking. An SLO that is never breached and budget always full may indicate an over-conservative SLO that is slowing development unnecessarily. |
-| "100% SLO = maximum safety" | 100% SLO means zero error budget. Every deployment risks breaching the SLO. Development is paralysed. The correct SLO has enough error budget to allow controlled risk-taking. |
-| "Error budget resets on Jan 1" | Rolling window error budgets (last 30 days) do not reset on calendar boundaries. As incidents age out of the 30-day window, budget recovers. Calendar month windows do reset - this creates "sprint to deploy everything in the first week" incentives. |
-| "The error budget policy is optional" | Without an enforced policy, the error budget is just a number on a dashboard. The policy (what changes when budget is exhausted) is the mechanism that makes the error budget operationally meaningful. |
+| Misconception                         | Reality                                                                                                                                                                                                                                                 |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Error budget = allowed downtime"     | Error budget is allowed bad events (errors, slow requests), not just downtime. A 1% error rate for 1 hour consumes budget even if the service was technically "up."                                                                                     |
+| "Exhausting the budget is a failure"  | Error budgets are designed to be occasionally exhausted. The budget exists to govern risk-taking. An SLO that is never breached and budget always full may indicate an over-conservative SLO that is slowing development unnecessarily.                 |
+| "100% SLO = maximum safety"           | 100% SLO means zero error budget. Every deployment risks breaching the SLO. Development is paralysed. The correct SLO has enough error budget to allow controlled risk-taking.                                                                          |
+| "Error budget resets on Jan 1"        | Rolling window error budgets (last 30 days) do not reset on calendar boundaries. As incidents age out of the 30-day window, budget recovers. Calendar month windows do reset - this creates "sprint to deploy everything in the first week" incentives. |
+| "The error budget policy is optional" | Without an enforced policy, the error budget is just a number on a dashboard. The policy (what changes when budget is exhausted) is the mechanism that makes the error budget operationally meaningful.                                                 |
 
 ---
 
@@ -570,6 +572,7 @@ budget is structurally unachievable given current
 infrastructure quality and incident rate.
 
 **Diagnostic:**
+
 ```promql
 # Check what the 90-day SLI performance actually is
 # (to find the achievable baseline)
@@ -610,6 +613,7 @@ not mandatory. Under pressure, it is always overridden
 without logging or consequence.
 
 **Fix:**
+
 1. Implement the CI/CD gate (see code example above)
 2. Add an override mechanism with explicit approval:
    the override creates a Jira ticket, requires VP
@@ -638,6 +642,7 @@ planned windows.
 
 **Fix:**
 Exclude planned maintenance from SLO measurement:
+
 ```promql
 # Use a maintenance marker metric to exclude windows
 # During maintenance: set maintenance_active = 1
@@ -659,12 +664,14 @@ full 43-minute budget before the next window ends.
 ### 🔗 Related Keywords
 
 **Prerequisites (understand these first):**
+
 - `SLI (Service Level Indicator)` - the measurement
   that the error budget is calculated from
 - `SLO (Service Level Objective)` - the target that
   defines the error budget: error_budget = (1-SLO) x window
 
 **Builds On This (learn these next):**
+
 - `Alerting Fundamentals` - burn rate alerts fire
   when the error budget is being consumed faster
   than sustainable. The burn rate alert is the
@@ -674,6 +681,7 @@ full 43-minute budget before the next window ends.
   is not enforced
 
 **Alternatives / Comparisons:**
+
 - `Binary SLA` - the traditional alternative: "99.9%
   uptime or no credit." Simpler, but no daily
   operational signal. The error budget approach provides
@@ -756,6 +764,7 @@ value from its resources.
 ### ✅ Mastery Checklist
 
 **You've mastered this when you can:**
+
 1. **[CALCULATE]** Given a 99.95% SLO, a 30-day window,
    and 3 incidents (8 min, 15 min, 5 min of degradation),
    calculate the budget remaining as both a duration
@@ -791,7 +800,7 @@ a 20-minute incident. Calculate: (a) current budget
 remaining, (b) expected budget cost of the deployment,
 (c) expected budget remaining after deployment,
 (d) should you deploy or defer? Show your reasoning.
-*Hint: (a) 43.2 - 38 = 5.2 minutes remaining = 12%.
+_Hint: (a) 43.2 - 38 = 5.2 minutes remaining = 12%.
 (b) Expected cost: 0.15 x 20 = 3 minutes. (c) Expected
 remaining: 5.2 - 3 = 2.2 minutes = 5%. (d) State:
 WARNING (< 20% remaining). Expected state after deploy:
@@ -799,10 +808,11 @@ still above 0% but very close. Decision: high risk -
 10% chance the deployment breaches the SLO outright
 (uses the remaining 5.2 minutes + breach). Defer
 to May 1 when budget resets, unless this is a critical
-security or compliance fix.*
+security or compliance fix._
 
 **Q2.** Your service has a 99.9% SLO. The monthly
 error budget is 43.2 minutes. In the last 3 months:
+
 - January: 41 minutes consumed (95% of budget)
 - February: 39 minutes consumed (90% of budget)
 - March: 44 minutes consumed (102% of budget - breached)
@@ -811,7 +821,7 @@ The SLO is at 99.9%. The SLA is at 99.5% (SLA not
 breached in any month). What does this data tell you
 about the SLO calibration? What action should the
 SRE team take?
-*Hint: The budget is consistently being almost-depleted
+_Hint: The budget is consistently being almost-depleted
 or depleted every month. This suggests either: (a)
 the incident rate is too high (need reliability
 investment), or (b) the SLO is set too high for the
@@ -823,7 +833,7 @@ headroom, (2) lower SLO to 99.8% to create more
 headroom (controversial - appears to lower standards),
 (3) raise SLA concern: if SLI is consistently 99.9%,
 the SLA at 99.5% has massive buffer - the SLO is
-doing its job but leaving no deployment budget.*
+doing its job but leaving no deployment budget._
 
 **Q3 (TYPE G):** You are designing the error budget
 framework for a platform team that owns 5 shared
@@ -838,7 +848,7 @@ policy interacts with consuming teams, how consuming
 teams are notified of platform budget status, and
 what the platform team's responsibilities are during
 a budget exhaustion event.
-*Hint: Platform services need higher SLOs than
+_Hint: Platform services need higher SLOs than
 application services (auth failure = all users
 affected). Auth SLO: 99.99%. DB proxy: 99.99%.
 Message broker: 99.95%. When platform budget is
@@ -850,7 +860,7 @@ their own services (platform outage vs consuming
 team deployment are independent). Exception: if
 the platform issue is related to a specific
 integration pattern that consuming teams use -
-that pattern should be temporarily blocked.*
+that pattern should be temporarily blocked._
 
 ---
 
@@ -858,9 +868,10 @@ that pattern should be temporarily blocked.*
 
 **Q1: "What is an error budget and how does it
 influence development velocity?"**
-*Why they ask:* Tests understanding of the core SRE
+_Why they ask:_ Tests understanding of the core SRE
 governance mechanism and its operational impact.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Error budget = (1 - SLO) x window. For 99.9% SLO
   over 30 days: 43.2 minutes of allowed bad events.
 - It influences velocity by providing a data-driven
@@ -879,9 +890,10 @@ governance mechanism and its operational impact.
 
 **Q2: "What is a burn rate and why do we use it for
 SLO alerting?"**
-*Why they ask:* Tests understanding of the most
+_Why they ask:_ Tests understanding of the most
 important alerting pattern in SRE practice.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - Burn rate = current error rate / (1 - SLO target)
 - Burn rate > 1: consuming budget faster than accrual
   rate (budget will not last the full month)
@@ -898,9 +910,10 @@ important alerting pattern in SRE practice.
 **Q3: "How do you handle a situation where a critical
 business feature must be deployed when the error
 budget is exhausted?"**
-*Why they ask:* Tests ability to balance SRE principles
+_Why they ask:_ Tests ability to balance SRE principles
 with business reality.
-*Strong answer includes:*
+_Strong answer includes:_
+
 - First: clarify "critical" - is this a security
   vulnerability fix? (Yes, deploy with SRE oversight
   and rollback plan). A revenue-generating feature?
