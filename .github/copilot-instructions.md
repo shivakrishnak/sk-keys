@@ -2,7 +2,7 @@
 
 This workspace is the **sk-keys Technical Reference** containing two independent content systems:
 
-1. **Technical Dictionary** (`dictionary/`) - 3,638+ keyword entries across 55 categories in 9 tiers, v4.0 spec
+1. **Technical Mastery** (`technical-mastery/`) - 3,638+ keyword entries across 55 categories in 9 tiers, v6.0 spec
 2. **Interview Mastery Dictionary** (`interview/`) - Interview-focused content with deep Q&A, v3.0 spec
 
 These systems are **completely separate** - never mix their specs, rules, or output formats.
@@ -18,14 +18,14 @@ Root (site essentials only)
   index.md                            Site root page
   README.md                           Repo readme
 
-dictionary/
-  _config/                            Dictionary specs and scripts
-    GENERATOR_PROMPT.md               Master generation spec v4.0
-    KEYWORD_GENERATOR_PROMPT.md       Category keyword generator v4.0
+technical-mastery/
+  _config/                            technical-mastery specs and scripts
+    ENTRY_GENERATOR_PROMPT.md               Master generation spec v6.0
+    MASTERY_OS_PROMPT.md       Category keyword generator v6.0
     CATEGORY_GENERATOR_PROMPT.md      Single-category generator
-    TECHNICAL_DICTIONARY.md           Master keyword list
+    TECHNICAL_MASTERY_LIST.md           Master keyword list (read-only ref; MAY be read for coverage reference; NEVER used as keyword generation source; updated AFTER keyword generation)
     GENERATE_QUEUE.md                 Generation queue guide
-  index.md                            Dictionary nav root
+  index.md                            technical-mastery nav root
   tier-1-foundations/                  Content tiers (9 total)
   tier-2-networking-security/
   ...
@@ -46,15 +46,15 @@ interview/
 
 .github/
   agents/                             Custom Copilot agents
-    dictionary.agent.md               /dictionary - generate/scale dict content
+    technical-mastery.agent.md               /technical-mastery - generate/scale dict content
     interview.agent.md                /interview - generate/scale interview content
   instructions/                       Auto-attach instructions
-    dictionary.instructions.md        Loads for dictionary/** edits
+    technical-mastery.instructions.md        Loads for technical-mastery/** edits
     interview.instructions.md         Loads for interview/** edits
   prompts/                            Copilot prompt files
-    dict-generate-entries.prompt.md   Generate dictionary entries
-    dict-generate-keywords.prompt.md  Generate dictionary keywords
-    dict-upgrade-batch.prompt.md      Upgrade dictionary to v4.0
+    technical-mastery-generate-entries.prompt.md   Generate technical-mastery entries
+    technical-mastery-generate-keywords.prompt.md  Generate dictionary keywords
+    technical-mastery-upgrade-batch.prompt.md      Upgrade dictionary to v6.0
     interview-fill-content.prompt.md  Fill interview scaffolds
     interview-scaffold.prompt.md      Run scaffold generator
   workflows/pages.yml                 GitHub Pages deployment
@@ -67,11 +67,11 @@ tmp/                                  Historical/utility scripts
 | Context                       | What loads automatically                            |
 | ----------------------------- | --------------------------------------------------- |
 | Any interaction               | This file (lean overview + shared rules)            |
-| Editing `dictionary/**` files | + `.github/instructions/dictionary.instructions.md` |
+| Editing `technical-mastery/**` files | + `.github/instructions/technical-mastery.instructions.md` |
 | Editing `interview/**` files  | + `.github/instructions/interview.instructions.md`  |
-| Using `/dictionary` agent     | Agent instructions + reads specs on demand          |
+| Using `/technical-mastery` agent     | Agent instructions + reads specs on demand          |
 | Using `/interview` agent      | Agent instructions + reads specs on demand          |
-| Using `@dict-*` prompts       | Prompt-specific instructions + agent tools          |
+| Using `@technical-mastery-*` prompts       | Prompt-specific instructions + agent tools          |
 | Using `@interview-*` prompts  | Prompt-specific instructions + agent tools          |
 
 ## Shared Rules (both systems)
@@ -87,6 +87,9 @@ tmp/                                  Historical/utility scripts
 - No em dashes anywhere - use regular hyphens only
 - Code lines: max 70 characters
 - ASCII diagrams: max 59 characters wide
+- Diagrams: DUAL format - ASCII block first, then equivalent Mermaid block immediately below. Supported Mermaid types: `flowchart`, `sequenceDiagram`, `stateDiagram-v2`, `classDiagram`, `erDiagram`, `mindmap`
+- No `# H1` in dictionary entry body - Just the Docs generates H1 from YAML `title` field (interview files keep `# Keyword` as keyword separators)
+- Bold-label lines (`**LABEL:** value`) must each be separated by a blank line - consecutive bold-label lines merge into one paragraph on Jekyll
 - BAD pattern before GOOD pattern in all code examples
 - Every `###` heading preceded by `---` with blank lines
 
@@ -98,8 +101,8 @@ tmp/                                  Historical/utility scripts
 ### Git Workflow
 
 ```bash
-# Dictionary: commit in batches of 10 created files
-git add dictionary/
+# Technical Mastery: commit in batches of 10 created files
+git add technical-mastery/
 git commit -m "feat: add <CODE>-<START>-<CODE>-<END> <Category> - batch <N>"
 
 # Interview: commit in batches of 5 created files
@@ -112,7 +115,7 @@ git commit -m "feat: add interview <Topic> - batch <N>"
 
 **Batch Commit Rules (Non-Negotiable):**
 
-- Dictionary: commit every **10 created files** (never single files)
+- Technical Mastery: commit every **10 created files** (never single files)
 - Interview: commit every **5 created files** (never single files)
 - Only commit files that were **created** (not just modified)
 - If fewer than the batch size remain at the end, commit all remaining
@@ -121,7 +124,7 @@ git commit -m "feat: add interview <Topic> - batch <N>"
 ## Content Quality Constitution (Non-Negotiable)
 
 Every piece of generated content MUST pass the Quality Constitution.
-Full details in `dictionary/_config/GENERATOR_PROMPT.md` Section 7
+Full details in `technical-mastery/_config/ENTRY_GENERATOR_PROMPT.md` Section 7
 and `interview/_config/INTERVIEW_PROMPT.md` Section 5.
 
 ### Eight Quality Tests (ALL must pass)
@@ -179,13 +182,13 @@ Before outputting: "Would an experienced engineer say 'Damn - this is genuinely 
 
 | Item                | Location                                          |
 | ------------------- | ------------------------------------------------- |
-| Full spec           | `dictionary/_config/GENERATOR_PROMPT.md`          |
-| Keyword generator   | `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`  |
-| Master keyword list | `dictionary/_config/TECHNICAL_DICTIONARY.md`      |
-| Generation queue    | `dictionary/_config/GENERATE_QUEUE.md`            |
-| Auto-instructions   | `.github/instructions/dictionary.instructions.md` |
+| Full spec           | `technical-mastery/_config/ENTRY_GENERATOR_PROMPT.md`          |
+| Keyword generator   | `technical-mastery/_config/MASTERY_OS_PROMPT.md`  |
+| Master keyword list | `technical-mastery/_config/TECHNICAL_MASTERY_LIST.md` (read-only reference; MAY be read to understand topic coverage and check IDs; NEVER used as source to generate new keywords; updated ONLY AFTER keyword generation) |
+| Generation queue    | `technical-mastery/_config/GENERATE_QUEUE.md`            |
+| Auto-instructions   | `.github/instructions/technical-mastery.instructions.md` |
 
-**Version Registry:** `LATEST_VERSION` = 4, `LATEST_VERSION_LABEL` = v4.0, `STUB_VERSION` = 0
+**Version Registry:** `LATEST_VERSION` = 6, `LATEST_VERSION_LABEL` = v6.0, `STUB_VERSION` = 0
 
 ## Quick Reference - Interview
 
@@ -201,8 +204,9 @@ Before outputting: "Would an experienced engineer say 'Damn - this is genuinely 
 
 ## Default Behaviour
 
-- When asked to work on **dictionary** content: read `dictionary/_config/GENERATOR_PROMPT.md` for the full spec
+- When asked to work on **dictionary** content: read `technical-mastery/_config/ENTRY_GENERATOR_PROMPT.md` for the full spec
 - When asked to work on **interview** content: read `interview/_config/INTERVIEW_PROMPT.md` for the full spec
+- When generating or updating any **keyword list**: read `technical-mastery/_config/MASTERY_OS_PROMPT.md` FIRST. You MAY read `TECHNICAL_MASTERY_LIST.md` to understand existing topic coverage and check for ID conflicts, but NEVER use it as the source to generate new keywords. All keyword generation must go through `MASTERY_OS_PROMPT.md`. `TECHNICAL_MASTERY_LIST.md` is updated ONLY AFTER keyword generation completes.
 - When asked to generate/create/upgrade entries, apply all rules automatically without confirmation
-- When editing dictionary files, the dictionary instructions auto-load with the Category Code Registry and section rules
+- When editing dictionary files, the technical-mastery instructions auto-load with the Category Code Registry and section rules
 - When editing interview files, the interview instructions auto-load with section structure and Q&A rules

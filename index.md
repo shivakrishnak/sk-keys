@@ -4,5 +4,5 @@ title: "Home"
 nav_order: 0
 permalink: /home/
 ---
-# 📚 Technical Dictionary
-See the [Technical Dictionary](/) for the full 1,770-keyword reference.
+# 📚 Technical Mastery
+See the [Technical Mastery](/) for the full 1,770-keyword reference.

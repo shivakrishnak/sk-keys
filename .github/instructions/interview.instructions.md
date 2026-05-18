@@ -12,11 +12,11 @@ description: "Rules for generating and editing Interview Mastery Dictionary v3.0
 
 ## Relationship to Main Dictionary
 
-The `/dictionary/` and `/interview/` systems are **completely separate**:
+The `/technical-mastery/` and `/interview/` systems are **completely separate**:
 
-- Do NOT apply `GENERATOR_PROMPT.md` rules to `/interview/` files
-- Do NOT apply `INTERVIEW_PROMPT.md` rules to `/dictionary/` files
-- Do NOT create files in `/dictionary/` when working on interview content
+- Do NOT apply `ENTRY_GENERATOR_PROMPT.md` rules to `/interview/` files
+- Do NOT apply `INTERVIEW_PROMPT.md` rules to `/technical-mastery/` files
+- Do NOT create files in `/technical-mastery/` when working on interview content
 
 ## Workspace Structure
 
@@ -83,12 +83,14 @@ interview/
 
 - Code lines: max 70 characters
 - ASCII diagrams: max 59 characters wide
+- Diagrams: DUAL format - ASCII block first, then equivalent Mermaid block immediately below. Types: `flowchart`, `sequenceDiagram`, `stateDiagram-v2`, `classDiagram`, `erDiagram`, `mindmap`
 - Paragraphs: max 5 sentences
 - BAD pattern before GOOD pattern in all code examples
 - Every `###` heading preceded by `---` with blank lines
 - Keywords within a file separated by double horizontal rules
 - No em dashes anywhere - use regular hyphens only
 - Bold-label lines (`**LABEL:** value`) must each be separated by a blank line - consecutive bold-label lines merge into one paragraph on Jekyll
+- No `# H1` duplication - interview files use `# Keyword Name` as keyword separators (not duplicating YAML `title`)
 
 ## Encoding Rules
 
@@ -165,7 +167,7 @@ title: "Topic - Subtopic"
 parent: "Topic Name"
 grand_parent: "Interview Mastery"
 nav_order: N
-permalink: /interview/{topic}/{slug}/
+permalink: /technical-mastery/interview/{topic}/{slug}/
 topic: Topic
 subtopic: Subtopic
 keywords:
@@ -186,7 +188,7 @@ title: "Topic Name"
 parent: "Interview Mastery"
 has_children: true
 nav_order: N
-permalink: /interview/{topic-name}/
+permalink: /technical-mastery/interview/{topic-name}/
 ---
 ```
 
@@ -238,7 +240,7 @@ Use scaffold only to preview file structure:
 
 **New topic:** `Create new interview mastery topic: Angular` (checks registry, generates keywords, creates files)
 
-**From dictionary:** `Generate interview content from: tier-3-java` (scans dictionary, maps to interview topics)
+**From Technical Mastery:** `Generate interview content from: tier-3-java` (scans dictionary, maps to interview topics)
 
 ## Folder/File Rules
 
@@ -251,7 +253,7 @@ Use scaffold only to preview file structure:
 ## Keyword Level Coverage (MANDATORY)
 
 Every interview topic MUST cover ALL knowledge levels from
-`dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`:
+`technical-mastery/_config/MASTERY_OS_PROMPT.md`:
 
 | Level | Icon | Name         | Min KW | What It Covers                          |
 | ----- | ---- | ------------ | ------ | --------------------------------------- |

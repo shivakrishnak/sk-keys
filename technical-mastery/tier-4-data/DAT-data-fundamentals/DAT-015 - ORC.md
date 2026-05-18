@@ -1,0 +1,594 @@
+---
+version: 1
+layout: default
+title: "ORC"
+parent: "Data Fundamentals"
+grand_parent: "Technical Mastery"
+nav_order: 15
+permalink: /technical-mastery/data-fundamentals/orc/
+id: DAT-013
+category: Data Fundamentals
+difficulty: ★★☆
+depends_on: Columnar vs Row Storage, Parquet, Binary Formats, Apache Spark
+used_by: Apache Hive, Hudi, Delta Lake, Data Lake
+related: Parquet, Avro, Delta Lake, Data Compression, Columnar vs Row Storage
+tags:
+  - dataengineering
+  - intermediate
+  - bigdata
+  - database
+  - performance
+---
+
+⚡ TL;DR - ORC (Optimised Row Columnar) is Hive's columnar file format with built-in Bloom filters and stripe-level statistics that enable predicate pushdown before reading any data.
+
+| #504 | Category: Data Fundamentals | Difficulty: ★★☆ |
+|:---|:---|:---|
+| **Depends on:** | Columnar vs Row Storage, Parquet, Binary Formats, Apache Spark | |
+| **Used by:** | Apache Hive, Hudi, Data Lake | |
+| **Related:** | Parquet, Avro, Delta Lake, Data Compression, Columnar vs Row Storage | |
+
+---
+
+### 🔥 The Problem This Solves
+
+**WORLD WITHOUT IT:**
+Apache Hive ran on top of HDFS and used text-based SequenceFiles
+or RCFiles (Row Columnar) in the early Hadoop era. RCFile stored
+data in column-oriented pages but lacked per-stripe statistics.
+A Hive query with `WHERE order_status = 'CANCELLED'` had to read
+every stripe of data - even stripes containing only COMPLETED
+orders - because there was no way to know whether a stripe
+contained any CANCELLED records without reading it.
+
+**THE BREAKING POINT:**
+As Hive tables grew to hundreds of billions of rows across
+thousands of stripes, the inability to skip irrelevant stripes
+meant that highly selective queries (99% of stripes irrelevant)
+still read 100% of the data. Hive queries that should have run in
+5 minutes took 3 hours because the engine was forced to scan
+petabytes of data to find megabytes of relevant records.
+
+**THE INVENTION MOMENT:**
+This is exactly why ORC was created at Hortonworks in 2013.
+ORC added per-stripe column statistics (min/max/sum/count) and
+Bloom filters so the Hive engine could skip entire 256 MB stripes
+before reading any data bytes. The same selective query went from
+3 hours to 12 minutes purely from stripe-level pruning.
+
+---
+
+### 📘 Textbook Definition
+
+**ORC (Optimised Row Columnar)** is a self-describing, type-aware
+columnar binary file format designed for Hive and the broader
+Hadoop ecosystem. ORC stores data in horizontal **stripes**
+(default 256 MB). Within each stripe, data is stored column-by-
+column. Each stripe has two index structures: the **stripe footer**
+(column-level min/max/count statistics per stripe) and an
+optional **Row Index** (lightweight statistics every 10,000 rows
+within a stripe for fine-grained skip). ORC also supports
+**Bloom filters** per column per stripe for efficient point-query
+filtering. The file-level **postscript** and **footer** store
+schema, stripe offsets, and file-level statistics using
+Protocol Buffers.
+
+---
+
+### ⏱️ Understand It in 30 Seconds
+
+**One line:**
+ORC is a columnar file format with a built-in directory - it
+knows what's in each section before you open it.
+
+**One analogy:**
+
+> A traditional library has a card catalogue telling you which
+> floor each topic is on, but you still have to walk through
+> each aisle once you're on the right floor. ORC is like a
+> library where every aisle entrance has a sign: "This aisle
+> contains books from authors A–G, published 1990–2010."
+> If you want a book by Smith from 2020, you skip the aisle
+> without entering.
+
+**One insight:**
+ORC's Bloom filter is the complement to min/max statistics.
+Min/max is excellent for range queries (date between X and Y).
+Bloom filters are excellent for equality queries
+(status = 'CANCELLED'). ORC provides both, covering a wider range
+of query patterns than a format with only min/max statistics.
+
+---
+
+### 🔩 First Principles Explanation
+
+**CORE INVARIANTS:**
+1. Columnar layout: all values of column X stored contiguously
+   within a stripe.
+2. Stripe statistics allow skipping stripes without reading data.
+3. Bloom filters allow skipping stripes for point-equality queries
+   that min/max alone cannot rule out.
+
+**DERIVED DESIGN:**
+Stripe layout (256 MB by default):
+- Index data (Row Index + Bloom filter per column)
+- Actual column data (streams: present, data, length, dictionary)
+- Stripe footer (column encoding info, stream positions)
+
+The Row Index creates checkpoints every 10,000 rows within a
+stripe, recording byte positions so the engine can jump directly
+to the relevant segment in a stripe after checking row-level
+statistics. This is more granular than Parquet's 1 MB data pages
+for range queries.
+
+Bloom filters: a probabilistic set membership structure per
+column per stripe. Testing `status = 'CANCELLED'` against the
+Bloom filter takes microseconds. A definitive `NO` from the
+filter means the stripe has zero CANCELLED records - skip the
+entire 256 MB stripe. The false-positive rate is tunable
+(lower = larger filter size).
+
+**THE TRADE-OFFS:**
+
+**Gain:** Stripe-level statistics + Bloom filters → better
+selective query performance than Parquet for equality predicates;
+built-in ACID support (via Hive's ORC ACID) for transactional
+workloads in Hive.
+
+**Cost:** Stripe size (256 MB) is larger than Parquet row group
+(128 MB), making parallel reads less granular. Parquet has
+broader multi-engine support (Spark, Presto, Trino, BigQuery,
+Athena); ORC has historically tighter Hive integration.
+
+---
+
+### 🧪 Thought Experiment
+
+**SETUP:**
+A Hive table with 1 billion order records. 1% of orders have
+`status = 'CANCELLED'`. Table is 400 GB stored as ORC.
+Query: `SELECT COUNT(*) WHERE status = 'CANCELLED'`
+
+**WITHOUT BLOOM FILTER / MIN-MAX (pre-ORC RCFile):**
+Engine reads all 400 GB. For 99% of the data read, `status` is
+not CANCELLED. 396 GB of I/O was wasted.
+
+**WITH ORC STRIPE STATISTICS:**
+Min/max per stripe: if a stripe's status range is
+['COMPLETED', 'PENDING'] (no CANCELLED alphabetically in range),
+the stripe can be skipped. But status encoding is a dictionary -
+min/max doesn't help for categorical equality checks.
+
+**WITH ORC BLOOM FILTER:**
+Each stripe has a Bloom filter for the `status` column. Testing
+`CANCELLED` against each filter:
+- Stripes with COMPLETED only → filter says NOT in set → skip
+- 80% of stripes can be skipped in 1 millisecond each
+- Only read 20% of stripes (80 GB) → verify in-memory
+
+**THE INSIGHT:**
+Bloom filters are the right tool for equality predicates on
+categorical values. Min/max statistics are the right tool for
+range predicates on ordered values (dates, IDs). A format that
+provides both covers the dominant query patterns in analytics.
+
+---
+
+### 🧠 Mental Model / Analogy
+
+> ORC is like a highly organised warehouse with two innovations:
+> every pallet has a tag listing the min and max item value
+> (for range queries), AND a QR code that instantly answers
+> "does this pallet contain item X?" with high accuracy (Bloom
+> filter). The warehouse manager can point to relevant pallets
+> in seconds without opening any of them.
+
+- "Pallet" → ORC stripe (256 MB block)
+- "Min/max tag" → stripe column statistics
+- "QR code" → Bloom filter per column per stripe
+- "Opening a pallet" → reading stripe data bytes
+- "Manager pointing at pallets" → predicate pushdown engine
+
+**Where this analogy breaks down:** The Bloom filter can say
+"maybe" (false positive) but never "definitely yes" - only
+"definitely no." So ORC still reads some stripes whose Bloom
+filter returns a false positive. Tuning the Bloom filter size
+reduces false positives at the cost of storage overhead.
+
+---
+
+### 📶 Gradual Depth - Four Levels
+
+**Level 1 - What it is (anyone can understand):**
+ORC is a file format for storing massive amounts of data
+efficiently. It's similar to Parquet but was built specifically
+for Apache Hive. Its key feature is that before reading any
+data, it can check metadata to decide whether a 256 MB section
+of data might contain what you're looking for - and skip it
+entirely if not.
+
+**Level 2 - How to use it (junior developer):**
+In Hive: `SET hive.exec.orc.default.compress=SNAPPY;` then
+`CREATE TABLE t STORED AS ORC`. In Spark: specify ORC format:
+`df.write.format("orc").save("s3://bucket/data/")` and
+`spark.read.format("orc").load("s3://bucket/data/")`. Set Bloom
+filters for high-selectivity equality columns:
+`tblproperties ("orc.bloom.filter.columns" = "status,region")`.
+
+**Level 3 - How it works (mid-level engineer):**
+ORC file layout: postscript (compression codec, version) → 0 or
+more stripes → file footer (schema as TypeDescription, stripe
+offsets, file-level stats, Bloom filter FPP).
+
+Each stripe: index data (Row Index entries every 10,000 rows with
+byte offsets per stream + stats) → row data (column streams) →
+stripe footer (streams registry, encoding info per column).
+
+Column streams in a stripe: `PRESENT` stream (NULL bitmap),
+`DATA` stream (values), auxiliary streams depending on type
+(LENGTH for strings; DICTIONARY_DATA + DICTIONARY_LENGTH for
+dict-encoded strings; SECONDARY for timestamps). Each stream
+is independently compressed.
+
+ORC type encodings: integers use ORCv2's improved run-length
+encoding (RLEv2) with delta encoding, patched bitset, and
+byte run-length modes - more compact than Parquet's RLE_DICTIONARY
+for monotonic sequences.
+
+**Level 4 - Why it was designed this way (senior/staff):**
+ORC was designed as Parquet's concurrent alternative during the
+same 2013 timeframe. The key design difference: ORC chose a 256 MB
+stripe vs Parquet's 128 MB row group - a deliberate bet that
+larger blocks produce better compression ratios and fewer file
+seeks in HDFS. ORC also embedded the Bloom filter at the format
+level (not a later addition), reflecting Hive's dominant use
+case: data warehouse point-queries with equality predicates.
+Parquet added Bloom filters only in parquet-format 2.5.0 (2018),
+five years after ORC. Historically, ORC's Hive ACID (insert,
+update, delete with MVCC on ORC using delta files) predates
+Delta Lake/Iceberg by years - making ORC the first production
+ACID table format in the Hadoop ecosystem. Apache Hudi's
+default format is ORC for Merge-on-Read tables. The long-term
+trend is ORC being displaced by Parquet + Delta Lake/Iceberg
+outside the Hive-native ecosystem.
+
+---
+
+### ⚙️ How It Works (Mechanism)
+
+```
+┌──────────────────────────────────────────────────────┐
+│                  ORC FILE LAYOUT                     │
+├──────────────────────────────────────────────────────┤
+│ Stripe 0 (256 MB default)                            │
+│  ┌─ Index Data ────────────────────────────────────┐ │
+│  │  Row Index (every 10K rows):                    │ │
+│  │    [byte offset in data][col stats: min,max]    │ │
+│  │  Bloom Filter (per column per stripe):          │ │
+│  │    [bit array, FPP=0.05 default]               │ │
+│  └─────────────────────────────────────────────────┘ │
+│  ┌─ Row Data ──────────────────────────────────────┐ │
+│  │  status stream: PRESENT + DATA (dict-enc)       │ │
+│  │  price stream:  PRESENT + DATA (RLEv2)          │ │
+│  │  ts stream:     PRESENT + DATA + SECONDARY      │ │
+│  └─────────────────────────────────────────────────┘ │
+│  Stripe Footer (encoding info, stream lengths)       │
+├──────────────────────────────────────────────────────┤
+│ Stripe 1 ... Stripe N                                │
+├──────────────────────────────────────────────────────┤
+│ File Footer (schema, stripe offsets, file-level stats│
+│ Bloom filter false positive probability per column)  │
+├──────────────────────────────────────────────────────┤
+│ Postscript (compression codec, footer length)        │
+└──────────────────────────────────────────────────────┘
+```
+
+**Query execution with Bloom filter:**
+```
+Query: SELECT price WHERE status = 'CANCELLED'
+
+For each stripe:
+  1. Read Bloom filter for 'status' column (~1 KB)
+  2. Test 'CANCELLED' against filter:
+     - "DEFINITELY NOT PRESENT" → skip entire 256 MB stripe
+     - "MAYBE PRESENT" → proceed
+  3. If maybe: read Row Index, locate relevant 10K-row
+    segments
+  4. Read only those column chunks for status + price
+  5. Final filter in memory
+```
+
+---
+
+### 💻 Code Example
+
+**Example 1 - Create ORC table in Hive with Bloom filters:**
+```sql
+-- Hive: create ORC table with Bloom filter on status
+CREATE TABLE orders (
+  order_id BIGINT,
+  customer_id BIGINT,
+  status STRING,
+  amount DECIMAL(10,2),
+  created_at TIMESTAMP
+)
+STORED AS ORC
+TBLPROPERTIES (
+  "orc.compress" = "SNAPPY",
+  "orc.bloom.filter.columns" = "status,customer_id",
+  "orc.bloom.filter.fpp" = "0.05"
+);
+```
+
+**Example 2 - Write and read ORC in Spark:**
+```python
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.getOrCreate()
+
+# Write as ORC
+df.write \
+  .mode("overwrite") \
+  .option("compression", "snappy") \
+  .format("orc") \
+  .save("s3://bucket/orders_orc/")
+
+# Read with pushdown (Spark auto-applies to ORC)
+result = spark.read \
+  .format("orc") \
+  .load("s3://bucket/orders_orc/") \
+  .filter("status = 'CANCELLED'") \
+  .select("order_id", "amount")
+
+result.explain(True)
+# Look for: PushedFilters in the plan
+```
+
+**Example 3 - Inspect ORC file metadata:**
+```python
+import pyorc
+
+# Read ORC schema and stripe info
+with open("orders.orc", "rb") as f:
+    reader = pyorc.Reader(f)
+    print("Schema:", reader.schema)
+    print("Rows:", reader.num_of_rows)
+    print("Stripes:", reader.num_of_stripes)
+    for i in range(reader.num_of_stripes):
+        stripe = reader.stripe(i)
+        print(f"Stripe {i}: {stripe.length} bytes,"
+              f" {stripe.num_of_rows} rows")
+```
+
+**Example 4 - Hive ACID update (ORC unique feature):**
+```sql
+-- ORC supports ACID transactions in Hive
+-- (unique among the major file formats)
+SET hive.support.concurrency=true;
+SET hive.txn.manager=org.apache.hadoop.hive.ql.lockmgr.DbTxnManager;
+
+-- Update (not possible with raw Parquet, requires Delta/Iceberg)
+UPDATE orders SET status = 'CANCELLED'
+WHERE order_id = 1001;
+
+-- Hive writes a delta file alongside the base ORC files
+-- and merges on read (or compact periodically)
+```
+
+---
+
+### ⚖️ Comparison Table
+
+| Feature | ORC | Parquet |
+|---|---|---|
+| **Layout** | Columnar (256 MB stripes) | Columnar (128 MB row groups) |
+| **Bloom filter** | Built-in (since v1) | Added in spec v2.5 (2018) |
+| **ACID transactions** | Hive ACID (delta files) | Via Delta Lake / Iceberg |
+| **Primary ecosystem** | Hive, Hudi, Flink | Spark, Presto, BigQuery, Athena |
+| **Row index granularity** | 10,000 rows | Page-level (~1 MB) |
+| **Compression** | ZLIB, Snappy, LZO, LZ4, Zstd | Snappy, Gzip, Brotli, Zstd, LZ4 |
+| **Best for** | Hive-primary, Hudi MoR | Multi-engine data lake |
+
+**How to choose:** Use ORC if your workload is Hive-primary or
+if you need Bloom filter support on Hive < 3.0. Use Parquet if
+you use Spark/Trino/BigQuery/Athena or need broader multi-engine
+support. Both are excellent; ecosystem matters more than format
+differences for most workloads.
+
+---
+
+### ⚠️ Common Misconceptions
+
+| Misconception | Reality |
+|---|---|
+| Parquet always outperforms ORC | ORC outperforms Parquet for equality-predicate queries where its Bloom filters skip large amounts of data; both are comparable for range scans |
+| ORC is obsolete | ORC remains the default format for Apache Hudi Merge-on-Read tables and is actively used in Hive-based production systems worldwide |
+| Bloom filters guarantee data is absent | Bloom filters can say "definitely not here" or "maybe here" - false positives still occur. The stripe must be read when the filter returns "maybe" |
+| ORC and Parquet are interchangeable | While both are columnar, their stripe/row-group sizes, Bloom filter semantics, and ACID models differ. Migrating between them requires re-writing all data |
+| ORC's 256 MB stripe is worse than 128 MB row groups | Larger stripes produce better compression ratios and fewer HDFS block seeks. For analytics-only workloads, 256 MB is often more efficient |
+
+---
+
+### 🚨 Failure Modes & Diagnosis
+
+**Bloom Filter False Positives Causing Excessive Reads**
+
+**Symptom:**
+A highly selective query reads far more stripes than expected.
+Query plan shows Bloom filter pushdown active but still reads
+80% of data.
+
+**Root Cause:**
+Bloom filter false positive rate (FPP) is too high (default 5%
+means 5% of irrelevant stripes still get read). At 1000 stripes
+and 1% true positives = 10 relevant stripes, 5% FPP adds
+~50 false-positive stripe reads.
+
+**Diagnostic Command / Tool:**
+```sql
+-- Check Bloom filter FPP setting in Hive table
+DESCRIBE EXTENDED orders;
+-- Look for: orc.bloom.filter.fpp in Table Parameters
+```
+
+**Fix:**
+```sql
+ALTER TABLE orders SET TBLPROPERTIES (
+  "orc.bloom.filter.fpp" = "0.01"  -- 1% FPP, larger filter
+);
+-- Rewrite table to apply new Bloom filter
+INSERT OVERWRITE TABLE orders SELECT * FROM orders;
+```
+
+**Prevention:**
+Set FPP based on cardinality and selectivity. For low-cardinality
+columns (20 distinct values), FPP of 0.01 adds minimal size.
+Monitor via `EXPLAIN EXTENDED` to verify skip rates.
+
+---
+
+**Hive ACID Compaction Lag**
+
+**Symptom:**
+ORC ACID table accumulates thousands of delta files.
+Hive queries slow from minutes to hours.
+
+**Root Cause:**
+`INSERT`, `UPDATE`, `DELETE` in Hive ACID write delta files
+alongside the base ORC files. Without regular compaction, queries
+must merge hundreds of delta files at read time.
+
+**Diagnostic Command / Tool:**
+```sql
+-- Check number of delta files for a partition
+SHOW COMPACTIONS;
+-- Count delta files
+HDFS dfs -ls /warehouse/tablepath/ | grep delta | wc -l
+```
+
+**Fix:**
+Run compaction manually:
+```sql
+ALTER TABLE orders COMPACT 'MAJOR';
+-- MAJOR compaction rewrites base + all deltas into clean ORC files
+```
+
+**Prevention:**
+Configure automatic compaction:
+`SET hive.compactor.initiator.on=true;`
+`SET hive.compactor.worker.threads=4;`
+Monitor delta file accumulation; set compaction thresholds.
+
+---
+
+**ORC Files Too Large for Parallel Spark Reads**
+
+**Symptom:**
+Spark reads a table with 10 ORC files each 5 GB. Only 10 Spark
+tasks are created. Cluster of 100 cores sits idle.
+
+**Root Cause:**
+`spark.sql.files.maxPartitionBytes` (default 128 MB) is not
+applied to ORC files if the files are indivisible by Spark's
+file split logic. Very large ORC files may each become one
+Spark task, underutilising the cluster.
+
+**Diagnostic Command / Tool:**
+```python
+df = spark.read.format("orc").load("s3://bucket/table/")
+print(df.rdd.getNumPartitions())  # Should be >> num files
+df.explain(True)
+# Look for partition count in FileScan
+```
+
+**Fix:**
+Re-partition ORC files at write time:
+```python
+df.repartition(500).write.format("orc").mode("overwrite") \
+  .save("s3://bucket/table_repartitioned/")
+# Target: 200–500 MB per file, many files
+```
+
+**Prevention:**
+When writing ORC from Spark, set
+`spark.sql.shuffle.partitions` and use `repartition()` to
+produce files in the 128–512 MB range.
+
+---
+
+### 🔗 Related Keywords
+
+**Prerequisites (understand these first):**
+- `Columnar vs Row Storage` - ORC is a columnar format;
+  the conceptual foundation for understanding ORC's benefits
+- `Parquet` - ORC's primary competitor; understanding both
+  reveals their trade-offs clearly
+- `Binary Formats` - ORC is a binary format; context for
+  why binary over text
+
+**Builds On This (learn these next):**
+- `Hudi` - Apache Hudi uses ORC as its Merge-on-Read
+  format, combining streaming writes with ORC analytics
+- `Delta Lake` - the Spark/Databricks alternative to Hive
+  ACID that stores data as Parquet, not ORC
+- `Data Compression` - the compression codecs applied
+  per stream within ORC stripes
+
+**Alternatives / Comparisons:**
+- `Parquet` - broader multi-engine ecosystem; complementary
+  columnar format with different stripe/Bloom filter history
+- `Avro` - row-oriented streaming format; used where
+  full-record sequential reads dominate
+- `Apache Iceberg` - open table format that can use either
+  Parquet or ORC as the underlying file format
+
+---
+
+### 📌 Quick Reference Card
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ WHAT IT IS   │ Hive's columnar binary format with built-│
+│              │ in Bloom filters and stripe statistics   │
+├──────────────┼──────────────────────────────────────────┤
+│ PROBLEM IT   │ Pre-ORC formats had to read all stripes  │
+│ SOLVES       │ even for highly selective queries        │
+├──────────────┼──────────────────────────────────────────┤
+│ KEY INSIGHT  │ Bloom filter = "definitely not here" for │
+│              │ equality queries - skip 99% of data      │
+├──────────────┼──────────────────────────────────────────┤
+│ USE WHEN     │ Hive-primary workloads; Hudi MoR tables; │
+│              │ equality-predicate-heavy analytics       │
+├──────────────┼──────────────────────────────────────────┤
+│ AVOID WHEN   │ Multi-engine data lake (Spark+Trino+Athen│
+│              │ prefer Parquet); operational simplicity  │
+├──────────────┼──────────────────────────────────────────┤
+│ TRADE-OFF    │ Bloom filter power vs Parquet's broader  │
+│              │ multi-engine ecosystem                   │
+├──────────────┼──────────────────────────────────────────┤
+│ ONE-LINER    │ "ORC knows what it doesn't have -        │
+│              │  and refuses to waste your time."        │
+├──────────────┼──────────────────────────────────────────┤
+│ NEXT EXPLORE │ Parquet → Delta Lake → Apache Iceberg    │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 🧠 Think About This Before We Continue
+
+**Q1.** A data platform uses ORC with Hive ACID for a 500 billion
+row transaction table. Over 18 months, engineers have been
+performing `UPDATE` and `DELETE` operations daily. Today Hive
+queries take 6× longer than on Day 1. Using your understanding
+of ORC ACID's delta file accumulation, trace exactly what is
+happening to the on-disk representation of the table over those
+18 months, why reads slow down, and what the complete remediation
+plan looks like including its operational risks.
+
+**Q2.** Both ORC Bloom filters and Parquet row group statistics
+(min/max) aim to let query engines skip reading data. Compare
+precisely the types of predicates each handles well and badly.
+Then design a query pattern where ORC Bloom filters skip 95% of
+data but Parquet min/max statistics cannot skip any, and another
+query pattern where the situation is reversed.
+

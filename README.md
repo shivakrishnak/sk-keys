@@ -1,16 +1,16 @@
-﻿# sk-keys Technical Reference
+# sk-keys Technical Reference
 
 A comprehensive software engineering reference with two content systems:
 
-1. **Technical Dictionary** - 3,638+ keyword entries across 55 categories in 9 tiers (v4.0)
+1. **Technical Mastery** - 3,638+ keyword entries across 55 categories in 9 tiers (v4.0)
 2. **Interview Mastery Dictionary** - Interview-focused content with deep Q&A (v3.0)
 
 ## Structure
 
 | Folder                | Purpose                                       |
 | --------------------- | --------------------------------------------- |
-| `dictionary/`         | Dictionary entries organized by tier/category |
-| `dictionary/_config/` | Dictionary specs and generation scripts       |
+| `technical-mastery/`         | technical-mastery entries organized by tier/category |
+| `technical-mastery/_config/` | technical-mastery specs and generation scripts       |
 | `interview/`          | Interview mastery entries organized by topic  |
 | `interview/_config/`  | Interview specs and generation scripts        |
 | `.github/`            | Copilot instructions, prompts, and workflows  |
@@ -18,13 +18,13 @@ A comprehensive software engineering reference with two content systems:
 
 ## Agents (recommended)
 
-Use `/dictionary` or `/interview` in VS Code Copilot chat for end-to-end content generation:
+Use `/technical-mastery` or `/interview` in VS Code Copilot chat for end-to-end content generation:
 
 ```
-/dictionary tier-3 JVM              Generate entries for JVM category
-/dictionary upgrade tier-1 CSF      Upgrade CSF entries to v4.0
-/dictionary new: PostgreSQL, Trino  Generate keywords + content for new topics
-/dictionary "Strong SQL skills..."  Analyze description, create keywords + content
+/technical-mastery tier-3 JVM              Generate entries for JVM category
+/technical-mastery upgrade tier-1 CSF      Upgrade CSF entries to v4.0
+/technical-mastery new: PostgreSQL, Trino  Generate keywords + content for new topics
+/technical-mastery "Strong SQL skills..."  Analyze description, create keywords + content
 
 /interview Angular                  Create new interview topic with full content
 /interview React hooks              Add subtopic to existing React topic
@@ -35,15 +35,15 @@ Use `/dictionary` or `/interview` in VS Code Copilot chat for end-to-end content
 ## Prompts
 
 ```bash
-# Dictionary: @dict-generate-entries, @dict-generate-keywords, @dict-upgrade-batch
+# Technical Mastery: @technical-mastery-generate-entries, @technical-mastery-generate-keywords, @technical-mastery-upgrade-batch
 # Interview: @interview-fill-content, @interview-scaffold
 ```
 
 ## Specs
 
-- Dictionary: `dictionary/_config/GENERATOR_PROMPT.md` (v4.0)
+- Technical Mastery: `technical-mastery/_config/ENTRY_GENERATOR_PROMPT.md` (v4.0)
 - Interview: `interview/_config/INTERVIEW_PROMPT.md` (v3.0)
-- Keywords: `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` (shared)
+- Keywords: `technical-mastery/_config/MASTERY_OS_PROMPT.md` (shared)
 
 See `.github/copilot-instructions.md` for workspace instructions.
 

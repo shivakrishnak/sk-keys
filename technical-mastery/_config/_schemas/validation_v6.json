@@ -1,0 +1,236 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://sk-keys.github.io/northstar/schemas/validation_v6.json",
+  "title": "Technical Mastery Validation Report v6.0",
+  "description": "JSON Schema for validating the ENTRY_GENERATOR output validation report block. Schema version: entry_v6.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "version",
+    "status",
+    "difficulty",
+    "topic_type",
+    "sections_present",
+    "quality_tests_passed",
+    "kpi_results",
+    "red_team_critique_applied",
+    "prompt_injection_attempt",
+    "truthfulness_check"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version - must be entry_v6.",
+      "const": "entry_v6"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Z]{2,4}-[0-9]{3}$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 6
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "in-progress", "complete"]
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["★☆☆", "★★☆", "★★★"]
+    },
+    "topic_type": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "sections_present": {
+      "type": "array",
+      "description": "Section numbers present in the emitted entry.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "quality_tests_passed": {
+      "type": "array",
+      "description": "Indices 1-8 of quality tests passed from the Constitution.",
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 8
+      },
+      "minItems": 8,
+      "maxItems": 8
+    },
+    "kpi_results": {
+      "type": "object",
+      "description": "KPI 1-8 results from Section 7.10.",
+      "properties": {
+        "kpi1_repetition_density": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "number" },
+            "pass": { "type": "boolean" }
+          }
+        },
+        "kpi2_cognitive_load_balance": {
+          "type": "object",
+          "properties": {
+            "pass": { "type": "boolean" }
+          }
+        },
+        "kpi3_code_to_prose_ratio": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "number" },
+            "threshold": { "type": "number" },
+            "pass": { "type": "boolean" }
+          }
+        },
+        "kpi4_mental_model_specificity": {
+          "type": "object",
+          "properties": {
+            "score": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "pass": { "type": "boolean" }
+          }
+        },
+        "kpi5_interview_alignment": {
+          "type": "object",
+          "properties": {
+            "avg_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "pass": { "type": "boolean" }
+          }
+        },
+        "kpi6_dimension_coverage": {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "threshold": { "type": "number" },
+            "pass": { "type": "boolean" }
+          }
+        },
+        "kpi7_version_coherence": {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "pass": { "type": "boolean" }
+          }
+        },
+        "kpi8_tooling_readiness": {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "pass": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "red_team_critique_applied": {
+      "type": "boolean",
+      "description": "True if the red-team hostile reviewer pass was completed."
+    },
+    "red_team_revision_sections": {
+      "type": "array",
+      "description": "Section numbers revised as a result of red team pass.",
+      "items": { "type": "string" }
+    },
+    "surprising_truth_score": {
+      "type": "integer",
+      "description": "Section 5.21 rubric score (0-3). Target >= 2 for ★★★.",
+      "minimum": 0,
+      "maximum": 3
+    },
+    "blooms_levels_covered": {
+      "type": "array",
+      "description": "Bloom's taxonomy levels present in Section 5.22.",
+      "items": {
+        "type": "string",
+        "enum": ["REMEMBER", "UNDERSTAND", "APPLY",
+                 "ANALYZE", "EVALUATE", "CREATE"]
+      },
+      "uniqueItems": true
+    },
+    "persona_pitches_included": {
+      "type": "boolean",
+      "description": "True if Section 5.6 persona pitches are present."
+    },
+    "concept_fingerprint_included": {
+      "type": "boolean",
+      "description": "True if Section 5.25 Concept Fingerprint is present."
+    },
+    "failure_signatures_included": {
+      "type": "boolean",
+      "description": "True if Section 5.26 Failure Signature Index is present."
+    },
+    "sustainability_included": {
+      "type": "boolean",
+      "description": "True if Section 5.27 Sustainability & Ethics is present."
+    },
+    "prompt_injection_attempt": {
+      "type": "boolean",
+      "description": "True if a prompt injection was detected in inputs."
+    },
+    "truthfulness_check": {
+      "type": "string",
+      "enum": ["pass", "fail", "partial"]
+    },
+    "upgrade_diff": {
+      "type": "object",
+      "description": "Present only when upgrade_mode is true.",
+      "properties": {
+        "preserved": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "edited": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "rewritten": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "added": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "removed": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "previous_version": { "type": "integer" },
+        "new_version": { "type": "integer" },
+        "v6_gaps_filled": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

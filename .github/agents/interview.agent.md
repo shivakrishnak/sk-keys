@@ -1,5 +1,5 @@
 ---
-description: "Use when: generating interview content, creating new interview topics, adding subtopics, scaling interview coverage, converting dictionary content to interview format. Trigger: /interview, new topic, subtopic, interview content, from dictionary tier/category"
+description: "Use when: generating interview content, creating new interview topics, adding subtopics, scaling interview coverage, converting technical-mastery content to interview format. Trigger: /interview, new topic, subtopic, interview content, from dictionary tier/category"
 tools: [read, edit, search, execute, todo]
 argument-hint: "Angular | React hooks | from tier-3 JVM | description: Strong SQL skills..."
 ---
@@ -187,7 +187,7 @@ excellent'?" If uncertain: rewrite. Masterclass = target.
 | File                                             | Purpose                                   | When to read                                   |
 | ------------------------------------------------ | ----------------------------------------- | ---------------------------------------------- |
 | `interview/_config/INTERVIEW_PROMPT.md`          | Master generation spec v3.0 (19 sections) | ONCE per session - first keyword only          |
-| `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` | Keyword list generator v4.0               | When generating NEW keyword lists for any mode |
+| `technical-mastery/_config/MASTERY_OS_PROMPT.md` | Keyword list generator v6.0               | When generating NEW keyword lists for any mode |
 | `interview/_config/topic-registry.md`            | Topic-to-folder mapping                   | When checking existing topics                  |
 | `interview/index.md`                             | Navigation root with all topics           | ALWAYS - to understand current structure       |
 
@@ -199,7 +199,7 @@ excellent'?" If uncertain: rewrite. Masterclass = target.
 ## Keyword Level Coverage Framework (MANDATORY - ALL MODES)
 
 When generating keyword lists for ANY interview topic, you MUST ensure
-coverage across ALL knowledge levels from `KEYWORD_GENERATOR_PROMPT.md`.
+coverage across ALL knowledge levels from `MASTERY_OS_PROMPT.md`.
 This is NON-NEGOTIABLE. A topic missing L0/L1 (foundations) or
 L5/L6/META (architecture and theory) is INCOMPLETE.
 
@@ -253,7 +253,7 @@ Before generating content, verify the keyword list covers:
 
 If ANY level is missing: add keywords before generating content.
 
-### Mandatory Keyword Types per KEYWORD_GENERATOR_PROMPT.md
+### Mandatory Keyword Types per MASTERY_OS_PROMPT.md
 
 At L3+, the keyword list MUST include:
 
@@ -275,10 +275,10 @@ Trigger: user names a topic like Angular, Docker, SQL that has no folder
 in `interview/`
 
 1. Read `interview/_config/INTERVIEW_PROMPT.md` (full spec)
-2. Read `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` (keyword gen spec)
+2. Read `technical-mastery/_config/MASTERY_OS_PROMPT.md` (keyword gen spec)
 3. Scan `interview/` folder to confirm topic does not exist
 4. Analyze where this topic belongs (determine logical grouping)
-5. Generate keyword list using KEYWORD_GENERATOR_PROMPT.md:
+5. Generate keyword list using MASTERY_OS_PROMPT.md:
    - Cover ALL knowledge levels: L0 through L6 + META
    - Group keywords into subtopic files (3-5 keywords per file, max 5)
    - Include a `{Topic} - Foundations.md` file (L0+L1 keywords, max 5)
@@ -314,9 +314,9 @@ Trigger: user names a subtopic like "React hooks" where the parent topic
 (React) already exists as a folder in `interview/`
 
 1. Read `interview/_config/INTERVIEW_PROMPT.md` (full spec)
-2. Read `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` (keyword gen spec)
+2. Read `technical-mastery/_config/MASTERY_OS_PROMPT.md` (keyword gen spec)
 3. Scan `interview/{topic}/` to see existing subtopic files
-4. Generate keyword list for the new subtopic using KEYWORD_GENERATOR_PROMPT.md
+4. Generate keyword list for the new subtopic using MASTERY_OS_PROMPT.md
    - Verify the subtopic keywords fill gaps in the topic's level coverage
    - Check if the topic is missing L0/L1 or L5/L6/META keywords
 5. **Run Keyword Cross-Verification** (see section below)
@@ -333,10 +333,10 @@ Trigger: user mentions a dictionary tier (tier-3) or category code
 (JVM, JCC, SPR) to generate interview content from
 
 1. Read `interview/_config/INTERVIEW_PROMPT.md` (full spec)
-2. Read `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` (keyword gen spec)
+2. Read `technical-mastery/_config/MASTERY_OS_PROMPT.md` (keyword gen spec)
 3. Scan the referenced dictionary tier/category:
    - Read dictionary `index.md` to find the category
-   - List files in the dictionary category folder
+   - List files in the technical-mastery category folder
 4. Scan existing `interview/` topics to find overlap
 5. Cross-verify: identify keywords that exist in dictionary but not
    in interview, or areas where interview coverage is thin
@@ -354,13 +354,13 @@ Trigger: user provides a description, job description, or feature list
 like "Strong SQL skills and experience with relational databases..."
 
 1. Read `interview/_config/INTERVIEW_PROMPT.md` (full spec)
-2. Read `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` (keyword gen spec)
+2. Read `technical-mastery/_config/MASTERY_OS_PROMPT.md` (keyword gen spec)
 3. Read `interview/index.md` to understand existing coverage
 4. Analyze the description to extract:
    - Technologies and skills mentioned
    - Experience areas and knowledge domains
    - Implicit skills (what someone with this JD needs to know)
-5. Generate keyword lists per extracted topic using KEYWORD_GENERATOR_PROMPT.md
+5. Generate keyword lists per extracted topic using MASTERY_OS_PROMPT.md
 6. **Run Keyword Cross-Verification** (see section below)
 7. Map keywords to existing or new topics:
    - If topic folder exists: check for gaps, add new subtopic files
@@ -374,10 +374,10 @@ like "Strong SQL skills and experience with relational databases..."
 After generating or collecting a keyword list - and BEFORE creating
 scaffold files or filling content - run this verification step:
 
-1. **Read the dictionary category `index.md`** for the matching category
-   (e.g., `dictionary/tier-3-java/JLG-java-language/index.md`).
+1. **Read the technical-mastery category `index.md`** for the matching category
+   (e.g., `technical-mastery/tier-3-java/JLG-java-language/index.md`).
    Extract all keyword names from the table.
-2. **Read `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`** Section 1
+2. **Read `technical-mastery/_config/MASTERY_OS_PROMPT.md`** Section 1
    (7 Knowledge Levels) and Section 2 (22 Rules). Use these as a
    completeness checklist:
    - Rule 5: all 10 knowledge dimensions covered?
@@ -423,7 +423,7 @@ title: "{Topic} - {Subtopic}" # REQUIRED - quoted, matches filename
 parent: "{Topic Name}" # REQUIRED - matches topic index title
 grand_parent: "Interview Mastery" # REQUIRED - always this value
 nav_order: N # REQUIRED - integer, unique within topic
-permalink: /interview/{topic}/{slug}/ # REQUIRED - lowercase, hyphens
+permalink: /technical-mastery/interview/{topic}/{slug}/ # REQUIRED - lowercase, hyphens
 topic: { Topic } # REQUIRED - unquoted topic name
 subtopic: { Subtopic } # REQUIRED - unquoted subtopic name
 keywords: # REQUIRED - list, min 3, max 5
@@ -446,7 +446,7 @@ title: "{Topic Name}" # REQUIRED - quoted
 parent: "Interview Mastery" # REQUIRED - always this value
 has_children: true # REQUIRED - always true
 nav_order: N # REQUIRED - unique across topics
-permalink: /interview/{topic-name}/ # REQUIRED - lowercase, hyphens
+permalink: /technical-mastery/interview/{topic-name}/ # REQUIRED - lowercase, hyphens
 ---
 ```
 
@@ -547,7 +547,7 @@ Only stop when:
 
 ## Constraints
 
-- NEVER modify files under `dictionary/` - systems are completely separate
+- NEVER modify files under `technical-mastery/` - systems are completely separate
   (only READ dictionary files for cross-reference in Mode 3)
 - NEVER skip reading `INTERVIEW_PROMPT.md` before generating the FIRST
   keyword in a session (subsequent keywords use condensed rules)
@@ -562,6 +562,8 @@ Only stop when:
 - Folder naming: lowercase with hyphens (e.g., `java-concurrency/`)
 - Code lines: max 70 characters
 - ASCII diagrams: max 59 characters wide
+- Diagrams: DUAL format (ASCII first, then Mermaid below). Types: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap
+- Bold-label lines (`**LABEL:** value`) must each be separated by a blank line
 - No em dashes anywhere - use regular hyphens only
 - YAML frontmatter starts at byte 0 with `---`
 - UTF-8 without BOM for all file operations

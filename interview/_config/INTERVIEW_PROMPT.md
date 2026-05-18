@@ -408,7 +408,7 @@ Format:
 
 Rules:
   - H1 header with the keyword name
-  - No ID prefix (unlike the dictionary format)
+  - No ID prefix (unlike the technical-mastery format)
   - Plain keyword name only
 
 ----------------------------------------------------------------
@@ -594,7 +594,7 @@ Section header:
 
 PURPOSE: Complete, summarized mechanism explanation. The reader
 should understand the full lifecycle/process after reading this.
-Shorter than the dictionary version but MUST cover everything
+Shorter than the technical-mastery version but MUST cover everything
 essential.
 
 Rules:
@@ -609,6 +609,15 @@ Rules:
     * Max width: 59 characters (57 content + 2 borders)
     * Box-drawing chars: + - | or Unicode box chars
     * Every diagram has a descriptive title
+  - DUAL FORMAT (mandatory):
+    * Every diagram must appear TWICE: ASCII block first,
+      then equivalent Mermaid block immediately below
+    * ASCII = primary (renders everywhere)
+    * Mermaid = supplementary (renders on GitHub/Jekyll)
+    * Supported Mermaid types ONLY: flowchart,
+      sequenceDiagram, stateDiagram-v2, classDiagram,
+      erDiagram, mindmap
+    * No custom Mermaid styling or theming
   - Distinguish: happy path vs failure path
   - Summarize but be COMPLETE - nothing essential left out
   - If concept involves concurrency/threading, state thread-
@@ -1106,6 +1115,9 @@ HEADERS:
 SECTION SPACING:
   - Every ### heading preceded by --- horizontal rule
   - Blank line before and after both --- and ###
+  - Bold-label lines (**LABEL:** value) must each be separated
+    by a blank line - consecutive bold-label lines merge into
+    one paragraph on Jekyll
   - Skip content inside code fences
   - Skip frontmatter block
 

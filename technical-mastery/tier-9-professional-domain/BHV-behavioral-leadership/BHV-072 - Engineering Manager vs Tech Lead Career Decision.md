@@ -1,0 +1,23 @@
+---
+id: BHV-008
+title: Engineering Manager vs Tech Lead Career Decision
+category: Behavioral & Leadership
+tier: tier-9-professional-domain
+folder: BHV-behavioral-leadership
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - bhv
+  - foundational
+status: draft
+version: 0
+layout: default
+parent: "Behavioral & Leadership"
+grand_parent: "Technical Mastery"
+nav_order: 72
+permalink: /technical-mastery/behavioral-leadership/engineering-manager-vs-tech-lead-career-decision/
+---
+
+> Entry stub. Generate full v4.0 content using the Master Prompt.

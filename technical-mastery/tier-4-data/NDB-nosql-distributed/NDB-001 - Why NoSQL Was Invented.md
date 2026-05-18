@@ -1,0 +1,24 @@
+---
+id: NDB-001
+title: Why NoSQL Was Invented
+category: NoSQL & Distributed Databases
+tier: tier-4-data
+folder: NDB-nosql-distributed
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - ndb
+  - foundational
+  - mental-model
+status: draft
+version: 0
+layout: default
+parent: "NoSQL & Distributed Databases"
+grand_parent: "Technical Mastery"
+nav_order: 1
+permalink: /technical-mastery/ndb/why-nosql-was-invented/
+---
+
+> Entry stub. Generate full content using Master Prompt v3.0.

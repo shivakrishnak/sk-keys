@@ -1,0 +1,24 @@
+---
+id: TSC-001
+title: What Is TypeScript and Why It Matters
+category: TypeScript
+tier: tier-7-frontend
+folder: TSC-typescript
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - tsc
+  - foundational
+  - mental-model
+status: draft
+version: 0
+layout: default
+parent: "TypeScript"
+grand_parent: "Technical Mastery"
+nav_order: 1
+permalink: /technical-mastery/tsc/what-is-typescript-and-why-it-matters/
+---
+
+> Entry stub. Generate full content using Master Prompt v3.0.

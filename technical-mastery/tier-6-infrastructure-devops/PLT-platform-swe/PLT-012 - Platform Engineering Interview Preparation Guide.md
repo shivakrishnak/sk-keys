@@ -1,0 +1,23 @@
+---
+id: PLT-014
+title: Platform Engineering Interview Preparation Guide
+category: Platform & Modern SWE
+tier: tier-6-infrastructure-devops
+folder: PLT-platform-swe
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - plt
+  - foundational
+status: draft
+version: 0
+layout: default
+parent: "Platform & Modern SWE"
+grand_parent: "Technical Mastery"
+nav_order: 12
+permalink: /technical-mastery/platform-swe/platform-engineering-interview-preparation-guide/
+---
+
+> Entry stub. Generate full v4.0 content using the Master Prompt.

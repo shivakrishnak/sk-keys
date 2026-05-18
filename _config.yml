@@ -1,4 +1,4 @@
-title: Dictionary
+title: Technical Mastery
 description: comprehensive, categorized keyword list - covering every layer of the stack a senior/staff engineer should deeply know.
 url: https://shivakrishnak.github.io
 baseurl: /sk-keys
@@ -20,7 +20,7 @@ exclude:
   - Gemfile.lock
   - vendor/
   - tmp/
-  - dictionary/_config/
+  - technical-mastery/_config/
   - interview/_config/
 
 # Search — disabled: 1,362 pages produce a ~25MB Lunr index

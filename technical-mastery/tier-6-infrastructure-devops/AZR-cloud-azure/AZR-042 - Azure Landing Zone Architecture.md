@@ -1,0 +1,25 @@
+---
+id: AZR-046
+title: Azure Landing Zone Architecture
+category: Cloud -- Azure
+tier: tier-6-infrastructure-devops
+folder: AZR-cloud-azure
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - azr
+  - advanced
+  - production
+  - deep-dive
+status: draft
+version: 0
+layout: default
+parent: "Cloud - Azure"
+grand_parent: "Technical Mastery"
+nav_order: 42
+permalink: /technical-mastery/azr/azure-landing-zone-architecture/
+---
+
+> Entry stub. Generate full content using Master Prompt v3.0.

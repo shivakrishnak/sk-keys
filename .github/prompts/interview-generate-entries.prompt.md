@@ -81,7 +81,9 @@ decisions:
 
 - Every `###` preceded by `---` with blank lines
 - ASCII diagrams max 59 chars; code lines max 70 chars
+- Diagrams: DUAL format (ASCII first, then Mermaid below). Types: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap
 - BAD pattern always before GOOD pattern
+- Bold-label lines (`**LABEL:** value`) separated by blank lines
 - No em dashes - use hyphens
 - Interview Deep-Dive: question count by difficulty (7/9/12 min)
 - Each Q: tag + why-they-ask + likely-follow-up + complete answer

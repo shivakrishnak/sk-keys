@@ -6,32 +6,32 @@
     Operates in multiple modes: single file, full topic, from dictionary
     tier, new topic creation, and subtopic addition.
 
-    Uses dictionary/_config/KEYWORD_GENERATOR_PROMPT.md (Category Keyword Generator v4.0)
-    via .github/prompts/dict-generate-keywords.prompt.md for keyword
+    Uses technical-mastery/_config/MASTERY_OS_PROMPT.md (Category Keyword Generator v4.0)
+    via .github/prompts/technical-mastery-generate-keywords.prompt.md for keyword
     discovery when creating new topics or scanning dictionary categories.
 
     DESIGN CONSIDERATIONS:
     - For new topics without an index.md, uses
-      dictionary/_config/KEYWORD_GENERATOR_PROMPT.md to generate keywords, applies
+      technical-mastery/_config/MASTERY_OS_PROMPT.md to generate keywords, applies
       folder/file rules, then generates content.
     - For topics like Angular that do not exist, analyses where
       the topic belongs, generates keywords via
-      dictionary/_config/KEYWORD_GENERATOR_PROMPT.md, creates folders/files, and
+      technical-mastery/_config/MASTERY_OS_PROMPT.md, creates folders/files, and
       generates content.
     - For new subtopics (e.g., React Hooks) where the main topic
       exists, creates the file in the existing folder, generates
-      keywords via dictionary/_config/KEYWORD_GENERATOR_PROMPT.md, and generates
+      keywords via technical-mastery/_config/MASTERY_OS_PROMPT.md, and generates
       content.
     - For existing dictionary categories (e.g., JVM, JCC), scans
-      the dictionary index.md, analyses keywords, checks for new
+      the technical-mastery index.md, analyses keywords, checks for new
       folder/file opportunities, and generates content.
 
     ALWAYS use pwsh (PowerShell 7+) to run this script:
       pwsh -ExecutionPolicy Bypass -File interview/_config/generate-content.ps1
 
     REFERENCES:
-    - dictionary/_config/KEYWORD_GENERATOR_PROMPT.md: Master keyword generation spec
-    - .github/prompts/dict-generate-keywords.prompt.md: Prompt file
+    - technical-mastery/_config/MASTERY_OS_PROMPT.md: Master keyword generation spec
+    - .github/prompts/technical-mastery-generate-keywords.prompt.md: Prompt file
       for category/tier keyword processing
     - interview/_config/INTERVIEW_PROMPT.md: Content generation spec
     - interview/_config/generate-keywords.ps1: Keyword scaffolding
@@ -249,7 +249,7 @@ title: "$TopicName - $SubtopicName"
 parent: "$TopicName"
 grand_parent: "Interview Mastery"
 nav_order: $NavOrder
-permalink: /interview/$topicSlug/$subtopicSlug/
+permalink: /technical-mastery/interview/$topicSlug/$subtopicSlug/
 topic: $TopicName
 subtopic: $SubtopicName
 keywords:
@@ -331,7 +331,7 @@ title: "$TopicName"
 parent: "Interview Mastery"
 nav_order: $topicNavOrder
 has_children: true
-permalink: /interview/$topicSlug/
+permalink: /technical-mastery/interview/$topicSlug/
 description: Interview mastery content for $TopicName
 keywords_count: $totalKeywords
 files_count: $($files.Count)
@@ -369,8 +369,8 @@ Generate interview mastery content following INTERVIEW_PROMPT.md v3.0 exactly.
 
 SPEC REFERENCES:
 - Content spec: interview/_config/INTERVIEW_PROMPT.md
-- Keyword spec: dictionary/_config/KEYWORD_GENERATOR_PROMPT.md v4.0
-- Keyword prompt: .github/prompts/dict-generate-keywords.prompt.md
+- Keyword spec: technical-mastery/_config/MASTERY_OS_PROMPT.md v4.0
+- Keyword prompt: .github/prompts/technical-mastery-generate-keywords.prompt.md
 
     Topic:    $TopicName
     Subtopic: $SubtopicName
@@ -671,8 +671,8 @@ function Invoke-NewMode {
     } else {
         Write-Host "No matching dictionary category found." -ForegroundColor Yellow
         Write-Host "Use generate-keywords.ps1 to create keyword list first." -ForegroundColor Yellow
-        Write-Host "  Spec: dictionary/_config/KEYWORD_GENERATOR_PROMPT.md v4.0" -ForegroundColor Cyan
-        Write-Host "  Prompt: .github/prompts/dict-generate-keywords.prompt.md" -ForegroundColor Cyan
+        Write-Host "  Spec: technical-mastery/_config/MASTERY_OS_PROMPT.md v4.0" -ForegroundColor Cyan
+        Write-Host "  Prompt: .github/prompts/technical-mastery-generate-keywords.prompt.md" -ForegroundColor Cyan
         Write-Host ""
         Write-Host "Example:" -ForegroundColor Cyan
         Write-Host "  pwsh -File interview/_config/generate-keywords.ps1 -Topic '$Topic'"
@@ -696,7 +696,7 @@ title: "$Topic"
 parent: "Interview Mastery"
 nav_order: $navOrder
 has_children: true
-permalink: /interview/$topicSlug/
+permalink: /technical-mastery/interview/$topicSlug/
 description: Interview mastery content for $Topic
 keywords_count: 0
 files_count: 0

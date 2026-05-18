@@ -1,0 +1,24 @@
+---
+id: AIP-002
+title: The AI Product Mental Model (UX + LLM + Data Pipeline)
+category: AI Product Engineering
+tier: tier-8-artificial-intelligence
+folder: AIP-ai-product
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - aip
+  - foundational
+  - mental-model
+status: draft
+version: 0
+layout: default
+parent: "AI Product Engineering"
+grand_parent: "Technical Mastery"
+nav_order: 2
+permalink: /technical-mastery/aip/the-ai-product-mental-model-ux-llm-data-pipeline/
+---
+
+> Entry stub. Generate full content using Master Prompt v3.0.

@@ -10,15 +10,15 @@
 
 | File                                               | Purpose                                     |
 | -------------------------------------------------- | ------------------------------------------- |
-| `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`   | Master keyword generation spec (v4.0)       |
-| `.github/prompts/dict-generate-keywords.prompt.md` | Prompt for category/tier keyword processing |
+| `technical-mastery/_config/MASTERY_OS_PROMPT.md`   | Master keyword generation spec (v4.0)       |
+| `.github/prompts/technical-mastery-generate-keywords.prompt.md` | Prompt for category/tier keyword processing |
 | `interview/_config/INTERVIEW_PROMPT.md`            | Master content generation spec (v3.0)       |
 
 ## Design Considerations
 
-1. **New topic (no folder/index.md):** Use `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` v4.0 to generate keywords. Analyse tier placement. Create folders/files. Generate content.
-2. **Brand-new topic (e.g., Angular):** Analyse which tier it belongs to. Generate keywords via `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`. Create folders/files. Generate content.
-3. **New subtopic (e.g., React Hooks, topic exists):** Create file in existing folder. Generate keywords via `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md`. Generate content.
+1. **New topic (no folder/index.md):** Use `technical-mastery/_config/MASTERY_OS_PROMPT.md` v4.0 to generate keywords. Analyse tier placement. Create folders/files. Generate content.
+2. **Brand-new topic (e.g., Angular):** Analyse which tier it belongs to. Generate keywords via `technical-mastery/_config/MASTERY_OS_PROMPT.md`. Create folders/files. Generate content.
+3. **New subtopic (e.g., React Hooks, topic exists):** Create file in existing folder. Generate keywords via `technical-mastery/_config/MASTERY_OS_PROMPT.md`. Generate content.
 4. **Existing dictionary category (e.g., JVM, JCC):** Scan dictionary `index.md`. Analyse keywords. Check for new folder/file opportunities. Generate content.
 
 ---

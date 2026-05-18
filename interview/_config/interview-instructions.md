@@ -28,7 +28,7 @@ in VS Code Copilot when you edit interview content files.
 
 | Scenario                      | Steps                                                                                      |
 | ----------------------------- | ------------------------------------------------------------------------------------------ |
-| New topic (no folder)         | Use `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` v4.0 -> scaffold -> fill              |
+| New topic (no folder)         | Use `technical-mastery/_config/MASTERY_OS_PROMPT.md` v4.0 -> scaffold -> fill              |
 | Brand-new topic (not in dict) | Analyse tier placement -> generate keywords -> scaffold -> fill                            |
-| New subtopic (topic exists)   | Create file in existing folder -> `dictionary/_config/KEYWORD_GENERATOR_PROMPT.md` -> fill |
+| New subtopic (topic exists)   | Create file in existing folder -> `technical-mastery/_config/MASTERY_OS_PROMPT.md` -> fill |
 | From dictionary category      | Scan dictionary index.md -> map via topic-registry.md -> scaffold -> fill                  |

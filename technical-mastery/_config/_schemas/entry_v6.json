@@ -1,0 +1,229 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://sk-keys.github.io/northstar/schemas/entry_v6.json",
+  "title": "Technical Mastery Entry v6.0",
+  "description": "JSON Schema for validating technical-mastery keyword entry YAML frontmatter and key structural fields. Schema version: entry_v6.",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "category",
+    "tier",
+    "folder",
+    "difficulty",
+    "depends_on",
+    "used_by",
+    "related",
+    "tags",
+    "status",
+    "version"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier in format [CODE]-[NNN]. CODE is 2-4 uppercase letters from Category Code Registry. NNN is zero-padded 3-digit number.",
+      "pattern": "^[A-Z]{2,4}-[0-9]{3}$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Exact keyword name matching the entry filename. Must not contain colon-space (use double-quotes if it does).",
+      "minLength": 2,
+      "maxLength": 120
+    },
+    "category": {
+      "type": "string",
+      "description": "Category name from Section 2 Category Code Registry. Must match exactly."
+    },
+    "tier": {
+      "type": "string",
+      "description": "Tier folder name in format tier-N-descriptive-name.",
+      "pattern": "^tier-[0-9]+-[a-z0-9-]+$"
+    },
+    "folder": {
+      "type": "string",
+      "description": "Category folder name in format CODE-descriptive-name (lowercase).",
+      "pattern": "^[A-Z]{2,4}-[a-z0-9-]+$"
+    },
+    "difficulty": {
+      "type": "string",
+      "description": "Entry difficulty level.",
+      "enum": ["★☆☆", "★★☆", "★★★"]
+    },
+    "depends_on": {
+      "type": "array",
+      "description": "Prerequisites - full IDs [CODE]-[NNN]. Must form a DAG (no cycles).",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2,4}-[0-9]{3}$"
+      },
+      "uniqueItems": true
+    },
+    "used_by": {
+      "type": "array",
+      "description": "Entries that depend on this one - full IDs. Must have reciprocal depends_on backlinks.",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2,4}-[0-9]{3}$"
+      },
+      "uniqueItems": true
+    },
+    "related": {
+      "type": "array",
+      "description": "Semantically related entries (not dep/used_by) - full IDs.",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2,4}-[0-9]{3}$"
+      },
+      "uniqueItems": true
+    },
+    "tags": {
+      "type": "array",
+      "description": "Tags from the taxonomy in Section 4. No # prefix.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "status": {
+      "type": "string",
+      "description": "Content completion status.",
+      "enum": ["draft", "in-progress", "complete"]
+    },
+    "version": {
+      "type": "integer",
+      "description": "Integer version. 0 = stub, 6 = v6.0 complete.",
+      "minimum": 0,
+      "maximum": 6
+    },
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version identifier. Required for v6.0 entries.",
+      "const": "entry_v6"
+    },
+    "topic_type": {
+      "type": "integer",
+      "description": "Content type from TYPE decision tree. 1=Runtime/Component, 2=Tool/Process, 3=Conceptual/Theorem, 4=Protocol/Standard, 5=Behavioral/Soft.",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "spaced_repetition": {
+      "type": "object",
+      "description": "Spaced repetition review schedule. Required for ★★☆ and ★★★.",
+      "properties": {
+        "first_review": {
+          "type": "string",
+          "description": "Relative time for first review (e.g. 1d, 3d)."
+        },
+        "second_review": {
+          "type": "string",
+          "description": "Relative time for second review (e.g. 7d)."
+        },
+        "third_review": {
+          "type": "string",
+          "description": "Relative time for third review (e.g. 21d)."
+        },
+        "fourth_review": {
+          "type": "string",
+          "description": "Relative time for fourth review (e.g. 60d)."
+        },
+        "decay_risk": {
+          "type": "string",
+          "description": "How quickly understanding degrades without review.",
+          "enum": ["low", "medium", "high"]
+        }
+      },
+      "required": ["first_review", "second_review", "third_review",
+                   "fourth_review", "decay_risk"]
+    }
+  },
+  "additionalProperties": true,
+  "definitions": {
+    "failure_mode": {
+      "type": "object",
+      "required": ["id", "name", "severity", "symptom",
+                   "root_cause", "detection", "fix_summary",
+                   "frequency"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^FM-[0-9]{2}$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "major", "minor"]
+        },
+        "symptom": {
+          "type": "string"
+        },
+        "root_cause": {
+          "type": "string"
+        },
+        "detection": {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["command", "signal", "behavioral"]
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "fix_summary": {
+          "type": "string"
+        },
+        "cve": {
+          "type": ["string", "null"]
+        },
+        "frequency": {
+          "type": "string",
+          "enum": ["common", "occasional", "rare"]
+        }
+      }
+    },
+    "concept_fingerprint": {
+      "type": "object",
+      "required": ["essence", "invariants", "boundary_conditions",
+                   "top_related"],
+      "properties": {
+        "essence": {
+          "type": "string",
+          "description": "One-sentence definition of the core concept."
+        },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "invariants": {
+          "type": "array",
+          "description": "Properties that are always true.",
+          "items": { "type": "string" },
+          "minItems": 2,
+          "maxItems": 5
+        },
+        "boundary_conditions": {
+          "type": "array",
+          "description": "Conditions where the concept breaks down or stops applying.",
+          "items": { "type": "string" },
+          "minItems": 2,
+          "maxItems": 4
+        },
+        "top_related": {
+          "type": "array",
+          "description": "Most closely related entry IDs.",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2,4}-[0-9]{3}$"
+          },
+          "minItems": 2,
+          "maxItems": 5
+        }
+      }
+    }
+  }
+}

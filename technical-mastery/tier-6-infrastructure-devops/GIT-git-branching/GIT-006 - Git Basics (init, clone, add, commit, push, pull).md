@@ -1,0 +1,24 @@
+---
+id: GIT-006
+title: Git Basics (init, clone, add, commit, push, pull)
+category: Git & Branching Strategy
+tier: tier-6-infrastructure-devops
+folder: GIT-git-branching
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - git
+  - foundational
+  - first-principles
+status: draft
+version: 0
+layout: default
+parent: "Git & Branching Strategy"
+grand_parent: "Technical Mastery"
+nav_order: 6
+permalink: /technical-mastery/git/git-basics-init-clone-add-commit-push-pull/
+---
+
+> Entry stub. Generate full content using Master Prompt v3.0.

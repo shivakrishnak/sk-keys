@@ -1,0 +1,25 @@
+---
+id: TSC-039
+title: TypeScript Architecture Strategy (Strict Typing, Shared Types)
+category: TypeScript
+tier: tier-7-frontend
+folder: TSC-typescript
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - tsc
+  - advanced
+  - architecture
+  - bestpractice
+status: draft
+version: 0
+layout: default
+parent: "TypeScript"
+grand_parent: "Technical Mastery"
+nav_order: 37
+permalink: /technical-mastery/tsc/typescript-architecture-strategy-strict-typing-shared-types/
+---
+
+> Entry stub. Generate full content using Master Prompt v3.0.

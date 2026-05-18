@@ -1,0 +1,24 @@
+---
+id: BIG-005
+title: Big Data in Production -- What to Expect
+category: Big Data & Streaming
+tier: tier-4-data
+folder: BIG-bigdata-streaming
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - big
+  - foundational
+  - mental-model
+status: draft
+version: 0
+layout: default
+parent: "Big Data & Streaming"
+grand_parent: "Technical Mastery"
+nav_order: 5
+permalink: /technical-mastery/big/big-data-in-production----what-to-expect/
+---
+
+> Entry stub. Generate full content using Master Prompt v3.0.

@@ -26,11 +26,12 @@ Interview-ready like a FAANG bar raiser.
 
 1. **Generate complete 19-section content** for each keyword
 2. **BAD before GOOD** in all code examples
-3. **Code lines max 70 chars**, ASCII diagrams max 59 chars wide
-4. **Min 4 misconception rows**, min 3 failure modes per keyword
-5. **Interview Q&A must have COMPLETE answers** (200-500 words each)
-6. **No em dashes** anywhere - use hyphens only
-7. **UTF-8 no BOM** - no special characters in YAML frontmatter
+3. **Code lines max 70 chars**, ASCII diagrams max 59 chars wide. Diagrams: DUAL format (ASCII first, then Mermaid below). Types: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap
+4. **Bold-label lines** (`**LABEL:** value`) must each be separated by a blank line
+5. **Min 4 misconception rows**, min 3 failure modes per keyword
+6. **Interview Q&A must have COMPLETE answers** (200-500 words each)
+7. **No em dashes** anywhere - use hyphens only
+8. **UTF-8 no BOM** - no special characters in YAML frontmatter
 
 ## Quality Constitution (Non-Negotiable)
 

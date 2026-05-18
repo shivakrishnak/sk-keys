@@ -1,0 +1,222 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://sk-keys.github.io/northstar/schemas/keyword_list_v6.json",
+  "title": "Technical Mastery Keyword List v6.0",
+  "description": "JSON Schema for validating MASTERY_OS per-category keyword list output. Schema version: mastery_os_v6.",
+  "type": "object",
+  "required": [
+    "category",
+    "code",
+    "tier",
+    "folder",
+    "schema_version",
+    "levels",
+    "validation"
+  ],
+  "properties": {
+    "category": {
+      "type": "string",
+      "description": "Full category name from Section 2 registry."
+    },
+    "code": {
+      "type": "string",
+      "description": "3-letter category code.",
+      "pattern": "^[A-Z]{2,4}$"
+    },
+    "tier": {
+      "type": "string",
+      "description": "Tier folder name.",
+      "pattern": "^tier-[0-9]+-[a-z0-9-]+$"
+    },
+    "folder": {
+      "type": "string",
+      "description": "Category folder name.",
+      "pattern": "^[A-Z]{2,4}-[a-z0-9-]+$"
+    },
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version - must be mastery_os_v6.",
+      "const": "mastery_os_v6"
+    },
+    "levels": {
+      "type": "object",
+      "description": "Keyword counts per level.",
+      "properties": {
+        "L0": {
+          "type": "integer",
+          "description": "Orientation keywords. Target: 5-12.",
+          "minimum": 5,
+          "maximum": 24
+        },
+        "L1": {
+          "type": "integer",
+          "description": "Foundational keywords. Target: 15-25.",
+          "minimum": 15,
+          "maximum": 50
+        },
+        "L2": {
+          "type": "integer",
+          "description": "Working keywords. Target: 20-35.",
+          "minimum": 20,
+          "maximum": 70
+        },
+        "L3": {
+          "type": "integer",
+          "description": "Intermediate keywords. Target: 25-45.",
+          "minimum": 25,
+          "maximum": 90
+        },
+        "L4": {
+          "type": "integer",
+          "description": "Expert keywords. Target: 20-35.",
+          "minimum": 20,
+          "maximum": 70
+        },
+        "L5": {
+          "type": "integer",
+          "description": "Architect keywords. Target: 12-20.",
+          "minimum": 12,
+          "maximum": 40
+        },
+        "L6": {
+          "type": "integer",
+          "description": "Creator keywords. Target: 8-15.",
+          "minimum": 8,
+          "maximum": 30
+        },
+        "META": {
+          "type": "integer",
+          "description": "Meta-skill keywords. Target: 3-6.",
+          "minimum": 3,
+          "maximum": 12
+        }
+      },
+      "additionalProperties": false
+    },
+    "keywords": {
+      "type": "array",
+      "description": "All keywords across all levels.",
+      "items": {
+        "$ref": "#/definitions/keyword_row"
+      }
+    },
+    "validation": {
+      "$ref": "#/definitions/validation_report"
+    }
+  },
+  "definitions": {
+    "keyword_row": {
+      "type": "object",
+      "required": ["id", "keyword", "level", "difficulty"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z]{2,4}-[0-9]{3}$"
+        },
+        "keyword": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "level": {
+          "type": "string",
+          "enum": ["L0", "L1", "L2", "L3", "L4", "L5", "L6", "META"]
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["🌱", "★☆☆", "★★☆", "★★★", "🔥", "🔬", "🧠"]
+        },
+        "topic_type": {
+          "type": ["integer", "string"],
+          "description": "1-5 or ? for ambiguous.",
+          "enum": [1, 2, 3, 4, 5, "?"]
+        },
+        "weight": {
+          "type": "string",
+          "description": "Estimated learning time bucket.",
+          "enum": ["🟢", "🟡", "🟠", "🔴", "⚫"]
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "deprecated": {
+          "type": "boolean",
+          "description": "True if this is a historical/deprecated keyword.",
+          "default": false
+        },
+        "deprecation_year": {
+          "type": ["integer", "null"],
+          "description": "Year the technology/API was deprecated, if applicable."
+        },
+        "superseded_by": {
+          "type": ["string", "null"],
+          "description": "ID of the replacement entry, if superseded.",
+          "pattern": "^[A-Z]{2,4}-[0-9]{3}$"
+        }
+      }
+    },
+    "validation_report": {
+      "type": "object",
+      "description": "Machine-readable validation result from MASTERY_OS.",
+      "required": [
+        "schema_version",
+        "rules_passed",
+        "checks_passed",
+        "completeness_gate",
+        "dependency_cycles",
+        "prompt_injection_attempt",
+        "truthfulness_check"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "const": "mastery_os_v6"
+        },
+        "rules_passed": {
+          "type": "array",
+          "description": "List of rule numbers that passed audit.",
+          "items": { "type": "integer", "minimum": 1, "maximum": 33 }
+        },
+        "checks_passed": {
+          "type": "array",
+          "description": "List of check numbers that passed audit.",
+          "items": { "type": "integer", "minimum": 1, "maximum": 28 }
+        },
+        "completeness_gate": {
+          "type": "boolean",
+          "description": "True only if all Rule 32 quantitative thresholds met."
+        },
+        "dependency_cycles": {
+          "type": "array",
+          "description": "List of detected cycles. Empty array = no cycles.",
+          "items": { "type": "string" }
+        },
+        "missing_backlinks": {
+          "type": "array",
+          "description": "List of missing used_by backlinks.",
+          "items": { "type": "string" }
+        },
+        "deprecated_topics_handled": {
+          "type": "boolean",
+          "description": "All deprecated items carry (Historical) annotation."
+        },
+        "type_column_present": {
+          "type": "boolean",
+          "description": "Type column included in output table."
+        },
+        "prompt_injection_attempt": {
+          "type": "boolean",
+          "description": "True if injection was detected in input."
+        },
+        "truthfulness_check": {
+          "type": "string",
+          "enum": ["pass", "fail", "partial"]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

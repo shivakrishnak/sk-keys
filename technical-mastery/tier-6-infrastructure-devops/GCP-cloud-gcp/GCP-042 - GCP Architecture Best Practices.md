@@ -1,0 +1,23 @@
+---
+id: GCP-044
+title: GCP Architecture Best Practices
+category: Cloud - GCP
+tier: tier-6-infrastructure-devops
+folder: GCP-cloud-gcp
+difficulty: ★★★
+depends_on:
+used_by:
+related:
+tags:
+  - gcp
+  - foundational
+status: draft
+version: 0
+layout: default
+parent: "Cloud - GCP"
+grand_parent: "Technical Mastery"
+nav_order: 42
+permalink: /technical-mastery/gcp/gcp-architecture-best-practices/
+---
+
+> Entry stub. Generate full v4.0 content using the Master Prompt.

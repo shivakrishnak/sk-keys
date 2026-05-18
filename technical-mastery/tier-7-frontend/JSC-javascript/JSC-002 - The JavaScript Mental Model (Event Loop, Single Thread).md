@@ -1,0 +1,24 @@
+---
+id: JSC-002
+title: The JavaScript Mental Model (Event Loop, Single Thread)
+category: JavaScript
+tier: tier-7-frontend
+folder: JSC-javascript
+difficulty: ★☆☆
+depends_on:
+used_by:
+related:
+tags:
+  - jsc
+  - foundational
+  - mental-model
+status: draft
+version: 0
+layout: default
+parent: "JavaScript"
+grand_parent: "Technical Mastery"
+nav_order: 2
+permalink: /technical-mastery/jsc/the-javascript-mental-model-event-loop-single-thread/
+---
+
+> Entry stub. Generate full content using Master Prompt v3.0.

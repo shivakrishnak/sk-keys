@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# pre-commit hook - enforces technical-mastery file validation rules.
+#
+# INSTALL (run once per clone):
+#   cp .github/hooks/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+#
+# Or use a symlink so the hook stays in sync with the repo:
+#   ln -sf ../../.github/hooks/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+#
+# What it does:
+#   1. Finds all staged technical-mastery/*.md files (added or modified).
+#   2. Runs file_validation_rules.ps1 on those files only.
+#   3. Blocks the commit if any ERROR-level rule is violated.
+#   4. Prints warnings but allows the commit to proceed.
+#
+# Bypass (emergency only - do not make a habit of this):
+#   git commit --no-verify
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM \
+  | grep "^technical-mastery/.*\.md$" \
+  | grep -v "/index\.md$"
+  | grep -v "/_config/")
+  | grep -v "/_config/")
+
+# Nothing staged in technical-mastery - skip validation
+if [ -z "$STAGED" ]; then
+  exit 0
+fi
+
+echo ""
+echo "Running file_validation_rules.ps1 on staged technical-mastery files..."
+
+# Write staged paths to a temp file for the script to read
+TMPFILE=$(mktemp /tmp/staged_files_XXXXXX.txt)
+echo "$STAGED" > "$TMPFILE"
+
+# Call the PowerShell validation script
+pwsh -NoProfile -File "technical-mastery/_config/file_validation_rules.ps1" \
+  -FileList "$TMPFILE"
+STATUS=$?
+
+rm -f "$TMPFILE"
+
+if [ $STATUS -ne 0 ]; then
+  echo ""
+  echo "Commit blocked: fix all ERROR violations before committing."
+  echo "Run manually to see all issues:"
+  echo "  pwsh -File technical-mastery/_config/file_validation_rules.ps1 -Category <CODE>"
+  exit 1
+fi
+
+exit 0
+
+

@@ -1,0 +1,23 @@
+---
+id: JCC-020
+title: Thread Safety Annotations (@GuardedBy, @ThreadSafe)
+category: Java Concurrency
+tier: tier-3-java
+folder: JCC-java-concurrency
+difficulty: ★★☆
+depends_on: 
+used_by: 
+related: 
+tags:
+  - java
+  - concurrency
+  - intermediate
+  - bestpractice
+status: draft
+version: 0
+layout: default
+parent: "Java Concurrency"
+grand_parent: "Technical Mastery"
+nav_order: 35
+permalink: /technical-mastery/java-concurrency/thread-safety-annotations/
+---
