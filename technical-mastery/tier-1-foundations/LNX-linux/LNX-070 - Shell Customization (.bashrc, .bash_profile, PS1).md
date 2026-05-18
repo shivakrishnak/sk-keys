@@ -484,7 +484,7 @@ fi
 
 # BAD 3: Storing secrets in .bashrc:
 # ~/.bashrc:
-export AWS_SECRET_ACCESS_KEY="AKIAIOSFODNN7EXAMPLE/..."  # NEVER DO THIS!
+export AWS_SECRET_ACCESS_KEY="AKIA_YOUR_KEY_EXAMPLE/..."  # NEVER DO THIS!
 export DB_PASSWORD="mysecret123"  # NEVER DO THIS!
 # .bashrc goes into git dotfiles repo = secret exposed!
 

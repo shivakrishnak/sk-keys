@@ -19,6 +19,8 @@
 >
 > **v6.0 (2026-05) additions:** Section 0.6 Cross-File Coordination Protocol (unified input contract + difficulty mapping table + invocation handoff + mode orchestration). Section 7.10 Quantitative Quality Metrics (8 measurable KPIs). Section 9 expanded with 8 new KPI definitions. Sections 5.6/5.22/5.25/5.27 upgraded: persona-aware pitches, Bloom's-tagged mastery checklist, Concept Fingerprint, Sustainability & Ethics layer. Section 7.8 Step 5 Red-Team Pass. Section 3 YAML: `schema_version`, `spaced_repetition`, `topic_type` optional fields added. Schema files at `_config/_schemas/entry_v6.json`.
 >
+> **v6.0 refinements (2026-05):** Section 7.10.1 KPI Failure Consequences (2+ KPI failures = mandatory red-team + needs_revision state). Section 7.11 LLM-as-Judge rubric (5 criteria x 5 = 25; pass >= 18). Sections 5.28/5.29/5.30 NEW: Interleaved Practice Prompts, Incident Runbook (5-step on-call), Postmortem Triggers. Spaced-repetition canonical schedules by difficulty. Validation report expanded: kpi_results block, judge_score, tier_a_unverified, quality_state. TYPE 1/2 profiles clarified as "24 core + 3 optional" sections.
+>
 > **To release v7:** Set `LATEST_VERSION` = `7`, `LATEST_VERSION_LABEL` = `v7.0`. Then add a `v7.0` row to the Version Detection table, update the Section 8 skeleton `version:`, rename `upgrade_to_v6.ps1` → `upgrade_to_v7.ps1`, and add a v7 entry to the changelog. Every `LATEST_VERSION` prose reference automatically inherits the new value.
 
 ---
@@ -282,6 +284,58 @@ Never invent values.
     - Every depends_on edge MUST have a reciprocal used_by edge
       in the referenced entry. Missing backlinks are a quality error.
     - Cross-category edges are valid; format: CODE-NNN (e.g. JVM-001)
+
+─────────────────────────────────────────────────────────────────────────
+0.7 REASONING TRACE PROTOCOL  [NEW v6.0]
+─────────────────────────────────────────────────────────────────────────
+
+  APPLICABILITY: ★★★ entries AND any entry with 3+ depends_on edges.
+
+  Before emitting the final entry content, produce a private reasoning
+  block wrapped in an HTML comment. This block is stripped by renderers
+  but extractable by tooling for audit purposes.
+
+  FORMAT:
+    <!-- reasoning
+    DISAMBIGUATION: [chosen interpretation + alternatives rejected]
+    DEPENDENCY_SKETCH: [key depends_on edges + why each is needed]
+    KPI_PREDICTION: [self-predicted scores for KPIs 1-8]
+    TIER_A_CLAIMS: [list of facts requiring citation + source status]
+    SECTION_PLAN: [which optional sections 5.25-5.30 will be emitted]
+    -->
+
+  RULES:
+    - The reasoning block appears BEFORE the YAML front-matter.
+    - For ★☆☆ and ★★☆ without complex dependencies: OPTIONAL.
+    - If emitted, every field must contain actual content (not "N/A").
+    - KPI_PREDICTION must be numeric (0-100 for each KPI).
+    - If KPI_PREDICTION shows any score < 70, the model MUST
+      address that gap before completing the entry.
+
+─────────────────────────────────────────────────────────────────────────
+0.9 REASONING EFFORT BUDGET  [NEW v6.0]
+─────────────────────────────────────────────────────────────────────────
+
+  Maps entry difficulty to generation depth. For models with adjustable
+  reasoning_effort or thinking budget, use these recommendations:
+
+  | Difficulty | Effort    | Generation Strategy                 |
+  |------------|-----------|-------------------------------------|
+  | ★☆☆       | LOW       | Single pass + light self-critique.  |
+  |            |           | Skip red-team. 24 core sections.    |
+  | ★★☆       | MEDIUM    | Full 5-step self-critique loop.     |
+  |            |           | Include optional 5.25-5.27 if TYPE  |
+  |            |           | 1/2/4. No reasoning trace required. |
+  | ★★★       | HIGH      | 5-step loop + red-team + KPI        |
+  |            |           | re-check. Reasoning trace required. |
+  |            |           | All applicable optional sections.   |
+
+  BUDGET CEILING:
+    - ★☆☆: Target 1500-2500 words. Resist over-explanation.
+    - ★★☆: Target 2500-4000 words. Full depth on core sections.
+    - ★★★: Target 4000-6000 words. No padding — only genuine depth.
+
+  UNDER-BUDGET is better than OVER-BUDGET with filler.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 1: PERSONA & TEACHING PHILOSOPHY
@@ -1011,6 +1065,14 @@ spaced_repetition:
   - fourth_review: fourth repetition delay (e.g. "1m")
   - decay_risk: low | medium | high
     (high = fast-changing API; low = timeless concept)
+  - CANONICAL SCHEDULES by difficulty:
+    ★☆☆: omit (or [1d, 1w, 1m] if explicitly requested)
+    ★★☆: first_review: 1d, second: 3d, third: 1w, fourth: 1m
+    ★★★: first_review: 1d, second: 3d, third: 1w, fourth: 2w,
+          fifth_review: 1m, sixth_review: 3m
+  - decay_risk derivation: high if concept is API-version-specific
+    or changes yearly; medium if evolving but stable core; low if
+    timeless principle (algorithms, theorems, patterns)
 
 layout:
   - Always exactly: layout: default
@@ -1136,13 +1198,17 @@ TOPIC TYPE CLASSIFICATION - DECLARE BEFORE GENERATING
            language feature)
     Examples: ZGC, Spring @Transactional, Docker, Kafka,
               HashMap, JWT implementation, React useState
-    Profile: All 24 sections apply as written.
+    Profile: All 24 core sections apply as written.
+             Optional v6.0 sections (5.25-5.27) per their
+             INCLUDE/SKIP rules.
 
   TYPE 2 - ALGORITHM / DATA STRUCTURE (defined procedure or
            data organization with time/space complexity)
     Examples: B-Tree, QuickSort, LRU Cache, Bloom Filter,
               Consistent Hashing, Dijkstra
-    Profile: All 24 sections apply as written.
+    Profile: All 24 core sections apply as written.
+             Optional v6.0 sections (5.25-5.27) per their
+             INCLUDE/SKIP rules.
              5.11 = algorithm steps + complexity analysis.
              5.12 = where this DS/algorithm fits in a system.
 
@@ -1526,6 +1592,16 @@ Content rules:
   - What's the decision framework for choosing this over alternatives?
   - How does this concept compose with other concepts at scale?
 
+  SCAFFOLDING-FADE RULE (v6.0):
+    Explanation density DECREASES as level increases:
+    - Level 1-2: Full scaffolding. Explain every term. Step-by-step.
+    - Level 3: Moderate. Assume basic vocabulary; explain mechanisms.
+    - Level 4: Light. Assume working knowledge; focus on WHY/tradeoffs.
+    - Level 5: Reference-density. Assume mastery of L1-L4 content;
+      only novel insight, cross-system reasoning, open questions.
+    DO NOT over-explain at Level 5. If a reader needs scaffolding
+    at Level 5, they should read Level 3-4 first.
+
 ─────────────────────────────────────────────────────────────────────────
 5.11  HOW IT WORKS - MECHANISM  [REQUIRED]
 ─────────────────────────────────────────────────────────────────────────
@@ -1778,6 +1854,14 @@ Content rules:
     This teaches engineering judgement, not just feature comparison.
     Omit for simple 2-option comparisons where the table suffices.
 
+  TCO COLUMN (v6.0 - when alternatives differ on cost):
+    If compared options have meaningfully different cost profiles,
+    add a "TCO" column capturing the most relevant cost dimension:
+    license cost | infra cost | ops effort | migration cost.
+    Pick whichever dimension creates the most differentiation.
+    Forces engineering-economic thinking beyond just features.
+    SKIP if all options are roughly cost-equivalent.
+
 ─────────────────────────────────────────────────────────────────────────
 5.15  FLOW / LIFECYCLE  [CONDITIONAL]
 ─────────────────────────────────────────────────────────────────────────
@@ -1887,7 +1971,23 @@ Content rules:
       fix_summary: "[one-line fix]"
       cve: null              # CVE ID if security-related, else null
       frequency: common      # common | occasional | rare
+      slo_impact: null       # availability|latency|correctness|
+                             # durability|freshness (pick affected SLI)
+      blast_radius: null     # ★★★ only: downstream systems affected
   ```
+
+  SLO_IMPACT RULE (v6.0):
+    For every failure mode with severity critical or major, state
+    which SLI/SLO this failure violates. Forces production thinking.
+    Example: "latency" (p99 breached), "correctness" (stale reads).
+
+  BLAST_RADIUS RULE (★★★ entries only, v6.0):
+    At least ONE failure mode (the most severe) MUST include
+    a blast_radius annotation describing:
+    - Which downstream systems are affected
+    - Estimated recovery time (minutes/hours)
+    - Data-integrity risk (yes/no)
+    Format: "Cascades to [X, Y]; recovery ~[time]; data risk: [yes/no]"
 
   Severity definitions (matches MASTERY_OS Rule 10):
     critical = data loss, security breach, prolonged outage
@@ -2028,6 +2128,24 @@ Content rules:
     * A design decision that was almost completely different
     * A connection to an unrelated field (biology, economics, physics)
     * What happens at extreme scale that nobody mentions in tutorials
+
+  5.21.1  SURPRISING TRUTH RUBRIC  [v6.0]
+
+  Score: 0-3 (logged as surprising_truth_score in validation report)
+
+    0 = Missing, trivial, or just a restatement of the definition
+    1 = Mildly interesting but most seniors would already know
+    2 = Genuinely surprising to mid-level engineers; memorable
+    3 = Perspective-shifting even for senior/staff engineers
+
+  PASS: score >= 2 for ★★☆ and ★★★ entries.
+  WARN: score == 1 for any difficulty.
+  FAIL: score == 0 for any entry (section is REQUIRED).
+
+  If score < 2 for ★★★: rewrite before finalizing.
+  The surprising truth is a RETENTION ANCHOR - it is the single
+  fact most likely to make the reader remember this entry months
+  later. Invest time here.
 
 ─────────────────────────────────────────────────────────────────────────
 5.22  MASTERY CHECKLIST  [REQUIRED - UPGRADED v6.0]
@@ -2334,6 +2452,91 @@ Be specific to THIS concept. If implications are minimal,
 write "No significant implications identified for [concept]
 at typical deployment scale" and skip the section.
 
+─────────────────────────────────────────────────────────────────────────
+5.28  INTERLEAVED PRACTICE PROMPTS  [OPTIONAL - NEW v6.0]
+─────────────────────────────────────────────────────────────────────────
+
+Section header:
+  ### 🔀 Interleaved Practice Prompts
+
+PURPOSE: Retrieval practice that forces the reader to connect
+this concept to related concepts. Interleaving (mixing topics)
+produces stronger long-term retention than blocked practice.
+
+INCLUDE FOR: ★★★ entries with 3+ items in `related:` field.
+SKIP FOR: ★☆☆ entries. ★★☆ entries where related list is thin.
+
+Content rules:
+  - EXACTLY 3 practice prompts, numbered
+  - Each prompt references 2-3 concepts from `related:` or
+    `depends_on:` fields, forcing cross-concept retrieval
+  - Format per prompt:
+    **Prompt N:** [Question requiring synthesis of this concept
+    with [RELATED-CODE-NNN] and [RELATED-CODE-NNN]]
+    *Concepts interleaved:* [list of CODE-NNN IDs referenced]
+  - Prompts should require APPLYING, not just recalling
+  - At least 1 prompt should involve a failure/debugging scenario
+
+─────────────────────────────────────────────────────────────────────────
+5.29  INCIDENT RUNBOOK  [OPTIONAL - NEW v6.0]
+─────────────────────────────────────────────────────────────────────────
+
+Section header:
+  ### 🚒 Incident Runbook
+
+PURPOSE: Operational procedure for the most severe failure mode
+from Section 5.17. Transforms knowledge into action under pressure.
+On-call engineers need checklists, not prose.
+
+INCLUDE FOR: ★★★ entries where Section 5.17 contains a failure
+mode with severity "critical" or "high".
+SKIP FOR: ★☆☆ and ★★☆ entries. TYPE 3/5 entries.
+
+Content rules:
+  - 5-step numbered checklist format:
+    1. DETECT   - How to confirm the failure is occurring
+                  (metric, alert, log pattern)
+    2. CONTAIN  - Immediate action to stop blast radius
+                  (circuit break, feature flag, rollback)
+    3. DIAGNOSE - Root cause investigation steps
+                  (commands, queries, dashboards)
+    4. REMEDIATE - Fix procedure (ordered steps)
+    5. POSTMORTEM - What to document after resolution
+                   (timeline, impact, prevention)
+  - Each step: 1-3 sentences, concrete (commands, not advice)
+  - Reference specific failure mode from Section 5.17 by name
+  - Include `slo_impact:` annotation: which SLO/SLI this
+    failure breaks (availability/latency/correctness/durability)
+  - Include `blast_radius:` annotation: downstream systems
+    affected, recovery time estimate, data-integrity risk
+
+─────────────────────────────────────────────────────────────────────────
+5.30  POSTMORTEM TRIGGERS  [OPTIONAL - NEW v6.0]
+─────────────────────────────────────────────────────────────────────────
+
+Section header:
+  ### 📋 Postmortem Triggers
+
+PURPOSE: Near-miss detection. Defines specific symptoms that
+should trigger a postmortem document even without customer impact.
+Builds the organizational muscle of capturing learning from
+close calls, not just outages.
+
+INCLUDE FOR: ★★★ entries for TYPE 1, 2, 4 concepts with
+production failure modes.
+SKIP FOR: ★☆☆, ★★☆ entries. TYPE 3/5 entries.
+
+Content rules:
+  - 2-3 specific trigger conditions, each as a bullet:
+    - **Trigger:** [Observable symptom or metric breach]
+      **Why postmortem:** [What could have gone worse;
+      what the near-miss reveals about systemic weakness]
+  - Triggers must be observable and specific (not "things
+    seem slow" but "p99 latency exceeds SLO for >5min
+    without alerting")
+  - At least 1 trigger should be a "silent failure" (no
+    alert fired but degradation was occurring)
+
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 6: FORMATTING RULES - UNIVERSAL
 ═══════════════════════════════════════════════════════════════════════════
@@ -2365,12 +2568,31 @@ CODE BLOCKS:
   - BAD pattern always before GOOD pattern
   - Max line length: 70 characters
   - Comments explain WHY, not WHAT
+  - Every code block MUST be followed by 1-2 sentences explaining
+    what the code demonstrates and the key lesson or takeaway.
 
 ASCII DIAGRAMS:
   - Max total width: 59 characters (57 content + 2 borders)
+  - ESCAPE HATCH: Up to 79 characters allowed ONLY IF:
+    (a) diagram has adjacent prose description (accessibility), AND
+    (b) content is genuinely clearer at wider width.
+    Width >79 → must split into parts or convert to Mermaid-only.
   - Every diagram has a title in its top border
-  - Aggressive line wrapping - no exceptions
+  - Aggressive line wrapping - no exceptions at standard width
   - Characters: ┌ ┐ └ ┘ │ ─ ├ ┤ ┬ ┴ ┼ ↓ ↑ → ← ↔
+  - Every ASCII diagram MUST be followed by 1-2 sentences explaining
+    what the diagram shows and the key insight to take away.
+
+MERMAID DIAGRAMS:
+  - Every Mermaid block MUST be preceded by a 1-2 sentence prose
+    description of what the diagram shows (accessibility alt-text).
+    Screen readers and failed Mermaid renders rely on this.
+  - Every Mermaid block (or DUAL block) MUST also be followed by
+    1-2 sentences explaining the key insight the diagram conveys.
+  - Supported types: flowchart, sequenceDiagram, stateDiagram-v2,
+    classDiagram, erDiagram, mindmap
+  - DUAL format rule: ASCII block first, then equivalent Mermaid
+    block immediately below (both show same information)
 
 TABLES:
   - Max 4 columns (except misconceptions table: 2 columns)
@@ -2395,8 +2617,32 @@ FILE ENCODING:
   - PowerShell: [System.IO.File]::WriteAllText(path, content,
     [System.Text.UTF8Encoding]::new($false))
 
-═══════════════════════════════════════════════════════════════════════════
-SECTION 7: CONTENT QUALITY STANDARDS
+SECRET SAFETY (NON-NEGOTIABLE - GitHub secret scanning enforced):
+  NEVER use strings that match GitHub's secret-scanning patterns in any
+  generated content - including code examples, failure mode diagnostics,
+  and prose scenarios. These patterns trigger GH013 push rejections.
+
+  FORBIDDEN patterns (will block git push):
+    AKIA[A-Z0-9]{16}           AWS Access Key ID
+    sk_live_[a-zA-Z0-9]{24,}   Stripe live secret key
+    ghp_[a-zA-Z0-9]{36,}       GitHub personal access token
+    github_pat_[a-zA-Z0-9_]{82,} GitHub fine-grained PAT
+    AIza[0-9A-Za-z_-]{35}      Google API key
+
+  MANDATORY safe placeholder formats (these break the scanner pattern):
+    AWS key    : AKIA_YOUR_KEY_EXAMPLE  or  <YOUR_AWS_ACCESS_KEY_ID>
+    Stripe key : sk_live_YOUR_STRIPE_KEY_HERE
+    GitHub PAT : ghp_YOUR_GITHUB_TOKEN
+    Google key : AIza_YOUR_GOOGLE_API_KEY
+
+  RULE: Any code example demonstrating credential misuse (hardcoded
+  secrets anti-pattern, secret scanning, IAM failures) MUST use the
+  safe placeholder forms above. The educational point is the PATTERN
+  of misuse, not the specific key value - safe placeholders make the
+  point equally well without triggering secret scanning.
+
+  ENFORCEMENT: file_validation_rules.ps1 rule NO_SECRETS blocks commit
+  on any match. No exceptions - not even for "example" or "test" contexts.
 NON-NEGOTIABLE QUALITY CONSTITUTION
 ═══════════════════════════════════════════════════════════════════════════
 
@@ -2574,6 +2820,10 @@ Every explanation must contain:
   - Explanations that skip WHY
   - "Best practice" claims without reasoning
   - Positive-only framing (always show failure modes)
+  - Strings matching GitHub secret-scanning patterns (AKIA[A-Z0-9]{16},
+    sk_live_[a-zA-Z0-9]{24,}, ghp_[a-zA-Z0-9]{36,}, AIza[A-Za-z0-9_-]{35})
+    even in "example" or "BAD code" contexts - use safe placeholders instead
+    (see Section 6 SECRET SAFETY block for mandatory placeholder formats)
 
 ─────────────────────────────────────────────────────────────────────────
 7.6 FINAL HARD GATE
@@ -2733,11 +2983,21 @@ are NON-NEGOTIABLE - must each score ≥2.
 7.8.2  MANDATORY VALIDATION REPORT
 ─────────────────────────────────────────────────────────────────────────
 
-Every entry output MUST end with a fenced YAML block:
+Every entry output MUST end with a fenced YAML block.
+
+EXTRACTION CONTRACT (for downstream tooling):
+  - The validation block is the LAST fenced code block in the file.
+  - Fence format: ```yaml\nvalidation:\n  ...fields...\n```
+  - No content may appear after the closing ``` except an optional
+    `<!-- END -->` HTML comment marker.
+  - Extraction regex: /```yaml\nvalidation:\n([\s\S]+?)\n```\s*$/
+  - If the entry contains other YAML blocks (e.g., failure_modes),
+    the validation block is distinguished by being LAST and by
+    starting with `validation:` as its root key.
 
 ```yaml
 validation:
-  spec_version: 5.0
+  spec_version: 6.0
   mode: REGISTRY              # or AD-HOC, DESCRIPTION
   topic_type: 1               # 1-5
   difficulty: ★★☆
@@ -2831,12 +3091,16 @@ one of three Tiers; citations are MANDATORY for Tier A.
 
   RULES:
     - If a Tier A claim cannot be cited from confident knowledge,
-      mark it (unverified) or OMIT it. Never invent a citation.
+      mark it (unverified: needs source) or OMIT it. Never invent.
     - No URLs required - inline reference shorthand only.
     - List every citation emitted in the validation report
       under: citations_emitted
     - If retrieval/web access is available, USE IT for Tier A
       claims BEFORE emitting (unverified).
+    - Every (unverified) claim MUST appear in the validation
+      report under: tier_a_unverified (array of strings).
+    - If 3+ Tier A claims are unverified in one entry, set
+      quality_state: needs_revision in validation report.
 
 ─────────────────────────────────────────────────────────────────────────
 KNOWLEDGE DEDUPLICATION
@@ -2974,7 +3238,7 @@ KPI 7: VERSION COHERENCE (0-100)
     ✓ All tags from approved taxonomy (Section 4)
   STANDARD checks:
     ✓ 5.2 TL;DR word count within difficulty band
-    ✓ All 24 sections present (or justified skip per TYPE)
+    ✓ All 24 core sections present (or justified skip per TYPE)
     ✓ No broken wikilinks [[CODE-NNN - Name]]
     ✓ Section headers match spec emoji + title
     ✓ Code examples labeled with language specifier
@@ -3000,6 +3264,79 @@ KPI 8: DOWNSTREAM TOOLING READINESS (0-100)
     ✓ depends_on / used_by in comma-separated ID format
     ✓ No HTML tags in body (breaks Jekyll markdown rendering)
   Target: 100% (no tooling failures allowed)
+
+─────────────────────────────────────────────────────────────────────────
+7.10.1  KPI FAILURE CONSEQUENCES  [NEW v6.0]
+─────────────────────────────────────────────────────────────────────────
+
+  KPI failure thresholds determine entry disposition:
+
+  PASS (all KPIs met):
+    Entry emitted with quality_state: complete.
+
+  WARN (1 KPI fails):
+    Entry emitted with quality_state: complete.
+    Validation report logs the failing KPI with reason.
+    No rewrite required (may be acceptable trade-off).
+
+  FAIL (2+ KPIs fail):
+    Entry marked quality_state: needs_revision.
+    Mandatory red-team pass (Section 7.8 Step 5) triggered.
+    After red-team revision, re-evaluate all 8 KPIs.
+    If still 2+ failures after red-team: log as
+    quality_state: deferred and flag for human review.
+
+  This gate is NON-NEGOTIABLE. An entry with 2+ KPI failures
+  must never ship as status: complete.
+
+─────────────────────────────────────────────────────────────────────────
+7.11  LLM-AS-JUDGE EVALUATION RUBRIC  [NEW v6.0]
+─────────────────────────────────────────────────────────────────────────
+
+  PURPOSE: Standardized rubric for downstream quality evaluation.
+  Any reviewer (human or LLM) can score an entry against these
+  5 criteria. This is the official eval contract.
+
+  CRITERIA (each scored 1-5):
+
+  C1 - FACTUAL ACCURACY (1-5):
+    1 = Contains fabricated claims or wrong mechanisms
+    3 = Mostly correct; 1-2 imprecise statements
+    5 = Every claim verifiable; mechanisms match reality
+
+  C2 - PEDAGOGICAL CLARITY (1-5):
+    1 = Confusing to target audience; jargon unexplained
+    3 = Understandable but lacks layered progression
+    5 = Crystal clear at every level; Feynman-test passing
+
+  C3 - PRODUCTION REALISM (1-5):
+    1 = Textbook-only; no failure modes or ops concerns
+    3 = Mentions production but examples are toy-scale
+    5 = Failure modes, blast radius, diagnostic paths real
+
+  C4 - RETENTION DESIGN (1-5):
+    1 = Wall of prose; nothing memorable
+    3 = Has analogies but no recall triggers or structure
+    5 = Mental models, surprising truths, spaced hooks all
+        present; reader remembers next month
+
+  C5 - TRANSFERABLE INSIGHT (1-5):
+    1 = Specific to one use case; no wider applicability
+    3 = Hints at broader pattern but doesn't crystallize
+    5 = Explicitly extracts reusable principle; shows
+        cross-domain transfer with industry examples
+
+  SCORING:
+    Total = C1 + C2 + C3 + C4 + C5 (max 25)
+    PASS:  >= 18 (average 3.6 per criterion)
+    GOOD:  >= 21 (average 4.2 per criterion)
+    EXCEPTIONAL: 24-25
+
+  USAGE:
+    - Self-evaluation: generator scores own output before emit
+    - Cross-model judge: separate model scores for quality gate
+    - Human review: same rubric for consistency
+    - Validation report: judge_score field (if evaluated)
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 8: COMPLETE ENTRY SKELETON - COPY EXACTLY
@@ -3443,12 +3780,28 @@ validation:
   persona_pitches_included: false
   concept_fingerprint_included: false
   failure_signatures_included: false
-  sustainability_included: false
+  sustainability_included: false       # true if 5.27 emitted
+  interleaved_practice_included: false # true if 5.28 emitted
+  incident_runbook_included: false     # true if 5.29 emitted
+  postmortem_triggers_included: false  # true if 5.30 emitted
   red_team_critique_applied: true
   red_team_revision_sections: []
+  kpi_results:
+    KPI1_repetition_density: 0         # <=5% to pass
+    KPI2_section_balance: 0            # ratio, <=3:1 to pass
+    KPI3_code_prose_ratio: 0           # by difficulty band
+    KPI4_mental_model_specificity: 0   # 0-3, >=2 to pass
+    KPI5_interview_alignment: 0        # 0-5, >=3 to pass
+    KPI6_dimension_coverage: 0         # %, >=80% to pass
+    KPI7_version_coherence: 0          # 0-100, >=85 to pass
+    KPI8_tooling_readiness: 0          # 0-100, 100 to pass
+    kpis_failed: 0                     # count of failures
+    quality_state: complete            # complete|needs_revision|deferred
+  judge_score: null                    # C1+C2+C3+C4+C5 if evaluated
   prompt_injection_attempt: false
   truthfulness_check: pass
   forbidden_patterns_check: pass
+  tier_a_unverified: []                # claims needing source
   word_budget_band: medium
   notes: ""
 ```
@@ -3513,6 +3866,31 @@ CROSS-CATEGORY BATCH:
   Cross-category depends_on uses full IDs: JVM-001, SEC-023.
   Follow Master Prompt LATEST_VERSION_LABEL exactly.
 
+─────────────────────────────────────────────────────────────────────────
+VALIDATE MODE (no regeneration):
+─────────────────────────────────────────────────────────────────────────
+
+  Validate existing entry:
+    mode: VALIDATE
+    file: [path/to/existing-entry.md]
+
+  OUTPUT: Validation report ONLY (Section 8 format).
+  DO NOT regenerate or modify the entry content.
+  DO NOT emit any markdown body - only the YAML validation block.
+
+  PROCEDURE:
+    1. Parse frontmatter - verify all 12+ required fields
+    2. Walk each section - verify presence per TYPE/difficulty
+    3. Run all 8 KPIs - score numerically
+    4. Apply LLM-as-Judge rubric (Section 7.11) - score C1-C5
+    5. Check Tier A citations - flag any (unverified) claims
+    6. Emit validation report with quality_state determination
+
+  USE CASES:
+    - CI/CD quality gate (batch validate before merge)
+    - Post-generation audit (verify batch output quality)
+    - Upgrade assessment (identify entries needing v6.0 refresh)
+
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 10: SELF-VALIDATION CHECKLIST
 ═══════════════════════════════════════════════════════════════════════════
@@ -3537,7 +3915,7 @@ FRONTMATTER:
   ☐ status: one of draft / in-progress / complete
   ☐ version: LATEST_VERSION for fully generated entries; STUB_VERSION for stub-only files
 
-STRUCTURE (24 sections check):
+STRUCTURE (24 core sections + 3 optional v6.0 sections):
   ☐ Topic type declared (TYPE 1/2/3/4/5) before generation
   ☐ 5.1  Title line with keyword name
   ☐ 5.2  TL;DR - tiered length by difficulty (★☆☆ 25–50w / ★★☆ 50–80w / ★★★ 80–120w); first sentence = ESSENCE + WHY
@@ -3646,6 +4024,12 @@ V6.0 NEW SECTIONS (required for ★★★, recommended ★★☆):
          columns (require 3+ failure modes in 5.17)
   ☐ 5.27 Sustainability & Ethics - 3 dimensions present
          (required for ★★★ TYPE 1/2/4)
+  ☐ 5.28 Interleaved Practice Prompts - 3 prompts referencing related
+         concepts (★★★ with 3+ related entries)
+  ☐ 5.29 Incident Runbook - 5-step on-call procedure for severest
+         failure mode (★★★ with critical/high severity failure)
+  ☐ 5.30 Postmortem Triggers - 2-3 near-miss detection triggers
+         (★★★ TYPE 1/2/4 with production failures)
 
 V6.0 SECTION UPGRADES:
   ☐ 5.6  Persona pitches present: Junior Dev, Mid Architect, Skeptic
@@ -4010,7 +4394,7 @@ OTHER CHANGES:
   - Category list: updated to match 43-category master list
 
 ═══════════════════════════════════════════════════════════════════════════
-END OF MASTER PROMPT v4.0
+END OF MASTER PROMPT v6.0
 ═══════════════════════════════════════════════════════════════════════════
 ```
 

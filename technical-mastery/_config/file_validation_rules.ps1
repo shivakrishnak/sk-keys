@@ -20,6 +20,18 @@
                         (e.g. NET-078 had parent: "Technical Mastery" not "Networking")
     VERSION_MISMATCH    status:complete requires version > 0; status:draft + version > 0 is suspicious
     EM_DASH             U+2014 em dash anywhere in body - replace with regular hyphen
+    NO_SECRETS          Realistic secret patterns that trigger GitHub secret scanning:
+                        AKIA[A-Z0-9]{16} (AWS Access Key ID), sk_live_[a-zA-Z0-9]{24}
+                        (Stripe live key), ghp_[a-zA-Z0-9]{36} (GitHub PAT),
+                        AIza[0-9A-Za-z_-]{35} (Google API key).
+                        Use safe placeholders: AKIA_YOUR_KEY_EXAMPLE,
+                        sk_live_YOUR_STRIPE_KEY_HERE, ghp_YOUR_GITHUB_TOKEN, etc.
+                        Real example: SEC-046/CCD-041 had AKIAIOSFODNN7EXAMPLE
+                        which matches the AWS Access Key ID scanner pattern.
+    LIQUID_TAG          {{ or }} outside a {% raw %}/{% endraw %} block causes Jekyll
+                        Liquid parse errors at build time (e.g. Java array literals
+                        {{u,v,w}} or Terraform interpolation ${} patterns with double
+                        braces). Wrap the offending code fence with {% raw %}/{% endraw %}.
     H1_IN_BODY          # H1 heading in body (code-fence-aware; # comments inside ``` are skipped)
     MISSING_DIVIDER     Every ### section heading must be preceded by blank + --- + blank
     BOLD_LABEL_NO_BLANK Consecutive **LABEL:** lines without a blank line between them
@@ -42,6 +54,13 @@
                         (heuristic: 50-char+ paragraphs appearing 2+ times)
 
     ── False-positive guards ─────────────────────────────────────────
+    LIQUID_TAG:         Tracks {% raw %}/{% endraw %} blocks; {{ inside those blocks is safe.
+                        Also skips lines that are themselves the raw/endraw tags.
+    NO_SECRETS:         Checked inside AND outside code fences (secrets appear in both prose
+                        and code examples). Pattern match only - does not validate if the
+                        key is real. Any string matching the scanner format must be replaced
+                        with a placeholder that breaks the pattern (add underscore, shorten,
+                        or use angle-bracket template syntax).
     H1_IN_BODY:         Skips lines inside ``` code fences (# Python/shell comments are NOT H1)
     CODE_LINE_LENGTH:   Only checked inside ``` fences, never in prose
     ASCII_WIDTH:        Only checked on box-drawing content lines (│ ├), not prose
@@ -330,11 +349,12 @@ function Test-EntryFile {
     # Body walk: single pass, tracking code fence and box state.
     # All remaining rules are checked here.
     # ────────────────────────────────────────────────────────────────────
-    $inCodeFence = $false
-    $inBoxArt    = $false     # Inside a ┌...└ ASCII art block
-    $boxOpenLine = -1         # Line number where ┌ was opened (for unclosed check)
-    $prevTrimmed = ""         # Previous non-empty trimmed line (for bold-label rule)
-    $firstSection = $true     # First ### in the file may legitimately have no ---
+    $inCodeFence  = $false
+    $inBoxArt     = $false     # Inside a ┌...└ ASCII art block
+    $boxOpenLine  = -1         # Line number where ┌ was opened (for unclosed check)
+    $prevTrimmed  = ""         # Previous non-empty trimmed line (for bold-label rule)
+    $firstSection = $true      # First ### in the file may legitimately have no ---
+    $inLiquidRaw  = $false     # Inside {% raw %} / {% endraw %} block (Liquid-safe)
 
     for ($idx = 0; $idx -lt $body.Length; $idx++) {
         $line    = $body[$idx]
@@ -360,6 +380,65 @@ function Test-EntryFile {
                 rule = "EM_DASH"
                 line = $lineNum
                 msg  = "Em dash (U+2014) found. Replace with '-': $($trimmed.Substring(0,[Math]::Min(70,$trimmed.Length)))"
+            })
+        }
+
+        # ── RULE: NO_SECRETS ──────────────────────────────────────────
+        # GitHub secret scanning blocks git push when a file contains a string
+        # matching a known secret pattern - even in educational/example code.
+        # This rule catches the patterns GitHub scans for so the author fixes
+        # them before committing, preventing GH013 push rejections.
+        #
+        # Patterns (GitHub secret scanning formats):
+        #   AWS Access Key ID : AKIA[A-Z0-9]{16}
+        #   Stripe live key   : sk_live_[0-9a-zA-Z]{24,}
+        #   GitHub PAT        : ghp_[a-zA-Z0-9]{36,} or github_pat_...
+        #   Google API key    : AIza[0-9A-Za-z_-]{35}
+        #
+        # Safe placeholder formats (break the scanner pattern):
+        #   AKIA_YOUR_KEY_EXAMPLE        (underscore after AKIA breaks [A-Z0-9]{16})
+        #   sk_live_YOUR_STRIPE_KEY_HERE (underscore in suffix breaks [a-zA-Z0-9]{24})
+        #   ghp_YOUR_GITHUB_TOKEN        (underscore breaks [a-zA-Z0-9]{36})
+        #   AIza_YOUR_GOOGLE_API_KEY     (underscore breaks [A-Za-z0-9_-]{35})
+        #   <YOUR_AWS_ACCESS_KEY_ID>     (angle brackets - always safe)
+        #
+        # Real example: SEC-046 had AKIAIOSFODNN7EXAMPLE (AWS docs example key)
+        #               and sk_live_<redacted> (Stripe test key).
+        #               Both matched scanner patterns -> GH013 on git push.
+        # Checked inside AND outside code fences.
+        $secretPatterns = @(
+            @{ re = 'AKIA[A-Z0-9]{16,}';          name = 'AWS Access Key ID (AKIA...)' },
+            @{ re = 'sk_live_[0-9a-zA-Z]{24,}';   name = 'Stripe live key (sk_live_...)' },
+            @{ re = 'ghp_[a-zA-Z0-9]{36,}';        name = 'GitHub PAT (ghp_...)' },
+            @{ re = 'github_pat_[a-zA-Z0-9_]{82,}';name = 'GitHub fine-grained PAT' },
+            @{ re = 'AIza[0-9A-Za-z_-]{35}';        name = 'Google API key (AIza...)' }
+        )
+        foreach ($sp in $secretPatterns) {
+            if ($line -cmatch $sp.re) {
+                $issues.Add(@{
+                    sev  = 'ERROR'
+                    rule = 'NO_SECRETS'
+                    line = $lineNum
+                    msg  = "Secret scanner pattern detected ($($sp.name)). Replace with a safe placeholder (e.g. AKIA_YOUR_KEY_EXAMPLE). Line: '$($trimmed.Substring(0,[Math]::Min(70,$trimmed.Length)))'"
+                })
+            }
+        }
+
+        # ── RULE: LIQUID_TAG ──────────────────────────────────────────
+        # Jekyll processes Liquid tags before Markdown rendering, even inside
+        # ``` code fences. Any {{ not inside a {% raw %}/{% endraw %} block
+        # causes a Liquid syntax error at build time.
+        # Real example: DSA-073 line 115: int[][] edges = {{u1,v1,w1},...};
+        # Fix: wrap the offending code block with {% raw %} / {% endraw %}.
+        # Guard: track raw/endraw state; {{ inside raw blocks is safe.
+        if ($trimmed -eq '{% raw %}')    { $inLiquidRaw = $true  }
+        if ($trimmed -eq '{% endraw %}') { $inLiquidRaw = $false }
+        if (-not $inLiquidRaw -and $line -match '\{\{') {
+            $issues.Add(@{
+                sev  = "ERROR"
+                rule = "LIQUID_TAG"
+                line = $lineNum
+                msg  = "Unescaped '{{' triggers Jekyll Liquid parser. Wrap the code block with {%% raw %%} / {%% endraw %%}: '$($trimmed.Substring(0,[Math]::Min(70,$trimmed.Length)))'"
             })
         }
 

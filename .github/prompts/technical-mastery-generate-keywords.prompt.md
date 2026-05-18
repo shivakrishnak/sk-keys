@@ -21,6 +21,8 @@ then sync the category `index.md` and create stub entry files.
 If the target is not a 3-letter category code or a `tier-N-name` folder,
 stop and return an error that shows the valid formats.
 
+**Constraint priority order:** Input validation -> Index safety rules (Phase 3, non-destructive) -> File write safety rules (Phase 4) -> Formatting.
+
 ---
 
 ## MASTER SPEC
@@ -44,7 +46,7 @@ stub files, then update TECHNICAL_MASTERY_LIST.md last.
 
 ## Phase 0 - Resolve Target
 
-Follow exactly one path. Do not combine paths.
+**Phases:** 0 (resolve target) -> 1 (scan) -> 2 (generate keywords) -> 3 (sync index) -> 4 (create stubs) -> 5 (validate) -> 6 (update list) -> 7 (summary). Follow exactly one path below. Do not combine paths.
 
 **Step 1 — Identify input type:**
 
@@ -334,8 +336,9 @@ Report validation results as a summary table.
 
 ## Phase 6 - Update TECHNICAL_MASTERY_LIST.md
 
-> **This is the LAST step. TECHNICAL_MASTERY_LIST.md is NEVER read before
-> this point. It is updated here and ONLY here.**
+> **This is the LAST step. TECHNICAL_MASTERY_LIST.md is NEVER written to
+> before this point - it is appended here and ONLY here. Reading it earlier
+> is permitted only to check existing IDs for conflicts (see CRITICAL RULE).**
 
 Open `technical-mastery/_config/TECHNICAL_MASTERY_LIST.md` and append the new keywords
 to the correct category section:

@@ -126,7 +126,7 @@ a custom header (`X-API-Key`), never as a query parameter.
 ```
 1. Client registration:
    Developer signs up → API provider generates key
-   <provider-prefix>_<environment>_<random-32-char-string>
+   sk_live_YOUR_STRIPE_KEY_HERE
 
 2. Client stores key:
    Securely in environment variables or secrets manager
@@ -134,7 +134,7 @@ a custom header (`X-API-Key`), never as a query parameter.
 
 3. Client sends key with every request:
    GET /data
-   Authorization: Bearer <your-api-key-here>
+   Authorization: Bearer sk_live_YOUR_STRIPE_KEY_HERE
    
    OR (Stripe, SendGrid style):
    Authorization: Bearer sk_live_...

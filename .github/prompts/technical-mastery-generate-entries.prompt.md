@@ -12,12 +12,14 @@ tools:
 > **Version Registry** — `LATEST_VERSION` = **6** | `LATEST_VERSION_LABEL` = **v6.0** | `STUB_VERSION` = **0**
 > _To release v7: update the Version Registry in `.github/copilot-instructions.md`, `.github/instructions/technical-mastery.instructions.md`, and `technical-mastery/_config/ENTRY_GENERATOR_PROMPT.md`, rename `upgrade_to_v6.ps1` to `upgrade_to_v7.ps1`, then update this file's commit messages and script references._
 
-Generate complete, spec-compliant **LATEST_VERSION_LABEL** keyword entries for stub files in either a specific **category** (e.g. `MSV`, `JVM`) or a specific **tier** (e.g. `3`, `5`) — but not both simultaneously. A category targets one folder; a tier targets all categories within that tier number.
+Generate complete, spec-compliant **LATEST_VERSION_LABEL** keyword entries for stub files for either a specific **category** (e.g. `MSV`, `JVM`) or a specific **tier** (e.g. `3`, `5`). If both are provided, use the **category** and ignore the **tier**. A category targets one folder; a tier targets all categories within that tier number.
 or upgrade existing older entries by adding missing LATEST_VERSION_LABEL sections.
 
 **Target:** `${input:target:Category code (e.g. MSV, JVM) or tier number (e.g. 3, 5)}`
 **Batch size:** `${input:batchSize:Entries per batch (default: 10)}`
 **Mode:** `${input:mode:generate (default) | upgrade}`
+
+**Constraint priority order:** Input validation -> YAML validity -> Section completeness (5.1-5.24) -> Formatting -> Content depth.
 
 > **Input validation:** If `target` is not a recognized 3-letter category code or a single digit tier number (1-9), stop and report: `"Invalid target '${input:target}'. Provide a category code (e.g. MSV, JVM) or a tier number (1-9)."` If `batchSize` is not a positive integer, default to `10`.
 
@@ -36,6 +38,10 @@ or upgrade existing older entries by adding missing LATEST_VERSION_LABEL section
 > Use `upgrade` to surgically add missing LATEST_VERSION_LABEL sections to existing older files.
 
 ---
+
+**Mode routing:**
+- `generate` mode: Phase 0 -> Phase 1 -> Phase 2 -> Phase 3 -> Phase 4
+- `upgrade` mode: Phase 0 -> Phase 2U -> Phase 3 -> Phase 4
 
 ## Phase 0 — Show version statistics
 
@@ -178,8 +184,7 @@ The script will:
 4. Add Level 5 stub to Gradual Depth (if only Four Levels found)
 5. Set `version: LATEST_VERSION` (currently `4`) in frontmatter
 
-**After the script runs**, search upgraded files for `<!-- TODO LATEST_VERSION_LABEL:` and fill each stub using Copilot,
-reading the entry's existing content for context. Add only the missing content — do not rewrite existing sections. If an existing section partially meets LATEST_VERSION_LABEL requirements, adjust only the non-compliant parts to bring it into full compliance.
+**After the script runs**, search upgraded files for `<!-- TODO LATEST_VERSION_LABEL:` and use Copilot to fill each stub, ensuring all outputs meet the eight quality tests in the Quality Constitution. Read the entry's existing content for context. Add only the missing content - do not rewrite existing sections. If an existing section partially meets LATEST_VERSION_LABEL requirements, adjust only the non-compliant parts to bring it into full compliance.
 
 ---
 

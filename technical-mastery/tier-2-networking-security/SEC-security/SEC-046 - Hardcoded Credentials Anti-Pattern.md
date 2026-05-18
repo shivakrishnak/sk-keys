@@ -37,8 +37,8 @@ exposed forever even if you delete the file or overwrite it.
 ```python
 # BAD: hardcoded, permanent, in git history forever
 DATABASE_URL = "postgresql://admin:SuperSecret123@prod.db.company.com/users"
-AWS_ACCESS_KEY = "AKIAIOSFODNN7EXAMPLE"
-STRIPE_SECRET = "sk_live_EXAMPLE_REPLACE_WITH_ENV_VAR"
+AWS_ACCESS_KEY = "AKIA_YOUR_KEY_EXAMPLE"
+STRIPE_SECRET = "sk_live_YOUR_STRIPE_KEY_HERE"
 
 # GOOD: from environment at runtime
 DATABASE_URL = os.environ["DATABASE_URL"]
@@ -261,7 +261,7 @@ TOOL: detect-secrets (Yelp, pre-commit)
 DISCOVERY: Security scan found AWS access key committed 6 months ago.
   File: config/aws-config.py
   Commit: 3f2a891 (6 months ago)
-  Key: AKIAIOSFODNN7EXAMPLE
+  Key: AKIA_YOUR_KEY_EXAMPLE
   Secret: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
 INCIDENT RESPONSE STEPS:
@@ -284,7 +284,7 @@ IMMEDIATE (within minutes):
 
 SHORT-TERM (within hours):
   3. Update code to use environment variable
-     Before: AWS_ACCESS_KEY = "AKIAIOSFODNN7EXAMPLE"
+     Before: AWS_ACCESS_KEY = "AKIA_YOUR_KEY_EXAMPLE"
      After:  AWS_ACCESS_KEY = os.environ["AWS_ACCESS_KEY"]
      Better: Use boto3 without explicit keys (IAM roles)
      Best:   boto3 uses instance role or ECS task role → no keys at all
@@ -496,7 +496,7 @@ s3.upload_file('local_file.txt', 'my-bucket', 'remote_file.txt')
 #   Commit: 3f2a891b...
 #   File: config/aws-config.py
 #   Line: 4
-#   Raw secret: AKIAIOSFODNN7EXAMPLE...
+#   Raw secret: AKIA_YOUR_KEY_EXAMPLE...
 #
 # Action: Rotate immediately. Do not use this credential.
 ```

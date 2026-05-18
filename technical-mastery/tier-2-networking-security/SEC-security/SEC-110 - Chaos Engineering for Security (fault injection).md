@@ -316,7 +316,7 @@ FACILITATOR SCENARIO INJECT (at T+0):
   "GuardDuty alert received: 
    Severity: HIGH
    Finding: UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration.InsideAWS
-   Credential: AKIA3EXAMPLE12345678 (IAM user 'ci-deploy-prod')
+   Credential: AKIA_EXAMPLE_KEY_ID (IAM user 'ci-deploy-prod')
    Used from: IP 185.220.101.24 (known Tor exit node)
    Time: 14:32 UTC"
    
@@ -610,6 +610,7 @@ echo "GameDay complete. Full log in: ${GAMEDAY_LOG}"
 echo "Next steps: conduct blameless post-mortem with all participants."
 ```
 
+{% raw %}
 ```yaml
 # atomic-red-team-execution.yml
 # CI/CD-integrated SIEM alert validation using Atomic Red Team.
@@ -695,6 +696,7 @@ jobs:
         **Auditor Note:** This test validates SOC 2 CC7.1 (monitoring activities).
         EOF
 ```
+{% endraw %}
 
 ---
 

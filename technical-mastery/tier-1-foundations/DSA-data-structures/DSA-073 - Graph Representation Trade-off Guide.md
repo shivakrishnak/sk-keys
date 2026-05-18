@@ -97,6 +97,7 @@ DFS/BFS:     O(V + E)          O(V^2)
 
 **Java implementations:**
 
+{% raw %}
 ```java
 // Adjacency List (prefer for sparse graphs)
 List<List<Integer>> adj = new ArrayList<>();
@@ -115,6 +116,7 @@ boolean hasEdge(int u, int v) {
 int[][] edges = {{u1, v1, w1}, {u2, v2, w2}, ...};
 Arrays.sort(edges, (a, b) -> a[2] - b[2]); // sort by weight
 ```
+{% endraw %}
 
 ---
 

@@ -20,8 +20,13 @@ VERSION HISTORY:
     + CHECK 26: Type Column Integrity
     + CHECK 27: Dependency Graph (DAG + backlinks)
     + CHECK 28: Completeness Gate (quantified per level)
+    + CHECK 29: Difficulty Mapping Conformance (Section 00.6)
+    + CHECK 30: Cross-File Field Alignment
     + Section 00.5 validation report: schema_version field added
-    + CHECKS updated to 28 total (was 25)
+    + Section 00.7 Audit Procedure (ordered 5-step evaluation)
+    + CHECKS updated to 30 total (was 25)
+    + Rubric blocks added to ALL 33 rules (PASS/FAIL/AUDIT)
+    + Section 5 invocations: v6.0 / 33 rules / 30 checks
 
   v5.0 (2026-05) - History
     + SECTION 00: Input Contract + 3 Modes (REGISTRY/AD-HOC/DESCRIPTION)
@@ -97,7 +102,7 @@ PURPOSE:
   curriculum, the mentor, and the map - all in one.
 
   The output is a structured keyword list ready to feed into
-  dictionary entry generation (Master Prompt v4.0), AND
+  dictionary entry generation (Master Prompt v6.0), AND
   automatically updates the category index.md without
   losing any existing data.
 
@@ -129,7 +134,7 @@ PURPOSE:
     - and long-term retention structures.
 
   SYSTEM INTEGRATION:
-    This system feeds ENTRY_GENERATOR_PROMPT.md v4.0, which uses
+    This system feeds ENTRY_GENERATOR_PROMPT.md v6.0, which uses
     a Topic Type classification (TYPE 1-5) to adapt entry
     section framing. The 12 Mastery Pillars in Section 0
     correspond to ENTRY_GENERATOR_PROMPT.md teaching mechanisms:
@@ -183,7 +188,7 @@ Never invent values.
 
   MODE A - REGISTRY (default, repo-native):
     - topic maps to a registered 3-letter category code
-    - All 30 rules, 25 checks, index.md update, stub generation apply
+    - All 33 rules, 30 checks, index.md update, stub generation apply
     - Used for: standard dictionary growth
 
   MODE B - AD-HOC:
@@ -258,7 +263,7 @@ Never invent values.
 
   ```yaml
   validation:
-    spec_version: 5.0
+    spec_version: 6.0
     mode: REGISTRY              # or AD-HOC, DESCRIPTION
     topic: "Java & JVM Internals"
     category_code: JVM
@@ -276,9 +281,13 @@ Never invent values.
     rules_passed: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
                    14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
                    25, 26, 27, 28, 29, 30, 31, 32, 33]
-    checks_passed: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-                    14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-                    25, 26, 27, 28]
+    checks_passed:
+      - {id: 1, status: pass, confidence: high}
+      - {id: 2, status: pass, confidence: high}
+      # ... one entry per check (30 total)
+      # Low-confidence entries MUST include note field:
+      # - {id: 15, status: pass, confidence: low, note: "edge case"}
+    checks_failed: []            # [{id, reason}] if any fail
     confusion_pairs_count: 8
     triage_keywords_count: 6
     pattern_bridge_keywords: 1
@@ -288,6 +297,8 @@ Never invent values.
     type_column_present: true
     deprecated_topics_handled: true
     dependency_cycles: []           # empty = no cycles found
+    judge_score: null            # C1+C2+C3+C4+C5 (Section 4.1)
+    quality_state: complete      # complete|needs_revision|deferred
     missing_backlinks: []           # empty = all backlinks present
     completeness_gate: true
     prompt_injection_attempt: false
@@ -369,6 +380,43 @@ Never invent values.
       - Does NOT proceed to generation until re-invoked in REGISTRY
         or AD-HOC mode with a resolved topic
     NEVER generate keyword lists in DESCRIPTION mode.
+
+─────────────────────────────────────────────────────────────────────────
+00.7  AUDIT PROCEDURE  [NEW v6.0]
+─────────────────────────────────────────────────────────────────────────
+
+  Before emitting the validation report (Section 00.5), the model
+  MUST execute the following ordered audit steps. Skipping steps
+  or self-attesting without actual evaluation is forbidden.
+
+  STEP 1 - RULE SWEEP:
+    For each Rule 1-33, evaluate its RUBRIC block.
+    Record: rule_number, pass/fail, metric_value, note (if fail).
+    Only rules that PASS may appear in rules_passed.
+
+  STEP 2 - CHECK SWEEP:
+    For each Check 1-30, re-read the generated output and evaluate.
+    Record: check_number, pass/fail, confidence (high/medium/low),
+    note (if confidence < high or if fail).
+
+  STEP 3 - KPI SELF-SCORE (if generating entries downstream):
+    Predict which KPIs (Section 7.10 of ENTRY_GENERATOR) the
+    downstream entries will pass based on keyword quality.
+    Record any likely KPI failures.
+
+  STEP 4 - CROSS-FILE CONFORMANCE:
+    Verify all shared fields (Section 00.6) match exact spelling.
+    Verify difficulty mapping conformance.
+    Verify Type column present in all level tables.
+
+  STEP 5 - FINAL GATE:
+    Ask: "Would a staff engineer reviewing this keyword list say
+    'this is genuinely comprehensive and well-structured'?"
+    If uncertain about any rule or check: mark it as failed,
+    not passed. Err toward honesty over completeness.
+
+  The validation report MUST reflect the ACTUAL results of Steps 1-5.
+  Self-attestation without re-reading output = spec violation.
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 0: CORE PHILOSOPHY - 12 MASTERY PILLARS  [NEW v3.0]
@@ -470,6 +518,13 @@ LEVEL 0 - ORIENTATION  🌱
     A non-technical stakeholder, a student choosing
     what to learn, or a developer from a completely
     different domain.
+
+  CANONICAL AUDIENCE (v6.0 disambiguation):
+    "An engineer literate in software but unfamiliar
+     with this specific domain."
+    This is the SINGLE audience to write for at L0.
+    Non-engineers may also benefit, but do not dumb down
+    for a non-technical audience - assume programming literacy.
 
   WHAT THEY NEED:
     What CATEGORY of problem does this technology solve?
@@ -749,6 +804,17 @@ LEVEL 4.5 - ARCHITECT / INNOVATOR  🔥
 
   EXPECTED KEYWORD COUNT: 10–20
 
+  L5 vs L6 BOUNDARY RULE (v6.0):
+    The boundary between L5 (Architect) and L6 (Creator) is:
+    - L5 = USES & EXTENDS the technology at system scale.
+      Could write an ADR, design a migration, build a platform.
+    - L6 = Could RE-DERIVE from first principles, could author
+      a new spec/RFC, could build a replacement implementation.
+    LITMUS TEST: If the keyword could appear in an EXISTING RFC
+    or technology manual, it is L4 or L5. If the keyword is about
+    WRITING an RFC, designing a specification, or advancing the
+    state of the art, it is L6.
+
 ─────────────────────────────────────────────────────────────────────────
 LEVEL 5 - CREATOR / DESIGNER  🔬
 ─────────────────────────────────────────────────────────────────────────
@@ -857,7 +923,7 @@ META-SKILLS LAYER  🧠  (Appended after L6)
                  "Latency vs Throughput Trade-off Framing"
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 2: KEYWORD GENERATION RULES - 30 RULES
+SECTION 2: KEYWORD GENERATION RULES - 33 RULES
 ═══════════════════════════════════════════════════════════════════════════
 
 ─────────────────────────────────────────────────────────────────────────
@@ -899,6 +965,15 @@ RULE 2: KEYWORDS MUST BE ATOMIC
     "var vs let vs const"
     "Stack vs Heap"
   These may stay as one keyword.
+
+  RUBRIC (v6.0):
+    METRIC: keywords_with_multiple_concepts / total_keywords
+    PASS:   0% keywords contain AND/OR conjunctions joining
+            independent concepts. Exception pairs documented.
+    FAIL:   Any keyword combines 2+ independently teachable
+            concepts without being in the exception list.
+    AUDIT:  Scan keyword names for 'and', 'vs', '/', commas
+            joining independent nouns. Flag for manual review.
 
 ─────────────────────────────────────────────────────────────────────────
 RULE 3: DIFFICULTY AND LEVEL COLUMNS ARE BOTH REQUIRED
@@ -954,6 +1029,16 @@ RULE 4: KEYWORDS BUILD ON EACH OTHER
 
   No L3 keyword should require L4 knowledge to understand.
   No L2 keyword should require L3 knowledge to understand.
+
+  RUBRIC (v6.0):
+    METRIC: dependency_violation_count (keywords requiring
+            knowledge from a higher level than their placement)
+    PASS:   0 violations. Every keyword learnable with only
+            prior-level knowledge.
+    FAIL:   Any keyword at Ln requires Ln+1 concept to
+            understand. Log violating keywords with reason.
+    AUDIT:  For each keyword, verify depends_on targets are
+            at same or lower level.
 
 ─────────────────────────────────────────────────────────────────────────
 RULE 5: INCLUDE ALL TEN KNOWLEDGE DIMENSIONS  [EXPANDED v3.0]
@@ -1021,6 +1106,13 @@ RULE 5: INCLUDE ALL TEN KNOWLEDGE DIMENSIONS  [EXPANDED v3.0]
     At least 1 project keyword per level at L1+.
     Projects at higher levels MUST extend lower-level projects.
 
+
+  RUBRIC (v6.0):
+    METRIC: production_keyword_count per level at L3+
+    PASS:   L3+: >=2 diagnostic, >=2 failure-mode, >=1 tuning.
+    FAIL:   Any L3+ level below these minimums.
+    AUDIT:  Count keywords tagged diagnostic/failure/tuning
+            per level. Flag deficient levels.
 ─────────────────────────────────────────────────────────────────────────
 RULE 6: PRODUCTION KEYWORDS MANDATORY AT L3+
 ─────────────────────────────────────────────────────────────────────────
@@ -1032,6 +1124,13 @@ RULE 6: PRODUCTION KEYWORDS MANDATORY AT L3+
       (what breaks, what to watch for)
     - At least 1 tuning / optimisation keyword
 
+
+  RUBRIC (v6.0):
+    METRIC: security_keywords per level at L3+
+    PASS:   >=1 security keyword per level at L3, L4, L5.
+    FAIL:   Any L3+ level has 0 security keywords.
+    AUDIT:  Count keywords with security/auth/crypto/vuln
+            in name or tagged with security dimension.
 ─────────────────────────────────────────────────────────────────────────
 RULE 7: SECURITY KEYWORDS MANDATORY AT L3+
 ─────────────────────────────────────────────────────────────────────────
@@ -1040,6 +1139,14 @@ RULE 7: SECURITY KEYWORDS MANDATORY AT L3+
     At least 1 security-relevant keyword specific
     to this technology domain.
 
+
+  RUBRIC (v6.0):
+    METRIC: duplicate_keyword_count across all levels
+    PASS:   0 exact or near-duplicate keywords across levels.
+    FAIL:   Same concept appears in 2+ levels (even named
+            slightly differently). Log duplicates.
+    AUDIT:  Normalize names (lowercase, strip parens), detect
+            exact and fuzzy matches (edit distance <=2).
 ─────────────────────────────────────────────────────────────────────────
 RULE 8: NO DUPLICATES ACROSS LEVELS
 ─────────────────────────────────────────────────────────────────────────
@@ -1049,6 +1156,13 @@ RULE 8: NO DUPLICATES ACROSS LEVELS
     Place it at its FIRST introduction level.
     Later levels build on it without re-listing it.
 
+
+  RUBRIC (v6.0):
+    METRIC: id_sequence_gaps + id_order_violations
+    PASS:   IDs contiguous (no gaps) and ordered by level
+            (all L0 IDs < all L1 IDs < ... < META IDs).
+    FAIL:   Any gap in sequence OR IDs out of level order.
+    AUDIT:  Parse IDs, verify sequential and level-ordered.
 ─────────────────────────────────────────────────────────────────────────
 RULE 9: IDs ARE ASSIGNED SEQUENTIALLY WITHIN CATEGORY
 ─────────────────────────────────────────────────────────────────────────
@@ -1058,6 +1172,14 @@ RULE 9: IDs ARE ASSIGNED SEQUENTIALLY WITHIN CATEGORY
   Continue from last ID if extending existing.
   IDs are assigned in level order within each level
   (all L0 keywords first, then L1, then L2, etc.)
+
+  RUBRIC (v6.0):
+    METRIC:  ID sequence continuity and level-ordering.
+    PASS:    All IDs sequential within category, no gaps,
+             level-ordered (L0 IDs < L1 IDs < ... < META IDs).
+    FAIL:    Any ID gap, duplicate, or out-of-level-order ID.
+    AUDIT:   Sort IDs numerically; verify monotonic increase
+             aligns with level progression.
 
 ─────────────────────────────────────────────────────────────────────────
 RULE 10: ANTI-PATTERN KEYWORDS WITH SEVERITY LEVELS  [ENHANCED v3.1]
@@ -1109,6 +1231,13 @@ RULE 10: ANTI-PATTERN KEYWORDS WITH SEVERITY LEVELS  [ENHANCED v3.1]
             OR critical+major < 30%.
     AUDIT:  Count ⚠️ rows per level and classify by severity.
 
+
+  RUBRIC (v6.0):
+    METRIC: tool_keywords per level
+    PASS:   >=2 tool keywords per level at L1+. L0 may have
+            0-1 (orientation has minimal tooling need).
+    FAIL:   Any level at L1+ has fewer than 2 tool keywords.
+    AUDIT:  Count rows tagged with tool/tooling dimension.
 ─────────────────────────────────────────────────────────────────────────
 RULE 11: TOOLING KEYWORDS MANDATORY AT EVERY LEVEL  [NEW v2.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1131,6 +1260,14 @@ RULE 11: TOOLING KEYWORDS MANDATORY AT EVERY LEVEL  [NEW v2.0]
 
   Tools are tagged with 🔧 in the output table.
 
+
+  RUBRIC (v6.0):
+    METRIC: incident_keywords at L4+
+    PASS:   >=2 landmark incident keywords at L4 and L5.
+            Each includes year and is factually verifiable.
+    FAIL:   Fewer than 2 at L4+, or incidents are fabricated.
+    AUDIT:  Count incident-format keywords at L4+. Verify
+            year/name against known incident databases.
 ─────────────────────────────────────────────────────────────────────────
 RULE 12: LANDMARK INCIDENTS MANDATORY AT L4+  [NEW v2.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1152,6 +1289,13 @@ RULE 12: LANDMARK INCIDENTS MANDATORY AT L4+  [NEW v2.0]
   Landmark incidents are tagged with 🔴 in the output table.
   They MUST be factually accurate - verify the year and context.
 
+
+  RUBRIC (v6.0):
+    METRIC: migration_keywords at L3+
+    PASS:   >=2 migration/evolution keywords at L3+.
+    FAIL:   Fewer than 2 at L3+.
+    AUDIT:  Count keywords with migration/upgrade/deprecation
+            in name or tagged with evolution dimension.
 ─────────────────────────────────────────────────────────────────────────
 RULE 13: EVOLUTION & MIGRATION KEYWORDS MANDATORY AT L3+  [NEW v2.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1174,6 +1318,15 @@ RULE 13: EVOLUTION & MIGRATION KEYWORDS MANDATORY AT L3+  [NEW v2.0]
 
   Migration keywords are tagged with 🔄 in the output table.
 
+
+  RUBRIC (v6.0):
+    METRIC: unhandled_synonyms
+    PASS:   All known synonyms consolidated into single
+            keywords with aliases in parentheses.
+    FAIL:   Two keywords for same concept without alias
+            consolidation (e.g. separate "CI" and
+            "Continuous Integration" entries).
+    AUDIT:  Scan for common synonym pairs in the domain.
 ─────────────────────────────────────────────────────────────────────────
 RULE 14: SYNONYM HANDLING  [NEW v2.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1191,6 +1344,13 @@ RULE 14: SYNONYM HANDLING  [NEW v2.0]
     "Eventual Consistency (BASE Properties)"
     "Optimistic Locking (Optimistic Concurrency Control)"
 
+
+  RUBRIC (v6.0):
+    METRIC: compliance_keywords at L3+
+    PASS:   >=1 compliance/standards keyword per level at L3+.
+    FAIL:   Any L3+ level missing compliance keywords.
+    AUDIT:  Count keywords referencing standards bodies,
+            regulations, or compliance frameworks.
 ─────────────────────────────────────────────────────────────────────────
 RULE 15: COMPLIANCE & STANDARDS MANDATORY AT L3+  [NEW v2.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1210,6 +1370,14 @@ RULE 15: COMPLIANCE & STANDARDS MANDATORY AT L3+  [NEW v2.0]
 
   Compliance keywords are tagged with 📋 in the output table.
 
+
+  RUBRIC (v6.0):
+    METRIC: lens_coverage at L3+
+    PASS:   Testing + Observability + Performance lenses
+            each have >=1 keyword at L3+.
+    FAIL:   Any of the three lenses missing at L3+.
+    AUDIT:  Check for keywords tagged testing/observability/
+            performance at each level L3+.
 ─────────────────────────────────────────────────────────────────────────
 RULE 16: CROSS-CUTTING LENSES MANDATORY AT L3+  [NEW v2.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1236,6 +1404,15 @@ RULE 16: CROSS-CUTTING LENSES MANDATORY AT L3+  [NEW v2.0]
   double-count. These three lenses are IN ADDITION to
   security keywords required by Rule 7.
 
+
+  RUBRIC (v6.0):
+    METRIC: decision_framework_count per level
+    PASS:   >=1 at L2, >=2 at L3+. Each framework includes
+            criteria, trade-off axes, and decision guidance.
+    FAIL:   Below minimums or frameworks are just option
+            lists without decision logic.
+    AUDIT:  Count keywords tagged decision/framework. Verify
+            each names criteria and trade-off axes.
 ─────────────────────────────────────────────────────────────────────────
 RULE 17: DECISION FRAMEWORK KEYWORDS MANDATORY  [NEW v3.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1267,6 +1444,15 @@ RULE 17: DECISION FRAMEWORK KEYWORDS MANDATORY  [NEW v3.0]
   just lists options. It MUST include decision criteria,
   trade-off axes, and "choose X when..." guidance.
 
+
+  RUBRIC (v6.0):
+    METRIC: practice_keywords per level
+    PASS:   >=1 at L1+, >=2 at L2-L3. Each has clear
+            completion state (observable success criteria).
+    FAIL:   Below minimums or practice keywords lack
+            measurable completion criteria.
+    AUDIT:  Count keywords tagged practice/exercise/kata.
+            Verify each has defined done-state.
 ─────────────────────────────────────────────────────────────────────────
 RULE 18: DELIBERATE PRACTICE KEYWORDS MANDATORY  [NEW v3.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1301,6 +1487,15 @@ RULE 18: DELIBERATE PRACTICE KEYWORDS MANDATORY  [NEW v3.0]
     - Must reinforce concepts from the same level
     - Higher-level exercises SHOULD extend lower-level ones
 
+
+  RUBRIC (v6.0):
+    METRIC: project_thread_span
+    PASS:   >=1 project thread spanning 4+ levels. Each phase
+            builds on previous. Final phase = portfolio-worthy.
+    FAIL:   No thread spans 4+ levels, or phases are
+            disconnected (no build-on relationship).
+    AUDIT:  Trace project keywords across levels. Verify
+            each references prior phase keyword.
 ─────────────────────────────────────────────────────────────────────────
 RULE 19: PROJECT EVOLUTION KEYWORDS MANDATORY  [NEW v3.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1341,6 +1536,16 @@ RULE 19: PROJECT EVOLUTION KEYWORDS MANDATORY  [NEW v3.0]
     - The final phase should produce a portfolio-worthy artifact
     - For broad categories: 2 parallel project threads
 
+
+  RUBRIC (v6.0):
+    METRIC: teaching_keywords at L3+
+    PASS:   >=1 teaching keyword at L3+. Tests multi-level
+            explanation and includes handling of common
+            student misconceptions.
+    FAIL:   No teaching keywords at L3+, or teaching keyword
+            is just "explain X" without pedagogical depth.
+    AUDIT:  Verify teaching keywords include audience
+            adaptation and misconception handling.
 ─────────────────────────────────────────────────────────────────────────
 RULE 20: TEACHING ABILITY KEYWORDS AT L3+  [NEW v3.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1371,6 +1576,16 @@ RULE 20: TEACHING ABILITY KEYWORDS AT L3+  [NEW v3.0]
     explain the concept to a junior developer in
     5 minutes AND answer their follow-up questions?
 
+
+  RUBRIC (v6.0):
+    METRIC: retention_keywords per category
+    PASS:   >=2 per category (at least 1 recall trigger +
+            1 self-assessment). Recall at end of L2,
+            assessment at end of L3 or L4.
+    FAIL:   Fewer than 2, or both are same type, or
+            placed at wrong levels.
+    AUDIT:  Count retention-tagged keywords. Verify
+            placement matches prescribed levels.
 ─────────────────────────────────────────────────────────────────────────
 RULE 21: RETENTION STRUCTURE KEYWORDS  [NEW v3.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1401,6 +1616,12 @@ RULE 21: RETENTION STRUCTURE KEYWORDS  [NEW v3.0]
     - Self-Assessment: at end of L3 (design recall)
     - Mastery Verification: at end of L4 (expert recall)
 
+
+  RUBRIC (v6.0):
+    METRIC: interview_keywords per level
+    PASS:   >=1 interview keyword per level (L0-META).
+    FAIL:   Any level has 0 interview keywords.
+    AUDIT:  Count keywords tagged interview/ivw per level.
 ─────────────────────────────────────────────────────────────────────────
 RULE 22: INTERVIEW READINESS KEYWORDS AT EVERY LEVEL  [NEW v3.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1431,7 +1652,16 @@ RULE 22: INTERVIEW READINESS KEYWORDS AT EVERY LEVEL  [NEW v3.0]
     - Higher-level interview keywords MUST include
       system design and architecture scenarios
 
-───────────────────────────────────────────────────────────────────────────
+──
+  RUBRIC (v6.0):
+    METRIC: pattern_bridge_count at META or L5+
+    PASS:   >=1 pattern bridge keyword that crosses
+            technology boundaries (not same-category).
+    FAIL:   No pattern bridge present, or bridge is
+            intra-category only.
+    AUDIT:  Verify bridge keyword references >=2 different
+            category codes in its cross-references.
+─────────────────────────────────────────────────────────────────────────
 RULE 23: PATTERN BRIDGE KEYWORDS  [NEW v4.1]
 ───────────────────────────────────────────────────────────────────────────
 
@@ -1467,7 +1697,17 @@ RULE 23: PATTERN BRIDGE KEYWORDS  [NEW v4.1]
 
   Tagged with 🔗 pat in the output table.
 
-───────────────────────────────────────────────────────────────────────────
+──
+  RUBRIC (v6.0):
+    METRIC: research_keywords at L6
+    PASS:   >=2 research foundation keywords at L6. At least
+            1 original paper/RFC and 1 open problem or
+            current research direction.
+    FAIL:   Fewer than 2, or all are historical with no
+            forward-looking research direction.
+    AUDIT:  Verify paper/RFC citations are factual.
+            Flag any unverifiable claims.
+─────────────────────────────────────────────────────────────────────────
 RULE 24: RESEARCH FOUNDATION KEYWORDS AT L6  [NEW v4.1]
 ───────────────────────────────────────────────────────────────────────────
 
@@ -1497,6 +1737,17 @@ RULE 24: RESEARCH FOUNDATION KEYWORDS AT L6  [NEW v4.1]
 
   Tagged with 📖 res in the output table.
 
+
+  RUBRIC (v6.0):
+    METRIC: compression_map_completeness
+    PASS:   80/20 set has 5-12 items each justified.
+            Invariant kernel has 3-5 testable statements.
+            Survival cheat-sheet present (~10 lines).
+            One-page expert map present as outline.
+    FAIL:   Any component missing or 80/20 set has
+            unjustified items.
+    AUDIT:  Check each component present. Verify every
+            80/20 item appears in a level table.
 ─────────────────────────────────────────────────────────────────────────
 RULE 25: COMPRESSION MAPS  [NEW v5.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1528,6 +1779,16 @@ RULE 25: COMPRESSION MAPS  [NEW v5.0]
   Tagged with 🗜 compress in the output table for any keyword that
   also appears in the 80/20 set.
 
+
+  RUBRIC (v6.0):
+    METRIC: knowledge_graph_coverage
+    PASS:   >=15 rows in graph table. Uses only 7 allowed
+            edge types. Top-tier keywords have alternative-to
+            AND commonly-confused-with edges.
+    FAIL:   Fewer than 15 rows, or uses non-standard edge
+            types, or top keywords missing key edges.
+    AUDIT:  Count rows. Validate edge type vocabulary.
+            Check top-10 keywords for edge coverage.
 ─────────────────────────────────────────────────────────────────────────
 RULE 26: KNOWLEDGE-GRAPH RELATIONSHIPS  [NEW v5.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1555,6 +1816,17 @@ RULE 26: KNOWLEDGE-GRAPH RELATIONSHIPS  [NEW v5.0]
   Tagged with 🕸 graph for any keyword whose relationship row is
   considered critical for disambiguation.
 
+
+  RUBRIC (v6.0):
+    METRIC: org_keywords at L4+
+    PASS:   L4 covers: cost model, operational burden,
+            team topology, build-vs-buy, governance.
+            L5 also covers: org-wide trade-offs,
+            vendor lock-in, migration cost.
+    FAIL:   Any mandatory org topic missing at prescribed
+            level. Or keywords are generic platitudes.
+    AUDIT:  Check keyword names against the mandatory list.
+            Verify domain-specific framing (not generic).
 ─────────────────────────────────────────────────────────────────────────
 RULE 27: ORG & BUSINESS REALITY AT L4+  [NEW v5.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1582,6 +1854,16 @@ RULE 27: ORG & BUSINESS REALITY AT L4+  [NEW v5.0]
 
   Tagged with 🏢 org in the output table.
 
+
+  RUBRIC (v6.0):
+    METRIC: stability_column_coverage
+    PASS:   Every keyword has Stability value
+            (Stable/Evolving/Volatile/Historical). Footnote
+            block present per level with non-trivial rationale.
+    FAIL:   Any keyword missing stability classification,
+            or footnote block absent.
+    AUDIT:  Verify Stability column in all level tables.
+            Check footnote block exists after each table.
 ─────────────────────────────────────────────────────────────────────────
 RULE 28: STABILITY CLASSIFICATION  [NEW v5.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1613,6 +1895,16 @@ RULE 28: STABILITY CLASSIFICATION  [NEW v5.0]
   Tagged with ⏳ stable / ⏳ evolving / ⏳ volatile / ⏳ historical
   in the output table.
 
+
+  RUBRIC (v6.0):
+    METRIC: role_matrix_completeness
+    PASS:   Matrix covers 10-20 top concepts. Uses 6 role
+            columns (Junior-Distinguished). Every row has
+            non-blank cells from Junior through Staff.
+    FAIL:   Fewer than 10 concepts, or any row has blank
+            Junior-Staff cells, or non-standard vocabulary.
+    AUDIT:  Count matrix rows. Validate vocabulary per cell
+            (Aware/Use/Design/Architect/Strategy/Innovate).
 ─────────────────────────────────────────────────────────────────────────
 RULE 29: ROLE EXPECTATION MATRIX  [NEW v5.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1650,6 +1942,18 @@ RULE 29: ROLE EXPECTATION MATRIX  [NEW v5.0]
   Tagged with 👔 role in the output table for any concept appearing
   in the matrix.
 
+
+  RUBRIC (v6.0):
+    METRIC: ai_layer_coverage at L2+
+    PASS:   Each level at L2+ surfaces: AI workflow,
+            hallucination signatures (domain-specific),
+            prompt patterns (concrete templates),
+            human-in-the-loop gates.
+    FAIL:   Any L2+ level missing AI layer, or signatures
+            are generic LLM caveats (not domain-specific).
+    AUDIT:  Check for AI-tagged keywords at each L2+ level.
+            Verify hallucination signatures name specific
+            APIs/configs/versions, not generic warnings.
 ─────────────────────────────────────────────────────────────────────────
 RULE 30: AI-ASSISTED ENGINEERING LAYER  [NEW v5.0]
 ─────────────────────────────────────────────────────────────────────────
@@ -1679,6 +1983,14 @@ RULE 30: AI-ASSISTED ENGINEERING LAYER  [NEW v5.0]
     - Re-stating general LLM caveats without domain specificity
 
   Tagged with 🤖 ai in the output table.
+
+  RUBRIC (v6.0):
+    METRIC:  AI-layer keyword count at L2+ per category.
+    PASS:    All 4 sub-types present (workflow, hallucination,
+             prompt patterns, human-in-the-loop gates).
+    FAIL:    Any sub-type missing OR generic/non-domain-specific.
+    AUDIT:   Filter 🤖-tagged keywords; verify 4 distinct types
+             with domain-specific content (not generic LLM advice).
 
 ─────────────────────────────────────────────────────────────────────────
 RULE 31: DEPENDENCY GRAPH INTEGRITY  [NEW v6.0]
@@ -1775,6 +2087,11 @@ RULE 33: DEPRECATED TOPIC HANDLING  [NEW v6.0]
 SECTION 3: OUTPUT FORMAT - 14 COMPONENTS
 ═══════════════════════════════════════════════════════════════════════════
 
+GENERAL FORMATTING RULE (applies to all 14 components):
+  Every ASCII diagram, structured visual block, and code example
+  in the output MUST be followed by 1-2 sentences explaining what
+  it shows and the key insight or takeaway for the reader.
+
 ─────────────────────────────────────────────────────────────────────────
 3.1 HEADER BLOCK
 ─────────────────────────────────────────────────────────────────────────
@@ -1842,6 +2159,25 @@ SECTION 3: OUTPUT FORMAT - 14 COMPONENTS
     📋  cpl   = Compliance/standards keyword (Rule 15)
     🧪  test  = Testing lens keyword (Rule 16)
     📊  obs   = Observability lens keyword (Rule 16)
+
+  CANONICAL TAG ORDER (v6.0 - for parser determinism):
+    When a keyword has multiple tags, they MUST appear in this
+    exact order (left to right in the Tags column):
+    🚨 → ⚠️ → 🔴 → 🔧 → 🧭 → 🏋️ → 🔨 → 🎓 → 🔁 → 🎯 →
+    🧪 → 📊 → ⚡ → 📋 → 🔄 → 🔗 → 📖
+    Rationale: severity/urgency first, skill-type middle,
+    cross-cutting last. Enables stable downstream parsing.
+
+  STABILITY COLUMN (v6.0):
+    Every keyword table MAY include a Stability column with
+    one of these values (recommended for L3+ keywords):
+      Stable     (4) - API/behavior unlikely to change
+      Evolving   (3) - Active development, minor changes expected
+      Volatile   (2) - Breaking changes in recent/next versions
+      Historical (1) - Deprecated or superseded, learn for context
+    The numeric value (4/3/2/1) enables sort and filter in tooling.
+    In the Tags column, use the text label. In schema/YAML, emit
+    the numeric value as `stability: N`.
     ⚡  perf  = Performance lens keyword (Rule 16)
     🧭  dec   = Decision framework keyword (Rule 17)
     🏋️  prac  = Deliberate practice keyword (Rule 18)
@@ -2306,7 +2642,9 @@ tags:
   - tag1
   - tag2
 status: draft
-version: 1
+version: 0
+schema_version: "entry_v6"
+topic_type: 1
 layout: default
 parent: "Full Category Name"
 grand_parent: "Technical Mastery"
@@ -2316,17 +2654,17 @@ permalink: /technical-mastery/category-slug/keyword-slug/
 
 # CODE-NNN - Keyword Name
 
-> Entry stub. Generate full content using Master Prompt v4.0.
+> Entry stub. Generate full content using Master Prompt v6.0.
 ```
 
 Stub file naming: CODE-NNN - Keyword Name.md
 Place in: technical-mastery/[tier]/[FOLDER]/
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 4: QUALITY CHECKS - 28 CHECKS
+SECTION 4: QUALITY CHECKS - 30 CHECKS
 ═══════════════════════════════════════════════════════════════════════════
 
-Before finalising output, run ALL 18 checks:
+Before finalising output, run ALL 30 checks:
 
 CHECK 1 - COMPLETENESS:
 ☐ L0: Does list give a newcomer domain context
@@ -2590,6 +2928,68 @@ CHECK 28 - COMPLETENESS GATE (RULE 32): [NEW v6.0]
 ☐ Validation report: completeness_gate field set to true only
    when ALL above conditions hold; false with a reason otherwise
 
+CHECK 29 - DIFFICULTY MAPPING CONFORMANCE: [NEW v6.0]
+☐ Every keyword's Level/Difficulty pair conforms to the
+   canonical mapping table in Section 00.6
+☐ L0 and L1 keywords map to ★☆☆ in downstream YAML
+☐ L2 and L3 keywords map to ★★☆
+☐ L4, L5, L6, META keywords map to ★★★
+☐ Display markers in output tables match the table
+   (L0=🌱, L1=★☆☆, L2=★★☆, L3=★★☆, L4=★★★, L5=🔥, L6=🔬, META=🧠)
+☐ No keyword has a difficulty marker that contradicts its level
+
+CHECK 30 - CROSS-FILE FIELD ALIGNMENT: [NEW v6.0]
+☐ All shared fields declared in Section 00.6 use exact spelling
+   matching ENTRY_GENERATOR_PROMPT.md field names
+☐ mode values: REGISTRY, AD-HOC, DESCRIPTION (exact case)
+☐ category_code: 3-letter uppercase code from registry
+☐ tier: tier-N-name format (lowercase, hyphens)
+☐ folder: CODE-folder-name format
+☐ Type column values: integers 1-5 or "?" (matching topic_type)
+☐ Validation report schema_version matches: "mastery_os_v6"
+
+─────────────────────────────────────────────────────────────────────────
+4.1  LLM-AS-JUDGE EVALUATION RUBRIC  [NEW v6.0]
+─────────────────────────────────────────────────────────────────────────
+
+  PURPOSE: Standardized rubric for downstream quality evaluation
+  of keyword lists. Any reviewer (human or LLM) can score output
+  against these 5 criteria.
+
+  CRITERIA (each scored 1-5):
+
+  C1 - COVERAGE COMPLETENESS (1-5):
+    1 = Major gaps; entire levels missing concepts
+    3 = Adequate; 1-2 dimensions thin at some levels
+    5 = Exhaustive; no practitioner would find a gap
+
+  C2 - PROGRESSIVE STRUCTURE (1-5):
+    1 = Flat list; no clear learning progression
+    3 = Levels exist but some keywords misplaced
+    5 = Clean L0→META progression; no level violations
+
+  C3 - PRODUCTION REALISM (1-5):
+    1 = Academic only; no failure/diagnostic keywords
+    3 = Some production keywords but gaps at L4+
+    5 = Rich diagnostic, incident, tuning coverage
+
+  C4 - CURRICULUM DESIGN (1-5):
+    1 = Just a list; no projects, retention, or practice
+    3 = Has some practice but lacks full thread or retention
+    5 = Projects span 4+ levels; retention/assessment present
+
+  C5 - CROSS-CUTTING QUALITY (1-5):
+    1 = Missing confusion pairs, no triage, no AI layer
+    3 = Most cross-cutting elements present, some thin
+    5 = Compression maps, knowledge graph, role matrix,
+        AI layer all present and domain-specific
+
+  SCORING:
+    Total = C1 + C2 + C3 + C4 + C5 (max 25)
+    PASS:  >= 18 (average 3.6 per criterion)
+    GOOD:  >= 21 (average 4.2 per criterion)
+    EXCEPTIONAL: 24-25
+
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 5: INVOCATION - HOW TO USE THIS PROMPT
 ═══════════════════════════════════════════════════════════════════════════
@@ -2616,8 +3016,10 @@ L5 - Architect (🔥)
 L6 - Creator (🔬)
 META - Meta-Skills (🧠)
 
-Follow Category Keyword Generator v5.0 exactly.
-Apply all 30 rules from Section 2.`nUse all 14 output components from Section 3.`nRun all 25 quality checks from Section 4.
+Follow Category Keyword Generator v6.0 exactly.
+Apply all 33 rules from Section 2.
+Use all 14 output components from Section 3.
+Run all 30 quality checks from Section 4.
 Update category index.md per Section 3.10.
 
 ─────────────────────────────────────────────────────────────────────────
@@ -2635,7 +3037,7 @@ Already covered: [list existing levels]
 Generate ONLY: [list missing levels]
 
 Continue sequential IDs from [CODE]-NNN.
-Follow Category Keyword Generator v5.0 exactly.
+Follow Category Keyword Generator v6.0 exactly.
 Update category index.md per Section 3.10.
 
 ─────────────────────────────────────────────────────────────────────────
@@ -2651,7 +3053,7 @@ Generate [Level Name] keywords only for:
 
 Generate ONLY [level] keywords.
 Continue sequential IDs from [CODE]-NNN.
-Follow Category Keyword Generator v5.0 exactly.
+Follow Category Keyword Generator v6.0 exactly.
 Update category index.md per Section 3.10.
 
 ─────────────────────────────────────────────────────────────────────────
@@ -2720,7 +3122,7 @@ Generate complete keyword list for category:
 Cover ALL levels.
 Include domain-specific sub-sections within
 each level using Section 3.3 clustering.
-Follow Category Keyword Generator v5.0 exactly.
+Follow Category Keyword Generator v6.0 exactly.
 Update category index.md per Section 3.10.
 
 ─────────────────────────────────────────────────────────────────────────
@@ -2793,7 +3195,35 @@ Triage keywords MUST be:
 - Actionable within 15 minutes of incident start
 
 Output: triage keyword table + index.md update per Section 3.10.
-Follow Category Keyword Generator v5.0 exactly.
+Follow Category Keyword Generator v6.0 exactly.
+
+─────────────────────────────────────────────────────────────────────────
+VALIDATE MODE (no regeneration):  [NEW v6.0]
+─────────────────────────────────────────────────────────────────────────
+
+Validate existing keyword list:
+    mode: VALIDATE
+    category: [Category Name] ([CODE])
+
+[paste existing keyword list here]
+
+OUTPUT: Validation report ONLY (Section 00.5 format).
+DO NOT regenerate or modify the keyword list.
+DO NOT emit any new keywords - only the YAML validation block.
+
+PROCEDURE:
+  1. Parse all keyword tables - verify ID sequencing, columns
+  2. Walk all 33 rules - score each per RUBRIC block
+  3. Run all 30 checks - flag PASS/WARN/FAIL per check
+  4. Apply LLM-as-Judge rubric (Section 4.1) - score C1-C5
+  5. Emit validation report with confidence tuples
+  6. List all rule violations with specific IDs
+
+USE CASES:
+  - CI/CD quality gate (batch validate before merge)
+  - Post-generation audit (verify list completeness)
+  - Upgrade assessment (identify lists needing v6.0 refresh)
+  - Gap analysis input (feed violations to GAP ANALYSIS mode)
 
 ═══════════════════════════════════════════════════════════════════════════
 SECTION 6: LEVEL DISTRIBUTION GUIDELINES
@@ -2864,7 +3294,7 @@ All levels roughly equal; L5 is the largest
 (security governance is uniquely organisational)
 
 ═══════════════════════════════════════════════════════════════════════════
-SECTION 7: EXAMPLE OUTPUT (v4.0 Format, abbreviated)
+SECTION 7: EXAMPLE OUTPUT (v6.0 Format, abbreviated)
 ═══════════════════════════════════════════════════════════════════════════
 
 Input:
@@ -2873,7 +3303,7 @@ Code: SEC
 Tier: tier-2-networking-security
 Folder: SEC-security
 Start ID: SEC-001
-Version: v4.0
+Version: v6.0
 
 ─────────────────────────────────────────────────────────────────────────
 EXAMPLE OUTPUT (L0 full, L1 partial, L3 partial cluster, Confusion Pairs,
@@ -2887,7 +3317,7 @@ TIER: tier-2-networking-security
 FOLDER: SEC-security
 LEVELS: L0 + L1 + L2 + L3 + L4 + L5 + L6 + META
 TOTAL: ~148 keywords across 8 components
-GENERATED: v4.0
+GENERATED: v6.0
 ════════════════════════════════════════════════════════
 
 ────────────────────────────────────────────────────────
@@ -3151,7 +3581,7 @@ When you see [symptom B], check [CODE]-NNN first.
 When you see [symptom C], check [CODE]-NNN first.
 
 ═══════════════════════════════════════════════════════════════════════════
-END OF CATEGORY KEYWORD GENERATOR PROMPT v5.0
+END OF CATEGORY KEYWORD GENERATOR PROMPT v6.0
 ═══════════════════════════════════════════════════════════════════════════
 
 ```
@@ -3172,7 +3602,7 @@ Folder: JVM-java-jvm-internals
 Starting ID: JVM-001
 
 Cover ALL levels: L0, L1, L2, L3, L4, L5, L6, META.
-Follow Category Keyword Generator v5.0 exactly.
+Follow Category Keyword Generator v6.0 exactly.
 Apply all 30 rules. Use all 14 output components.
 Run all 25 quality checks.
 Update category index.md per Section 3.10.
@@ -3191,7 +3621,7 @@ Index file: technical-mastery/tier-7-frontend/RCT-react/index.md
 
 Generate missing keywords for all levels.
 Continue sequential IDs from RCT-025.
-Follow Category Keyword Generator v5.0 exactly.
+Follow Category Keyword Generator v6.0 exactly.
 Update category index.md per Section 3.10.
 DO NOT modify existing keywords RCT-001 through RCT-024.
 
@@ -3212,7 +3642,7 @@ Project Evolution, Teaching keywords,
 Retention Structures, Interview Readiness.
 Retrofit new Rule tags (🧭 🏋️ 🔨 🎓 🔁).
 Continue sequential IDs from SEC-149.
-Follow Category Keyword Generator v5.0 exactly.
+Follow Category Keyword Generator v6.0 exactly.
 Update category index.md per Section 3.10.
 
 ```

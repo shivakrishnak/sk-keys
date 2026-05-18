@@ -16,7 +16,7 @@ technical-mastery/
     ENTRY_GENERATOR_PROMPT.md               # Master generation spec v6.0
     MASTERY_OS_PROMPT.md       # Category keyword generator v6.0
     CATEGORY_GENERATOR_PROMPT.md      # Single-category generator v2.0
-    TECHNICAL_MASTERY_LIST.md           # Master keyword list - READ-ONLY reference; MAY be read to understand existing topic coverage and check IDs; NEVER the source for keyword generation; updated AFTER keyword generation only
+    TECHNICAL_MASTERY_LIST.md           # READ-ONLY reference. Permitted uses: (1) check existing IDs for conflicts; (2) verify topic coverage. Prohibited: generating or deriving any keywords from it.
     GENERATE_QUEUE.md                 # Generation queue guide
   index.md                            # Site root nav node
   tier-1-foundations/
@@ -51,18 +51,18 @@ technical-mastery/
 **0. KEYWORD GENERATION (NON-NEGOTIABLE):** Any keyword list - for any
 topic, technology, language, skill, feature, description, JD text, or
 anything else - MUST be generated using `MASTERY_OS_PROMPT.md`
-v6.0. All 33 rules, all 28 quality checks. No exceptions.
-`TECHNICAL_MASTERY_LIST.md` MAY be read to understand what topics a
-category covers and to check existing IDs for conflicts. It is NEVER
-the source for generating new keywords - ALL keyword generation goes
-through `MASTERY_OS_PROMPT.md` only. `TECHNICAL_MASTERY_LIST.md`
-is updated ONLY AFTER the keyword list is generated. Copying or
-deriving keywords directly from TECHNICAL_MASTERY_LIST.md is a critical
-violation of this rule.
+v6.0. All 33 rules, all 30 quality checks. No exceptions.
+`TECHNICAL_MASTERY_LIST.md` has two permitted uses ONLY:
+(1) verify a keyword ID does not already exist;
+(2) confirm which topics a category already covers.
+All other use is prohibited - especially generating, deriving, or
+copying keywords from it. ALL keyword generation goes through
+`MASTERY_OS_PROMPT.md` only. `TECHNICAL_MASTERY_LIST.md` is updated
+ONLY AFTER the keyword list is generated.
 
 **1. Content:** All 24 required sections in exact sequence (5.1-5.24). BAD-before-GOOD code. Min 4 misconception rows, min 3 failure modes.
 
-**2. Conditional sections** - include only when condition is clearly met:
+**2. Conditional sections** - use this decision table:
 
 | Section               | Include when...                                     | Omit when...                              |
 | :-------------------- | :-------------------------------------------------- | :---------------------------------------- |
@@ -70,9 +70,11 @@ violation of this rule.
 | 5.14 Comparison Table | 2+ named alternatives/variants exist                | Concept is unique, no alternative         |
 | 5.15 Flow / Lifecycle | Distinct ordered multi-phase lifecycle (3+ phases)  | Data structure, algorithm, single pattern |
 
-**3. Formatting:** `---` before every `###`. ASCII diagrams max 59 chars. Diagrams: DUAL format (ASCII first, then Mermaid below). Types: `flowchart`, `sequenceDiagram`, `stateDiagram-v2`, `classDiagram`, `erDiagram`, `mindmap`. Code lines max 70 chars. No H2 headers. No `# H1` in body - Just the Docs renders H1 from YAML `title`. Bold-label lines (`**LABEL:** value`) must each be separated by a blank line.
+If the condition is ambiguous, include the section.
 
-**4. YAML:** All required frontmatter fields. Double-quote titles with `: `. No em dashes anywhere.
+**3. Formatting:** `---` before every `###`. ASCII diagrams: each line must not exceed 59 characters in width. Diagrams: DUAL format (ASCII first, then Mermaid below). Types: `flowchart`, `sequenceDiagram`, `stateDiagram-v2`, `classDiagram`, `erDiagram`, `mindmap`. Code lines max 70 chars. No H2 headers. No `# H1` in body - Just the Docs renders H1 from YAML `title`. Bold-label lines (`**LABEL:** value`) must each be separated by a blank line.
+
+**4. YAML:** All required frontmatter fields. Double-quote titles with `: `. No em dashes anywhere. If a required field is missing or invalid, halt and specify which field needs to be supplied before proceeding.
 
 **5. Versions:** Complete entries = `version: 4`, stubs = `version: 0`. Scale: 0|1|2|3|4.
 
@@ -199,6 +201,8 @@ permalink: /technical-mastery/category-slug/keyword-slug/
 
 ## Quality Constitution (Non-Negotiable)
 
+**Priority order when constraints conflict:** YAML validity -> Section completeness (5.1-5.24) -> Formatting -> Content depth.
+
 Full spec: `technical-mastery/_config/ENTRY_GENERATOR_PROMPT.md` Section 7.
 Every entry MUST pass ALL eight quality tests before output.
 
@@ -215,24 +219,25 @@ Every entry MUST pass ALL eight quality tests before output.
 | 7   | Decision           | Can't decide when to use/avoid = add decision framework |
 | 8   | Scale              | No 10x/100x/1000x coverage = add scale analysis         |
 
-### Code Example Requirements (Non-Negotiable)
+### Code Example Requirements
 
-Every concept with code must choose examples from these categories.
-Choose based on concept complexity (minimum 2-3 categories):
+Every concept with code must include at minimum:
+- **MANDATORY:** Wrong vs Right Example (BAD before GOOD, always)
+- **MANDATORY:** Failure Example (what breaks, symptoms, fix)
+- **Plus 1-2 more** based on complexity:
 
-1. Recognition Example - identify the pattern in existing code
-2. Wrong vs Right Example - **MANDATORY** (BAD before GOOD, always)
-3. Production Example - real-world, not toy
-4. Failure Example - **MANDATORY** - what breaks, symptoms, fix
-5. Debugging Example - diagnostic commands, log analysis
-6. Scale Example - what changes under load
-7. Trade-off Example - gain vs sacrifice in code
-8. Internal Mechanism Example - how it works underneath
-9. System Interaction Example - cross-component behavior
-10. Testing/Verification Example - prove correctness
+| Category                  | Use when...                              |
+| ------------------------- | ---------------------------------------- |
+| Recognition Example       | Pattern appears in real codebases        |
+| Production Example        | Real-world usage, not toy                |
+| Debugging Example         | Diagnostic commands or log analysis      |
+| Scale Example             | Behavior changes under load              |
+| Trade-off Example         | Gain vs sacrifice decision               |
+| Internal Mechanism Example| How it works underneath                  |
+| System Interaction Example| Cross-component behavior                 |
+| Testing/Verification      | Prove correctness                        |
 
-Goal: the reader understands why, when, failure, scale,
-debugging, and trade-offs - not just the API.
+Goal: reader understands why, when, failure, scale, debugging, and trade-offs.
 
 ### 10-Point Writing Standard
 

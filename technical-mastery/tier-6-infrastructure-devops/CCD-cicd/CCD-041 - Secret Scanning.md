@@ -18,6 +18,7 @@ tags:
   - git
   - devops
   - deep-dive
+status: complete
 ---
 
 ⚡ TL;DR - Secret scanning automatically detects API keys, passwords, and tokens committed to source code before they reach production or get exposed in public repositories.
@@ -33,7 +34,7 @@ tags:
 ### 🔥 The Problem This Solves
 
 **WORLD WITHOUT IT:**
-A developer pushes a hotfix at 11pm. The changes include a temporary config file with `AWS_SECRET_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE` to debug a production issue. The fix works, they clean up the code - but the key stays in `config.local.js` which is still tracked in git. The file is committed, pushed, and merged to main. Three weeks later, a GitHub Actions log accidentally prints environment variables. A security researcher sees the key in a public GitHub repository within 6 minutes of the push.
+A developer pushes a hotfix at 11pm. The changes include a temporary config file with `AWS_SECRET_ACCESS_KEY=AKIA_YOUR_KEY_EXAMPLE` to debug a production issue. The fix works, they clean up the code - but the key stays in `config.local.js` which is still tracked in git. The file is committed, pushed, and merged to main. Three weeks later, a GitHub Actions log accidentally prints environment variables. A security researcher sees the key in a public GitHub repository within 6 minutes of the push.
 
 **THE BREAKING POINT:**
 Secrets in source code are an extreme confidence violation: a committed secret is immediately in git history, potentially replicated to dozens of developer machines, CI runners, mirrors, and GitHub's servers. Deleting the commit is insufficient - `git log` is immutable, `git reflog` survives, and GitHub's "remove sensitive data" process requires force-push and cache invalidation. The cost of remediation (rotate key, audit access logs, patch affected systems) far exceeds the cost of the entire secret scanning toolchain.
@@ -241,6 +242,7 @@ pre-commit install
 ```
 
 **Example 2 - TruffleHog CI scan (GitHub Actions):**
+{% raw %}
 ```yaml
 # .github/workflows/secret-scan.yml
 name: Secret Scanning
@@ -264,6 +266,7 @@ jobs:
           # --only-verified: only report confirmed live secrets
           # (eliminates test/example key false positives)
 ```
+{% endraw %}
 
 **Example 3 - Correct secret management pattern:**
 ```bash

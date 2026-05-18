@@ -11,7 +11,7 @@ and `technical-mastery/_config/ENTRY_GENERATOR_PROMPT.md` (complete spec).
 
 ## How to invoke
 
-Use one target at a time: pass either `CODE` alone for a single category, or `START` and `END` together for a range — but not both modes simultaneously.
+Use one target at a time: pass either `CODE` alone (no `START`/`END`) to process the full category, or `CODE` with `START` and `END` to process a specific range. If `START` is provided without `END` (or vice versa), reject the input and return an error specifying which parameter is missing.
 
 > **Input validation:** If `CODE` is missing or not a recognized 3-letter category code, stop and report: `"Invalid CODE '{{CODE}}'. Provide a valid 3-letter category code (e.g. DST, JVM)."` If using range mode and `START` or `END` are missing or not 3-digit numbers, stop and report the issue before proceeding.
 
@@ -27,7 +27,11 @@ Use one target at a time: pass either `CODE` alone for a single category, or `ST
 @upgrade-batch  CODE=JVM  START=037  END=041
 ```
 
+**Constraint priority order:** Input validation -> Formatting rules -> Content minimums -> YAML and references -> Quality tests.
+
 ## Workflow (execute in order, no confirmation needed between steps)
+
+**Steps:** 1 (check status) -> 2 (scaffold) -> 3 (fill content) -> 4 (verify) -> 5 (commit). Complete one file fully in Step 3 before moving to the next.
 
 ### Step 1 — Check current status
 
@@ -106,8 +110,8 @@ git commit -m "upgrade: ->v6.0 {{CODE}}-{{START}}-{{CODE}}-{{END}} {{CATEGORY_NA
 
 **Batch Rules:**
 
-- Do NOT commit single files - wait until 10 files are upgraded
-- If fewer than 10 remain at the end, commit all remaining
+- Do NOT commit after individual files - batch every 10 upgraded files
+- Last batch exception: if fewer than 10 files remain after the last full batch, commit all remaining as the final commit
 - Do NOT `git push`
 
 This workflow ends after the commit step.

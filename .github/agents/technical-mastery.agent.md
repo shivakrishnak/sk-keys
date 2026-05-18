@@ -12,15 +12,27 @@ under `technical-mastery/` following the v6.0 spec exactly.
 
 | File                                              | Purpose                                   | When to read                                   |
 | ------------------------------------------------- | ----------------------------------------- | ---------------------------------------------- |
-| `technical-mastery/_config/ENTRY_GENERATOR_PROMPT.md`          | Master generation spec v6.0 (24 sections) | ALWAYS - before generating any keyword content |
+| `technical-mastery/_config/ENTRY_GENERATOR_PROMPT.md`          | Master generation spec v6.0 (24 sections) | ALWAYS - before generating any entry content |
 | `technical-mastery/_config/MASTERY_OS_PROMPT.md`  | Keyword list generator v6.0               | When generating ANY keyword lists (mandatory)  |
-| `technical-mastery/_config/TECHNICAL_MASTERY_LIST.md`      | Master keyword list - read-only reference | Read to understand topics already covered and check existing IDs. NEVER used as the source to generate new keywords. Updated ONLY AFTER keyword list is generated via MASTERY_OS_PROMPT.md. |
+| `technical-mastery/_config/TECHNICAL_MASTERY_LIST.md`      | Master keyword list - read-only reference | Read ONLY to verify coverage and check IDs. NEVER used as keyword generation source. Updated ONLY AFTER generation via MASTERY_OS_PROMPT.md. |
 | `technical-mastery/_config/CATEGORY_GENERATOR_PROMPT.md` | Single-category generator                 | When generating a full category                |
 | `technical-mastery/index.md`                             | Navigation root with all tiers/categories | ALWAYS - to understand current structure       |
 
 ## Mode Detection
 
-Analyze the user's input to determine the workflow mode:
+Analyze the user's input to determine the workflow mode.
+If the input does not clearly match any trigger below, ask the user
+to clarify which mode they intend (generate, upgrade, or new keywords)
+before proceeding.
+
+**Quick Decision Table:**
+
+| User says...                        | Mode       |
+|-------------------------------------|------------|
+| tier-N or CODE (DSA, JVM, etc.)     | GENERATE   |
+| "upgrade" / "update" / "migrate"    | UPGRADE    |
+| new topic / description / JD text   | NEW KEYWORDS |
+| unclear or ambiguous                | Ask user   |
 
 ### Mode 1 - GENERATE (tier or category code mentioned)
 
@@ -32,10 +44,9 @@ Trigger: user mentions a tier (tier-1, tier-3) or category code (DSA, JVM, MSG)
    **KEYWORD LIST GATE:** If the category index.md has no keywords (new category
    or empty), STOP and generate the keyword list using `MASTERY_OS_PROMPT.md`
    FIRST. NEVER generate entry content before the keyword list exists.
-   You MAY read `TECHNICAL_MASTERY_LIST.md` to understand what topics the
-   category covers - but ALL keyword generation MUST go through
-   `MASTERY_OS_PROMPT.md`. NEVER copy or derive keywords directly
-   from TECHNICAL_MASTERY_LIST.md.
+   You MAY read `TECHNICAL_MASTERY_LIST.md` ONLY to verify existing topic
+   coverage and check ID conflicts - but MUST NOT derive keywords from it.
+   ALL keyword generation MUST go through `MASTERY_OS_PROMPT.md`.
 4. Identify stubs (version: 0) or missing entries that need content
 5. Pick ONE category, generate keyword content for ONE entry at a time
 6. Follow all 24 sections in exact sequence per ENTRY_GENERATOR_PROMPT.md
@@ -84,33 +95,38 @@ a description/JD like "Strong SQL skills and experience with..."
 
 ## Constraints
 
+### Keyword Generation Rules
+
 - ALWAYS use `MASTERY_OS_PROMPT.md` v6.0 for ANY keyword generation -
-  regardless of input type (topic, subtopic, microtopic, keyword, skill,
-  language, programming language, CS concept, technology, feature,
-  description, JD text, or anything else). This is NON-NEGOTIABLE.
-  No keyword list may be generated without following this spec in full.
+  regardless of input type. This is NON-NEGOTIABLE.
 - NEVER use `TECHNICAL_MASTERY_LIST.md` as the SOURCE for generating keyword lists.
-  You MAY read it to understand existing topic coverage, see how other
-  categories are structured, and check for existing ID conflicts.
-  You MUST NOT copy, derive, or adapt keyword titles directly from it.
-  It is updated ONLY AFTER the keyword list is generated via
-  `MASTERY_OS_PROMPT.md`. Using TECHNICAL_MASTERY_LIST.md as a
-  keyword generation source is a critical violation.
-- NEVER modify files under `interview/` - systems are completely separate
+  You MAY read it ONLY to: (1) verify existing topic coverage,
+  (2) check for ID conflicts. You MUST NOT derive or adapt keywords from it.
+  It is updated ONLY AFTER generation via `MASTERY_OS_PROMPT.md`.
+
+### Entry Generation Rules
+
 - NEVER skip reading `ENTRY_GENERATOR_PROMPT.md` before generating content
 - NEVER generate more than ONE keyword entry at a time - complete it fully, then move to next
 - ALWAYS follow the 24-section structure in exact order
 - ALWAYS use BAD-before-GOOD code pattern in examples
 - ALWAYS use `version: 4` for complete entries, `version: 0` for stubs
+
+### File and Formatting Rules
+
 - File naming: `[CODE]-[NNN] - Keyword Name.md` (SPACE-HYPHEN-SPACE, never em dash)
 - ID format: `[CODE]-[NNN]` - next ID = highest existing + 1
 - Code lines: max 70 characters
 - ASCII diagrams: max 59 characters wide
-- Diagrams: DUAL format (ASCII first, then Mermaid below). Types: flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, erDiagram, mindmap
+- Diagrams: DUAL format (ASCII first, then Mermaid below)
 - No `# H1` in body - Just the Docs renders H1 from YAML `title`
 - Bold-label lines (`**LABEL:** value`) must each be separated by a blank line
 - No em dashes anywhere - use regular hyphens only
 - YAML frontmatter starts at byte 0 with `---`
+
+### Environment Rules
+
+- NEVER modify files under `interview/` - systems are completely separate
 - UTF-8 without BOM for all file operations
 - Use `pwsh` for terminal commands, NEVER `powershell.exe`
 - Python: `$env:USERPROFILE\.local\bin\python3.14.exe`
